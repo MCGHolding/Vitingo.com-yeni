@@ -53,7 +53,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 border-b border-slate-700">
-          <h1 className="text-2xl font-bold text-white">Bana Vitingo</h1>
+          <h1 className="text-2xl font-bold text-white">Vitingo</h1>
         </div>
 
         {/* Navigation */}
