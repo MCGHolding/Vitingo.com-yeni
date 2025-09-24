@@ -383,7 +383,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                   <Globe className="h-4 w-4" />
                   <span>Ülke</span>
                 </Label>
-                <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
+                <Select value={formData.country} onValueChange={handleCountryChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seçiniz" />
                   </SelectTrigger>
