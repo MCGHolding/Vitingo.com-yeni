@@ -46,11 +46,34 @@ const navigation = [
   { name: 'Ayarlar', href: '/settings', icon: Settings, current: false },
 ];
 
-export default function Sidebar({ isOpen, toggleSidebar }) {
+export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
   const toggleSubmenu = (itemName) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
+  };
+
+  const handleMenuClick = (item, subItem = null) => {
+    // Handle specific menu actions
+    if (subItem && subItem.name === 'Yeni Satış Fırsatı') {
+      if (onNewOpportunity) {
+        onNewOpportunity();
+      }
+      return;
+    }
+    
+    // Default click behavior (preventDefault for demo)
+    if (!subItem) {
+      if (item.hasSubmenu) {
+        toggleSubmenu(item.name);
+      } else {
+        // Handle main menu navigation
+        console.log('Navigate to:', item.href);
+      }
+    } else {
+      // Handle submenu navigation
+      console.log('Navigate to:', subItem.href);
+    }
   };
 
   return (
