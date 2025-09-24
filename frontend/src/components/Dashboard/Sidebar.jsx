@@ -14,7 +14,10 @@ import {
   ChevronRight,
   Plus,
   List,
-  Eye
+  Eye,
+  Trophy,
+  XCircle,
+  Heart
 } from 'lucide-react';
 
 const navigation = [
@@ -30,6 +33,9 @@ const navigation = [
     submenu: [
       { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
       { name: 'Açık Fırsatlar', href: '/opportunities/open', icon: Eye },
+      { name: 'Kazanılan Fırsatlar', href: '/opportunities/won', icon: Trophy },
+      { name: 'Kaybedilen Fırsatlar', href: '/opportunities/lost', icon: XCircle },
+      { name: 'Favori Fırsatlar', href: '/opportunities/favorites', icon: Heart },
       { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
     ]
   },
