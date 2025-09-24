@@ -91,15 +91,52 @@ export default function NewOpportunityForm({ onClose, onSave }) {
     { value: '12', label: 'Aralık' }
   ];
 
-  const cities = [
-    { value: 'istanbul', label: 'İstanbul' },
-    { value: 'ankara', label: 'Ankara' },
-    { value: 'izmir', label: 'İzmir' },
-    { value: 'bursa', label: 'Bursa' },
-    { value: 'antalya', label: 'Antalya' },
-    { value: 'adana', label: 'Adana' },
-    { value: 'gaziantep', label: 'Gaziantep' }
+  const countries = [
+    { value: 'tr', label: 'Türkiye' },
+    { value: 'de', label: 'Almanya' },
+    { value: 'us', label: 'Amerika Birleşik Devletleri' },
+    { value: 'gb', label: 'Birleşik Krallık' },
+    { value: 'fr', label: 'Fransa' },
+    { value: 'it', label: 'İtalya' },
+    { value: 'es', label: 'İspanya' }
   ];
+
+  const getCitiesByCountry = (countryCode) => {
+    const cityMap = {
+      'tr': [
+        { value: 'istanbul', label: 'İstanbul' },
+        { value: 'ankara', label: 'Ankara' },
+        { value: 'izmir', label: 'İzmir' },
+        { value: 'bursa', label: 'Bursa' },
+        { value: 'antalya', label: 'Antalya' },
+        { value: 'gaziantep', label: 'Gaziantep' },
+        { value: 'adana', label: 'Adana' },
+        { value: 'konya', label: 'Konya' }
+      ],
+      'de': [
+        { value: 'frankfurt', label: 'Frankfurt am Main' },
+        { value: 'munich', label: 'München' },
+        { value: 'cologne', label: 'Köln' },
+        { value: 'dusseldorf', label: 'Düsseldorf' },
+        { value: 'hamburg', label: 'Hamburg' },
+        { value: 'berlin', label: 'Berlin' },
+        { value: 'hannover', label: 'Hannover' },
+        { value: 'stuttgart', label: 'Stuttgart' },
+        { value: 'nuremberg', label: 'Nürnberg' }
+      ],
+      'us': [
+        { value: 'las-vegas', label: 'Las Vegas' },
+        { value: 'chicago', label: 'Chicago' },
+        { value: 'new-york', label: 'New York' },
+        { value: 'atlanta', label: 'Atlanta' },
+        { value: 'orlando', label: 'Orlando' }
+      ]
+    };
+    
+    return cityMap[countryCode] || [];
+  };
+
+  const availableCities = getCitiesByCountry(formData.country);
 
   const handleInputChange = (name, value) => {
     setFormData(prev => ({
