@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { cn } from '../../lib/utils';
 import { 
   LayoutDashboard, 
@@ -8,14 +9,28 @@ import {
   Target,
   Calendar,
   BarChart3,
-  Zap
+  Zap,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  List
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
   { name: 'Müşteriler', href: '/customers', icon: Users, current: false },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
-  { name: 'Satış Fırsatları', href: '/opportunities', icon: Zap, current: false },
+  { 
+    name: 'Satış Fırsatları', 
+    href: '/opportunities', 
+    icon: Zap, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
+      { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
+    ]
+  },
   { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
@@ -24,6 +39,12 @@ const navigation = [
 ];
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+
+  const toggleSubmenu = (itemName) => {
+    setOpenSubmenu(openSubmenu === itemName ? null : itemName);
+  };
+
   return (
     <div className={cn(
       "fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 to-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
@@ -36,24 +57,52 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {navigation.map((item) => {
             const Icon = item.icon;
+            const isSubmenuOpen = openSubmenu === item.name;
+            
             return (
-              <a
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
-                  item.current
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "text-slate-300 hover:bg-slate-700 hover:text-white"
+              <div key={item.name}>
+                {/* Main menu item */}
+                <div
+                  className={cn(
+                    "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
+                    item.current
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                  )}
+                  onClick={item.hasSubmenu ? () => toggleSubmenu(item.name) : (e) => e.preventDefault()}
+                >
+                  <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                  <span className="flex-1">{item.name}</span>
+                  {item.hasSubmenu && (
+                    isSubmenuOpen ? 
+                      <ChevronDown className="h-4 w-4 text-slate-400" /> :
+                      <ChevronRight className="h-4 w-4 text-slate-400" />
+                  )}
+                </div>
+
+                {/* Submenu */}
+                {item.hasSubmenu && isSubmenuOpen && (
+                  <div className="ml-6 mt-2 space-y-1">
+                    {item.submenu.map((subItem) => {
+                      const SubIcon = subItem.icon;
+                      return (
+                        <a
+                          key={subItem.name}
+                          href={subItem.href}
+                          className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
+                          {subItem.name}
+                        </a>
+                      );
+                    })}
+                  </div>
                 )}
-                onClick={(e) => e.preventDefault()}
-              >
-                <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
-                {item.name}
-              </a>
+              </div>
             );
           })}
         </nav>
