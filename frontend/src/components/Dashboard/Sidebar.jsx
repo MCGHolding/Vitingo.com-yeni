@@ -124,7 +124,10 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity }) {
                           key={subItem.name}
                           href={subItem.href}
                           className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
-                          onClick={(e) => e.preventDefault()}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleMenuClick(item, subItem);
+                          }}
                         >
                           <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
                           {subItem.name}
