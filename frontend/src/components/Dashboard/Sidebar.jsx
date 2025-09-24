@@ -13,7 +13,8 @@ import {
   ChevronDown,
   ChevronRight,
   Plus,
-  List
+  List,
+  Eye
 } from 'lucide-react';
 
 const navigation = [
@@ -28,6 +29,7 @@ const navigation = [
     hasSubmenu: true,
     submenu: [
       { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
+      { name: 'Açık Fırsatlar', href: '/opportunities/open', icon: Eye },
       { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
     ]
   },
