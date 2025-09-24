@@ -103,7 +103,7 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity }) {
                       ? "bg-blue-600 text-white shadow-lg"
                       : "text-slate-300 hover:bg-slate-700 hover:text-white"
                   )}
-                  onClick={item.hasSubmenu ? () => toggleSubmenu(item.name) : (e) => e.preventDefault()}
+                  onClick={() => handleMenuClick(item)}
                 >
                   <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
                   <span className="flex-1">{item.name}</span>
