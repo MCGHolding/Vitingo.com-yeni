@@ -429,7 +429,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                       <SelectValue placeholder="Seçiniz" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cities.map((city) => (
+                      {availableCities.map((city) => (
                         <SelectItem key={city.value} value={city.value}>
                           {city.label}
                         </SelectItem>
