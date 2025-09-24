@@ -91,16 +91,6 @@ export default function NewOpportunityForm({ onClose, onSave }) {
     { value: '12', label: 'Aralık' }
   ];
 
-  const countries = [
-    { value: 'tr', label: 'Türkiye' },
-    { value: 'de', label: 'Almanya' },
-    { value: 'us', label: 'Amerika Birleşik Devletleri' },
-    { value: 'gb', label: 'Birleşik Krallık' },
-    { value: 'fr', label: 'Fransa' },
-    { value: 'it', label: 'İtalya' },
-    { value: 'es', label: 'İspanya' }
-  ];
-
   const getCitiesByCountry = (countryCode) => {
     const cityMap = {
       'tr': [
