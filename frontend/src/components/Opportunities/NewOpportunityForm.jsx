@@ -128,6 +128,12 @@ export default function NewOpportunityForm({ onClose, onSave }) {
 
   const availableCities = getCitiesByCountry(formData.country);
 
+  const handleCountryChange = (value) => {
+    handleInputChange('country', value);
+    // Reset city when country changes
+    handleInputChange('city', '');
+  };
+
   const handleInputChange = (name, value) => {
     setFormData(prev => ({
       ...prev,
