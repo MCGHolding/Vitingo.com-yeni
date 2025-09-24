@@ -8,6 +8,7 @@ import CustomerSegmentChart from './components/Dashboard/CustomerSegmentChart';
 import ActivityFeed from './components/Dashboard/ActivityFeed';
 import SalesFunnelChart from './components/Dashboard/SalesFunnelChart';
 import TopPerformersTable from './components/Dashboard/TopPerformersTable';
+import NewOpportunityForm from './components/Opportunities/NewOpportunityForm';
 import { customerStats, salesData } from './mock/data';
 import { 
   Users, 
@@ -20,14 +21,32 @@ import {
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNewOpportunityForm, setShowNewOpportunityForm] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleNewOpportunity = () => {
+    setShowNewOpportunityForm(true);
+  };
+
+  const closeOpportunityForm = () => {
+    setShowNewOpportunityForm(false);
+  };
+
+  const saveOpportunity = (formData) => {
+    console.log('Saving opportunity:', formData);
+    // Here you would typically send the data to your backend
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar}
+        onNewOpportunity={handleNewOpportunity}
+      />
       
       {/* Main content */}
       <div className="lg:ml-64">
@@ -118,6 +137,14 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* New Opportunity Form Modal */}
+      {showNewOpportunityForm && (
+        <NewOpportunityForm
+          onClose={closeOpportunityForm}
+          onSave={saveOpportunity}
+        />
+      )}
     </div>
   );
 };
