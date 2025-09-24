@@ -7,13 +7,15 @@ import {
   Settings, 
   Target,
   Calendar,
-  BarChart3
+  BarChart3,
+  Zap
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
   { name: 'Müşteriler', href: '/customers', icon: Users, current: false },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
+  { name: 'Satış Fırsatları', href: '/opportunities', icon: Zap, current: false },
   { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
