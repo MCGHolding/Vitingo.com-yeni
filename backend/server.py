@@ -601,17 +601,6 @@ async def download_template(category: str):
         logger.error(f"Error creating template for {category}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
 
-# Include the router in the main app
-app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Currency Models
 class CurrencyRate(BaseModel):
     code: str
@@ -699,6 +688,17 @@ async def convert_currency(try_amount: float):
             gbp_amount=try_amount / 44.2,
             rates={"USD": 34.6, "EUR": 38.3, "GBP": 44.2}
         )
+
+# Include the router in the main app
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
