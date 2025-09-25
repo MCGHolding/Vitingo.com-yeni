@@ -47,6 +47,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNewOpportunityForm, setShowNewOpportunityForm] = useState(false);
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
+  const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
   const [users, setUsers] = useState(mockUsers);
