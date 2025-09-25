@@ -63,7 +63,11 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
   };
 
   const handleSendSurvey = async () => {
-    if (!selectedCustomer || !latestProject) return;
+    if (surveyMode === 'customer') {
+      if (!selectedCustomer || !selectedProject) return;
+    } else {
+      if (!arbitraryName || !arbitraryEmail || !arbitraryProject) return;
+    }
 
     setIsLoading(true);
     
@@ -71,24 +75,41 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
       // Get backend URL from environment
       const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
       
-      // Send real email via backend API
-      const response = await fetch(`${backendUrl}/api/surveys/send-invitation`, {
+      let requestData;
+      let endpoint = '/api/surveys/send-invitation';
+      
+      if (surveyMode === 'customer') {
+        // Customer-project mode
+        requestData = {
+          customer_id: selectedCustomer.id.toString(),
+          project_id: selectedProject.id.toString(),
+          email: selectedCustomer.email,
+          customer_name: selectedCustomer.name,
+          contact_name: selectedCustomer.contact,
+          project_name: selectedProject.name,
+          fair_name: selectedProject.fairName,
+          city: selectedProject.city,
+          country: selectedProject.country,
+          delivery_date: selectedProject.deliveryDate
+        };
+      } else {
+        // Arbitrary email mode
+        endpoint = '/api/surveys/send-arbitrary';
+        requestData = {
+          email: arbitraryEmail,
+          contact_name: arbitraryName,
+          company_name: arbitraryCompany,
+          project_name: arbitraryProject
+        };
+      }
+      
+      // Send request to backend API
+      const response = await fetch(`${backendUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          customer_id: selectedCustomer.id.toString(),
-          project_id: latestProject.id.toString(),
-          email: selectedCustomer.email,
-          customer_name: selectedCustomer.name,
-          contact_name: selectedCustomer.contact,
-          project_name: latestProject.name,
-          fair_name: latestProject.fairName,
-          city: latestProject.city,
-          country: latestProject.country,
-          delivery_date: latestProject.deliveryDate
-        })
+        body: JSON.stringify(requestData)
       });
       
       const result = await response.json();
@@ -97,25 +118,40 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
         // Add to sent surveys list
         const newSentSurvey = {
           id: Date.now(),
-          customerId: selectedCustomer.id,
-          customerName: selectedCustomer.name,
-          contact: selectedCustomer.contact,
-          email: selectedCustomer.email,
-          projectName: latestProject.name,
-          fairName: latestProject.fairName,
+          customerId: surveyMode === 'customer' ? selectedCustomer.id : null,
+          customerName: surveyMode === 'customer' ? selectedCustomer.name : arbitraryCompany,
+          contact: surveyMode === 'customer' ? selectedCustomer.contact : arbitraryName,
+          email: surveyMode === 'customer' ? selectedCustomer.email : arbitraryEmail,
+          projectName: surveyMode === 'customer' ? selectedProject.name : arbitraryProject,
+          fairName: surveyMode === 'customer' ? selectedProject.fairName : arbitraryProject,
           surveyToken: result.survey_token,
           surveyLink: result.survey_link,
           sentAt: new Date().toISOString(),
           status: 'sent',
           opened: false,
-          completed: false
+          completed: false,
+          mode: surveyMode
         };
         
         setSentSurveys(prev => [newSentSurvey, ...prev]);
-        setSelectedCustomerId('');
-        setSearchTerm('');
         
-        alert(`✅ Anket başarıyla gönderildi!\n\n📧 Alıcı: ${selectedCustomer.contact} (${selectedCustomer.email})\n🔗 Link: ${result.survey_link}`);
+        // Reset form fields
+        if (surveyMode === 'customer') {
+          setSelectedCustomerId('');
+          setSelectedProjectId('');
+          setSearchTerm('');
+        } else {
+          setArbitraryName('');
+          setArbitraryEmail('');
+          setArbitraryProject('');
+          setArbitraryCompany('');
+        }
+        
+        const recipientInfo = surveyMode === 'customer' 
+          ? `${selectedCustomer.contact} (${selectedCustomer.email})` 
+          : `${arbitraryName} (${arbitraryEmail})`;
+          
+        alert(`✅ Anket başarıyla gönderildi!\n\n📧 Alıcı: ${recipientInfo}\n🔗 Link: ${result.survey_link}`);
       } else {
         throw new Error(result.error || 'Email gönderim hatası');
       }
