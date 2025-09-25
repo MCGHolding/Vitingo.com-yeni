@@ -9,6 +9,7 @@ from datetime import datetime, timezone, timedelta
 from pydantic import BaseModel, Field
 from typing import List, Dict
 import uuid
+from email_service import email_service
 import csv
 import io
 from pathlib import Path
