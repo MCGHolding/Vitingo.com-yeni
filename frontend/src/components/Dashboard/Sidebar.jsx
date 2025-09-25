@@ -83,7 +83,9 @@ export default function Sidebar({
   onInactiveUsers, 
   onFormerUsers,
   onNewProspect,
-  onAllProspects 
+  onAllProspects,
+  onNewQuote,
+  onAllQuotes
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
