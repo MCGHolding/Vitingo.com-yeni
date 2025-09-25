@@ -376,6 +376,10 @@ const Dashboard = () => {
         onLostOpportunities={handleLostOpportunities}
         onFavoriteOpportunities={handleFavoriteOpportunities}
         onAllOpportunities={handleAllOpportunities}
+        onNewCustomer={handleNewCustomer}
+        onAllCustomers={handleAllCustomers}
+        onInactiveCustomers={handleInactiveCustomers}
+        onFavoriteCustomers={handleFavoriteCustomers}
         onNewUser={handleNewUser}
         onAllUsers={handleAllUsers}
         onInactiveUsers={handleInactiveUsers}
