@@ -10,7 +10,14 @@ import {
   Users
 } from 'lucide-react';
 
-const Header = ({ toggleSidebar, sidebarOpen }) => {
+const Header = ({ 
+  toggleSidebar, 
+  sidebarOpen, 
+  onNewUser, 
+  onAllUsers, 
+  onInactiveUsers, 
+  onFormerUsers 
+}) => {
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
