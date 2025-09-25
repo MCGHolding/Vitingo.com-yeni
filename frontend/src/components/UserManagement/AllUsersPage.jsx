@@ -456,6 +456,22 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
           onSave={handleSaveUser}
         />
       )}
+
+      {/* Message Modal */}
+      {showMessageModal && selectedUser && (
+        <MessageModal
+          user={selectedUser}
+          onClose={handleCloseMessageModal}
+        />
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && selectedUser && (
+        <EmailModal
+          user={selectedUser}
+          onClose={handleCloseEmailModal}
+        />
+      )}
     </div>
   );
 }
