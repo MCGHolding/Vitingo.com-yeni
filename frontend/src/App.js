@@ -158,8 +158,13 @@ const Dashboard = () => {
       ...personData,
       id: Date.now()
     };
-    setPeople(prev => [newPerson, ...prev]);
-    console.log('New person created:', newPerson);
+    console.log('Before update - People count:', people.length);
+    setPeople(prev => {
+      const updated = [newPerson, ...prev];
+      console.log('After update - People count:', updated.length);
+      console.log('New person data:', newPerson);
+      return updated;
+    });
   };
 
   const handleAllQuotes = () => {
