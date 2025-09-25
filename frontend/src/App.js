@@ -498,7 +498,7 @@ const Dashboard = () => {
               </div>
 
               {/* KPI Grid - Modern Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <ModernKPICard
                   title="Toplam Satışlar"
                   value={2847500}
@@ -517,6 +517,7 @@ const Dashboard = () => {
                   icon={Users}
                   gradient="from-orange-500 to-orange-600"
                 />
+                <PassiveLeadsCard />
               </div>
 
               {/* Second Row KPIs */}
