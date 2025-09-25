@@ -130,14 +130,14 @@ const SalesSummaryCard = () => {
       </div>
 
       {/* Chart */}
-      <div className="h-48">
+      <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={currentData.chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
             <XAxis 
               dataKey="period" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#6B7280', fontSize: 12 }}
+              tick={{ fill: '#6B7280', fontSize: 10 }}
             />
             <YAxis hide />
             <Tooltip content={<CustomTooltip />} />
@@ -145,26 +145,26 @@ const SalesSummaryCard = () => {
               type="monotone"
               dataKey="iphone"
               stroke="#3B82F6"
-              strokeWidth={3}
-              dot={{ fill: '#3B82F6', strokeWidth: 0, r: 4 }}
-              activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
+              strokeWidth={2}
+              dot={{ fill: '#3B82F6', strokeWidth: 0, r: 3 }}
+              activeDot={{ r: 4, stroke: '#3B82F6', strokeWidth: 2 }}
               name="iPhone"
             />
             <Line
               type="monotone"
               dataKey="ipad"
               stroke="#10B981"
-              strokeWidth={3}
-              dot={{ fill: '#10B981', strokeWidth: 0, r: 4 }}
-              activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2 }}
+              strokeWidth={2}
+              dot={{ fill: '#10B981', strokeWidth: 0, r: 3 }}
+              activeDot={{ r: 4, stroke: '#10B981', strokeWidth: 2 }}
               name="iPad"
             />
             <Line
               type="monotone"
               dataKey="total"
               stroke="#F59E0B"
-              strokeWidth={2}
-              strokeDasharray="5 5"
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
               dot={false}
               name="Toplam"
             />
