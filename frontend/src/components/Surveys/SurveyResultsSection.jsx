@@ -210,6 +210,22 @@ const SurveyResultsSection = () => {
           </div>
         </div>
 
+        {/* Clear Filters Button */}
+        {(selectedCustomerId || selectedRepresentative || searchTerm) && (
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                setSelectedCustomerId('');
+                setSelectedRepresentative('');
+                setSearchTerm('');
+              }}
+              className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Filtreleri Temizle
+            </button>
+          </div>
+        )}
+
         {/* Quick Stats */}
         {filteredResponses.length > 0 && (
           <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-gray-200">
