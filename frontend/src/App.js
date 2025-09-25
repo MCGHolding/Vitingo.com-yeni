@@ -32,6 +32,8 @@ import AllFairsPage from './components/Fairs/AllFairsPage';
 import ActiveFairsPage from './components/Fairs/ActiveFairsPage';
 import PastFairsPage from './components/Fairs/PastFairsPage';
 import NewFairForm from './components/Fairs/NewFairForm';
+import ImportDataPage from './components/Settings/ImportDataPage';
+import ExportDataPage from './components/Settings/ExportDataPage';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { mockUsers } from './mock/usersData';
