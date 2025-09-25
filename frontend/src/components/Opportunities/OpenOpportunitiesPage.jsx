@@ -496,12 +496,12 @@ export default function OpenOpportunitiesPage() {
                   <SelectValue placeholder="Tutar Aralığı" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tüm Tutarlar</SelectItem>
-                  <SelectItem value="0-5000">0 - 5.000</SelectItem>
-                  <SelectItem value="5000-15000">5.000 - 15.000</SelectItem>
-                  <SelectItem value="15000-30000">15.000 - 30.000</SelectItem>
-                  <SelectItem value="30000+">30.000+</SelectItem>
-                  <SelectItem value="no-amount">Tutar Girilmemiş</SelectItem>
+                  <SelectItem value="all">Tüm Tutarlar ({amountCounts['0-5000'] + amountCounts['5000-15000'] + amountCounts['15000-30000'] + amountCounts['30000+'] + amountCounts['no-amount']})</SelectItem>
+                  <SelectItem value="0-5000">0 - 5.000 ({amountCounts['0-5000']})</SelectItem>
+                  <SelectItem value="5000-15000">5.000 - 15.000 ({amountCounts['5000-15000']})</SelectItem>
+                  <SelectItem value="15000-30000">15.000 - 30.000 ({amountCounts['15000-30000']})</SelectItem>
+                  <SelectItem value="30000+">30.000+ ({amountCounts['30000+']})</SelectItem>
+                  <SelectItem value="no-amount">Tutar Girilmemiş ({amountCounts['no-amount']})</SelectItem>
                 </SelectContent>
               </Select>
             </div>
