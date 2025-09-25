@@ -7,7 +7,7 @@ import logging
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Dict
 import uuid
 import csv
 import io
