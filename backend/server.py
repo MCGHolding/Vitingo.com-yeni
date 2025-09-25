@@ -664,7 +664,7 @@ class SurveyResponse(BaseModel):
     project_id: str
     responses: Dict
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    ip_address: str = None
+    ip_address: Optional[str] = None
 
 class SurveyInvitation(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
