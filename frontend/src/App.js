@@ -739,6 +739,19 @@ const Dashboard = () => {
         onCustomerReports={handleCustomerReports}
         onHandovers={handleHandovers}
         onSurveys={handleSurveys}
+        // Accounting handlers
+        onNewInvoice={handleNewInvoice}
+        onAllInvoices={handleAllInvoices}
+        onPendingApproval={handlePendingApproval}
+        onPendingCollection={handlePendingCollection}
+        onPaidInvoices={handlePaidInvoices}
+        onOverdueInvoices={handleOverdueInvoices}
+        onCurrentAccounts={handleCurrentAccounts}
+        onCollectionReceipt={handleCollectionReceipt}
+        onExpenseReceipt={handleExpenseReceipt}
+        onPaymentRequests={handlePaymentRequests}
+        onPurchaseInvoices={handlePurchaseInvoices}
+        onPurchaseApprovals={handlePurchaseApprovals}
       />
       
       {/* Main content */}
