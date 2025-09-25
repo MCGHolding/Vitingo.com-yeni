@@ -190,6 +190,24 @@ export default function NewOpportunityForm({ onClose, onSave }) {
       description: "Satış fırsatı başarıyla oluşturuldu",
     });
 
+    // Reset form
+    setFormData({
+      customer: '',
+      subject: '',
+      contactPerson: '',
+      amount: '',
+      currency: 'TRY',
+      status: 'open',
+      stage: '',
+      details: '',
+      businessType: '',
+      country: '',
+      tradeShowMonth: '',
+      tradeShowName: '',
+      tradeShowDates: '',
+      city: ''
+    });
+
     if (onClose) {
       onClose();
     }
