@@ -103,7 +103,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   // Calculate totals
   useEffect(() => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.total || 0), 0);
-    const discountAmount = (subtotal * formData.discount) / 100;
+    const discountPercent = parseNumber(formData.discount) || 0;
+    const discountAmount = (subtotal * discountPercent) / 100;
     const discountedSubtotal = subtotal - discountAmount;
     const vatAmount = (discountedSubtotal * formData.vatRate) / 100;
     const total = discountedSubtotal + vatAmount;
