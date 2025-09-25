@@ -103,6 +103,7 @@ export default function Sidebar({
   onAllCustomers,
   onInactiveCustomers,
   onFavoriteCustomers,
+  onPeople,
   onNewUser, 
   onAllUsers, 
   onInactiveUsers, 
