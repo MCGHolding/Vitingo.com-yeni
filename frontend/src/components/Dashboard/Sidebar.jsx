@@ -178,7 +178,10 @@ export default function Sidebar({
   onActiveFairs,
   onPastFairs,
   onImportData,
-  onExportData
+  onExportData,
+  onSalesReports,
+  onCustomerReports,
+  onSurveys
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
