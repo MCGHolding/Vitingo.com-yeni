@@ -116,10 +116,21 @@ export default function NewUserFormModal({ onClose, onSave }) {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+      
+      // Auto-generate username when firstName or lastName changes
+      if ((field === 'firstName' || field === 'lastName') && newData.firstName && newData.lastName) {
+        const firstThree = newData.firstName.toLowerCase().substring(0, 3);
+        const lastThree = newData.lastName.toLowerCase().substring(0, 3);
+        newData.username = `${firstThree}${lastThree}`;
+      }
+      
+      return newData;
+    });
   };
 
   const handleSubmit = (e) => {
