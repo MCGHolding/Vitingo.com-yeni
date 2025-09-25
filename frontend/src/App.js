@@ -11,6 +11,7 @@ import TopPerformersTable from './components/Dashboard/TopPerformersTable';
 import NewOpportunityForm from './components/Opportunities/NewOpportunityForm';
 import OpenOpportunitiesPage from './components/Opportunities/OpenOpportunitiesPage';
 import { customerStats, salesData } from './mock/data';
+import { openOpportunities } from './mock/opportunitiesData';
 import { 
   Users, 
   TrendingUp, 
@@ -24,6 +25,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNewOpportunityForm, setShowNewOpportunityForm] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [opportunities, setOpportunities] = useState(openOpportunities);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -46,8 +48,63 @@ const Dashboard = () => {
   };
 
   const saveOpportunity = (formData) => {
-    console.log('Saving opportunity:', formData);
-    // Here you would typically send the data to your backend
+    // Generate new ID (get highest existing ID + 1)
+    const maxId = Math.max(...opportunities.map(op => op.id));
+    const newId = maxId + 1;
+
+    // Create tags array from form data
+    const tags = [];
+    if (formData.country) {
+      const countryMap = {
+        'tr': 'TÜRKİYE',
+        'de': 'ALMANYA',
+        'us': 'ABD',
+        'gb': 'İNGİLTERE',
+        'fr': 'FRANSA'
+      };
+      if (countryMap[formData.country]) {
+        tags.push(countryMap[formData.country]);
+      }
+    }
+
+    if (formData.city) {
+      const cityMap = {
+        'istanbul': 'İSTANBUL',
+        'frankfurt': 'FRANKFURT',
+        'munich': 'MÜNİH',
+        'cologne': 'KÖLN',
+        'dusseldorf': 'DÜSSELDORF'
+      };
+      if (cityMap[formData.city]) {
+        tags.push(cityMap[formData.city]);
+      }
+    }
+
+    if (formData.tradeShowName) {
+      tags.push(formData.tradeShowName.toUpperCase());
+    }
+
+    // Create new opportunity object
+    const newOpportunity = {
+      id: newId,
+      customer: formData.customer,
+      eventName: formData.subject || formData.tradeShowName || 'Yeni Etkinlik',
+      amount: parseFloat(formData.amount) || 0,
+      currency: formData.currency,
+      status: formData.status || 'open-active',
+      statusText: `Açık - Aktif - ${formData.stage === 'lead' ? 'Yeni Fırsat' : 
+                   formData.stage === 'qualified' ? 'Nitelikli Fırsat' :
+                   formData.stage === 'proposal' ? 'Teklif Bekleniyor' :
+                   formData.stage === 'negotiation' ? 'Müzakere' : 'Değerlendiriliyor'}`,
+      tags: tags,
+      lastUpdate: new Date().toISOString().split('T')[0],
+      contactPerson: formData.contactPerson || 'Belirtilmemiş'
+    };
+
+    // Add to opportunities list
+    setOpportunities(prev => [newOpportunity, ...prev]);
+    
+    console.log('New opportunity saved:', newOpportunity);
   };
 
   const renderContent = () => {
