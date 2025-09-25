@@ -616,7 +616,10 @@ const Dashboard = () => {
                 <div className="xl:col-span-2">
                   <ModernSalesChart />
                 </div>
-                <RealTimeSurveyStats />
+                <RealTimeSurveyStats 
+                  onDetailedReport={handleSurveyResults}
+                  onSendSurvey={handleSurveys}
+                />
               </div>
 
               {/* Sales Summary and Additional Charts */}
