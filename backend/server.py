@@ -12,6 +12,9 @@ import uuid
 import csv
 import io
 from pathlib import Path
+import requests
+import xml.etree.ElementTree as ET
+from decimal import Decimal
 
 
 ROOT_DIR = Path(__file__).parent
