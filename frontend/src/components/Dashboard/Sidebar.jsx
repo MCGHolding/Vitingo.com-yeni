@@ -274,10 +274,13 @@ export default function Sidebar({
   };
 
   return (
-    <div className={cn(
-      "fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
-      isOpen ? "translate-x-0" : "-translate-x-full"
-    )}>
+    <div 
+      className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}
+      style={{ backgroundColor: '#0f172a' }}
+    >
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 border-b border-slate-700">
