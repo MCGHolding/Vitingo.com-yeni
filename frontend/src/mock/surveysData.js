@@ -248,7 +248,8 @@ export const customersWithProjects = [
         status: "completed", 
         fairName: "GITEX Technology Week",
         standSize: "15x10 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Mert Kaya"
       }
     ]
   },
