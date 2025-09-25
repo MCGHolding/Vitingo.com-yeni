@@ -83,6 +83,13 @@ const Dashboard = () => {
     console.log('New user created:', newUser);
   };
 
+  const updateUser = (updatedUser) => {
+    setUsers(prev => prev.map(user => 
+      user.id === updatedUser.id ? updatedUser : user
+    ));
+    console.log('User updated:', updatedUser);
+  };
+
   const saveOpportunity = (formData) => {
     // Generate new ID (get highest existing ID + 1)
     const maxId = Math.max(...opportunities.map(op => op.id));
