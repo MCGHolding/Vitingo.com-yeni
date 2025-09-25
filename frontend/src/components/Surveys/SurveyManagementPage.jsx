@@ -3,7 +3,7 @@ import { Search, Mail, Send, Eye, Calendar, User, MapPin, CheckCircle, Clock, Ba
 import { customersWithProjects, surveyStats, generateSurveyToken, surveyEmailTemplate } from '../../mock/surveysData';
 import SurveyResultsSection from './SurveyResultsSection';
 
-const SurveyManagementPage = ({ onBackToDashboard }) => {
+const SurveyManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
