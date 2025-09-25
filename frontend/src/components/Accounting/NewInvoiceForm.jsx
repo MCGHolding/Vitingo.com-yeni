@@ -441,12 +441,13 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">İskonto (%)</label>
                 <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={formData.discount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, discount: parseFloat(e.target.value) || 0 }))}
+                  type="text"
+                  value={formData.discount ? formatNumber(formData.discount) : ''}
+                  onChange={(e) => {
+                    const value = parseNumber(e.target.value);
+                    setFormData(prev => ({ ...prev, discount: value }));
+                  }}
+                  placeholder="0,00"
                 />
               </div>
 
