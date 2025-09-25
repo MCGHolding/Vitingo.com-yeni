@@ -346,11 +346,10 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                     </td>
                     <td className="py-3 px-2">
                       <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.quantity}
-                        onChange={(e) => handleItemChange(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                        type="text"
+                        value={item.quantity ? formatNumber(item.quantity) : ''}
+                        onChange={(e) => handleItemChange(item.id, 'quantity', e.target.value)}
+                        placeholder="0"
                         className="w-full"
                       />
                     </td>
