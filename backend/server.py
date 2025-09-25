@@ -1275,6 +1275,17 @@ async def get_survey_responses(
             .limit(limit)\
             .to_list(length=limit)
         
+        # Enrich responses with customer names from invitations
+        for response in responses:
+            invitation = await db.survey_invitations.find_one({"survey_token": response.get("survey_token")})
+            if invitation:
+                if invitation.get("is_arbitrary"):
+                    response["customer_name"] = invitation.get("company_name", "Anonim Müşteri")
+                else:
+                    response["customer_name"] = invitation.get("customer_name", "Müşteri")
+            else:
+                response["customer_name"] = "Bilinmeyen Müşteri"
+        
         # Get total count
         total_count = await db.survey_responses.count_documents(query_filter)
         
