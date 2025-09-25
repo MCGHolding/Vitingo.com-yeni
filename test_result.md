@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Vitingo CRM User Management - Complete implementation of View, Edit and Action Menu functionality for All Users page. Eye icon should open ViewUserModal showing user details as preview, Pen icon should open EditUserModal for editing user details, Three dots should open ActionMenuUserPopover with Sil, Paylaş, Mesaj, Mail options."
+user_problem_statement: "Test the new Sales Opportunities pages functionality. The application now has 4 new opportunity pages with specialized content: 1. Kazanılan Fırsatlar (Won Opportunities) - Shows 10 won opportunities with win dates and deal values, 2. Kaybedilen Fırsatlar (Lost Opportunities) - Shows 10 lost opportunities with loss reasons and competitors, 3. Favori Fırsatlar (Favorite Opportunities) - Shows 10 priority opportunities with VIP/Strategic/Elite classifications and relationship info, 4. Tüm Satış Fırsatları (All Opportunities) - Shows all 42+ opportunities combined with status filtering and summary cards. Test navigation, content verification, filter functionality, action buttons (eye, pen, three dots), and UI/UX elements."
 
 frontend:
   - task: "Create mock users data file"
