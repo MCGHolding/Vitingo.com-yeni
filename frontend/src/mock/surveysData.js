@@ -200,6 +200,28 @@ export const customersWithProjects = [
         fairName: "Automechanika İstanbul",
         standSize: "12x8 metre",
         surveyLink: null
+      },
+      {
+        id: 110,
+        name: "IAA Mobility Münih",
+        city: "Münih",
+        country: "Almanya",
+        deliveryDate: "2024-06-12",
+        status: "completed",
+        fairName: "IAA Mobility",
+        standSize: "18x12 metre",
+        surveyLink: null
+      },
+      {
+        id: 111,
+        name: "Paris Motor Show",
+        city: "Paris",
+        country: "Fransa",
+        deliveryDate: "2024-08-05",
+        status: "completed",
+        fairName: "Paris Motor Show",
+        standSize: "16x10 metre",
+        surveyLink: null
       }
     ]
   },
