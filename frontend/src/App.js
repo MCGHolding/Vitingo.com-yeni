@@ -45,7 +45,7 @@ import ModernSalesChart from './components/Dashboard/ModernSalesChart';
 import SalesByCountryTable from './components/Dashboard/SalesByCountryTable';
 import RecentTransactionsTable from './components/Dashboard/RecentTransactionsTable';
 import TopCustomersCard from './components/Dashboard/TopCustomersCard';
-import RealTimeSurveyStats from './components/Dashboard/RealTimeSurveyStats';
+import CSATGauge from './components/Dashboard/CSATGauge';
 import GeographicSalesMap from './components/Dashboard/GeographicSalesMap';
 import CurrencyTooltip from './components/Dashboard/CurrencyTooltip';
 import SalesSummaryCard from './components/Dashboard/SalesSummaryCard';
