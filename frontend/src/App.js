@@ -409,7 +409,8 @@ const Dashboard = () => {
         onAllCustomers={handleAllCustomers}
         onInactiveCustomers={handleInactiveCustomers}
         onFavoriteCustomers={handleFavoriteCustomers}
-        onPeople={handlePeople}
+        onNewPerson={handleNewPerson}
+        onAllPeople={handleAllPeople}
         onNewUser={handleNewUser}
         onAllUsers={handleAllUsers}
         onInactiveUsers={handleInactiveUsers}
