@@ -1033,6 +1033,84 @@ async def send_test_email(request: TestEmailRequest):
             "error": str(e)
         }
 
+class ArbitrarySurveyRequest(BaseModel):
+    email: str
+    contact_name: str
+    company_name: Optional[str] = ""
+    project_name: str
+
+@api_router.post("/surveys/send-arbitrary")
+async def send_arbitrary_survey_invitation(request: ArbitrarySurveyRequest):
+    """Send survey invitation to arbitrary email address"""
+    try:
+        # Generate unique survey token
+        survey_token = str(uuid.uuid4())
+        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-2.preview.emergentagent.com')
+        survey_link = f"{base_url}/survey/{survey_token}"
+        
+        # Prepare customer and project data for email
+        customer_data = {
+            "id": "arbitrary",
+            "name": request.company_name or "Değerli Müşterimiz",
+            "contact": request.contact_name,
+            "email": request.email
+        }
+        
+        project_data = {
+            "id": "arbitrary",
+            "name": request.project_name,
+            "fairName": request.project_name,
+            "city": "",
+            "country": "",
+            "deliveryDate": datetime.now().isoformat()
+        }
+        
+        # Send email via SendGrid
+        email_result = email_service.send_survey_invitation(customer_data, project_data, survey_link)
+        
+        if email_result["success"]:
+            # Create invitation record with arbitrary flag
+            invitation = SurveyInvitation(
+                customer_id="arbitrary",
+                project_id="arbitrary", 
+                survey_token=survey_token,
+                email=request.email,
+                survey_link=survey_link
+            )
+            
+            # Add extra fields for arbitrary surveys
+            invitation_dict = invitation.dict()
+            invitation_dict.update({
+                "is_arbitrary": True,
+                "contact_name": request.contact_name,
+                "company_name": request.company_name,
+                "project_name": request.project_name,
+                "created_at": datetime.now().isoformat()
+            })
+            
+            # Save to database
+            await db.survey_invitations.insert_one(invitation_dict)
+            
+            return {
+                "success": True,
+                "survey_token": survey_token,
+                "survey_link": survey_link,
+                "message": f"Survey invitation sent successfully to {request.email}",
+                "email_status": email_result
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Failed to send email: {email_result.get('error', 'Unknown error')}"
+            }
+        
+    except Exception as e:
+        logger.error(f"Error sending arbitrary survey invitation: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.get("/surveys/{survey_token}")
 async def get_survey_by_token(survey_token: str):
     """Get survey details by token"""
