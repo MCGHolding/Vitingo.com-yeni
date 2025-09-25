@@ -99,6 +99,83 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
     }
   };
 
+  // Modal handlers
+  const handleViewPerson = (person) => {
+    setSelectedPerson(person);
+    setShowViewModal(true);
+  };
+
+  const handleEditPerson = (person) => {
+    setSelectedPerson(person);
+    setShowEditModal(true);
+    setShowViewModal(false);
+  };
+
+  const handleSavePerson = (updatedPerson) => {
+    const updatedPeople = people.map(p => 
+      p.id === updatedPerson.id ? updatedPerson : p
+    );
+    setPeople(updatedPeople);
+    
+    // Also update parent component if callback provided
+    if (onUpdatePerson) {
+      onUpdatePerson(updatedPerson);
+    }
+    
+    setShowEditModal(false);
+    setSelectedPerson(null);
+  };
+
+  const handleDeletePerson = (person) => {
+    if (window.confirm(`${person.fullName} kişisini silmek istediğinizden emin misiniz?`)) {
+      const updatedPeople = people.filter(p => p.id !== person.id);
+      setPeople(updatedPeople);
+      
+      toast({
+        title: "Başarılı",
+        description: `${person.fullName} başarıyla silindi.`,
+      });
+    }
+  };
+
+  const handleSharePerson = (person) => {
+    navigator.clipboard.writeText(`${person.fullName} - ${person.company} - ${person.phone}`);
+    toast({
+      title: "Paylaşıldı",
+      description: `${person.fullName} bilgileri panoya kopyalandı.`,
+    });
+  };
+
+  const handleMessagePerson = (person) => {
+    if (person.phone) {
+      window.open(`sms:${person.phone}`, '_blank');
+    } else {
+      toast({
+        title: "Telefon Bulunamadı",
+        description: `${person.fullName} için telefon numarası kayıtlı değil.`,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleMailPerson = (person) => {
+    if (person.email) {
+      window.open(`mailto:${person.email}`, '_blank');
+    } else {
+      toast({
+        title: "E-posta Bulunamadı",
+        description: `${person.fullName} için e-posta adresi kayıtlı değil.`,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const closeModals = () => {
+    setShowViewModal(false);
+    setShowEditModal(false);
+    setSelectedPerson(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
