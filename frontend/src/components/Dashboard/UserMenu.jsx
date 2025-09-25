@@ -40,6 +40,18 @@ export default function UserMenu() {
     }
   };
 
+  const handleReturnToAdmin = () => {
+    if (window.confirm('Admin hesabına geri dönmek istediğinizden emin misiniz?')) {
+      returnToAdmin();
+    }
+    setIsOpen(false);
+  };
+
+  const handleUserSwitch = () => {
+    setShowUserSwitchModal(true);
+    setIsOpen(false);
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('tr-TR', {
       day: '2-digit',
