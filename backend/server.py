@@ -1202,6 +1202,87 @@ async def send_handover_form(request: HandoverRequest):
             "error": str(e)
         }
 
+class ArbitraryHandoverRequest(BaseModel):
+    email: str
+    contact_name: str
+    company_name: Optional[str] = ""
+    project_name: str
+    country: str
+    language: str
+    customer_representative: str
+
+@api_router.post("/handovers/send-arbitrary")
+async def send_arbitrary_handover_form(request: ArbitraryHandoverRequest):
+    """Send handover form to arbitrary email address"""
+    try:
+        # Generate unique handover token
+        handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
+        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-2.preview.emergentagent.com')
+        handover_link = f"{base_url}/handover/{handover_token}"
+        
+        # Prepare customer and project data for email
+        customer_data = {
+            "id": "arbitrary",
+            "name": request.company_name or "Değerli Müşterimiz",
+            "contact": request.contact_name,
+            "email": request.email
+        }
+        
+        project_data = {
+            "id": "arbitrary",
+            "name": request.project_name,
+            "language": request.language
+        }
+        
+        # Send email via SendGrid
+        email_result = email_service.send_handover_invitation(customer_data, project_data, handover_link)
+        
+        if email_result["success"]:
+            # Create handover invitation record with arbitrary flag
+            handover_invitation = {
+                "customer_id": "arbitrary",
+                "project_id": "arbitrary",
+                "handover_token": handover_token,
+                "email": request.email,
+                "handover_link": handover_link,
+                "customer_name": request.company_name or "Arbitrary Customer",
+                "contact_name": request.contact_name,
+                "project_name": request.project_name,
+                "customer_representative": request.customer_representative,
+                "language": request.language,
+                "country": request.country,
+                "status": "pending",
+                "sent_at": datetime.now().isoformat(),
+                "completed_at": None,
+                "signature_data": None,
+                "auto_survey_triggered": False,
+                "survey_token": None,
+                "is_arbitrary": True
+            }
+            
+            # Save to database
+            await db.handover_invitations.insert_one(handover_invitation)
+            
+            return {
+                "success": True,
+                "handover_token": handover_token,
+                "handover_link": handover_link,
+                "message": f"Handover form sent successfully to {request.email}",
+                "email_status": email_result
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Failed to send email: {email_result.get('error', 'Unknown error')}"
+            }
+        
+    except Exception as e:
+        logger.error(f"Error sending arbitrary handover form: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.get("/handovers/{handover_token}")
 async def get_handover_by_token(handover_token: str):
     """Get handover details by token"""
