@@ -61,6 +61,17 @@ const Dashboard = () => {
     setCurrentView('former-users');
   };
 
+  // Prospect Management Handlers
+  const handleNewProspect = () => {
+    console.log('New Prospect clicked');
+    // TODO: Implement new prospect modal/form
+  };
+
+  const handleAllProspects = () => {
+    console.log('All Prospects clicked');
+    // TODO: Implement all prospects page view
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
