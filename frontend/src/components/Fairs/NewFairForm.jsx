@@ -89,7 +89,8 @@ export default function NewFairForm({ onClose, onSave }) {
     startDate: '',
     endDate: '',
     sector: '',
-    cycle: ''
+    cycle: '',
+    fairMonth: ''
   });
 
   // Default sectors list
