@@ -589,7 +589,7 @@ async def download_template(category: str):
             yield csv_content
         
         return StreamingResponse(
-            io.StringIO(csv_content),
+            io.BytesIO(csv_content.encode('utf-8')),
             media_type="text/csv",
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
