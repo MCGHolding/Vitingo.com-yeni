@@ -89,6 +89,94 @@ async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
     return [StatusCheck(**status_check) for status_check in status_checks]
 
+# Fair API Endpoints
+@api_router.post("/fairs", response_model=Fair)
+async def create_fair(fair_input: FairCreate):
+    """Create a new fair"""
+    try:
+        fair_dict = fair_input.dict()
+        fair_obj = Fair(**fair_dict)
+        
+        # Insert to MongoDB
+        result = await db.fairs.insert_one(fair_obj.dict())
+        
+        if result.inserted_id:
+            logger.info(f"Fair created successfully: {fair_obj.name}")
+            return fair_obj
+        else:
+            logger.error("Failed to insert fair to database")
+            raise HTTPException(status_code=500, detail="Failed to create fair")
+            
+    except Exception as e:
+        logger.error(f"Error creating fair: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating fair: {str(e)}")
+
+@api_router.get("/fairs", response_model=List[Fair])
+async def get_fairs():
+    """Get all fairs"""
+    try:
+        fairs = await db.fairs.find().to_list(1000)
+        return [Fair(**fair) for fair in fairs]
+    except Exception as e:
+        logger.error(f"Error getting fairs: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting fairs: {str(e)}")
+
+@api_router.get("/fairs/{fair_id}", response_model=Fair)
+async def get_fair(fair_id: str):
+    """Get a specific fair by ID"""
+    try:
+        fair = await db.fairs.find_one({"id": fair_id})
+        if fair:
+            return Fair(**fair)
+        else:
+            raise HTTPException(status_code=404, detail="Fair not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting fair: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting fair: {str(e)}")
+
+@api_router.put("/fairs/{fair_id}", response_model=Fair)
+async def update_fair(fair_id: str, fair_input: FairCreate):
+    """Update a fair"""
+    try:
+        update_data = fair_input.dict()
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await db.fairs.update_one(
+            {"id": fair_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            updated_fair = await db.fairs.find_one({"id": fair_id})
+            return Fair(**updated_fair)
+        else:
+            raise HTTPException(status_code=404, detail="Fair not found or no changes made")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating fair: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error updating fair: {str(e)}")
+
+@api_router.delete("/fairs/{fair_id}")
+async def delete_fair(fair_id: str):
+    """Delete a fair"""
+    try:
+        result = await db.fairs.delete_one({"id": fair_id})
+        
+        if result.deleted_count:
+            return {"message": "Fair deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Fair not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting fair: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting fair: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
