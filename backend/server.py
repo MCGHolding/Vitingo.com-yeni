@@ -246,6 +246,155 @@ async def delete_fair(fair_id: str):
         logger.error(f"Error deleting fair: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting fair: {str(e)}")
 
+# Import Data Endpoints
+async def parse_csv_content(file_content: str, category: str):
+    """Parse CSV content based on category"""
+    reader = csv.DictReader(io.StringIO(file_content))
+    processed_records = []
+    errors = []
+    
+    try:
+        for row_num, row in enumerate(reader, start=2):  # Start from row 2 (header is row 1)
+            try:
+                if category == "fairs":
+                    record = Fair(
+                        name=row.get('name', ''),
+                        city=row.get('city', ''),
+                        country=row.get('country', ''),
+                        startDate=row.get('startDate', ''),
+                        endDate=row.get('endDate', ''),
+                        sector=row.get('sector', ''),
+                        cycle=row.get('cycle', 'yearly'),
+                        fairMonth=row.get('fairMonth', ''),
+                        description=row.get('description', '')
+                    )
+                elif category == "customers":
+                    record = Customer(
+                        company_name=row.get('company_name', ''),
+                        contact_person=row.get('contact_person', ''),
+                        email=row.get('email', ''),
+                        phone=row.get('phone', ''),
+                        address=row.get('address', ''),
+                        city=row.get('city', ''),
+                        country=row.get('country', ''),
+                        industry=row.get('industry', ''),
+                        status=row.get('status', 'active')
+                    )
+                elif category == "people":
+                    record = Person(
+                        first_name=row.get('first_name', ''),
+                        last_name=row.get('last_name', ''),
+                        email=row.get('email', ''),
+                        phone=row.get('phone', ''),
+                        job_title=row.get('job_title', ''),
+                        company=row.get('company', ''),
+                        relationship_type=row.get('relationship_type', ''),
+                        notes=row.get('notes', '')
+                    )
+                elif category == "prospects":
+                    record = Prospect(
+                        company_name=row.get('company_name', ''),
+                        contact_person=row.get('contact_person', ''),
+                        email=row.get('email', ''),
+                        phone=row.get('phone', ''),
+                        industry=row.get('industry', ''),
+                        status=row.get('status', 'new'),
+                        source=row.get('source', ''),
+                        notes=row.get('notes', '')
+                    )
+                elif category == "cities":
+                    record = City(
+                        name=row.get('name', ''),
+                        country=row.get('country', ''),
+                        region=row.get('region', ''),
+                        population=int(row.get('population', 0) or 0)
+                    )
+                elif category == "countries":
+                    record = Country(
+                        name=row.get('name', ''),
+                        code=row.get('code', ''),
+                        continent=row.get('continent', ''),
+                        population=int(row.get('population', 0) or 0)
+                    )
+                elif category == "faircenters":
+                    record = FairCenter(
+                        name=row.get('name', ''),
+                        city=row.get('city', ''),
+                        country=row.get('country', ''),
+                        address=row.get('address', ''),
+                        capacity=int(row.get('capacity', 0) or 0),
+                        contact_phone=row.get('contact_phone', ''),
+                        contact_email=row.get('contact_email', '')
+                    )
+                else:
+                    raise ValueError(f"Unknown category: {category}")
+                
+                processed_records.append(record.dict())
+                
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+                
+    except Exception as e:
+        errors.append(f"CSV parsing error: {str(e)}")
+        
+    return processed_records, errors
+
+@api_router.post("/import/{category}")
+async def import_data(
+    category: str,
+    file: UploadFile = File(...)
+):
+    """Import CSV data for different categories"""
+    
+    # Validate category
+    valid_categories = ["fairs", "customers", "people", "prospects", "cities", "countries", "faircenters"]
+    if category not in valid_categories:
+        raise HTTPException(status_code=400, detail=f"Invalid category. Must be one of: {valid_categories}")
+    
+    # Validate file type
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Only CSV files are supported")
+    
+    try:
+        # Read file content
+        content = await file.read()
+        file_content = content.decode('utf-8')
+        
+        # Parse CSV content
+        processed_records, errors = await parse_csv_content(file_content, category)
+        
+        if not processed_records:
+            raise HTTPException(status_code=400, detail="No valid records found in CSV file")
+        
+        # Insert records to database
+        collection_name = category
+        if category == "faircenters":
+            collection_name = "fair_centers"
+        
+        collection = getattr(db, collection_name)
+        
+        if processed_records:
+            result = await collection.insert_many(processed_records)
+            inserted_count = len(result.inserted_ids)
+        else:
+            inserted_count = 0
+        
+        logger.info(f"Imported {inserted_count} {category} records")
+        
+        return {
+            "success": True,
+            "processed": inserted_count,
+            "errors": len(errors),
+            "details": errors[:10] if errors else [],  # Return first 10 errors
+            "message": f"Successfully imported {inserted_count} {category} records"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error importing {category}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error importing data: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
