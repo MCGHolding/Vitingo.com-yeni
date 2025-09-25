@@ -203,6 +203,27 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       return;
     }
 
+    // Create invoice object
+    const invoice = {
+      id: Date.now(), // Simple ID generation
+      invoiceNumber: formData.invoiceNumber,
+      customerName: 'Demo Müşteri', // In real app, this would come from customer selection
+      date: formData.date,
+      currency: formData.currency,
+      amount: totals.total,
+      status: 'draft',
+      items: formData.items.filter(item => item.name.trim()).length,
+      details: {
+        ...formData,
+        totals: totals
+      }
+    };
+
+    // Save to localStorage (in real app, would save to backend)
+    const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+    existingInvoices.push(invoice);
+    localStorage.setItem('invoices', JSON.stringify(existingInvoices));
+
     console.log('Invoice Data:', formData);
     console.log('Totals:', totals);
     
