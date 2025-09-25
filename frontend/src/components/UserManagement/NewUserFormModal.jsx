@@ -22,6 +22,25 @@ import {
 
 export default function NewUserFormModal({ onClose, onSave }) {
   const { toast } = useToast();
+  const { user } = useAuth();
+  
+  // Check if user is admin
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+          <div className="text-center">
+            <div className="p-3 bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <X className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Erişim Reddedildi</h3>
+            <p className="text-gray-600 mb-4">Bu özelliği sadece Admin kullanıcılar kullanabilir.</p>
+            <Button onClick={onClose} className="w-full">Tamam</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   const [formData, setFormData] = useState({
     firstName: '',
