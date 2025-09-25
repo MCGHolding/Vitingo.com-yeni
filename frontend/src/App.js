@@ -52,6 +52,7 @@ import SalesSummaryCard from './components/Dashboard/SalesSummaryCard';
 import GrowthRateCard from './components/Dashboard/GrowthRateCard';
 import PassiveLeadsCard from './components/Dashboard/PassiveLeadsCard';
 import SurveyManagementPage from './components/Surveys/SurveyManagementPage';
+import SurveyFormPage from './components/Surveys/SurveyFormPage';
 import { 
   Users, 
   TrendingUp, 
