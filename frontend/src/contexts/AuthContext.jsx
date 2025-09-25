@@ -153,6 +153,150 @@ export const AuthProvider = ({ children }) => {
     return roles[role] || role;
   };
 
+  // Admin-only: Switch to another user without password
+  const switchUser = async (targetUserId) => {
+    if (!user || user.role !== 'admin') {
+      throw new Error('Bu işlem sadece admin kullanıcıları tarafından yapılabilir');
+    }
+
+    // Get all users
+    const users = [
+      {
+        id: 1,
+        username: 'admin',
+        password: 'admin123',
+        fullName: 'Sistem Yöneticisi',
+        email: 'admin@vitingo.com',
+        role: 'admin',
+        department: 'IT',
+        avatar: null,
+        permissions: ['all']
+      },
+      {
+        id: 2,
+        username: 'satis1',
+        password: 'satis123',
+        fullName: 'Ahmet Yılmaz',
+        email: 'ahmet@vitingo.com',
+        role: 'sales_rep',
+        department: 'Satış',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 3,
+        username: 'mudur1',
+        password: 'mudur123',
+        fullName: 'Fatma Demir',
+        email: 'fatma@vitingo.com',
+        role: 'sales_manager',
+        department: 'Satış',
+        avatar: null,
+        permissions: ['read_team', 'write_team', 'reports']
+      },
+      {
+        id: 4,
+        username: 'satis2',
+        password: 'satis123',
+        fullName: 'Mehmet Kaya',
+        email: 'mehmet@vitingo.com',
+        role: 'sales_rep',
+        department: 'Satış',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      }
+    ];
+
+    const targetUser = users.find(u => u.id === targetUserId);
+    if (!targetUser) {
+      throw new Error('Kullanıcı bulunamadı');
+    }
+
+    // Save original admin session if not already saved
+    if (!originalAdminUser) {
+      setOriginalAdminUser(user);
+      localStorage.setItem('vitingo_admin_session', JSON.stringify(user));
+    }
+
+    // Remove password from target user object
+    const { password: _, ...userWithoutPassword } = targetUser;
+    const loginTime = new Date().toISOString();
+    
+    const userData = {
+      ...userWithoutPassword,
+      loginTime,
+      lastActivity: loginTime,
+      impersonatedBy: originalAdminUser?.id || user.id // Track who is impersonating
+    };
+
+    setUser(userData);
+    
+    // Update localStorage
+    localStorage.setItem('vitingo_user', JSON.stringify(userData));
+
+    return userData;
+  };
+
+  // Admin-only: Return to original admin account
+  const returnToAdmin = () => {
+    if (!originalAdminUser) {
+      throw new Error('Orijinal admin oturumu bulunamadı');
+    }
+
+    const updatedAdminUser = {
+      ...originalAdminUser,
+      lastActivity: new Date().toISOString()
+    };
+
+    setUser(updatedAdminUser);
+    setOriginalAdminUser(null);
+    
+    localStorage.setItem('vitingo_user', JSON.stringify(updatedAdminUser));
+    localStorage.removeItem('vitingo_admin_session');
+  };
+
+  // Get available users for admin to switch to
+  const getAvailableUsers = () => {
+    if (!user || user.role !== 'admin') return [];
+    
+    const users = [
+      {
+        id: 2,
+        username: 'satis1',
+        fullName: 'Ahmet Yılmaz',
+        email: 'ahmet@vitingo.com',
+        role: 'sales_rep',
+        department: 'Satış',
+        avatar: null
+      },
+      {
+        id: 3,
+        username: 'mudur1',
+        fullName: 'Fatma Demir',
+        email: 'fatma@vitingo.com',
+        role: 'sales_manager',
+        department: 'Satış',
+        avatar: null
+      },
+      {
+        id: 4,
+        username: 'satis2',
+        fullName: 'Mehmet Kaya',
+        email: 'mehmet@vitingo.com',
+        role: 'sales_rep',
+        department: 'Satış',
+        avatar: null
+      }
+    ];
+
+    return users.filter(u => u.id !== user.id);
+  };
+
+  // Check if user is impersonating
+  const isImpersonating = () => {
+    return !!(user && user.impersonatedBy) || !!originalAdminUser;
+  };
+
   const value = {
     user,
     login,
