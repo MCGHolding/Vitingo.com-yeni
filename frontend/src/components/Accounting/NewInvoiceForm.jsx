@@ -21,7 +21,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
     ],
     vatRate: 20,
-    discount: 0,
+    discount: '',
     conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
     paymentTerm: '30'
   });
