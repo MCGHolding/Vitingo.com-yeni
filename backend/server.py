@@ -643,6 +643,34 @@ class PassiveLeadStats(BaseModel):
     average_passive_days: float
     threshold_days: int
 
+# Survey Models
+class SurveyQuestion(BaseModel):
+    id: int
+    type: str  # multiple_choice, checkbox, text
+    question: str
+    required: bool
+    options: List[Dict] = None
+    placeholder: str = None
+
+class SurveyResponse(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    survey_token: str
+    customer_id: str
+    project_id: str
+    responses: Dict
+    submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    ip_address: str = None
+
+class SurveyInvitation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    project_id: str
+    survey_token: str
+    email: str
+    sent_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    status: str = "sent"  # sent, opened, completed
+    survey_link: str
+
 @api_router.get("/currency-rates", response_model=List[CurrencyRate])
 async def get_currency_rates():
     """Get current currency rates from TCMB"""
