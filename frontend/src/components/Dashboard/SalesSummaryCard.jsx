@@ -85,44 +85,44 @@ const SalesSummaryCard = () => {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         {/* Current Earnings */}
-        <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <DollarSign className="h-5 w-5 text-green-600" />
-            <span className="text-sm font-medium text-green-800">Gelir</span>
+        <div className="p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+          <div className="flex items-center space-x-1 mb-2">
+            <DollarSign className="h-4 w-4 text-green-600" />
+            <span className="text-xs font-medium text-green-800">Gelir</span>
           </div>
-          <div className="text-2xl font-bold text-green-900">
+          <div className="text-lg font-bold text-green-900 leading-tight">
             ₺<CountUp end={currentData.currentEarnings} duration={1.5} separator="." />
           </div>
           <div className="flex items-center space-x-1 mt-1">
             {earningsGrowth >= 0 ? (
-              <TrendingUp className="h-4 w-4 text-green-600" />
+              <TrendingUp className="h-3 w-3 text-green-600" />
             ) : (
-              <TrendingDown className="h-4 w-4 text-red-600" />
+              <TrendingDown className="h-3 w-3 text-red-600" />
             )}
-            <span className={`text-sm font-medium ${earningsGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-xs font-medium ${earningsGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {earningsGrowth >= 0 ? '+' : ''}{earningsGrowth}%
             </span>
           </div>
         </div>
 
         {/* Current Sales */}
-        <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <ShoppingBag className="h-5 w-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-800">Satış</span>
+        <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+          <div className="flex items-center space-x-1 mb-2">
+            <ShoppingBag className="h-4 w-4 text-blue-600" />
+            <span className="text-xs font-medium text-blue-800">Satış</span>
           </div>
-          <div className="text-2xl font-bold text-blue-900">
+          <div className="text-lg font-bold text-blue-900 leading-tight">
             <CountUp end={currentData.currentSales} duration={1.5} separator="." />
           </div>
           <div className="flex items-center space-x-1 mt-1">
             {salesGrowth >= 0 ? (
-              <TrendingUp className="h-4 w-4 text-blue-600" />
+              <TrendingUp className="h-3 w-3 text-blue-600" />
             ) : (
-              <TrendingDown className="h-4 w-4 text-red-600" />
+              <TrendingDown className="h-3 w-3 text-red-600" />
             )}
-            <span className={`text-sm font-medium ${salesGrowth >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+            <span className={`text-xs font-medium ${salesGrowth >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
               {salesGrowth >= 0 ? '+' : ''}{salesGrowth}%
             </span>
           </div>
