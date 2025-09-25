@@ -55,6 +55,17 @@ const navigation = [
       { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
     ]
   },
+  { 
+    name: 'Teklifler', 
+    href: '/quotes', 
+    icon: ClipboardList, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Teklif', href: '/quotes/new', icon: Plus },
+      { name: 'Tüm Teklifler', href: '/quotes/all', icon: Files }
+    ]
+  },
   { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
