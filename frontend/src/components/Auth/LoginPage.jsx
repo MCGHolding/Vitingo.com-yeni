@@ -182,36 +182,36 @@ export default function LoginPage() {
 
             {/* Demo Credentials */}
             <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-sm text-gray-600 mb-4 text-center font-medium">Demo Hesapları:</p>
+              <p className="text-sm text-gray-600 mb-4 text-center font-medium">Quattro Stand Personeli:</p>
               <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials('super_admin')}
+                  className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={loading}
+                >
+                  <div className="font-medium text-gray-900">👑 Süper Admin</div>
+                  <div className="text-sm text-gray-600">murb / Murat2024!</div>
+                </button>
+                
                 <button
                   type="button"
                   onClick={() => fillDemoCredentials('admin')}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
-                  <div className="font-medium text-gray-900">👑 Sistem Yöneticisi</div>
-                  <div className="text-sm text-gray-600">admin / admin123</div>
+                  <div className="font-medium text-gray-900">👔 Admin</div>
+                  <div className="text-sm text-gray-600">biry / Birtan2024!</div>
                 </button>
                 
                 <button
                   type="button"
-                  onClick={() => fillDemoCredentials('sales_manager')}
+                  onClick={() => fillDemoCredentials('customer_rep')}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
-                  <div className="font-medium text-gray-900">👔 Satış Müdürü</div>
-                  <div className="text-sm text-gray-600">mudur1 / mudur123</div>
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => fillDemoCredentials('sales_rep')}
-                  className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                  disabled={loading}
-                >
-                  <div className="font-medium text-gray-900">💼 Satış Temsilcisi</div>
-                  <div className="text-sm text-gray-600">satis1 / satis123</div>
+                  <div className="font-medium text-gray-900">💼 Müşteri Temsilcisi</div>
+                  <div className="text-sm text-gray-600">tame / Tamer2024!</div>
                 </button>
               </div>
             </div>
