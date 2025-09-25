@@ -128,7 +128,10 @@ export default function ViewUserModal({ user, onClose }) {
                     <Shield className="h-5 w-5 text-purple-600" />
                     <div>
                       <label className="text-sm font-medium text-gray-600">Rol</label>
-                      <p className="text-gray-900">{user.role === 'admin' ? 'Yönetici' : 'Kullanıcı'}</p>
+                      <p className="text-gray-900">
+                        {user.role === 'super-admin' ? 'Süper Admin' : 
+                         user.role === 'admin' ? 'Admin' : 'Kullanıcı'}
+                      </p>
                     </div>
                   </div>
                 </div>
