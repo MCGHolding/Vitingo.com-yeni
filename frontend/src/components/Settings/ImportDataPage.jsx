@@ -205,6 +205,27 @@ export default function ImportDataPage({ onBackToDashboard }) {
             {/* File Upload Section */}
             {selectedCategory && (
               <div className="space-y-6">
+                {/* Template Download Button */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-900 mb-1">
+                        📋 Önce Şablon İndirin
+                      </h3>
+                      <p className="text-xs text-blue-700">
+                        {selectedCategory} için örnek CSV şablonunu indirin, düzenleyin ve yükleyin
+                      </p>
+                    </div>
+                    <button
+                      onClick={downloadTemplate}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2 text-sm font-medium"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span>Şablon İndir</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Browse Button */}
                 <div>
                   <input
@@ -216,7 +237,7 @@ export default function ImportDataPage({ onBackToDashboard }) {
                   />
                   <label
                     htmlFor="csv-file-upload"
-                    className="bg-blue-600 text-white px-8 py-4 rounded-lg cursor-pointer hover:bg-blue-700 inline-flex items-center space-x-2 text-lg font-medium"
+                    className="bg-green-600 text-white px-8 py-4 rounded-lg cursor-pointer hover:bg-green-700 inline-flex items-center space-x-2 text-lg font-medium"
                   >
                     <FileText className="h-5 w-5" />
                     <span>Browse</span>
