@@ -117,7 +117,36 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null) => {
-    // Handle specific menu actions
+    // Handle Customer menu actions
+    if (subItem && subItem.name === 'Yeni Müşteri') {
+      if (onNewCustomer) {
+        onNewCustomer();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Müşteriler') {
+      if (onAllCustomers) {
+        onAllCustomers();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Pasif Müşteriler') {
+      if (onInactiveCustomers) {
+        onInactiveCustomers();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Favori Müşteriler') {
+      if (onFavoriteCustomers) {
+        onFavoriteCustomers();
+      }
+      return;
+    }
+    
+    // Handle Prospect menu actions
     if (subItem && subItem.name === 'Yeni Müşteri Adayı') {
       if (onNewProspect) {
         onNewProspect();
