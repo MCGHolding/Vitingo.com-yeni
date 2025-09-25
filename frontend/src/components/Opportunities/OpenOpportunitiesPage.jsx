@@ -54,10 +54,67 @@ export default function OpenOpportunitiesPage() {
       );
     }
 
+    // Tag search filter
+    if (tagSearch) {
+      filtered = filtered.filter(opportunity =>
+        opportunity.tags.some(tag => 
+          tag.toLowerCase().includes(tagSearch.toLowerCase())
+        )
+      );
+    }
+
     // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(opportunity => 
         opportunity.status === statusFilter
+      );
+    }
+
+    // Currency filter
+    if (currencyFilter !== 'all') {
+      filtered = filtered.filter(opportunity => 
+        opportunity.currency === currencyFilter
+      );
+    }
+
+    // Amount filter
+    if (amountFilter !== 'all') {
+      filtered = filtered.filter(opportunity => {
+        const amount = opportunity.amount;
+        switch (amountFilter) {
+          case '0-5000':
+            return amount >= 0 && amount <= 5000;
+          case '5000-15000':
+            return amount > 5000 && amount <= 15000;
+          case '15000-30000':
+            return amount > 15000 && amount <= 30000;
+          case '30000+':
+            return amount > 30000;
+          case 'no-amount':
+            return amount === 0;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Country filter
+    if (countryFilter !== 'all') {
+      filtered = filtered.filter(opportunity =>
+        opportunity.tags.includes(countryFilter)
+      );
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      filtered = filtered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) >= new Date(dateFrom)
+      );
+    }
+
+    if (dateTo) {
+      filtered = filtered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) <= new Date(dateTo)
       );
     }
 
@@ -76,7 +133,7 @@ export default function OpenOpportunitiesPage() {
     });
 
     return filtered;
-  }, [searchTerm, statusFilter, sortBy]);
+  }, [searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const formatCurrency = (amount, currency) => {
     if (amount === 0) return '-';
