@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the CSV template download functionality for the 'fairs' category. The endpoint should be /api/download-template/fairs and it should return a properly formatted CSV file with the corrected template. Check that: 1. The endpoint responds correctly with status 200 2. The response headers include proper Content-Disposition for file download 3. The CSV content is properly formatted with semicolon delimiters 4. The CSV includes the corrected headers: name, city, country, startDate, endDate, sector, cycle, description (note: fairMonth column should be removed) 5. The sample data includes proper Turkish examples with consistent YYYY-MM-DD date format 6. All required fields (name, city, country) are filled with valid data 7. The file can be downloaded successfully"
+user_problem_statement: "Kullanıcı CSV dosyasında format hataları nedeniyle import edilen fuar verilerinin Tüm Fuarlar listesinde görünmediğini bildirdi. Şablon download işlevinin düzeltilmiş CSV formatıyla güncellenmesi isteniyor. CSV şablonunda fairMonth kolonunun kaldırılması, tutarlı tarih formatları (YYYY-MM-DD), zorunlu alanların doldurulması ve proper Türkçe örneklerin eklenmesi gerekiyor."
 
 backend:
   - task: "CSV Template Download for Fairs Category"
