@@ -904,6 +904,184 @@ async def check_passive_candidates():
             "error": str(e)
         }
 
+# Survey Endpoints
+@api_router.get("/surveys/questions", response_model=List[SurveyQuestion])
+async def get_survey_questions():
+    """Get survey questions for fair stand customer satisfaction"""
+    # Return predefined survey questions
+    questions = [
+        {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "Proje tasarım süreciyle ilgili genel memnuniyet seviyeniz nedir?",
+            "required": True,
+            "options": [
+                {"value": "5", "label": "Çok Memnun"},
+                {"value": "4", "label": "Memnun"},
+                {"value": "3", "label": "Orta"},
+                {"value": "2", "label": "Memnun Değil"},
+                {"value": "1", "label": "Hiç Memnun Değil"}
+            ]
+        },
+        {
+            "id": 2,
+            "type": "multiple_choice",
+            "question": "Stand üretim kalitesini 1-10 arasında nasıl değerlendirirsiniz?",
+            "required": True,
+            "options": [
+                {"value": "10", "label": "10 - Mükemmel"},
+                {"value": "9", "label": "9 - Çok İyi"},
+                {"value": "8", "label": "8 - İyi"},
+                {"value": "7", "label": "7 - Orta Üstü"},
+                {"value": "6", "label": "6 - Orta"}
+            ]
+        }
+    ]
+    return [SurveyQuestion(**q) for q in questions]
+
+@api_router.post("/surveys/send-invitation")
+async def send_survey_invitation(
+    customer_id: str,
+    project_id: str,
+    email: str
+):
+    """Send survey invitation to customer"""
+    try:
+        # Generate unique survey token
+        survey_token = str(uuid.uuid4())
+        survey_link = f"{request.base_url}survey/{survey_token}"
+        
+        # Create invitation record
+        invitation = SurveyInvitation(
+            customer_id=customer_id,
+            project_id=project_id,
+            survey_token=survey_token,
+            email=email,
+            survey_link=survey_link
+        )
+        
+        # Save to database
+        await db.survey_invitations.insert_one(invitation.dict())
+        
+        # In real implementation, send email here
+        # send_email(email, survey_link, customer_data, project_data)
+        
+        return {
+            "success": True,
+            "survey_token": survey_token,
+            "survey_link": survey_link,
+            "message": "Survey invitation sent successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error sending survey invitation: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.get("/surveys/{survey_token}")
+async def get_survey_by_token(survey_token: str):
+    """Get survey details by token"""
+    try:
+        # Find invitation by token
+        invitation = await db.survey_invitations.find_one({"survey_token": survey_token})
+        
+        if not invitation:
+            return {"error": "Survey not found", "status": 404}
+        
+        # Get customer and project data
+        customer = await db.customers.find_one({"id": invitation["customer_id"]})
+        project = await db.projects.find_one({"id": invitation["project_id"]})
+        
+        # Get survey questions
+        questions = await get_survey_questions()
+        
+        return {
+            "survey_token": survey_token,
+            "customer": customer,
+            "project": project,
+            "questions": questions,
+            "status": "active"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting survey: {str(e)}")
+        return {"error": str(e), "status": 500}
+
+@api_router.post("/surveys/{survey_token}/submit")
+async def submit_survey_response(
+    survey_token: str,
+    responses: Dict,
+    ip_address: str = None
+):
+    """Submit survey response"""
+    try:
+        # Find invitation
+        invitation = await db.survey_invitations.find_one({"survey_token": survey_token})
+        
+        if not invitation:
+            return {"error": "Survey not found", "success": False}
+        
+        # Create response record
+        survey_response = SurveyResponse(
+            survey_token=survey_token,
+            customer_id=invitation["customer_id"],
+            project_id=invitation["project_id"],
+            responses=responses,
+            ip_address=ip_address
+        )
+        
+        # Save response
+        await db.survey_responses.insert_one(survey_response.dict())
+        
+        # Update invitation status
+        await db.survey_invitations.update_one(
+            {"survey_token": survey_token},
+            {"$set": {"status": "completed"}}
+        )
+        
+        return {
+            "success": True,
+            "message": "Survey response submitted successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error submitting survey response: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.get("/surveys/stats")
+async def get_survey_stats():
+    """Get survey statistics"""
+    try:
+        total_sent = await db.survey_invitations.count_documents({})
+        total_completed = await db.survey_responses.count_documents({})
+        
+        # Calculate response rate
+        response_rate = (total_completed / total_sent * 100) if total_sent > 0 else 0
+        
+        # Get recent responses
+        recent_responses = await db.survey_responses.find().sort("submitted_at", -1).limit(5).to_list(length=5)
+        
+        return {
+            "total_sent": total_sent,
+            "total_completed": total_completed,
+            "response_rate": round(response_rate, 1),
+            "recent_responses": len(recent_responses)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting survey stats: {str(e)}")
+        return {
+            "total_sent": 0,
+            "total_completed": 0,
+            "response_rate": 0,
+            "recent_responses": 0
+        }
+
 # Include the router in the main app
 app.include_router(api_router)
 
