@@ -1140,9 +1140,28 @@ async def get_survey_by_token(survey_token: str):
                 "deliveryDate": invitation.get("created_at", datetime.now().isoformat())
             }
         else:
-            # For regular customer surveys, get data from database
+            # For regular customer surveys, try to get data from database first
             customer = await db.customers.find_one({"id": invitation["customer_id"]})
             project = await db.projects.find_one({"id": invitation["project_id"]})
+            
+            # If not found in database, create mock data from invitation context
+            if not customer:
+                customer = {
+                    "id": invitation["customer_id"],
+                    "name": "Customer",
+                    "contact": "Contact Person",
+                    "email": invitation.get("email", "")
+                }
+            
+            if not project:
+                project = {
+                    "id": invitation["project_id"],
+                    "name": "Project",
+                    "fairName": "Fair",
+                    "city": "",
+                    "country": "",
+                    "deliveryDate": ""
+                }
         
         # Get survey questions
         questions = await get_survey_questions()
