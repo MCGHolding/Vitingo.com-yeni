@@ -1160,11 +1160,14 @@ async def get_survey_by_token(survey_token: str):
         logger.error(f"Error getting survey: {str(e)}")
         return {"error": str(e), "status": 500}
 
+class SurveySubmissionRequest(BaseModel):
+    responses: Dict
+    ip_address: Optional[str] = None
+
 @api_router.post("/surveys/{survey_token}/submit")
 async def submit_survey_response(
     survey_token: str,
-    responses: Dict,
-    ip_address: str = None
+    request: SurveySubmissionRequest
 ):
     """Submit survey response"""
     try:
@@ -1179,8 +1182,8 @@ async def submit_survey_response(
             survey_token=survey_token,
             customer_id=invitation["customer_id"],
             project_id=invitation["project_id"],
-            responses=responses,
-            ip_address=ip_address
+            responses=request.responses,
+            ip_address=request.ip_address
         )
         
         # Save response
