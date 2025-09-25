@@ -179,8 +179,8 @@ const RealTimeSurveyStats = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-600">Yanıt Oranı</span>
-          <span className={`text-lg font-bold ${getResponseRateColor(surveyStats.responseRate)}`}>
-            {surveyStats.responseRate.toFixed(1)}%
+          <span className={`text-lg font-bold ${getResponseRateColor(surveyStats.response_rate)}`}>
+            {surveyStats.response_rate.toFixed(1)}%
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
