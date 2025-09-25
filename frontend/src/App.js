@@ -288,6 +288,55 @@ const Dashboard = () => {
     setCurrentView('handovers');
   };
 
+  // Accounting handlers
+  const handleNewInvoice = () => {
+    setCurrentView('new-invoice');
+  };
+
+  const handleAllInvoices = () => {
+    setCurrentView('all-invoices');
+  };
+
+  const handlePendingApproval = () => {
+    setCurrentView('pending-approval');
+  };
+
+  const handlePendingCollection = () => {
+    setCurrentView('pending-collection');
+  };
+
+  const handlePaidInvoices = () => {
+    setCurrentView('paid-invoices');
+  };
+
+  const handleOverdueInvoices = () => {
+    setCurrentView('overdue-invoices');
+  };
+
+  const handleCurrentAccounts = () => {
+    setCurrentView('current-accounts');
+  };
+
+  const handleCollectionReceipt = () => {
+    setCurrentView('collection-receipt');
+  };
+
+  const handleExpenseReceipt = () => {
+    setCurrentView('expense-receipt');
+  };
+
+  const handlePaymentRequests = () => {
+    setCurrentView('payment-requests');
+  };
+
+  const handlePurchaseInvoices = () => {
+    setCurrentView('purchase-invoices');
+  };
+
+  const handlePurchaseApprovals = () => {
+    setCurrentView('purchase-approvals');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
