@@ -18,7 +18,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     currency: 'USD',
     date: new Date().toISOString().split('T')[0],
     items: [
-      { id: 1, name: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0 }
+      { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
     ],
     vatRate: 20,
     discount: 0,
