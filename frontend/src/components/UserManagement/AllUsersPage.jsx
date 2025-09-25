@@ -380,13 +380,12 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
+                                <div>
+                                  <ActionMenuUserPopover
+                                    user={user}
+                                    onAction={handleActionMenuAction}
+                                  />
+                                </div>
                               </TooltipTrigger>
                               <TooltipContent>
                                 <p>Daha Fazla İşlem</p>
