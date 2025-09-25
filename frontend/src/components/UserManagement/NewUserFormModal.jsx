@@ -126,10 +126,10 @@ export default function NewUserFormModal({ onClose, onSave }) {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.department) {
       toast({
         title: "Eksik Bilgiler",
-        description: "Lütfen zorunlu alanları doldurunuz (Ad, Soyad, E-posta).",
+        description: "Lütfen zorunlu alanları doldurunuz (Ad, Soyad, E-posta, Departman).",
         variant: "destructive"
       });
       return;
@@ -146,21 +146,43 @@ export default function NewUserFormModal({ onClose, onSave }) {
       return;
     }
 
+    // Username validation
+    if (!formData.username) {
+      toast({
+        title: "Kullanıcı Adı Gerekli",
+        description: "Lütfen kullanıcı adını oluşturunuz.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Password validation
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      toast({
+        title: "Geçersiz Şifre",
+        description: passwordError,
+        variant: "destructive"
+      });
+      return;
+    }
+
     const userData = {
       ...formData,
       id: Date.now(),
       fullName: `${formData.firstName} ${formData.lastName}`,
-      role: 'user',
+      role: formData.department === 'super_admin' ? 'admin' : 'user',
       status: 'active',
       createdDate: new Date().toISOString().split('T')[0],
-      lastActivity: new Date().toISOString().split('T')[0]
+      lastActivity: new Date().toISOString().split('T')[0],
+      createdBy: 'Admin'
     };
 
     onSave(userData);
     
     toast({
       title: "Başarılı",
-      description: "Yeni kullanıcı başarıyla oluşturuldu.",
+      description: `Yeni kullanıcı başarıyla oluşturuldu: ${userData.username}`,
     });
     
     onClose();
