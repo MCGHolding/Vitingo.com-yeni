@@ -768,6 +768,10 @@ function App() {
               path="/survey/:token" 
               element={<SurveyFormPage />} 
             />
+            <Route 
+              path="/handover/:token" 
+              element={<HandoverFormPage />} 
+            />
           </Routes>
         </BrowserRouter>
       </div>
