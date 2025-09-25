@@ -506,12 +506,32 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                     <FileText className="h-4 w-4" />
                     <span>Fuar Adı</span>
                   </Label>
-                  <Input
-                    id="tradeShowName"
-                    placeholder="Fuar adını giriniz"
-                    value={formData.tradeShowName}
-                    onChange={(e) => handleInputChange('tradeShowName', e.target.value)}
-                  />
+                  <Select 
+                    value={formData.tradeShowName} 
+                    onValueChange={(value) => handleInputChange('tradeShowName', value)}
+                    disabled={loadingFairs}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={loadingFairs ? "Fuarlar yükleniyor..." : "Fuar seçiniz"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fairs.map((fair) => (
+                        <SelectItem key={fair.id} value={fair.name}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{fair.name}</span>
+                            <span className="text-xs text-gray-500">
+                              {fair.city}, {fair.country} • {fair.startDate} - {fair.endDate}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      {fairs.length === 0 && !loadingFairs && (
+                        <SelectItem value="" disabled>
+                          Henüz fuar bulunmuyor
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
