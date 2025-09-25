@@ -113,6 +113,150 @@ export default function OpenOpportunitiesPage() {
     return counts;
   };
 
+  const getCountryCounts = () => {
+    const countries = ['ALMANYA', 'TÜRKİYE', 'ABD', 'BAE', 'KANADA'];
+    const counts = {};
+    
+    // Apply all filters except country filter
+    let baseFiltered = openOpportunities;
+
+    if (searchTerm) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (tagSearch) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.tags.some(tag => 
+          tag.toLowerCase().includes(tagSearch.toLowerCase())
+        )
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => 
+        opportunity.status === statusFilter
+      );
+    }
+
+    if (currencyFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => 
+        opportunity.currency === currencyFilter
+      );
+    }
+
+    if (amountFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => {
+        const amount = opportunity.amount;
+        switch (amountFilter) {
+          case '0-5000': return amount >= 0 && amount <= 5000;
+          case '5000-15000': return amount > 5000 && amount <= 15000;
+          case '15000-30000': return amount > 15000 && amount <= 30000;
+          case '30000+': return amount > 30000;
+          case 'no-amount': return amount === 0;
+          default: return true;
+        }
+      });
+    }
+
+    if (dateFrom) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) >= new Date(dateFrom)
+      );
+    }
+
+    if (dateTo) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) <= new Date(dateTo)
+      );
+    }
+
+    countries.forEach(country => {
+      counts[country] = baseFiltered.filter(opportunity =>
+        opportunity.tags.includes(country)
+      ).length;
+    });
+
+    return counts;
+  };
+
+  const countryCounts = getCountryCounts();
+
+  const getAmountCounts = () => {
+    const ranges = ['0-5000', '5000-15000', '15000-30000', '30000+', 'no-amount'];
+    const counts = {};
+    
+    // Apply all filters except amount filter
+    let baseFiltered = openOpportunities;
+
+    if (searchTerm) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (tagSearch) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.tags.some(tag => 
+          tag.toLowerCase().includes(tagSearch.toLowerCase())
+        )
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => 
+        opportunity.status === statusFilter
+      );
+    }
+
+    if (currencyFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => 
+        opportunity.currency === currencyFilter
+      );
+    }
+
+    if (countryFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.tags.includes(countryFilter)
+      );
+    }
+
+    if (dateFrom) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) >= new Date(dateFrom)
+      );
+    }
+
+    if (dateTo) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) <= new Date(dateTo)
+      );
+    }
+
+    ranges.forEach(range => {
+      counts[range] = baseFiltered.filter(opportunity => {
+        const amount = opportunity.amount;
+        switch (range) {
+          case '0-5000': return amount >= 0 && amount <= 5000;
+          case '5000-15000': return amount > 5000 && amount <= 15000;
+          case '15000-30000': return amount > 15000 && amount <= 30000;
+          case '30000+': return amount > 30000;
+          case 'no-amount': return amount === 0;
+          default: return true;
+        }
+      }).length;
+    });
+
+    return counts;
+  };
+
+  const amountCounts = getAmountCounts();
+
   const currencyCounts = getCurrencyCounts();
 
   const clearAllFilters = () => {
