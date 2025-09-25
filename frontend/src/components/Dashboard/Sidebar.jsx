@@ -376,6 +376,28 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Reports menu actions
+    if (subItem && subItem.name === 'Satış Raporları') {
+      if (onSalesReports) {
+        onSalesReports();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Müşteri Raporları') {
+      if (onCustomerReports) {
+        onCustomerReports();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Anketler') {
+      if (onSurveys) {
+        onSurveys();
+      }
+      return;
+    }
     
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
