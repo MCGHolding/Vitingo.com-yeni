@@ -34,7 +34,7 @@ export default function NewUserFormModal({ onClose, onSave }) {
               <X className="h-8 w-8 text-red-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Erişim Reddedildi</h3>
-            <p className="text-gray-600 mb-4">Bu özelliği sadece Admin kullanıcılar kullanabilir.</p>
+            <p className="text-gray-600 mb-4">Bu özelliği sadece Admin ve Süper Admin kullanıcılar kullanabilir.</p>
             <Button onClick={onClose} className="w-full">Tamam</Button>
           </div>
         </div>
