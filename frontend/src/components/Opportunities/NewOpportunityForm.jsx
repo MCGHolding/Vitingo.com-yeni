@@ -515,7 +515,9 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                       <SelectValue placeholder={loadingFairs ? "Fuarlar yükleniyor..." : "Fuar seçiniz"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {fairs.map((fair) => (
+                      {fairs
+                        .filter(fair => fair.name && fair.name.trim() !== '') // Filter out fairs with empty names
+                        .map((fair) => (
                         <SelectItem key={fair.id} value={fair.name}>
                           <div className="flex flex-col">
                             <span className="font-medium">{fair.name}</span>
@@ -525,7 +527,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                           </div>
                         </SelectItem>
                       ))}
-                      {fairs.length === 0 && !loadingFairs && (
+                      {fairs.filter(fair => fair.name && fair.name.trim() !== '').length === 0 && !loadingFairs && (
                         <SelectItem value="no-fairs" disabled>
                           Henüz fuar bulunmuyor
                         </SelectItem>
