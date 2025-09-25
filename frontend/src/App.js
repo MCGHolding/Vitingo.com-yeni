@@ -589,10 +589,10 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Tables and Map Grid */}
+              {/* Tables Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                 <SalesByCountryTable />
-                <GeographicSalesMap />
+                <RecentTransactionsTable />
               </div>
 
               {/* Bottom Section */}
