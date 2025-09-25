@@ -208,7 +208,13 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Navigation to Satış Fırsatları submenu"
+    - "Kazanılan Fırsatlar page functionality"
+    - "Kaybedilen Fırsatlar page functionality"
+    - "Favori Fırsatlar page functionality"
+    - "Tüm Satış Fırsatları page functionality"
+    - "Action buttons modal functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
