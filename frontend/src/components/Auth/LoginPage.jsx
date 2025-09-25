@@ -1,0 +1,230 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { useAuth } from '../../contexts/AuthContext';
+import { 
+  Eye,
+  EyeOff,
+  LogIn,
+  User,
+  Lock,
+  AlertCircle,
+  Loader2
+} from 'lucide-react';
+
+export default function LoginPage() {
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    rememberMe: false
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (error) {
+      setError('');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.username || !formData.password) {
+      setError('Lütfen kullanıcı adı ve şifre giriniz');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await login(formData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fillDemoCredentials = (role) => {
+    const credentials = {
+      admin: { username: 'admin', password: 'admin123' },
+      sales_manager: { username: 'mudur1', password: 'mudur123' },
+      sales_rep: { username: 'satis1', password: 'satis123' }
+    };
+    
+    const cred = credentials[role];
+    setFormData(prev => ({
+      ...prev,
+      username: cred.username,
+      password: cred.password
+    }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo and Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Vitingo</h1>
+          <p className="text-blue-200 text-lg">CRM Yönetim Sistemi</p>
+        </div>
+
+        {/* Login Card */}
+        <Card className="shadow-2xl border-0">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
+            <CardTitle className="text-2xl text-center flex items-center justify-center space-x-2">
+              <LogIn className="h-6 w-6" />
+              <span>Giriş Yap</span>
+            </CardTitle>
+          </CardHeader>
+          
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              )}
+
+              {/* Username Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center">
+                  <User className="h-4 w-4 mr-2" />
+                  Kullanıcı Adı
+                </label>
+                <Input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  placeholder="Kullanıcı adınızı giriniz"
+                  className="h-12"
+                  disabled={loading}
+                />
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center">
+                  <Lock className="h-4 w-4 mr-2" />
+                  Şifre
+                </label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    placeholder="Şifrenizi giriniz"
+                    className="h-12 pr-12"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    disabled={loading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  checked={formData.rememberMe}
+                  onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  disabled={loading}
+                />
+                <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700">
+                  Beni hatırla
+                </label>
+              </div>
+
+              {/* Login Button */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Giriş yapılıyor...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Giriş Yap
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Demo Credentials */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <p className="text-sm text-gray-600 mb-4 text-center font-medium">Demo Hesapları:</p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials('admin')}
+                  className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={loading}
+                >
+                  <div className="font-medium text-gray-900">👑 Sistem Yöneticisi</div>
+                  <div className="text-sm text-gray-600">admin / admin123</div>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials('sales_manager')}
+                  className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={loading}
+                >
+                  <div className="font-medium text-gray-900">👔 Satış Müdürü</div>
+                  <div className="text-sm text-gray-600">mudur1 / mudur123</div>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => fillDemoCredentials('sales_rep')}
+                  className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={loading}
+                >
+                  <div className="font-medium text-gray-900">💼 Satış Temsilcisi</div>
+                  <div className="text-sm text-gray-600">satis1 / satis123</div>
+                </button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-blue-200 text-sm">
+            © 2024 Vitingo CRM - Tüm hakları saklıdır
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
