@@ -240,6 +240,18 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED SUCCESSFULLY - UI/UX and responsive design is excellent across all customer pages. Professional styling with appropriate thematic colors: Blue for Tüm Müşteriler (Building icon), Red for Pasif Müşteriler (UserX icon), Yellow for Favori Müşteriler (Star icon). Responsive layout works well, tables are scrollable with proper overflow handling. Professional card-based design with consistent spacing and typography. Each page has distinctive icons and color schemes while maintaining overall design consistency. Excel export buttons, filter sections, and navigation elements are well-positioned. 'Kapat' buttons work correctly to return to dashboard. Overall user experience is professional, intuitive, and visually appealing."
 
+  - task: "People Management Integration (Kişi Ekle and Tüm Kişiler)"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/Dashboard/Sidebar.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE FOUND - People management functionality is NOT working. Comprehensive testing revealed: 1) 'Kişi Ekle' and 'Tüm Kişiler' menu items are not visible in the UI 2) Sidebar shows 'DashboardMüşterilerSatışlarMüşteri AdaySatış FırsatlarıTekliflerRaporlarGörevlerTakvimDökümanlarAyarlar' with no people management items 3) No 'Kişi' text found anywhere on the page 4) Cannot access the form or list functionality 5) Integration between form submission and list display cannot be tested because the menu items are not accessible. ROOT CAUSE: The people management functionality that was reported as implemented is not actually visible or functional in the current UI. The sidebar menu implementation is missing the people management items under Müşteriler dropdown."
+
   - task: "Yeni Müşteri form modal integration"
     implemented: true
     working: true
