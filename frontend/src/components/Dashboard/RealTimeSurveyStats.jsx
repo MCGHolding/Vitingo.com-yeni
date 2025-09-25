@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Mail, CheckCircle, Clock, Users, Star, AlertTriangle } from 'lucide-react';
 
-const RealTimeSurveyStats = () => {
+const RealTimeSurveyStats = ({ onDetailedReport, onSendSurvey }) => {
   const [surveyStats, setSurveyStats] = useState({
     total_sent: 0,
     total_completed: 0,
