@@ -230,7 +230,7 @@ export const AuthProvider = ({ children }) => {
 
   // Admin-only: Switch to another user without password
   const switchUser = async (targetUserId) => {
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.role !== 'super-admin')) {
       throw new Error('Bu işlem sadece admin kullanıcıları tarafından yapılabilir');
     }
 
