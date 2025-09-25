@@ -471,6 +471,17 @@ const Dashboard = () => {
         />
       )}
 
+      {/* New User Form Modal */}
+      {showNewUserForm && (
+        <NewUserFormModal
+          onClose={() => setShowNewUserForm(false)}
+          onSave={(userData) => {
+            console.log('New user created:', userData);
+            setShowNewUserForm(false);
+          }}
+        />
+      )}
+
       {/* User Management Modal */}
       {showUserManagementModal && (
         <UserManagementModal
