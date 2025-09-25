@@ -905,7 +905,14 @@ const Dashboard = () => {
       />
       
       {/* Header */}
-      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Header 
+        toggleSidebar={toggleSidebar} 
+        sidebarOpen={sidebarOpen}
+        onNewUser={handleNewUser}
+        onAllUsers={handleAllUsers}
+        onInactiveUsers={handleInactiveUsers}
+        onFormerUsers={handleFormerUsers}
+      />
       
       {/* Main content */}
       <div className="lg:ml-64">
