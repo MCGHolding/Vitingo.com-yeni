@@ -183,6 +183,13 @@ export default function UserMenu() {
           </div>
         </>
       )}
+
+      {/* User Switch Modal */}
+      {showUserSwitchModal && (
+        <UserSwitchModal
+          onClose={() => setShowUserSwitchModal(false)}
+        />
+      )}
     </div>
   );
 }
