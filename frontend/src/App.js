@@ -548,6 +548,175 @@ const Dashboard = () => {
           </div>
         );
 
+      // Accounting cases
+      case 'new-invoice':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Yeni Fatura</h1>
+            <p className="text-gray-600">Yeni fatura oluşturma sayfası yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'all-invoices':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tüm Faturalar</h1>
+            <p className="text-gray-600">Tüm faturalar listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'pending-approval':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Onay Bekleyenler</h1>
+            <p className="text-gray-600">Onay bekleyen faturalar listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'pending-collection':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tahsilat Bekleyenler</h1>
+            <p className="text-gray-600">Tahsilat bekleyen faturalar listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'paid-invoices':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Ödenmiş</h1>
+            <p className="text-gray-600">Ödenmiş faturalar listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'overdue-invoices':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Vadesi Geçmiş</h1>
+            <p className="text-gray-600">Vadesi geçmiş faturalar listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'current-accounts':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Cari Hesaplar</h1>
+            <p className="text-gray-600">Cari hesaplar yönetimi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'collection-receipt':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tahsilat Makbuzu</h1>
+            <p className="text-gray-600">Tahsilat makbuzu oluşturma sayfası yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'expense-receipt':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Gider Makbuzu</h1>
+            <p className="text-gray-600">Gider makbuzu oluşturma sayfası yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'payment-requests':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Ödeme Talepleri</h1>
+            <p className="text-gray-600">Ödeme talepleri listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'purchase-invoices':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Alış Faturaları</h1>
+            <p className="text-gray-600">Alış faturaları listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'purchase-approvals':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Alış Fatura Onayları</h1>
+            <p className="text-gray-600">Alış fatura onayları listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
       default:
         return (
           <>
