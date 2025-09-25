@@ -19,7 +19,7 @@ const RealTimeSurveyStats = () => {
   useEffect(() => {
     const fetchSurveyStats = async () => {
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const backendUrl = import.meta.env?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
         
         // Ana istatistikleri çek
         const statsResponse = await fetch(`${backendUrl}/api/surveys/stats`);
