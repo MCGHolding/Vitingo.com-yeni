@@ -17,7 +17,8 @@ import {
   Eye,
   Trophy,
   XCircle,
-  Heart
+  Heart,
+  User
 } from 'lucide-react';
 
 const navigation = [
