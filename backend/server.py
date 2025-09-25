@@ -74,6 +74,71 @@ class FairCreate(BaseModel):
     fairMonth: str = ""
     description: str = ""
 
+# Import Models
+class City(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    country: str = ""
+    region: str = ""
+    population: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Country(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    code: str = ""
+    continent: str = ""
+    population: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class FairCenter(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    city: str
+    country: str
+    address: str = ""
+    capacity: int = 0
+    contact_phone: str = ""
+    contact_email: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Prospect(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_name: str
+    contact_person: str = ""
+    email: str = ""
+    phone: str = ""
+    industry: str = ""
+    status: str = "new"
+    source: str = ""
+    notes: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Person(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    first_name: str
+    last_name: str
+    email: str = ""
+    phone: str = ""
+    job_title: str = ""
+    company: str = ""
+    relationship_type: str = ""
+    notes: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Customer(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_name: str
+    contact_person: str = ""
+    email: str = ""
+    phone: str = ""
+    address: str = ""
+    city: str = ""
+    country: str = ""
+    industry: str = ""
+    status: str = "active"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
