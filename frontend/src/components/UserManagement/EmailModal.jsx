@@ -176,42 +176,70 @@ ${currentUser.fullName}`
     setIsLoading(true);
 
     try {
-      // Create email record
-      const email = {
-        id: Date.now(),
-        from: currentUser.email,
-        fromName: currentUser.fullName,
+      // Get backend URL from environment
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Prepare email data for backend
+      const emailPayload = {
         to: emailData.to,
-        toName: `${user.firstName} ${user.lastName}`,
         cc: emailData.cc,
         bcc: emailData.bcc,
         subject: emailData.subject,
         body: emailData.body,
-        timestamp: new Date().toISOString(),
-        status: 'sent',
+        from_name: currentUser.fullName,
+        from_email: currentUser.email,
+        to_name: `${user.firstName} ${user.lastName}`,
         attachments: emailData.attachments
       };
 
-      // Save to localStorage (in real app, would send via backend)
-      const sentEmails = JSON.parse(localStorage.getItem('sent_emails') || '[]');
-      sentEmails.push(email);
-      localStorage.setItem('sent_emails', JSON.stringify(sentEmails));
-
-      // Simulate email sending delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      toast({
-        title: "E-posta Gönderildi",
-        description: `${user.firstName} ${user.lastName} kişisine e-posta başarıyla gönderildi`,
+      // Send email via backend API
+      const response = await fetch(`${backendUrl}/api/send-user-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailPayload)
       });
 
-      onClose();
+      const result = await response.json();
+
+      if (result.success) {
+        // Also save to localStorage for tracking
+        const email = {
+          id: Date.now(),
+          from: currentUser.email,
+          fromName: currentUser.fullName,
+          to: emailData.to,
+          toName: `${user.firstName} ${user.lastName}`,
+          cc: emailData.cc,
+          bcc: emailData.bcc,
+          subject: emailData.subject,
+          body: emailData.body,
+          timestamp: new Date().toISOString(),
+          status: 'sent',
+          attachments: emailData.attachments.length,
+          message_id: result.message_id
+        };
+
+        const sentEmails = JSON.parse(localStorage.getItem('sent_emails') || '[]');
+        sentEmails.push(email);
+        localStorage.setItem('sent_emails', JSON.stringify(sentEmails));
+
+        toast({
+          title: "E-posta Gönderildi",
+          description: `${user.firstName} ${user.lastName} kişisine e-posta başarıyla gönderildi`,
+        });
+
+        onClose();
+      } else {
+        throw new Error(result.error || 'E-posta gönderimi başarısız');
+      }
 
     } catch (error) {
       console.error('Error sending email:', error);
       toast({
         title: "Hata",
-        description: "E-posta gönderilemedi, lütfen tekrar deneyin",
+        description: error.message || "E-posta gönderilemedi, lütfen tekrar deneyin",
         variant: "destructive",
       });
     } finally {
