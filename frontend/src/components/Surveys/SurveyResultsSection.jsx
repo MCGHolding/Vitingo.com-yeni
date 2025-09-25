@@ -254,10 +254,16 @@ const SurveyResultsSection = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                       <div className="flex items-center space-x-2">
                         <MapPin className="h-4 w-4 text-gray-400" />
                         <span className="text-gray-600">{survey.projectName}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4 text-blue-500" />
+                        <span className="text-blue-600 font-medium">
+                          {getCustomerRepresentative(survey.projectId)}
+                        </span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
