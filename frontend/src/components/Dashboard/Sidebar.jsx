@@ -18,7 +18,9 @@ import {
   Trophy,
   XCircle,
   Heart,
-  User
+  User,
+  UserPlus,
+  UserSearch
 } from 'lucide-react';
 
 const navigation = [
