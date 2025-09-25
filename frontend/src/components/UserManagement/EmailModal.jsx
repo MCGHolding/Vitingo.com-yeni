@@ -83,6 +83,86 @@ ${currentUser.fullName}`
     }));
   };
 
+  const handleFileSelect = (event) => {
+    const files = Array.from(event.target.files);
+    const maxSize = 10 * 1024 * 1024; // 10MB per file
+    const maxTotalSize = 25 * 1024 * 1024; // 25MB total
+    
+    let validFiles = [];
+    let totalSize = emailData.attachments.reduce((sum, file) => sum + file.size, 0);
+    
+    for (const file of files) {
+      if (file.size > maxSize) {
+        toast({
+          title: "Dosya Çok Büyük",
+          description: `${file.name} dosyası 10MB'dan büyük olamaz`,
+          variant: "destructive",
+        });
+        continue;
+      }
+      
+      if (totalSize + file.size > maxTotalSize) {
+        toast({
+          title: "Toplam Boyut Aşıldı",
+          description: "Toplam dosya boyutu 25MB'ı geçemez",
+          variant: "destructive",
+        });
+        break;
+      }
+      
+      // Convert file to base64 for storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const attachment = {
+          id: Date.now() + Math.random(),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          data: e.target.result
+        };
+        
+        setEmailData(prev => ({
+          ...prev,
+          attachments: [...prev.attachments, attachment]
+        }));
+      };
+      reader.readAsDataURL(file);
+      
+      totalSize += file.size;
+      validFiles.push(file);
+    }
+    
+    if (validFiles.length > 0) {
+      toast({
+        title: "Dosya(lar) Eklendi",
+        description: `${validFiles.length} dosya başarıyla eklendi`,
+      });
+    }
+    
+    // Clear input
+    event.target.value = '';
+  };
+
+  const removeAttachment = (attachmentId) => {
+    setEmailData(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter(att => att.id !== attachmentId)
+    }));
+    
+    toast({
+      title: "Dosya Kaldırıldı",
+      description: "Dosya eklerden kaldırıldı",
+    });
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const sendEmail = async () => {
     if (!emailData.subject.trim() || !emailData.body.trim()) {
       toast({
