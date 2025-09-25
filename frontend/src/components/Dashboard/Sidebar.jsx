@@ -153,6 +153,7 @@ const navigation = [
 export default function Sidebar({ 
   isOpen, 
   toggleSidebar, 
+  onDashboard,
   onNewOpportunity, 
   onOpenOpportunities,
   onWonOpportunities,
