@@ -60,7 +60,18 @@ const navigation = [
   { name: 'Ayarlar', href: '/settings', icon: Settings, current: false },
 ];
 
-export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity, onOpenOpportunities, onNewUser, onAllUsers, onInactiveUsers, onFormerUsers }) {
+export default function Sidebar({ 
+  isOpen, 
+  toggleSidebar, 
+  onNewOpportunity, 
+  onOpenOpportunities, 
+  onNewUser, 
+  onAllUsers, 
+  onInactiveUsers, 
+  onFormerUsers,
+  onNewProspect,
+  onAllProspects 
+}) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
   const toggleSubmenu = (itemName) => {
