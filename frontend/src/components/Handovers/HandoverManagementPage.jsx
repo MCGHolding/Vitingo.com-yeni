@@ -274,13 +274,54 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 py-8">
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Tab Navigation */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab('send')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'send'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <Send className="h-5 w-5" />
+                  <span>Teslim Formu Gönder</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('results')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'results'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5" />
+                  <span>Teslim Formları</span>
+                </div>
+              </button>
+            </nav>
+          </div>
+        </div>
+
         {activeTab === 'send' ? (
-          /* Send Handover Form */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Send Form */}
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Left Panel - Send Handover */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <FileText className="h-6 w-6 text-green-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Teslim Formu Gönder</h2>
+              </div>
+            </div>
             <div className="p-6">
               {/* Handover Mode Toggle */}
               <div className="mb-6">
