@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Send, FileText, CheckCircle, Clock, User, MapPin, Filter, Eye, Mail } from 'lucide-react';
+import { Search, Send, FileText, CheckCircle, Clock, User, MapPin, Filter, Eye, Mail, BarChart3 } from 'lucide-react';
 import { handoverRecords, getAccessibleHandovers, userPermissions } from '../../mock/handoverData';
 import { customersWithProjects } from '../../mock/surveysData';
 
