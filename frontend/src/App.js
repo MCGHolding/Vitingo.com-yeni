@@ -402,6 +402,14 @@ const Dashboard = () => {
           onSave={saveOpportunity}
         />
       )}
+      {/* New Customer Form Modal */}
+      {showNewCustomerForm && (
+        <NewCustomerForm
+          onClose={closeCustomerForm}
+          onSave={saveCustomer}
+        />
+      )}
+
       {/* User Management Modal */}
       {showUserManagementModal && (
         <UserManagementModal
