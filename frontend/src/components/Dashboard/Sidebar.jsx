@@ -94,6 +94,19 @@ const navigation = [
       { name: 'Tüm Teklifler', href: '/quotes/all', icon: Files }
     ]
   },
+  { 
+    name: 'Kullanıcı Yönetimi', 
+    href: '/users', 
+    icon: Users, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Kullanıcı', href: '/users/new', icon: UserPlus },
+      { name: 'Tüm Kullanıcılar', href: '/users/all', icon: Users },
+      { name: 'Pasif Kullanıcılar', href: '/users/inactive', icon: UserX },
+      { name: 'Önceki Kullanıcılar', href: '/users/former', icon: User }
+    ]
+  },
   { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
