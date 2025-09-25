@@ -42,6 +42,8 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
   const [selectedUser, setSelectedUser] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   const filteredUsers = useMemo(() => {
     let filtered = users;
