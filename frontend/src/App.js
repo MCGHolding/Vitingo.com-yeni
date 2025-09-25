@@ -53,6 +53,8 @@ import GrowthRateCard from './components/Dashboard/GrowthRateCard';
 import PassiveLeadsCard from './components/Dashboard/PassiveLeadsCard';
 import SurveyManagementPage from './components/Surveys/SurveyManagementPage';
 import SurveyFormPage from './components/Surveys/SurveyFormPage';
+import HandoverManagementPage from './components/Handovers/HandoverManagementPage';
+import HandoverFormPage from './components/Handovers/HandoverFormPage';
 import { 
   Users, 
   TrendingUp, 
