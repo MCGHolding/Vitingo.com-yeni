@@ -122,7 +122,18 @@ const navigation = [
       { name: 'Geçmiş Fuarlar', href: '/fairs/past', icon: Calendar }
     ]
   },
-  { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
+  { 
+    name: 'Raporlar', 
+    href: '/reports', 
+    icon: BarChart3, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
+      { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
+      { name: 'Anketler', href: '/reports/surveys', icon: ClipboardList }
+    ]
+  },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
   { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
