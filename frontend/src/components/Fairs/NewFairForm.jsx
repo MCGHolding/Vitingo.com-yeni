@@ -153,7 +153,7 @@ export default function NewFairForm({ onClose, onSave }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Form validation
@@ -180,27 +180,54 @@ export default function NewFairForm({ onClose, onSave }) {
       return;
     }
 
-    // Create fair object
-    const fairData = {
-      ...formData,
-      id: Date.now(),
-      status: 'active',
-      organizer: 'Vitingo Events',
-      participants: 0,
-      budget: 0,
-      revenue: 0,
-      description: `${formData.sector} sektörü fuarı`,
-      createdDate: new Date().toISOString().split('T')[0]
-    };
+    try {
+      // Create fair object for API
+      const fairData = {
+        name: formData.name,
+        city: formData.city,
+        country: formData.country,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        sector: formData.sector,
+        cycle: formData.cycle,
+        description: `${formData.sector} sektörü fuarı`
+      };
 
-    onSave(fairData);
-    
-    toast({
-      title: "Başarılı",
-      description: `"${formData.name}" fuarı başarıyla oluşturuldu.`,
-    });
-    
-    onClose();
+      // Send to backend API
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/fairs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fairData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Fuar kaydedilemedi');
+      }
+
+      const savedFair = await response.json();
+      
+      // Call parent onSave with the response from backend
+      onSave(savedFair);
+      
+      toast({
+        title: "Başarılı",
+        description: `"${formData.name}" fuarı veritabanına başarıyla kaydedildi.`,
+      });
+      
+      onClose();
+
+    } catch (error) {
+      console.error('Error saving fair:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Fuar kaydedilirken bir hata oluştu.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
