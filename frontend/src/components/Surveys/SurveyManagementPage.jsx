@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Mail, Send, Eye, Calendar, User, MapPin, CheckCircle, Clock } from 'lucide-react';
+import { Search, Mail, Send, Eye, Calendar, User, MapPin, CheckCircle, Clock, BarChart3 } from 'lucide-react';
 import { customersWithProjects, surveyStats, generateSurveyToken, surveyEmailTemplate } from '../../mock/surveysData';
+import SurveyResultsSection from './SurveyResultsSection';
 
 const SurveyManagementPage = ({ onBackToDashboard }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
