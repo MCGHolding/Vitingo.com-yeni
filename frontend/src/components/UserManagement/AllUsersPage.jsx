@@ -155,8 +155,29 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
   };
 
   const handleActionMenuAction = (action, user) => {
-    // Handle action menu actions
-    console.log('Action:', action, 'User:', user);
+    setSelectedUser(user);
+    
+    switch (action) {
+      case 'message':
+        setShowMessageModal(true);
+        break;
+      case 'email':
+        setShowEmailModal(true);
+        break;
+      default:
+        console.log('Action:', action, 'User:', user);
+    }
+  };
+
+  // Close modal handlers for new modals
+  const handleCloseMessageModal = () => {
+    setShowMessageModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseEmailModal = () => {
+    setShowEmailModal(false);
+    setSelectedUser(null);
   };
 
   return (
