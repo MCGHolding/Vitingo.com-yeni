@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { useAuth } from '../../contexts/AuthContext';
+import UserSwitchModal from './UserSwitchModal';
 import { 
   User,
   LogOut,
   Settings,
   ChevronDown,
   Clock,
-  Shield
+  Shield,
+  Users,
+  RotateCcw,
+  Crown
 } from 'lucide-react';
 
 export default function UserMenu() {
