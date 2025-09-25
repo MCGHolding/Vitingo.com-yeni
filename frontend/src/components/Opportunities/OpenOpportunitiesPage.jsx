@@ -199,12 +199,20 @@ export default function OpenOpportunitiesPage() {
                       </td>
                       
                       <td className="py-4 px-4">
-                        <div className="font-medium text-gray-900">
-                          {opportunity.customer}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Son güncelleme: {formatDate(opportunity.lastUpdate)}
-                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150">
+                                {opportunity.customer}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-sm">
+                                Son güncelleme: {formatDate(opportunity.lastUpdate)}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </td>
                       
                       <td className="py-4 px-4">
