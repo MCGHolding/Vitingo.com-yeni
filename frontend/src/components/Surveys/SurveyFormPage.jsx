@@ -12,14 +12,30 @@ const SurveyFormPage = () => {
   const [customerData, setCustomerData] = useState(null);
   const [projectData, setProjectData] = useState(null);
 
-  // Mock customer and project data based on token (in real app, fetch from backend)
+  // Fetch survey data from backend API
   useEffect(() => {
-    // Simulate fetching customer data based on survey token
-    const mockCustomer = customersWithProjects[0]; // For demo, use first customer
-    const mockProject = mockCustomer.projects[0];
-    
-    setCustomerData(mockCustomer);
-    setProjectData(mockProject);
+    const fetchSurveyData = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/surveys/${token}`);
+        const data = await response.json();
+        
+        if (data.error) {
+          console.error('Survey not found:', data.error);
+          // You could redirect to an error page here
+          return;
+        }
+        
+        setCustomerData(data.customer);
+        setProjectData(data.project);
+      } catch (error) {
+        console.error('Error fetching survey data:', error);
+      }
+    };
+
+    if (token) {
+      fetchSurveyData();
+    }
   }, [token]);
 
   const handleResponse = (questionId, value) => {
