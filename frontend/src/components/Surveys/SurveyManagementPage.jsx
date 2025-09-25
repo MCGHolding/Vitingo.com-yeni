@@ -5,10 +5,18 @@ import SurveyResultsSection from './SurveyResultsSection';
 
 const SurveyManagementPage = ({ onBackToDashboard }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sentSurveys, setSentSurveys] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('send'); // 'send' or 'results'
+  const [surveyMode, setSurveyMode] = useState('customer'); // 'customer' or 'arbitrary'
+  
+  // Arbitrary email survey fields
+  const [arbitraryName, setArbitraryName] = useState('');
+  const [arbitraryEmail, setArbitraryEmail] = useState('');
+  const [arbitraryProject, setArbitraryProject] = useState('');
+  const [arbitraryCompany, setArbitraryCompany] = useState('');
 
   // Filter customers based on search term
   const filteredCustomers = useMemo(() => {
