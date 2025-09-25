@@ -72,6 +72,17 @@ const Dashboard = () => {
     // TODO: Implement all prospects page view
   };
 
+  // Quote Management Handlers
+  const handleNewQuote = () => {
+    console.log('New Quote clicked');
+    // TODO: Implement new quote modal/form
+  };
+
+  const handleAllQuotes = () => {
+    console.log('All Quotes clicked');
+    // TODO: Implement all quotes page view
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
