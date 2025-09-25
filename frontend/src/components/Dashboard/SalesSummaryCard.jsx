@@ -44,10 +44,10 @@ const SalesSummaryCard = () => {
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900">{currentData.title}</h3>
-          <p className="text-sm text-gray-600 mt-1">{currentData.subtitle}</p>
+      <div className="flex items-center justify-between mb-4">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-bold text-gray-900 truncate">{currentData.title}</h3>
+          <p className="text-xs text-gray-600 mt-1">{currentData.subtitle}</p>
         </div>
         
         {/* Period Dropdown */}
