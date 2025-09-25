@@ -6,7 +6,8 @@ import {
   User,
   Settings,
   Bell,
-  ChevronDown
+  ChevronDown,
+  Users
 } from 'lucide-react';
 
 const Header = ({ toggleSidebar, sidebarOpen }) => {
