@@ -6,6 +6,10 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import ViewOpportunityModal from './ViewOpportunityModal';
+import EditOpportunityModal from './EditOpportunityModal';
+import ActionMenuPopover from './ActionMenuPopover';
+import { useToast } from '../../hooks/use-toast';
 import { 
   Search, 
   Filter, 
@@ -21,6 +25,7 @@ import {
 import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
 export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities }) {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -30,6 +35,11 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
+
+  // Modal states
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
   // Use opportunities from props, fallback to imported data
   const opportunitiesData = opportunities || openOpportunities;
