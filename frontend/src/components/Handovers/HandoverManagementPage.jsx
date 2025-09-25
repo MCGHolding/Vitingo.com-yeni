@@ -590,13 +590,23 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
               </button>
             </div>
             
-            {/* Handover Statistics Panel */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+          {/* Right Panel - Handover Statistics */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Teslim İstatistikleri</h2>
+              </div>
+            </div>
+
+            <div className="p-6">
               {/* Header */}
               <div className="text-center mb-6">
                 <div className="flex items-center justify-center mb-2">
                   <FileText className="h-6 w-6 text-green-600 mr-2" />
-                  <h3 className="text-xl font-bold text-gray-900">Teslim İstatistikleri</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Teslimat İstatistikleri</h3>
                 </div>
                 <p className="text-sm text-gray-600">Gerçek Zamanlı Teslim Takibi</p>
               </div>
@@ -667,7 +677,7 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
                 <div className="bg-purple-50 rounded-lg p-4 text-center">
                   <User className="h-6 w-6 text-purple-600 mx-auto mb-2" />
                   <div className="text-xl font-bold text-purple-600">2.4 sa</div>
-                  <div className="text-xs text-gray-600">Ort. Yanıt Süresi</div>
+                  <div className="text-xs text-gray-600">Ort. İmza Süresi</div>
                 </div>
               </div>
 
@@ -701,15 +711,22 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
               )}
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <button 
                   onClick={() => setActiveTab('results')}
                   className="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Detaylı Rapor
                 </button>
+                <button 
+                  className="px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Teslim Gönder
+                </button>
               </div>
             </div>
+          </div>
+          
           </div>
           </div>
         ) : (
