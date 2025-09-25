@@ -323,22 +323,21 @@ export default function EditUserModal({ user, onClose, onSave }) {
                     <Building2 className="h-4 w-4" />
                     <span>Departman *</span>
                   </Label>
-                  <Select 
-                    value={formData.department} 
-                    onValueChange={(value) => handleInputChange('department', value)}
+                  <select
+                    value={formData.department}
+                    onChange={(e) => handleInputChange('department', e.target.value)}
                     disabled={isSubmitting}
+                    className={`w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                      errors.department ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
-                    <SelectTrigger className={errors.department ? 'border-red-500' : ''}>
-                      <SelectValue placeholder="Departman seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map((dept) => (
-                        <SelectItem key={dept.value} value={dept.value}>
-                          {dept.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <option value="">Departman seçiniz</option>
+                    {departments.map((dept) => (
+                      <option key={dept.value} value={dept.value}>
+                        {dept.label}
+                      </option>
+                    ))}
+                  </select>
                   {errors.department && (
                     <p className="text-sm text-red-600">{errors.department}</p>
                   )}
