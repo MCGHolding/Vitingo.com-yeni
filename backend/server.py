@@ -942,38 +942,69 @@ async def get_survey_questions():
 
 @api_router.post("/surveys/send-invitation")
 async def send_survey_invitation(
-    request: Request,
     customer_id: str,
     project_id: str,
-    email: str
+    email: str,
+    customer_name: str,
+    contact_name: str,
+    project_name: str,
+    fair_name: str,
+    city: str,
+    country: str,
+    delivery_date: str
 ):
-    """Send survey invitation to customer"""
+    """Send survey invitation to customer via SendGrid email"""
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        survey_link = f"{request.base_url}survey/{survey_token}"
+        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-1.preview.emergentagent.com')
+        survey_link = f"{base_url}/survey/{survey_token}"
         
-        # Create invitation record
-        invitation = SurveyInvitation(
-            customer_id=customer_id,
-            project_id=project_id,
-            survey_token=survey_token,
-            email=email,
-            survey_link=survey_link
-        )
-        
-        # Save to database
-        await db.survey_invitations.insert_one(invitation.dict())
-        
-        # In real implementation, send email here
-        # send_email(email, survey_link, customer_data, project_data)
-        
-        return {
-            "success": True,
-            "survey_token": survey_token,
-            "survey_link": survey_link,
-            "message": "Survey invitation sent successfully"
+        # Prepare customer and project data for email
+        customer_data = {
+            "id": customer_id,
+            "name": customer_name,
+            "contact": contact_name,
+            "email": email
         }
+        
+        project_data = {
+            "id": project_id,
+            "name": project_name,
+            "fairName": fair_name,
+            "city": city,
+            "country": country,
+            "deliveryDate": delivery_date
+        }
+        
+        # Send email via SendGrid
+        email_result = email_service.send_survey_invitation(customer_data, project_data, survey_link)
+        
+        if email_result["success"]:
+            # Create invitation record only if email sent successfully
+            invitation = SurveyInvitation(
+                customer_id=customer_id,
+                project_id=project_id,
+                survey_token=survey_token,
+                email=email,
+                survey_link=survey_link
+            )
+            
+            # Save to database
+            await db.survey_invitations.insert_one(invitation.dict())
+            
+            return {
+                "success": True,
+                "survey_token": survey_token,
+                "survey_link": survey_link,
+                "message": f"Survey invitation sent successfully to {email}",
+                "email_status": email_result
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Failed to send email: {email_result.get('error', 'Unknown error')}"
+            }
         
     except Exception as e:
         logger.error(f"Error sending survey invitation: {str(e)}")
