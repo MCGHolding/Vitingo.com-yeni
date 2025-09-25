@@ -246,67 +246,39 @@ export default function NewUserFormModal({ onClose, onSave }) {
                   </div>
                 </div>
 
-                {/* Email and Phone */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <Mail className="h-4 w-4 mr-2" />
-                      E-posta *
-                    </label>
-                    <Input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="kullanici@sirket.com"
-                      className="h-12"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      Telefon
-                    </label>
-                    <Input
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+90 555 123 4567"
-                      className="h-12"
-                    />
-                  </div>
+                {/* Email */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 flex items-center">
+                    <Mail className="h-4 w-4 mr-2" />
+                    E-posta *
+                  </label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="kullanici@sirket.com"
+                    className="h-12"
+                  />
                 </div>
 
-                {/* Birth Date and Department */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Doğum Tarihi
-                    </label>
-                    <Input
-                      type="date"
-                      value={formData.birthDate}
-                      onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                      className="h-12"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Departman
-                    </label>
-                    <Select value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
-                      <SelectTrigger className="h-12">
-                        <SelectValue placeholder="Departman seçiniz" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {departments.map((dept) => (
-                          <SelectItem key={dept.value} value={dept.value}>
-                            {dept.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Department */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 flex items-center">
+                    <Building2 className="h-4 w-4 mr-2" />
+                    Departman / Kullanıcı Tipi *
+                  </label>
+                  <Select value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Departman seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept.value} value={dept.value}>
+                          {dept.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
