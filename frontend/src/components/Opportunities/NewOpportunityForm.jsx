@@ -526,7 +526,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                         </SelectItem>
                       ))}
                       {fairs.length === 0 && !loadingFairs && (
-                        <SelectItem value="" disabled>
+                        <SelectItem value="no-fairs" disabled>
                           Henüz fuar bulunmuyor
                         </SelectItem>
                       )}
