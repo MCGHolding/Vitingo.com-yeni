@@ -33,10 +33,13 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   };
 
   const parseNumber = (value) => {
-    if (!value) return '';
+    if (!value && value !== 0) return '';
+    
+    // Convert to string if it's a number
+    const strValue = value.toString();
     
     // Remove thousand separators (dots) and convert comma to dot for parsing
-    const cleanValue = value.replace(/\./g, '').replace(',', '.');
+    const cleanValue = strValue.replace(/\./g, '').replace(',', '.');
     const num = parseFloat(cleanValue);
     
     return isNaN(num) ? '' : num;
