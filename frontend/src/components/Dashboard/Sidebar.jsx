@@ -235,6 +235,7 @@ export default function Sidebar({
   onPurchaseApprovals
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const { user, logout } = useAuth();
 
   const toggleSubmenu = (itemName) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
