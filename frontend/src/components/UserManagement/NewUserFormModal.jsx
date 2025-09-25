@@ -45,7 +45,9 @@ export default function NewUserFormModal({ onClose, onSave }) {
 
   const generateUsername = () => {
     if (formData.firstName && formData.lastName) {
-      const username = `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}`;
+      const firstThree = formData.firstName.toLowerCase().substring(0, 3);
+      const lastThree = formData.lastName.toLowerCase().substring(0, 3);
+      const username = `${firstThree}${lastThree}`;
       setFormData(prev => ({ ...prev, username }));
       toast({
         title: "Kullanıcı Adı Oluşturuldu",
