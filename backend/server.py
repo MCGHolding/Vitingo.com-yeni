@@ -7,7 +7,7 @@ import logging
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone, timedelta
 from pydantic import BaseModel, Field
-from typing import List, Dict
+from typing import List, Dict, Optional
 import uuid
 # Debug environment variables
 print(f"DEBUG: SENDGRID_API_KEY exists: {'SENDGRID_API_KEY' in os.environ}")
