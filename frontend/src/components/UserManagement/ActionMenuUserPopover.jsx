@@ -37,7 +37,7 @@ export default function ActionMenuUserPopover({ user, onAction }) {
     },
     {
       icon: Mail,
-      label: 'Mail',
+      label: 'E-posta',
       action: 'email',
       color: 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
     }
