@@ -693,12 +693,13 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm">
+                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[100px] truncate">
                                 {opportunity.customer}
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
                               <p className="text-xs">
+                                {opportunity.customer}<br/>
                                 Son güncelleme: {formatDate(opportunity.lastUpdate)}
                               </p>
                             </TooltipContent>
