@@ -193,7 +193,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     const counts = {};
     
     // Apply all filters except amount filter
-    let baseFiltered = openOpportunities;
+    let baseFiltered = opportunitiesData;
 
     if (searchTerm) {
       baseFiltered = baseFiltered.filter(opportunity =>
