@@ -183,6 +183,7 @@ export default function Sidebar({
   onExportData,
   onSalesReports,
   onCustomerReports,
+  onHandovers,
   onSurveys
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
