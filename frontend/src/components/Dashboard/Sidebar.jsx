@@ -25,7 +25,8 @@ import {
   Files,
   Building,
   UserX,
-  Star
+  Star,
+  UserRound
 } from 'lucide-react';
 
 const navigation = [
