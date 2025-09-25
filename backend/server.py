@@ -35,6 +35,36 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+# Fair Models
+class Fair(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    city: str
+    country: str
+    startDate: str
+    endDate: str
+    sector: str
+    cycle: str
+    status: str = "active"
+    organizer: str = "Vitingo Events"
+    participants: int = 0
+    budget: float = 0
+    revenue: float = 0
+    description: str = ""
+    createdDate: str = Field(default_factory=lambda: datetime.utcnow().strftime('%Y-%m-%d'))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class FairCreate(BaseModel):
+    name: str
+    city: str
+    country: str
+    startDate: str
+    endDate: str
+    sector: str
+    cycle: str
+    description: str = ""
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
