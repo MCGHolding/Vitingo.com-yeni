@@ -127,6 +127,34 @@ export default function Sidebar({
       return;
     }
     
+    if (subItem && subItem.name === 'Kazanılan Fırsatlar') {
+      if (onWonOpportunities) {
+        onWonOpportunities();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Kaybedilen Fırsatlar') {
+      if (onLostOpportunities) {
+        onLostOpportunities();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Favori Fırsatlar') {
+      if (onFavoriteOpportunities) {
+        onFavoriteOpportunities();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Satış Fırsatları') {
+      if (onAllOpportunities) {
+        onAllOpportunities();
+      }
+      return;
+    }
+    
     if (subItem && subItem.name === 'Yeni Teklif') {
       if (onNewQuote) {
         onNewQuote();
