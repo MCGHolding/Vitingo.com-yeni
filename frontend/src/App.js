@@ -743,6 +743,10 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/survey/:token" 
+              element={<SurveyFormPage />} 
+            />
           </Routes>
         </BrowserRouter>
       </div>
