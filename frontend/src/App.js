@@ -232,12 +232,9 @@ const Dashboard = () => {
   };
 
   const saveFair = (fairData) => {
-    const newFair = {
-      ...fairData,
-      id: Date.now()
-    };
-    setFairs(prev => [newFair, ...prev]);
-    console.log('New fair created:', newFair);
+    // fairData is already the response from backend API with proper ID
+    setFairs(prev => [fairData, ...prev]);
+    console.log('New fair saved to database:', fairData);
   };
 
   const handleBackToDashboard = () => {
