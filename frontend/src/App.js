@@ -158,6 +158,33 @@ const Dashboard = () => {
     switch (currentView) {
       case 'open-opportunities':
         return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} />;
+      case 'all-users':
+        return (
+          <AllUsersPage 
+            users={users}
+            onBack={handleBackToDashboard}
+            onEditUser={(user) => console.log('Edit user:', user)}
+            onViewUser={(user) => console.log('View user:', user)}
+          />
+        );
+      case 'inactive-users':
+        return (
+          <AllUsersPage 
+            users={users.filter(user => user.status === 'inactive')}
+            onBack={handleBackToDashboard}
+            onEditUser={(user) => console.log('Edit user:', user)}
+            onViewUser={(user) => console.log('View user:', user)}
+          />
+        );
+      case 'former-users':
+        return (
+          <AllUsersPage 
+            users={users.filter(user => user.status === 'former')}
+            onBack={handleBackToDashboard}
+            onEditUser={(user) => console.log('Edit user:', user)}
+            onViewUser={(user) => console.log('View user:', user)}
+          />
+        );
       default:
         return (
           <>
