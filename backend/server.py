@@ -615,6 +615,34 @@ class CurrencyConversion(BaseModel):
     gbp_amount: float
     rates: Dict[str, float]
 
+# Lead Models
+class Lead(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    contact: str
+    email: str
+    phone: str
+    source: str
+    value: float
+    stage: str
+    last_activity: datetime
+    status: str = "active"  # active, passive
+    passive_since: datetime = None
+    reason: str = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PassiveLeadRule(BaseModel):
+    threshold_days: int = 20
+    auto_transfer: bool = True
+    enabled: bool = True
+
+class PassiveLeadStats(BaseModel):
+    total_passive_leads: int
+    recently_passive: int  # Last 7 days
+    passive_value: float
+    average_passive_days: float
+    threshold_days: int
+
 @api_router.get("/currency-rates", response_model=List[CurrencyRate])
 async def get_currency_rates():
     """Get current currency rates from TCMB"""
