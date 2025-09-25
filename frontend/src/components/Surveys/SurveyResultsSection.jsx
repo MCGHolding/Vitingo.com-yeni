@@ -153,7 +153,7 @@ const SurveyResultsSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Customer Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -168,6 +168,25 @@ const SurveyResultsSection = () => {
               {customers.map(customer => (
                 <option key={customer.id} value={customer.id}>
                   {customer.name} - {customer.contact}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Customer Representative Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Müşteri Temsilcisine Göre Filtrele
+            </label>
+            <select
+              value={selectedRepresentative}
+              onChange={(e) => setSelectedRepresentative(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Tüm Temsilciler</option>
+              {uniqueRepresentatives.map(rep => (
+                <option key={rep} value={rep}>
+                  {rep}
                 </option>
               ))}
             </select>
