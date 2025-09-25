@@ -346,6 +346,115 @@ export default function EditUserModal({ user, onClose, onSave }) {
               </div>
             </div>
 
+            {/* Password Change Section */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                <Lock className="h-5 w-5" />
+                <span>Şifre Değişikliği</span>
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="changePassword"
+                    checked={changePassword}
+                    onChange={(e) => {
+                      setChangePassword(e.target.checked);
+                      if (!e.target.checked) {
+                        setFormData(prev => ({
+                          ...prev,
+                          password: '',
+                          confirmPassword: ''
+                        }));
+                        setErrors(prev => ({
+                          ...prev,
+                          password: '',
+                          confirmPassword: ''
+                        }));
+                      }
+                    }}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    disabled={isSubmitting}
+                  />
+                  <Label htmlFor="changePassword" className="text-sm font-medium">
+                    Şifreyi değiştir
+                  </Label>
+                </div>
+
+                {changePassword && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg">
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium">
+                        Yeni Şifre *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Yeni şifrenizi giriniz"
+                          value={formData.password}
+                          onChange={(e) => handleInputChange('password', e.target.value)}
+                          className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                          disabled={isSubmitting}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          disabled={isSubmitting}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                      {errors.password && (
+                        <p className="text-sm text-red-600">{errors.password}</p>
+                      )}
+                      <p className="text-xs text-gray-500">
+                        En az 6 karakter, 1 büyük harf, 1 küçük harf ve 1 özel karakter içermelidir
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                        Şifre Tekrarı *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          placeholder="Şifrenizi tekrar giriniz"
+                          value={formData.confirmPassword}
+                          onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                          className={errors.confirmPassword ? 'border-red-500 pr-10' : 'pr-10'}
+                          disabled={isSubmitting}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          disabled={isSubmitting}
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                      {errors.confirmPassword && (
+                        <p className="text-sm text-red-600">{errors.confirmPassword}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Status */}
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
