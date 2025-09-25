@@ -12,6 +12,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [originalAdminUser, setOriginalAdminUser] = useState(null); // For admin impersonation
   const [loading, setLoading] = useState(true);
 
   // Check for saved session on mount
