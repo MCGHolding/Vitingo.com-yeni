@@ -78,13 +78,22 @@ const ModernKPICard = ({
         <div className="flex items-baseline space-x-1">
           {isCurrency && <span className="text-2xl font-bold text-gray-900">₺</span>}
           <span className="text-3xl font-bold text-gray-900">
-            <CountUp
-              end={value}
-              duration={2}
-              separator="."
-              decimals={isPercentage ? 1 : 0}
-              formattingFn={formatValue}
-            />
+            {hasAnimated ? (
+              // Show static value after animation
+              formatValue(displayValue)
+            ) : (
+              // Show CountUp animation only on first load
+              <CountUp
+                ref={countUpRef}
+                start={0}
+                end={displayValue}
+                duration={2}
+                separator="."
+                decimals={isPercentage ? 1 : 0}
+                formattingFn={formatValue}
+                onEnd={() => setHasAnimated(true)}
+              />
+            )}
           </span>
           {isPercentage && <span className="text-2xl font-bold text-gray-900">%</span>}
           {unit && <span className="text-lg font-medium text-gray-600">{unit}</span>}
