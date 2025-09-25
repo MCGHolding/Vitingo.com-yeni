@@ -422,43 +422,8 @@ const Dashboard = () => {
 };
 
 function App() {
-  const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
-  const [showUserManagementModal, setShowUserManagementModal] = useState(false);
-
-  const closeCustomerForm = () => {
-    setShowNewCustomerForm(false);
-  };
-
-  const saveCustomer = (customerData) => {
-    console.log('New customer created:', customerData);
-  };
-
-  const closeUserManagementModal = () => {
-    setShowUserManagementModal(false);
-  };
-
-  const saveUser = (userData) => {
-    console.log('New user created:', userData);
-  };
-
   return (
     <div className="App">
-      {/* New Customer Form Modal */}
-      {showNewCustomerForm && (
-        <NewCustomerForm
-          onClose={closeCustomerForm}
-          onSave={saveCustomer}
-        />
-      )}
-
-      {/* User Management Modal */}
-      {showUserManagementModal && (
-        <UserManagementModal
-          onClose={closeUserManagementModal}
-          onSave={saveUser}
-        />
-      )}
-
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
