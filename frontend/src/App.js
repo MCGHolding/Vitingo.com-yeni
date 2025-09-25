@@ -56,6 +56,7 @@ import SurveyFormPage from './components/Surveys/SurveyFormPage';
 import HandoverManagementPage from './components/Handovers/HandoverManagementPage';
 import HandoverFormPage from './components/Handovers/HandoverFormPage';
 import NewInvoiceForm from './components/Accounting/NewInvoiceForm';
+import AllInvoicesPage from './components/Accounting/AllInvoicesPage';
 import { 
   Users, 
   TrendingUp, 
