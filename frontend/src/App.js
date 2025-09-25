@@ -596,8 +596,7 @@ const Dashboard = () => {
               </div>
 
               {/* Bottom Section */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <RecentTransactionsTable />
+              <div className="grid grid-cols-1">
                 <TopCustomersCard />
               </div>
             </div>
