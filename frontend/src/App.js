@@ -349,6 +349,27 @@ const Dashboard = () => {
             onUpdateUser={updateUser}
           />
         );
+      case 'all-fairs':
+        return (
+          <AllFairsPage 
+            fairs={fairs}
+            onBackToDashboard={handleBackToDashboard}
+          />
+        );
+      case 'active-fairs':
+        return (
+          <ActiveFairsPage 
+            fairs={fairs}
+            onBackToDashboard={handleBackToDashboard}
+          />
+        );
+      case 'past-fairs':
+        return (
+          <PastFairsPage 
+            fairs={fairs}
+            onBackToDashboard={handleBackToDashboard}
+          />
+        );
       default:
         return (
           <>
