@@ -13,6 +13,35 @@ import {
 } from 'lucide-react';
 
 const NewInvoiceForm = ({ onBackToDashboard }) => {
+  // Number formatting functions
+  const formatNumber = (value) => {
+    if (!value && value !== 0) return '';
+    
+    // Convert to string and handle decimal places
+    const numStr = value.toString();
+    const parts = numStr.split('.');
+    
+    // Format integer part with thousands separator
+    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Handle decimal part (use comma as decimal separator)
+    if (parts[1]) {
+      return `${integerPart},${parts[1]}`;
+    }
+    
+    return integerPart;
+  };
+
+  const parseNumber = (value) => {
+    if (!value) return '';
+    
+    // Remove thousand separators (dots) and convert comma to dot for parsing
+    const cleanValue = value.replace(/\./g, '').replace(',', '.');
+    const num = parseFloat(cleanValue);
+    
+    return isNaN(num) ? '' : num;
+  };
+
   const [formData, setFormData] = useState({
     invoiceNumber: '',
     currency: 'USD',
