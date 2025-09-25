@@ -513,12 +513,12 @@ export default function OpenOpportunitiesPage() {
                   <SelectValue placeholder="Ülke Filtresi" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tüm Ülkeler</SelectItem>
-                  <SelectItem value="ALMANYA">Almanya</SelectItem>
-                  <SelectItem value="TÜRKİYE">Türkiye</SelectItem>
-                  <SelectItem value="ABD">Amerika Birleşik Devletleri</SelectItem>
-                  <SelectItem value="BAE">Birleşik Arap Emirlikleri</SelectItem>
-                  <SelectItem value="KANADA">Kanada</SelectItem>
+                  <SelectItem value="all">Tüm Ülkeler ({countryCounts['ALMANYA'] + countryCounts['TÜRKİYE'] + countryCounts['ABD'] + countryCounts['BAE'] + countryCounts['KANADA']})</SelectItem>
+                  <SelectItem value="ALMANYA">Almanya ({countryCounts['ALMANYA']})</SelectItem>
+                  <SelectItem value="TÜRKİYE">Türkiye ({countryCounts['TÜRKİYE']})</SelectItem>
+                  <SelectItem value="ABD">Amerika Birleşik Devletleri ({countryCounts['ABD']})</SelectItem>
+                  <SelectItem value="BAE">Birleşik Arap Emirlikleri ({countryCounts['BAE']})</SelectItem>
+                  <SelectItem value="KANADA">Kanada ({countryCounts['KANADA']})</SelectItem>
                 </SelectContent>
               </Select>
 
