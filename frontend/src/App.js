@@ -237,6 +237,17 @@ const Dashboard = () => {
     console.log('New fair saved to database:', fairData);
   };
 
+  // Settings Management Handlers
+  const handleImportData = () => {
+    console.log('Import Data clicked');
+    setCurrentView('import-data');
+  };
+
+  const handleExportData = () => {
+    console.log('Export Data clicked');
+    setCurrentView('export-data');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
