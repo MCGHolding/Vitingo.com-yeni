@@ -69,23 +69,23 @@ export default function UserSwitchModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-y-auto">
-        <Card className="border-0">
-          <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-auto">
+        <Card className="border-0 h-full">
+          <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-2xl">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl flex items-center space-x-2">
-                <Shield className="h-6 w-6" />
+              <CardTitle className="text-2xl flex items-center space-x-3">
+                <Shield className="h-7 w-7" />
                 <span>Kullanıcı Değiştir</span>
-                <Badge className="bg-white/20 text-white">Admin Yetkisi</Badge>
+                <Badge className="bg-white/20 text-white text-sm px-3 py-1">Admin Yetkisi</Badge>
               </CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-white hover:bg-white/20"
+                className="text-white hover:bg-white/20 p-2"
                 disabled={loading}
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </Button>
             </div>
           </CardHeader>
