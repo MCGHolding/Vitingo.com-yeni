@@ -535,6 +535,8 @@ const Dashboard = () => {
         onAllFairs={handleAllFairs}
         onActiveFairs={handleActiveFairs}
         onPastFairs={handlePastFairs}
+        onImportData={handleImportData}
+        onExportData={handleExportData}
       />
       
       {/* Main content */}
