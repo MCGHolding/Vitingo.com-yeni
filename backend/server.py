@@ -1,21 +1,21 @@
 from fastapi import FastAPI, APIRouter, HTTPException, File, UploadFile, Form
 from fastapi.responses import StreamingResponse
-from dotenv import load_env
+from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
-from pathlib import Path
+from motor.motor_asyncio import AsyncIOMotorClient
+from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import List
 import uuid
-from datetime import datetime
 import csv
 import io
+from pathlib import Path
 
 
 ROOT_DIR = Path(__file__).parent
-load_env(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
