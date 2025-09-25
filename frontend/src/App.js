@@ -14,6 +14,7 @@ import UserManagementModal from './components/UserManagement/UserManagementModal
 import AllUsersPage from './components/UserManagement/AllUsersPage';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
+import { mockUsers } from './mock/usersData';
 import { 
   Users, 
   TrendingUp, 
