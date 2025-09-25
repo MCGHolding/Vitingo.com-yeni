@@ -80,6 +80,20 @@ export default function Sidebar({
 
   const handleMenuClick = (item, subItem = null) => {
     // Handle specific menu actions
+    if (subItem && subItem.name === 'Yeni Müşteri Adayı') {
+      if (onNewProspect) {
+        onNewProspect();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Müşteri Adayları') {
+      if (onAllProspects) {
+        onAllProspects();
+      }
+      return;
+    }
+    
     if (subItem && subItem.name === 'Yeni Satış Fırsatı') {
       if (onNewOpportunity) {
         onNewOpportunity();
