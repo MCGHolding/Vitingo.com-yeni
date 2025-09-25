@@ -212,6 +212,7 @@ export default function NewFairForm({ onClose, onSave }) {
         endDate: formData.endDate,
         sector: formData.sector,
         cycle: formData.cycle,
+        fairMonth: formData.fairMonth,
         description: `${formData.sector} sektörü fuarı`
       };
 
