@@ -105,9 +105,34 @@ const Dashboard = () => {
     // TODO: Implement new quote modal/form
   };
 
-  const handleAllQuotes = () => {
-    console.log('All Quotes clicked');
-    // TODO: Implement all quotes page view
+  // Customer Management Handlers
+  const handleNewCustomer = () => {
+    setShowNewCustomerForm(true);
+  };
+
+  const handleAllCustomers = () => {
+    setCurrentView('all-customers');
+  };
+
+  const handleInactiveCustomers = () => {
+    setCurrentView('inactive-customers');
+  };
+
+  const handleFavoriteCustomers = () => {
+    setCurrentView('favorite-customers');
+  };
+
+  const closeCustomerForm = () => {
+    setShowNewCustomerForm(false);
+  };
+
+  const saveCustomer = (customerData) => {
+    const newCustomer = {
+      ...customerData,
+      id: Date.now()
+    };
+    setCustomers(prev => [newCustomer, ...prev]);
+    console.log('New customer created:', newCustomer);
   };
 
   const handleBackToDashboard = () => {
