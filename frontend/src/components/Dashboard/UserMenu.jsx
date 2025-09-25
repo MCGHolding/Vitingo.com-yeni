@@ -69,7 +69,7 @@ export default function UserMenu() {
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-3 text-slate-300 hover:text-white hover:bg-slate-700 bg-slate-800/80 px-3 py-2 w-full justify-start rounded-lg backdrop-blur-sm"
+        className="flex items-center space-x-3 text-white bg-slate-800 hover:bg-slate-700 px-4 py-3 w-full justify-start rounded-lg border border-slate-600"
       >
         <div className="flex-shrink-0 h-8 w-8">
           <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
