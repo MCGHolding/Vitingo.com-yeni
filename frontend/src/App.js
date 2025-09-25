@@ -15,6 +15,7 @@ import LostOpportunitiesPage from './components/Opportunities/LostOpportunitiesP
 import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpportunitiesPage';
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
 import NewCustomerForm from './components/Customers/NewCustomerForm';
+import NewPersonForm from './components/Customers/NewPersonForm';
 import AllCustomersPage from './components/Customers/AllCustomersPage';
 import InactiveCustomersPage from './components/Customers/InactiveCustomersPage';
 import FavoriteCustomersPage from './components/Customers/FavoriteCustomersPage';
