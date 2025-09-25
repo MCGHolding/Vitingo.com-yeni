@@ -150,9 +150,16 @@ export default function Sidebar({
       return;
     }
     
-    if (subItem && subItem.name === 'Kişiler') {
-      if (onPeople) {
-        onPeople();
+    if (subItem && subItem.name === 'Kişi Ekle') {
+      if (onNewPerson) {
+        onNewPerson();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Kişiler') {
+      if (onAllPeople) {
+        onAllPeople();
       }
       return;
     }
