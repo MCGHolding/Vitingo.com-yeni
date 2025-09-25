@@ -104,7 +104,7 @@ export default function UserMenu() {
           />
           
           {/* Dropdown Menu */}
-          <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl shadow-2xl border-2 border-gray-300 py-2 z-50 backdrop-blur-sm">
             {/* User Info */}
             <div className="px-4 py-3 border-b border-gray-100">
               <div className="flex items-center space-x-3">
