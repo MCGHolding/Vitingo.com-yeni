@@ -29,7 +29,18 @@ import {
   UserRound,
   MapPin,
   Upload,
-  Download
+  Download,
+  Calculator,
+  Receipt,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  DollarSign,
+  CreditCard,
+  Wallet,
+  FileCheck,
+  ShoppingCart,
+  FileX
 } from 'lucide-react';
 
 const navigation = [
