@@ -1111,6 +1111,187 @@ async def send_arbitrary_survey_invitation(request: ArbitrarySurveyRequest):
             "error": str(e)
         }
 
+# =====================================
+# HANDOVER ENDPOINTS
+# =====================================
+
+class HandoverRequest(BaseModel):
+    customer_id: str
+    project_id: str
+    email: str
+    customer_name: str
+    contact_name: str
+    project_name: str
+    language: str
+    customer_representative: str
+
+class HandoverSubmission(BaseModel):
+    customer_name: str
+    customer_title: Optional[str] = ""
+    customer_company: Optional[str] = ""
+    signature_base64: str
+    acceptance_confirmed: bool
+
+@api_router.post("/handovers/send")
+async def send_handover_form(request: HandoverRequest):
+    """Send handover form to customer"""
+    try:
+        # Generate unique handover token
+        handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
+        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-2.preview.emergentagent.com')
+        handover_link = f"{base_url}/handover/{handover_token}"
+        
+        # Prepare customer and project data for email
+        customer_data = {
+            "id": request.customer_id,
+            "name": request.customer_name,
+            "contact": request.contact_name,
+            "email": request.email
+        }
+        
+        project_data = {
+            "id": request.project_id,
+            "name": request.project_name,
+            "language": request.language
+        }
+        
+        # Send email via SendGrid
+        email_result = email_service.send_handover_invitation(customer_data, project_data, handover_link)
+        
+        if email_result["success"]:
+            # Create handover invitation record
+            handover_invitation = {
+                "customer_id": request.customer_id,
+                "project_id": request.project_id,
+                "handover_token": handover_token,
+                "email": request.email,
+                "handover_link": handover_link,
+                "customer_name": request.customer_name,
+                "contact_name": request.contact_name,
+                "project_name": request.project_name,
+                "customer_representative": request.customer_representative,
+                "language": request.language,
+                "status": "pending",
+                "sent_at": datetime.now().isoformat(),
+                "completed_at": None,
+                "signature_data": None,
+                "auto_survey_triggered": False,
+                "survey_token": None
+            }
+            
+            # Save to database
+            await db.handover_invitations.insert_one(handover_invitation)
+            
+            return {
+                "success": True,
+                "handover_token": handover_token,
+                "handover_link": handover_link,
+                "message": f"Handover form sent successfully to {request.email}",
+                "email_status": email_result
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Failed to send email: {email_result.get('error', 'Unknown error')}"
+            }
+        
+    except Exception as e:
+        logger.error(f"Error sending handover form: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.get("/handovers/{handover_token}")
+async def get_handover_by_token(handover_token: str):
+    """Get handover details by token"""
+    try:
+        # Find invitation by token
+        invitation = await db.handover_invitations.find_one({"handover_token": handover_token})
+        
+        if not invitation:
+            return {"error": "Handover form not found", "status": 404}
+        
+        # Check if already completed
+        if invitation.get("status") == "completed":
+            return {"error": "Handover form already completed", "status": 410}
+        
+        # Create customer and project data
+        customer = {
+            "id": invitation["customer_id"],
+            "name": invitation["customer_name"],
+            "contact": invitation["contact_name"],
+            "email": invitation["email"]
+        }
+        
+        project = {
+            "id": invitation["project_id"],
+            "name": invitation["project_name"]
+        }
+        
+        return {
+            "handover_token": handover_token,
+            "customer": customer,
+            "project": project,
+            "language": invitation.get("language", "en"),
+            "status": "active"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting handover: {str(e)}")
+        return {"error": str(e), "status": 500}
+
+@api_router.post("/handovers/{handover_token}/submit")
+async def submit_handover_form(handover_token: str, submission: HandoverSubmission):
+    """Submit handover form with signature"""
+    try:
+        # Find invitation by token
+        invitation = await db.handover_invitations.find_one({"handover_token": handover_token})
+        
+        if not invitation:
+            return {"success": False, "error": "Handover form not found"}
+        
+        if invitation.get("status") == "completed":
+            return {"success": False, "error": "Handover form already completed"}
+        
+        # Update invitation with signature and completion
+        signature_data = {
+            "customer_name": submission.customer_name,
+            "customer_title": submission.customer_title,
+            "customer_company": submission.customer_company,
+            "signature_base64": submission.signature_base64,
+            "acceptance_confirmed": submission.acceptance_confirmed,
+            "submitted_at": datetime.now().isoformat(),
+            "ip_address": None  # Could get real IP if needed
+        }
+        
+        await db.handover_invitations.update_one(
+            {"handover_token": handover_token},
+            {
+                "$set": {
+                    "status": "completed",
+                    "completed_at": datetime.now().isoformat(),
+                    "signature_data": signature_data
+                }
+            }
+        )
+        
+        # TODO: Trigger automatic survey sending after handover completion
+        # This would be implemented based on the reminder schedule
+        
+        return {
+            "success": True,
+            "message": "Handover form submitted successfully",
+            "handover_token": handover_token
+        }
+        
+    except Exception as e:
+        logger.error(f"Error submitting handover: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.get("/surveys/stats")
 async def get_survey_stats():
     """Get survey statistics"""
