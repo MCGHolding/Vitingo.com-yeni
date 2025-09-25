@@ -631,18 +631,12 @@ export default function Sidebar({
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0 h-10 w-10">
               <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                <span className="text-sm font-medium text-white">
-                  {user ? `${user.firstName?.charAt(0)}${user.lastName?.charAt(0)}` : 'AD'}
-                </span>
+                <span className="text-sm font-medium text-white">AD</span>
               </div>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">
-                {user ? `${user.firstName} ${user.lastName}` : 'Admin User'}
-              </p>
-              <p className="text-xs text-slate-400">
-                {user ? user.email : 'admin@company.com'}
-              </p>
+              <p className="text-sm font-medium text-white">Admin User</p>
+              <p className="text-xs text-slate-400">admin@company.com</p>
             </div>
           </div>
         </div>
