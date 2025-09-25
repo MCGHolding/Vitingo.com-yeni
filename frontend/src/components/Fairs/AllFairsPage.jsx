@@ -75,8 +75,14 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               <h1 className="text-2xl font-bold text-gray-900 flex items-center">
                 <MapPin className="h-7 w-7 text-blue-600 mr-2" />
                 Tüm Fuarlar
+                {loading && (
+                  <div className="ml-2 animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                )}
               </h1>
-              <p className="text-sm text-gray-600">Tüm fuar etkinliklerini görüntüleyin ve yönetin</p>
+              <p className="text-sm text-gray-600">
+                Tüm fuar etkinliklerini görüntüleyin ve yönetin 
+                {!loading && ` • ${fairs.length} fuar`}
+              </p>
             </div>
           </div>
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
