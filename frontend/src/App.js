@@ -581,6 +581,14 @@ const Dashboard = () => {
                 <CSATGauge />
               </div>
 
+              {/* Sales Summary and Additional Charts */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+                <SalesSummaryCard />
+                <div className="xl:col-span-2">
+                  <GeographicSalesMap />
+                </div>
+              </div>
+
               {/* Tables and Map Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                 <SalesByCountryTable />
