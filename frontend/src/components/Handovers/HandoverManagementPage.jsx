@@ -284,7 +284,7 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
         </div>
 
         {activeTab === 'send' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           
           {/* Left Panel - Send Handover */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200">
