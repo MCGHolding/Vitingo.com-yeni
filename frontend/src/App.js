@@ -307,6 +307,8 @@ const Dashboard = () => {
         onFormerUsers={handleFormerUsers}
         onNewProspect={handleNewProspect}
         onAllProspects={handleAllProspects}
+        onNewQuote={handleNewQuote}
+        onAllQuotes={handleAllQuotes}
       />
       
       {/* Main content */}
