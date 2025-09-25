@@ -146,7 +146,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "CeBIT Turkey",
         standSize: "9x6 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Elif Özkan"
       },
       {
         id: 107,
@@ -157,7 +158,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "Mobile World Congress",
         standSize: "12x8 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Can Demir"
       },
       {
         id: 108,
@@ -168,7 +170,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "ITU Telecom World",
         standSize: "15x10 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Elif Özkan"
       },
       {
         id: 109,
@@ -179,7 +182,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "Eurasia Boat Show",
         standSize: "8x6 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Mert Kaya"
       }
     ]
   },
