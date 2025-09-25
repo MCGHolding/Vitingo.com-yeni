@@ -552,6 +552,14 @@ const Dashboard = () => {
           onSave={saveUser}
         />
       )}
+
+      {/* New Fair Form Modal */}
+      {showNewFairForm && (
+        <NewFairForm
+          onClose={closeNewFairForm}
+          onSave={saveFair}
+        />
+      )}
     </div>
   );
 };
