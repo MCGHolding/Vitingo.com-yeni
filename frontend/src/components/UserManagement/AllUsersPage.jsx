@@ -35,6 +35,11 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
+  
+  // Modal states
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const filteredUsers = useMemo(() => {
     let filtered = users;
