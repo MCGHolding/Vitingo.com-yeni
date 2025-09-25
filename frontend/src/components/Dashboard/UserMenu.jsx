@@ -81,7 +81,15 @@ export default function UserMenu() {
           </div>
         </div>
         <div className="flex-1 text-left">
-          <div className="text-sm font-medium">{user.fullName}</div>
+          <div className="text-sm font-medium flex items-center space-x-2">
+            <span>{user.fullName}</span>
+            {isImpersonating() && (
+              <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                <Crown className="h-3 w-3 mr-1" />
+                Admin
+              </Badge>
+            )}
+          </div>
           <div className="text-xs text-slate-400">{getRoleName(user.role)}</div>
         </div>
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
