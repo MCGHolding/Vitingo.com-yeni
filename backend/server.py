@@ -941,6 +941,7 @@ async def get_survey_questions():
 
 @api_router.post("/surveys/send-invitation")
 async def send_survey_invitation(
+    request: Request,
     customer_id: str,
     project_id: str,
     email: str
