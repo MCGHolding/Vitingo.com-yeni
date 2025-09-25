@@ -159,8 +159,7 @@ const Dashboard = () => {
           <AllUsersPage 
             users={users}
             onBack={handleBackToDashboard}
-            onEditUser={(user) => console.log('Edit user:', user)}
-            onViewUser={(user) => console.log('View user:', user)}
+            onUpdateUser={updateUser}
           />
         );
       case 'inactive-users':
