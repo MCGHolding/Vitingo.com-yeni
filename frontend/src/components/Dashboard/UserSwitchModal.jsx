@@ -189,16 +189,20 @@ export default function UserSwitchModal({ onClose }) {
               </div>
             )}
 
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="mt-8 pt-6 border-t border-gray-100">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600">
-                  <Shield className="h-4 w-4 inline mr-1" />
-                  Bu özellik sadece admin kullanıcıları tarafından kullanılabilir.
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <div className="p-2 bg-amber-100 rounded-lg">
+                    <Shield className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <span className="text-sm font-medium">Bu özellik sadece admin kullanıcıları tarafından kullanılabilir.</span>
                 </div>
                 <Button
                   variant="outline"
+                  size="lg"
                   onClick={onClose}
                   disabled={loading}
+                  className="px-8 py-3 text-base font-medium hover:bg-gray-50 transition-colors"
                 >
                   Kapat
                 </Button>
