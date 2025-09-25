@@ -25,6 +25,9 @@ import InactiveCustomersPage from './components/Customers/InactiveCustomersPage'
 import FavoriteCustomersPage from './components/Customers/FavoriteCustomersPage';
 import UserManagementModal from './components/UserManagement/UserManagementModal';
 import AllUsersPage from './components/UserManagement/AllUsersPage';
+import ViewUserModal from './components/UserManagement/ViewUserModal';
+import EditUserModal from './components/UserManagement/EditUserModal';
+import NewUserFormModal from './components/UserManagement/NewUserFormModal';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { mockUsers } from './mock/usersData';
