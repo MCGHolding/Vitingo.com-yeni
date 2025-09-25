@@ -664,17 +664,17 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">No.</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">Müşteri</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">İsim</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">Tutar</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">Durum</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">İletişim</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-600">Etiketler</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-600">İşlemler</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Müşteri</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İsim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
+                    <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -685,20 +685,20 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
                       }`}
                     >
-                      <td className="py-4 px-4">
-                        <span className="font-medium text-blue-600">#{opportunity.id}</span>
+                      <td className="py-3 px-3">
+                        <span className="font-medium text-blue-600 text-sm">#{opportunity.id}</span>
                       </td>
                       
-                      <td className="py-4 px-4">
+                      <td className="py-3 px-3">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150">
+                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm">
                                 {opportunity.customer}
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="text-sm">
+                              <p className="text-xs">
                                 Son güncelleme: {formatDate(opportunity.lastUpdate)}
                               </p>
                             </TooltipContent>
@@ -706,29 +706,29 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                         </TooltipProvider>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="font-medium text-gray-900">
+                      <td className="py-3 px-3">
+                        <div className="font-medium text-gray-900 text-sm">
                           {opportunity.eventName}
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
+                      <td className="py-3 px-3">
                         <div className="flex items-center space-x-1">
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm">
                             {formatCurrency(opportunity.amount, opportunity.currency)}
                           </span>
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <Badge className={`${getStatusBadgeColor(opportunity.statusText)} border-0`}>
+                      <td className="py-3 px-3">
+                        <Badge className={`${getStatusBadgeColor(opportunity.statusText)} border-0 text-xs px-2 py-1`}>
                           {opportunity.statusText}
                         </Badge>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-8 w-8">
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-2">
+                          <Avatar className="h-7 w-7">
                             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
                               {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
@@ -741,12 +741,12 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
+                      <td className="py-3 px-3">
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {opportunity.tags.map((tag, tagIndex) => (
                             <Badge
                               key={tagIndex}
-                              className={`text-[10px] px-1.5 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                              className={`text-[9px] px-1 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
                             >
                               {tag}
                             </Badge>
@@ -754,23 +754,23 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4 text-center">
-                        <div className="flex items-center justify-center space-x-2">
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                            className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                             onClick={() => handleViewOpportunity(opportunity)}
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
+                            className="h-7 w-7 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
                             onClick={() => handleEditOpportunity(opportunity)}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-3.5 w-3.5" />
                           </Button>
                           <ActionMenuPopover
                             opportunity={opportunity}
