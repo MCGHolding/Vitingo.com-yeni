@@ -293,6 +293,9 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
             </div>
           </div>
         </div>
+        ) : (
+          <SurveyResultsSection />
+        )}
       </div>
     </div>
   );
