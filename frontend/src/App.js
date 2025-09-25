@@ -180,6 +180,27 @@ const Dashboard = () => {
     // TODO: Implement all quotes page view
   };
 
+  // Fair Management Handlers
+  const handleNewFair = () => {
+    console.log('New Fair clicked');
+    // TODO: Implement new fair modal/form
+  };
+
+  const handleAllFairs = () => {
+    console.log('All Fairs clicked');
+    setCurrentView('all-fairs');
+  };
+
+  const handleActiveFairs = () => {
+    console.log('Active Fairs clicked');
+    setCurrentView('active-fairs');
+  };
+
+  const handlePastFairs = () => {
+    console.log('Past Fairs clicked');
+    setCurrentView('past-fairs');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
