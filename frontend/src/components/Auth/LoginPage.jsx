@@ -58,9 +58,9 @@ export default function LoginPage() {
 
   const fillDemoCredentials = (role) => {
     const credentials = {
-      admin: { username: 'admin', password: 'admin123' },
-      sales_manager: { username: 'mudur1', password: 'mudur123' },
-      sales_rep: { username: 'satis1', password: 'satis123' }
+      super_admin: { username: 'murb', password: 'Murat2024!' },
+      admin: { username: 'biry', password: 'Birtan2024!' },
+      customer_rep: { username: 'tame', password: 'Tamer2024!' }
     };
     
     const cred = credentials[role];
