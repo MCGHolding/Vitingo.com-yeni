@@ -640,6 +640,7 @@ const Dashboard = () => {
       <Sidebar 
         isOpen={sidebarOpen} 
         toggleSidebar={toggleSidebar}
+        onDashboard={handleBackToDashboard}
         onNewOpportunity={handleNewOpportunity}
         onOpenOpportunities={handleOpenOpportunities}
         onWonOpportunities={handleWonOpportunities}
