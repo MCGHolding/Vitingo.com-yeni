@@ -13,8 +13,41 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 
-export default function AllFairsPage({ fairs, onBackToDashboard }) {
+export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [fairs, setFairs] = useState(initialFairs || []);
+  const [loading, setLoading] = useState(false);
+
+  // Load fairs from database on component mount
+  useEffect(() => {
+    const loadFairs = async () => {
+      setLoading(true);
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/fairs`);
+        
+        if (response.ok) {
+          const fairsData = await response.json();
+          // Filter out fairs with empty names
+          const validFairs = fairsData.filter(fair => fair.name && fair.name.trim() !== '');
+          setFairs(validFairs);
+          console.log('Fairs loaded from database:', validFairs.length);
+        } else {
+          console.error('Failed to load fairs from API');
+          // Fallback to initial fairs if API fails
+          setFairs(initialFairs || []);
+        }
+      } catch (error) {
+        console.error('Error loading fairs:', error);
+        // Fallback to initial fairs if API fails
+        setFairs(initialFairs || []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFairs();
+  }, [initialFairs]);
 
   const filteredFairs = fairs?.filter(fair =>
     fair.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
