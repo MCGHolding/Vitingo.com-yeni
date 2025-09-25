@@ -156,7 +156,7 @@ const RealTimeSurveyStats = () => {
         <div className="bg-blue-50 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-blue-600">{surveyStats.totalSent}</div>
+              <div className="text-2xl font-bold text-blue-600">{surveyStats.total_sent}</div>
               <div className="text-sm text-gray-600">Gönderilen</div>
             </div>
             <Mail className="h-8 w-8 text-blue-600" />
@@ -167,7 +167,7 @@ const RealTimeSurveyStats = () => {
         <div className="bg-green-50 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-green-600">{surveyStats.totalCompleted}</div>
+              <div className="text-2xl font-bold text-green-600">{surveyStats.total_completed}</div>
               <div className="text-sm text-gray-600">Tamamlanan</div>
             </div>
             <CheckCircle className="h-8 w-8 text-green-600" />
