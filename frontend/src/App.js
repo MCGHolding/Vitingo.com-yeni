@@ -30,19 +30,7 @@ const Dashboard = () => {
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      firstName: 'Admin',
-      lastName: 'User',
-      email: 'admin@vitingo.com',
-      username: 'admu',
-      phone: '+90 532 123 45 67',
-      department: 'senior-management',
-      status: 'active',
-      createdAt: new Date('2024-01-01').toISOString()
-    }
-  ]);
+  const [users, setUsers] = useState(mockUsers);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
