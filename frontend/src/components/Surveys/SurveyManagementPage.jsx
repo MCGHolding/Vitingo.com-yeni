@@ -232,77 +232,226 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
             </div>
 
             <div className="p-6">
-              {/* Customer Search and Selection */}
+              {/* Survey Mode Toggle */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Müşteri Seç
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Anket Gönderim Şekli
                 </label>
-                
-                {/* Search Input */}
-                <div className="relative mb-3">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Müşteri adı veya iletişim kişisi ara..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setSurveyMode('customer')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+                      surveyMode === 'customer'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    Müşteri Projesi
+                  </button>
+                  <button
+                    onClick={() => setSurveyMode('arbitrary')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+                      surveyMode === 'arbitrary'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    Manuel E-posta
+                  </button>
                 </div>
-
-                {/* Customer Dropdown */}
-                <select
-                  value={selectedCustomerId}
-                  onChange={(e) => setSelectedCustomerId(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Müşteri seçiniz...</option>
-                  {filteredCustomers.map(customer => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.name} - {customer.contact}
-                    </option>
-                  ))}
-                </select>
               </div>
 
-              {/* Selected Customer Project Details */}
-              {selectedCustomer && latestProject && (
-                <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
-                    <Eye className="h-4 w-4 mr-2" />
-                    Son Teslim Edilen Proje
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-blue-600" />
-                      <span><strong>İletişim:</strong> {selectedCustomer.contact}</span>
+              {surveyMode === 'customer' ? (
+                <>
+                  {/* Customer Search and Selection */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Müşteri Seç
+                    </label>
+                    
+                    {/* Search Input */}
+                    <div className="relative mb-3">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Müşteri adı veya iletişim kişisi ara..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-blue-600" />
-                      <span><strong>Email:</strong> {selectedCustomer.email}</span>
+
+                    {/* Customer Dropdown */}
+                    <select
+                      value={selectedCustomerId}
+                      onChange={(e) => {
+                        setSelectedCustomerId(e.target.value);
+                        setSelectedProjectId(''); // Reset project selection when customer changes
+                      }}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Müşteri seçiniz...</option>
+                      {filteredCustomers.map(customer => (
+                        <option key={customer.id} value={customer.id}>
+                          {customer.name} - {customer.contact}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Project Selection */}
+                  {selectedCustomer && (
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Proje Seç ({selectedCustomer.projects.length} proje mevcut)
+                      </label>
+                      <select
+                        value={selectedProjectId}
+                        onChange={(e) => setSelectedProjectId(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Proje seçiniz...</option>
+                        {selectedCustomer.projects.map(project => (
+                          <option key={project.id} value={project.id}>
+                            {project.name} - {project.city} ({new Date(project.deliveryDate).toLocaleDateString('tr-TR')})
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-blue-600" />
-                      <span><strong>Proje:</strong> {latestProject.name}</span>
+                  )}
+
+                  {/* Selected Customer Project Details */}
+                  {selectedCustomer && selectedProject && (
+                    <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Seçilen Proje Detayları
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-blue-600" />
+                          <span><strong>İletişim:</strong> {selectedCustomer.contact}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-blue-600" />
+                          <span><strong>Email:</strong> {selectedCustomer.email}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="h-4 w-4 text-blue-600" />
+                          <span><strong>Proje:</strong> {selectedProject.name}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="h-4 w-4 text-blue-600" />
+                          <span><strong>Lokasyon:</strong> {selectedProject.city}, {selectedProject.country}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-blue-600" />
+                          <span><strong>Teslimat:</strong> {new Date(selectedProject.deliveryDate).toLocaleDateString('tr-TR')}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-blue-600" />
-                      <span><strong>Lokasyon:</strong> {latestProject.city}, {latestProject.country}</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Arbitrary Email Survey Form */}
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        İletişim Kişisi Adı *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: Ahmet Yılmaz"
+                        value={arbitraryName}
+                        onChange={(e) => setArbitraryName(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
-                      <span><strong>Teslimat:</strong> {new Date(latestProject.deliveryDate).toLocaleDateString('tr-TR')}</span>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        E-posta Adresi *
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="Örn: ahmet@sirket.com"
+                        value={arbitraryEmail}
+                        onChange={(e) => setArbitraryEmail(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şirket Adı
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: ABC Teknoloji Ltd."
+                        value={arbitraryCompany}
+                        onChange={(e) => setArbitraryCompany(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Proje/Fuar Adı *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: CeBIT Turkey 2024 Standı"
+                        value={arbitraryProject}
+                        onChange={(e) => setArbitraryProject(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
                     </div>
                   </div>
-                </div>
+
+                  {/* Preview Info */}
+                  {arbitraryName && arbitraryEmail && arbitraryProject && (
+                    <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Anket Özeti
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-green-600" />
+                          <span><strong>Alıcı:</strong> {arbitraryName}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-green-600" />
+                          <span><strong>Email:</strong> {arbitraryEmail}</span>
+                        </div>
+                        {arbitraryCompany && (
+                          <div className="flex items-center space-x-2">
+                            <User className="h-4 w-4 text-green-600" />
+                            <span><strong>Şirket:</strong> {arbitraryCompany}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="h-4 w-4 text-green-600" />
+                          <span><strong>Proje:</strong> {arbitraryProject}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Send Button */}
               <button
                 onClick={handleSendSurvey}
-                disabled={!selectedCustomer || isLoading}
+                disabled={
+                  (surveyMode === 'customer' && (!selectedCustomer || !selectedProject)) ||
+                  (surveyMode === 'arbitrary' && (!arbitraryName || !arbitraryEmail || !arbitraryProject)) ||
+                  isLoading
+                }
                 className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all ${
-                  selectedCustomer && !isLoading
+                  ((surveyMode === 'customer' && selectedCustomer && selectedProject) ||
+                   (surveyMode === 'arbitrary' && arbitraryName && arbitraryEmail && arbitraryProject)) && !isLoading
                     ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
