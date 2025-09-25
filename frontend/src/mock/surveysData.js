@@ -203,7 +203,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "Automechanika İstanbul",
         standSize: "12x8 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Can Demir"
       },
       {
         id: 110,
@@ -214,7 +215,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "IAA Mobility",
         standSize: "18x12 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Selin Aydın"
       },
       {
         id: 111,
@@ -225,7 +227,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "Paris Motor Show",
         standSize: "16x10 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Can Demir"
       }
     ]
   },
