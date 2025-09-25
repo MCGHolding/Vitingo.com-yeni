@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CountUp from 'react-countup';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -13,6 +13,25 @@ const ModernKPICard = ({
   isPercentage = false,
   isCurrency = false 
 }) => {
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [displayValue, setDisplayValue] = useState(0);
+  const countUpRef = useRef(null);
+
+  useEffect(() => {
+    // Animate only once when component mounts
+    if (!hasAnimated) {
+      setHasAnimated(true);
+      // Small delay to make sure component is rendered
+      const timer = setTimeout(() => {
+        setDisplayValue(value);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      // If already animated, just update the display value immediately
+      setDisplayValue(value);
+    }
+  }, [value, hasAnimated]);
+
   const formatValue = (val) => {
     if (isCurrency) {
       return val.toLocaleString('tr-TR');
