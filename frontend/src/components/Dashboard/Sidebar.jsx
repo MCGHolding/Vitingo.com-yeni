@@ -339,7 +339,7 @@ export default function Sidebar({
         </nav>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-slate-700">
+        <div className="p-4 border-t border-slate-700 bg-slate-800/90">
           <UserMenu />
         </div>
       </div>
