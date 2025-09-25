@@ -714,7 +714,6 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                       
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-1">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
                           <span className="font-semibold text-gray-900">
                             {formatCurrency(opportunity.amount, opportunity.currency)}
                           </span>
