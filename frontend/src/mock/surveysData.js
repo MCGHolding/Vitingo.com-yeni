@@ -269,7 +269,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "IFA Berlin",
         standSize: "18x12 metre", 
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Selin Aydın"
       }
     ]
   },
