@@ -1013,6 +1013,19 @@ async def send_survey_invitation(
             "error": str(e)
         }
 
+@api_router.post("/send-test-email")
+async def send_test_email(email: str):
+    """Send test email to verify SendGrid configuration"""
+    try:
+        result = email_service.send_test_email(email)
+        return result
+    except Exception as e:
+        logger.error(f"Error sending test email: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.get("/surveys/{survey_token}")
 async def get_survey_by_token(survey_token: str):
     """Get survey details by token"""
