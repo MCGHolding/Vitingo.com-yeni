@@ -1255,35 +1255,6 @@ async def submit_survey_response(
             "error": str(e)
         }
 
-@api_router.get("/surveys/stats")
-async def get_survey_stats():
-    """Get survey statistics"""
-    try:
-        total_sent = await db.survey_invitations.count_documents({})
-        total_completed = await db.survey_responses.count_documents({})
-        
-        # Calculate response rate
-        response_rate = (total_completed / total_sent * 100) if total_sent > 0 else 0
-        
-        # Get recent responses
-        recent_responses = await db.survey_responses.find().sort("submitted_at", -1).limit(5).to_list(length=5)
-        
-        return {
-            "total_sent": total_sent,
-            "total_completed": total_completed,
-            "response_rate": round(response_rate, 1),
-            "recent_responses": len(recent_responses)
-        }
-        
-    except Exception as e:
-        logger.error(f"Error getting survey stats: {str(e)}")
-        return {
-            "total_sent": 0,
-            "total_completed": 0,
-            "response_rate": 0,
-            "recent_responses": 0
-        }
-
 @api_router.get("/surveys/responses")
 async def get_survey_responses(
     customer_id: str = None,
