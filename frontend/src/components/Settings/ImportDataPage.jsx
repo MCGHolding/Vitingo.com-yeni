@@ -12,7 +12,7 @@ import {
   ChevronDown,
   Download
 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { useToast } from '../../hooks/use-toast';
 
 export default function ImportDataPage({ onBackToDashboard }) {
