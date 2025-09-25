@@ -18,7 +18,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     if (!value && value !== 0) return '';
     
     // Convert to string and handle decimal places
-    const numStr = value.toString();
+    const numStr = parseFloat(value).toString();
     const parts = numStr.split('.');
     
     // Format integer part with thousands separator
