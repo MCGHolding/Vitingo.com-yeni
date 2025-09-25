@@ -27,12 +27,9 @@ export default function NewUserFormModal({ onClose, onSave }) {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
-    birthDate: '',
     department: '',
     username: '',
-    password: '',
-    notes: ''
+    password: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
