@@ -28,7 +28,7 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
 
   // Get selected customer details
   const selectedCustomer = customersWithProjects.find(c => c.id === parseInt(selectedCustomerId));
-  const latestProject = selectedCustomer?.projects?.[0]; // Assuming latest project is first
+  const selectedProject = selectedCustomer?.projects?.find(p => p.id === parseInt(selectedProjectId)) || selectedCustomer?.projects?.[0];
 
   const handleTestEmail = async () => {
     setIsLoading(true);
