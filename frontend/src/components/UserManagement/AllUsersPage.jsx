@@ -366,7 +366,7 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
-                                  onClick={() => onEditUser && onEditUser(user)}
+                                  onClick={() => handleEditUser(user)}
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Button>
