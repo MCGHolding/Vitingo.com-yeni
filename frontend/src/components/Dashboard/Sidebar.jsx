@@ -165,7 +165,9 @@ export default function Sidebar({
   onNewFair,
   onAllFairs,
   onActiveFairs,
-  onPastFairs
+  onPastFairs,
+  onImportData,
+  onExportData
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
