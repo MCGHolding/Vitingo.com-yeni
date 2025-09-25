@@ -147,6 +147,39 @@ export const customersWithProjects = [
         fairName: "CeBIT Turkey",
         standSize: "9x6 metre",
         surveyLink: null
+      },
+      {
+        id: 107,
+        name: "Mobile World Congress Barcelona",
+        city: "Barcelona",
+        country: "İspanya",
+        deliveryDate: "2024-02-28",
+        status: "completed",
+        fairName: "Mobile World Congress",
+        standSize: "12x8 metre",
+        surveyLink: null
+      },
+      {
+        id: 108,
+        name: "ITU Telecom World Istanbul",
+        city: "İstanbul",
+        country: "Türkiye",
+        deliveryDate: "2024-05-15",
+        status: "completed",
+        fairName: "ITU Telecom World",
+        standSize: "15x10 metre",
+        surveyLink: null
+      },
+      {
+        id: 109,
+        name: "Eurasia Boat Show Istanbul",
+        city: "İstanbul",
+        country: "Türkiye",
+        deliveryDate: "2024-03-10",
+        status: "completed",
+        fairName: "Eurasia Boat Show",
+        standSize: "8x6 metre",
+        surveyLink: null
       }
     ]
   },
