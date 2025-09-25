@@ -24,11 +24,17 @@ import {
 } from 'lucide-react';
 import { allPeople } from '../../mock/peopleData';
 
-export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [] }) {
+export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [], onUpdatePerson }) {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearchTerm, setTagSearchTerm] = useState('');
   const [selectedSector, setSelectedSector] = useState('');
   const [selectedRelationship, setSelectedRelationship] = useState('');
+  
+  // Modal states
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   
   // Use props people if provided, otherwise fall back to mock data
   const [people, setPeople] = useState(peopleProp.length > 0 ? peopleProp : allPeople);
