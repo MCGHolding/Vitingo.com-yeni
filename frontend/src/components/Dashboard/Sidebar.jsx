@@ -62,6 +62,13 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity }) {
       return;
     }
     
+    if (subItem && subItem.name === 'Açık Fırsatlar') {
+      if (onOpenOpportunities) {
+        onOpenOpportunities();
+      }
+      return;
+    }
+    
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
       if (item.hasSubmenu) {
