@@ -904,6 +904,9 @@ const Dashboard = () => {
         onPurchaseApprovals={handlePurchaseApprovals}
       />
       
+      {/* Header */}
+      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      
       {/* Main content */}
       <div className="lg:ml-64">
         {renderContent()}
