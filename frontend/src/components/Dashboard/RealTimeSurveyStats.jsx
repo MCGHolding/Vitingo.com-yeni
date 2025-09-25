@@ -186,10 +186,10 @@ const RealTimeSurveyStats = () => {
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
             className={`h-2 rounded-full transition-all duration-1000 ${
-              surveyStats.responseRate >= 70 ? 'bg-green-500' :
-              surveyStats.responseRate >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+              surveyStats.response_rate >= 70 ? 'bg-green-500' :
+              surveyStats.response_rate >= 50 ? 'bg-yellow-500' : 'bg-red-500'
             }`}
-            style={{ width: `${Math.min(surveyStats.responseRate, 100)}%` }}
+            style={{ width: `${Math.min(surveyStats.response_rate, 100)}%` }}
           ></div>
         </div>
       </div>
