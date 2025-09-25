@@ -167,13 +167,68 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity, onOpe
           
           {/* User Menu */}
           <div className="space-y-1">
-            <button
-              className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all duration-200"
-              onClick={onUserManagement}
-            >
-              <User className="mr-3 h-4 w-4 flex-shrink-0" />
-              Kullanıcı Yönetimi
-            </button>
+            <div>
+              {/* User Management with submenu */}
+              <div
+                className={cn(
+                  "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
+                  "text-slate-300 hover:bg-slate-700 hover:text-white"
+                )}
+                onClick={() => toggleSubmenu('Kullanıcı Yönetimi')}
+              >
+                <User className="mr-3 h-4 w-4 flex-shrink-0" />
+                <span className="flex-1">Kullanıcı Yönetimi</span>
+                {openSubmenu === 'Kullanıcı Yönetimi' ? 
+                  <ChevronDown className="h-4 w-4 text-slate-400" /> :
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
+                }
+              </div>
+
+              {/* User Management Submenu */}
+              {openSubmenu === 'Kullanıcı Yönetimi' && (
+                <div className="ml-6 mt-2 space-y-1">
+                  <button
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                    onClick={() => {
+                      if (onNewUser) onNewUser();
+                    }}
+                  >
+                    <Plus className="mr-3 h-4 w-4 flex-shrink-0" />
+                    Yeni Kullanıcı
+                  </button>
+                  
+                  <button
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                    onClick={() => {
+                      if (onAllUsers) onAllUsers();
+                    }}
+                  >
+                    <Users className="mr-3 h-4 w-4 flex-shrink-0" />
+                    Tüm Kullanıcılar
+                  </button>
+                  
+                  <button
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                    onClick={() => {
+                      if (onInactiveUsers) onInactiveUsers();
+                    }}
+                  >
+                    <Target className="mr-3 h-4 w-4 flex-shrink-0" />
+                    Pasif Kullanıcılar
+                  </button>
+                  
+                  <button
+                    className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                    onClick={() => {
+                      if (onFormerUsers) onFormerUsers();
+                    }}
+                  >
+                    <XCircle className="mr-3 h-4 w-4 flex-shrink-0" />
+                    Önceki Kullanıcılar
+                  </button>
+                </div>
+              )}
+            </div>
             
             <button
               className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all duration-200"
