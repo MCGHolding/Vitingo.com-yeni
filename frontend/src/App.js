@@ -39,8 +39,6 @@ import {
   X
 } from 'lucide-react';
 
-import { useActivityTracker } from './hooks/useActivityTracker';
-
 const Dashboard = () => {
   useActivityTracker();
   const [sidebarOpen, setSidebarOpen] = useState(false);
