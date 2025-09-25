@@ -107,13 +107,12 @@ const isValidPassword = (password) => {
 };
 
 export const departments = [
-  { value: 'customer-service', label: 'Müşteri Temsilcisi' },
-  { value: 'accounting', label: 'Muhasebe' },
-  { value: 'senior-management', label: 'Üst Yönetim' },
-  { value: 'management', label: 'Yönetim' },
-  { value: 'sales', label: 'Satış' },
+  { value: 'super-admin', label: 'Süper Admin' },
+  { value: 'admin', label: 'Admin' },
+  { value: 'customer-representative', label: 'Müşteri Temsilcisi' },
   { value: 'design', label: 'Tasarım' },
-  { value: 'marketing', label: 'Pazarlama' }
+  { value: 'accounting', label: 'Muhasebe' },
+  { value: 'production', label: 'Üretim Müdürü' }
 ];
 
 export const sendWelcomeEmail = async (userData, generatedPassword) => {
