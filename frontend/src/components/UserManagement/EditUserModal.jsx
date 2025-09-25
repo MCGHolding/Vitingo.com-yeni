@@ -100,6 +100,25 @@ export default function EditUserModal({ user, onClose, onSave }) {
       newErrors.department = 'Departman seçimi zorunludur';
     }
 
+    // Password validation (only if changing password)
+    if (changePassword) {
+      if (!formData.password) {
+        newErrors.password = 'Şifre zorunludur';
+      } else if (formData.password.length < 6) {
+        newErrors.password = 'Şifre en az 6 karakter olmalıdır';
+      } else if (!/(?=.*[a-z])/.test(formData.password)) {
+        newErrors.password = 'Şifre en az bir küçük harf içermelidir';
+      } else if (!/(?=.*[A-Z])/.test(formData.password)) {
+        newErrors.password = 'Şifre en az bir büyük harf içermelidir';
+      } else if (!/(?=.*[!@#$%^&*])/.test(formData.password)) {
+        newErrors.password = 'Şifre en az bir özel karakter içermelidir';
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Şifreler eşleşmiyor';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
