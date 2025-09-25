@@ -14,6 +14,10 @@ import WonOpportunitiesPage from './components/Opportunities/WonOpportunitiesPag
 import LostOpportunitiesPage from './components/Opportunities/LostOpportunitiesPage';
 import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpportunitiesPage';
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
+import NewCustomerForm from './components/Customers/NewCustomerForm';
+import AllCustomersPage from './components/Customers/AllCustomersPage';
+import InactiveCustomersPage from './components/Customers/InactiveCustomersPage';
+import FavoriteCustomersPage from './components/Customers/FavoriteCustomersPage';
 import UserManagementModal from './components/UserManagement/UserManagementModal';
 import AllUsersPage from './components/UserManagement/AllUsersPage';
 import { customerStats, salesData } from './mock/data';
