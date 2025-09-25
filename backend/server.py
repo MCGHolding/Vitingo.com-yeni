@@ -1033,6 +1033,60 @@ async def send_test_email(request: TestEmailRequest):
             "error": str(e)
         }
 
+class UserEmailRequest(BaseModel):
+    to: str
+    cc: Optional[str] = ""
+    bcc: Optional[str] = ""
+    subject: str
+    body: str
+    from_name: str
+    from_email: str
+    to_name: str
+    attachments: Optional[List[Dict]] = []
+
+@api_router.post("/send-user-email")
+async def send_user_email(request: UserEmailRequest):
+    """Send email from user to user via CRM system"""
+    try:
+        result = email_service.send_user_email(
+            to_email=request.to,
+            to_name=request.to_name,
+            from_email=request.from_email,
+            from_name=request.from_name,
+            subject=request.subject,
+            body=request.body,
+            cc=request.cc,
+            bcc=request.bcc,
+            attachments=request.attachments
+        )
+        
+        # Save email to sent_emails collection for tracking
+        email_record = {
+            "id": str(uuid.uuid4()),
+            "from": request.from_email,
+            "from_name": request.from_name,
+            "to": request.to,
+            "to_name": request.to_name,
+            "cc": request.cc,
+            "bcc": request.bcc,
+            "subject": request.subject,
+            "body": request.body,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "sent" if result.get("success") else "failed",
+            "attachments": len(request.attachments) if request.attachments else 0,
+            "sendgrid_message_id": result.get("message_id")
+        }
+        
+        await db.sent_emails.insert_one(email_record)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error sending user email: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 class ArbitrarySurveyRequest(BaseModel):
     email: str
     contact_name: str
