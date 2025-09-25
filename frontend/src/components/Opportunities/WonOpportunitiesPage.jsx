@@ -278,13 +278,14 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Müşteri</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Etkinlik</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Tutar</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Durum</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Kazanım Tarihi</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">İletişim</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-600">İşlemler</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Müşteri</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İsim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
+                    <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,75 +296,88 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
                       }`}
                     >
-                      <td className="py-4 px-4">
-                        <div className="space-y-1">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600">
-                                  {opportunity.customer}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Kazanım tarihi: {formatDate(opportunity.wonDate)}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <div className="flex items-center space-x-1">
-                            {opportunity.tags.map((tag, i) => (
-                              <Badge 
-                                key={i} 
-                                className={`text-xs ${tagColors[tag] || 'bg-gray-500 text-white'}`}
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
+                      <td className="py-3 px-3">
+                        <span className="font-medium text-blue-600 text-sm">#{opportunity.id}</span>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[100px] truncate">
+                                {opportunity.customer}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">
+                                {opportunity.customer}<br/>
+                                Kazanım tarihi: {formatDate(opportunity.wonDate)}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="font-medium text-gray-900 text-sm max-w-[140px] truncate">
+                          {opportunity.eventName}
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="font-medium text-gray-900">{opportunity.eventName}</div>
-                      </td>
-                      
-                      <td className="py-4 px-4">
-                        <div className="font-bold text-green-600">
-                          {formatCurrency(opportunity.dealValue, opportunity.currency)}
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-green-600 text-sm">
+                            {formatCurrency(opportunity.dealValue, opportunity.currency)}
+                          </span>
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <Badge className="bg-green-100 text-green-800 border-green-300">
+                      <td className="py-3 px-3">
+                        <Badge className="bg-green-100 text-green-800 border-green-300 text-[10px] px-2 py-1">
                           Kazanıldı
                         </Badge>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Calendar className="h-3 w-3" />
-                          <span>{formatDate(opportunity.wonDate)}</span>
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px]">
+                              {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium text-gray-900 text-xs max-w-[80px] truncate">
+                              {opportunity.contactPerson}
+                            </div>
+                          </div>
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2 text-sm">
-                          <User className="h-3 w-3 text-gray-400" />
-                          <span className="text-gray-900">{opportunity.contactPerson}</span>
+                      <td className="py-3 px-3">
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {opportunity.tags.map((tag, tagIndex) => (
+                            <Badge
+                              key={tagIndex}
+                              className={`text-[9px] px-1 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4 text-center">
-                        <div className="flex items-center justify-center space-x-2">
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center space-x-1">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                  className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                                   onClick={() => handleView(opportunity)}
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <Eye className="h-3 w-3" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -378,10 +392,10 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
+                                  className="h-7 w-7 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
                                   onClick={() => handleEdit(opportunity)}
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Edit className="h-3 w-3" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
