@@ -365,7 +365,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     });
 
     return filtered;
-  }, [searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
+  }, [opportunitiesData, searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const formatCurrency = (amount, currency) => {
     if (amount === 0) return '-';
