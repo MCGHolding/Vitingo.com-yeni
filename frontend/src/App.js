@@ -175,8 +175,7 @@ const Dashboard = () => {
           <AllUsersPage 
             users={users.filter(user => user.status === 'former')}
             onBack={handleBackToDashboard}
-            onEditUser={(user) => console.log('Edit user:', user)}
-            onViewUser={(user) => console.log('View user:', user)}
+            onUpdateUser={updateUser}
           />
         );
       default:
