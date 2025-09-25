@@ -258,10 +258,16 @@ const RealTimeSurveyStats = ({ onDetailedReport, onSendSurvey }) => {
 
       {/* Aksiyon Butonları */}
       <div className="grid grid-cols-2 gap-2">
-        <button className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+        <button 
+          onClick={onDetailedReport}
+          className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
           Detaylı Rapor
         </button>
-        <button className="px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+        <button 
+          onClick={onSendSurvey}
+          className="px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+        >
           Anket Gönder
         </button>
       </div>
