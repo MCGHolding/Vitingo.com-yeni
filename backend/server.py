@@ -52,6 +52,7 @@ class Fair(BaseModel):
     endDate: str
     sector: str
     cycle: str
+    fairMonth: str = ""
     status: str = "active"
     organizer: str = "Vitingo Events"
     participants: int = 0
@@ -70,6 +71,7 @@ class FairCreate(BaseModel):
     endDate: str
     sector: str
     cycle: str
+    fairMonth: str = ""
     description: str = ""
 
 # Add your routes to the router instead of directly to app
