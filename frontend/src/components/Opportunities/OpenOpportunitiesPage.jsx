@@ -340,10 +340,10 @@ export default function OpenOpportunitiesPage() {
                   <SelectValue placeholder="Para Birimi" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tüm Para Birimleri</SelectItem>
-                  <SelectItem value="EUR">EUR (€)</SelectItem>
-                  <SelectItem value="USD">USD ($)</SelectItem>
-                  <SelectItem value="TRY">TRY (₺)</SelectItem>
+                  <SelectItem value="all">Tüm Para Birimleri ({currencyCounts.EUR + currencyCounts.USD + currencyCounts.TRY})</SelectItem>
+                  <SelectItem value="EUR">EUR (€) ({currencyCounts.EUR})</SelectItem>
+                  <SelectItem value="USD">USD ($) ({currencyCounts.USD})</SelectItem>
+                  <SelectItem value="TRY">TRY (₺) ({currencyCounts.TRY})</SelectItem>
                 </SelectContent>
               </Select>
 
