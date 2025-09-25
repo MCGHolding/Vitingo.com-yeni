@@ -4,6 +4,7 @@ import { surveyResponses, surveyQuestions, customersWithProjects } from '../../m
 
 const SurveyResultsSection = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [selectedRepresentative, setSelectedRepresentative] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
