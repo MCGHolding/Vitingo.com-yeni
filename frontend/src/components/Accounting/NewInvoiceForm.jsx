@@ -374,11 +374,10 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                           {selectedCurrency?.symbol}
                         </span>
                         <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={item.unitPrice}
-                          onChange={(e) => handleItemChange(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                          type="text"
+                          value={item.unitPrice ? formatNumber(item.unitPrice) : ''}
+                          onChange={(e) => handleItemChange(item.id, 'unitPrice', e.target.value)}
+                          placeholder="0,00"
                           className="w-full pl-8"
                         />
                       </div>
