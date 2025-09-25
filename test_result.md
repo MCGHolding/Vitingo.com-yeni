@@ -248,12 +248,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Navigation to Satış Fırsatları submenu"
-    - "Kazanılan Fırsatlar page functionality"
-    - "Kaybedilen Fırsatlar page functionality"
-    - "Favori Fırsatlar page functionality"
-    - "Tüm Satış Fırsatları page functionality"
-    - "Action buttons modal functionality"
+    - "Navigation to Müşteriler submenu"
+    - "Tüm Müşteriler page functionality"
+    - "Pasif Müşteriler page functionality"
+    - "Favori Müşteriler page functionality"
+    - "Table format consistency across customer pages"
+    - "Filter and search functionality"
+    - "Action buttons functionality"
+    - "Summary cards and statistics"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
