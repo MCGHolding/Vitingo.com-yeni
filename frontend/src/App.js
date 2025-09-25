@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 import Sidebar from './components/Dashboard/Sidebar';
 import StatCard from './components/Dashboard/StatCard';
 import RevenueChart from './components/Dashboard/RevenueChart';
