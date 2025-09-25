@@ -40,6 +40,8 @@ const Dashboard = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
   const [users, setUsers] = useState(mockUsers);
+  const [customers, setCustomers] = useState(allCustomers);
+  const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
