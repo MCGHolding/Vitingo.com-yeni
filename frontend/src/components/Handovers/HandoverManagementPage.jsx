@@ -246,32 +246,6 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
             Dashboard'a Dön
           </button>
         </div>
-
-        {/* Tabs */}
-        <div className="flex space-x-1 mt-6">
-          <button
-            onClick={() => setActiveTab('send')}
-            className={`px-6 py-3 text-sm font-medium rounded-lg transition-colors ${
-              activeTab === 'send'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-            }`}
-          >
-            <Send className="inline-block w-4 h-4 mr-2" />
-            Teslim Formu Gönder
-          </button>
-          <button
-            onClick={() => setActiveTab('results')}
-            className={`px-6 py-3 text-sm font-medium rounded-lg transition-colors ${
-              activeTab === 'results'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-            }`}
-          >
-            <FileText className="inline-block w-4 h-4 mr-2" />
-            Teslim Formları ({filteredHandovers.length})
-          </button>
-        </div>
       </div>
 
       <div className="p-6 max-w-7xl mx-auto">
