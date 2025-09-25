@@ -31,6 +31,90 @@ export default function OpenOpportunitiesPage() {
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
 
+  const getCurrencyCounts = () => {
+    const counts = { EUR: 0, USD: 0, TRY: 0 };
+    
+    // Apply all filters except currency filter to get base filtered results
+    let baseFiltered = openOpportunities;
+
+    // Search filter
+    if (searchTerm) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opportunity.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Tag search filter
+    if (tagSearch) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.tags.some(tag => 
+          tag.toLowerCase().includes(tagSearch.toLowerCase())
+        )
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => 
+        opportunity.status === statusFilter
+      );
+    }
+
+    // Amount filter
+    if (amountFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity => {
+        const amount = opportunity.amount;
+        switch (amountFilter) {
+          case '0-5000':
+            return amount >= 0 && amount <= 5000;
+          case '5000-15000':
+            return amount > 5000 && amount <= 15000;
+          case '15000-30000':
+            return amount > 15000 && amount <= 30000;
+          case '30000+':
+            return amount > 30000;
+          case 'no-amount':
+            return amount === 0;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Country filter
+    if (countryFilter !== 'all') {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        opportunity.tags.includes(countryFilter)
+      );
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) >= new Date(dateFrom)
+      );
+    }
+
+    if (dateTo) {
+      baseFiltered = baseFiltered.filter(opportunity =>
+        new Date(opportunity.lastUpdate) <= new Date(dateTo)
+      );
+    }
+
+    // Count by currency
+    baseFiltered.forEach(opportunity => {
+      if (counts.hasOwnProperty(opportunity.currency)) {
+        counts[opportunity.currency]++;
+      }
+    });
+
+    return counts;
+  };
+
+  const currencyCounts = getCurrencyCounts();
+
   const clearAllFilters = () => {
     setSearchTerm('');
     setTagSearch('');
