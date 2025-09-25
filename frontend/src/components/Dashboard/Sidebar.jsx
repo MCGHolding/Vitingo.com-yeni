@@ -341,11 +341,18 @@ export default function Sidebar({
         </nav>
 
         {/* User Profile */}
-        <div 
-          className="p-4 border-t border-slate-600 bg-slate-800"
-          style={{ backgroundColor: '#1e293b' }}
-        >
-          <UserMenu />
+        <div className="p-4 border-t border-slate-700">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0 h-10 w-10">
+              <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                <span className="text-sm font-medium text-white">AD</span>
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-white">Admin User</p>
+              <p className="text-xs text-slate-400">admin@company.com</p>
+            </div>
+          </div>
         </div>
       </div>
 
