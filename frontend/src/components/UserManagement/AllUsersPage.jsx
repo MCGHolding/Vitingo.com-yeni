@@ -348,7 +348,7 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                                  onClick={() => onViewUser && onViewUser(user)}
+                                  onClick={() => handleViewUser(user)}
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
