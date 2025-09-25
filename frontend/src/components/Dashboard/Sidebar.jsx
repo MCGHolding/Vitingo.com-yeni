@@ -27,8 +27,7 @@ import {
   Building,
   UserX,
   Star,
-  UserRound,
-  UserPlus
+  UserRound
 } from 'lucide-react';
 
 const navigation = [
