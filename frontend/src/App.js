@@ -63,6 +63,29 @@ const Dashboard = () => {
   const [fairs, setFairs] = useState(mockFairs);
   const [showNewFairForm, setShowNewFairForm] = useState(false);
 
+  // Load fairs from backend API
+  useEffect(() => {
+    const loadFairs = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/fairs`);
+        
+        if (response.ok) {
+          const fairsData = await response.json();
+          setFairs(fairsData);
+          console.log('Fairs loaded from database:', fairsData.length);
+        } else {
+          console.log('Failed to load fairs from API, using mock data');
+        }
+      } catch (error) {
+        console.error('Error loading fairs:', error);
+        console.log('Using mock data as fallback');
+      }
+    };
+
+    loadFairs();
+  }, []);
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
