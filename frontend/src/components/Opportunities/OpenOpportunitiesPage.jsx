@@ -30,6 +30,18 @@ export default function OpenOpportunitiesPage() {
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
 
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setTagSearch('');
+    setStatusFilter('all');
+    setCurrencyFilter('all');
+    setAmountFilter('all');
+    setCountryFilter('all');
+    setDateFrom('');
+    setDateTo('');
+    setSortBy('id');
+  };
+
   const filteredOpportunities = useMemo(() => {
     let filtered = openOpportunities;
 
