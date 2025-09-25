@@ -34,16 +34,25 @@ const navigation = [
   { 
     name: 'Müşteriler', 
     href: '/customers', 
-    icon: Users, 
+    icon: Building, 
     current: false,
     hasSubmenu: true,
     submenu: [
       { name: 'Yeni Müşteri', href: '/customers/new', icon: Plus },
       { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
       { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
-      { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star },
-      { name: 'Kişi Ekle', href: '/customers/people/new', icon: Plus },
-      { name: 'Tüm Kişiler', href: '/customers/people/all', icon: UserRound }
+      { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star }
+    ]
+  },
+  { 
+    name: 'Kişiler', 
+    href: '/people', 
+    icon: Users, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Kişi Ekle', href: '/people/new', icon: Plus },
+      { name: 'Tüm Kişiler', href: '/people/all', icon: UserRound }
     ]
   },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
