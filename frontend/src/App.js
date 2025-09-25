@@ -497,7 +497,7 @@ const Dashboard = () => {
               </div>
 
               {/* KPI Grid - Modern Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 <ModernKPICard
                   title="Toplam Satışlar"
                   value={2847500}
@@ -507,24 +507,7 @@ const Dashboard = () => {
                   gradient="from-green-500 to-green-600"
                   isCurrency={true}
                 />
-                <ModernKPICard
-                  title="Toplam Kar"
-                  value={847200}
-                  change="+18.5%"
-                  changeType="positive"
-                  icon={TrendingUp}
-                  gradient="from-blue-500 to-blue-600"
-                  isCurrency={true}
-                />
-                <ModernKPICard
-                  title="Büyüme Oranı"
-                  value={23.8}
-                  change="+5.2%"
-                  changeType="positive"
-                  icon={Target}
-                  gradient="from-purple-500 to-purple-600"
-                  isPercentage={true}
-                />
+                <GrowthRateCard />
                 <ModernKPICard
                   title="Aktif Müşteri"
                   value={892}
