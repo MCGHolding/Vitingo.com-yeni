@@ -247,6 +247,13 @@ const Dashboard = () => {
           onSave={saveOpportunity}
         />
       )}
+      {/* User Management Modal */}
+      {showUserManagementModal && (
+        <UserManagementModal
+          onClose={closeUserManagementModal}
+          onSave={saveUser}
+        />
+      )}
     </div>
   );
 };
