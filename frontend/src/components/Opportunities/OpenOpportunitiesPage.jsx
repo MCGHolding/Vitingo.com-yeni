@@ -21,7 +21,13 @@ import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mo
 
 export default function OpenOpportunitiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [tagSearch, setTagSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [currencyFilter, setCurrencyFilter] = useState('all');
+  const [amountFilter, setAmountFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
 
   const filteredOpportunities = useMemo(() => {
