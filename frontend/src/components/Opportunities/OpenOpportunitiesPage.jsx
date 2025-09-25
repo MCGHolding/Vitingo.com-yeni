@@ -721,8 +721,8 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                       </td>
                       
                       <td className="py-3 px-3">
-                        <Badge className={`${getStatusBadgeColor(opportunity.statusText)} border-0 text-xs px-2 py-1`}>
-                          {opportunity.statusText}
+                        <Badge className={`${getStatusBadgeColor(opportunity.statusText)} border-0 text-[10px] px-2 py-1 max-w-[120px] truncate`}>
+                          {opportunity.statusText.replace('Açık - Aktif - ', '')}
                         </Badge>
                       </td>
                       
