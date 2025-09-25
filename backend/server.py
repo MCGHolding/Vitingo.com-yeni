@@ -1017,11 +1017,14 @@ async def send_survey_invitation(
             "error": str(e)
         }
 
+class TestEmailRequest(BaseModel):
+    email: str
+
 @api_router.post("/send-test-email")
-async def send_test_email(email: str):
+async def send_test_email(request: TestEmailRequest):
     """Send test email to verify SendGrid configuration"""
     try:
-        result = email_service.send_test_email(email)
+        result = email_service.send_test_email(request.email)
         return result
     except Exception as e:
         logger.error(f"Error sending test email: {str(e)}")
