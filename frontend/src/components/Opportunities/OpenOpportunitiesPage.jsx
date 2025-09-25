@@ -112,23 +112,42 @@ export default function OpenOpportunitiesPage() {
         </div>
       </div>
 
-      {/* Filters and Search */}
+      {/* Advanced Filters and Search */}
       <div className="px-6 py-6">
         <Card>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center space-x-2">
+              <Search className="h-5 w-5" />
+              <span>Gelişmiş Arama ve Filtreler</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* First Row - Main Search */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="relative col-span-2">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Müşteri, etkinlik veya kişi ara..."
+                  placeholder="Müşteri adı, etkinlik adı veya kişi adı ile ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-11"
                 />
               </div>
               
+              <div className="relative">
+                <Input
+                  placeholder="Etiketlerde ara (ör: ALMANYA, MEDICA...)"
+                  value={tagSearch}
+                  onChange={(e) => setTagSearch(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+            </div>
+
+            {/* Second Row - Status and Sort Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Durum filtrele" />
                 </SelectTrigger>
@@ -144,21 +163,111 @@ export default function OpenOpportunitiesPage() {
               </Select>
 
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11">
                   <SelectValue placeholder="Sırala" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="id">No'ya Göre</SelectItem>
-                  <SelectItem value="customer">Müşteri Adına Göre</SelectItem>
-                  <SelectItem value="amount">Tutara Göre</SelectItem>
-                  <SelectItem value="date">Tarihe Göre</SelectItem>
+                  <SelectItem value="id">No'ya Göre (Yeniden Eskiye)</SelectItem>
+                  <SelectItem value="customer">Müşteri Adına Göre (A-Z)</SelectItem>
+                  <SelectItem value="amount">Tutara Göre (Yüksekten Düşüğe)</SelectItem>
+                  <SelectItem value="date">Tarihe Göre (Yeni Güncelleme)</SelectItem>
                 </SelectContent>
               </Select>
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">
-                  Toplam {filteredOpportunities.length} fırsat
+              <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
+                <SelectTrigger className="h-11">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Para Birimi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tüm Para Birimleri</SelectItem>
+                  <SelectItem value="EUR">EUR (€)</SelectItem>
+                  <SelectItem value="USD">USD ($)</SelectItem>
+                  <SelectItem value="TRY">TRY (₺)</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={amountFilter} onValueChange={setAmountFilter}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Tutar Aralığı" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tüm Tutarlar</SelectItem>
+                  <SelectItem value="0-5000">0 - 5.000</SelectItem>
+                  <SelectItem value="5000-15000">5.000 - 15.000</SelectItem>
+                  <SelectItem value="15000-30000">15.000 - 30.000</SelectItem>
+                  <SelectItem value="30000+">30.000+</SelectItem>
+                  <SelectItem value="no-amount">Tutar Girilmemiş</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Third Row - Additional Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Ülke Filtresi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tüm Ülkeler</SelectItem>
+                  <SelectItem value="ALMANYA">Almanya</SelectItem>
+                  <SelectItem value="TÜRKİYE">Türkiye</SelectItem>
+                  <SelectItem value="ABD">Amerika Birleşik Devletleri</SelectItem>
+                  <SelectItem value="BAE">Birleşik Arap Emirlikleri</SelectItem>
+                  <SelectItem value="KANADA">Kanada</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="relative">
+                <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  type="date"
+                  placeholder="Başlangıç Tarihi"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="pl-10 h-11"
+                />
+              </div>
+
+              <div className="relative">
+                <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  type="date"
+                  placeholder="Bitiş Tarihi"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="pl-10 h-11"
+                />
+              </div>
+            </div>
+
+            {/* Results and Actions */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-medium text-gray-700">
+                  <span className="text-blue-600 font-bold">{filteredOpportunities.length}</span> fırsat bulundu
                 </span>
+                {(searchTerm || tagSearch || statusFilter !== 'all' || currencyFilter !== 'all' || amountFilter !== 'all' || countryFilter !== 'all' || dateFrom || dateTo) && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearAllFilters}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Filtreleri Temizle
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-1" />
+                  Excel'e Aktar
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-1" />
+                  Kayıtlı Filtreler
+                </Button>
               </div>
             </div>
           </CardContent>
