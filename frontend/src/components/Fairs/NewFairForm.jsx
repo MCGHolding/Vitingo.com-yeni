@@ -156,9 +156,12 @@ export default function NewFairForm({ onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('Form submit başladı, form data:', formData);
+    
     // Form validation
     if (!formData.name || !formData.city || !formData.country || 
         !formData.startDate || !formData.endDate || !formData.sector || !formData.cycle) {
+      console.log('Form validation hatası - eksik alanlar');
       toast({
         title: "Eksik Bilgiler",
         description: "Lütfen tüm zorunlu alanları doldurunuz.",
@@ -172,6 +175,7 @@ export default function NewFairForm({ onClose, onSave }) {
     const endDate = new Date(formData.endDate);
     
     if (endDate <= startDate) {
+      console.log('Tarih validation hatası');
       toast({
         title: "Tarih Hatası",
         description: "Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.",
@@ -181,6 +185,8 @@ export default function NewFairForm({ onClose, onSave }) {
     }
 
     try {
+      console.log('API çağrısı başlıyor...');
+      
       // Create fair object for API
       const fairData = {
         name: formData.name,
@@ -193,8 +199,12 @@ export default function NewFairForm({ onClose, onSave }) {
         description: `${formData.sector} sektörü fuarı`
       };
 
+      console.log('Gönderilecek veri:', fairData);
+
       // Send to backend API
       const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      console.log('Backend URL:', backendUrl);
+      
       const response = await fetch(`${backendUrl}/api/fairs`, {
         method: 'POST',
         headers: {
@@ -203,12 +213,16 @@ export default function NewFairForm({ onClose, onSave }) {
         body: JSON.stringify(fairData)
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('API hatası:', errorData);
         throw new Error(errorData.detail || 'Fuar kaydedilemedi');
       }
 
       const savedFair = await response.json();
+      console.log('Kaydedilen fuar:', savedFair);
       
       // Call parent onSave with the response from backend
       onSave(savedFair);
@@ -218,6 +232,7 @@ export default function NewFairForm({ onClose, onSave }) {
         description: `"${formData.name}" fuarı veritabanına başarıyla kaydedildi.`,
       });
       
+      console.log('Form kapatılıyor...');
       onClose();
 
     } catch (error) {
