@@ -275,6 +275,12 @@ const Dashboard = () => {
     setCurrentView('surveys');
   };
 
+  const handleSurveyResults = () => {
+    // Anket sonuçları sayfasına git (surveys sayfasında results tab'ına)
+    setCurrentView('surveys');
+    // Burada daha sonra results tab'ını aktif etmek için state eklenebilir
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
