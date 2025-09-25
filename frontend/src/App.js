@@ -26,6 +26,7 @@ import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { mockUsers } from './mock/usersData';
 import { allCustomers } from './mock/customersData';
+import { allPeople } from './mock/peopleData';
 import { 
   Users, 
   TrendingUp, 
