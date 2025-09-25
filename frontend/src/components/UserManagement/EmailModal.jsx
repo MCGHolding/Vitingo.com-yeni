@@ -26,6 +26,7 @@ export default function EmailModal({ user, onClose }) {
     attachments: []
   });
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   const emailTemplates = [
     {
