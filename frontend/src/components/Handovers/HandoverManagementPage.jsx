@@ -563,6 +563,7 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
                 )}
               </button>
             </div>
+          </div>
             
           {/* Right Panel - Handover Statistics */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200">
