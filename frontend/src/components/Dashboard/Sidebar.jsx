@@ -149,7 +149,11 @@ export default function Sidebar({
   onNewProspect,
   onAllProspects,
   onNewQuote,
-  onAllQuotes
+  onAllQuotes,
+  onNewFair,
+  onAllFairs,
+  onActiveFairs,
+  onPastFairs
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
