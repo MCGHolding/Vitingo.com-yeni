@@ -612,6 +612,94 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Currency Models
+class CurrencyRate(BaseModel):
+    code: str
+    name: str
+    buying_rate: float
+    selling_rate: float
+
+class CurrencyConversion(BaseModel):
+    try_amount: float
+    usd_amount: float
+    eur_amount: float
+    gbp_amount: float
+    rates: Dict[str, float]
+
+@api_router.get("/api/currency-rates", response_model=List[CurrencyRate])
+async def get_currency_rates():
+    """Get current currency rates from TCMB"""
+    try:
+        url = "https://www.tcmb.gov.tr/kurlar/today.xml"
+        response = requests.get(url, timeout=10)
+        root = ET.fromstring(response.content)
+        
+        rates = []
+        target_currencies = ["USD", "EUR", "GBP"]
+        
+        for currency in root.findall("Currency"):
+            code = currency.get("CurrencyCode")
+            if code in target_currencies:
+                name = currency.find("Isim").text
+                forex_buying = currency.find("ForexBuying")
+                forex_selling = currency.find("ForexSelling")
+                
+                if forex_buying is not None and forex_selling is not None:
+                    buying_rate = float(forex_buying.text or "0")
+                    selling_rate = float(forex_selling.text or "0")
+                    
+                    rates.append(CurrencyRate(
+                        code=code,
+                        name=name,
+                        buying_rate=buying_rate,
+                        selling_rate=selling_rate
+                    ))
+        
+        return rates
+    except Exception as e:
+        logger.error(f"Error fetching currency rates: {str(e)}")
+        # Return fallback rates if TCMB is unavailable
+        return [
+            CurrencyRate(code="USD", name="US DOLLAR", buying_rate=34.5, selling_rate=34.7),
+            CurrencyRate(code="EUR", name="EURO", buying_rate=38.2, selling_rate=38.5),
+            CurrencyRate(code="GBP", name="POUND STERLING", buying_rate=44.1, selling_rate=44.4)
+        ]
+
+@api_router.get("/api/convert-currency/{try_amount}", response_model=CurrencyConversion)
+async def convert_currency(try_amount: float):
+    """Convert TRY amount to other currencies"""
+    try:
+        # Get current rates
+        rates_response = await get_currency_rates()
+        
+        # Create rates dict for easy access
+        rates = {}
+        conversions = {}
+        
+        for rate in rates_response:
+            # Use selling rate for conversion from TRY to foreign currency
+            rate_value = rate.selling_rate
+            rates[rate.code] = rate_value
+            conversions[f"{rate.code.lower()}_amount"] = try_amount / rate_value
+        
+        return CurrencyConversion(
+            try_amount=try_amount,
+            usd_amount=conversions.get("usd_amount", 0),
+            eur_amount=conversions.get("eur_amount", 0),
+            gbp_amount=conversions.get("gbp_amount", 0),
+            rates=rates
+        )
+    except Exception as e:
+        logger.error(f"Error converting currency: {str(e)}")
+        # Return fallback conversion
+        return CurrencyConversion(
+            try_amount=try_amount,
+            usd_amount=try_amount / 34.6,
+            eur_amount=try_amount / 38.3,
+            gbp_amount=try_amount / 44.2,
+            rates={"USD": 34.6, "EUR": 38.3, "GBP": 44.2}
+        )
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
