@@ -22,7 +22,10 @@ import {
   UserPlus,
   UserSearch,
   ClipboardList,
-  Files
+  Files,
+  Building,
+  UserX,
+  Star
 } from 'lucide-react';
 
 const navigation = [
