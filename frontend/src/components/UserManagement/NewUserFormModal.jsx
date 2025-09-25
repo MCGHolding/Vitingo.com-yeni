@@ -4,8 +4,8 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   X,
   User,
