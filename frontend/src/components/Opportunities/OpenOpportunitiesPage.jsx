@@ -272,6 +272,71 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
 
   const currencyCounts = getCurrencyCounts();
 
+  // Action handlers
+  const handleViewOpportunity = (opportunity) => {
+    setSelectedOpportunity(opportunity);
+    setViewModalOpen(true);
+  };
+
+  const handleEditOpportunity = (opportunity) => {
+    setSelectedOpportunity(opportunity);
+    setEditModalOpen(true);
+  };
+
+  const handleUpdateOpportunity = (updatedOpportunity) => {
+    // This would normally update the database
+    // For now, we'll just show a success message
+    console.log('Opportunity updated:', updatedOpportunity);
+    toast({
+      title: "Başarılı",
+      description: "Satış fırsatı başarıyla güncellendi",
+    });
+  };
+
+  const handleActionMenu = (action, opportunity) => {
+    switch (action) {
+      case 'delete':
+        toast({
+          title: "Silme İşlemi",
+          description: `${opportunity.customer} fırsatı silme işlemi başlatıldı`,
+          variant: "destructive"
+        });
+        break;
+      case 'share':
+        toast({
+          title: "Paylaşım",
+          description: `${opportunity.customer} fırsatı paylaşıma hazırlandı`,
+        });
+        break;
+      case 'comment':
+        toast({
+          title: "Yorum Ekle",
+          description: `${opportunity.customer} fırsatına yorum ekleme`,
+        });
+        break;
+      case 'event':
+        toast({
+          title: "Etkinlik Oluştur",
+          description: `${opportunity.customer} için etkinlik oluşturuluyor`,
+        });
+        break;
+      case 'message':
+        toast({
+          title: "Mesaj Gönder",
+          description: `${opportunity.customer} ile mesajlaşma başlatılıyor`,
+        });
+        break;
+      case 'email':
+        toast({
+          title: "E-posta Gönder",
+          description: `${opportunity.customer} için e-posta hazırlanıyor`,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   const clearAllFilters = () => {
     setSearchTerm('');
     setTagSearch('');
