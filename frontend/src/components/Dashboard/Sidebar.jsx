@@ -342,36 +342,6 @@ export default function Sidebar({
       }
       return;
     }
-    
-    // Handle User Management menu actions
-    if (subItem && subItem.name === 'Yeni Kullanıcı') {
-      if (onNewUser) {
-        onNewUser();
-      }
-      return;
-    }
-    
-    if (subItem && subItem.name === 'Tüm Kullanıcılar') {
-      if (onAllUsers) {
-        onAllUsers();
-      }
-      return;
-    }
-    
-    if (subItem && subItem.name === 'Pasif Kullanıcılar') {
-      if (onInactiveUsers) {
-        onInactiveUsers();
-      }
-      return;
-    }
-    
-    if (subItem && subItem.name === 'Önceki Kullanıcılar') {
-      if (onFormerUsers) {
-        onFormerUsers();
-      }
-      return;
-    }
-    
     // Handle Fair Management menu actions
     if (subItem && subItem.name === 'Yeni Fuar') {
       if (onNewFair) {
