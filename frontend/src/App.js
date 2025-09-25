@@ -50,6 +50,7 @@ import GeographicSalesMap from './components/Dashboard/GeographicSalesMap';
 import CurrencyTooltip from './components/Dashboard/CurrencyTooltip';
 import SalesSummaryCard from './components/Dashboard/SalesSummaryCard';
 import GrowthRateCard from './components/Dashboard/GrowthRateCard';
+import PassiveLeadsCard from './components/Dashboard/PassiveLeadsCard';
 import { 
   Users, 
   TrendingUp, 
