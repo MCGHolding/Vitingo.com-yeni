@@ -20,7 +20,9 @@ import {
   Heart,
   User,
   UserPlus,
-  UserSearch
+  UserSearch,
+  ClipboardList,
+  Files
 } from 'lucide-react';
 
 const navigation = [
