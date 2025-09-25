@@ -28,8 +28,12 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
         
         if (response.ok) {
           const fairsData = await response.json();
+          console.log('Raw API response:', fairsData.length, 'fairs');
+          console.log('First 5 fairs:', fairsData.slice(0, 5).map(f => f.name));
           // Filter out fairs with empty names
           const validFairs = fairsData.filter(fair => fair.name && fair.name.trim() !== '');
+          console.log('Valid fairs after filtering:', validFairs.length);
+          console.log('Valid fair names:', validFairs.map(f => f.name));
           setFairs(validFairs);
           console.log('Fairs loaded from database:', validFairs.length);
         } else {
