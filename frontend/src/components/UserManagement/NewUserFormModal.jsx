@@ -385,20 +385,6 @@ export default function NewUserFormModal({ onClose, onSave }) {
                 </div>
               </div>
 
-              {/* Notes */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Notlar
-                </label>
-                <Textarea
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Kullanıcı hakkında notlar..."
-                  rows={3}
-                  className="w-full"
-                />
-              </div>
-
               {/* Buttons */}
               <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
                 <Button
