@@ -401,6 +401,122 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
                   </div>
                 </div>
               )}
+                </>
+              ) : (
+                <>
+                  {/* Arbitrary Email Handover Form */}
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        İletişim Kişisi Adı *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: Mehmet Yılmaz"
+                        value={arbitraryName}
+                        onChange={(e) => setArbitraryName(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        E-posta Adresi *
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="Örn: mehmet@sirket.com"
+                        value={arbitraryEmail}
+                        onChange={(e) => setArbitraryEmail(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şirket Adı
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: XYZ İnşaat Ltd."
+                        value={arbitraryCompany}
+                        onChange={(e) => setArbitraryCompany(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Proje/Fuar Adı *
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Örn: Yapı Fuarı İzmir 2025 Standı"
+                        value={arbitraryProject}
+                        onChange={(e) => setArbitraryProject(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke (Form Dili İçin)
+                      </label>
+                      <select
+                        value={arbitraryCountry}
+                        onChange={(e) => setArbitraryCountry(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="Türkiye">Türkiye (Türkçe Form)</option>
+                        <option value="Germany">Germany (English Form)</option>
+                        <option value="USA">USA (English Form)</option>
+                        <option value="France">France (English Form)</option>
+                        <option value="Italy">Italy (English Form)</option>
+                        <option value="Spain">Spain (English Form)</option>
+                        <option value="Other">Other (English Form)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Preview Info */}
+                  {arbitraryName && arbitraryEmail && arbitraryProject && (
+                    <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Teslim Formu Özeti
+                      </h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-green-600" />
+                          <span><strong>Alıcı:</strong> {arbitraryName}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-4 w-4 text-green-600" />
+                          <span><strong>Email:</strong> {arbitraryEmail}</span>
+                        </div>
+                        {arbitraryCompany && (
+                          <div className="flex items-center space-x-2">
+                            <User className="h-4 w-4 text-green-600" />
+                            <span><strong>Şirket:</strong> {arbitraryCompany}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="h-4 w-4 text-green-600" />
+                          <span><strong>Proje:</strong> {arbitraryProject}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <FileText className="h-4 w-4 text-green-600" />
+                          <span><strong>Form Dili:</strong> {['Türkiye', 'Turkey'].includes(arbitraryCountry) ? 'Türkçe' : 'İngilizce'}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-green-600" />
+                          <span><strong>Temsilci:</strong> {currentUser.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
               {/* Send Button */}
               <button
