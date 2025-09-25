@@ -221,9 +221,9 @@ export const AuthProvider = ({ children }) => {
 
   const getRoleName = (role) => {
     const roles = {
-      admin: 'Sistem Yöneticisi',
-      sales_manager: 'Satış Müdürü',
-      sales_rep: 'Satış Temsilcisi'
+      'super-admin': 'Süper Admin',
+      'admin': 'Admin',
+      'user': 'Kullanıcı'
     };
     return roles[role] || role;
   };
