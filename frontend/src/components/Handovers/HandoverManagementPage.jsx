@@ -101,26 +101,51 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
   }, [accessibleHandovers]);
 
   const handleSendHandover = async () => {
-    if (!selectedCustomer || !selectedProject) return;
+    if (handoverMode === 'customer') {
+      if (!selectedCustomer || !selectedProject) return;
+    } else {
+      if (!arbitraryName || !arbitraryEmail || !arbitraryProject) return;
+    }
 
     setIsLoading(true);
     
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-      const language = getCustomerLanguage(selectedCustomer.id);
       
-      const requestData = {
-        customer_id: selectedCustomer.id.toString(),
-        project_id: selectedProject.id.toString(),
-        email: selectedCustomer.email,
-        customer_name: selectedCustomer.name,
-        contact_name: selectedCustomer.contact,
-        project_name: selectedProject.name,
-        language: language,
-        customer_representative: selectedProject.customerRepresentative
-      };
+      let requestData;
+      let endpoint = '/api/handovers/send';
       
-      const response = await fetch(`${backendUrl}/api/handovers/send`, {
+      if (handoverMode === 'customer') {
+        // Customer-project mode
+        const language = getCustomerLanguage(selectedCustomer.id);
+        requestData = {
+          customer_id: selectedCustomer.id.toString(),
+          project_id: selectedProject.id.toString(),
+          email: selectedCustomer.email,
+          customer_name: selectedCustomer.name,
+          contact_name: selectedCustomer.contact,
+          project_name: selectedProject.name,
+          language: language,
+          customer_representative: selectedProject.customerRepresentative
+        };
+      } else {
+        // Arbitrary email mode
+        endpoint = '/api/handovers/send-arbitrary';
+        const turkishCountries = ['Türkiye', 'Turkey'];
+        const language = turkishCountries.includes(arbitraryCountry) ? 'tr' : 'en';
+        
+        requestData = {
+          email: arbitraryEmail,
+          contact_name: arbitraryName,
+          company_name: arbitraryCompany,
+          project_name: arbitraryProject,
+          country: arbitraryCountry,
+          language: language,
+          customer_representative: currentUser.name
+        };
+      }
+      
+      const response = await fetch(`${backendUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,13 +158,13 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
       if (result.success) {
         const newHandover = {
           id: Date.now(),
-          customerId: selectedCustomer.id,
-          customerName: selectedCustomer.name,
-          contact: selectedCustomer.contact,
-          projectId: selectedProject.id,
-          projectName: selectedProject.name,
-          customerRepresentative: selectedProject.customerRepresentative,
-          language: language,
+          customerId: handoverMode === 'customer' ? selectedCustomer.id : null,
+          customerName: handoverMode === 'customer' ? selectedCustomer.name : arbitraryCompany,
+          contact: handoverMode === 'customer' ? selectedCustomer.contact : arbitraryName,
+          projectId: handoverMode === 'customer' ? selectedProject.id : null,
+          projectName: handoverMode === 'customer' ? selectedProject.name : arbitraryProject,
+          customerRepresentative: handoverMode === 'customer' ? selectedProject.customerRepresentative : currentUser.name,
+          language: handoverMode === 'customer' ? getCustomerLanguage(selectedCustomer.id) : (turkishCountries.includes(arbitraryCountry) ? 'tr' : 'en'),
           sentAt: new Date().toISOString(),
           status: 'pending',
           handoverToken: result.handover_token,
@@ -147,15 +172,34 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
           completedAt: null,
           signatureData: null,
           autoSurveyTriggered: false,
-          surveyToken: null
+          surveyToken: null,
+          mode: handoverMode
         };
         
         setSentHandovers(prev => [newHandover, ...prev]);
-        setSelectedCustomerId('');
-        setSelectedProjectId('');
-        setSearchTerm('');
         
-        alert(`✅ Teslim formu başarıyla gönderildi!\n\n📧 Alıcı: ${selectedCustomer.contact} (${selectedCustomer.email})\n🌐 Dil: ${language === 'tr' ? 'Türkçe' : 'İngilizce'}\n🔗 Link: ${result.handover_link}`);
+        // Reset form fields
+        if (handoverMode === 'customer') {
+          setSelectedCustomerId('');
+          setSelectedProjectId('');
+          setSearchTerm('');
+        } else {
+          setArbitraryName('');
+          setArbitraryEmail('');
+          setArbitraryProject('');
+          setArbitraryCompany('');
+          setArbitraryCountry('Türkiye');
+        }
+        
+        const recipientInfo = handoverMode === 'customer' 
+          ? `${selectedCustomer.contact} (${selectedCustomer.email})` 
+          : `${arbitraryName} (${arbitraryEmail})`;
+          
+        const languageInfo = handoverMode === 'customer' 
+          ? (getCustomerLanguage(selectedCustomer.id) === 'tr' ? 'Türkçe' : 'İngilizce')
+          : (turkishCountries.includes(arbitraryCountry) ? 'Türkçe' : 'İngilizce');
+          
+        alert(`✅ Teslim formu başarıyla gönderildi!\n\n📧 Alıcı: ${recipientInfo}\n🌐 Dil: ${languageInfo}\n🔗 Link: ${result.handover_link}`);
       } else {
         throw new Error(result.error || 'Email gönderim hatası');
       }
