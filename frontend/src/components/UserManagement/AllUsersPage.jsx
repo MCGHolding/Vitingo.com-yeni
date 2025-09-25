@@ -8,6 +8,9 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../../hooks/use-toast';
 import { departments } from '../../utils/userUtils';
+import ViewUserModal from './ViewUserModal';
+import EditUserModal from './EditUserModal';
+import ActionMenuUserPopover from './ActionMenuUserPopover';
 import { 
   Search, 
   Filter, 
@@ -26,7 +29,7 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 
-export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUser }) {
+export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUser, onUpdateUser }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('all');
