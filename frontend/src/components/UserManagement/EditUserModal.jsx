@@ -31,11 +31,16 @@ export default function EditUserModal({ user, onClose, onSave }) {
     phone: '',
     birthDate: '',
     department: '',
-    status: 'active'
+    status: 'active',
+    password: '',
+    confirmPassword: ''
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [changePassword, setChangePassword] = useState(false);
 
   // Populate form with existing user data
   useEffect(() => {
