@@ -105,92 +105,101 @@
 user_problem_statement: "Test the new Sales Opportunities pages functionality. The application now has 4 new opportunity pages with specialized content: 1. Kazanılan Fırsatlar (Won Opportunities) - Shows 10 won opportunities with win dates and deal values, 2. Kaybedilen Fırsatlar (Lost Opportunities) - Shows 10 lost opportunities with loss reasons and competitors, 3. Favori Fırsatlar (Favorite Opportunities) - Shows 10 priority opportunities with VIP/Strategic/Elite classifications and relationship info, 4. Tüm Satış Fırsatları (All Opportunities) - Shows all 42+ opportunities combined with status filtering and summary cards. Test navigation, content verification, filter functionality, action buttons (eye, pen, three dots), and UI/UX elements."
 
 frontend:
-  - task: "Create mock users data file"
+  - task: "Navigation to Satış Fırsatları submenu"
     implemented: true
-    working: true
-    file: "/app/frontend/src/mock/usersData.js"
+    working: "NA"
+    file: "/app/frontend/src/components/Dashboard/Sidebar.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "main"
-        comment: "Created mock users data with 8 sample users including different departments and statuses"
-
-  - task: "Create ActionMenuUserPopover component"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserManagement/ActionMenuUserPopover.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created popover component with Sil, Paylaş, Mesaj, Mail options based on opportunities pattern"
-      - working: true
+      - working: "NA"
         agent: "testing"
-        comment: "Tested successfully - ActionMenuUserPopover opens correctly from three dots button, displays all 4 menu items (Sil, Paylaş, Mesaj, Mail), menu items are clickable and trigger actions, popover closes after selection. Functionality working perfectly."
+        comment: "Need to test navigation to Satış Fırsatları menu and verify submenu opens correctly with all 6 items (Yeni Satış Fırsatı, Açık Fırsatlar, Kazanılan Fırsatlar, Kaybedilen Fırsatlar, Favori Fırsatlar, Tüm Satış Fırsatları)"
 
-  - task: "ViewUserModal integration with AllUsersPage"
+  - task: "Kazanılan Fırsatlar page functionality"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserManagement/ViewUserModal.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/WonOpportunitiesPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "main"
-        comment: "ViewUserModal already existed and looks complete, integrated with AllUsersPage eye icon"
-      - working: true
+      - working: "NA"
         agent: "testing"
-        comment: "Tested successfully - Eye icon opens ViewUserModal perfectly, displays complete user details including contact info, personal info, and system info. Modal has professional design with proper close functionality. All user data displays correctly."
+        comment: "Need to test Won Opportunities page - verify 10 won opportunities display with green styling, win dates, deal values, search functionality, currency filters, sorting options, and action buttons (eye, pen, three dots)"
 
-  - task: "EditUserModal integration with AllUsersPage"
+  - task: "Kaybedilen Fırsatlar page functionality"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserManagement/EditUserModal.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/LostOpportunitiesPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "main"
-        comment: "EditUserModal already existed with validation, integrated with AllUsersPage pen icon"
-      - working: true
+      - working: "NA"
         agent: "testing"
-        comment: "Minor: Tested successfully - Pen icon opens EditUserModal correctly, form fields are editable, validation works (requires department selection). Core editing functionality works well. Minor issue with dropdown selection interaction, but form validation prevents invalid saves."
+        comment: "Need to test Lost Opportunities page - verify 10 lost opportunities display with red styling, loss reasons, competitors info, specialized filters (loss reason), and action buttons functionality"
 
-  - task: "Update AllUsersPage with modal states and handlers"
+  - task: "Favori Fırsatlar page functionality"
     implemented: true
-    working: true
-    file: "/app/frontend/src/components/UserManagement/AllUsersPage.jsx"
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/FavoriteOpportunitiesPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "main"
-        comment: "Added modal states, view/edit handlers, integrated ActionMenuUserPopover, replaced hardcoded buttons with proper handlers"
-      - working: true
+      - working: "NA"
         agent: "testing"
-        comment: "Tested successfully - All Users page displays 8 mock users correctly, all three action buttons (eye, pen, three dots) are functional and properly integrated. Navigation from sidebar works perfectly. Table layout is professional and responsive."
+        comment: "Need to test Favorite Opportunities page - verify 10 priority opportunities display with purple styling, VIP/Strategic/Elite badges, relationship info, priority filters, and action buttons functionality"
 
-  - task: "Update App.js for user management integration"
+  - task: "Tüm Satış Fırsatları page functionality"
     implemented: true
-    working: true
-    file: "/app/frontend/src/App.js"
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/AllOpportunitiesPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-      - working: true
-        agent: "main"
-        comment: "Updated to use mock users data, added updateUser function, cleaned up unused props"
-      - working: true
+      - working: "NA"
         agent: "testing"
-        comment: "Tested successfully - App.js integration works perfectly, navigation to User Management → All Users works smoothly, mock data loads correctly, state management for modals functions properly."
+        comment: "Need to test All Opportunities page - verify summary cards (12 open, 10 won, 10 lost, 42 total), status filtering, Excel export button, comprehensive filtering options, and action buttons functionality"
+
+  - task: "Action buttons modal functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/ViewOpportunityModal.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test action buttons across all opportunity pages - verify eye icon opens ViewOpportunityModal, pen icon opens EditOpportunityModal, three dots opens ActionMenuPopover with proper functionality"
+
+  - task: "Filter and search functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/WonOpportunitiesPage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test comprehensive filtering across all opportunity pages - search functionality, currency filters with live counts, specialized filters (won date, loss reason, priority level, status), and sorting options"
+
+  - task: "UI/UX and responsive design"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test professional styling with appropriate colors (green for won, red for lost, purple for favorites), responsive layout, table scrolling, and overall user experience"
 
 metadata:
   created_by: "main_agent"
