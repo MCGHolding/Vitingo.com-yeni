@@ -145,6 +145,15 @@ export default function EditUserModal({ user, onClose, onSave }) {
         updatedAt: new Date().toISOString()
       };
 
+      // Only include password if it's being changed
+      if (changePassword && formData.password) {
+        updatedUser.password = formData.password;
+      } else {
+        // Remove password fields from update if not changing
+        delete updatedUser.password;
+        delete updatedUser.confirmPassword;
+      }
+
       if (onSave) {
         onSave(updatedUser);
       }
