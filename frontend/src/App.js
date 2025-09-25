@@ -460,7 +460,7 @@ const Dashboard = () => {
         );
 
       case 'surveys':
-        return <SurveyManagementPage onBackToDashboard={handleBackToDashboard} />;
+        return <SurveyManagementPage onBackToDashboard={handleBackToDashboard} initialTab={surveyInitialTab} />;
 
       case 'sales-reports':
         return (
