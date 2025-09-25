@@ -50,39 +50,47 @@ export default function ActionMenuUserPopover({ user, onAction }) {
   };
 
   const handleMenuItemClick = (action) => {
-    let message = '';
-    let description = '';
-    
     switch (action) {
       case 'delete':
-        message = `${user.firstName} ${user.lastName} silindi`;
-        description = 'Kullanıcı başarıyla sistemden kaldırıldı';
+        // Show custom message instead of deleting
+        toast({
+          title: "Bu kişiyi silemezsiniz",
+          description: "Lütfen durumunu pasif veya eski çalışan olarak güncelleyin",
+          variant: "destructive",
+        });
         break;
       case 'share':
-        message = `${user.firstName} ${user.lastName} paylaşıldı`;
-        description = 'Kullanıcı bilgileri paylaşım için hazırlandı';
+        // Detect if mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile && navigator.share) {
+          navigator.share({
+            title: `${user.firstName} ${user.lastName}`,
+            text: `${user.firstName} ${user.lastName} - ${user.department} departmanı`,
+            url: window.location.href
+          });
+        } else {
+          toast({
+            title: "Paylaş Özelliği",
+            description: "Bu seçenek sadece mobil cihazlarda aktiftir",
+            variant: "default",
+          });
+        }
         break;
       case 'message':
-        message = `${user.firstName} ${user.lastName} ile mesajlaşma başlatıldı`;
-        description = 'Mesaj penceresi açıldı';
-        break;
       case 'email':
-        message = `${user.firstName} ${user.lastName} için e-posta oluşturuldu`;
-        description = 'E-posta editörü açıldı';
+        // These will be handled by parent component
+        if (onAction) {
+          onAction(action, user);
+        }
         break;
       default:
-        message = 'İşlem gerçekleştirildi';
-        description = `${action} işlemi tamamlandı`;
+        toast({
+          title: 'İşlem gerçekleştirildi',
+          description: `${action} işlemi tamamlandı`,
+        });
     }
 
-    toast({
-      title: message,
-      description: description,
-    });
-
-    if (onAction) {
-      onAction(action, user);
-    }
     setIsOpen(false);
   };
 
