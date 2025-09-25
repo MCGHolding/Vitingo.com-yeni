@@ -248,7 +248,7 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
         </div>
       </div>
 
-      <div className="p-6 max-w-full mx-auto">
+      <div className="p-4 max-w-full mx-auto">
         {/* Tab Navigation */}
         <div className="mb-6">
           <div className="border-b border-gray-200">
