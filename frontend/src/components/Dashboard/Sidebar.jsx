@@ -461,6 +461,91 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Accounting menu actions
+    if (subItem && subItem.name === 'Yeni Fatura') {
+      if (onNewInvoice) {
+        onNewInvoice();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Faturalar') {
+      if (onAllInvoices) {
+        onAllInvoices();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Onay Bekleyenler') {
+      if (onPendingApproval) {
+        onPendingApproval();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tahsilat Bekleyenler') {
+      if (onPendingCollection) {
+        onPendingCollection();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Ödenmiş') {
+      if (onPaidInvoices) {
+        onPaidInvoices();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Vadesi Geçmiş') {
+      if (onOverdueInvoices) {
+        onOverdueInvoices();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Cari Hesaplar') {
+      if (onCurrentAccounts) {
+        onCurrentAccounts();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tahsilat Makbuzu') {
+      if (onCollectionReceipt) {
+        onCollectionReceipt();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Gider Makbuzu') {
+      if (onExpenseReceipt) {
+        onExpenseReceipt();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Ödeme Talepleri') {
+      if (onPaymentRequests) {
+        onPaymentRequests();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Alış Faturaları') {
+      if (onPurchaseInvoices) {
+        onPurchaseInvoices();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Alış Fatura Onayları') {
+      if (onPurchaseApprovals) {
+        onPurchaseApprovals();
+      }
+      return;
+    }
     
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
