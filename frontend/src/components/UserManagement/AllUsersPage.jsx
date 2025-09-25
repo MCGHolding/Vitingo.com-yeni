@@ -11,6 +11,8 @@ import { departments } from '../../utils/userUtils';
 import ViewUserModal from './ViewUserModal';
 import EditUserModal from './EditUserModal';
 import ActionMenuUserPopover from './ActionMenuUserPopover';
+import MessageModal from './MessageModal';
+import EmailModal from './EmailModal';
 import { 
   Search, 
   Filter, 
