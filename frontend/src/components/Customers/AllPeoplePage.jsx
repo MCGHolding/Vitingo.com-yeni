@@ -18,7 +18,7 @@ import {
   UserPlus,
   Truck
 } from 'lucide-react';
-import { allPeople, peopleStats } from '../../mock/peopleData';
+import { allPeople } from '../../mock/peopleData';
 
 export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
