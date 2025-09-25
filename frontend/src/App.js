@@ -51,6 +51,7 @@ import CurrencyTooltip from './components/Dashboard/CurrencyTooltip';
 import SalesSummaryCard from './components/Dashboard/SalesSummaryCard';
 import GrowthRateCard from './components/Dashboard/GrowthRateCard';
 import PassiveLeadsCard from './components/Dashboard/PassiveLeadsCard';
+import SurveyManagementPage from './components/Surveys/SurveyManagementPage';
 import { 
   Users, 
   TrendingUp, 
