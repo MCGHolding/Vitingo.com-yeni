@@ -142,7 +142,7 @@ const Header = ({
                         </button>
                         
                         {/* Submenu */}
-                        <div className="hidden group-hover:block absolute left-full top-0 ml-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="hidden group-hover:block absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button
                               onClick={() => {
