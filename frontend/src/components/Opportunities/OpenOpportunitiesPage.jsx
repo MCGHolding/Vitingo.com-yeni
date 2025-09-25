@@ -761,6 +761,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                             variant="ghost"
                             size="sm"
                             className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                            onClick={() => handleViewOpportunity(opportunity)}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -768,16 +769,14 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                             variant="ghost"
                             size="sm"
                             className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
+                            onClick={() => handleEditOpportunity(opportunity)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
+                          <ActionMenuPopover
+                            opportunity={opportunity}
+                            onAction={handleActionMenu}
+                          />
                         </div>
                       </td>
                     </tr>
