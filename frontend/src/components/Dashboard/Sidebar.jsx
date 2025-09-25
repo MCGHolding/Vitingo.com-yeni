@@ -30,7 +30,19 @@ import {
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
-  { name: 'Müşteriler', href: '/customers', icon: Users, current: false },
+  { 
+    name: 'Müşteriler', 
+    href: '/customers', 
+    icon: Users, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Müşteri', href: '/customers/new', icon: Plus },
+      { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
+      { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
+      { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star }
+    ]
+  },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
   { 
     name: 'Müşteri Aday', 
