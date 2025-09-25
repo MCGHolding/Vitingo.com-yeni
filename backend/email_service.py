@@ -478,6 +478,208 @@ class EmailService:
         """Get current date in Turkish format"""
         from datetime import datetime
         return datetime.now().strftime("%d.%m.%Y %H:%M")
+    
+    def send_user_email(self, to_email: str, to_name: str, from_email: str, from_name: str, 
+                       subject: str, body: str, cc: str = "", bcc: str = "", attachments: list = None) -> dict:
+        """Send email from user to user via CRM system"""
+        try:
+            if not self.sg:
+                logger.error("SendGrid client not initialized - missing API key")
+                return {"success": False, "error": "Email service not configured"}
+
+            # Create HTML content for user email
+            html_content = self._generate_user_email_html(
+                to_name=to_name,
+                from_name=from_name,
+                subject=subject,
+                body=body
+            )
+            
+            # Create plain text content
+            plain_content = f"""
+{subject}
+
+{body}
+
+---
+Gönderen: {from_name}
+E-posta: {from_email}
+Vitingo CRM Sistemi
+            """.strip()
+
+            # Create SendGrid mail object
+            message = Mail(
+                from_email=From(self.sender_email, f"Vitingo CRM - {from_name}"),
+                to_emails=To(to_email, to_name),
+                subject=Subject(subject),
+                html_content=HtmlContent(html_content),
+                plain_text_content=PlainTextContent(plain_content)
+            )
+            
+            # Add CC if provided
+            if cc:
+                cc_emails = [email.strip() for email in cc.split(',') if email.strip()]
+                for cc_email in cc_emails:
+                    message.add_cc(To(cc_email))
+            
+            # Add BCC if provided
+            if bcc:
+                bcc_emails = [email.strip() for email in bcc.split(',') if email.strip()]
+                for bcc_email in bcc_emails:
+                    message.add_bcc(To(bcc_email))
+            
+            # Add reply-to
+            message.reply_to = From(from_email, from_name)
+            
+            # Handle attachments
+            if attachments:
+                from sendgrid.helpers.mail import Attachment, FileContent, FileName, FileType, Disposition
+                import base64
+                
+                for attachment in attachments:
+                    try:
+                        # Extract base64 data (remove data:type;base64, prefix)
+                        file_data = attachment['data']
+                        if file_data.startswith('data:'):
+                            file_data = file_data.split(',')[1]
+                        
+                        # Create attachment
+                        attached_file = Attachment(
+                            FileContent(file_data),
+                            FileName(attachment['name']),
+                            FileType(attachment['type']),
+                            Disposition('attachment')
+                        )
+                        message.add_attachment(attached_file)
+                        logger.info(f"Added attachment: {attachment['name']}")
+                        
+                    except Exception as attach_error:
+                        logger.error(f"Error adding attachment {attachment.get('name', 'unknown')}: {str(attach_error)}")
+
+            # Send email
+            response = self.sg.send(message)
+            
+            logger.info(f"User email sent from {from_email} to {to_email} - Status: {response.status_code}")
+            
+            if response.status_code == 202:
+                return {
+                    "success": True,
+                    "message": "Email sent successfully",
+                    "message_id": response.headers.get('X-Message-Id')
+                }
+            else:
+                logger.error(f"SendGrid returned unexpected status: {response.status_code}")
+                return {
+                    "success": False,
+                    "error": f"Email sending failed with status: {response.status_code}"
+                }
+
+        except Exception as e:
+            logger.error(f"Error sending user email: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    def _generate_user_email_html(self, to_name: str, from_name: str, subject: str, body: str) -> str:
+        """Generate HTML content for user email"""
+        return f"""
+        <!DOCTYPE html>
+        <html lang="tr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{subject}</title>
+            <style>
+                body {{
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f4f4f4;
+                }}
+                .email-container {{
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }}
+                .email-header {{
+                    background: linear-gradient(135deg, #3B82F6, #1E40AF);
+                    color: white;
+                    padding: 30px 20px;
+                    text-align: center;
+                }}
+                .email-header h1 {{
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: bold;
+                }}
+                .email-body {{
+                    padding: 30px;
+                }}
+                .email-body h2 {{
+                    color: #1E40AF;
+                    margin-top: 0;
+                }}
+                .email-content {{
+                    white-space: pre-wrap;
+                    background: #f8fafc;
+                    padding: 20px;
+                    border-radius: 6px;
+                    border-left: 4px solid #3B82F6;
+                    margin: 20px 0;
+                }}
+                .email-signature {{
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e2e8f0;
+                    color: #64748b;
+                }}
+                .email-footer {{
+                    background-color: #f8fafc;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #64748b;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="email-header">
+                    <h1>Vitingo CRM</h1>
+                </div>
+                
+                <div class="email-body">
+                    <h2>Merhaba {to_name},</h2>
+                    <p>{from_name} size bir mesaj gönderdi:</p>
+                    
+                    <div class="email-content">
+                        {body}
+                    </div>
+                    
+                    <div class="email-signature">
+                        <p><strong>Gönderen:</strong></p>
+                        <p>
+                            <strong>{from_name}</strong><br>
+                            Vitingo CRM Sistemi<br>
+                            Bu e-posta Vitingo CRM sistemi üzerinden gönderilmiştir.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="email-footer">
+                    <p>Bu e-posta Vitingo CRM sistemi tarafından gönderilmiştir.</p>
+                    <p>© {self._get_current_date().split(' ')[0].split('.')[2]} Vitingo CRM - Tüm hakları saklıdır</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
 
 # Global email service instance
 email_service = EmailService()
