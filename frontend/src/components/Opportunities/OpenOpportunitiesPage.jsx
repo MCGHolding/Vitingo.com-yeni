@@ -799,6 +799,28 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
           </CardContent>
         </Card>
       </div>
+
+      {/* Modals */}
+      {viewModalOpen && selectedOpportunity && (
+        <ViewOpportunityModal
+          opportunity={selectedOpportunity}
+          onClose={() => {
+            setViewModalOpen(false);
+            setSelectedOpportunity(null);
+          }}
+        />
+      )}
+
+      {editModalOpen && selectedOpportunity && (
+        <EditOpportunityModal
+          opportunity={selectedOpportunity}
+          onClose={() => {
+            setEditModalOpen(false);
+            setSelectedOpportunity(null);
+          }}
+          onSave={handleUpdateOpportunity}
+        />
+      )}
     </div>
   );
 }
