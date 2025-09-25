@@ -234,49 +234,115 @@ export const AuthProvider = ({ children }) => {
       throw new Error('Bu işlem sadece admin kullanıcıları tarafından yapılabilir');
     }
 
-    // Get all users
+    // Get all users - same as login function
     const users = [
       {
         id: 1,
-        username: 'admin',
-        password: 'admin123',
-        fullName: 'Sistem Yöneticisi',
-        email: 'admin@vitingo.com',
-        role: 'admin',
-        department: 'IT',
+        username: 'murb',
+        password: 'Murat2024!',
+        fullName: 'Murat Bucak',
+        email: 'murat.bucak@quattrostand.com',
+        role: 'super-admin',
+        department: 'Süper Admin',
         avatar: null,
         permissions: ['all']
       },
       {
         id: 2,
-        username: 'satis1',
-        password: 'satis123',
-        fullName: 'Ahmet Yılmaz',
-        email: 'ahmet@vitingo.com',
-        role: 'sales_rep',
-        department: 'Satış',
+        username: 'tame',
+        password: 'Tamer2024!',
+        fullName: 'Tamer Erdim',
+        email: 'tamer.erdim@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
         avatar: null,
         permissions: ['read_own', 'write_own']
       },
       {
         id: 3,
-        username: 'mudur1',
-        password: 'mudur123',
-        fullName: 'Fatma Demir',
-        email: 'fatma@vitingo.com',
-        role: 'sales_manager',
-        department: 'Satış',
+        username: 'batc',
+        password: 'Batuhan2024!',
+        fullName: 'Batuhan Cücük',
+        email: 'batuhan.cucuk@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
         avatar: null,
-        permissions: ['read_team', 'write_team', 'reports']
+        permissions: ['read_own', 'write_own']
       },
       {
         id: 4,
-        username: 'satis2',
-        password: 'satis123',
-        fullName: 'Mehmet Kaya',
-        email: 'mehmet@vitingo.com',
-        role: 'sales_rep',
-        department: 'Satış',
+        username: 'vatd',
+        password: 'Vatan2024!',
+        fullName: 'Vatan Dalkılıç',
+        email: 'vatan.dalkilic@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 5,
+        username: 'biry',
+        password: 'Birtan2024!',
+        fullName: 'Birtan Yılmaz',
+        email: 'birtan.yilmaz@quattrostand.com',
+        role: 'admin',
+        department: 'Admin',
+        avatar: null,
+        permissions: ['all']
+      },
+      {
+        id: 6,
+        username: 'beyn',
+        password: 'Beyza2024!',
+        fullName: 'Beyza Nur',
+        email: 'beyza.nur@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 7,
+        username: 'niyk',
+        password: 'Niyazi2024!',
+        fullName: 'Niyazi Karahan',
+        email: 'niyazi.karahan@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 8,
+        username: 'sukb',
+        password: 'Sukran2024!',
+        fullName: 'Şükran Bucak',
+        email: 'sukran.bucak@quattrostand.com',
+        role: 'user',
+        department: 'Muhasebe',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 9,
+        username: 'icla',
+        password: 'Iclal2024!',
+        fullName: 'İclal Aksu',
+        email: 'iclal.aksu@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 10,
+        username: 'meha',
+        password: 'Mehmet2024!',
+        fullName: 'Mehmet Ağdaş',
+        email: 'info@noktafuar.com',
+        role: 'user',
+        department: 'Üretim Müdürü',
         avatar: null,
         permissions: ['read_own', 'write_own']
       }
