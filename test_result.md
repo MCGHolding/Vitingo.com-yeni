@@ -334,7 +334,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "CSV Template Download for Fairs Category"
+    - "Currency Rates Endpoint"
+    - "Currency Conversion Endpoint"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
