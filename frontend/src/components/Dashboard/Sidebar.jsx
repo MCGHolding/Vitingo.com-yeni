@@ -638,17 +638,34 @@ export default function Sidebar({
 
         {/* User Profile */}
         <div className="p-4 border-t border-slate-700">
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 h-10 w-10">
-              <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                <span className="text-sm font-medium text-white">AD</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 h-10 w-10">
+                <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                  <span className="text-sm font-medium text-white">
+                    {user ? `${user.firstName?.charAt(0)}${user.lastName?.charAt(0)}` : 'AD'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">
+                  {user ? `${user.firstName} ${user.lastName}` : 'Admin User'}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {user ? user.email : 'admin@company.com'}
+                </p>
               </div>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-white">Admin User</p>
-              <p className="text-xs text-slate-400">admin@company.com</p>
-            </div>
           </div>
+          
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-300 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-200 group"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Çıkış Yap</span>
+          </button>
         </div>
       </div>
 
