@@ -139,7 +139,14 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
   };
 
   const formatCurrency = (amount, currency) => {
-    const symbols = { EUR: '€', USD: '$', TRY: '₺' };
+    if (amount === 0) return '-';
+    
+    const symbols = {
+      'EUR': '€',
+      'USD': '$',
+      'TRY': '₺'
+    };
+    
     return `${symbols[currency] || currency} ${amount.toLocaleString()}`;
   };
 
