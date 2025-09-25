@@ -305,6 +305,35 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Fair Management menu actions
+    if (subItem && subItem.name === 'Yeni Fuar') {
+      if (onNewFair) {
+        onNewFair();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Fuarlar') {
+      if (onAllFairs) {
+        onAllFairs();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Aktif Fuarlar') {
+      if (onActiveFairs) {
+        onActiveFairs();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Geçmiş Fuarlar') {
+      if (onPastFairs) {
+        onPastFairs();
+      }
+      return;
+    }
+    
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
       if (item.hasSubmenu) {
