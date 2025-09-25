@@ -275,15 +275,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Navigation to Müşteriler submenu"
-    - "Tüm Müşteriler page functionality"
-    - "Pasif Müşteriler page functionality"
-    - "Favori Müşteriler page functionality"
-    - "Table format consistency across customer pages"
-    - "Filter and search functionality"
-    - "Action buttons functionality"
-    - "Summary cards and statistics"
-  stuck_tasks: []
+    - "People Management Integration (Kişi Ekle and Tüm Kişiler)"
+  stuck_tasks:
+    - "People Management Integration (Kişi Ekle and Tüm Kişiler)"
   test_all: false
   test_priority: "high_first"
 
