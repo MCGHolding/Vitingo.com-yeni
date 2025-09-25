@@ -150,7 +150,7 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity, onOpe
 
         {/* User Profile */}
         <div className="p-4 border-t border-slate-700">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 mb-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <span className="text-white text-sm font-semibold">AD</span>
             </div>
@@ -159,9 +159,36 @@ export default function Sidebar({ isOpen, toggleSidebar, onNewOpportunity, onOpe
                 Admin User
               </p>
               <p className="text-xs text-slate-400 truncate">
-                admin@banavitingo.com
+                admin@vitingo.com
               </p>
             </div>
+          </div>
+          
+          {/* User Menu */}
+          <div className="space-y-1">
+            <button
+              className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all duration-200"
+              onClick={onUserManagement}
+            >
+              <User className="mr-3 h-4 w-4 flex-shrink-0" />
+              Kullanıcı Yönetimi
+            </button>
+            
+            <button
+              className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all duration-200"
+              onClick={() => console.log('Profile clicked')}
+            >
+              <Settings className="mr-3 h-4 w-4 flex-shrink-0" />
+              Profil Ayarları
+            </button>
+            
+            <button
+              className="w-full flex items-center px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all duration-200"
+              onClick={() => console.log('Logout clicked')}
+            >
+              <Target className="mr-3 h-4 w-4 flex-shrink-0" />
+              Çıkış Yap
+            </button>
           </div>
         </div>
       </div>
