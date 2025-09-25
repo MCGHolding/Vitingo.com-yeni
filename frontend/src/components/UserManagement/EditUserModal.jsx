@@ -52,7 +52,9 @@ export default function EditUserModal({ user, onClose, onSave }) {
         phone: user.phone || '',
         birthDate: user.birthDate || '',
         department: user.department || '',
-        status: user.status || 'active'
+        status: user.status || 'active',
+        password: '',
+        confirmPassword: ''
       });
     }
   }, [user]);
