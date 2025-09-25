@@ -42,7 +42,8 @@ const navigation = [
       { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
       { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
       { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star },
-      { name: 'Kişiler', href: '/customers/people', icon: UserRound }
+      { name: 'Kişi Ekle', href: '/customers/people/new', icon: Plus },
+      { name: 'Tüm Kişiler', href: '/customers/people/all', icon: UserRound }
     ]
   },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
