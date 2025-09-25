@@ -7,67 +7,109 @@ import {
   MapPin, 
   AlertCircle,
   CheckCircle,
-  Download
+  Building2,
+  Globe,
+  ChevronDown
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useToast } from '../../hooks/use-toast';
 
 export default function ImportDataPage({ onBackToDashboard }) {
-  const [selectedFileType, setSelectedFileType] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState(null);
+  const { toast } = useToast();
 
-  const dataTypes = [
-    {
-      id: 'customers',
-      name: 'Müşteriler',
-      icon: Users,
-      description: 'Müşteri listesi ve bilgilerini import edin',
-      format: 'CSV, Excel (.xlsx)'
-    },
-    {
-      id: 'fairs',
-      name: 'Fuarlar',
-      icon: MapPin,
-      description: 'Fuar bilgilerini ve detaylarını import edin',
-      format: 'CSV, Excel (.xlsx)'
-    },
-    {
-      id: 'opportunities',
-      name: 'Satış Fırsatları',
-      icon: FileText,
-      description: 'Satış fırsatları ve pipeline verilerini import edin',
-      format: 'CSV, Excel (.xlsx)'
-    }
+  const categories = [
+    { id: 'fairs', name: 'Fuarlar' },
+    { id: 'customers', name: 'Müşteriler' },
+    { id: 'people', name: 'Kişiler' },
+    { id: 'prospects', name: 'Müşteri Adayları' },
+    { id: 'cities', name: 'Şehirler' },
+    { id: 'countries', name: 'Ülkeler' },
+    { id: 'faircenters', name: 'Fuar Merkezleri' }
   ];
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-    setImportResult(null);
+    if (file && file.type === 'text/csv') {
+      setSelectedFile(file);
+      setImportResult(null);
+    } else {
+      toast({
+        title: "Hata",
+        description: "Lütfen geçerli bir CSV dosyası seçiniz.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleImport = async () => {
-    if (!selectedFile || !selectedFileType) return;
+    if (!selectedFile || !selectedCategory) {
+      toast({
+        title: "Eksik Bilgiler",
+        description: "Lütfen kategori seçiniz ve dosya yükleyiniz.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setImporting(true);
-    
-    // Simulate import process
-    setTimeout(() => {
+    setImportResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('category', selectedCategory);
+
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/import/${selectedCategory}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Import işlemi başarısız');
+      }
+
+      const result = await response.json();
+      
       setImportResult({
         success: true,
-        processed: Math.floor(Math.random() * 100) + 50,
-        errors: Math.floor(Math.random() * 5),
-        message: `${selectedFileType} verisi başarıyla import edildi!`
+        processed: result.processed || 0,
+        errors: result.errors || 0,
+        message: `${selectedCategory} verisi başarıyla import edildi!`,
+        details: result.details || []
       });
+      
+      toast({
+        title: "Başarılı",
+        description: `${result.processed} kayıt başarıyla import edildi.`,
+      });
+
+    } catch (error) {
+      console.error('Import error:', error);
+      setImportResult({
+        success: false,
+        message: error.message || "Import işlemi sırasında hata oluştu.",
+        errors: 1
+      });
+      
+      toast({
+        title: "Hata",
+        description: error.message || "Import işlemi başarısız.",
+        variant: "destructive"
+      });
+    } finally {
       setImporting(false);
-      setSelectedFile(null);
-      setSelectedFileType('');
-    }, 2000);
+    }
   };
 
-  const downloadTemplate = (type) => {
-    // Simulate template download
-    console.log(`Downloading template for ${type}`);
+  const resetForm = () => {
+    setSelectedCategory('');
+    setSelectedFile(null);
+    setImportResult(null);
   };
 
   return (
@@ -94,116 +136,93 @@ export default function ImportDataPage({ onBackToDashboard }) {
       </div>
 
       <div className="p-4 lg:p-6">
-        {/* Data Type Selection */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Veri Türü Seçin</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {dataTypes.map((type) => {
-              const Icon = type.icon;
-              return (
-                <div
-                  key={type.id}
-                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedFileType === type.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => setSelectedFileType(type.id)}
-                >
-                  <div className="flex items-center space-x-3 mb-2">
-                    <Icon className={`h-5 w-5 ${
-                      selectedFileType === type.id ? 'text-blue-600' : 'text-gray-600'
-                    }`} />
-                    <h3 className="font-medium text-gray-900">{type.name}</h3>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">{type.description}</p>
-                  <p className="text-xs text-gray-500">Format: {type.format}</p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadTemplate(type.id);
-                    }}
-                    className="mt-2 text-xs text-blue-600 hover:text-blue-800 flex items-center"
+        {/* Category Selection */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+              Lütfen import etmek istediğiniz kategoriyi seçiniz
+            </h2>
+            
+            <div className="mb-8">
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="h-14 text-lg">
+                  <SelectValue placeholder="Kategori seçiniz..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id} className="text-lg py-3">
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* File Upload Section */}
+            {selectedCategory && (
+              <div className="space-y-6">
+                {/* Browse Button */}
+                <div>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    id="csv-file-upload"
+                  />
+                  <label
+                    htmlFor="csv-file-upload"
+                    className="bg-blue-600 text-white px-8 py-4 rounded-lg cursor-pointer hover:bg-blue-700 inline-flex items-center space-x-2 text-lg font-medium"
                   >
-                    <Download className="h-3 w-3 mr-1" />
-                    Template İndir
-                  </button>
+                    <FileText className="h-5 w-5" />
+                    <span>Browse</span>
+                  </label>
                 </div>
-              );
-            })}
+
+                {/* Info Message */}
+                <p className="text-sm text-gray-600 italic">
+                  *Dosyanızın şablonumuza uygun ve geçerli bir CSV formatında olduğunu unutmayınız
+                </p>
+
+                {/* Selected File Info */}
+                {selectedFile && (
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex items-center justify-center space-x-2">
+                      <FileText className="h-5 w-5 text-green-600" />
+                      <span className="text-gray-900 font-medium">{selectedFile.name}</span>
+                      <span className="text-gray-600 text-sm">
+                        ({(selectedFile.size / 1024).toFixed(1)} KB)
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Import Button */}
+                {selectedFile && (
+                  <div className="pt-4">
+                    <button
+                      onClick={handleImport}
+                      disabled={importing}
+                      className="bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center space-x-2 text-lg font-medium"
+                    >
+                      {importing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          <span>Import Ediliyor...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-5 w-5" />
+                          <span>Import Et</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
-
-        {/* File Upload */}
-        {selectedFileType && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Dosya Seçin</h2>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg font-medium text-gray-900 mb-2">
-                Dosyayı buraya sürükleyin veya seçin
-              </p>
-              <p className="text-sm text-gray-600 mb-4">
-                CSV veya Excel dosyası (.csv, .xlsx)
-              </p>
-              <input
-                type="file"
-                accept=".csv,.xlsx,.xls"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
-              >
-                Dosya Seç
-              </label>
-              
-              {selectedFile && (
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">
-                    Seçilen dosya: {selectedFile.name}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    Boyut: {(selectedFile.size / 1024).toFixed(1)} KB
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Import Button */}
-        {selectedFile && selectedFileType && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">Import İşlemi</h2>
-                <p className="text-sm text-gray-600">
-                  {selectedFile.name} dosyası {selectedFileType} olarak import edilecek
-                </p>
-              </div>
-              <button
-                onClick={handleImport}
-                disabled={importing}
-                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-              >
-                {importing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Import Ediliyor...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4" />
-                    <span>Import Et</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Import Result */}
         {importResult && (
@@ -227,6 +246,16 @@ export default function ImportDataPage({ onBackToDashboard }) {
                   <p>⚠️ Hata sayısı: {importResult.errors}</p>
                 </div>
               )}
+              
+              {/* Reset Button */}
+              <div className="pt-4">
+                <button
+                  onClick={resetForm}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Yeni Import
+                </button>
+              </div>
             </div>
           </div>
         )}
