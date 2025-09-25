@@ -93,19 +93,27 @@ const SurveyFormPage = () => {
   const submitSurvey = async () => {
     setIsLoading(true);
     try {
-      // Simulate API submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
       
-      // In real app, send to backend
-      console.log('Survey submitted:', {
-        token,
-        customerId: customerData?.id,
-        projectId: projectData?.id,
-        responses,
-        submittedAt: new Date().toISOString()
+      const response = await fetch(`${backendUrl}/api/surveys/${token}/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          responses: responses,
+          ip_address: null // Could get real IP if needed
+        })
       });
       
-      setIsSubmitted(true);
+      const result = await response.json();
+      
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        throw new Error(result.error || 'Survey submission failed');
+      }
+      
     } catch (error) {
       console.error('Survey submission error:', error);
       alert('Anket gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
