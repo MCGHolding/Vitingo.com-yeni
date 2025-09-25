@@ -410,7 +410,7 @@ async def download_template(category: str):
         if category == "fairs":
             headers = [
                 "name", "city", "country", "startDate", "endDate", 
-                "sector", "cycle", "fairMonth", "description"
+                "sector", "cycle", "description"
             ]
             sample_data = [
                 [
@@ -420,8 +420,7 @@ async def download_template(category: str):
                     "2025-09-15", 
                     "2025-09-18", 
                     "Teknoloji", 
-                    "yearly", 
-                    "09", 
+                    "1", 
                     "Teknoloji sektörü fuarı"
                 ],
                 [
@@ -431,8 +430,7 @@ async def download_template(category: str):
                     "2025-10-20", 
                     "2025-10-23", 
                     "Otomotiv", 
-                    "yearly", 
-                    "10", 
+                    "2", 
                     "Otomotiv sektörü fuarı"
                 ],
                 [
@@ -442,9 +440,18 @@ async def download_template(category: str):
                     "2025-11-10", 
                     "2025-11-13", 
                     "Gıda ve İçecek", 
-                    "yearly", 
-                    "11", 
+                    "3", 
                     "Gıda sektörü fuarı"
+                ],
+                [
+                    "Tekstil Fuarı 2025",
+                    "Bursa", 
+                    "Türkiye", 
+                    "2025-12-05", 
+                    "2025-12-08", 
+                    "Tekstil", 
+                    "1", 
+                    "Tekstil ve konfeksiyon fuarı"
                 ]
             ]
         elif category == "customers":
