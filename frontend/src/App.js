@@ -48,6 +48,22 @@ const Dashboard = () => {
     setCurrentView('open-opportunities');
   };
 
+  const handleWonOpportunities = () => {
+    setCurrentView('won-opportunities');
+  };
+
+  const handleLostOpportunities = () => {
+    setCurrentView('lost-opportunities');
+  };
+
+  const handleFavoriteOpportunities = () => {
+    setCurrentView('favorite-opportunities');
+  };
+
+  const handleAllOpportunities = () => {
+    setCurrentView('all-opportunities');
+  };
+
   // User Management Handlers
   const handleNewUser = () => {
     setShowUserManagementModal(true);
