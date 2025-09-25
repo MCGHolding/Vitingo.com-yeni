@@ -15,7 +15,8 @@ import {
   Calendar,
   User,
   DollarSign,
-  FileText
+  FileText,
+  X
 } from 'lucide-react';
 import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
