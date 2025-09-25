@@ -135,6 +135,11 @@ const Dashboard = () => {
     console.log('New customer created:', newCustomer);
   };
 
+  const handleAllQuotes = () => {
+    console.log('All Quotes clicked');
+    // TODO: Implement all quotes page view
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
