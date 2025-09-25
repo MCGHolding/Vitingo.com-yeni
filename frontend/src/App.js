@@ -685,6 +685,7 @@ const Dashboard = () => {
         onExportData={handleExportData}
         onSalesReports={handleSalesReports}
         onCustomerReports={handleCustomerReports}
+        onHandovers={handleHandovers}
         onSurveys={handleSurveys}
       />
       
