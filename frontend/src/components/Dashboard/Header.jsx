@@ -130,6 +130,61 @@ const Header = ({
                       Profilim
                     </button>
 
+                    {/* User Management - only for admin and super-admin */}
+                    {(user?.role === 'admin' || user?.role === 'super-admin') && (
+                      <div className="relative group">
+                        <button
+                          className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Users className="h-4 w-4 mr-3" />
+                          Kullanıcı Yönetimi
+                          <ChevronDown className="h-3 w-3 ml-auto" />
+                        </button>
+                        
+                        {/* Submenu */}
+                        <div className="hidden group-hover:block absolute left-full top-0 ml-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                          <div className="py-1">
+                            <button
+                              onClick={() => {
+                                onNewUser && onNewUser();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                              Yeni Kullanıcı
+                            </button>
+                            <button
+                              onClick={() => {
+                                onAllUsers && onAllUsers();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                              Tüm Kullanıcılar
+                            </button>
+                            <button
+                              onClick={() => {
+                                onInactiveUsers && onInactiveUsers();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                              Pasif Kullanıcılar
+                            </button>
+                            <button
+                              onClick={() => {
+                                onFormerUsers && onFormerUsers();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                              Önceki Kullanıcılar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       onClick={() => setShowUserMenu(false)}
                       className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
