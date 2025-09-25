@@ -121,7 +121,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     const counts = {};
     
     // Apply all filters except country filter
-    let baseFiltered = openOpportunities;
+    let baseFiltered = opportunitiesData;
 
     if (searchTerm) {
       baseFiltered = baseFiltered.filter(opportunity =>
