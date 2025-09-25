@@ -11,6 +11,14 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sentHandovers, setSentHandovers] = useState([]);
+  const [handoverMode, setHandoverMode] = useState('customer'); // 'customer' or 'arbitrary'
+  
+  // Arbitrary email handover fields
+  const [arbitraryName, setArbitraryName] = useState('');
+  const [arbitraryEmail, setArbitraryEmail] = useState('');
+  const [arbitraryProject, setArbitraryProject] = useState('');
+  const [arbitraryCompany, setArbitraryCompany] = useState('');
+  const [arbitraryCountry, setArbitraryCountry] = useState('Türkiye');
 
   // Mock current user - in real app this would come from auth context
   const currentUser = { name: "admin", role: "admin" }; // Change this to test different users
