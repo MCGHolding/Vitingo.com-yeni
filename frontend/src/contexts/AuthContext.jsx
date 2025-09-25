@@ -18,13 +18,22 @@ export const AuthProvider = ({ children }) => {
   // Check for saved session on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('vitingo_user');
+    const savedAdminSession = localStorage.getItem('vitingo_admin_session');
+    
     if (savedUser) {
       try {
         const userData = JSON.parse(savedUser);
         setUser(userData);
+        
+        // Restore admin session if exists
+        if (savedAdminSession) {
+          const adminData = JSON.parse(savedAdminSession);
+          setOriginalAdminUser(adminData);
+        }
       } catch (error) {
         console.error('Error parsing saved user data:', error);
         localStorage.removeItem('vitingo_user');
+        localStorage.removeItem('vitingo_admin_session');
       }
     }
     setLoading(false);
