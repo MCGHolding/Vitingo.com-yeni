@@ -141,8 +141,12 @@ const Dashboard = () => {
   };
 
   // People Management Handlers
-  const handlePeople = () => {
+  const handleNewPerson = () => {
     setShowNewPersonForm(true);
+  };
+
+  const handleAllPeople = () => {
+    setCurrentView('all-people');
   };
 
   const closePersonForm = () => {
