@@ -196,6 +196,14 @@ const Dashboard = () => {
     switch (currentView) {
       case 'open-opportunities':
         return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} />;
+      case 'won-opportunities':
+        return <WonOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+      case 'lost-opportunities':
+        return <LostOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+      case 'favorite-opportunities':
+        return <FavoriteOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+      case 'all-opportunities':
+        return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-users':
         return (
           <AllUsersPage 
