@@ -63,7 +63,7 @@ const SalesSummaryCard = () => {
           </button>
           
           {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+            <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
               {periodOptions.map((option) => (
                 <button
                   key={option.value}
@@ -71,12 +71,12 @@ const SalesSummaryCard = () => {
                     setSelectedPeriod(option.value);
                     setDropdownOpen(false);
                   }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
+                  className={`w-full flex items-center space-x-2 px-3 py-2 text-left hover:bg-gray-50 transition-colors ${
                     selectedPeriod === option.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
                   }`}
                 >
-                  <span className="text-lg">{option.icon}</span>
-                  <span className="text-sm font-medium">{option.label}</span>
+                  <span className="text-sm">{option.icon}</span>
+                  <span className="text-xs font-medium">{option.label}</span>
                 </button>
               ))}
             </div>
