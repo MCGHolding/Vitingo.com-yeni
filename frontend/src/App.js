@@ -280,7 +280,17 @@ const Dashboard = () => {
       case 'favorite-customers':
         return <FavoriteCustomersPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-people':
-        return <AllPeoplePage onBackToDashboard={handleBackToDashboard} people={people} />;
+        return (
+          <AllPeoplePage 
+            onBackToDashboard={handleBackToDashboard} 
+            people={people}
+            onUpdatePerson={(updatedPerson) => {
+              setPeople(prev => prev.map(p => 
+                p.id === updatedPerson.id ? updatedPerson : p
+              ));
+            }}
+          />
+        );
       case 'all-users':
         return (
           <AllUsersPage 
