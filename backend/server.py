@@ -1121,9 +1121,28 @@ async def get_survey_by_token(survey_token: str):
         if not invitation:
             return {"error": "Survey not found", "status": 404}
         
-        # Get customer and project data
-        customer = await db.customers.find_one({"id": invitation["customer_id"]})
-        project = await db.projects.find_one({"id": invitation["project_id"]})
+        # Check if this is an arbitrary survey
+        if invitation.get("is_arbitrary", False):
+            # For arbitrary surveys, create customer and project data from stored info
+            customer = {
+                "id": "arbitrary",
+                "name": invitation.get("company_name", "Değerli Müşterimiz"),
+                "contact": invitation.get("contact_name", ""),
+                "email": invitation.get("email", "")
+            }
+            
+            project = {
+                "id": "arbitrary",
+                "name": invitation.get("project_name", ""),
+                "fairName": invitation.get("project_name", ""),
+                "city": "",
+                "country": "",
+                "deliveryDate": invitation.get("created_at", datetime.now().isoformat())
+            }
+        else:
+            # For regular customer surveys, get data from database
+            customer = await db.customers.find_one({"id": invitation["customer_id"]})
+            project = await db.projects.find_one({"id": invitation["project_id"]})
         
         # Get survey questions
         questions = await get_survey_questions()
@@ -1133,7 +1152,8 @@ async def get_survey_by_token(survey_token: str):
             "customer": customer,
             "project": project,
             "questions": questions,
-            "status": "active"
+            "status": "active",
+            "is_arbitrary": invitation.get("is_arbitrary", False)
         }
         
     except Exception as e:
