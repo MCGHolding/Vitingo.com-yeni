@@ -72,12 +72,12 @@ const Header = ({ toggleSidebar, sidebarOpen }) => {
                 <div className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {user ? `${user.firstName?.charAt(0)}${user.lastName?.charAt(0)}` : 'AD'}
+                      {user ? user.fullName?.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : 'AD'}
                     </span>
                   </div>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-gray-900">
-                      {user ? `${user.firstName} ${user.lastName}` : 'Admin User'}
+                      {user ? user.fullName : 'Admin User'}
                     </p>
                     <p className="text-xs text-gray-500">
                       {user ? user.department : 'Yönetici'}
