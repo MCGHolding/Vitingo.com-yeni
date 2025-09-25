@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import ViewPersonModal from './ViewPersonModal';
+import EditPersonModal from './EditPersonModal';
+import ActionMenuPersonPopover from './ActionMenuPersonPopover';
+import { useToast } from '../../hooks/use-toast';
 import { 
   UserRound,
   Search,
