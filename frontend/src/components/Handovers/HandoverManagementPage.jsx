@@ -703,7 +703,6 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
           </div>
           
           </div>
-          </div>
         ) : (
           /* Handover Results */
           <div className="space-y-6">
