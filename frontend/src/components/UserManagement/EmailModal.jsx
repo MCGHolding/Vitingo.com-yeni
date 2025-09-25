@@ -438,6 +438,46 @@ ${currentUser.fullName}`
                       disabled={isLoading}
                     />
                   </div>
+
+                  {/* Attachments List */}
+                  {emailData.attachments.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ekli Dosyalar ({emailData.attachments.length})
+                      </label>
+                      <div className="space-y-2 max-h-32 overflow-y-auto border rounded-md p-3 bg-gray-50">
+                        {emailData.attachments.map((attachment) => (
+                          <div
+                            key={attachment.id}
+                            className="flex items-center justify-between bg-white p-2 rounded border"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <Paperclip className="h-4 w-4 text-gray-500" />
+                              <span className="text-sm font-medium truncate max-w-48">
+                                {attachment.name}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ({formatFileSize(attachment.size)})
+                              </span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeAttachment(attachment.id)}
+                              disabled={isLoading}
+                              className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Maksimum dosya boyutu: 10MB, Toplam: 25MB
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
