@@ -438,6 +438,23 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      {showViewModal && selectedPerson && (
+        <ViewPersonModal
+          person={selectedPerson}
+          onClose={closeModals}
+          onEdit={handleEditPerson}
+        />
+      )}
+
+      {showEditModal && selectedPerson && (
+        <EditPersonModal
+          person={selectedPerson}
+          onClose={closeModals}
+          onSave={handleSavePerson}
+        />
+      )}
     </div>
   );
 }
