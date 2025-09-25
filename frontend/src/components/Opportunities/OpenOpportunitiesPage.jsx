@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
-export default function OpenOpportunitiesPage() {
+export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -30,6 +30,9 @@ export default function OpenOpportunitiesPage() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
+
+  // Use opportunities from props, fallback to imported data
+  const opportunitiesData = opportunities || openOpportunities;
 
   const getCurrencyCounts = () => {
     const counts = { EUR: 0, USD: 0, TRY: 0 };
