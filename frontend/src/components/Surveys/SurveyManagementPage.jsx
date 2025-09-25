@@ -28,42 +28,61 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
     setIsLoading(true);
     
     try {
-      // Generate unique survey token
-      const surveyToken = generateSurveyToken();
-      const surveyLink = `${window.location.origin}/survey/${surveyToken}`;
+      // Get backend URL from environment
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
       
-      // Simulate email sending (in real app, this would be a backend API call)
-      const emailData = surveyEmailTemplate(selectedCustomer, latestProject, surveyLink);
+      // Send real email via backend API
+      const response = await fetch(`${backendUrl}/api/surveys/send-invitation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer_id: selectedCustomer.id.toString(),
+          project_id: latestProject.id.toString(),
+          email: selectedCustomer.email,
+          customer_name: selectedCustomer.name,
+          contact_name: selectedCustomer.contact,
+          project_name: latestProject.name,
+          fair_name: latestProject.fairName,
+          city: latestProject.city,
+          country: latestProject.country,
+          delivery_date: latestProject.deliveryDate
+        })
+      });
       
-      // Add to sent surveys list
-      const newSentSurvey = {
-        id: Date.now(),
-        customerId: selectedCustomer.id,
-        customerName: selectedCustomer.name,
-        contact: selectedCustomer.contact,
-        email: selectedCustomer.email,
-        projectName: latestProject.name,
-        fairName: latestProject.fairName,
-        surveyToken,
-        surveyLink,
-        sentAt: new Date().toISOString(),
-        status: 'sent',
-        opened: false,
-        completed: false
-      };
+      const result = await response.json();
       
-      setSentSurveys(prev => [newSentSurvey, ...prev]);
-      setSelectedCustomerId('');
-      setSearchTerm('');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      alert(`Anket başarıyla ${selectedCustomer.contact} (${selectedCustomer.email}) adresine gönderildi!`);
+      if (result.success) {
+        // Add to sent surveys list
+        const newSentSurvey = {
+          id: Date.now(),
+          customerId: selectedCustomer.id,
+          customerName: selectedCustomer.name,
+          contact: selectedCustomer.contact,
+          email: selectedCustomer.email,
+          projectName: latestProject.name,
+          fairName: latestProject.fairName,
+          surveyToken: result.survey_token,
+          surveyLink: result.survey_link,
+          sentAt: new Date().toISOString(),
+          status: 'sent',
+          opened: false,
+          completed: false
+        };
+        
+        setSentSurveys(prev => [newSentSurvey, ...prev]);
+        setSelectedCustomerId('');
+        setSearchTerm('');
+        
+        alert(`✅ Anket başarıyla gönderildi!\n\n📧 Alıcı: ${selectedCustomer.contact} (${selectedCustomer.email})\n🔗 Link: ${result.survey_link}`);
+      } else {
+        throw new Error(result.error || 'Email gönderim hatası');
+      }
       
     } catch (error) {
       console.error('Survey send error:', error);
-      alert('Anket gönderilirken bir hata oluştu.');
+      alert(`❌ Anket gönderilirken hata oluştu:\n${error.message}`);
     } finally {
       setIsLoading(false);
     }
