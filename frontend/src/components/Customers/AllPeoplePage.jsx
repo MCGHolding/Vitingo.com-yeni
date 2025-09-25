@@ -29,6 +29,23 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
   // Use props people if provided, otherwise fall back to mock data
   const [people, setPeople] = useState(peopleProp.length > 0 ? peopleProp : allPeople);
 
+  // Update people when props change
+  React.useEffect(() => {
+    if (peopleProp.length > 0) {
+      setPeople(peopleProp);
+    }
+  }, [peopleProp]);
+
+  // Calculate stats dynamically
+  const peopleStats = {
+    totalPeople: people.length,
+    activePeople: people.filter(p => p.status === 'active').length,
+    customers: people.filter(p => p.relationshipType === 'customer').length,
+    potentialCustomers: people.filter(p => p.relationshipType === 'potential_customer').length,
+    contacts: people.filter(p => p.relationshipType === 'kontak').length,
+    suppliers: people.filter(p => p.relationshipType === 'supplier').length
+  };
+
   const filteredPeople = people.filter(person => {
     const matchesSearch = searchTerm === '' || 
       person.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
