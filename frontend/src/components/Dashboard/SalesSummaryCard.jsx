@@ -173,18 +173,18 @@ const SalesSummaryCard = () => {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center space-x-6 mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <span className="text-sm text-gray-600">iPhone</span>
+      <div className="flex items-center justify-center space-x-4 mt-3 pt-3 border-t border-gray-200">
+        <div className="flex items-center space-x-1">
+          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <span className="text-xs text-gray-600">iPhone</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-          <span className="text-sm text-gray-600">iPad</span>
+        <div className="flex items-center space-x-1">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span className="text-xs text-gray-600">iPad</span>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <div className="w-3 h-0.5 bg-yellow-500"></div>
-          <span className="text-sm text-gray-600">Toplam</span>
+          <span className="text-xs text-gray-600">Toplam</span>
         </div>
       </div>
     </div>
