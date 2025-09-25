@@ -8,6 +8,7 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sentSurveys, setSentSurveys] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('send'); // 'send' or 'results'
 
   // Filter customers based on search term
   const filteredCustomers = useMemo(() => {
