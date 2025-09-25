@@ -241,6 +241,12 @@ export default function Sidebar({
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
   };
 
+  const handleLogout = () => {
+    if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+      logout();
+    }
+  };
+
   const handleMenuClick = (item, subItem = null) => {
     // Handle Dashboard main menu
     if (item.name === 'Dashboard' && !subItem) {
