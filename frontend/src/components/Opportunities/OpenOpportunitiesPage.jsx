@@ -275,7 +275,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   };
 
   const filteredOpportunities = useMemo(() => {
-    let filtered = openOpportunities;
+    let filtered = opportunitiesData;
 
     // Search filter
     if (searchTerm) {
