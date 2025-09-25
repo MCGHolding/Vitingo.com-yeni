@@ -182,10 +182,14 @@ export default function UserSwitchModal({ onClose }) {
             </div>
 
             {availableUsers.length === 0 && (
-              <div className="text-center py-8">
-                <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Kullanıcı Bulunamadı</h3>
-                <p className="text-gray-600">Geçiş yapılabilecek kullanıcı bulunmuyor.</p>
+              <div className="text-center py-12">
+                <div className="p-4 bg-gray-100 rounded-2xl w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                  <Users className="h-12 w-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Kullanıcı Bulunamadı</h3>
+                <p className="text-gray-600 text-base leading-relaxed max-w-md mx-auto">
+                  Şu anda geçiş yapılabilecek kullanıcı bulunmuyor. Yeni kullanıcılar eklemek için sistem ayarlarını kontrol edin.
+                </p>
               </div>
             )}
 
