@@ -99,7 +99,7 @@ export default function UserMenu() {
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40" 
+            className="fixed inset-0 bg-black bg-opacity-20 z-40" 
             onClick={() => setIsOpen(false)}
           />
           
