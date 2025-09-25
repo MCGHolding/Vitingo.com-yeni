@@ -610,7 +610,7 @@ const Dashboard = () => {
                 <div className="xl:col-span-2">
                   <ModernSalesChart />
                 </div>
-                <CSATGauge />
+                <RealTimeSurveyStats />
               </div>
 
               {/* Sales Summary and Additional Charts */}
