@@ -122,6 +122,39 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
     });
   };
 
+  // Modal handlers
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setShowViewModal(true);
+  };
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleSaveUser = (updatedUser) => {
+    if (onUpdateUser) {
+      onUpdateUser(updatedUser);
+    }
+    handleCloseEditModal();
+  };
+
+  const handleActionMenuAction = (action, user) => {
+    // Handle action menu actions
+    console.log('Action:', action, 'User:', user);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
