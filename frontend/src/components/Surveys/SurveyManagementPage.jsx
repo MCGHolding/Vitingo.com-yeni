@@ -243,6 +243,16 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
                   </>
                 )}
               </button>
+
+              {/* Test Email Button */}
+              <button
+                onClick={handleTestEmail}
+                disabled={isLoading}
+                className="w-full mt-3 py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center justify-center space-x-2 transition-all"
+              >
+                <Mail className="h-4 w-4" />
+                <span>Test Email Gönder (mbucak@gmail.com)</span>
+              </button>
             </div>
           </div>
 
