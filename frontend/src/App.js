@@ -468,6 +468,9 @@ const Dashboard = () => {
       case 'surveys':
         return <SurveyManagementPage onBackToDashboard={handleBackToDashboard} initialTab={surveyInitialTab} />;
 
+      case 'handovers':
+        return <HandoverManagementPage onBackToDashboard={handleBackToDashboard} />;
+
       case 'sales-reports':
         return (
           <div className="p-6">
