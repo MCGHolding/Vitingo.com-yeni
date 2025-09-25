@@ -262,6 +262,18 @@ const Dashboard = () => {
     setCurrentView('export-data');
   };
 
+  const handleSalesReports = () => {
+    setCurrentView('sales-reports');
+  };
+
+  const handleCustomerReports = () => {
+    setCurrentView('customer-reports');
+  };
+
+  const handleSurveys = () => {
+    setCurrentView('surveys');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
