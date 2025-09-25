@@ -113,7 +113,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    setOriginalAdminUser(null);
     localStorage.removeItem('vitingo_user');
+    localStorage.removeItem('vitingo_admin_session');
   };
 
   const updateLastActivity = () => {
