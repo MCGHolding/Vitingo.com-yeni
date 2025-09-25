@@ -47,6 +47,7 @@ import RecentTransactionsTable from './components/Dashboard/RecentTransactionsTa
 import TopCustomersCard from './components/Dashboard/TopCustomersCard';
 import CSATGauge from './components/Dashboard/CSATGauge';
 import GeographicSalesMap from './components/Dashboard/GeographicSalesMap';
+import CurrencyTooltip from './components/Dashboard/CurrencyTooltip';
 import { 
   Users, 
   TrendingUp, 
