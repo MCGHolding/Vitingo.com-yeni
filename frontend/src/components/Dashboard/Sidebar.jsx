@@ -126,7 +126,17 @@ const navigation = [
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
   { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
-  { name: 'Ayarlar', href: '/settings', icon: Settings, current: false },
+  { 
+    name: 'Ayarlar', 
+    href: '/settings', 
+    icon: Settings, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Import Data', href: '/settings/import', icon: Upload },
+      { name: 'Export Data', href: '/settings/export', icon: Download }
+    ]
+  },
 ];
 
 export default function Sidebar({ 
