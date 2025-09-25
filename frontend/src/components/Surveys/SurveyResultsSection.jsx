@@ -9,7 +9,31 @@ const SurveyResultsSection = () => {
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-  // Filter responses by customer and search term
+  // Helper function to get customer representative by project ID
+  const getCustomerRepresentative = (projectId) => {
+    for (const customer of customersWithProjects) {
+      const project = customer.projects.find(p => p.id === projectId);
+      if (project) {
+        return project.customerRepresentative || 'Belirtilmemiş';
+      }
+    }
+    return 'Belirtilmemiş';
+  };
+
+  // Get unique customer representatives for filter
+  const uniqueRepresentatives = useMemo(() => {
+    const reps = new Set();
+    customersWithProjects.forEach(customer => {
+      customer.projects.forEach(project => {
+        if (project.customerRepresentative) {
+          reps.add(project.customerRepresentative);
+        }
+      });
+    });
+    return Array.from(reps).sort();
+  }, []);
+
+  // Filter responses by customer, representative and search term
   const filteredResponses = useMemo(() => {
     let filtered = surveyResponses;
 
