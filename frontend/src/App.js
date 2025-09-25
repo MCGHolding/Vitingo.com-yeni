@@ -232,6 +232,7 @@ const Dashboard = () => {
         toggleSidebar={toggleSidebar}
         onNewOpportunity={handleNewOpportunity}
         onOpenOpportunities={handleOpenOpportunities}
+        onUserManagement={handleUserManagement}
       />
       
       {/* Main content */}
