@@ -138,6 +138,24 @@ const Dashboard = () => {
     console.log('New customer created:', newCustomer);
   };
 
+  // People Management Handlers
+  const handlePeople = () => {
+    setShowNewPersonForm(true);
+  };
+
+  const closePersonForm = () => {
+    setShowNewPersonForm(false);
+  };
+
+  const savePerson = (personData) => {
+    const newPerson = {
+      ...personData,
+      id: Date.now()
+    };
+    setPeople(prev => [newPerson, ...prev]);
+    console.log('New person created:', newPerson);
+  };
+
   const handleAllQuotes = () => {
     console.log('All Quotes clicked');
     // TODO: Implement all quotes page view
