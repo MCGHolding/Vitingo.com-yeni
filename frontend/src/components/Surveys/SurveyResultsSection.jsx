@@ -42,6 +42,14 @@ const SurveyResultsSection = () => {
       filtered = filtered.filter(response => response.customerId === parseInt(selectedCustomerId));
     }
 
+    // Filter by customer representative
+    if (selectedRepresentative) {
+      filtered = filtered.filter(response => {
+        const rep = getCustomerRepresentative(response.projectId);
+        return rep === selectedRepresentative;
+      });
+    }
+
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(response =>
@@ -52,7 +60,7 @@ const SurveyResultsSection = () => {
     }
 
     return filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-  }, [selectedCustomerId, searchTerm]);
+  }, [selectedCustomerId, selectedRepresentative, searchTerm]);
 
   // Get unique customers
   const customers = useMemo(() => {
