@@ -107,6 +107,19 @@ const navigation = [
       { name: 'Önceki Kullanıcılar', href: '/users/former', icon: User }
     ]
   },
+  { 
+    name: 'Fuarlar', 
+    href: '/fairs', 
+    icon: MapPin, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Fuar', href: '/fairs/new', icon: Plus },
+      { name: 'Tüm Fuarlar', href: '/fairs/all', icon: List },
+      { name: 'Aktif Fuarlar', href: '/fairs/active', icon: Eye },
+      { name: 'Geçmiş Fuarlar', href: '/fairs/past', icon: Calendar }
+    ]
+  },
   { name: 'Raporlar', href: '/reports', icon: BarChart3, current: false },
   { name: 'Görevler', href: '/tasks', icon: Target, current: false },
   { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
