@@ -396,6 +396,201 @@ async def import_data(
         logger.error(f"Error importing {category}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error importing data: {str(e)}")
 
+@api_router.get("/download-template/{category}")
+async def download_template(category: str):
+    """Download CSV template for different categories"""
+    
+    # Validate category
+    valid_categories = ["fairs", "customers", "people", "prospects", "cities", "countries", "faircenters"]
+    if category not in valid_categories:
+        raise HTTPException(status_code=400, detail=f"Invalid category. Must be one of: {valid_categories}")
+    
+    try:
+        # Create CSV content based on category
+        if category == "fairs":
+            headers = [
+                "name", "city", "country", "startDate", "endDate", 
+                "sector", "cycle", "fairMonth", "description"
+            ]
+            sample_data = [
+                [
+                    "Teknoloji Fuarı 2025",
+                    "İstanbul", 
+                    "Türkiye", 
+                    "2025-09-15", 
+                    "2025-09-18", 
+                    "Teknoloji", 
+                    "yearly", 
+                    "09", 
+                    "Teknoloji sektörü fuarı"
+                ],
+                [
+                    "Otomotiv Expo 2025",
+                    "Ankara", 
+                    "Türkiye", 
+                    "2025-10-20", 
+                    "2025-10-23", 
+                    "Otomotiv", 
+                    "yearly", 
+                    "10", 
+                    "Otomotiv sektörü fuarı"
+                ],
+                [
+                    "Gıda Fuarı 2025",
+                    "İzmir", 
+                    "Türkiye", 
+                    "2025-11-10", 
+                    "2025-11-13", 
+                    "Gıda ve İçecek", 
+                    "yearly", 
+                    "11", 
+                    "Gıda sektörü fuarı"
+                ]
+            ]
+        elif category == "customers":
+            headers = [
+                "company_name", "contact_person", "email", "phone", 
+                "address", "city", "country", "industry", "status"
+            ]
+            sample_data = [
+                [
+                    "ABC Teknoloji Ltd.", 
+                    "Ahmet Yılmaz", 
+                    "ahmet@abc.com", 
+                    "+90 212 555 0001", 
+                    "Maslak Mahallesi", 
+                    "İstanbul", 
+                    "Türkiye", 
+                    "Teknoloji", 
+                    "active"
+                ],
+                [
+                    "XYZ Otomotiv A.Ş.", 
+                    "Fatma Demir", 
+                    "fatma@xyz.com", 
+                    "+90 312 555 0002", 
+                    "Çankaya", 
+                    "Ankara", 
+                    "Türkiye", 
+                    "Otomotiv", 
+                    "active"
+                ]
+            ]
+        elif category == "people":
+            headers = [
+                "first_name", "last_name", "email", "phone", 
+                "job_title", "company", "relationship_type", "notes"
+            ]
+            sample_data = [
+                [
+                    "Mehmet", 
+                    "Kaya", 
+                    "mehmet.kaya@sirket.com", 
+                    "+90 532 555 0001", 
+                    "Satış Müdürü", 
+                    "ABC Ltd.", 
+                    "client", 
+                    "VIP müşteri"
+                ],
+                [
+                    "Ayşe", 
+                    "Öz", 
+                    "ayse.oz@firma.com", 
+                    "+90 533 555 0002", 
+                    "Pazarlama Uzmanı", 
+                    "XYZ A.Ş.", 
+                    "lead", 
+                    "Potansiyel müşteri"
+                ]
+            ]
+        elif category == "prospects":
+            headers = [
+                "company_name", "contact_person", "email", "phone", 
+                "industry", "status", "source", "notes"
+            ]
+            sample_data = [
+                [
+                    "DEF Yazılım", 
+                    "Ali Çelik", 
+                    "ali@def.com", 
+                    "+90 216 555 0001", 
+                    "Yazılım", 
+                    "new", 
+                    "web", 
+                    "Web sitesinden gelen lead"
+                ]
+            ]
+        elif category == "cities":
+            headers = ["name", "country", "region", "population"]
+            sample_data = [
+                ["İstanbul", "Türkiye", "Marmara", "15000000"],
+                ["Ankara", "Türkiye", "İç Anadolu", "5500000"],
+                ["İzmir", "Türkiye", "Ege", "4500000"]
+            ]
+        elif category == "countries":
+            headers = ["name", "code", "continent", "population"]
+            sample_data = [
+                ["Türkiye", "TR", "Asia", "84000000"],
+                ["Almanya", "DE", "Europe", "83000000"],
+                ["Fransa", "FR", "Europe", "67000000"]
+            ]
+        elif category == "faircenters":
+            headers = [
+                "name", "city", "country", "address", 
+                "capacity", "contact_phone", "contact_email"
+            ]
+            sample_data = [
+                [
+                    "İstanbul Fuar Merkezi", 
+                    "İstanbul", 
+                    "Türkiye", 
+                    "Yeşilköy Halkalı Cad. No:1", 
+                    "50000", 
+                    "+90 212 555 0100", 
+                    "info@istanbulfuar.com"
+                ],
+                [
+                    "Ankara CONGRESIUM", 
+                    "Ankara", 
+                    "Türkiye", 
+                    "Eskişehir Yolu 7. km", 
+                    "30000", 
+                    "+90 312 555 0200", 
+                    "info@congresium.com"
+                ]
+            ]
+        
+        # Create CSV content
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write headers
+        writer.writerow(headers)
+        
+        # Write sample data
+        for row in sample_data:
+            writer.writerow(row)
+        
+        # Get CSV content
+        csv_content = output.getvalue()
+        output.close()
+        
+        # Create response
+        filename = f"{category}_template.csv"
+        
+        def generate():
+            yield csv_content
+        
+        return StreamingResponse(
+            io.StringIO(csv_content),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating template for {category}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating template: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
