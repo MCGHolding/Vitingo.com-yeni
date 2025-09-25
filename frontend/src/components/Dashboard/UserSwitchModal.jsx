@@ -90,21 +90,21 @@ export default function UserSwitchModal({ onClose }) {
             </div>
           </CardHeader>
           
-          <CardContent className="p-8">
-            <div className="mb-8">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="h-6 w-6 text-purple-600" />
+          <CardContent className="p-10">
+            <div className="mb-10">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="p-3 bg-purple-100 rounded-xl">
+                  <Users className="h-7 w-7 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Kullanılabilir Kullanıcılar</h3>
+                <h3 className="text-2xl font-bold text-gray-900">Kullanılabilir Kullanıcılar</h3>
               </div>
-              <p className="text-base text-gray-600 leading-relaxed">
+              <p className="text-lg text-gray-600 leading-relaxed">
                 Admin yetkileriyle şifre girmeden diğer kullanıcı hesaplarına geçiş yapabilirsiniz. 
                 Değiştirmek istediğiniz kullanıcıyı seçin.
               </p>
             </div>
 
-            <div className="grid gap-6">
+            <div className="space-y-6">
               {availableUsers.map((targetUser) => {
                 const RoleIcon = getRoleIcon(targetUser.role);
                 const isLoading = loading && selectedUserId === targetUser.id;
