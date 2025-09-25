@@ -440,7 +440,7 @@ export default function OpenOpportunitiesPage() {
                           {opportunity.tags.map((tag, tagIndex) => (
                             <Badge
                               key={tagIndex}
-                              className={`text-xs px-2 py-1 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                              className={`text-[10px] px-1.5 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
                             >
                               {tag}
                             </Badge>
