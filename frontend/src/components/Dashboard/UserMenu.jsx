@@ -66,10 +66,10 @@ export default function UserMenu() {
 
   return (
     <div className="relative" ref={menuRef}>
-      <Button
-        variant="ghost"
+      <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-3 text-white bg-slate-800 hover:bg-slate-700 px-4 py-3 w-full justify-start rounded-lg border border-slate-600"
+        className="flex items-center space-x-3 text-white bg-slate-800 hover:bg-slate-700 px-4 py-3 w-full justify-start rounded-lg border border-slate-600 cursor-pointer transition-colors duration-200"
+        style={{ backgroundColor: '#1e293b' }}
       >
         <div className="flex-shrink-0 h-8 w-8">
           <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
