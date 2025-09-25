@@ -334,8 +334,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Currency Rates Endpoint"
-    - "Currency Conversion Endpoint"
+    - "Enhanced Survey System - Multi-Project Selection"
+    - "Enhanced Survey System - Arbitrary Email Surveys"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
