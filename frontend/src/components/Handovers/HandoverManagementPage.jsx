@@ -280,11 +280,42 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
           /* Send Handover Form */
           <div className="bg-white rounded-xl shadow-lg border border-gray-200">
             <div className="p-6">
-              {/* Customer Search and Selection */}
+              {/* Handover Mode Toggle */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Müşteri Seç
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Teslim Formu Gönderim Şekli
                 </label>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setHandoverMode('customer')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+                      handoverMode === 'customer'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    Müşteri Projesi
+                  </button>
+                  <button
+                    onClick={() => setHandoverMode('arbitrary')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all ${
+                      handoverMode === 'arbitrary'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    Manuel E-posta
+                  </button>
+                </div>
+              </div>
+
+              {handoverMode === 'customer' ? (
+                <>
+                  {/* Customer Search and Selection */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Müşteri Seç
+                    </label>
                 
                 <div className="relative mb-3">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
