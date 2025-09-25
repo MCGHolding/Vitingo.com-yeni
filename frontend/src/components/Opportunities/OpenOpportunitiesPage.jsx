@@ -729,13 +729,13 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                       
                       <td className="py-3 px-3">
                         <div className="flex items-center space-x-2">
-                          <Avatar className="h-7 w-7">
-                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
+                          <Avatar className="h-6 w-6">
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px]">
                               {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-gray-900 text-sm">
+                            <div className="font-medium text-gray-900 text-xs max-w-[80px] truncate">
                               {opportunity.contactPerson}
                             </div>
                           </div>
