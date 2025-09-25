@@ -176,9 +176,9 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       items: [...prev.items, {
         id: newId,
         name: '',
-        quantity: 1,
+        quantity: '',
         unit: 'adet',
-        unitPrice: 0,
+        unitPrice: '',
         total: 0
       }]
     }));
