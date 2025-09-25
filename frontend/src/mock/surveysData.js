@@ -290,7 +290,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "NAB Show",
         standSize: "21x15 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Elif Özkan"
       }
     ]
   },
