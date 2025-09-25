@@ -443,13 +443,23 @@ ${currentUser.fullName}`
 
               <div className="flex items-center justify-between">
                 <div className="flex space-x-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.gif,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
+                  />
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
+                    onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
                   >
                     <Paperclip className="h-4 w-4 mr-2" />
-                    Dosya Ekle
+                    Dosya Ekle ({emailData.attachments.length})
                   </Button>
                 </div>
 
