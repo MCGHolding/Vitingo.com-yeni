@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { allPeople, peopleStats } from '../../mock/peopleData';
 
-export default function AllPeoplePage({ onBackToDashboard }) {
+export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearchTerm, setTagSearchTerm] = useState('');
   const [selectedSector, setSelectedSector] = useState('');
