@@ -38,7 +38,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     const counts = { EUR: 0, USD: 0, TRY: 0 };
     
     // Apply all filters except currency filter to get base filtered results
-    let baseFiltered = openOpportunities;
+    let baseFiltered = opportunitiesData;
 
     // Search filter
     if (searchTerm) {
