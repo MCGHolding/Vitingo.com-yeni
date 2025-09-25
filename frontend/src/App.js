@@ -274,6 +274,8 @@ const Dashboard = () => {
         return <InactiveCustomersPage onBackToDashboard={handleBackToDashboard} />;
       case 'favorite-customers':
         return <FavoriteCustomersPage onBackToDashboard={handleBackToDashboard} />;
+      case 'all-people':
+        return <AllPeoplePage onBackToDashboard={handleBackToDashboard} />;
       case 'all-users':
         return (
           <AllUsersPage 
