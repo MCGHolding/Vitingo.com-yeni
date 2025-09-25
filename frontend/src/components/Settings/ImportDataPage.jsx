@@ -112,6 +112,50 @@ export default function ImportDataPage({ onBackToDashboard }) {
     setImportResult(null);
   };
 
+  const downloadTemplate = async () => {
+    if (!selectedCategory) {
+      toast({
+        title: "Uyarı",
+        description: "Önce kategori seçiniz.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/download-template/${selectedCategory}`);
+      
+      if (!response.ok) {
+        throw new Error('Template indirilemedi');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${selectedCategory}_template.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Başarılı",
+        description: `${selectedCategory} şablonu indirildi.`,
+      });
+      
+    } catch (error) {
+      console.error('Template download error:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Şablon indirilemedi.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
