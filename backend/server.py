@@ -1297,18 +1297,34 @@ async def get_handover_by_token(handover_token: str):
         if invitation.get("status") == "completed":
             return {"error": "Handover form already completed", "status": 410}
         
-        # Create customer and project data
-        customer = {
-            "id": invitation["customer_id"],
-            "name": invitation["customer_name"],
-            "contact": invitation["contact_name"],
-            "email": invitation["email"]
-        }
-        
-        project = {
-            "id": invitation["project_id"],
-            "name": invitation["project_name"]
-        }
+        # Check if this is an arbitrary handover
+        if invitation.get("is_arbitrary", False):
+            # For arbitrary handovers, create customer and project data from stored info
+            customer = {
+                "id": "arbitrary",
+                "name": invitation.get("customer_name", "Değerli Müşterimiz"),
+                "contact": invitation.get("contact_name", ""),
+                "email": invitation.get("email", "")
+            }
+            
+            project = {
+                "id": "arbitrary",
+                "name": invitation.get("project_name", ""),
+                "country": invitation.get("country", "")
+            }
+        else:
+            # For regular customer handovers, create data from stored info
+            customer = {
+                "id": invitation["customer_id"],
+                "name": invitation["customer_name"],
+                "contact": invitation["contact_name"],
+                "email": invitation["email"]
+            }
+            
+            project = {
+                "id": invitation["project_id"],
+                "name": invitation["project_name"]
+            }
         
         return {
             "handover_token": handover_token,
