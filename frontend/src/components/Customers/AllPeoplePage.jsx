@@ -399,15 +399,27 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center space-x-3">
-                          <button className="text-blue-600 hover:text-blue-900" title="Detayları Görüntüle">
+                          <button 
+                            onClick={() => handleViewPerson(person)}
+                            className="text-blue-600 hover:text-blue-900" 
+                            title="Detayları Görüntüle"
+                          >
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button className="text-green-600 hover:text-green-900" title="Düzenle">
+                          <button 
+                            onClick={() => handleEditPerson(person)}
+                            className="text-green-600 hover:text-green-900" 
+                            title="Düzenle"
+                          >
                             <Edit className="h-4 w-4" />
                           </button>
-                          <button className="text-gray-600 hover:text-gray-900" title="Daha Fazla İşlem">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </button>
+                          <ActionMenuPersonPopover
+                            person={person}
+                            onDelete={handleDeletePerson}
+                            onShare={handleSharePerson}
+                            onMessage={handleMessagePerson}
+                            onMail={handleMailPerson}
+                          />
                         </div>
                       </td>
                     </tr>
