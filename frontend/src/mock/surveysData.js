@@ -252,12 +252,15 @@ export const customersWithProjects = [
   }
 ];
 
-// Survey Responses Mock Data
+// Survey Responses Mock Data - Multiple responses per customer
 export const surveyResponses = [
   {
     id: 1,
     customerId: 1,
+    customerName: "ABC Teknoloji Ltd.",
+    contact: "Ahmet Yılmaz",
     projectId: 101,
+    projectName: "CeBIT Turkey 2024 Standı",
     surveyToken: "abc123def456",
     responses: {
       1: "5", // Çok Memnun
@@ -272,6 +275,167 @@ export const surveyResponses = [
       10: "Harika bir deneyimdi, teşekkürler!"
     },
     submittedAt: "2024-11-20T10:30:00Z",
+    ipAddress: "192.168.1.100"
+  },
+  {
+    id: 2,
+    customerId: 2,
+    customerName: "XYZ Otomotiv A.Ş.",
+    contact: "Fatma Demir",
+    projectId: 102,
+    projectName: "Automechanika İstanbul Standı",
+    surveyToken: "xyz789ghi012",
+    responses: {
+      1: "4", // Memnun
+      2: "good", // İyi
+      3: ["production", "installation", "support"],
+      4: "8", // 8 puan
+      5: "Araç sergi alanı ve LED ışıklandırma çok profesyoneldi",
+      6: "on_time",
+      7: ["electrical"], // Elektrik sorunları
+      8: "Ses sisteminde iyileştirme yapılabilir",
+      9: "8", // NPS 8
+      10: "Genel olarak başarılı bir proje oldu"
+    },
+    submittedAt: "2024-09-25T14:15:00Z",
+    ipAddress: "192.168.1.105"
+  },
+  {
+    id: 3,
+    customerId: 1,
+    customerName: "ABC Teknoloji Ltd.",
+    contact: "Ahmet Yılmaz",
+    projectId: 107,
+    projectName: "Mobile World Congress Barcelona",
+    surveyToken: "abc456def789",
+    responses: {
+      1: "5", // Çok Memnun
+      2: "excellent",
+      3: ["design", "production", "logistics", "support"],
+      4: "10", // 10 puan
+      5: "Hologram teknolojisi ve VR bölümü müthişti",
+      6: "early", // Erken teslim
+      7: ["none"],
+      8: "Daha büyük LED duvarları olabilir",
+      9: "10", // NPS 10
+      10: "Mükemmel bir iş çıkardınız, Barcelona'da çok beğeni topladık!"
+    },
+    submittedAt: "2024-02-28T09:45:00Z",
+    ipAddress: "192.168.1.100"
+  },
+  {
+    id: 4,
+    customerId: 3,
+    customerName: "DEF Yazılım Inc.",
+    contact: "Mehmet Kaya",
+    projectId: 103,
+    projectName: "GITEX Technology Week Standı",
+    surveyToken: "def345ghi678",
+    responses: {
+      1: "3", // Orta
+      2: "average", // Orta
+      3: ["design", "timeline"],
+      4: "6", // 6 puan
+      5: "Yazılım demo alanları güzeldi ama teknik sorunlar oldu",
+      6: "slightly_late", // Hafif gecikme
+      7: ["assembly", "electrical"], // Kurulum ve elektrik sorunları
+      8: "Kurulum ekibinin daha deneyimli olması gerekiyor",
+      9: "5", // NPS 5
+      10: "Ortalama bir deneyim, geliştirilmesi gereken alanlar var"
+    },
+    submittedAt: "2024-10-18T16:20:00Z",
+    ipAddress: "192.168.1.110"
+  },
+  {
+    id: 5,
+    customerId: 4,
+    customerName: "GHI Elektronik Ltd.",
+    contact: "Ayşe Öz",
+    projectId: 104,
+    projectName: "IFA Berlin Standı",
+    surveyToken: "ghi567jkl890",
+    responses: {
+      1: "5", // Çok Memnun
+      2: "excellent",
+      3: ["design", "production", "installation", "logistics"],
+      4: "9", // 9 puan
+      5: "Ürün sergileme alanları ve aydınlatma sistemi harika",
+      6: "on_time",
+      7: ["none"],
+      8: "İnteraktif ekranlar daha büyük olabilir",
+      9: "9", // NPS 9
+      10: "Berlin'de çok başarılı geçti, tebrikler!"
+    },
+    submittedAt: "2024-09-05T11:10:00Z",
+    ipAddress: "192.168.1.115"
+  },
+  {
+    id: 6,
+    customerId: 1,
+    customerName: "ABC Teknoloji Ltd.",
+    contact: "Ahmet Yılmaz",
+    projectId: 108,
+    projectName: "ITU Telecom World Istanbul",
+    surveyToken: "abc789def012",
+    responses: {
+      1: "4", // Memnun
+      2: "good",
+      3: ["design", "production", "timeline"],
+      4: "8", // 8 puan
+      5: "5G demo alanı ve hologram gösterileri etkileyiciydi",
+      6: "on_time",
+      7: ["materials"], // Malzeme kalite sorunları
+      8: "Malzeme kalitesinde iyileştirme yapılmalı",
+      9: "7", // NPS 7
+      10: "İyi bir proje ama bazı detaylarda eksiklik vardı"
+    },
+    submittedAt: "2024-05-15T13:25:00Z",
+    ipAddress: "192.168.1.100"
+  },
+  {
+    id: 7,
+    customerId: 5,
+    customerName: "JKL Medya A.Ş.",
+    contact: "Murat Çelik",
+    projectId: 105,
+    projectName: "NAB Show Las Vegas Standı",
+    surveyToken: "jkl123mno456",
+    responses: {
+      1: "5", // Çok Memnun
+      2: "excellent",
+      3: ["design", "production", "logistics", "support"],
+      4: "10", // 10 puan
+      5: "4K LED duvarı ve ses sistemi mükemmeldi",
+      6: "on_time",
+      7: ["none"],
+      8: "Her şey harikaydı, devam edin böyle",
+      9: "10", // NPS 10
+      10: "Las Vegas'ta büyük ilgi gördük, ekibinizi tebrik ediyorum!"
+    },
+    submittedAt: "2024-04-20T08:50:00Z",
+    ipAddress: "192.168.1.120"
+  },
+  {
+    id: 8,
+    customerId: 1,
+    customerName: "ABC Teknoloji Ltd.",
+    contact: "Ahmet Yılmaz",
+    projectId: 109,
+    projectName: "Eurasia Boat Show Istanbul",
+    surveyToken: "abc012def345",
+    responses: {
+      1: "3", // Orta
+      2: "average",
+      3: ["design", "installation"],
+      4: "7", // 7 puan
+      5: "Tasarım güzeldi ama kurulum sorunları yaşandı",
+      6: "late", // Gecikme
+      7: ["assembly", "structural"], // Kurulum ve yapısal sorunlar
+      8: "Kurulum sürecinde daha dikkatli olunmalı",
+      9: "6", // NPS 6
+      10: "Ortalama bir deneyim, beklentilerimi tam karşılamadı"
+    },
+    submittedAt: "2024-03-10T12:40:00Z",
     ipAddress: "192.168.1.100"
   }
 ];
