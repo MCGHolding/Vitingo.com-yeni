@@ -191,6 +191,14 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null) => {
+    // Handle Dashboard main menu
+    if (item.name === 'Dashboard' && !subItem) {
+      if (onDashboard) {
+        onDashboard();
+      }
+      return;
+    }
+    
     // Handle Customer menu actions
     if (subItem && subItem.name === 'Yeni Müşteri') {
       if (onNewCustomer) {
