@@ -626,7 +626,7 @@ class CurrencyConversion(BaseModel):
     gbp_amount: float
     rates: Dict[str, float]
 
-@api_router.get("/api/currency-rates", response_model=List[CurrencyRate])
+@api_router.get("/currency-rates", response_model=List[CurrencyRate])
 async def get_currency_rates():
     """Get current currency rates from TCMB"""
     try:
