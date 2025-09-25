@@ -143,11 +143,19 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   const handleItemChange = (id, field, value) => {
     const updatedItems = formData.items.map(item => {
       if (item.id === id) {
-        const updatedItem = { ...item, [field]: value };
+        let updatedItem = { ...item };
         
-        // Calculate total for this item
         if (field === 'quantity' || field === 'unitPrice') {
-          updatedItem.total = (updatedItem.quantity || 0) * (updatedItem.unitPrice || 0);
+          // Parse the number value
+          const numValue = parseNumber(value);
+          updatedItem[field] = numValue;
+          
+          // Calculate total for this item
+          const qty = parseNumber(updatedItem.quantity) || 0;
+          const price = parseNumber(updatedItem.unitPrice) || 0;
+          updatedItem.total = qty * price;
+        } else {
+          updatedItem[field] = value;
         }
         
         return updatedItem;
