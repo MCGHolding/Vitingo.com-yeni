@@ -398,34 +398,88 @@ export const AuthProvider = ({ children }) => {
 
   // Get available users for admin to switch to
   const getAvailableUsers = () => {
-    if (!user || user.role !== 'admin') return [];
+    if (!user || (user.role !== 'admin' && user.role !== 'super-admin')) return [];
     
     const users = [
       {
         id: 2,
-        username: 'satis1',
-        fullName: 'Ahmet Yılmaz',
-        email: 'ahmet@vitingo.com',
-        role: 'sales_rep',
-        department: 'Satış',
+        username: 'tame',
+        fullName: 'Tamer Erdim',
+        email: 'tamer.erdim@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
         avatar: null
       },
       {
         id: 3,
-        username: 'mudur1',
-        fullName: 'Fatma Demir',
-        email: 'fatma@vitingo.com',
-        role: 'sales_manager',
-        department: 'Satış',
+        username: 'batc',
+        fullName: 'Batuhan Cücük',
+        email: 'batuhan.cucuk@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
         avatar: null
       },
       {
         id: 4,
-        username: 'satis2',
-        fullName: 'Mehmet Kaya',
-        email: 'mehmet@vitingo.com',
-        role: 'sales_rep',
-        department: 'Satış',
+        username: 'vatd',
+        fullName: 'Vatan Dalkılıç',
+        email: 'vatan.dalkilic@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
+        avatar: null
+      },
+      {
+        id: 5,
+        username: 'biry',
+        fullName: 'Birtan Yılmaz',
+        email: 'birtan.yilmaz@quattrostand.com',
+        role: 'admin',
+        department: 'Admin',
+        avatar: null
+      },
+      {
+        id: 6,
+        username: 'beyn',
+        fullName: 'Beyza Nur',
+        email: 'beyza.nur@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null
+      },
+      {
+        id: 7,
+        username: 'niyk',
+        fullName: 'Niyazi Karahan',
+        email: 'niyazi.karahan@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null
+      },
+      {
+        id: 8,
+        username: 'sukb',
+        fullName: 'Şükran Bucak',
+        email: 'sukran.bucak@quattrostand.com',
+        role: 'user',
+        department: 'Muhasebe',
+        avatar: null
+      },
+      {
+        id: 9,
+        username: 'icla',
+        fullName: 'İclal Aksu',
+        email: 'iclal.aksu@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null
+      },
+      {
+        id: 10,
+        username: 'meha',
+        fullName: 'Mehmet Ağdaş',
+        email: 'info@noktafuar.com',
+        role: 'user',
+        department: 'Üretim Müdürü',
         avatar: null
       }
     ];
