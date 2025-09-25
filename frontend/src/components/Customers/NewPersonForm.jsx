@@ -112,10 +112,15 @@ export default function NewPersonForm({ onClose, onSave }) {
 
     const personData = {
       ...formData,
+      fullName: `${formData.firstName} ${formData.lastName}`,
       avatar: imagePreview,
       status: 'active',
       createdDate: new Date().toISOString().split('T')[0],
-      lastActivity: new Date().toISOString().split('T')[0]
+      lastActivity: new Date().toISOString().split('T')[0],
+      relationshipText: relationshipTypes.find(r => r.value === formData.relationshipType)?.label || '',
+      tags: formData.relationshipType ? [formData.relationshipType.toUpperCase()] : [],
+      sector: 'Diğer',
+      priority: 'medium'
     };
 
     onSave(personData);
