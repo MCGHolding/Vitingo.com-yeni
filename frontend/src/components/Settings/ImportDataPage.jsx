@@ -189,18 +189,18 @@ export default function ImportDataPage({ onBackToDashboard }) {
             </h2>
             
             <div className="mb-8">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="h-14 text-lg">
-                  <SelectValue placeholder="Kategori seçiniz..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id} className="text-lg py-3">
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="h-14 text-lg w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Kategori seçiniz...</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* File Upload Section */}
