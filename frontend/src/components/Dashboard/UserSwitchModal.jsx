@@ -112,55 +112,70 @@ export default function UserSwitchModal({ onClose }) {
                 return (
                   <div
                     key={targetUser.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                    className="group relative bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                          {targetUser.avatar ? (
-                            <img 
-                              src={targetUser.avatar} 
-                              alt="Avatar" 
-                              className="h-12 w-12 rounded-full object-cover" 
-                            />
-                          ) : (
-                            <User className="h-6 w-6 text-white" />
-                          )}
+                      <div className="flex items-center space-x-5 flex-1">
+                        {/* Avatar */}
+                        <div className="relative">
+                          <div className="h-16 w-16 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+                            {targetUser.avatar ? (
+                              <img 
+                                src={targetUser.avatar} 
+                                alt="Avatar" 
+                                className="h-16 w-16 rounded-2xl object-cover" 
+                              />
+                            ) : (
+                              <User className="h-8 w-8 text-white" />
+                            )}
+                          </div>
+                          <div className="absolute -top-1 -right-1 h-5 w-5 bg-green-500 rounded-full border-2 border-white"></div>
                         </div>
                         
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <h4 className="font-medium text-gray-900">{targetUser.fullName}</h4>
-                            <Badge className={getRoleBadgeColor(targetUser.role)}>
-                              <RoleIcon className="h-3 w-3 mr-1" />
+                        {/* User Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h4 className="text-xl font-bold text-gray-900 truncate">{targetUser.fullName}</h4>
+                            <Badge className={`${getRoleBadgeColor(targetUser.role)} text-sm px-3 py-1`}>
+                              <RoleIcon className="h-4 w-4 mr-1.5" />
                               {getRoleName(targetUser.role)}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600">{targetUser.email}</p>
-                          <p className="text-xs text-gray-500">
-                            Departman: {targetUser.department} • Kullanıcı Adı: {targetUser.username}
-                          </p>
+                          
+                          <div className="space-y-1">
+                            <p className="text-gray-600 font-medium">{targetUser.email}</p>
+                            <p className="text-sm text-gray-500">
+                              📂 {targetUser.department} • 👤 {targetUser.username}
+                            </p>
+                          </div>
                         </div>
                       </div>
                       
-                      <Button
-                        onClick={() => handleUserSwitch(targetUser.id)}
-                        disabled={loading}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Geçiliyor...
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck className="mr-2 h-4 w-4" />
-                            Geç
-                          </>
-                        )}
-                      </Button>
+                      {/* Switch Button */}
+                      <div className="ml-4">
+                        <Button
+                          onClick={() => handleUserSwitch(targetUser.id)}
+                          disabled={loading}
+                          size="lg"
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-3 text-base font-semibold"
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Geçiliyor...
+                            </>
+                          ) : (
+                            <>
+                              <UserCheck className="mr-2 h-5 w-5" />
+                              Kullanıcıya Geç
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
+                    
+                    {/* Hover Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 );
               })}
