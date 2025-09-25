@@ -432,6 +432,14 @@ const Dashboard = () => {
         />
       )}
 
+      {/* New Person Form Modal */}
+      {showNewPersonForm && (
+        <NewPersonForm
+          onClose={closePersonForm}
+          onSave={savePerson}
+        />
+      )}
+
       {/* User Management Modal */}
       {showUserManagementModal && (
         <UserManagementModal
