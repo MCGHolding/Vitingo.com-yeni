@@ -1083,6 +1083,131 @@ async def get_survey_stats():
             "recent_responses": 0
         }
 
+@api_router.get("/surveys/responses")
+async def get_survey_responses(
+    customer_id: str = None,
+    limit: int = 50,
+    offset: int = 0
+):
+    """Get survey responses with optional customer filter"""
+    try:
+        # Build query filter
+        query_filter = {}
+        if customer_id:
+            query_filter["customer_id"] = customer_id
+        
+        # Get responses with pagination
+        responses = await db.survey_responses.find(query_filter)\
+            .sort("submitted_at", -1)\
+            .skip(offset)\
+            .limit(limit)\
+            .to_list(length=limit)
+        
+        # Get total count
+        total_count = await db.survey_responses.count_documents(query_filter)
+        
+        return {
+            "responses": responses,
+            "total_count": total_count,
+            "has_more": (offset + len(responses)) < total_count
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting survey responses: {str(e)}")
+        return {
+            "responses": [],
+            "total_count": 0,
+            "has_more": False,
+            "error": str(e)
+        }
+
+@api_router.get("/surveys/responses/{response_id}")
+async def get_survey_response_details(response_id: str):
+    """Get detailed survey response by ID"""
+    try:
+        # Find response
+        response = await db.survey_responses.find_one({"id": response_id})
+        
+        if not response:
+            return {"error": "Survey response not found", "status": 404}
+        
+        # Get customer and project details
+        customer = await db.customers.find_one({"id": response["customer_id"]})
+        project = await db.projects.find_one({"id": response["project_id"]})
+        
+        return {
+            "response": response,
+            "customer": customer,
+            "project": project,
+            "status": "success"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting survey response details: {str(e)}")
+        return {
+            "error": str(e),
+            "status": 500
+        }
+
+@api_router.get("/surveys/analytics")
+async def get_survey_analytics(customer_id: str = None):
+    """Get survey analytics and insights"""
+    try:
+        # Build query filter
+        query_filter = {}
+        if customer_id:
+            query_filter["customer_id"] = customer_id
+        
+        # Get all responses for analysis
+        responses = await db.survey_responses.find(query_filter).to_list(length=None)
+        
+        if not responses:
+            return {
+                "total_responses": 0,
+                "avg_satisfaction": 0,
+                "avg_nps": 0,
+                "avg_quality": 0,
+                "satisfaction_distribution": {},
+                "nps_distribution": {}
+            }
+        
+        # Calculate averages
+        satisfaction_scores = [int(r["responses"].get("1", 0)) for r in responses if r["responses"].get("1")]
+        nps_scores = [int(r["responses"].get("9", 0)) for r in responses if r["responses"].get("9")]
+        quality_scores = [int(r["responses"].get("4", 0)) for r in responses if r["responses"].get("4")]
+        
+        avg_satisfaction = sum(satisfaction_scores) / len(satisfaction_scores) if satisfaction_scores else 0
+        avg_nps = sum(nps_scores) / len(nps_scores) if nps_scores else 0
+        avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0
+        
+        # Calculate distributions
+        satisfaction_dist = {}
+        for score in satisfaction_scores:
+            satisfaction_dist[score] = satisfaction_dist.get(score, 0) + 1
+            
+        nps_dist = {}
+        for score in nps_scores:
+            nps_dist[score] = nps_dist.get(score, 0) + 1
+        
+        return {
+            "total_responses": len(responses),
+            "avg_satisfaction": round(avg_satisfaction, 1),
+            "avg_nps": round(avg_nps, 1),
+            "avg_quality": round(avg_quality, 1),
+            "satisfaction_distribution": satisfaction_dist,
+            "nps_distribution": nps_dist
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting survey analytics: {str(e)}")
+        return {
+            "total_responses": 0,
+            "avg_satisfaction": 0,
+            "avg_nps": 0,
+            "avg_quality": 0,
+            "error": str(e)
+        }
+
 # Include the router in the main app
 app.include_router(api_router)
 
