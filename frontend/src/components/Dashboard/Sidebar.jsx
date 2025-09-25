@@ -402,6 +402,13 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Teslim Formları') {
+      if (onHandovers) {
+        onHandovers();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Anketler') {
       if (onSurveys) {
         onSurveys();
