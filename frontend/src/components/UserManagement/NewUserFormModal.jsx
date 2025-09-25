@@ -24,8 +24,8 @@ export default function NewUserFormModal({ onClose, onSave }) {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // Check if user is admin
-  if (!user || user.role !== 'admin') {
+  // Check if user is admin or super-admin
+  if (!user || (user.role !== 'admin' && user.role !== 'super-admin')) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
