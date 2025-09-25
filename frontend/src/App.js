@@ -110,7 +110,7 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (currentView) {
       case 'open-opportunities':
-        return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+        return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} />;
       default:
         return (
           <>
