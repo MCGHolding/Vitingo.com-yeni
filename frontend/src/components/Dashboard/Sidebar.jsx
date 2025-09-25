@@ -339,7 +339,10 @@ export default function Sidebar({
         </nav>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-slate-600 bg-slate-800">
+        <div 
+          className="p-4 border-t border-slate-600 bg-slate-800"
+          style={{ backgroundColor: '#1e293b' }}
+        >
           <UserMenu />
         </div>
       </div>
