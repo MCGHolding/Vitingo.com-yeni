@@ -414,6 +414,18 @@ const Dashboard = () => {
             onBackToDashboard={handleBackToDashboard}
           />
         );
+      case 'import-data':
+        return (
+          <ImportDataPage 
+            onBackToDashboard={handleBackToDashboard}
+          />
+        );
+      case 'export-data':
+        return (
+          <ExportDataPage 
+            onBackToDashboard={handleBackToDashboard}
+          />
+        );
       default:
         return (
           <>
