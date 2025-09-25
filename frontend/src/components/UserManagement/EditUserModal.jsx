@@ -465,24 +465,18 @@ export default function EditUserModal({ user, onClose, onSave }) {
                 <Label className="text-sm font-medium">
                   Kullanıcı Durumu
                 </Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(value) => handleInputChange('status', value)}
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
                   disabled={isSubmitting}
+                  className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map((status) => (
-                      <SelectItem key={status.value} value={status.value}>
-                        <span className={`px-2 py-1 rounded-full text-xs ${status.color}`}>
-                          {status.label}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {statusOptions.map((status) => (
+                    <option key={status.value} value={status.value}>
+                      {status.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
