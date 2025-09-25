@@ -59,15 +59,15 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
   const getPriorityIcon = (priority) => {
     switch (priority) {
       case 'VIP':
-        return <Crown className="h-4 w-4 text-yellow-500" />;
+        return <Crown className="h-3 w-3 text-yellow-500" />;
       case 'Strategic':
-        return <Star className="h-4 w-4 text-purple-500" />;
+        return <Star className="h-3 w-3 text-purple-500" />;
       case 'High':
-        return <Star className="h-4 w-4 text-blue-500" />;
+        return <Star className="h-3 w-3 text-blue-500" />;
       case 'Elite':
-        return <Crown className="h-4 w-4 text-gold-500" />;
+        return <Crown className="h-3 w-3 text-indigo-500" />;
       default:
-        return <Heart className="h-4 w-4 text-red-500" />;
+        return <Heart className="h-3 w-3 text-red-500" />;
     }
   };
 
@@ -157,7 +157,14 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
   };
 
   const formatCurrency = (amount, currency) => {
-    const symbols = { EUR: '€', USD: '$', TRY: '₺' };
+    if (amount === 0) return '-';
+    
+    const symbols = {
+      'EUR': '€',
+      'USD': '$',
+      'TRY': '₺'
+    };
+    
     return `${symbols[currency] || currency} ${amount.toLocaleString()}`;
   };
 
@@ -316,23 +323,21 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
       <div className="px-6 pb-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <Star className="h-5 w-5 text-red-600" />
-              <span>Favori Fırsatlar Listesi</span>
-            </CardTitle>
+            <CardTitle className="text-lg">Favori Fırsatlar Listesi</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Müşteri</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Etkinlik</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Tutar</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Öncelik</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">İlişki</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">İletişim</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-600">İşlemler</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Müşteri</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İsim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
+                    <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -343,86 +348,97 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
                       }`}
                     >
-                      <td className="py-4 px-4">
-                        <div className="space-y-1">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 flex items-center space-x-2">
-                                  {getPriorityIcon(opportunity.priority)}
-                                  <span>{opportunity.customer}</span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Son güncelleme: {formatDate(opportunity.lastUpdate)}</p>
-                                <p>Öncelik: {opportunity.priority}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <div className="flex items-center space-x-1">
-                            {opportunity.tags.map((tag, i) => (
-                              <Badge 
-                                key={i} 
-                                className={`text-xs ${tagColors[tag] || 'bg-gray-500 text-white'}`}
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
+                      <td className="py-3 px-3">
+                        <span className="font-medium text-blue-600 text-sm">#{opportunity.id}</span>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[100px] truncate flex items-center space-x-1">
+                                {getPriorityIcon(opportunity.priority)}
+                                <span>{opportunity.customer}</span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">
+                                {opportunity.customer}<br/>
+                                Öncelik: {opportunity.priority}<br/>
+                                İlişki: {opportunity.relationship}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="font-medium text-gray-900 text-sm max-w-[140px] truncate">
+                          {opportunity.eventName}
+                        </div>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-purple-600 text-sm">
+                            {formatCurrency(opportunity.amount, opportunity.currency)}
+                          </span>
+                        </div>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <Badge 
+                          className={`text-[10px] px-2 py-1 ${
+                            opportunity.priority === 'VIP' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+                            opportunity.priority === 'Strategic' ? 'bg-purple-100 text-purple-800 border-purple-300' :
+                            opportunity.priority === 'Elite' ? 'bg-indigo-100 text-indigo-800 border-indigo-300' :
+                            'bg-red-100 text-red-800 border-red-300'
+                          }`}
+                        >
+                          {opportunity.priority}
+                        </Badge>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px]">
+                              {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium text-gray-900 text-xs max-w-[80px] truncate">
+                              {opportunity.contactPerson}
+                            </div>
                           </div>
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="font-medium text-gray-900">{opportunity.eventName}</div>
-                      </td>
-                      
-                      <td className="py-4 px-4">
-                        <div className="font-bold text-purple-600">
-                          {formatCurrency(opportunity.amount, opportunity.currency)}
+                      <td className="py-3 px-3">
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {opportunity.tags.map((tag, tagIndex) => (
+                            <Badge
+                              key={tagIndex}
+                              className={`text-[9px] px-1 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
                         </div>
                       </td>
                       
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2">
-                          {getPriorityIcon(opportunity.priority)}
-                          <Badge 
-                            className={`${
-                              opportunity.priority === 'VIP' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                              opportunity.priority === 'Strategic' ? 'bg-purple-100 text-purple-800 border-purple-300' :
-                              opportunity.priority === 'Elite' ? 'bg-indigo-100 text-indigo-800 border-indigo-300' :
-                              'bg-red-100 text-red-800 border-red-300'
-                            }`}
-                          >
-                            {opportunity.priority}
-                          </Badge>
-                        </div>
-                      </td>
-                      
-                      <td className="py-4 px-4">
-                        <div className="text-sm text-gray-600">
-                          {opportunity.relationship}
-                        </div>
-                      </td>
-                      
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2 text-sm">
-                          <User className="h-3 w-3 text-gray-400" />
-                          <span className="text-gray-900">{opportunity.contactPerson}</span>
-                        </div>
-                      </td>
-                      
-                      <td className="py-4 px-4 text-center">
-                        <div className="flex items-center justify-center space-x-2">
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center space-x-1">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                  className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                                   onClick={() => handleView(opportunity)}
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <Eye className="h-3 w-3" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -437,10 +453,10 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
+                                  className="h-7 w-7 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
                                   onClick={() => handleEdit(opportunity)}
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Edit className="h-3 w-3" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
