@@ -9,7 +9,7 @@ const SurveyManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sentSurveys, setSentSurveys] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('send'); // 'send' or 'results'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'send' or 'results'
   const [surveyMode, setSurveyMode] = useState('customer'); // 'customer' or 'arbitrary'
   
   // Arbitrary email survey fields
