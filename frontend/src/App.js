@@ -294,6 +294,8 @@ const Dashboard = () => {
         onAllUsers={handleAllUsers}
         onInactiveUsers={handleInactiveUsers}
         onFormerUsers={handleFormerUsers}
+        onNewProspect={handleNewProspect}
+        onAllProspects={handleAllProspects}
       />
       
       {/* Main content */}
