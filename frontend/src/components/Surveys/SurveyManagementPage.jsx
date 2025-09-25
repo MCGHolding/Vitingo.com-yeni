@@ -22,6 +22,38 @@ const SurveyManagementPage = ({ onBackToDashboard }) => {
   const selectedCustomer = customersWithProjects.find(c => c.id === parseInt(selectedCustomerId));
   const latestProject = selectedCustomer?.projects?.[0]; // Assuming latest project is first
 
+  const handleTestEmail = async () => {
+    setIsLoading(true);
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      
+      const response = await fetch(`${backendUrl}/api/send-test-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'mbucak@gmail.com'
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Test email başarıyla gönderildi!\n\n📧 Alıcı: mbucak@gmail.com\n📨 Durum: ${result.message}`);
+      } else {
+        throw new Error(result.error || 'Test email gönderim hatası');
+      }
+      
+    } catch (error) {
+      console.error('Test email error:', error);
+      alert(`❌ Test email gönderilirken hata oluştu:\n${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSendSurvey = async () => {
     if (!selectedCustomer || !latestProject) return;
 
