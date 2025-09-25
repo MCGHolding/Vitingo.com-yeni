@@ -372,6 +372,9 @@ test_plan:
       - working: true
         agent: "testing"
         comment: "✅ BACKEND TESTED SUCCESSFULLY - Arbitrary email survey system working perfectly: 1) New /api/surveys/send-arbitrary endpoint accepts manual email/name/company/project data ✅ 2) Arbitrary surveys create proper database records with is_arbitrary=true flag ✅ 3) Survey retrieval correctly handles arbitrary surveys with stored contact info ✅ 4) Arbitrary survey emails sent successfully via SendGrid ✅ 5) Survey responses can be submitted for arbitrary surveys same as regular ones ✅ 6) Database properly stores both regular and arbitrary survey invitations and responses ✅ 7) All error handling and validation working correctly ✅"
+      - working: true
+        agent: "testing"
+        comment: "✅ FRONTEND TESTED SUCCESSFULLY - Arbitrary email survey UI working perfectly: 1) 'Manuel E-posta' mode toggle button working correctly ✅ 2) Form displays 4 input fields: İletişim Kişisi Adı, E-posta Adresi, Şirket Adı, Proje/Fuar Adı ✅ 3) Successfully filled test data: Test User, test@example.com, Test Company, Test Project ✅ 4) 'Anket Özeti' preview section appears with green background ✅ 5) Preview displays entered data correctly (Alıcı: Test User, Email: test@example.com, Şirket: Test Company, Proje: Test Project) ✅ 6) Form validation working - send button enabled when required fields filled ✅ 7) Mode switching between customer and arbitrary modes working smoothly ✅"
 
 agent_communication:
   - agent: "main"
