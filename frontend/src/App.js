@@ -486,7 +486,10 @@ const Dashboard = () => {
                     <p className="text-blue-100">Bugün harika bir performans sergiliyorsunuz. İşte özet durumunuz:</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold">₺{(2847500).toLocaleString('tr-TR')}</p>
+                    <div className="flex items-center justify-end">
+                      <p className="text-2xl font-bold">₺{(2847500).toLocaleString('tr-TR')}</p>
+                      <CurrencyTooltip tryAmount={2847500} />
+                    </div>
                     <p className="text-blue-100 text-sm">Bu Ayın Toplam Satışı</p>
                   </div>
                 </div>
