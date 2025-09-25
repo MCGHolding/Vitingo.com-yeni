@@ -38,13 +38,12 @@ export default function NewUserFormModal({ onClose, onSave }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const departments = [
-    { value: 'it', label: 'Bilgi İşlem' },
+    { value: 'super_admin', label: 'Super Admin' },
+    { value: 'customer_rep', label: 'Müşteri Temsilcisi' },
     { value: 'sales', label: 'Satış' },
     { value: 'marketing', label: 'Pazarlama' },
-    { value: 'hr', label: 'İnsan Kaynakları' },
-    { value: 'finance', label: 'Finans' },
-    { value: 'operations', label: 'Operasyon' },
-    { value: 'management', label: 'Yönetim' }
+    { value: 'accounting', label: 'Muhasebe' },
+    { value: 'data_collection', label: 'Veri Toplama' }
   ];
 
   const generateUsername = () => {
