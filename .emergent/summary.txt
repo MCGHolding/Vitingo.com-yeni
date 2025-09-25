@@ -1,13 +1,15 @@
 <analysis>
-The AI engineer successfully enhanced the Vitingo CRM across multiple critical modules. Initial work focused on fixing the New User form for admin-only access, auto-username generation, and strong password validation, overcoming initial UI routing and caching issues. Following this, a comprehensive Fuarlar (Fairs) management section was built, including dedicated pages and a detailed Yeni Fuar form with dynamic fields. A key achievement was implementing full backend API integration for fairs, ensuring data persistence and CRUD operations. The engineer then integrated a Fuar Ayı dropdown and, critically, redesigned the Import Data section, adding seven import categories with backend models, CSV processing, and a downloadable template feature. The most recent and challenging task involved debugging user-reported issues with imported data not appearing, which was ultimately traced to persistent CSV formatting errors (delimiter, date format, empty required fields) from the user's side, rather than a code defect.
+The AI engineer successfully transformed the Vitingo CRM, moving from initial fixes and basic feature additions to comprehensive system enhancements. This involved resolving CSV import template issues, debugging frontend rendering for import functionality, and undertaking a complete dashboard redesign. Key features added to the dashboard include multi-currency support with real-time exchange rates, dynamic sales summaries, year-over-year growth rate analysis, and a passive leads tracking system. A major new module, Surveys, was implemented for customer satisfaction, enabling survey creation, management, results viewing, and SendGrid integration for email delivery. A critical debugging session around SendGrid revealed environment variable loading issues, temporarily resolved by hardcoding for validation. The project is currently focused on enhancing the survey system to handle multiple customer projects and allow sending surveys to arbitrary email addresses, with work initiated on mock data preparation.
 </analysis>
 
 <product_requirements>
-The Vitingo CRM's objective is to deliver an intuitive interface with appealing graphics, starting from an MVP dashboard. Recent development has focused on expanding core functionalities:
-1.  **User Management**: Enhance Kullanıcı Yönetimi with an admin-restricted New User form, automatic username generation (first 3 letters of first name + last name), specific department options (Super Admin, Customer Representative, Sales, Marketing, Accounting, Data Collection), and strong password validation (min 6 chars, 1 uppercase, 1 lowercase, 1 special char).
-2.  **Fair Management**: Introduce a new top-level Fuarlar (Fairs) menu with sub-menus (Yeni Fuar, Tüm Fuarlar, Aktif Fuarlar, Geçmiş Fuarlar). The Yeni Fuar form needs fields for Fair Name, City, Country, Start/End Dates, Sector (dropdown with dynamic add option), Cycle (dropdown), and Fuar Ayı (dropdown for months).
-3.  **Data Import/Export**: Add Import Data and Export Data sub-menus under Ayarlar. The Import Data page requires a category dropdown (Fuarlar, Müşteriler, Kişiler, Müşteri Adayları, Şehirler, Ülkeler, Fuar Merkezleri), a Browse button, a warning about CSV format, an Import Et button, and for each category, a dedicated database collection. A downloadable sample CSV template for Fuarlar is also required.
-4.  **Sales Opportunity Integration**: The Yeni Satış Fırsatı form's Fuar Adı field should be a dropdown populated with fair names from the database, reflecting data imported through the Import Data section.
+The Vitingo CRM aims to provide an intuitive interface with appealing graphics, expanding core functionalities from an MVP dashboard. Key requirements include:
+1.  **User Management**: Admin-restricted New User form, automatic username generation, specific department options, and strong password validation.
+2.  **Fair Management**: A Fuarlar menu with sub-menus, including a Yeni Fuar form with fields for Fair Name, City, Country, Start/End Dates, Sector, Cycle, and Fuar Ayı.
+3.  **Data Import/Export**: Import Data and Export Data sub-menus under Ayarlar. Import Data requires a category dropdown, file browser, CSV format warning, Import button, and downloadable sample CSV templates.
+4.  **Sales Opportunity Integration**: Yeni Satış Fırsatı form's Fuar Adı field should be a dropdown populated dynamically from the database.
+5.  **Dashboard Redesign**: A modern, dynamic dashboard with KPI cards, sales charts, geographic maps, multi-currency total revenue display (TL, USD, EURO, GBP from TCMB), dynamic Sales Summary (Daily/Weekly/Monthly/Yearly), Growth Rate (Year-over-Year comparison), and Passive Leads (20-day inactivity rule).
+6.  **Customer Survey System**: A new Anketler sub-menu under Reports to send post-project satisfaction surveys. Features include customer selection with search, Send Survey button to email a unique, personalized survey link (via SendGrid), a survey form with various question types, and a system to view results and statistics.
 </product_requirements>
 
 <key_technical_concepts>
@@ -15,60 +17,57 @@ The Vitingo CRM's objective is to deliver an intuitive interface with appealing 
 -   **FastAPI/MongoDB**: Backend for API and data persistence.
 -   **Shadcn UI/Tailwind CSS**: UI components and styling.
 -   **React Router DOM**: Client-side routing.
--   **Context API**: For global state, especially authentication ().
--   **Dynamic UI**: Modals, popovers, dropdowns.
--   **CSV Processing**: Backend parsing and validation (, ).
--   **Pydantic Models**: Data validation and serialization in FastAPI.
--   **UUIDs**: Unique identifiers for MongoDB documents.
--   **Environment Variables**: Strict URL management.
+-   **Context API**: Global state management (e.g., AuthContext).
+-   **CSV Processing**: Backend parsing and validation.
+-   **Pydantic Models**: Data validation in FastAPI.
+-   ****: Numerical animations.
+-   ****: Charting library.
+-   **, **: External API calls (TCMB).
+-   ****: Email sending service.
 </key_technical_concepts>
 
 <code_architecture>
 
-
--   ****: Central application logic.
-    -   Changes: Updated extensively for new routes,  integration,  logic for Fuarlar and Ayarlar sub-pages, and state management for modals (New User, New Fair, Import/Export Data). Added  for fetching fair data from backend.
--   ****: Main navigation component.
-    -   Changes: Added Fuarlar as a top-level menu with sub-items. Transformed Ayarlar into a submenu with Import Data and Export Data items. Updated  array,  logic, and passed new event handlers.
--   ****: FastAPI backend application.
-    -   Changes: Added Pydantic models (, , , , , , , ) for various entities. Implemented full CRUD API endpoints for . Created  endpoint for CSV file uploads, parsing, validation, and bulk insertion into respective MongoDB collections. Added  endpoint to generate and serve sample CSV templates.
--   ****: New user creation form.
-    -   Changes: Implemented admin-only access via , auto-username generation, department dropdown, and strong password validation.
--   ****: Form for creating new fairs.
-    -   Changes: Created with fields for name, city, country, start/end dates, sector dropdown (with dynamic add), cycle dropdown, and Fuar Ayı dropdown. Integrated with backend API for saving new fair data.
--   ****: Displays a list of all fairs.
-    -   Changes: Initially displayed mock data; updated to fetch real fair data from  endpoint using , including filtering for valid fair names and adding a loading state.
--   ****: Displays active fairs. (Created, basic structure)
--   ****: Displays past fairs. (Created, basic structure)
--   ****: Form for creating new sales opportunities.
-    -   Changes: Converted Fuar Adı input field into a dropdown (, ) populated dynamically with fairs fetched from , including logic to filter out fairs with empty names.
--   ****: Page for importing data.
-    -   Changes: Redesigned with a category dropdown (listing 7 types: Fairs, Customers, People, Prospects, Cities, Countries, Fair Centers), a Browse button, a warning message for CSV format, and a Şablon İndir button to download sample CSV templates. Integrated with backend import and template download APIs.
--   ****: Page for exporting data. (Created, basic structure with mock counts, format, and date range options)
--   ****: Mock data for fairs. (Created and populated)
+-   ****: Handles API endpoints, data processing, and external integrations.
+    -   Changes: Updated  for corrected CSVs; added  for TCMB exchange rates; implemented lead management endpoints (, , ); added survey endpoints (, , , , , ); integrated SendGrid for email sending; included debug logging for environment variables.
+-   ****: (New File) Centralizes SendGrid email sending logic, used by .
+-   ****: Core frontend routing and state management.
+    -   Changes: Integrated all new dashboard components and survey pages; updated  logic and state handlers for navigation.
+-   ****: Main navigation.
+    -   Changes: Added Anketler (Surveys) as a submenu under Raporlar, and new dashboard entry points.
+-   ****: Data import UI.
+    -   Changes: Replaced the UI  component with a native HTML  to fix rendering issues, ensuring the category dropdown functions correctly.
+-   ****: New dashboard components.
+    -   Includes , , , , , , , , , , . These implement modern UI, data visualization, currency conversion, dynamic data filtering, and animations.  was updated to prevent re-animations.
+-   ****: (New File) React hook for fetching and managing currency data.
+-   ****: (New File) Admin page for survey operations.
+    -   Changes: Manages customer selection, project display, sending survey emails via SendGrid, and tab navigation between Anket Gönder and Anket Sonuçları.
+-   ****: (New File) Public-facing survey form page.
+-   ****: (New File) Displays detailed survey results, including filtering and a modal for individual responses.
+-   ****: Multiple new mock data files (e.g., , ) created to support new features.  was recently expanded to include more project data per customer.
 </code_architecture>
 
 <pending_tasks>
 -   Backend implementation for Sales Opportunities, Customer Prospects, Quotes, Customer Management, Person Management beyond basic CRUD endpoints.
 -   Fully implementing  logic to save changes.
--   Implementing the email notification system for new user creation.
 -   Developing Pasif Müşteriler and Favori Müşteriler pages with real data filtering.
--   Further refining the UI of the date picker in  for a smoother user experience.
+-   Further refining the UI of the date picker in .
+-   Implementing the email notification system for new user creation.
+-   **Enhance Survey System**: Allow sending surveys for *all* of a customer's projects.
+-   **Enhance Survey System**: Allow sending surveys to *arbitrary email addresses* (with manual name/email input).
 </pending_tasks>
 
 <current_work>
-Immediately prior to this summary, the AI engineer was engaged in a critical debugging session related to the Import Data functionality. The user had reported that newly imported fair data was not appearing in the Tüm Fuarlar (All Fairs) list, despite the import process seemingly completing successfully.
+Immediately before this summary, the AI engineer was focused on debugging SendGrid email integration for the new Survey system. Although a previous claim of success was made, the user reported an error Test email gönderilirken hata oluştu. Debugging revealed that the  environment variable was not being correctly loaded into the backend Python application, despite being present in  and  being called. To bypass this for testing purposes, the API key was temporarily hardcoded into , and a test email endpoint was simplified. With these changes, backend logs indicated successful email sending (200 OK) for both test emails to a specified address and survey invitation emails to selected customers.
 
-The engineer investigated by:
-1.  **Verifying backend data:** Confirmed that a significant number of fairs (22 in total) existed in the MongoDB database via direct API calls.
-2.  **Debugging frontend display:** Added console logs to  to trace what data was being fetched from the API and how it was being processed and filtered.
-3.  **Identifying the core issue:** The console logs revealed that while 22 fairs were fetched from the API, only 10 were considered valid for display after filtering. A direct check of the database then confirmed that the user's recently imported fairs had been saved with empty  fields. This was the root cause: the frontend was correctly filtering out fairs with no names.
+The product's current state boasts a fully redesigned, modern dashboard with interactive elements like multi-currency conversion (from TCMB), dynamic sales summaries, year-over-year growth metrics, and a passive leads tracking card. The survey management system is operational, allowing administrators to send personalized survey invitations and view aggregate statistics and detailed individual responses. SendGrid is integrated for email delivery, though the environment variable loading issue for the API key needs a permanent solution.
 
-The engineer then accurately diagnosed that the user's CSV file itself had formatting issues (e.g., using semicolons as delimiters, incorrect date formats, empty  fields, and crucially, empty  fields), preventing successful parsing or full data entry, leading to the missing data on the UI. The engineer provided a correctly formatted CSV, demonstrated successful import, and showed that these fairs now appeared correctly in the Tüm Fuarlar list and the Yeni Satış Fırsatı dropdown.
-
-The last action was the user's re-assertion that the  field was filled in their CSV, accompanied by an upload of their problematic CSV, indicating the user needs further guidance on CSV formatting.
+The user's most recent request is to enhance the survey system to:
+1.  Allow selection of *any* project for a given customer to send a survey, not just the latest one.
+2.  Provide an option to send a survey to an *arbitrary email address* by manually entering the recipient's name and email.
+The AI engineer has just started this work by expanding the mock  to include more projects for customers.
 </current_work>
 
 <optional_next_step>
-Analyze the user's newly provided CSV to precisely identify all formatting errors and provide clear instructions.
+Expand  further, then modify  to enable project selection for a customer and add input fields for manual email address entry before sending surveys.
 </optional_next_step>

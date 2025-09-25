@@ -961,7 +961,7 @@ async def send_survey_invitation(
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-1.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://vitingo-crm-2.preview.emergentagent.com')
         survey_link = f"{base_url}/survey/{survey_token}"
         
         # Prepare customer and project data for email
