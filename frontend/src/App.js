@@ -284,6 +284,10 @@ const Dashboard = () => {
     setCurrentView('surveys');
   };
 
+  const handleHandovers = () => {
+    setCurrentView('handovers');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
