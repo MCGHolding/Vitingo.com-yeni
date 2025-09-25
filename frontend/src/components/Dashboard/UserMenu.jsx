@@ -93,7 +93,7 @@ export default function UserMenu() {
           <div className="text-xs text-slate-400">{getRoleName(user.role)}</div>
         </div>
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </Button>
+      </div>
 
       {isOpen && (
         <>
