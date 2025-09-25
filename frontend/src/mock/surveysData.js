@@ -311,7 +311,8 @@ export const customersWithProjects = [
         status: "completed",
         fairName: "Yapı Fuarı İzmir",
         standSize: "6x4 metre",
-        surveyLink: null
+        surveyLink: null,
+        customerRepresentative: "Mert Kaya"
       }
     ]
   }
