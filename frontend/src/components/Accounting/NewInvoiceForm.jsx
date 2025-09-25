@@ -384,7 +384,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                     </td>
                     <td className="py-3 px-2">
                       <div className="bg-gray-50 px-3 py-2 rounded font-medium">
-                        {selectedCurrency?.symbol}{item.total.toFixed(2)}
+                        {selectedCurrency?.symbol}{formatNumber(item.total.toFixed(2))}
                       </div>
                     </td>
                     <td className="py-3 px-2">
