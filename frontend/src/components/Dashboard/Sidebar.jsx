@@ -27,7 +27,9 @@ import {
   UserX,
   Star,
   UserRound,
-  MapPin
+  MapPin,
+  Upload,
+  Download
 } from 'lucide-react';
 
 const navigation = [
