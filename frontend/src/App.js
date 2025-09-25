@@ -633,6 +633,9 @@ const Dashboard = () => {
         onPastFairs={handlePastFairs}
         onImportData={handleImportData}
         onExportData={handleExportData}
+        onSalesReports={handleSalesReports}
+        onCustomerReports={handleCustomerReports}
+        onSurveys={handleSurveys}
       />
       
       {/* Main content */}
