@@ -77,6 +77,7 @@ const Dashboard = () => {
   const [people, setPeople] = useState(allPeople);
   const [fairs, setFairs] = useState(mockFairs);
   const [showNewFairForm, setShowNewFairForm] = useState(false);
+  const [surveyInitialTab, setSurveyInitialTab] = useState('send');
 
   // Load fairs from backend API
   useEffect(() => {
