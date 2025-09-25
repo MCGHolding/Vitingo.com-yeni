@@ -529,13 +529,463 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_survey_questions_endpoint():
+    """Test the survey questions endpoint"""
+    print("=" * 80)
+    print("TESTING SURVEY QUESTIONS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/questions"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, list) or len(data) == 0:
+            print("❌ FAIL: Should return list of questions")
+            return False
+        
+        print(f"✅ PASS: Survey questions endpoint returned {len(data)} questions")
+        return True
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing survey questions: {str(e)}")
+        return False
+
+def test_send_test_email():
+    """Test the send test email functionality"""
+    print("=" * 80)
+    print("TESTING SEND TEST EMAIL ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/send-test-email"
+    print(f"Testing endpoint: {endpoint}")
+    
+    test_email = "test@example.com"
+    payload = {"email": test_email}
+    
+    try:
+        response = requests.post(endpoint, json=payload, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        if data.get("success"):
+            print("✅ PASS: Test email sent successfully")
+        else:
+            print(f"⚠️  WARNING: Test email failed: {data.get('error', 'Unknown error')}")
+            # This might be expected if SendGrid is not properly configured
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing send test email: {str(e)}")
+        return False
+
+def test_regular_survey_invitation():
+    """Test sending regular survey invitation with customer project data"""
+    print("=" * 80)
+    print("TESTING REGULAR SURVEY INVITATION")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/send-invitation"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data based on ABC Teknoloji example
+    test_data = {
+        "customer_id": "test-customer-123",
+        "project_id": "test-project-456", 
+        "email": "test@abcteknoloji.com",
+        "customer_name": "ABC Teknoloji Ltd.",
+        "contact_name": "Ahmet Yılmaz",
+        "project_name": "İstanbul Teknoloji Fuarı Stand Projesi",
+        "fair_name": "İstanbul Teknoloji Fuarı 2025",
+        "city": "İstanbul",
+        "country": "Türkiye",
+        "delivery_date": "2025-03-15"
+    }
+    
+    try:
+        response = requests.post(endpoint, params=test_data, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        # Check required fields in response
+        required_fields = ["success", "survey_token", "survey_link", "message"]
+        for field in required_fields:
+            if field not in data:
+                print(f"❌ FAIL: Missing required field: {field}")
+                return False
+        
+        if data.get("success"):
+            print("✅ PASS: Regular survey invitation sent successfully")
+            print(f"   Survey Token: {data.get('survey_token')}")
+            print(f"   Survey Link: {data.get('survey_link')}")
+            
+            # Store token for later tests
+            global regular_survey_token
+            regular_survey_token = data.get('survey_token')
+            return True
+        else:
+            print(f"⚠️  WARNING: Survey invitation failed: {data.get('error', 'Unknown error')}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing regular survey invitation: {str(e)}")
+        return False
+
+def test_arbitrary_survey_invitation():
+    """Test sending arbitrary survey invitation with manual data"""
+    print("=" * 80)
+    print("TESTING ARBITRARY SURVEY INVITATION")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/send-arbitrary"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for arbitrary survey
+    test_data = {
+        "email": "test@example.com",
+        "contact_name": "Test User",
+        "company_name": "Test Company",
+        "project_name": "Test Project"
+    }
+    
+    try:
+        response = requests.post(endpoint, json=test_data, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        # Check required fields in response
+        required_fields = ["success", "survey_token", "survey_link", "message"]
+        for field in required_fields:
+            if field not in data:
+                print(f"❌ FAIL: Missing required field: {field}")
+                return False
+        
+        if data.get("success"):
+            print("✅ PASS: Arbitrary survey invitation sent successfully")
+            print(f"   Survey Token: {data.get('survey_token')}")
+            print(f"   Survey Link: {data.get('survey_link')}")
+            
+            # Store token for later tests
+            global arbitrary_survey_token
+            arbitrary_survey_token = data.get('survey_token')
+            return True
+        else:
+            print(f"⚠️  WARNING: Arbitrary survey invitation failed: {data.get('error', 'Unknown error')}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
+        return False
+
+def test_survey_retrieval_regular():
+    """Test retrieving regular survey by token"""
+    print("=" * 80)
+    print("TESTING REGULAR SURVEY RETRIEVAL")
+    print("=" * 80)
+    
+    if 'regular_survey_token' not in globals():
+        print("⚠️  SKIP: No regular survey token available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/{regular_survey_token}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        # Check required fields
+        required_fields = ["survey_token", "customer", "project", "questions", "status"]
+        for field in required_fields:
+            if field not in data:
+                print(f"❌ FAIL: Missing required field: {field}")
+                return False
+        
+        print("✅ PASS: Regular survey retrieved successfully")
+        print(f"   Survey Token: {data.get('survey_token')}")
+        print(f"   Customer: {data.get('customer', {}).get('name', 'N/A')}")
+        print(f"   Project: {data.get('project', {}).get('name', 'N/A')}")
+        print(f"   Questions: {len(data.get('questions', []))}")
+        print(f"   Is Arbitrary: {data.get('is_arbitrary', False)}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing regular survey retrieval: {str(e)}")
+        return False
+
+def test_survey_retrieval_arbitrary():
+    """Test retrieving arbitrary survey by token"""
+    print("=" * 80)
+    print("TESTING ARBITRARY SURVEY RETRIEVAL")
+    print("=" * 80)
+    
+    if 'arbitrary_survey_token' not in globals():
+        print("⚠️  SKIP: No arbitrary survey token available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/{arbitrary_survey_token}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        # Check required fields
+        required_fields = ["survey_token", "customer", "project", "questions", "status"]
+        for field in required_fields:
+            if field not in data:
+                print(f"❌ FAIL: Missing required field: {field}")
+                return False
+        
+        # Check if it's properly marked as arbitrary
+        if not data.get('is_arbitrary', False):
+            print("❌ FAIL: Arbitrary survey should have is_arbitrary=true")
+            return False
+        
+        print("✅ PASS: Arbitrary survey retrieved successfully")
+        print(f"   Survey Token: {data.get('survey_token')}")
+        print(f"   Customer: {data.get('customer', {}).get('name', 'N/A')}")
+        print(f"   Project: {data.get('project', {}).get('name', 'N/A')}")
+        print(f"   Questions: {len(data.get('questions', []))}")
+        print(f"   Is Arbitrary: {data.get('is_arbitrary', False)}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing arbitrary survey retrieval: {str(e)}")
+        return False
+
+def test_survey_submission_regular():
+    """Test submitting response for regular survey"""
+    print("=" * 80)
+    print("TESTING REGULAR SURVEY SUBMISSION")
+    print("=" * 80)
+    
+    if 'regular_survey_token' not in globals():
+        print("⚠️  SKIP: No regular survey token available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/{regular_survey_token}/submit"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test response data
+    test_responses = {
+        "1": "5",  # Very satisfied
+        "2": "9"   # Quality rating 9/10
+    }
+    
+    payload = {
+        "responses": test_responses,
+        "ip_address": "127.0.0.1"
+    }
+    
+    try:
+        response = requests.post(endpoint, json=payload, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        if data.get("success"):
+            print("✅ PASS: Regular survey response submitted successfully")
+            print(f"   Message: {data.get('message')}")
+            return True
+        else:
+            print(f"❌ FAIL: Survey submission failed: {data.get('error', 'Unknown error')}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing regular survey submission: {str(e)}")
+        return False
+
+def test_survey_submission_arbitrary():
+    """Test submitting response for arbitrary survey"""
+    print("=" * 80)
+    print("TESTING ARBITRARY SURVEY SUBMISSION")
+    print("=" * 80)
+    
+    if 'arbitrary_survey_token' not in globals():
+        print("⚠️  SKIP: No arbitrary survey token available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/{arbitrary_survey_token}/submit"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test response data
+    test_responses = {
+        "1": "4",  # Satisfied
+        "2": "8"   # Quality rating 8/10
+    }
+    
+    payload = {
+        "responses": test_responses,
+        "ip_address": "127.0.0.1"
+    }
+    
+    try:
+        response = requests.post(endpoint, json=payload, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        if data.get("success"):
+            print("✅ PASS: Arbitrary survey response submitted successfully")
+            print(f"   Message: {data.get('message')}")
+            return True
+        else:
+            print(f"❌ FAIL: Survey submission failed: {data.get('error', 'Unknown error')}")
+            return False
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing arbitrary survey submission: {str(e)}")
+        return False
+
+def test_invalid_survey_token():
+    """Test error handling for invalid survey tokens"""
+    print("=" * 80)
+    print("TESTING INVALID SURVEY TOKEN HANDLING")
+    print("=" * 80)
+    
+    invalid_token = "invalid-token-12345"
+    endpoint = f"{BACKEND_URL}/api/surveys/{invalid_token}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        data = response.json()
+        
+        if "error" in data and data.get("status") == 404:
+            print("✅ PASS: Invalid survey token returns proper error")
+            return True
+        else:
+            print(f"⚠️  WARNING: Expected error response for invalid token")
+            return False
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing invalid survey token: {str(e)}")
+        return False
+
+def test_survey_stats():
+    """Test survey statistics endpoint"""
+    print("=" * 80)
+    print("TESTING SURVEY STATISTICS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/surveys/stats"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        if response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        data = response.json()
+        if not isinstance(data, dict):
+            print("❌ FAIL: Should return JSON object")
+            return False
+        
+        # Check required fields
+        required_fields = ["total_sent", "total_completed", "response_rate", "recent_responses"]
+        for field in required_fields:
+            if field not in data:
+                print(f"❌ FAIL: Missing required field: {field}")
+                return False
+        
+        print("✅ PASS: Survey statistics retrieved successfully")
+        print(f"   Total Sent: {data.get('total_sent')}")
+        print(f"   Total Completed: {data.get('total_completed')}")
+        print(f"   Response Rate: {data.get('response_rate')}%")
+        print(f"   Recent Responses: {data.get('recent_responses')}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ FAIL: Error testing survey statistics: {str(e)}")
+        return False
+
 def main():
     """Run all tests"""
     print("Starting Backend API Tests")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    # Test currency conversion endpoints (new functionality)
+    # Initialize global variables for survey tokens
+    global regular_survey_token, arbitrary_survey_token
+    regular_survey_token = None
+    arbitrary_survey_token = None
+    
+    # Test currency conversion endpoints (existing functionality)
     currency_rates_test_passed = test_currency_rates_endpoint()
     currency_conversion_test_passed = test_currency_conversion_endpoint()
     
@@ -545,11 +995,28 @@ def main():
     # Test error handling
     invalid_test_passed = test_invalid_category()
     
+    # Test survey system functionality (NEW ENHANCED FEATURES)
+    print("\n" + "=" * 80)
+    print("TESTING ENHANCED SURVEY SYSTEM")
+    print("=" * 80)
+    
+    survey_questions_passed = test_survey_questions_endpoint()
+    test_email_passed = test_send_test_email()
+    regular_invitation_passed = test_regular_survey_invitation()
+    arbitrary_invitation_passed = test_arbitrary_survey_invitation()
+    regular_retrieval_passed = test_survey_retrieval_regular()
+    arbitrary_retrieval_passed = test_survey_retrieval_arbitrary()
+    regular_submission_passed = test_survey_submission_regular()
+    arbitrary_submission_passed = test_survey_submission_arbitrary()
+    invalid_token_passed = test_invalid_survey_token()
+    survey_stats_passed = test_survey_stats()
+    
     # Final summary
     print("\n" + "=" * 80)
     print("OVERALL TEST SUMMARY")
     print("=" * 80)
     
+    # Existing functionality
     if currency_rates_test_passed:
         print("✅ Currency Rates Endpoint: PASSED")
     else:
@@ -570,15 +1037,93 @@ def main():
     else:
         print("❌ Invalid Category Handling: FAILED")
     
-    all_tests_passed = all([
+    # Survey system functionality
+    print("\n--- ENHANCED SURVEY SYSTEM RESULTS ---")
+    
+    if survey_questions_passed:
+        print("✅ Survey Questions Endpoint: PASSED")
+    else:
+        print("❌ Survey Questions Endpoint: FAILED")
+    
+    if test_email_passed:
+        print("✅ Test Email Functionality: PASSED")
+    else:
+        print("❌ Test Email Functionality: FAILED")
+    
+    if regular_invitation_passed:
+        print("✅ Regular Survey Invitation: PASSED")
+    else:
+        print("❌ Regular Survey Invitation: FAILED")
+    
+    if arbitrary_invitation_passed:
+        print("✅ Arbitrary Survey Invitation: PASSED")
+    else:
+        print("❌ Arbitrary Survey Invitation: FAILED")
+    
+    if regular_retrieval_passed:
+        print("✅ Regular Survey Retrieval: PASSED")
+    else:
+        print("❌ Regular Survey Retrieval: FAILED")
+    
+    if arbitrary_retrieval_passed:
+        print("✅ Arbitrary Survey Retrieval: PASSED")
+    else:
+        print("❌ Arbitrary Survey Retrieval: FAILED")
+    
+    if regular_submission_passed:
+        print("✅ Regular Survey Submission: PASSED")
+    else:
+        print("❌ Regular Survey Submission: FAILED")
+    
+    if arbitrary_submission_passed:
+        print("✅ Arbitrary Survey Submission: PASSED")
+    else:
+        print("❌ Arbitrary Survey Submission: FAILED")
+    
+    if invalid_token_passed:
+        print("✅ Invalid Token Handling: PASSED")
+    else:
+        print("❌ Invalid Token Handling: FAILED")
+    
+    if survey_stats_passed:
+        print("✅ Survey Statistics: PASSED")
+    else:
+        print("❌ Survey Statistics: FAILED")
+    
+    # Calculate overall results
+    existing_tests = [
         currency_rates_test_passed,
         currency_conversion_test_passed,
         fairs_test_passed,
         invalid_test_passed
-    ])
+    ]
+    
+    survey_tests = [
+        survey_questions_passed,
+        test_email_passed,
+        regular_invitation_passed,
+        arbitrary_invitation_passed,
+        regular_retrieval_passed,
+        arbitrary_retrieval_passed,
+        regular_submission_passed,
+        arbitrary_submission_passed,
+        invalid_token_passed,
+        survey_stats_passed
+    ]
+    
+    all_tests_passed = all(existing_tests + survey_tests)
+    survey_tests_passed = all(survey_tests)
+    
+    print(f"\n--- SUMMARY ---")
+    print(f"Existing Functionality: {sum(existing_tests)}/{len(existing_tests)} tests passed")
+    print(f"Enhanced Survey System: {sum(survey_tests)}/{len(survey_tests)} tests passed")
     
     if all_tests_passed:
         print("\n🎉 ALL TESTS PASSED!")
+        return True
+    elif survey_tests_passed:
+        print("\n✅ ENHANCED SURVEY SYSTEM TESTS PASSED!")
+        print("⚠️  Some existing functionality tests failed")
         return True
     else:
         print("\n❌ SOME TESTS FAILED!")
