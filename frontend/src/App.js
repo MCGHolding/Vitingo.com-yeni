@@ -86,7 +86,7 @@ const Dashboard = () => {
 
   // User Management Handlers
   const handleNewUser = () => {
-    setShowUserManagementModal(true);
+    setShowNewUserForm(true);
   };
 
   const handleAllUsers = () => {
