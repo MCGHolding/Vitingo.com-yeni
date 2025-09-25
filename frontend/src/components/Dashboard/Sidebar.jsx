@@ -26,7 +26,8 @@ import {
   Building,
   UserX,
   Star,
-  UserRound
+  UserRound,
+  MapPin
 } from 'lucide-react';
 
 const navigation = [
