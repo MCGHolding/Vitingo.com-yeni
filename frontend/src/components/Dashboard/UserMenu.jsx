@@ -16,8 +16,9 @@ import {
 } from 'lucide-react';
 
 export default function UserMenu() {
-  const { user, logout, getRoleName } = useAuth();
+  const { user, logout, getRoleName, returnToAdmin, isImpersonating } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [showUserSwitchModal, setShowUserSwitchModal] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
