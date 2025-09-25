@@ -127,8 +127,14 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
 
   // Load invoices on component mount
   useEffect(() => {
-    setInvoices(mockInvoices);
-    setFilteredInvoices(mockInvoices);
+    // Load invoices from localStorage
+    const savedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+    
+    // Combine with mock data for demo
+    const allInvoices = [...mockInvoices, ...savedInvoices];
+    
+    setInvoices(allInvoices);
+    setFilteredInvoices(allInvoices);
   }, []);
 
   // Apply filters
