@@ -176,7 +176,7 @@ export default function NewFairForm({ onClose, onSave }) {
     
     // Form validation
     if (!formData.name || !formData.city || !formData.country || 
-        !formData.startDate || !formData.endDate || !formData.sector || !formData.cycle) {
+        !formData.startDate || !formData.endDate || !formData.sector || !formData.cycle || !formData.fairMonth) {
       console.log('Form validation hatası - eksik alanlar');
       toast({
         title: "Eksik Bilgiler",
