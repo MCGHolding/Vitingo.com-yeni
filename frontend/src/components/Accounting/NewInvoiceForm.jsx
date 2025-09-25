@@ -470,22 +470,22 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Ara Toplam:</span>
-                  <span className="font-medium">{selectedCurrency?.symbol}{totals.subtotal.toFixed(2)}</span>
+                  <span className="font-medium">{selectedCurrency?.symbol}{formatNumber(totals.subtotal.toFixed(2))}</span>
                 </div>
                 {formData.discount > 0 && (
                   <div className="flex justify-between text-red-600">
-                    <span>İskonto ({formData.discount}%):</span>
-                    <span>-{selectedCurrency?.symbol}{totals.discountAmount.toFixed(2)}</span>
+                    <span>İskonto ({formatNumber(formData.discount)}%):</span>
+                    <span>-{selectedCurrency?.symbol}{formatNumber(totals.discountAmount.toFixed(2))}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-600">KDV ({formData.vatRate}%):</span>
-                  <span className="font-medium">{selectedCurrency?.symbol}{totals.vatAmount.toFixed(2)}</span>
+                  <span className="font-medium">{selectedCurrency?.symbol}{formatNumber(totals.vatAmount.toFixed(2))}</span>
                 </div>
                 <hr className="border-gray-300" />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Genel Toplam:</span>
-                  <span className="text-blue-600">{selectedCurrency?.symbol}{totals.total.toFixed(2)}</span>
+                  <span className="text-blue-600">{selectedCurrency?.symbol}{formatNumber(totals.total.toFixed(2))}</span>
                 </div>
               </div>
             </div>
