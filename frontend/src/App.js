@@ -429,25 +429,25 @@ const Dashboard = () => {
       default:
         return (
           <>
-            {/* Top bar */}
-            <div className="bg-white shadow-sm border-b border-gray-200 px-4 py-4 lg:px-6">
+            {/* Modern Top bar */}
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 shadow-xl px-4 py-6 lg:px-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <button
-                    className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    className="lg:hidden p-2 rounded-md text-white/80 hover:text-white hover:bg-white/10"
                     onClick={toggleSidebar}
                   >
                     {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                   </button>
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                    <p className="text-sm text-gray-600">CRM sistemine hoş geldiniz</p>
+                    <h1 className="text-3xl font-bold text-white">Vitingo CRM</h1>
+                    <p className="text-slate-300 mt-1">Modern İş Yönetimi Dashboard'u</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-6">
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">Bugün</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-white">Bugün</p>
+                    <p className="text-xs text-slate-300">
                       {new Date().toLocaleDateString('tr-TR', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -456,63 +456,129 @@ const Dashboard = () => {
                       })}
                     </p>
                   </div>
+                  <div className="h-8 w-px bg-slate-600"></div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-white">Online</p>
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-slate-300">Aktif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Dashboard content */}
-            <div className="p-4 lg:p-6">
-              {/* Stats Grid */}
+            {/* Modern Dashboard content */}
+            <div className="p-4 lg:p-8 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+              {/* Welcome Message */}
+              <div className="mb-8 p-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold mb-2">Hoş Geldiniz! 🚀</h2>
+                    <p className="text-blue-100">Bugün harika bir performans sergiliyorsunuz. İşte özet durumunuz:</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold">₺{(2847500).toLocaleString('tr-TR')}</p>
+                    <p className="text-blue-100 text-sm">Bu Ayın Toplam Satışı</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* KPI Grid - Modern Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <StatCard
-                  title="Toplam Müşteri"
-                  value={customerStats.totalCustomers.toLocaleString('tr-TR')}
-                  change={`+${customerStats.newThisMonth}`}
-                  changeType="positive"
-                  icon={Users}
-                  color="blue"
-                />
-                <StatCard
-                  title="Aktif Müşteri"
-                  value={customerStats.activeCustomers.toLocaleString('tr-TR')}
-                  change={`${customerStats.churnRate}% kayıp`}
-                  changeType="negative"
-                  icon={Target}
-                  color="green"
-                />
-                <StatCard
-                  title="Toplam Gelir"
-                  value={`₺${salesData.totalRevenue.toLocaleString('tr-TR')}`}
-                  change={`%${salesData.monthlyGrowth}`}
+                <ModernKPICard
+                  title="Toplam Satışlar"
+                  value={2847500}
+                  change="+23.8%"
                   changeType="positive"
                   icon={DollarSign}
-                  color="purple"
+                  gradient="from-green-500 to-green-600"
+                  isCurrency={true}
                 />
-                <StatCard
-                  title="Dönüşüm Oranı"
-                  value={`%${salesData.conversionRate}`}
-                  change={`Ort. ₺${salesData.avgDealSize.toLocaleString('tr-TR')}`}
+                <ModernKPICard
+                  title="Toplam Kar"
+                  value={847200}
+                  change="+18.5%"
                   changeType="positive"
                   icon={TrendingUp}
-                  color="orange"
+                  gradient="from-blue-500 to-blue-600"
+                  isCurrency={true}
+                />
+                <ModernKPICard
+                  title="Büyüme Oranı"
+                  value={23.8}
+                  change="+5.2%"
+                  changeType="positive"
+                  icon={Target}
+                  gradient="from-purple-500 to-purple-600"
+                  isPercentage={true}
+                />
+                <ModernKPICard
+                  title="Aktif Müşteri"
+                  value={892}
+                  change="+42 bu ay"
+                  changeType="positive"
+                  icon={Users}
+                  gradient="from-orange-500 to-orange-600"
+                />
+              </div>
+
+              {/* Second Row KPIs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <ModernKPICard
+                  title="Açık Leadler"
+                  value={89}
+                  change="+12 bu hafta"
+                  changeType="positive"
+                  icon={Users}
+                  gradient="from-cyan-500 to-cyan-600"
+                />
+                <ModernKPICard
+                  title="Kaybedilen Leadler"
+                  value={15}
+                  change="-3 bu hafta"
+                  changeType="positive"
+                  icon={Users}
+                  gradient="from-red-500 to-red-600"
+                />
+                <ModernKPICard
+                  title="Toplam Alacaklar"
+                  value={1234567}
+                  change="+8.9%"
+                  changeType="positive"
+                  icon={DollarSign}
+                  gradient="from-indigo-500 to-indigo-600"
+                  isCurrency={true}
+                />
+                <ModernKPICard
+                  title="CSAT Puanı"
+                  value={87.5}
+                  change="+2.3%"
+                  changeType="positive"
+                  icon={Target}
+                  gradient="from-pink-500 to-pink-600"
+                  isPercentage={true}
                 />
               </div>
 
               {/* Charts Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <RevenueChart />
-                <CustomerSegmentChart />
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+                <div className="xl:col-span-2">
+                  <ModernSalesChart />
+                </div>
+                <CSATGauge />
               </div>
 
-              {/* Second Row Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <SalesFunnelChart />
-                <ActivityFeed />
+              {/* Tables and Map Grid */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                <SalesByCountryTable />
+                <GeographicSalesMap />
               </div>
 
-              {/* Performance Table */}
-              <div className="mb-8">
-                <TopPerformersTable />
+              {/* Bottom Section */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <RecentTransactionsTable />
+                <TopCustomersCard />
               </div>
             </div>
           </>
