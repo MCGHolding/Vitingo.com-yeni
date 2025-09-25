@@ -521,9 +521,14 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
               {/* Send Button */}
               <button
                 onClick={handleSendHandover}
-                disabled={!selectedCustomer || !selectedProject || isLoading}
+                disabled={
+                  (handoverMode === 'customer' && (!selectedCustomer || !selectedProject)) ||
+                  (handoverMode === 'arbitrary' && (!arbitraryName || !arbitraryEmail || !arbitraryProject)) ||
+                  isLoading
+                }
                 className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all ${
-                  selectedCustomer && selectedProject && !isLoading
+                  ((handoverMode === 'customer' && selectedCustomer && selectedProject) ||
+                   (handoverMode === 'arbitrary' && arbitraryName && arbitraryEmail && arbitraryProject)) && !isLoading
                     ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
