@@ -28,11 +28,15 @@ import AllUsersPage from './components/UserManagement/AllUsersPage';
 import ViewUserModal from './components/UserManagement/ViewUserModal';
 import EditUserModal from './components/UserManagement/EditUserModal';
 import NewUserFormModal from './components/UserManagement/NewUserFormModal';
+import AllFairsPage from './components/Fairs/AllFairsPage';
+import ActiveFairsPage from './components/Fairs/ActiveFairsPage';
+import PastFairsPage from './components/Fairs/PastFairsPage';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { mockUsers } from './mock/usersData';
 import { allCustomers } from './mock/customersData';
 import { allPeople } from './mock/peopleData';
+import { mockFairs } from './mock/fairsData';
 import { 
   Users, 
   TrendingUp, 
