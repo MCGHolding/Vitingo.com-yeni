@@ -236,13 +236,310 @@ def test_invalid_category():
         print(f"❌ FAIL: Error testing invalid category: {str(e)}")
         return False
 
+def test_currency_rates_endpoint():
+    """
+    Test the currency rates endpoint.
+    
+    Requirements to verify:
+    1. Should return current rates for USD, EUR, GBP from TCMB
+    2. Should include buying_rate and selling_rate for each currency
+    3. Should have fallback rates if TCMB is unavailable
+    4. Should return proper JSON responses
+    """
+    
+    print("=" * 80)
+    print("TESTING CURRENCY RATES ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/currency-rates"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Make the request
+        print("\n1. Making request to get currency rates...")
+        response = requests.get(endpoint, timeout=30)
+        
+        # Test 1: Check status code
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+            print(f"   Response length: {len(data) if isinstance(data, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Check response structure
+        print("\n3. Checking response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of currency rates")
+            return False
+        
+        if len(data) == 0:
+            print("   ❌ FAIL: Response should contain currency rates")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(data)} currency rates")
+        
+        # Test 5: Check required currencies
+        print("\n4. Checking required currencies...")
+        expected_currencies = ["USD", "EUR", "GBP"]
+        found_currencies = []
+        
+        for rate in data:
+            if not isinstance(rate, dict):
+                print(f"   ❌ FAIL: Each rate should be a dictionary, got {type(rate)}")
+                return False
+            
+            # Check required fields
+            required_fields = ["code", "name", "buying_rate", "selling_rate"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in rate:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Rate missing required fields: {missing_fields}")
+                return False
+            
+            currency_code = rate.get("code")
+            found_currencies.append(currency_code)
+            
+            print(f"   Currency: {currency_code}")
+            print(f"     Name: {rate.get('name')}")
+            print(f"     Buying Rate: {rate.get('buying_rate')}")
+            print(f"     Selling Rate: {rate.get('selling_rate')}")
+            
+            # Test 6: Check rate values are numeric and positive
+            buying_rate = rate.get('buying_rate')
+            selling_rate = rate.get('selling_rate')
+            
+            if not isinstance(buying_rate, (int, float)) or buying_rate <= 0:
+                print(f"   ❌ FAIL: Invalid buying_rate for {currency_code}: {buying_rate}")
+                return False
+            
+            if not isinstance(selling_rate, (int, float)) or selling_rate <= 0:
+                print(f"   ❌ FAIL: Invalid selling_rate for {currency_code}: {selling_rate}")
+                return False
+            
+            print(f"   ✅ PASS: {currency_code} has valid rates")
+        
+        # Check if all expected currencies are present
+        missing_currencies = set(expected_currencies) - set(found_currencies)
+        if missing_currencies:
+            print(f"   ❌ FAIL: Missing required currencies: {missing_currencies}")
+            return False
+        
+        print("   ✅ PASS: All required currencies (USD, EUR, GBP) are present")
+        
+        print("\n" + "=" * 80)
+        print("CURRENCY RATES TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Contains all required currencies (USD, EUR, GBP)")
+        print("✅ Each currency has buying_rate and selling_rate")
+        print("✅ All rates are valid positive numbers")
+        print("\n🎉 CURRENCY RATES ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_currency_conversion_endpoint():
+    """
+    Test the currency conversion endpoint.
+    
+    Requirements to verify:
+    1. Should convert 2847500 TRY to USD, EUR, GBP
+    2. Should return proper conversion amounts based on current rates
+    3. Should include the rates used for conversion
+    4. Should return proper JSON responses and handle errors gracefully
+    """
+    
+    print("=" * 80)
+    print("TESTING CURRENCY CONVERSION ENDPOINT")
+    print("=" * 80)
+    
+    test_amount = 2847500
+    endpoint = f"{BACKEND_URL}/api/convert-currency/{test_amount}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Converting amount: {test_amount:,} TRY")
+    
+    try:
+        # Make the request
+        print("\n1. Making request to convert currency...")
+        response = requests.get(endpoint, timeout=30)
+        
+        # Test 1: Check status code
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Check response structure
+        print("\n3. Checking response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        required_fields = ["try_amount", "usd_amount", "eur_amount", "gbp_amount", "rates"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 5: Check TRY amount matches input
+        print("\n4. Checking input amount...")
+        try_amount = data.get("try_amount")
+        if try_amount != test_amount:
+            print(f"   ❌ FAIL: TRY amount mismatch. Expected: {test_amount}, Got: {try_amount}")
+            return False
+        
+        print(f"   ✅ PASS: TRY amount matches input: {try_amount:,}")
+        
+        # Test 6: Check conversion amounts
+        print("\n5. Checking conversion amounts...")
+        usd_amount = data.get("usd_amount")
+        eur_amount = data.get("eur_amount")
+        gbp_amount = data.get("gbp_amount")
+        rates = data.get("rates")
+        
+        print(f"   USD Amount: ${usd_amount:,.2f}")
+        print(f"   EUR Amount: €{eur_amount:,.2f}")
+        print(f"   GBP Amount: £{gbp_amount:,.2f}")
+        
+        # Check if amounts are positive numbers
+        for currency, amount in [("USD", usd_amount), ("EUR", eur_amount), ("GBP", gbp_amount)]:
+            if not isinstance(amount, (int, float)) or amount <= 0:
+                print(f"   ❌ FAIL: Invalid {currency} amount: {amount}")
+                return False
+        
+        print("   ✅ PASS: All conversion amounts are valid positive numbers")
+        
+        # Test 7: Check rates structure
+        print("\n6. Checking rates structure...")
+        if not isinstance(rates, dict):
+            print("   ❌ FAIL: Rates should be a dictionary")
+            return False
+        
+        expected_rate_currencies = ["USD", "EUR", "GBP"]
+        missing_rates = []
+        for currency in expected_rate_currencies:
+            if currency not in rates:
+                missing_rates.append(currency)
+        
+        if missing_rates:
+            print(f"   ❌ FAIL: Missing rates for currencies: {missing_rates}")
+            return False
+        
+        print("   Rates used for conversion:")
+        for currency, rate in rates.items():
+            print(f"     {currency}: {rate}")
+            
+            if not isinstance(rate, (int, float)) or rate <= 0:
+                print(f"   ❌ FAIL: Invalid rate for {currency}: {rate}")
+                return False
+        
+        print("   ✅ PASS: All rates are valid positive numbers")
+        
+        # Test 8: Verify conversion calculations
+        print("\n7. Verifying conversion calculations...")
+        for currency in ["USD", "EUR", "GBP"]:
+            expected_amount = test_amount / rates[currency]
+            actual_amount = data.get(f"{currency.lower()}_amount")
+            
+            # Allow for small floating point differences
+            if abs(expected_amount - actual_amount) > 0.01:
+                print(f"   ❌ FAIL: {currency} calculation error. Expected: {expected_amount:.2f}, Got: {actual_amount:.2f}")
+                return False
+            
+            print(f"   ✅ PASS: {currency} calculation correct ({actual_amount:.2f})")
+        
+        print("\n" + "=" * 80)
+        print("CURRENCY CONVERSION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Input TRY amount matches request")
+        print("✅ Contains conversion amounts for USD, EUR, GBP")
+        print("✅ All conversion amounts are valid positive numbers")
+        print("✅ Includes rates used for conversion")
+        print("✅ Conversion calculations are mathematically correct")
+        print(f"\n🎉 CURRENCY CONVERSION ENDPOINT TEST PASSED!")
+        print(f"   Converted {test_amount:,} TRY to:")
+        print(f"   • ${usd_amount:,.2f} USD")
+        print(f"   • €{eur_amount:,.2f} EUR")
+        print(f"   • £{gbp_amount:,.2f} GBP")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def main():
     """Run all tests"""
-    print("Starting Backend API Tests for CSV Template Download")
+    print("Starting Backend API Tests")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    # Test the main functionality
+    # Test currency conversion endpoints (new functionality)
+    currency_rates_test_passed = test_currency_rates_endpoint()
+    currency_conversion_test_passed = test_currency_conversion_endpoint()
+    
+    # Test the CSV template functionality (existing)
     fairs_test_passed = test_csv_template_download_fairs()
     
     # Test error handling
@@ -252,6 +549,16 @@ def main():
     print("\n" + "=" * 80)
     print("OVERALL TEST SUMMARY")
     print("=" * 80)
+    
+    if currency_rates_test_passed:
+        print("✅ Currency Rates Endpoint: PASSED")
+    else:
+        print("❌ Currency Rates Endpoint: FAILED")
+    
+    if currency_conversion_test_passed:
+        print("✅ Currency Conversion Endpoint: PASSED")
+    else:
+        print("❌ Currency Conversion Endpoint: FAILED")
     
     if fairs_test_passed:
         print("✅ Fairs CSV Template Download: PASSED")
@@ -263,7 +570,14 @@ def main():
     else:
         print("❌ Invalid Category Handling: FAILED")
     
-    if fairs_test_passed and invalid_test_passed:
+    all_tests_passed = all([
+        currency_rates_test_passed,
+        currency_conversion_test_passed,
+        fairs_test_passed,
+        invalid_test_passed
+    ])
+    
+    if all_tests_passed:
         print("\n🎉 ALL TESTS PASSED!")
         return True
     else:
