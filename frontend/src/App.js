@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [customers, setCustomers] = useState(allCustomers);
   const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
   const [showNewPersonForm, setShowNewPersonForm] = useState(false);
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState(allPeople);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
