@@ -26,7 +26,8 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
   const [selectedSector, setSelectedSector] = useState('');
   const [selectedRelationship, setSelectedRelationship] = useState('');
   
-  const [people, setPeople] = useState(allPeople);
+  // Use props people if provided, otherwise fall back to mock data
+  const [people, setPeople] = useState(peopleProp.length > 0 ? peopleProp : allPeople);
 
   const filteredPeople = people.filter(person => {
     const matchesSearch = searchTerm === '' || 
