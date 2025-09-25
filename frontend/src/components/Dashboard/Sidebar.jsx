@@ -149,6 +149,13 @@ export default function Sidebar({
       return;
     }
     
+    if (subItem && subItem.name === 'Kişiler') {
+      if (onPeople) {
+        onPeople();
+      }
+      return;
+    }
+    
     // Handle Prospect menu actions
     if (subItem && subItem.name === 'Yeni Müşteri Adayı') {
       if (onNewProspect) {
