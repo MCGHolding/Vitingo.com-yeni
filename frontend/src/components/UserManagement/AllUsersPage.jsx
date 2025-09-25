@@ -414,6 +414,23 @@ export default function AllUsersPage({ users = [], onBack, onEditUser, onViewUse
           </CardContent>
         </Card>
       </div>
+
+      {/* View User Modal */}
+      {showViewModal && selectedUser && (
+        <ViewUserModal
+          user={selectedUser}
+          onClose={handleCloseViewModal}
+        />
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && selectedUser && (
+        <EditUserModal
+          user={selectedUser}
+          onClose={handleCloseEditModal}
+          onSave={handleSaveUser}
+        />
+      )}
     </div>
   );
 }
