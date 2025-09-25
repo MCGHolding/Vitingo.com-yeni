@@ -123,6 +123,20 @@ export default function Sidebar({
       return;
     }
     
+    if (subItem && subItem.name === 'Yeni Teklif') {
+      if (onNewQuote) {
+        onNewQuote();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Teklifler') {
+      if (onAllQuotes) {
+        onAllQuotes();
+      }
+      return;
+    }
+    
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
       if (item.hasSubmenu) {
