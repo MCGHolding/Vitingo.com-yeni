@@ -15,7 +15,10 @@ import {
   Building2,
   Shield,
   X,
-  Save
+  Save,
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function EditUserModal({ user, onClose, onSave }) {
