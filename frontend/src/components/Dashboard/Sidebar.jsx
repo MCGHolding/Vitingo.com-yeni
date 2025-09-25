@@ -348,6 +348,21 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Settings menu actions
+    if (subItem && subItem.name === 'Import Data') {
+      if (onImportData) {
+        onImportData();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Export Data') {
+      if (onExportData) {
+        onExportData();
+      }
+      return;
+    }
+    
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
       if (item.hasSubmenu) {
