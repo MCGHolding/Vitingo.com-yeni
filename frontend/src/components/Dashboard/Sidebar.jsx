@@ -216,7 +216,20 @@ export default function Sidebar({
   onSalesReports,
   onCustomerReports,
   onHandovers,
-  onSurveys
+  onSurveys,
+  // Accounting handlers
+  onNewInvoice,
+  onAllInvoices,
+  onPendingApproval,
+  onPendingCollection,
+  onPaidInvoices,
+  onOverdueInvoices,
+  onCurrentAccounts,
+  onCollectionReceipt,
+  onExpenseReceipt,
+  onPaymentRequests,
+  onPurchaseInvoices,
+  onPurchaseApprovals
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
