@@ -41,7 +41,9 @@ import {
   Wallet,
   FileCheck,
   ShoppingCart,
-  FileX
+  FileX,
+  LogOut,
+  User
 } from 'lucide-react';
 
 const navigation = [
