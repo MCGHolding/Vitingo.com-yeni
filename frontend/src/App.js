@@ -463,6 +463,10 @@ const Dashboard = () => {
         onAllProspects={handleAllProspects}
         onNewQuote={handleNewQuote}
         onAllQuotes={handleAllQuotes}
+        onNewFair={handleNewFair}
+        onAllFairs={handleAllFairs}
+        onActiveFairs={handleActiveFairs}
+        onPastFairs={handlePastFairs}
       />
       
       {/* Main content */}
