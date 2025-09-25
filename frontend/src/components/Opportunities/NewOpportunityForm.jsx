@@ -41,6 +41,43 @@ export default function NewOpportunityForm({ onClose, onSave }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [fairs, setFairs] = useState([]);
+  const [loadingFairs, setLoadingFairs] = useState(false);
+
+  // Load fairs from database on component mount
+  useEffect(() => {
+    const loadFairs = async () => {
+      setLoadingFairs(true);
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/fairs`);
+        
+        if (response.ok) {
+          const fairsData = await response.json();
+          setFairs(fairsData);
+          console.log('Fairs loaded for dropdown:', fairsData.length);
+        } else {
+          console.error('Failed to load fairs');
+          toast({
+            title: "Uyarı",
+            description: "Fuarlar yüklenirken sorun oluştu",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Error loading fairs:', error);
+        toast({
+          title: "Hata",
+          description: "Fuarlar yüklenemedi",
+          variant: "destructive"
+        });
+      } finally {
+        setLoadingFairs(false);
+      }
+    };
+
+    loadFairs();
+  }, []);
 
   const statusOptions = [
     { value: 'open', label: 'Açık - Aktif', color: 'bg-green-100 text-green-800' },
