@@ -10,6 +10,7 @@ import SalesFunnelChart from './components/Dashboard/SalesFunnelChart';
 import TopPerformersTable from './components/Dashboard/TopPerformersTable';
 import NewOpportunityForm from './components/Opportunities/NewOpportunityForm';
 import OpenOpportunitiesPage from './components/Opportunities/OpenOpportunitiesPage';
+import UserManagementModal from './components/UserManagement/UserManagementModal';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { 
@@ -24,8 +25,10 @@ import {
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNewOpportunityForm, setShowNewOpportunityForm] = useState(false);
+  const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
+  const [users, setUsers] = useState([]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -39,12 +42,29 @@ const Dashboard = () => {
     setCurrentView('open-opportunities');
   };
 
+  const handleUserManagement = () => {
+    setShowUserManagementModal(true);
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
 
   const closeOpportunityForm = () => {
     setShowNewOpportunityForm(false);
+  };
+
+  const closeUserManagementModal = () => {
+    setShowUserManagementModal(false);
+  };
+
+  const saveUser = (userData) => {
+    const newUser = {
+      ...userData,
+      id: Date.now(), // Simple ID generation
+    };
+    setUsers(prev => [newUser, ...prev]);
+    console.log('New user created:', newUser);
   };
 
   const saveOpportunity = (formData) => {
