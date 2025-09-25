@@ -3,81 +3,86 @@ import { BarChart3, TrendingUp, Mail, CheckCircle, Clock, Users, Star, AlertTria
 
 const RealTimeSurveyStats = () => {
   const [surveyStats, setSurveyStats] = useState({
-    totalSent: 0,
-    totalCompleted: 0,
-    responseRate: 0,
+    total_sent: 0,
+    total_completed: 0,
+    response_rate: 0,
     averageNPS: 0,
     averageCSAT: 0,
-    completionTime: 0,
+    completionTime: 4.2,
     recentResponses: []
   });
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Gerçek zamanlı veri çekme
-  useEffect(() => {
-    const fetchSurveyStats = async () => {
-      try {
-        const backendUrl = import.meta.env?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        
-        // Ana istatistikleri çek
-        const statsResponse = await fetch(`${backendUrl}/api/surveys/stats`);
-        const statsData = await statsResponse.json();
-        
-        // Detaylı yanıtları çek
-        const responsesResponse = await fetch(`${backendUrl}/api/surveys/responses`);
-        const responsesData = await responsesResponse.json();
-        
-        // NPS ve CSAT hesapla
-        const calculateMetrics = (responses) => {
-          if (!responses || responses.length === 0) {
-            return { averageNPS: 0, averageCSAT: 0, completionTime: 4.2 };
-          }
-          
-          let npsSum = 0;
-          let csatSum = 0;
-          let npsCount = 0;
-          let csatCount = 0;
-          
-          responses.forEach(response => {
-            // NPS sorusu (soru 9)
-            if (response.responses['9']) {
-              npsSum += parseInt(response.responses['9']);
-              npsCount++;
-            }
+  // Veri çekme fonksiyonu
+  const fetchSurveyStats = () => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+    
+    // Ana istatistikleri çek
+    fetch(`${backendUrl}/api/surveys/stats`)
+      .then(response => response.json())
+      .then(statsData => {
+        // Yanıtları çek
+        return fetch(`${backendUrl}/api/surveys/responses`)
+          .then(response => response.json())
+          .then(responsesData => {
+            // NPS ve CSAT hesapla
+            let npsSum = 0;
+            let csatSum = 0;
+            let npsCount = 0;
+            let csatCount = 0;
             
-            // CSAT sorusu (soru 1) - 5 üzerinden puanı yüzdeye çevir
-            if (response.responses['1']) {
-              const satisfaction = parseInt(response.responses['1']);
-              csatSum += (satisfaction * 20); // 5 üzerinden 100 üzerine çevir
-              csatCount++;
-            }
+            const responses = responsesData.responses || [];
+            responses.forEach(response => {
+              try {
+                // NPS sorusu (soru 9)
+                if (response.responses && response.responses['9']) {
+                  const npsValue = parseInt(response.responses['9']);
+                  if (!isNaN(npsValue)) {
+                    npsSum += npsValue;
+                    npsCount++;
+                  }
+                }
+                
+                // CSAT sorusu (soru 1) - 5 üzerinden puanı yüzdeye çevir
+                if (response.responses && response.responses['1']) {
+                  const satisfaction = parseInt(response.responses['1']);
+                  if (!isNaN(satisfaction)) {
+                    csatSum += (satisfaction * 20); // 5 üzerinden 100 üzerine çevir
+                    csatCount++;
+                  }
+                }
+              } catch (err) {
+                console.warn('Error processing response:', err);
+              }
+            });
+            
+            const averageNPS = npsCount > 0 ? (npsSum / npsCount) : 0;
+            const averageCSAT = csatCount > 0 ? (csatSum / csatCount) : 0;
+            
+            setSurveyStats({
+              total_sent: statsData.total_sent || 0,
+              total_completed: statsData.total_completed || 0,
+              response_rate: statsData.response_rate || 0,
+              averageNPS: averageNPS,
+              averageCSAT: averageCSAT,
+              completionTime: 4.2,
+              recentResponses: responses.slice(0, 5)
+            });
+            
+            setLoading(false);
           });
-          
-          return {
-            averageNPS: npsCount > 0 ? (npsSum / npsCount) : 0,
-            averageCSAT: csatCount > 0 ? (csatSum / csatCount) : 0,
-            completionTime: 4.2 // Sabit değer, gerçek uygulamada hesaplanabilir
-          };
-        };
-        
-        const metrics = calculateMetrics(responsesData.responses || []);
-        
-        setSurveyStats({
-          ...statsData,
-          ...metrics,
-          recentResponses: responsesData.responses?.slice(0, 5) || []
-        });
-        
-        setLoading(false);
-      } catch (error) {
+      })
+      .catch(error => {
         console.error('Error fetching survey stats:', error);
         setError('İstatistikler yüklenirken hata oluştu');
         setLoading(false);
-      }
-    };
+      });
+  };
 
+  // İlk yükleme
+  useEffect(() => {
     fetchSurveyStats();
     
     // Her 30 saniyede bir güncelle
