@@ -278,7 +278,9 @@ const HandoverManagementPage = ({ onBackToDashboard, initialTab = 'send' }) => {
       <div className="px-6 py-8">
         {activeTab === 'send' ? (
           /* Send Handover Form */
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Send Form */}
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-200">
             <div className="p-6">
               {/* Handover Mode Toggle */}
               <div className="mb-6">
