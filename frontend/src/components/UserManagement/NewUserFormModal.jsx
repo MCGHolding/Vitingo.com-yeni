@@ -63,16 +63,48 @@ export default function NewUserFormModal({ onClose, onSave }) {
   };
 
   const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    // Generate password: 1 uppercase, 1 lowercase, 1 special char, rest random
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const special = '!@#$%^&*';
+    
     let password = '';
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    // Add required characters
+    password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+    password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+    password += special.charAt(Math.floor(Math.random() * special.length));
+    
+    // Fill remaining with random chars (minimum 6 total)
+    const allChars = uppercase + lowercase + numbers + special;
+    for (let i = 3; i < 8; i++) {
+      password += allChars.charAt(Math.floor(Math.random() * allChars.length));
     }
+    
+    // Shuffle password
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+    
     setFormData(prev => ({ ...prev, password }));
     toast({
       title: "Şifre Oluşturuldu",
-      description: "Güvenli şifre otomatik olarak oluşturuldu.",
+      description: "Güvenli şifre (1 büyük, 1 küçük harf, 1 özel karakter) oluşturuldu.",
     });
+  };
+
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return "Şifre en az 6 karakter olmalıdır.";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "Şifre en az 1 büyük harf içermelidir.";
+    }
+    if (!/[a-z]/.test(password)) {
+      return "Şifre en az 1 küçük harf içermelidir.";
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+      return "Şifre en az 1 özel karakter (!@#$%^&*) içermelidir.";
+    }
+    return null;
   };
 
   const copyToClipboard = (text, label) => {
