@@ -11,6 +11,7 @@ import TopPerformersTable from './components/Dashboard/TopPerformersTable';
 import NewOpportunityForm from './components/Opportunities/NewOpportunityForm';
 import OpenOpportunitiesPage from './components/Opportunities/OpenOpportunitiesPage';
 import UserManagementModal from './components/UserManagement/UserManagementModal';
+import AllUsersPage from './components/UserManagement/AllUsersPage';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { 
@@ -28,7 +29,19 @@ const Dashboard = () => {
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      firstName: 'Admin',
+      lastName: 'User',
+      email: 'admin@vitingo.com',
+      username: 'admu',
+      phone: '+90 532 123 45 67',
+      department: 'senior-management',
+      status: 'active',
+      createdAt: new Date('2024-01-01').toISOString()
+    }
+  ]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -42,8 +55,21 @@ const Dashboard = () => {
     setCurrentView('open-opportunities');
   };
 
-  const handleUserManagement = () => {
+  // User Management Handlers
+  const handleNewUser = () => {
     setShowUserManagementModal(true);
+  };
+
+  const handleAllUsers = () => {
+    setCurrentView('all-users');
+  };
+
+  const handleInactiveUsers = () => {
+    setCurrentView('inactive-users');
+  };
+
+  const handleFormerUsers = () => {
+    setCurrentView('former-users');
   };
 
   const handleBackToDashboard = () => {
@@ -61,7 +87,8 @@ const Dashboard = () => {
   const saveUser = (userData) => {
     const newUser = {
       ...userData,
-      id: Date.now(), // Simple ID generation
+      id: Date.now(),
+      status: 'active' // New users are active by default
     };
     setUsers(prev => [newUser, ...prev]);
     console.log('New user created:', newUser);
