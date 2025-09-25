@@ -145,6 +145,31 @@ export default function UserMenu() {
                 Profil ve Ayarlar
               </button>
               
+              {/* Admin-only features */}
+              {user.role === 'admin' && (
+                <>
+                  <div className="border-t border-gray-100 my-1" />
+                  
+                  {isImpersonating() ? (
+                    <button
+                      onClick={handleReturnToAdmin}
+                      className="w-full flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-3" />
+                      Admin Hesabına Dön
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleUserSwitch}
+                      className="w-full flex items-center px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 transition-colors"
+                    >
+                      <Users className="h-4 w-4 mr-3" />
+                      Kullanıcı Değiştir
+                    </button>
+                  )}
+                </>
+              )}
+              
               <div className="border-t border-gray-100 my-1" />
               
               <button
