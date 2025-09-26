@@ -195,8 +195,8 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.companyName || !formData.relationshipType || !formData.contactPerson || !formData.email) {
+    // Validation
+    if (!formData.companyName || !formData.relationshipType || !formData.email) {
       toast({
         title: "Eksik Bilgiler",
         description: "Lütfen zorunlu alanları doldurunuz.",
@@ -216,16 +216,23 @@ export default function NewCustomerForm({ onClose, onSave }) {
       return;
     }
 
+    // Get selected person data
+    const selectedPerson = availablePeople.find(p => p.id.toString() === formData.contactPersonId);
+    
+    // Get selected country data
+    const selectedCountry = availableCountries.find(c => c.code === formData.country);
+
     const customerData = {
       ...formData,
+      contactPerson: selectedPerson ? selectedPerson.fullName : '',
       logo: imagePreview,
       status: 'active',
       customerSince: new Date().toISOString().split('T')[0],
       lastActivity: new Date().toISOString().split('T')[0],
       totalOrders: 0,
       totalRevenue: 0,
-      currency: formData.country === 'Türkiye' ? 'TRY' : 
-                formData.country === 'ABD' || formData.country === 'Kanada' ? 'USD' : 'EUR'
+      currency: formData.country === 'TR' ? 'TRY' : 
+                formData.country === 'US' || formData.country === 'CA' ? 'USD' : 'EUR'
     };
 
     onSave(customerData);
@@ -242,14 +249,14 @@ export default function NewCustomerForm({ onClose, onSave }) {
     setFormData({
       companyName: '',
       relationshipType: '',
-      contactPerson: '',
+      contactPersonId: '',
       phone: '',
-      countryCode: '+90',
+      countryCode: 'TR',
       email: '',
       website: '',
       address: '',
-      country: 'Türkiye',
-      region: '',
+      country: 'TR',
+      city: '',
       sector: '',
       notes: ''
     });
