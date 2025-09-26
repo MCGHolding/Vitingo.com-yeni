@@ -174,6 +174,33 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     }));
   };
 
+  const handleProductSelect = (itemId, productId) => {
+    const product = products.find(p => p.id === productId);
+    
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.map(item => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            productId: productId,
+            name: product ? product.name : '',
+            unit: product ? product.unit : 'adet',
+            unitPrice: product ? product.default_price : '',
+            total: calculateItemTotal(item.quantity, product ? product.default_price : 0)
+          };
+        }
+        return item;
+      })
+    }));
+  };
+
+  const calculateItemTotal = (quantity, unitPrice) => {
+    const qty = parseNumber(quantity) || 0;
+    const price = parseNumber(unitPrice) || 0;
+    return qty * price;
+  };
+
   const handleCurrencyChange = (currency) => {
     setFormData(prev => ({
       ...prev,
