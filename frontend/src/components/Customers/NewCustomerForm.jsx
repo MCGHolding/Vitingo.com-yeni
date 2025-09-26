@@ -246,7 +246,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
       relationshipType: '',
       contactPersonId: '',
       phone: '',
-      countryCode: 'TR',
       email: '',
       website: '',
       address: '',
@@ -255,6 +254,7 @@ export default function NewCustomerForm({ onClose, onSave }) {
       sector: '',
       notes: ''
     });
+    setPhoneCountryCode('TR');
     setSelectedImage(null);
     setImagePreview(null);
   };
