@@ -560,17 +560,42 @@ export default function NewCustomerForm({ onClose, onSave }) {
                         <SelectValue placeholder="Ülke" />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableCountries.map((country) => (
-                          <SelectItem key={country.code} value={country.code}>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">{country.flag}</span>
-                              <div className="flex flex-col">
-                                <span className="text-xs">{country.phoneCode}</span>
-                                <span className="text-xs text-gray-500">{country.name}</span>
-                              </div>
+                        <SelectItem value="TR">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇹🇷</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+90</span>
+                              <span className="text-xs text-gray-500">Turkey</span>
                             </div>
-                          </SelectItem>
-                        ))}
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="US">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇺🇸</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+1</span>
+                              <span className="text-xs text-gray-500">United States</span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="GB">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇬🇧</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+44</span>
+                              <span className="text-xs text-gray-500">United Kingdom</span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="DE">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇩🇪</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+49</span>
+                              <span className="text-xs text-gray-500">Germany</span>
+                            </div>
+                          </div>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
