@@ -444,8 +444,8 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 <div className="flex space-x-2">
                   <div className="w-32">
                     <Select 
-                      value={formData.countryCode} 
-                      onValueChange={(value) => handleInputChange('countryCode', value)}
+                      value={phoneCountryCode} 
+                      onValueChange={setPhoneCountryCode}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Ülke" />
