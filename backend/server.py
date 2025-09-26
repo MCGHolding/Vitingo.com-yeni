@@ -167,6 +167,25 @@ class Customer(BaseModel):
     tags: List[str] = Field(default_factory=list)  # Etiketler
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Geographic Data Models
+class Country(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    iso2: str = Field(..., description="ISO 3166-1 alpha-2 code")
+    iso3: str = Field(..., description="ISO 3166-1 alpha-3 code") 
+    name: str = Field(..., description="Country name in English")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class City(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str = Field(..., description="City name in English")
+    country_iso2: str = Field(..., description="Country ISO2 code")
+    admin1: str = Field(default="", description="Administrative division (state/province)")
+    lat: Optional[float] = Field(None, description="Latitude")
+    lng: Optional[float] = Field(None, description="Longitude") 
+    population: Optional[int] = Field(None, description="Population")
+    is_capital: bool = Field(default=False, description="Is this city a capital?")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
