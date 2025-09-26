@@ -1,29 +1,26 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../../hooks/use-toast';
+import { getFavoriteCustomers, formatDate, getCustomerStatistics } from '../../utils/customerStatus';
 import { 
   Search, 
   Filter, 
   Eye, 
   Edit, 
-  MoreHorizontal,
   Calendar,
   User,
-  DollarSign,
   FileText,
-  X,
-  Star,
+  Heart,
   Users,
   TrendingUp,
-  Crown
+  Star,
+  Award
 } from 'lucide-react';
-import { favoriteCustomers, customerTagColors } from '../../mock/customersData';
 
 export default function FavoriteCustomersPage({ onBackToDashboard }) {
   const { toast } = useToast();
