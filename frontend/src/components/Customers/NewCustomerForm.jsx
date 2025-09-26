@@ -643,41 +643,34 @@ export default function NewCustomerForm({ onClose, onSave }) {
               </div>
 
               {/* Country and Region */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Ülke
+                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                    <Globe className="h-4 w-4" />
+                    <span>Ülke *</span>
                   </label>
-                  <Select value={formData.country} onValueChange={handleCountryChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Ülke seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableCountries.map((country) => (
-                        <SelectItem key={country.code} value={country.code}>
-                          {country.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CountrySelect
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    placeholder="Ülke seçiniz"
+                    required={true}
+                    className="w-full"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Şehir
+                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>Şehir *</span>
                   </label>
-                  <Select value={formData.city} onValueChange={(value) => handleInputChange('city', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Şehir seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableCities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CitySelect
+                    country={formData.country}
+                    value={formData.city}
+                    onChange={handleCityChange}
+                    placeholder="Şehir seçiniz"
+                    required={true}
+                    className="w-full"
+                  />
                 </div>
               </div>
 
