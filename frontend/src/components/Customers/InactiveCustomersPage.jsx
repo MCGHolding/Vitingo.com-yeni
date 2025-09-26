@@ -44,11 +44,6 @@ export default function InactiveCustomersPage({ customers = [], onBackToDashboar
     setPassiveCustomers(passive);
   }, [customers, invoices]);
 
-  // Modal states - placeholder for future implementation
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-
   // Filter and sort passive customers
   const filteredCustomers = useMemo(() => {
     let filtered = [...passiveCustomers];
