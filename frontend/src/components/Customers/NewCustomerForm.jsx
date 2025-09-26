@@ -55,6 +55,10 @@ export default function NewCustomerForm({ onClose, onSave }) {
     'INŞAAT', 'GIDA', 'TEKSTIL', 'OTOMOTIV', 'ENERJI'
   ]);
 
+  // Geographic data state
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+
   // Separate state for phone country code to avoid conflicts
   const [phoneCountryCode, setPhoneCountryCode] = useState('TR');
 
