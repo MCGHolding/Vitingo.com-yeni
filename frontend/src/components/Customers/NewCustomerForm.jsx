@@ -314,9 +314,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
     // Get selected person data
     const selectedPerson = availablePeople.find(p => p.id.toString() === formData.contactPersonId);
     
-    // Get selected country data
-    const selectedCountry = availableCountries.find(c => c.code === formData.country);
-
     const customerData = {
       ...formData,
       countryCode: phoneCountryCode, // Add phone country code
