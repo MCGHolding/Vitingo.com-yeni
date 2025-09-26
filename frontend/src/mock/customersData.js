@@ -772,7 +772,7 @@ export const customerTagColors = {
   'GIDA': 'bg-lime-600 text-white',
   'TEKSTIL': 'bg-rose-500 text-white',
   'OTOMOTIV': 'bg-slate-600 text-white',
-  'ENERJİ': 'bg-yellow-600 text-black'
+  'ENERJİ': 'bg-yellow-600 text-black',
   'SMART_CITY': 'bg-blue-500 text-white',
   'IOT': 'bg-indigo-500 text-white',
   'SUSTAINABLE': 'bg-green-600 text-white',
