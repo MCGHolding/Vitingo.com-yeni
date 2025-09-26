@@ -91,16 +91,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
     }
   }, [formData.country]);
 
-  useEffect(() => {
-    // Update phone country code when country changes
-    if (formData.country && availableCountries.length > 0) {
-      const selectedCountry = availableCountries.find(c => c.code === formData.country);
-      if (selectedCountry && formData.countryCode !== formData.country) {
-        setFormData(prev => ({ ...prev, countryCode: formData.country }));
-      }
-    }
-  }, [formData.country, availableCountries.length, formData.countryCode]);
-
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
