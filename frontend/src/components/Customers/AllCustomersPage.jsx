@@ -743,14 +743,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
 
       {/* Email Customer Modal */}
       {emailModalOpen && selectedCustomer && (
-        <EmailModal
-          user={{
-            firstName: selectedCustomer.contactPerson.split(' ')[0] || selectedCustomer.companyName,
-            lastName: selectedCustomer.contactPerson.split(' ').slice(1).join(' ') || 'Müşterisi',
-            email: selectedCustomer.email,
-            department: selectedCustomer.sector || 'Müşteri',
-            fullName: selectedCustomer.contactPerson || selectedCustomer.companyName
-          }}
+        <CustomerEmailModal
+          customer={selectedCustomer}
           onClose={() => {
             setEmailModalOpen(false);
             setSelectedCustomer(null);
