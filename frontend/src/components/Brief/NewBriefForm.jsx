@@ -312,6 +312,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
       deadline: ''
     });
     setSelectedCustomer(null);
+    setRelatedPeople([]);
+    setSelectedPersonId('');
   };
 
   return (
