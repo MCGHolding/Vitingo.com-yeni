@@ -1586,27 +1586,46 @@ def test_customer_validation_errors():
     return True
 
 def main():
-    """Run all tests"""
-    print("Starting Backend API Tests")
+    """Run comprehensive customer CRUD tests as requested"""
+    print("Starting Customer CRUD Backend API Tests")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("\n🎯 FOCUS: Testing customer CRUD operations to diagnose why new customers aren't appearing in the customer list")
     
-    # Initialize global variables for survey tokens
-    global regular_survey_token, arbitrary_survey_token
-    regular_survey_token = None
-    arbitrary_survey_token = None
-    
-    # Test Customer CRUD endpoints (NEW FUNCTIONALITY)
+    # Test Customer CRUD endpoints with Turkish data (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("TESTING CUSTOMER CRUD ENDPOINTS")
+    print("TESTING CUSTOMER CRUD ENDPOINTS WITH TURKISH DATA")
     print("=" * 80)
     
+    # 1. Test POST /api/customers with Turkish data
     create_customer_passed, created_customer_id = test_create_customer()
+    
+    # 2. Test Turkish-specific data scenarios
+    turkish_data_passed, turkish_customer_ids = test_turkish_customer_data()
+    
+    # 3. Test GET /api/customers to verify customers are saved and retrievable
     get_all_customers_passed = test_get_all_customers()
+    
+    # 4. Test GET /api/customers/{id} for specific customer retrieval
     get_specific_customer_passed = test_get_specific_customer(created_customer_id)
+    
+    # 5. Test PUT /api/customers/{id} for updates
     update_customer_passed = test_update_customer(created_customer_id)
-    delete_customer_passed = test_delete_customer(created_customer_id)
+    
+    # 6. Test error handling and validation
     customer_validation_passed = test_customer_validation_errors()
+    
+    # 7. Test DELETE /api/customers/{id} (run last to clean up)
+    delete_customer_passed = test_delete_customer(created_customer_id)
+    
+    # Clean up Turkish test customers
+    if turkish_customer_ids:
+        print("\n" + "=" * 80)
+        print("CLEANING UP TURKISH TEST CUSTOMERS")
+        print("=" * 80)
+        for customer_id in turkish_customer_ids:
+            if customer_id:
+                test_delete_customer(customer_id)
     
     # Test currency conversion endpoints (existing functionality)
     currency_rates_test_passed = test_currency_rates_endpoint()
