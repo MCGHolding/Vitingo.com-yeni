@@ -1377,6 +1377,113 @@ def test_delete_customer(customer_id):
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_turkish_customer_data():
+    """Test creating customers with various Turkish data scenarios"""
+    print("=" * 80)
+    print("TESTING TURKISH CUSTOMER DATA HANDLING")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test cases with different Turkish scenarios
+    test_cases = [
+        {
+            "name": "Turkish Company with Special Characters",
+            "data": {
+                "companyName": "Özel Güvenlik Şirketi Ltd. Şti.",
+                "relationshipType": "customer",
+                "contactPerson": "Müge Çelik",
+                "email": "muge@ozelguvenlik.com.tr",
+                "phone": "532 456 7890",
+                "countryCode": "TR",
+                "address": "Çankaya Mahallesi, Atatürk Bulvarı No:456",
+                "country": "TR",
+                "city": "Ankara",
+                "sector": "Güvenlik",
+                "companyTitle": "Özel Güvenlik Hizmetleri Anonim Şirketi",
+                "taxOffice": "Ankara Vergi Dairesi Başkanlığı",
+                "taxNumber": "9876543210"
+            }
+        },
+        {
+            "name": "Istanbul Technology Company",
+            "data": {
+                "companyName": "İstanbul Teknoloji A.Ş.",
+                "relationshipType": "customer",
+                "contactPerson": "Gökhan Özdemir",
+                "email": "gokhan@istanbultek.com",
+                "phone": "212 555 1234",
+                "countryCode": "TR",
+                "address": "Beşiktaş, Barbaros Bulvarı No:789",
+                "country": "TR",
+                "city": "İstanbul",
+                "sector": "Bilişim",
+                "companyTitle": "İstanbul Teknoloji Anonim Şirketi",
+                "taxOffice": "İstanbul Vergi Dairesi Başkanlığı",
+                "taxNumber": "5555666677"
+            }
+        },
+        {
+            "name": "Izmir Manufacturing Company",
+            "data": {
+                "companyName": "İzmir Üretim Şirketi Ltd.",
+                "relationshipType": "supplier",
+                "contactPerson": "Şule Karagöz",
+                "email": "sule@izmiruretim.com.tr",
+                "phone": "232 777 8888",
+                "countryCode": "TR",
+                "address": "Konak, Cumhuriyet Meydanı No:321",
+                "country": "TR",
+                "city": "İzmir",
+                "sector": "Üretim",
+                "companyTitle": "İzmir Üretim Limited Şirketi",
+                "taxOffice": "İzmir Vergi Dairesi Başkanlığı",
+                "taxNumber": "1111222233"
+            }
+        }
+    ]
+    
+    created_customers = []
+    
+    for i, test_case in enumerate(test_cases, 1):
+        print(f"\n{i}. Testing: {test_case['name']}")
+        
+        try:
+            response = requests.post(endpoint, json=test_case['data'], timeout=30)
+            
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Customer created successfully")
+                
+                data = response.json()
+                customer_id = data.get('id')
+                created_customers.append(customer_id)
+                
+                # Verify Turkish data preservation
+                for field, expected_value in test_case['data'].items():
+                    actual_value = data.get(field)
+                    if actual_value != expected_value:
+                        print(f"   ❌ FAIL: {field} mismatch. Expected: {expected_value}, Got: {actual_value}")
+                        return False, []
+                
+                print(f"   Company: {data.get('companyName')}")
+                print(f"   Contact: {data.get('contactPerson')}")
+                print(f"   Tax Office: {data.get('taxOffice')}")
+                
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False, []
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error creating customer: {str(e)}")
+            return False, []
+    
+    print(f"\n✅ TURKISH CUSTOMER DATA TESTS PASSED!")
+    print(f"   Created {len(created_customers)} customers with Turkish data")
+    return True, created_customers
+
 def test_customer_validation_errors():
     """Test customer validation and error cases"""
     print("=" * 80)
