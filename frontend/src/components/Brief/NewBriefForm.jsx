@@ -20,7 +20,8 @@ import {
   ImageIcon,
   Ruler,
   Eye,
-  EyeOff
+  EyeOff,
+  User
 } from 'lucide-react';
 
 export default function NewBriefForm({ onBackToDashboard }) {
