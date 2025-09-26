@@ -100,12 +100,12 @@ export default function NewCustomerForm({ onClose, onSave }) {
     const cities = getCitiesForCountry(countryCode);
     setAvailableCities(cities);
     
-    // Update form data
+    // Update form data - ONLY country field, NOT countryCode
     setFormData(prev => ({
       ...prev,
       country: countryCode,
-      city: '', // Reset city when country changes
-      countryCode: countryCode
+      city: '' // Reset city when country changes
+      // Removed countryCode assignment - this was causing the infinite loop!
     }));
   };
 
