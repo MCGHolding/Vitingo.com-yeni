@@ -346,27 +346,28 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
             </div>
           </div>
 
-          {/* Currency and Date Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Currency, Date and Customer Selection */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Currency */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <DollarSign className="inline h-4 w-4 mr-1" />
                 Para Birimi
               </label>
-              <div className="grid grid-cols-5 gap-2">
-                {currencies.map((currency) => (
+              <div className="grid grid-cols-3 gap-2">
+                {currencies.slice(0, 3).map((currency) => (
                   <button
                     key={currency.code}
                     type="button"
                     onClick={() => handleCurrencyChange(currency.code)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
+                    className={`p-2 rounded-lg border-2 transition-all ${
                       formData.currency === currency.code
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="text-center">
-                      <div className="text-lg font-bold">{currency.symbol}</div>
+                      <div className="text-sm font-bold">{currency.symbol}</div>
                       <div className="text-xs">{currency.code}</div>
                     </div>
                   </button>
@@ -374,20 +375,68 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               </div>
             </div>
 
+            {/* Date - Daraltılmış */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Calendar className="inline h-4 w-4 mr-1" />
-                Fatura Tarihi
+                Tarih
               </label>
               <Input
                 type="date"
                 value={formData.date}
                 onChange={(e) => handleDateChange(e.target.value)}
-                className="h-12"
+                className="h-10"
                 required
               />
             </div>
+
+            {/* Customer Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Building className="inline h-4 w-4 mr-1" />
+                Müşteri Seç *
+              </label>
+              <SearchableSelect
+                options={customers.map(customer => ({
+                  id: customer.id,
+                  label: customer.companyName,
+                  sublabel: `${customer.city || ''} ${customer.country || ''}`.trim() || customer.email
+                }))}
+                value={formData.customerId}
+                onChange={handleCustomerChange}
+                placeholder={isLoadingData ? "Müşteriler yükleniyor..." : "Müşteri seçiniz..."}
+                searchPlaceholder="Müşteri ara..."
+                disabled={isLoadingData}
+                className="w-full"
+              />
+            </div>
           </div>
+
+          {/* Selected Customer Info */}
+          {selectedCustomer && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h4 className="text-sm font-medium text-blue-900 mb-2 flex items-center">
+                <User className="h-4 w-4 mr-1" />
+                Fatura Kesilecek Müşteri
+              </h4>
+              <div className="text-sm text-blue-800 space-y-1">
+                <p className="font-semibold">{selectedCustomer.companyName}</p>
+                {selectedCustomer.companyTitle && (
+                  <p className="text-blue-700">Ünvan: {selectedCustomer.companyTitle}</p>
+                )}
+                <p>{selectedCustomer.address}</p>
+                <p>{selectedCustomer.city} {selectedCustomer.country}</p>
+                {selectedCustomer.phone && <p>Tel: {selectedCustomer.phone}</p>}
+                {selectedCustomer.taxOffice && (
+                  <div className="mt-2 pt-2 border-t border-blue-200">
+                    <p className="text-xs text-blue-600">
+                      {selectedCustomer.taxOffice} - {selectedCustomer.taxNumber}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Items Section */}
