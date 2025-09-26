@@ -22,20 +22,26 @@ import {
   Award
 } from 'lucide-react';
 
-export default function FavoriteCustomersPage({ onBackToDashboard }) {
+export default function FavoriteCustomersPage({ customers = [], onBackToDashboard }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [tagSearch, setTagSearch] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState('all');
   const [sectorFilter, setSectorFilter] = useState('all');
   const [countryFilter, setCountryFilter] = useState('all');
-  const [relationshipFilter, setRelationshipFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('priority');
+  const [sortBy, setSortBy] = useState('invoicesLastYear');
+  const [invoices, setInvoices] = useState([]);
+  const [favoriteCustomers, setFavoriteCustomers] = useState([]);
 
-  // Modal states - placeholder for future implementation
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  // Load invoices from localStorage
+  useEffect(() => {
+    const savedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+    setInvoices(savedInvoices);
+  }, []);
+
+  // Calculate favorite customers whenever customers or invoices change
+  useEffect(() => {
+    const favorites = getFavoriteCustomers(customers, invoices);
+    setFavoriteCustomers(favorites);
+  }, [customers, invoices]);
 
   const getPriorityIcon = (priority) => {
     switch (priority) {
