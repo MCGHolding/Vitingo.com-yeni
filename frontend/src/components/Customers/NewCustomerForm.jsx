@@ -609,6 +609,57 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 </div>
               </div>
 
+              {/* Turkish-specific fields - only show when Turkey is selected */}
+              {formData.country === 'TR' && (
+                <>
+                  {/* Company Title */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Firma Unvanı
+                    </label>
+                    <Input
+                      value={formData.companyTitle}
+                      onChange={(e) => handleInputChange('companyTitle', e.target.value)}
+                      placeholder="Şirket unvanını giriniz (örn: Ltd. Şti., A.Ş.)"
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* Tax Office */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Vergi Dairesi
+                    </label>
+                    <Select value={formData.taxOffice} onValueChange={(value) => handleInputChange('taxOffice', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Vergi dairesi seçiniz" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {turkishTaxOffices.map((office) => (
+                          <SelectItem key={office} value={office}>
+                            {office}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Tax Number */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Vergi Numarası
+                    </label>
+                    <Input
+                      value={formData.taxNumber}
+                      onChange={(e) => handleInputChange('taxNumber', e.target.value)}
+                      placeholder="Vergi numarasını giriniz (10 haneli)"
+                      className="w-full"
+                      maxLength="11"
+                    />
+                  </div>
+                </>
+              )}
+
               {/* Sector */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
