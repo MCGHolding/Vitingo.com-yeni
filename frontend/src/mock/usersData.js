@@ -20,6 +20,7 @@ export const mockUsers = [
     id: 2,
     firstName: 'Tamer',
     lastName: 'Erdim',
+    fullName: 'Tamer Erdim',
     email: 'tamer.erdim@quattrostand.com',
     username: 'tame',
     phone: '+90 535 398 94 45',
