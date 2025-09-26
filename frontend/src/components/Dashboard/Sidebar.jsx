@@ -40,7 +40,11 @@ import {
   Wallet,
   FileCheck,
   ShoppingCart,
-  FileX
+  FileX,
+  Briefcase,
+  Archive,
+  Pause,
+  MessageSquare
 } from 'lucide-react';
 
 const navigation = [
