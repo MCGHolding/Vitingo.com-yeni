@@ -8,6 +8,7 @@ import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
 import CountrySelect from '../geo/CountrySelect';
 import CitySelect from '../geo/CitySelect';
+import NewCustomerForm from './NewCustomerForm';
 import { 
   X,
   UserRound,
