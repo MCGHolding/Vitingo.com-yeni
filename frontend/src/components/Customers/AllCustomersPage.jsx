@@ -44,6 +44,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
     { label: 'Fatura', icon: Receipt, color: 'text-orange-600 hover:text-orange-800', action: 'invoice' },
     { label: 'Pasif', icon: UserX, color: 'text-red-600 hover:text-red-800', action: 'inactive' },
     { label: 'Favori', icon: Star, color: 'text-yellow-600 hover:text-yellow-800', action: 'favorite' },
+    { label: 'Sil', icon: Trash2, color: 'text-red-700 hover:text-red-900', action: 'delete' },
   ];
 
   const handleMenuAction = (action) => {
