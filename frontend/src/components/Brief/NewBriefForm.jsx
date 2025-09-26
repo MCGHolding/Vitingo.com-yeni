@@ -98,8 +98,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
           person.status === 'active'
         );
         
-        console.log('Customer:', customer.companyName, 'Found people:', customerPeople.length, customerPeople);
-        
         setRelatedPeople(customerPeople);
         
         // Reset person selection when customer changes
