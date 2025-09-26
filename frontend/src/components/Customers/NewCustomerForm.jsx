@@ -109,14 +109,75 @@ export default function NewCustomerForm({ onClose, onSave }) {
     }));
   };
 
-  const handleCountryChange = (country) => {
-    const selectedCountry = countries.find(c => c.value === country);
+  const handleCountryChange = (countryCode) => {
     setFormData(prev => ({
       ...prev,
-      country: country,
-      countryCode: selectedCountry ? selectedCountry.code : '+90',
-      region: '' // Reset region when country changes
+      country: countryCode,
+      city: '' // Reset city when country changes
     }));
+  };
+
+  const handleWebsiteChange = (value) => {
+    // Remove http:// or https:// if user enters it
+    let cleanValue = value.replace(/^https?:\/\//, '');
+    setFormData(prev => ({
+      ...prev,
+      website: cleanValue
+    }));
+  };
+
+  const handleAddNewRelationshipType = () => {
+    if (newRelationshipType.trim()) {
+      const newType = {
+        value: newRelationshipType.toLowerCase().replace(/\s+/g, '_'),
+        label: newRelationshipType.trim()
+      };
+      
+      setRelationshipTypes(prev => [...prev, newType]);
+      setFormData(prev => ({ ...prev, relationshipType: newType.value }));
+      setNewRelationshipType('');
+      setShowNewRelationshipInput(false);
+      
+      toast({
+        title: "Başarılı",
+        description: "Yeni ilişki tipi eklendi.",
+      });
+    }
+  };
+
+  const handleAddNewSector = () => {
+    if (newSector.trim()) {
+      const newSectorObj = {
+        value: newSector.trim(),
+        label: newSector.trim()
+      };
+      
+      setSectors(prev => [...prev, newSectorObj]);
+      setFormData(prev => ({ ...prev, sector: newSector.trim() }));
+      setNewSector('');
+      setShowNewSectorInput(false);
+      
+      toast({
+        title: "Başarılı",
+        description: "Yeni sektör eklendi.",
+      });
+    }
+  };
+
+  const handlePersonAdded = (newPerson) => {
+    // Add new person to available people list
+    setAvailablePeople(prev => 
+      [...prev, newPerson].sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'))
+    );
+    
+    // Auto-select the new person
+    setFormData(prev => ({ ...prev, contactPersonId: newPerson.id.toString() }));
+    setShowPersonForm(false);
+    
+    toast({
+      title: "Başarılı",
+      description: "Yeni kişi eklendi ve seçildi.",
+    });
   };
 
   const handleImageUpload = (event) => {
