@@ -480,12 +480,29 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                       </div>
                     </td>
                     <td className="py-3 px-2">
-                      <Input
-                        value={item.name}
-                        onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                        placeholder="Ürün/Hizmet adı giriniz"
-                        className="w-full"
+                      <SearchableSelect
+                        options={products.map(product => ({
+                          id: product.id,
+                          label: product.name,
+                          sublabel: `${product.default_price ? formatNumber(product.default_price) + ' ' + product.currency : ''} / ${product.unit}`.trim(),
+                          data: product
+                        }))}
+                        value={item.productId || ''}
+                        onChange={(productId) => handleProductSelect(item.id, productId)}
+                        placeholder="Ürün/Hizmet seçin..."
+                        searchPlaceholder="Ürün ara..."
+                        className="min-w-[300px]"
+                        emptyMessage="Ürün bulunamadı"
                       />
+                      {/* Fallback manual input if no product selected */}
+                      {!item.productId && (
+                        <Input
+                          value={item.name}
+                          onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                          placeholder="Özel ürün/hizmet adı giriniz"
+                          className="w-full mt-1"
+                        />
+                      )}
                     </td>
                     <td className="py-3 px-2">
                       <Input
