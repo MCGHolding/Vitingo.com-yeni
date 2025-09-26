@@ -1811,6 +1811,61 @@ async def update_customer(customer_id: str, customer_data: dict):
         logger.error(f"Error updating customer {customer_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/customers/{customer_id}/can-delete")
+async def check_customer_can_delete(customer_id: str):
+    """Check if a customer can be deleted (no related records)"""
+    try:
+        # Customer must exist first
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        
+        related_records = []
+        
+        # Check for related invoices (faturalar)
+        invoices_count = await db.invoices.count_documents({"customer_id": customer_id})
+        if invoices_count > 0:
+            related_records.append(f"{invoices_count} Fatura")
+        
+        # Check for related quotes (teklifler) 
+        quotes_count = await db.quotes.count_documents({"customer_id": customer_id})
+        if quotes_count > 0:
+            related_records.append(f"{quotes_count} Teklif")
+        
+        # Check for related opportunities (satış fırsatları)
+        opportunities_count = await db.opportunities.count_documents({"customer_id": customer_id})
+        if opportunities_count > 0:
+            related_records.append(f"{opportunities_count} Satış Fırsatı")
+        
+        # Check for related projects (projeler)
+        projects_count = await db.projects.count_documents({"customer_id": customer_id})
+        if projects_count > 0:
+            related_records.append(f"{projects_count} Proje")
+        
+        # Check for related survey invitations
+        surveys_count = await db.survey_invitations.count_documents({"customer_id": customer_id})
+        if surveys_count > 0:
+            related_records.append(f"{surveys_count} Anket")
+        
+        # Check for related handovers (teslimler)
+        handovers_count = await db.handovers.count_documents({"customer_id": customer_id})
+        if handovers_count > 0:
+            related_records.append(f"{handovers_count} Teslim")
+            
+        can_delete = len(related_records) == 0
+        
+        return {
+            "canDelete": can_delete,
+            "relatedRecords": related_records,
+            "message": "Müşteri silinebilir" if can_delete else "Müşteriyle ilişkili kayıtlar bulunduğu için silinemez"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error checking if customer {customer_id} can be deleted: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/customers/{customer_id}")
 async def delete_customer(customer_id: str):
     """Delete a customer"""
