@@ -282,13 +282,26 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(file);
+      setLogoFile(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target.result);
+        setLogoUrl(e.target.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Logo handlers
+  const handleLogoChange = (file, preview) => {
+    setLogoFile(file);
+    setLogoUrl(preview);
+  };
+
+  const handleLogoRemove = () => {
+    setLogoFile(null);
+    setLogoUrl('');
   };
 
   const handleSubmit = (e) => {
