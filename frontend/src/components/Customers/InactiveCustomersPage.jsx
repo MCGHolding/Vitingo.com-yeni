@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../../hooks/use-toast';
+import { getPassiveCustomers, formatDate, getCustomerStatistics } from '../../utils/customerStatus';
 import { 
   Search, 
   Filter, 
@@ -20,18 +21,31 @@ import {
   X,
   UserX,
   Users,
-  TrendingDown
+  TrendingDown,
+  Clock,
+  AlertCircle
 } from 'lucide-react';
-import { inactiveCustomers, customerTagColors } from '../../mock/customersData';
 
-export default function InactiveCustomersPage({ onBackToDashboard }) {
+export default function InactiveCustomersPage({ customers = [], onBackToDashboard }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [tagSearch, setTagSearch] = useState('');
   const [sectorFilter, setSectorFilter] = useState('all');
   const [countryFilter, setCountryFilter] = useState('all');
-  const [relationshipFilter, setRelationshipFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('inactiveSince');
+  const [sortBy, setSortBy] = useState('monthsSinceLastInvoice');
+  const [invoices, setInvoices] = useState([]);
+  const [passiveCustomers, setPassiveCustomers] = useState([]);
+
+  // Load invoices from localStorage
+  useEffect(() => {
+    const savedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+    setInvoices(savedInvoices);
+  }, []);
+
+  // Calculate passive customers whenever customers or invoices change
+  useEffect(() => {
+    const passive = getPassiveCustomers(customers, invoices);
+    setPassiveCustomers(passive);
+  }, [customers, invoices]);
 
   // Modal states - placeholder for future implementation
   const [viewModalOpen, setViewModalOpen] = useState(false);
