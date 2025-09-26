@@ -674,10 +674,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
                   rows={3}
                   className="w-full"
                 />
-                <div className="flex items-center space-x-2 text-sm text-blue-600 cursor-pointer">
-                  <MapPin className="h-4 w-4" />
-                  <span>Konumu haritada işaretle</span>
-                </div>
               </div>
 
               {/* Country and Region */}
