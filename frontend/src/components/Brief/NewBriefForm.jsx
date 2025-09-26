@@ -408,17 +408,85 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   İletişim Kişisi *
                 </label>
-                <Input
-                  value={formData.contactPerson}
-                  onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                  placeholder="Ad Soyad"
-                  required
-                  disabled={!!formData.customerId}
-                  className={formData.customerId ? 'bg-gray-50' : ''}
-                />
-                {formData.customerId && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Seçilen müşteriden otomatik dolduruldu
+                
+                {selectedCustomer && (relatedPeople.length > 0 || selectedCustomer.contactPerson) ? (
+                  <div className="space-y-3">
+                    {/* Person Selection Dropdown */}
+                    <Select value={selectedPersonId} onValueChange={setSelectedPersonId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="İletişim kişisi seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* Default customer contact */}
+                        {selectedCustomer.contactPerson && (
+                          <SelectItem value="customer-default">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{selectedCustomer.contactPerson}</span>
+                              <span className="text-xs text-gray-500">Varsayılan İletişim (Müşteri Kaydı)</span>
+                            </div>
+                          </SelectItem>
+                        )}
+                        
+                        {/* Related people */}
+                        {relatedPeople.map(person => (
+                          <SelectItem key={person.id} value={person.id.toString()}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{person.fullName}</span>
+                              <span className="text-xs text-gray-500">{person.jobTitle}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    {/* Display selected person info */}
+                    {selectedPersonId && (
+                      <div className="text-sm text-gray-600 bg-green-50 p-3 rounded border">
+                        {selectedPersonId === 'customer-default' ? (
+                          <div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <User className="h-4 w-4 text-green-500" />
+                              <span className="font-medium">{selectedCustomer.contactPerson}</span>
+                            </div>
+                            <div className="text-xs text-gray-500">Müşteri kaydından varsayılan iletişim kişisi</div>
+                          </div>
+                        ) : (
+                          (() => {
+                            const person = relatedPeople.find(p => p.id.toString() === selectedPersonId);
+                            return person ? (
+                              <div>
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <User className="h-4 w-4 text-green-500" />
+                                  <span className="font-medium">{person.fullName}</span>
+                                </div>
+                                <div className="text-xs text-gray-500">{person.jobTitle} • {person.relationshipText}</div>
+                              </div>
+                            ) : null;
+                          })()
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Hidden input for form compatibility */}
+                    <Input
+                      value={formData.contactPerson}
+                      onChange={(e) => handleInputChange('contactPerson', e.target.value)}
+                      className="hidden"
+                      required
+                    />
+                  </div>
+                ) : (
+                  <Input
+                    value={formData.contactPerson}
+                    onChange={(e) => handleInputChange('contactPerson', e.target.value)}
+                    placeholder="Ad Soyad"
+                    required
+                  />
+                )}
+                
+                {relatedPeople.length > 0 && (
+                  <p className="text-xs text-blue-600 mt-2">
+                    Bu müşteriye bağlı {relatedPeople.length} kişi bulundu
                   </p>
                 )}
               </div>
@@ -432,12 +500,12 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="email@example.com"
-                  disabled={!!formData.customerId}
-                  className={formData.customerId ? 'bg-gray-50' : ''}
+                  disabled={!!selectedPersonId}
+                  className={selectedPersonId ? 'bg-gray-50' : ''}
                 />
-                {formData.customerId && (
+                {selectedPersonId && (
                   <p className="text-xs text-gray-500 mt-1">
-                    Seçilen müşteriden otomatik dolduruldu
+                    Seçilen kişiden otomatik dolduruldu
                   </p>
                 )}
               </div>
@@ -450,12 +518,12 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="0532 000 00 00"
-                  disabled={!!formData.customerId}
-                  className={formData.customerId ? 'bg-gray-50' : ''}
+                  disabled={!!selectedPersonId}
+                  className={selectedPersonId ? 'bg-gray-50' : ''}
                 />
-                {formData.customerId && (
+                {selectedPersonId && (
                   <p className="text-xs text-gray-500 mt-1">
-                    Seçilen müşteriden otomatik dolduruldu
+                    Seçilen kişiden otomatik dolduruldu
                   </p>
                 )}
               </div>
