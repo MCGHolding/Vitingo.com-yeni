@@ -575,6 +575,14 @@ export default function NewCustomerForm({ onClose, onSave }) {
           </CardContent>
         </Card>
       </div>
+      
+      {/* New Person Form Modal */}
+      {showPersonForm && (
+        <NewPersonForm
+          onClose={() => setShowPersonForm(false)}
+          onSave={handlePersonAdded}
+        />
+      )}
     </div>
   );
 }
