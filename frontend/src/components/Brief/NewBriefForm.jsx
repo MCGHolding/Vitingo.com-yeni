@@ -836,6 +836,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   createdAt: new Date().toISOString()
                 };
                 
+                const customer = customers.find(c => c.id.toString() === formData.customerId);
+                if (customer) {
+                  draftBrief.clientCompany = customer.companyName;
+                }
+                
                 const drafts = JSON.parse(localStorage.getItem('briefDrafts') || '[]');
                 drafts.unshift(draftBrief);
                 localStorage.setItem('briefDrafts', JSON.stringify(drafts));
