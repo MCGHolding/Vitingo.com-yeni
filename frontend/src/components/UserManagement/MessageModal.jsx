@@ -76,13 +76,6 @@ export default function MessageModal({ user, onClose }) {
       localStorage.setItem('all_messages', JSON.stringify(allMessages));
 
       // Create notification for the recipient
-      console.log('Creating notification for user:', {
-        recipientId: user.id,
-        recipientName: user.fullName,
-        senderId: currentUser.id,
-        senderName: currentUser.fullName
-      });
-      
       const notification = {
         id: Date.now() + '_notif',
         userId: user.id, // recipient
