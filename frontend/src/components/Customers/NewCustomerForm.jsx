@@ -336,11 +336,14 @@ export default function NewCustomerForm({ onClose, onSave }) {
       // Turkey-specific fields
       companyTitle: '',
       taxOffice: '',
-      taxNumber: ''
+      taxNumber: '',
+      // Tags field
+      tags: []
     });
     setPhoneCountryCode('TR');
     setSelectedImage(null);
     setImagePreview(null);
+    setTagInput('');
   };
 
   return (
