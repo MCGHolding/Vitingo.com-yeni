@@ -152,7 +152,7 @@ class Customer(BaseModel):
     city: str = ""
     sector: str = ""
     notes: str = ""
-    logo: str = ""
+    logo: Optional[str] = ""  # Allow None and default to empty string
     status: str = "active"
     customerSince: str = ""
     lastActivity: str = ""
