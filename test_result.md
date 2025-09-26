@@ -475,9 +475,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Customer Deletion Functionality - Can-Delete Check"
-    - "Customer Deletion Functionality - Delete Customer"
-    - "Customer Deletion Functionality - Comprehensive Integration"
+    - "Logo Validation Fix - Frontend New Customer Form Testing"
   stuck_tasks:
     - "Customer Form Submission Frontend Integration"
   test_all: false
