@@ -351,7 +351,7 @@ metadata:
     implemented: true
     working: false
     file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -364,6 +364,9 @@ metadata:
       - working: false
         agent: "testing"
         comment: "❌ ENVIRONMENT VARIABLE FIX VERIFICATION FAILED - COMPREHENSIVE TESTING COMPLETED AS REQUESTED. AUTHENTICATION TEST: ✅ Successfully logged in with murb/Murat2024! credentials, dashboard accessible ✅ CUSTOMER LIST API DATA TEST: ❌ CONFIRMED: Customer list is using MOCK DATA instead of API data ❌ Browser console shows repeated errors: 'TypeError: Cannot read properties of undefined (reading REACT_APP_BACKEND_URL)' ❌ Console logs show 'Using mock data as fallback' for both customers and fairs ❌ Customer list displays 10 mock companies (Asian Electronics Co., Australian Mining Ltd., etc.) instead of API data ✅ NEW CUSTOMER FORM SUBMISSION TEST: ✅ Form opens correctly and accepts all required data (Test API Fix Şirketi 2024, Müşteri, testapi@fix2024.com) ✅ Turkish conditional fields work properly (Firma Unvanı, Vergi Dairesi, Vergi Numarası) ❌ Form submission FAILS - no POST /api/customers requests captured in network monitoring ❌ Environment variable REACT_APP_BACKEND_URL remains undefined in browser context ❌ NETWORK MONITORING RESULTS: NO API calls to /api/customers during form submission ❌ CUSTOMER LIST REFRESH TEST: New customer 'Test API Fix Şirketi 2024' does NOT appear in customer list ❌ CRITICAL CONCLUSION: Environment variable fixes are NOT working. Frontend cannot access REACT_APP_BACKEND_URL, causing complete failure of customer management functionality. Both form submission and list display are broken due to this environment variable configuration issue."
+      - working: false
+        agent: "testing"
+        comment: "❌ FINAL DIAGNOSIS: KUBERNETES INGRESS ROUTING ISSUE IDENTIFIED - HARDCODED BACKEND URL FIXES ARE NOT THE SOLUTION. COMPREHENSIVE TESTING RESULTS: ✅ AUTHENTICATION: Successfully logged in with murb/Murat2024! credentials ✅ BACKEND API VERIFICATION: Direct curl test to https://crm-turk-portal.preview.emergentagent.com/api/customers returns valid JSON with customer data - backend is working perfectly ✅ BACKEND LOGS: Show successful API requests and customer creation - backend functionality confirmed ❌ BROWSER API ACCESS: When accessing /api/customers through browser, returns HTML login page instead of JSON API response ❌ FRONTEND API CALLS: All API calls fail with 'TypeError: Failed to fetch' errors ❌ CONSOLE ERRORS: 'Using mock data as fallback' messages for customers, fairs, currency rates, and survey stats 🎯 ROOT CAUSE IDENTIFIED: Kubernetes ingress routing configuration is NOT routing /api/* requests to the backend service. Instead, all requests including /api/* are being served by the frontend React app. This explains why: 1) Backend works perfectly when accessed directly via curl 2) Frontend cannot reach API because /api/* requests are routed to frontend instead of backend 3) Browser shows login page when accessing API endpoints 4) All 'Failed to fetch' errors occur because requests never reach backend service 🔧 SOLUTION REQUIRED: Fix Kubernetes ingress configuration to properly route /api/* requests to backend service, not frontend service. The hardcoded URLs in frontend code are correct - the infrastructure routing is broken."
 
 test_plan:
   current_focus:
