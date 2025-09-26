@@ -26,7 +26,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [formData, setFormData] = useState({
     // Basic Information
     projectName: '',
-    clientCompany: '',
+    customerId: '', // Changed from clientCompany to customerId
     contactPerson: '',
     email: '',
     phone: '',
@@ -71,6 +71,33 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [uploadingSections, setUploadingSections] = useState({});
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // Load customers data
+  const [customers, setCustomers] = useState([]);
+
+  useEffect(() => {
+    // Load customers from mock data
+    setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+  }, []);
+
+  // Update contact person and email when customer is selected
+  useEffect(() => {
+    if (formData.customerId) {
+      const customer = customers.find(c => c.id.toString() === formData.customerId);
+      if (customer) {
+        setSelectedCustomer(customer);
+        setFormData(prev => ({
+          ...prev,
+          contactPerson: customer.contactPerson,
+          email: customer.email,
+          phone: customer.phone || ''
+        }));
+      }
+    } else {
+      setSelectedCustomer(null);
+    }
+  }, [formData.customerId, customers]);
 
   const standTypes = [
     { value: 'shell-scheme', label: 'Shell Scheme (Kabuk Stand)' },
