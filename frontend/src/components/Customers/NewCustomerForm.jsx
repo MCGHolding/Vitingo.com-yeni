@@ -770,6 +770,75 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 </Select>
               </div>
 
+              {/* Tags */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                  <Tag className="h-4 w-4" />
+                  <span>Etiketler</span>
+                </label>
+                
+                {/* Current Tags */}
+                {formData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.tags.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        className={`text-xs px-2 py-1 ${getTagColor(tag)} border-0 flex items-center space-x-1`}
+                      >
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="ml-1 hover:bg-black hover:bg-opacity-20 rounded-full w-4 h-4 flex items-center justify-center"
+                        >
+                          <X className="h-2 w-2" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Tag Input */}
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={handleTagInputKeyPress}
+                    placeholder="Etiket yazın ve Enter'a basın..."
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addTag(tagInput)}
+                    disabled={!tagInput.trim()}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Suggested Tags */}
+                <div className="space-y-2">
+                  <span className="text-xs text-gray-600">Önerilen etiketler:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {availableTags
+                      .filter(tag => !formData.tags.includes(tag))
+                      .slice(0, 8)
+                      .map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => addTag(tag)}
+                          className={`text-xs px-2 py-1 rounded-full border hover:shadow-sm transition-colors ${getTagColor(tag)} opacity-70 hover:opacity-100`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Notes */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
