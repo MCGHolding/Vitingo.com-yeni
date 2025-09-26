@@ -198,6 +198,51 @@ class Product(BaseModel):
     is_active: bool = Field(default=True, description="Is product active")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class InvoiceItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    product_id: Optional[str] = Field(None, description="Product ID if selected from database")
+    name: str = Field(..., description="Product/Service name")
+    quantity: float = Field(..., description="Quantity")
+    unit: str = Field(..., description="Unit")
+    unit_price: float = Field(..., description="Unit price")
+    total: float = Field(..., description="Total amount for this item")
+
+class Invoice(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    invoice_number: str = Field(..., description="Generated invoice number")
+    customer_id: Optional[str] = Field(None, description="Customer ID")
+    customer_name: str = Field("", description="Customer name for display")
+    date: str = Field(..., description="Invoice date")
+    currency: str = Field(..., description="Invoice currency")
+    items: List[InvoiceItem] = Field(..., description="Invoice items")
+    subtotal: float = Field(..., description="Subtotal before tax")
+    vat_rate: float = Field(..., description="VAT rate percentage")
+    vat_amount: float = Field(..., description="VAT amount")
+    discount: float = Field(0.0, description="Discount percentage")
+    discount_amount: float = Field(0.0, description="Discount amount")
+    total: float = Field(..., description="Final total amount")
+    conditions: str = Field("", description="Terms and conditions")
+    payment_term: str = Field("30", description="Payment terms in days")
+    status: str = Field("draft", description="Invoice status")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class InvoiceCreate(BaseModel):
+    invoice_number: str
+    customer_id: Optional[str] = None
+    customer_name: str = ""
+    date: str
+    currency: str
+    items: List[InvoiceItem]
+    subtotal: float
+    vat_rate: float
+    vat_amount: float
+    discount: float = 0.0
+    discount_amount: float = 0.0
+    total: float
+    conditions: str = ""
+    payment_term: str = "30"
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
