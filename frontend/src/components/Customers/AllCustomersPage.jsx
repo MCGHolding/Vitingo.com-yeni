@@ -29,6 +29,8 @@ import {
   Star
 } from 'lucide-react';
 import { customerTagColors } from '../../mock/customersData';
+import ViewPersonModal from './ViewPersonModal';
+import EditPersonModal from './EditPersonModal';
 
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ customer, onAction }) => {
