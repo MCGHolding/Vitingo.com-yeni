@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -22,9 +22,9 @@ import {
   Users,
   TrendingUp
 } from 'lucide-react';
-import { allCustomers, customerTagColors } from '../../mock/customersData';
+import { customerTagColors } from '../../mock/customersData';
 
-export default function AllCustomersPage({ onBackToDashboard }) {
+export default function AllCustomersPage({ onBackToDashboard, customers = [] }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
