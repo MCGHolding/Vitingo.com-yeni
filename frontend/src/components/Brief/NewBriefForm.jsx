@@ -204,15 +204,17 @@ export default function NewBriefForm({ onBackToDashboard }) {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.projectName || !formData.clientCompany || !formData.contactPerson) {
-      alert('Lütfen zorunlu alanları doldurun: Proje Adı, Müşteri Şirket, İletişim Kişisi');
+    if (!formData.projectName || !formData.customerId || !formData.contactPerson) {
+      alert('Lütfen zorunlu alanları doldurun: Proje Adı, Müşteri, İletişim Kişisi');
       return;
     }
 
-    // Create brief object
+    // Create brief object with customer data
+    const customer = customers.find(c => c.id.toString() === formData.customerId);
     const newBrief = {
       id: Date.now(),
       ...formData,
+      clientCompany: customer ? customer.companyName : '', // Add company name for compatibility
       status: 'active',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -229,7 +231,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     // Reset form
     setFormData({
       projectName: '',
-      clientCompany: '',
+      customerId: '',
       contactPerson: '',
       email: '',
       phone: '',
@@ -255,6 +257,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
       priority: 'normal',
       deadline: ''
     });
+    setSelectedCustomer(null);
   };
 
   return (
