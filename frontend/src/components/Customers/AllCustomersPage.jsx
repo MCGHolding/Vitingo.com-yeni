@@ -298,14 +298,16 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
       return;
     }
 
+    if (action === 'email') {
+      setSelectedCustomer(customer);
+      setEmailModalOpen(true);
+      return;
+    }
+
     const actionMessages = {
       message: {
         title: "Mesaj Gönder",
         description: `${customer.companyName} için mesaj gönderme sayfası açılıyor...`
-      },
-      email: {
-        title: "E-posta Gönder", 
-        description: `${customer.companyName} için e-posta gönderme sayfası açılıyor...`
       },
       quote: {
         title: "Teklif Oluştur",
