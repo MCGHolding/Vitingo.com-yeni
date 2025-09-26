@@ -70,8 +70,17 @@ const Header = ({
   // Handle notification click (open message thread)
   const handleNotificationClick = (notification) => {
     markAsRead(notification.id);
-    // Here you could open the message modal with the sender
+    setSelectedNotification(notification);
     setShowNotifications(false);
+  };
+
+  const handleCloseNotificationModal = () => {
+    setSelectedNotification(null);
+  };
+
+  const handleBackToNotifications = () => {
+    setSelectedNotification(null);
+    setShowNotifications(true);
   };
 
   // Load notifications when component mounts or user changes
