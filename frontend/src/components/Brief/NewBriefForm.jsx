@@ -73,6 +73,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [uploadingSections, setUploadingSections] = useState({});
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [relatedPeople, setRelatedPeople] = useState([]);
+  const [selectedPersonId, setSelectedPersonId] = useState('');
 
   // Load customers data
   const [customers, setCustomers] = useState([]);
