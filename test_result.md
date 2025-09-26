@@ -334,8 +334,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Survey System - Multi-Project Selection"
-    - "Enhanced Survey System - Arbitrary Email Surveys"
+    - "Customer CRUD Endpoints"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
