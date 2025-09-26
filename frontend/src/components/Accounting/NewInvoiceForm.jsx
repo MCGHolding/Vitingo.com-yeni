@@ -517,7 +517,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         </div>
 
         {/* Items Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 relative">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-2">
               <Package className="h-5 w-5 text-gray-600" />
@@ -535,7 +535,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
             </Button>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-visible">
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-gray-200">
