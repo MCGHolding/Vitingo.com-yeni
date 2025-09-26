@@ -487,7 +487,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Geographic API Endpoints - Countries and Cities"
+    - "CountrySelect Component Testing"
+    - "CitySelect Component Testing"
+    - "NewCustomerForm Geo Integration Testing"
+    - "NewPersonForm Geo Integration Testing"
   stuck_tasks:
     - "Customer Form Submission Frontend Integration"
   test_all: false
