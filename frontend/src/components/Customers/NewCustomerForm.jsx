@@ -29,7 +29,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
     relationshipType: '',
     contactPersonId: '',
     phone: '',
-    countryCode: 'TR',
     email: '',
     website: '',
     address: '',
@@ -38,6 +37,9 @@ export default function NewCustomerForm({ onClose, onSave }) {
     sector: '',
     notes: ''
   });
+
+  // Separate state for phone country code to avoid conflicts
+  const [phoneCountryCode, setPhoneCountryCode] = useState('TR');
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
