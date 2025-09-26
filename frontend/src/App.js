@@ -220,15 +220,6 @@ const Dashboard = () => {
     setCurrentView('favorite-customers');
   };
 
-  // People Management Handlers
-  const handleNewPerson = () => {
-    setShowNewPersonForm(true);
-  };
-
-  const handleAllPeople = () => {
-    setCurrentView('all-people');
-  };
-
   const closeCustomerForm = () => {
     setShowNewCustomerForm(false);
   };
