@@ -111,6 +111,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
   // Modal states - placeholder for future implementation
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const getSectorCounts = () => {
