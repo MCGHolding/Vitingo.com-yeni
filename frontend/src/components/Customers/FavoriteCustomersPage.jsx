@@ -43,180 +43,59 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
     setFavoriteCustomers(favorites);
   }, [customers, invoices]);
 
-  const getPriorityIcon = (priority) => {
-    switch (priority) {
-      case 'VIP':
-        return <Crown className="h-3 w-3 text-yellow-500" />;
-      case 'Strategic':
-        return <Star className="h-3 w-3 text-purple-500" />;
-      case 'Elite':
-        return <Crown className="h-3 w-3 text-indigo-500" />;
-      case 'Luxury':
-        return <Star className="h-3 w-3 text-amber-500" />;
-      default:
-        return <Star className="h-3 w-3 text-red-500" />;
-    }
-  };
-
-  const getSectorCounts = () => {
-    const counts = {};
-    filteredCustomers.forEach(customer => {
-      const sector = customer.sector || 'Diğer';
-      counts[sector] = (counts[sector] || 0) + 1;
-    });
-    return counts;
-  };
-
-  const getCountryCounts = () => {
-    const counts = {};
-    filteredCustomers.forEach(customer => {
-      const country = customer.country || 'Bilinmiyor';
-      counts[country] = (counts[country] || 0) + 1;
-    });
-    return counts;
-  };
-
+  // Filter and sort favorite customers
   const filteredCustomers = useMemo(() => {
-    let filtered = favoriteCustomers;
+    let filtered = [...favoriteCustomers];
 
-    // Search filter
+    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(customer =>
-        customer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (customer.sector && customer.sector.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (customer.priority && customer.priority.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (customer.favoriteReason && customer.favoriteReason.toLowerCase().includes(searchTerm.toLowerCase()))
+        customer.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.contactPerson?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Tag search filter
-    if (tagSearch) {
-      filtered = filtered.filter(customer =>
-        customer.tags && customer.tags.some(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()))
-      );
-    }
-
-    // Priority filter
-    if (priorityFilter !== 'all') {
-      filtered = filtered.filter(customer => customer.priority === priorityFilter);
-    }
-
-    // Sector filter
+    // Apply sector filter
     if (sectorFilter !== 'all') {
       filtered = filtered.filter(customer => customer.sector === sectorFilter);
     }
 
-    // Country filter
+    // Apply country filter
     if (countryFilter !== 'all') {
       filtered = filtered.filter(customer => customer.country === countryFilter);
     }
 
-    // Relationship filter
-    if (relationshipFilter !== 'all') {
-      filtered = filtered.filter(customer => customer.relationshipType === relationshipFilter);
-    }
-
-    // Sort
+    // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'priority':
-          const priorityOrder = { 'VIP': 5, 'Strategic': 4, 'Elite': 3, 'Luxury': 2, 'Growth': 1 };
-          return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+        case 'invoicesLastYear':
+          return b.statusInfo.invoicesLastYear - a.statusInfo.invoicesLastYear;
         case 'companyName':
-          return a.companyName.localeCompare(b.companyName);
-        case 'revenue':
-          return b.totalRevenue - a.totalRevenue;
-        case 'customerSince':
-          return new Date(b.customerSince) - new Date(a.customerSince);
-        case 'lastActivity':
-          return new Date(b.lastActivity) - new Date(a.lastActivity);
+          return a.companyName.localeCompare(b.companyName, 'tr');
+        case 'totalRevenue':
+          return (b.totalRevenue || 0) - (a.totalRevenue || 0);
         default:
-          const priorityOrderDefault = { 'VIP': 5, 'Strategic': 4, 'Elite': 3, 'Luxury': 2, 'Growth': 1 };
-          return (priorityOrderDefault[b.priority] || 0) - (priorityOrderDefault[a.priority] || 0);
+          return b.statusInfo.invoicesLastYear - a.statusInfo.invoicesLastYear;
       }
     });
 
     return filtered;
-  }, [searchTerm, tagSearch, priorityFilter, sectorFilter, countryFilter, relationshipFilter, sortBy]);
+  }, [favoriteCustomers, searchTerm, sectorFilter, countryFilter, sortBy]);
 
-  const sectorCounts = getSectorCounts();
-  const countryCounts = getCountryCounts();
+  // Get statistics
+  const stats = getCustomerStatistics(customers, invoices);
 
-  const clearFilters = () => {
-    setSearchTerm('');
-    setTagSearch('');
-    setPriorityFilter('all');
-    setSectorFilter('all');
-    setCountryFilter('all');
-    setRelationshipFilter('all');
-    setSortBy('priority');
-  };
+  // Get unique sectors and countries for filters
+  const uniqueSectors = [...new Set(favoriteCustomers.map(c => c.sector).filter(Boolean))];
+  const uniqueCountries = [...new Set(favoriteCustomers.map(c => c.country).filter(Boolean))];
 
-  const formatCurrency = (amount, currency) => {
-    if (amount === 0) return '-';
-    
-    const symbols = {
-      'EUR': '€',
-      'USD': '$',
-      'TRY': '₺'
-    };
-    
-    return `${symbols[currency] || currency} ${amount.toLocaleString()}`;
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('tr-TR');
-  };
-
-  const getPriorityBadge = (priority) => {
-    switch (priority) {
-      case 'VIP':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 text-[10px] px-2 py-1">VIP</Badge>;
-      case 'Strategic':
-        return <Badge className="bg-purple-100 text-purple-800 border-purple-300 text-[10px] px-2 py-1">Stratejik</Badge>;
-      case 'Elite':
-        return <Badge className="bg-indigo-100 text-indigo-800 border-indigo-300 text-[10px] px-2 py-1">Elite</Badge>;
-      case 'Luxury':
-        return <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] px-2 py-1">Lüks</Badge>;
-      case 'Growth':
-        return <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px] px-2 py-1">Büyüme</Badge>;
-      default:
-        return <Badge className="bg-red-100 text-red-800 border-red-300 text-[10px] px-2 py-1">Favori</Badge>;
-    }
-  };
-
-  const handleView = (customer) => {
-    setSelectedCustomer(customer);
-    setViewModalOpen(true);
-    toast({
-      title: "Müşteri Detayları",
-      description: `${customer.companyName} detayları görüntüleniyor`,
-    });
-  };
-
-  const handleEdit = (customer) => {
-    setSelectedCustomer(customer);
-    setEditModalOpen(true);
-    toast({
-      title: "Müşteri Düzenleme",
-      description: `${customer.companyName} bilgileri düzenleniyor`,
-    });
-  };
-
-  const handleAction = (action, customer) => {
-    toast({
-      title: `${action} işlemi`,
-      description: `${customer.companyName} için ${action} işlemi başlatıldı.`,
-    });
-  };
-
-  const exportToExcel = () => {
-    toast({
-      title: "Excel Aktarımı",
-      description: `${filteredCustomers.length} favori müşteri Excel dosyasına aktarılıyor...`,
-    });
+  const getInitials = (name) => {
+    return name?.split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'MŞ';
   };
 
   return (
