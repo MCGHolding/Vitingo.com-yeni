@@ -26,7 +26,8 @@ import {
   FileUser,
   Receipt,
   UserX,
-  Star
+  Star,
+  Trash2
 } from 'lucide-react';
 import { customerTagColors } from '../../mock/customersData';
 import ViewPersonModal from './ViewPersonModal';
