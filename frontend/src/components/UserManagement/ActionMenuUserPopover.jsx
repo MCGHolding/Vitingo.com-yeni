@@ -69,6 +69,25 @@ export default function ActionMenuUserPopover({ user, onAction }) {
     setIsOpen(!isOpen);
   };
 
+  const handleUserLogin = async () => {
+    try {
+      await switchUser(user.id);
+      toast({
+        title: "Hesap Değiştirme Başarılı",
+        description: `${user.fullName || `${user.firstName} ${user.lastName}`} hesabına giriş yapıldı`,
+      });
+      
+      // Reload the page to reflect the new user session
+      window.location.reload();
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: error.message || "Hesap değiştirme başarısız",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleMenuItemClick = (action) => {
     switch (action) {
       case 'delete':
