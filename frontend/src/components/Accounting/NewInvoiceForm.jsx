@@ -718,6 +718,14 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
           </Button>
         </div>
       </form>
+
+      {/* Add Product Modal */}
+      {showAddProductModal && (
+        <AddProductModal
+          onClose={() => setShowAddProductModal(false)}
+          onProductAdded={handleProductAdded}
+        />
+      )}
     </div>
   );
 };
