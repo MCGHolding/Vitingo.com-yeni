@@ -376,8 +376,8 @@ export default function NewCustomerForm({ onClose, onSave }) {
       tags: []
     });
     setPhoneCountryCode('TR');
-    setSelectedImage(null);
-    setImagePreview(null);
+    setLogoFile(null);
+    setLogoUrl('');
     setTagInput('');
     // Clear geographic selections
     setSelectedCountry(null);
