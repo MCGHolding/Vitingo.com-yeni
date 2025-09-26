@@ -222,8 +222,10 @@ const Dashboard = () => {
 
   const saveCustomer = async (customerData) => {
     try {
-      // Hardcoded backend URL for runtime - Kubernetes environment
-      const backendUrl = 'https://crm-turk-portal.preview.emergentagent.com';
+      // Try runtime config first, fallback to environment variables, then hardcoded
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://crm-turk-portal.preview.emergentagent.com';
       console.log('Saving customer to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`, {
         method: 'POST',
