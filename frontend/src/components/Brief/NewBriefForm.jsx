@@ -90,17 +90,68 @@ export default function NewBriefForm({ onBackToDashboard }) {
       const customer = customers.find(c => c.id.toString() === formData.customerId);
       if (customer) {
         setSelectedCustomer(customer);
-        setFormData(prev => ({
-          ...prev,
-          contactPerson: customer.contactPerson,
-          email: customer.email,
-          phone: customer.phone || ''
-        }));
+        
+        // Find related people for this customer company
+        const customerPeople = allPeople.filter(person => 
+          person.company === customer.companyName && 
+          person.status === 'active'
+        );
+        
+        setRelatedPeople(customerPeople);
+        
+        // If there are related people, don't auto-fill, let user choose
+        // If no related people, fill with customer's default contact
+        if (customerPeople.length === 0) {
+          setFormData(prev => ({
+            ...prev,
+            contactPerson: customer.contactPerson,
+            email: customer.email,
+            phone: customer.phone || ''
+          }));
+          setSelectedPersonId('customer-default');
+        } else {
+          // Clear contact fields and let user select from people
+          setFormData(prev => ({
+            ...prev,
+            contactPerson: '',
+            email: '',
+            phone: ''
+          }));
+          setSelectedPersonId('');
+        }
       }
     } else {
       setSelectedCustomer(null);
+      setRelatedPeople([]);
+      setSelectedPersonId('');
     }
   }, [formData.customerId, customers]);
+
+  // Update contact info when a person is selected
+  useEffect(() => {
+    if (selectedPersonId && selectedCustomer) {
+      if (selectedPersonId === 'customer-default') {
+        // Use customer's default contact info
+        setFormData(prev => ({
+          ...prev,
+          contactPerson: selectedCustomer.contactPerson,
+          email: selectedCustomer.email,
+          phone: selectedCustomer.phone || ''
+        }));
+      } else {
+        // Use selected person's info
+        const person = relatedPeople.find(p => p.id.toString() === selectedPersonId);
+        if (person) {
+          setFormData(prev => ({
+            ...prev,
+            contactPerson: person.fullName,
+            email: person.email,
+            phone: person.phone || ''
+          }));
+        }
+      }
+    }
+  }, [selectedPersonId, selectedCustomer, relatedPeople]);
 
   const standTypes = [
     { value: 'shell-scheme', label: 'Shell Scheme (Kabuk Stand)' },
