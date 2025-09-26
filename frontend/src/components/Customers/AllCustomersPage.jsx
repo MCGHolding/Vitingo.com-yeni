@@ -20,9 +20,78 @@ import {
   X,
   Building,
   Users,
-  TrendingUp
+  TrendingUp,
+  MessageSquare,
+  Mail,
+  FileUser,
+  Receipt,
+  UserX,
+  Star
 } from 'lucide-react';
 import { customerTagColors } from '../../mock/customersData';
+
+// ActionMenuPopover Component
+const ActionMenuPopover = ({ customer, onAction }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = [
+    { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800', action: 'message' },
+    { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800', action: 'email' },
+    { label: 'Teklif', icon: FileUser, color: 'text-purple-600 hover:text-purple-800', action: 'quote' },
+    { label: 'Fatura', icon: Receipt, color: 'text-orange-600 hover:text-orange-800', action: 'invoice' },
+    { label: 'Pasif', icon: UserX, color: 'text-red-600 hover:text-red-800', action: 'inactive' },
+    { label: 'Favori', icon: Star, color: 'text-yellow-600 hover:text-yellow-800', action: 'favorite' },
+  ];
+
+  const handleMenuAction = (action) => {
+    onAction(action, customer);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              onMouseEnter={() => setIsOpen(true)}
+              onMouseLeave={() => setIsOpen(false)}
+            >
+              <MoreHorizontal className="h-3 w-3" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Daha Fazla İşlem</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      {isOpen && (
+        <div 
+          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]"
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+        >
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-full text-left px-3 py-2 text-sm ${item.color} hover:bg-gray-50 flex items-center space-x-2 ${
+                index === 0 ? 'rounded-t-lg' : ''
+              } ${index === menuItems.length - 1 ? 'rounded-b-lg' : ''}`}
+              onClick={() => handleMenuAction(item.action)}
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function AllCustomersPage({ onBackToDashboard, customers = [] }) {
   const { toast } = useToast();
