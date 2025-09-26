@@ -130,19 +130,16 @@ export default function NewCustomerForm({ onClose, onSave }) {
   ].sort();
 
   useEffect(() => {
-    // Load people data and sort alphabetically - ONLY RUN ONCE
+    // Load people data
     const sortedPeople = allPeople
       .filter(person => person.status === 'active')
       .sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'));
     setAvailablePeople(sortedPeople);
 
-    // Load countries data - ONLY RUN ONCE
-    const countries = getSortedCountries();
-    setAvailableCountries(countries);
-    
-    // Set initial cities for default country (TR)
-    const initialCities = getCitiesForCountry('TR');
-    setAvailableCities(initialCities);
+    // Set default country to Turkey
+    if (!selectedCountry) {
+      // Turkey will be set by CountrySelect component's default behavior
+    }
   }, []); // EMPTY dependency array - runs only once
 
   const handleInputChange = (field, value) => {
@@ -152,18 +149,39 @@ export default function NewCustomerForm({ onClose, onSave }) {
     }));
   };
 
-  const handleCountryChange = (countryCode) => {
-    // Update cities for selected country
-    const cities = getCitiesForCountry(countryCode);
-    setAvailableCities(cities);
+  const handleCountryChange = (countryData) => {
+    setSelectedCountry(countryData);
+    setSelectedCity(null); // Clear city when country changes
     
-    // Update form data - ONLY country field, NOT countryCode
-    setFormData(prev => ({
-      ...prev,
-      country: countryCode,
-      city: '' // Reset city when country changes
-      // Removed countryCode assignment - this was causing the infinite loop!
-    }));
+    if (countryData) {
+      setFormData(prev => ({
+        ...prev,
+        country: countryData.iso2,
+        city: '' // Clear city
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        country: '',
+        city: ''
+      }));
+    }
+  };
+
+  const handleCityChange = (cityData) => {
+    setSelectedCity(cityData);
+    
+    if (cityData) {
+      setFormData(prev => ({
+        ...prev,
+        city: cityData.name
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        city: ''
+      }));
+    }
   };
 
   const handleWebsiteChange = (value) => {
