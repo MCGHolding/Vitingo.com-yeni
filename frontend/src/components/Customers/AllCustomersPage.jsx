@@ -263,9 +263,41 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
   };
 
   const handleAction = (action, customer) => {
-    toast({
+    const actionMessages = {
+      message: {
+        title: "Mesaj Gönder",
+        description: `${customer.companyName} için mesaj gönderme sayfası açılıyor...`
+      },
+      email: {
+        title: "E-posta Gönder", 
+        description: `${customer.companyName} için e-posta gönderme sayfası açılıyor...`
+      },
+      quote: {
+        title: "Teklif Oluştur",
+        description: `${customer.companyName} için yeni teklif oluşturma sayfası açılıyor...`
+      },
+      invoice: {
+        title: "Fatura Oluştur",
+        description: `${customer.companyName} için yeni fatura oluşturma sayfası açılıyor...`
+      },
+      inactive: {
+        title: "Müşteriyi Pasif Yap",
+        description: `${customer.companyName} pasif müşteriler listesine taşınıyor...`
+      },
+      favorite: {
+        title: "Favori Müşteri Yap",
+        description: `${customer.companyName} favori müşteriler listesine ekleniyor...`
+      }
+    };
+
+    const message = actionMessages[action] || {
       title: `${action} işlemi`,
-      description: `${customer.companyName} için ${action} işlemi başlatıldı.`,
+      description: `${customer.companyName} için ${action} işlemi başlatıldı.`
+    };
+
+    toast({
+      title: message.title,
+      description: message.description,
     });
   };
 
