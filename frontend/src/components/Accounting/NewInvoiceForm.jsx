@@ -736,10 +736,11 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         <div className="flex justify-center">
           <Button
             type="submit"
-            className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg rounded-xl shadow-lg"
+            disabled={isSubmitting}
+            className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="mr-2 h-5 w-5" />
-            Fatura Oluştur
+            {isSubmitting ? 'Fatura Oluşturuluyor...' : 'Fatura Oluştur'}
           </Button>
         </div>
       </form>
