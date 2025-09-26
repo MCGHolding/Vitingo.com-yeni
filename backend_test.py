@@ -2134,8 +2134,17 @@ def main():
     print("• UUID field'ların doğru çalışması")
     print("• Validation işlemleri")
     print("• Error handling (404, validation errors)")
+    print("• Müşteri email gönderimi ve customer_emails collection'a kayıt")
     
-    # Test Customer CRUD endpoints with Turkish data (PRIMARY FOCUS)
+    # Test Customer Email Endpoint (NEW - PRIMARY FOCUS)
+    print("\n" + "=" * 80)
+    print("📧 YENİ MÜŞTERİ EMAIL ENDPOINT TESTİ (ÖNCELIK)")
+    print("=" * 80)
+    
+    print("\n📧 POST /api/send-customer-email - Müşteriye email gönderme testi")
+    customer_email_passed = test_send_customer_email()
+    
+    # Test Customer CRUD endpoints with Turkish data
     print("\n" + "=" * 80)
     print("🇹🇷 TÜRK MÜŞTERİ CRUD ENDPOINT TESTLERİ")
     print("=" * 80)
