@@ -1061,6 +1061,19 @@ class UserEmailRequest(BaseModel):
     to_name: str
     attachments: Optional[List[Dict]] = []
 
+class CustomerEmailRequest(BaseModel):
+    to: str
+    cc: Optional[str] = ""
+    bcc: Optional[str] = ""
+    subject: str
+    body: str
+    from_name: str
+    from_email: str
+    to_name: str
+    customer_id: str
+    customer_company: str
+    attachments: Optional[List[Dict]] = []
+
 @api_router.post("/send-user-email")
 async def send_user_email(request: UserEmailRequest):
     """Send email from user to user via CRM system"""
