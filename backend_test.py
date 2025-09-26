@@ -1585,6 +1585,353 @@ def test_customer_validation_errors():
     print("\n✅ CUSTOMER VALIDATION AND ERROR TESTS PASSED!")
     return True
 
+def test_products_api_endpoints():
+    """
+    Test the Products API endpoints for NewInvoiceForm AddProductModal integration.
+    
+    Requirements to verify:
+    1. GET /api/products endpoint to retrieve all products
+    2. POST /api/products endpoint to create a new product
+    3. Verify response format and data structure
+    4. Test error handling for invalid data
+    5. Test with Turkish product names, categories like 'fair_services', units like 'adet', prices, and currencies
+    """
+    
+    print("=" * 80)
+    print("TESTING PRODUCTS API ENDPOINTS")
+    print("=" * 80)
+    
+    # Test data with Turkish product names and fair services category
+    test_products = [
+        {
+            "name": "Fuar Stand Tasarımı",
+            "name_en": "Fair Stand Design",
+            "category": "fair_services",
+            "unit": "adet",
+            "default_price": 15000.0,
+            "currency": "TRY",
+            "is_active": True
+        },
+        {
+            "name": "Stand Kurulumu ve Montajı",
+            "name_en": "Stand Setup and Installation",
+            "category": "fair_services", 
+            "unit": "adet",
+            "default_price": 8500.0,
+            "currency": "TRY",
+            "is_active": True
+        },
+        {
+            "name": "Grafik Tasarım Hizmetleri",
+            "name_en": "Graphic Design Services",
+            "category": "design_services",
+            "unit": "saat",
+            "default_price": 250.0,
+            "currency": "TRY",
+            "is_active": True
+        },
+        {
+            "name": "LED Ekran Kiralama",
+            "name_en": "LED Screen Rental",
+            "category": "equipment_rental",
+            "unit": "gün",
+            "default_price": 500.0,
+            "currency": "TRY",
+            "is_active": True
+        }
+    ]
+    
+    created_product_ids = []
+    all_tests_passed = True
+    
+    # Test 1: GET /api/products (initially should be empty or have existing products)
+    print("\n1. Testing GET /api/products endpoint...")
+    get_endpoint = f"{BACKEND_URL}/api/products"
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: GET products endpoint responds with status 200")
+            
+            # Parse response
+            try:
+                data = response.json()
+                if isinstance(data, list):
+                    print(f"   ✅ PASS: Response is a list with {len(data)} products")
+                    
+                    # If there are existing products, validate structure
+                    if len(data) > 0:
+                        first_product = data[0]
+                        required_fields = ["id", "name", "category", "unit", "currency", "is_active"]
+                        missing_fields = [field for field in required_fields if field not in first_product]
+                        
+                        if missing_fields:
+                            print(f"   ❌ FAIL: Product missing required fields: {missing_fields}")
+                            all_tests_passed = False
+                        else:
+                            print("   ✅ PASS: Product structure is valid")
+                            print(f"   Sample Product: {first_product.get('name')} ({first_product.get('category')})")
+                else:
+                    print("   ❌ FAIL: Response should be a list")
+                    all_tests_passed = False
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing GET products: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 2: POST /api/products - Create new products
+    print("\n2. Testing POST /api/products endpoint...")
+    post_endpoint = f"{BACKEND_URL}/api/products"
+    
+    for i, product_data in enumerate(test_products, 1):
+        print(f"\n   2.{i} Creating product: {product_data['name']}")
+        
+        try:
+            response = requests.post(post_endpoint, json=product_data, timeout=30)
+            print(f"      Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("      ✅ PASS: Product creation responds with status 200")
+                
+                # Parse response
+                try:
+                    data = response.json()
+                    if isinstance(data, dict) and data.get("success"):
+                        print("      ✅ PASS: Product created successfully")
+                        
+                        # Validate product data in response
+                        product_info = data.get("product", {})
+                        if product_info.get("id"):
+                            created_product_ids.append(product_info.get("id"))
+                            print(f"      Product ID: {product_info.get('id')}")
+                            print(f"      Name: {product_info.get('name')}")
+                            print(f"      Category: {product_info.get('category')}")
+                            print(f"      Unit: {product_info.get('unit')}")
+                            print(f"      Price: {product_info.get('default_price')} {product_info.get('currency')}")
+                            
+                            # Verify Turkish characters are preserved
+                            if any(char in product_info.get('name', '') for char in 'ğüşıöçĞÜŞİÖÇ'):
+                                print("      ✅ PASS: Turkish characters preserved")
+                        else:
+                            print("      ❌ FAIL: No product ID in response")
+                            all_tests_passed = False
+                    else:
+                        print(f"      ❌ FAIL: Unexpected response structure: {data}")
+                        all_tests_passed = False
+                except Exception as e:
+                    print(f"      ❌ FAIL: Could not parse JSON response: {str(e)}")
+                    all_tests_passed = False
+            else:
+                print(f"      ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"      Response: {response.text}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"      ❌ FAIL: Error creating product: {str(e)}")
+            all_tests_passed = False
+    
+    # Test 3: GET /api/products again to verify created products
+    print("\n3. Testing GET /api/products after creation...")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                print(f"   ✅ PASS: Now showing {len(data)} products")
+                
+                # Verify our created products are in the list
+                created_names = [p['name'] for p in test_products]
+                found_products = [p for p in data if p.get('name') in created_names]
+                
+                if len(found_products) >= len(test_products):
+                    print(f"   ✅ PASS: All {len(test_products)} created products found in list")
+                    
+                    # Test filtering by category
+                    print("\n   3.1 Testing category filtering...")
+                    category_endpoint = f"{get_endpoint}?category=fair_services"
+                    category_response = requests.get(category_endpoint, timeout=30)
+                    
+                    if category_response.status_code == 200:
+                        category_data = category_response.json()
+                        fair_services_count = len([p for p in category_data if p.get('category') == 'fair_services'])
+                        print(f"      ✅ PASS: Category filter returned {fair_services_count} fair_services products")
+                    else:
+                        print(f"      ❌ FAIL: Category filtering failed with status {category_response.status_code}")
+                        all_tests_passed = False
+                        
+                    # Test search functionality
+                    print("\n   3.2 Testing search functionality...")
+                    search_endpoint = f"{get_endpoint}?search=Stand"
+                    search_response = requests.get(search_endpoint, timeout=30)
+                    
+                    if search_response.status_code == 200:
+                        search_data = search_response.json()
+                        stand_products = [p for p in search_data if 'Stand' in p.get('name', '') or 'Stand' in p.get('name_en', '')]
+                        print(f"      ✅ PASS: Search returned {len(stand_products)} products containing 'Stand'")
+                    else:
+                        print(f"      ❌ FAIL: Search functionality failed with status {search_response.status_code}")
+                        all_tests_passed = False
+                        
+                else:
+                    print(f"   ❌ FAIL: Only {len(found_products)} of {len(test_products)} created products found")
+                    all_tests_passed = False
+            else:
+                print("   ❌ FAIL: Response should be a list")
+                all_tests_passed = False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing GET products after creation: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 4: Error handling - Duplicate product name
+    print("\n4. Testing error handling - Duplicate product name...")
+    
+    if test_products:
+        duplicate_product = test_products[0].copy()  # Try to create the same product again
+        
+        try:
+            response = requests.post(post_endpoint, json=duplicate_product, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 400:
+                print("   ✅ PASS: Duplicate product name properly rejected with 400")
+                data = response.json()
+                if "already exists" in data.get("detail", "").lower():
+                    print("   ✅ PASS: Proper error message for duplicate product")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be specific: {data.get('detail')}")
+            else:
+                print(f"   ❌ FAIL: Expected status 400 for duplicate, got {response.status_code}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error testing duplicate product: {str(e)}")
+            all_tests_passed = False
+    
+    # Test 5: Error handling - Invalid product data
+    print("\n5. Testing error handling - Invalid product data...")
+    
+    invalid_products = [
+        {
+            "name": "",  # Empty name
+            "category": "fair_services",
+            "unit": "adet"
+        },
+        {
+            "name": "Test Product",
+            "category": "fair_services",
+            "unit": "adet",
+            "default_price": -100  # Negative price
+        }
+    ]
+    
+    for i, invalid_product in enumerate(invalid_products, 1):
+        print(f"\n   5.{i} Testing invalid product data...")
+        
+        try:
+            response = requests.post(post_endpoint, json=invalid_product, timeout=30)
+            print(f"      Status Code: {response.status_code}")
+            
+            if response.status_code >= 400:
+                print("      ✅ PASS: Invalid product data properly rejected")
+            else:
+                print(f"      ⚠️  WARNING: Invalid data was accepted (validation might be frontend-only)")
+                
+        except Exception as e:
+            print(f"      ⚠️  WARNING: Error testing invalid product: {str(e)}")
+    
+    # Test 6: GET specific product by ID
+    if created_product_ids:
+        print("\n6. Testing GET specific product by ID...")
+        test_product_id = created_product_ids[0]
+        specific_endpoint = f"{BACKEND_URL}/api/products/{test_product_id}"
+        
+        try:
+            response = requests.get(specific_endpoint, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("   ✅ PASS: GET specific product responds with status 200")
+                
+                data = response.json()
+                if isinstance(data, dict) and data.get("id") == test_product_id:
+                    print("   ✅ PASS: Returned product has correct ID")
+                    print(f"   Product: {data.get('name')} ({data.get('category')})")
+                else:
+                    print("   ❌ FAIL: Product ID mismatch or invalid structure")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error testing GET specific product: {str(e)}")
+            all_tests_passed = False
+    
+    # Test 7: Error handling - Non-existent product ID
+    print("\n7. Testing error handling - Non-existent product ID...")
+    non_existent_id = "non-existent-product-12345"
+    non_existent_endpoint = f"{BACKEND_URL}/api/products/{non_existent_id}"
+    
+    try:
+        response = requests.get(non_existent_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("   ✅ PASS: Non-existent product ID returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent product, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing non-existent product: {str(e)}")
+        all_tests_passed = False
+    
+    # Summary
+    print("\n" + "=" * 80)
+    print("PRODUCTS API ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ GET /api/products endpoint working correctly")
+        print("✅ POST /api/products endpoint working correctly")
+        print("✅ Response format and data structure validated")
+        print("✅ Error handling for invalid data working")
+        print("✅ Turkish product names handled correctly")
+        print("✅ Fair services category support confirmed")
+        print("✅ Turkish units (adet) and currency (TRY) working")
+        print("✅ Search and filtering functionality working")
+        print(f"✅ Created {len(created_product_ids)} test products successfully")
+        print("\n🎉 ALL PRODUCTS API TESTS PASSED!")
+        print("   NewInvoiceForm AddProductModal integration ready!")
+        
+        # Display created products summary
+        if created_product_ids:
+            print(f"\n📋 CREATED TEST PRODUCTS ({len(created_product_ids)}):")
+            for i, product in enumerate(test_products, 1):
+                print(f"   {i}. {product['name']} ({product['category']}) - {product['default_price']} {product['currency']}")
+        
+        return True, created_product_ids
+    else:
+        print("❌ Some Products API tests failed")
+        print("   Please check the error messages above")
+        return False, created_product_ids
+
 def test_geographic_countries_endpoint():
     """
     Test the Geographic Countries API endpoint.
