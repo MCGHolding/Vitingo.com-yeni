@@ -2737,154 +2737,127 @@ def test_logo_null_validation():
         return False
 
 def main():
-    """Run comprehensive backend tests including new customer email endpoint"""
-    print("🇹🇷 BACKEND API TESTLERİ - MÜŞTERİ YÖNETİMİ VE EMAIL SİSTEMİ")
+    """Run comprehensive backend tests focusing on Geographic API endpoints"""
+    print("🌍 BACKEND API TESTLERİ - COĞRAFİ API ENDPOINT'LERİ")
     print("=" * 80)
-    print("Backend API endpoint'lerinin kapsamlı testi")
+    print("Geographic API endpoint'lerinin kapsamlı testi")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    print("\n🎯 TEST EDİLECEK BACKEND ENDPOINTS:")
-    print("1. GET /api/customers - Tüm müşterileri getir")
-    print("2. POST /api/customers - Yeni müşteri oluştur (Türk müşteri verisi ile)")
-    print("3. GET /api/customers/{id} - Belirli müşteri getir")
-    print("4. PUT /api/customers/{id} - Müşteri güncelle")
-    print("5. DELETE /api/customers/{id} - Müşteri sil")
-    print("6. POST /api/send-customer-email - Müşteriye email gönder (YENİ ENDPOINT)")
+    print("\n🎯 TEST EDİLECEK GEOGRAFİK API ENDPOINTS:")
+    print("1. GET /api/geo/countries - Ülke listesi (search ile)")
+    print("2. GET /api/geo/countries/{iso2}/cities - Şehir listesi (pagination ile)")
     
-    print("\n🔍 ÖZEL TEST SENARYOLARI:")
-    print("• Türk müşteri verisi ile test (companyTitle, taxOffice, taxNumber alanları dahil)")
-    print("• Türkçe karakter desteği (ğüşıöç)")
-    print("• UUID field'ların doğru çalışması")
-    print("• Validation işlemleri")
-    print("• Error handling (404, validation errors)")
-    print("• Müşteri email gönderimi ve customer_emails collection'a kayıt")
+    print("\n🔍 TEST SENARYOLARI:")
+    print("📍 Countries Test:")
+    print("   • GET /api/geo/countries (tüm ülkeler)")
+    print("   • GET /api/geo/countries?query=turk (Türkiye arama)")
+    print("   • GET /api/geo/countries?query=united (United arama)")
+    print("   • GET /api/geo/countries?query=ger (Germany arama)")
+    print("   • Aksan toleransı: 'turkiye' → 'Turkey'")
     
-    # Test Customer Email Endpoint (NEW - PRIMARY FOCUS)
+    print("\n📍 Cities Test:")
+    print("   • GET /api/geo/countries/TR/cities (Türkiye şehirleri)")
+    print("   • GET /api/geo/countries/TR/cities?query=ist (Istanbul arama)")
+    print("   • GET /api/geo/countries/TR/cities?query=ank (Ankara arama)")
+    print("   • GET /api/geo/countries/AE/cities (BAE şehirleri)")
+    print("   • GET /api/geo/countries/AE/cities?query=dub (Dubai arama)")
+    print("   • GET /api/geo/countries/US/cities?limit=5&page=1 (pagination test)")
+    print("   • Aksan toleransı: 'istanbul' → 'Istanbul'")
+    
+    print("\n📋 BEKLENİLEN SONUÇLAR:")
+    print("   • Tüm endpoints 200 status dönmeli")
+    print("   • Countries: Turkey, United States, Germany vs bulunmalı")
+    print("   • Cities: Istanbul, Ankara, Dubai vs bulunmalı")
+    print("   • Search fonksiyonu çalışmalı")
+    print("   • Pagination çalışmalı (limit, page)")
+    print("   • Response yapısı doğru olmalı")
+    
+    # Test Geographic Countries API (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("📧 YENİ MÜŞTERİ EMAIL ENDPOINT TESTİ (ÖNCELIK)")
+    print("🌍 COĞRAFİ ÜLKELER API TESTİ (ÖNCELIK)")
     print("=" * 80)
     
-    print("\n📧 POST /api/send-customer-email - Müşteriye email gönderme testi")
-    customer_email_passed = test_send_customer_email()
+    print("\n🌍 GET /api/geo/countries - Ülkeler endpoint'i testi")
+    countries_passed = test_geographic_countries_endpoint()
     
-    # Test Customer CRUD endpoints with Turkish data
+    # Test Geographic Cities API (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("🇹🇷 TÜRK MÜŞTERİ CRUD ENDPOINT TESTLERİ")
+    print("🏙️ COĞRAFİ ŞEHİRLER API TESTİ (ÖNCELIK)")
     print("=" * 80)
     
-    # 1. Test POST /api/customers with Turkish data
-    print("\n1️⃣ POST /api/customers - Yeni Türk müşteri oluşturma testi")
-    create_customer_passed, created_customer_id = test_create_customer()
-    
-    # 2. Test Turkish-specific data scenarios
-    print("\n2️⃣ Türkçe veri senaryoları testi")
-    turkish_data_passed, turkish_customer_ids = test_turkish_customer_data()
-    
-    # 3. Test GET /api/customers to verify customers are saved and retrievable
-    print("\n3️⃣ GET /api/customers - Tüm müşterileri getirme testi")
-    get_all_customers_passed = test_get_all_customers()
-    
-    # 4. Test GET /api/customers/{id} for specific customer retrieval
-    print("\n4️⃣ GET /api/customers/{id} - Belirli müşteri getirme testi")
-    get_specific_customer_passed = test_get_specific_customer(created_customer_id)
-    
-    # 5. Test PUT /api/customers/{id} for updates
-    print("\n5️⃣ PUT /api/customers/{id} - Müşteri güncelleme testi")
-    update_customer_passed = test_update_customer(created_customer_id)
-    
-    # 6. Test error handling and validation
-    print("\n6️⃣ Error handling ve validation testleri")
-    customer_validation_passed = test_customer_validation_errors()
-    
-    # 7. Test DELETE /api/customers/{id} (run last to clean up)
-    print("\n7️⃣ DELETE /api/customers/{id} - Müşteri silme testi")
-    delete_customer_passed = test_delete_customer(created_customer_id)
-    
-    # Clean up Turkish test customers
-    if turkish_customer_ids:
-        print("\n" + "=" * 80)
-        print("🧹 TÜRK TEST MÜŞTERİLERİNİ TEMİZLEME")
-        print("=" * 80)
-        for customer_id in turkish_customer_ids:
-            if customer_id:
-                test_delete_customer(customer_id)
+    print("\n🏙️ GET /api/geo/countries/{iso2}/cities - Şehirler endpoint'i testi")
+    cities_passed = test_geographic_cities_endpoint()
     
     # Final Results Summary
     print("\n" + "=" * 100)
-    print("📊 TÜRK MÜŞTERİ YÖNETİMİ TEST SONUÇLARI")
+    print("📊 COĞRAFİ API TEST SONUÇLARI")
     print("=" * 100)
     
-    # Primary focus results (Customer CRUD)
-    print("\n🎯 TÜRK MÜŞTERİ CRUD ENDPOINT SONUÇLARI:")
-    print(f"   1. POST /api/customers (Türk verisi ile oluşturma): {'✅ BAŞARILI' if create_customer_passed else '❌ BAŞARISIZ'}")
-    print(f"   2. Türkçe Veri Senaryoları: {'✅ BAŞARILI' if turkish_data_passed else '❌ BAŞARISIZ'}")
-    print(f"   3. GET /api/customers (Tümünü getir): {'✅ BAŞARILI' if get_all_customers_passed else '❌ BAŞARISIZ'}")
-    print(f"   4. GET /api/customers/{{id}} (Belirli müşteri): {'✅ BAŞARILI' if get_specific_customer_passed else '❌ BAŞARISIZ'}")
-    print(f"   5. PUT /api/customers/{{id}} (Güncelleme): {'✅ BAŞARILI' if update_customer_passed else '❌ BAŞARISIZ'}")
-    print(f"   6. DELETE /api/customers/{{id}} (Silme): {'✅ BAŞARILI' if delete_customer_passed else '❌ BAŞARISIZ'}")
-    print(f"   7. Error Handling & Validation: {'✅ BAŞARILI' if customer_validation_passed else '❌ BAŞARISIZ'}")
+    # Primary focus results (Geographic API)
+    print("\n🎯 COĞRAFİ API ENDPOINT SONUÇLARI:")
+    print(f"   1. GET /api/geo/countries (Ülkeler API): {'✅ BAŞARILI' if countries_passed else '❌ BAŞARISIZ'}")
+    print(f"   2. GET /api/geo/countries/{{iso2}}/cities (Şehirler API): {'✅ BAŞARILI' if cities_passed else '❌ BAŞARISIZ'}")
     
     # Count primary test results
-    primary_tests = [
-        create_customer_passed, turkish_data_passed, get_all_customers_passed,
-        get_specific_customer_passed, update_customer_passed, delete_customer_passed,
-        customer_validation_passed
-    ]
+    primary_tests = [countries_passed, cities_passed]
     primary_passed = sum(primary_tests)
     primary_total = len(primary_tests)
     
-    print(f"\n🎯 TÜRK MÜŞTERİ CRUD TEST SONUCU: {primary_passed}/{primary_total} BAŞARILI")
+    print(f"\n🎯 COĞRAFİ API TEST SONUCU: {primary_passed}/{primary_total} BAŞARILI")
     
-    # Diagnosis for customer management
+    # Diagnosis for geographic API
     print("\n" + "=" * 100)
-    print("🔍 TÜRK MÜŞTERİ YÖNETİMİ BACKEND ANALİZİ")
+    print("🔍 COĞRAFİ API BACKEND ANALİZİ")
     print("=" * 100)
     
     if primary_passed == primary_total:
-        print("✅ BACKEND ANALİZİ: Tüm Türk müşteri CRUD işlemleri mükemmel çalışıyor!")
-        print("   • POST /api/customers başarıyla Türk müşteri verisi ile müşteri oluşturuyor")
-        print("   • GET /api/customers tüm müşterileri başarıyla getiriyor")
-        print("   • Türkçe karakterler (ğüşıöç) doğru şekilde korunuyor")
-        print("   • Türk-özel alanlar (companyTitle, taxOffice, taxNumber) düzgün çalışıyor")
-        print("   • Tüm CRUD işlemleri (Oluştur, Oku, Güncelle, Sil) doğru çalışıyor")
-        print("   • Error handling geçersiz istekler için çalışıyor")
+        print("✅ BACKEND ANALİZİ: Tüm coğrafi API işlemleri mükemmel çalışıyor!")
+        print("   • GET /api/geo/countries başarıyla ülke listesi döndürüyor")
+        print("   • GET /api/geo/countries/{iso2}/cities başarıyla şehir listesi döndürüyor")
+        print("   • Search fonksiyonu çalışıyor (turk → Turkey, ist → Istanbul)")
+        print("   • Aksan toleransı çalışıyor (turkiye → Turkey, istanbul → Istanbul)")
+        print("   • Pagination çalışıyor (limit, page parametreleri)")
+        print("   • Response yapısı doğru (countries: list, cities: {cities, pagination})")
+        print("   • Tüm endpoints 200 status döndürüyor")
         print("   • JSON response formatı doğru")
-        print("   • UUID field'lar doğru çalışıyor")
-        print("   • Validation işlemleri çalışıyor")
+        print("   • Error handling çalışıyor (404 for invalid country codes)")
         
-        print("\n🎯 SONUÇ: Backend'de hiçbir problem yok!")
-        print("   Eğer müşteriler frontend listesinde görünmüyorsa, sorun muhtemelen:")
-        print("   1. Frontend doğru API endpoint'lerini çağırmıyor")
-        print("   2. Frontend environment variable sorunları (REACT_APP_BACKEND_URL)")
-        print("   3. Frontend-backend entegrasyon problemleri")
-        print("   4. Frontend state management veya rendering sorunları")
-        print("   5. Frontend mock data kullanıyor, API data'sı yerine")
+        print("\n🎯 SONUÇ: Geographic API backend'de hiçbir problem yok!")
+        print("   Kullanıcının talep ettiği tüm test senaryoları başarıyla geçti:")
+        print("   ✅ Countries endpoint - tüm ülkeler, search, aksan toleransı")
+        print("   ✅ Cities endpoint - ülke bazlı şehirler, search, pagination, aksan toleransı")
+        print("   ✅ Beklenen ülkeler bulundu: Turkey, United States, Germany")
+        print("   ✅ Beklenen şehirler bulundu: Istanbul, Ankara, Dubai")
+        print("   ✅ Search fonksiyonu çalışıyor")
+        print("   ✅ Pagination çalışıyor")
+        print("   ✅ Response yapısı doğru")
         
         print("\n✅ BEKLENİLEN SONUÇLAR ELDE EDİLDİ:")
-        print("   • Tüm CRUD işlemlerinin başarılı olması ✅")
-        print("   • JSON response formatının doğru olması ✅")
-        print("   • Türkçe verilerin doğru şekilde kaydedilip getirilmesi ✅")
-        print("   • Error handling'in düzgün çalışması ✅")
+        print("   • Tüm endpoints 200 status döndürüyor ✅")
+        print("   • Search fonksiyonu çalışıyor ✅")
+        print("   • Pagination çalışıyor ✅")
+        print("   • Aksan toleransı çalışıyor ✅")
+        print("   • Response yapısı doğru ✅")
         
     else:
         print("❌ BACKEND'DE SORUNLAR BULUNDU:")
-        if not create_customer_passed:
-            print("   • Müşteri oluşturma (POST) başarısız")
-        if not get_all_customers_passed:
-            print("   • Müşteri getirme (GET all) başarısız")
-        if not get_specific_customer_passed:
-            print("   • Belirli müşteri getirme (GET by ID) başarısız")
-        if not update_customer_passed:
-            print("   • Müşteri güncelleme (PUT) başarısız")
-        if not delete_customer_passed:
-            print("   • Müşteri silme (DELETE) başarısız")
-        if not turkish_data_passed:
-            print("   • Türkçe veri işleme başarısız")
-        if not customer_validation_passed:
-            print("   • Error handling ve validation başarısız")
+        if not countries_passed:
+            print("   • Ülkeler API (GET /api/geo/countries) başarısız")
+            print("     - Search fonksiyonu çalışmıyor olabilir")
+            print("     - Aksan toleransı çalışmıyor olabilir")
+            print("     - Response yapısı yanlış olabilir")
+        if not cities_passed:
+            print("   • Şehirler API (GET /api/geo/countries/{iso2}/cities) başarısız")
+            print("     - Pagination çalışmıyor olabilir")
+            print("     - Search fonksiyonu çalışmıyor olabilir")
+            print("     - Aksan toleransı çalışmıyor olabilir")
+            print("     - Response yapısı yanlış olabilir")
         
-        print("\n🎯 ÖNERİ: Önce yukarıdaki backend sorunlarını çözün, sonra frontend'i araştırın")
+        print("\n🎯 ÖNERİ: Yukarıdaki backend sorunlarını çözün")
+        print("   • Database'de countries ve cities collection'larının dolu olduğundan emin olun")
+        print("   • Search regex pattern'lerinin doğru çalıştığından emin olun")
+        print("   • Pagination logic'inin doğru çalıştığından emin olun")
     
     print(f"\nTest tamamlanma zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
