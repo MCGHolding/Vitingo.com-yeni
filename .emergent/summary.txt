@@ -1,21 +1,21 @@
 <analysis>
-The AI engineer significantly expanded the Vitingo CRM across multiple modules. Initially, a new Brief system was integrated, adding navigation and basic form structure. The core focus then shifted to extensively overhauling the Yeni Müşteri Ekle (New Customer Form) with dynamic fields, complex dropdowns, and country/city integrations. This involved prolonged debugging of React infinite loop errors (), eventually resolved with  identifying a state update conflict. Subsequently, customer persistence was addressed by implementing full CRUD API endpoints in the backend (FastAPI/MongoDB) and integrating them into the frontend. A critical frontend environment variable issue ( undefined) was fixed by standardizing to . Finally, an automatic customer classification system for Pasif Müşteriler (Inactive) and Favori Müşteriler (Favorite) based on invoice activity was introduced, currently being implemented into the UI. The latest task involves conditionally rendering specific fields for Türkiye in the new customer form.
+The AI engineer's trajectory involved implementing conditional fields for Türkiye in the new customer form, which was confirmed complete after initial testing. However, this revealed a critical authentication bug (), promptly fixed. A subsequent user report exposed that new customers weren't appearing in the list. This led to extensive debugging, first identifying that the customer list was displaying mock data and, more significantly, that the  environment variable was inaccessible in the React production build, causing API call failures. Attempts to resolve this evolved into diagnosing a Kubernetes ingress routing issue, where API requests were misdirected. The latest effort focused on runtime environment variable injection using  and verifying backend accessibility via , indicating a persistent infrastructure-level challenge over simple code bugs.
 </analysis>
 
 <product_requirements>
-The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP dashboard. Key requirements and implementation status:
-1.  **User Management**: Admin-restricted New User form, real user data, role definitions, password changes, actions (Delete, Share, Message, Email), Super Admin user creation, Kullanıcı Yönetimi in header dropdown, Login As for Super Admins.
+The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP dashboard. Key requirements include:
+1.  **User Management**: Admin-restricted forms, real user data, roles, password changes, actions (Delete, Share, Message, Email), Super Admin Login As.
 2.  **Fair Management**: Fuarlar menu with sub-menus and Yeni Fuar form.
 3.  **Data Import/Export**: Under Ayarlar with category dropdowns.
 4.  **Sales Opportunity Integration**: Dynamic Fuar Adı dropdown in Yeni Satış Fırsatı form.
-5.  **Dashboard Redesign**: Modern KPIs, charts, maps, multi-currency, real-time survey stats. Logout moved to header.
+5.  **Dashboard Redesign**: Modern KPIs, charts, maps, multi-currency, real-time survey stats, relocated logout.
 6.  **Customer Survey System**: Post-project surveys with multi-project, arbitrary email, and rep filtering.
-7.  **Handover Form System**: Digital forms, language, signature, automatic survey upon completion.
+7.  **Handover Form System**: Digital forms, language, signature, automatic survey, upon completion.
 8.  **Accounting System**: Muhasebe menu, Yeni Fatura form with unique numbering, currency, item lines, KDV, discount, totals, localStorage persistence.
 9.  **Messaging System**: In-app messaging, notification bell.
-10. **Brief System (New)**: Brief menu with sub-items (Yeni Brief, Tüm Briefler, Kapanmış, Pasif, Brief Talep Et) implemented, with a comprehensive Yeni Brief form featuring dynamic customer/contact person selection and auto-fill.
-11. **Customer Status Logic (New)**: Customers without invoices for 6+ months are Pasif, and those with 3+ invoices in a year are Favori, displayed on respective pages.
-12. **New Customer Form Enhancements**: Overhauled form with dynamic İletişim Kişisi, İlişki Tipi, detailed country/city selection, professional phone input, and conditional fields for Türkiye (Firma Unvanı, Vergi Daireleri, Vergi Numarası).
+10. **Brief System (New)**: Fully implemented Brief menu with sub-items and a comprehensive Yeni Brief form featuring dynamic customer/contact person selection and auto-fill.
+11. **Customer Status Logic (New)**: Pasif (6+ months no invoice) and Favori (3+ invoices in a year) status calculations and display.
+12. **New Customer Form Enhancements**: Overhauled form with dynamic İletişim Kişisi, İlişki Tipi, detailed country/city selection, professional phone input. Conditional fields for Türkiye (Firma Unvanı, Vergi Daireleri, Vergi Numarası) are being implemented.
 </product_requirements>
 
 <key_technical_concepts>
@@ -24,36 +24,31 @@ The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP
 -   **Shadcn UI/Tailwind CSS**: UI components and styling.
 -   **React Router DOM**: Client-side routing.
 -   **Context API**: Global state management (AuthContext).
--   **SendGrid**: Email sending service.
--   **LocalStorage**: Temporary persistence for users, invoices, notifications.
--   **Frontend Environment Variables**: Proper usage of  for API URLs.
--   **Troubleshooting**: Utilizing  for complex React debugging.
+-   **Frontend Environment Variables**: Proper usage of  (and  / ) for API URLs.
+-   **Kubernetes Ingress Routing**: Infrastructure-level routing for API calls.
 </key_technical_concepts>
 
 <code_architecture>
 
--   ****: API endpoints, data processing.
-    -   **Changes**: Updated  Pydantic model to reflect new form fields. Added comprehensive CRUD (Create, Read, Update, Delete) API endpoints for , ensuring data persistence.
--   ****: Core frontend routing and state.
-    -   **Changes**: Integrated Brief system by adding  state,  related functions, and passing them to . Imported  and . Updated  to call backend API and added  to fetch customers from backend. Standardized environment variable access to . Passed  prop to  and .
--   ****: Main navigation.
-    -   **Changes**: Added Brief menu with Yeni Brief, Tüm Briefler, Kapanmış, Pasif, and Brief Talep Et sub-items and their respective handlers.
+-   ****: Handles API endpoints and data processing.
+    -   **Changes**: Updated  Pydantic model to include , , and  to support new conditional fields for Turkish customers. Implements comprehensive CRUD endpoints for .
+-   ****: Core frontend routing and state management.
+    -   **Changes**: Integrated Brief system. Modified  to use backend API. Includes a  to fetch customers from the backend. Critically, updated to use  for environment variable access, and passes  prop to various customer-related pages.
+-   ****: Main navigation component.
+    -   **Changes**: Added Brief menu items and handlers.
 -   ****: (New File) Form for creating new briefs.
-    -   **Changes**: Implemented Temel Bilgiler, Etkinlik Bilgileri, Stand Gereksinimleri, Bütçe ve Gereksinimler sections. Added Müşteri dropdown using , with auto-fill for contact details from . Includes advanced/simple view toggle. Debugged and fixed multiple React infinite loop errors (Max Update Depth Exceeded) by refining  dependencies and state management.
--   ****: (New File) Displays all created briefs. (Initial implementation, placeholder content)
+    -   **Changes**: Implemented multi-section form with customer/contact person dropdowns and auto-fill.
 -   ****: Form for creating new customers.
-    -   **Changes**: Underwent a major overhaul. Implemented dynamic İlişki Tipi (Relationship Type) and İletişim Kişisi (Contact Person) dropdowns with add new options. Redesigned phone input with narrowed country code, flags, and country names. Removed Bölge and added Ülke and dependent Şehir dropdowns using . Implemented Sektör (Sector) dropdown with add new option. Resolved multiple Maximum update depth exceeded errors by isolating phone country code into a separate state and carefully managing  dependencies. Currently being updated to conditionally show fields for Türkiye.
--   ****: (New File) Centralized data for countries and their respective cities, used in the .
--   ****: Mock customer data.
-    -   **Changes**: Used to populate the customer dropdown in .
--   ****: Mock people data.
-    -   **Changes**: Updated company names to match  for auto-fill functionality in . Added more mock entries for .
--   ****: (New File) Utility functions to calculate customer status (active, passive, favorite) based on invoice history.
--   ****: Displays passive customers.
-    -   **Changes**: Rewritten to dynamically filter and display customers based on the 6-month no-invoice rule using . Includes statistics cards and filtering options.
--   ****: Displays favorite customers.
-    -   **Changes**: Rewritten to dynamically filter and display customers based on the 3+ invoices in 1-year rule using .
-
+    -   **Changes**: Major overhaul with dynamic dropdowns, professional phone input, country/city selection. Currently being updated to conditionally render Firma Unvanı, Vergi Daireleri, and Vergi Numarası when Türkiye is selected. State variables and a list of Turkish tax offices were added.
+-   ****: Displays all customers.
+    -   **Changes**: Modified to receive  as a prop and display real data instead of mock data, fixing a bug where newly added customers weren't visible.
+-   ****: Handles user authentication.
+    -   **Changes**: Fixed a bug in the  function that was causing authentication failures.
+-   ****: (New File) Provides country and city data for the new customer form.
+-   ****: (New File) Utility for customer status calculation.
+-   ****: (New File) Created for runtime environment variable injection, to store  for the frontend.
+-   ****: Main HTML file.
+    -   **Changes**: Modified to include  script for runtime environment configuration.
 </code_architecture>
 
 <pending_tasks>
@@ -63,14 +58,19 @@ The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP
 -   Implementing the email notification system for new user creation.
 -   **Handover System Enhancements**: Handover form page (with signature) testing, backend endpoint testing for handovers, email sending tests, automatic survey triggering upon handover completion, and reminder email logic.
 -   **Brief System Implementation**: Implement detailed functionality for Tüm Briefler, Kapanmış, Pasif, Brief Talep Et pages beyond initial structure.
--   **New Customer Form Enhancements**: Complete the conditional rendering of Firma Unvanı, Vergi Daireleri (dropdown), and Vergi Numarası fields when Türkiye is selected.
+-   **New Customer Form Enhancements**: Address the persistent issue of  inaccessibility and Kubernetes ingress routing.
 -   **Customer Status Logic**: Connect the customer status calculation with actual backend invoice data once the invoice system is integrated with the backend.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was implementing conditional fields in the Yeni Müşteri Ekle (New Customer Form) in . Specifically, the user requested that when Türkiye is selected as the country, three new fields should appear: Firma Unvanı (Company Title), a dropdown for Vergi Daireleri (Tax Offices), and a textbox for Vergi Numarası (Tax ID). The AI engineer has just started this task, having identified the relevant file and begun adding the necessary state variables for these new fields and defining the list of Turkish tax offices within . This is a continuation of the extensive overhaul of the New Customer Form.
+Immediately before this summary request, the AI engineer was deep into diagnosing and resolving critical infrastructure-level issues affecting the frontend-backend communication. The initial task of implementing conditional fields for Türkiye in  was ostensibly completed, but it unveiled a cascade of problems.
+First, a  bug in  was fixed, addressing a broken authentication.
+Subsequently, a user reported that newly added customers, though seemingly submitted, were not appearing in the . This led to the discovery that  was still using mock data and, more fundamentally, that the  environment variable was not being correctly accessed in the React production build, preventing proper API calls.
+The AI engineer attempted several fixes for the environment variable issue (e.g., trying , temporary hardcoding) which eventually revealed a deeper Kubernetes ingress routing problem where  requests intended for the backend were erroneously routed to the frontend.
+The latest approach involved implementing runtime environment variable injection by creating , including it in , and updating  to read the  from . The last action was a successful  request to the backend at , confirming the backend is serving data, setting the stage to re-test frontend API access.
 </current_work>
 
 <optional_next_step>
-I will implement the conditional rendering of Firma Unvanı, Vergi Daireleri, and Vergi Numarası fields in  based on the selected country being Türkiye.
+Test frontend API access through the application after implementing runtime config injection.
 </optional_next_step>
+

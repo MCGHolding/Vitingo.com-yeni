@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://crm-turk-portal.preview.emergentagent.com"
+BACKEND_URL = "https://api-routing-fix-6.preview.emergentagent.com"
 
 def test_csv_template_download_fairs():
     """
