@@ -163,6 +163,8 @@ class Customer(BaseModel):
     companyTitle: str = ""  # Firma Unvanı
     taxOffice: str = ""     # Vergi Dairesi  
     taxNumber: str = ""     # Vergi Numarası
+    # Tags field
+    tags: List[str] = Field(default_factory=list)  # Etiketler
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Add your routes to the router instead of directly to app
