@@ -233,7 +233,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Toplam Müşteri</p>
-                  <p className="text-2xl font-bold text-gray-900">{allCustomers.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{customers.length}</p>
                 </div>
               </div>
             </CardContent>
