@@ -57,7 +57,7 @@ export default function MessageModal({ user, onClose }) {
         senderId: currentUser.id,
         senderName: `${currentUser.fullName}`,
         receiverId: user.id,
-        receiverName: `${user.firstName} ${user.lastName}`,
+        receiverName: user.fullName || `${user.firstName} ${user.lastName}`,
         content: newMessage.trim(),
         timestamp: new Date().toISOString(),
         read: false
