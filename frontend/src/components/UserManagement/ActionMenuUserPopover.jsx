@@ -104,6 +104,10 @@ export default function ActionMenuUserPopover({ user, onAction }) {
           onAction(action, user);
         }
         break;
+      case 'login':
+        // Switch to the selected user's account
+        handleUserLogin();
+        break;
       default:
         toast({
           title: 'İşlem gerçekleştirildi',
