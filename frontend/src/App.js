@@ -192,13 +192,33 @@ const Dashboard = () => {
     setShowNewCustomerForm(false);
   };
 
-  const saveCustomer = (customerData) => {
-    const newCustomer = {
-      ...customerData,
-      id: Date.now()
-    };
-    setCustomers(prev => [newCustomer, ...prev]);
-    console.log('New customer created:', newCustomer);
+  const saveCustomer = async (customerData) => {
+    try {
+      const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/customers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customerData)
+      });
+
+      if (response.ok) {
+        const newCustomer = await response.json();
+        setCustomers(prev => [newCustomer, ...prev]);
+        console.log('New customer created:', newCustomer);
+        
+        // Show success toast
+        alert('Müşteri başarıyla kaydedildi!');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save customer:', errorData);
+        alert('Müşteri kaydedilirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Error saving customer:', error);
+      alert('Müşteri kaydedilirken hata oluştu: ' + error.message);
+    }
   };
 
   // People Management Handlers
