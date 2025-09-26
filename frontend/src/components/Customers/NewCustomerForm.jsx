@@ -27,43 +27,27 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const [formData, setFormData] = useState({
     companyName: '',
     relationshipType: '',
-    contactPerson: '',
+    contactPersonId: '',
     phone: '',
-    countryCode: '+90',
+    countryCode: 'TR',
     email: '',
     website: '',
     address: '',
-    country: 'Türkiye',
-    region: '',
+    country: 'TR',
+    city: '',
     sector: '',
     notes: ''
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
-  const relationshipTypes = [
+  const [showPersonForm, setShowPersonForm] = useState(false);
+  const [relationshipTypes, setRelationshipTypes] = useState([
     { value: 'potential_customer', label: 'Potansiyel Müşteri' },
     { value: 'customer', label: 'Müşteri' },
     { value: 'supplier', label: 'Tedarikçi' }
-  ];
-
-  const countries = [
-    { value: 'Türkiye', label: 'Türkiye', code: '+90' },
-    { value: 'ABD', label: 'Amerika Birleşik Devletleri', code: '+1' },
-    { value: 'Almanya', label: 'Almanya', code: '+49' },
-    { value: 'İngiltere', label: 'İngiltere', code: '+44' },
-    { value: 'Fransa', label: 'Fransa', code: '+33' },
-    { value: 'İtalya', label: 'İtalya', code: '+39' },
-    { value: 'İspanya', label: 'İspanya', code: '+34' },
-    { value: 'Hollanda', label: 'Hollanda', code: '+31' },
-    { value: 'Çin', label: 'Çin', code: '+86' },
-    { value: 'Japonya', label: 'Japonya', code: '+81' },
-    { value: 'Kanada', label: 'Kanada', code: '+1' },
-    { value: 'Avustralya', label: 'Avustralya', code: '+61' }
-  ];
-
-  const sectors = [
+  ]);
+  const [sectors, setSectors] = useState([
     { value: 'Teknoloji', label: 'Teknoloji' },
     { value: 'İmalat', label: 'İmalat' },
     { value: 'Sağlık', label: 'Sağlık' },
@@ -78,22 +62,45 @@ export default function NewCustomerForm({ onClose, onSave }) {
     { value: 'Lojistik', label: 'Lojistik' },
     { value: 'Perakende', label: 'Perakende' },
     { value: 'Diğer', label: 'Diğer' }
-  ];
+  ]);
+  
+  const [newRelationshipType, setNewRelationshipType] = useState('');
+  const [newSector, setNewSector] = useState('');
+  const [showNewRelationshipInput, setShowNewRelationshipInput] = useState(false);
+  const [showNewSectorInput, setShowNewSectorInput] = useState(false);
+  const [availablePeople, setAvailablePeople] = useState([]);
+  const [availableCountries, setAvailableCountries] = useState([]);
+  const [availableCities, setAvailableCities] = useState([]);
 
-  const regions = {
-    'Türkiye': ['Marmara', 'Ege', 'Akdeniz', 'İç Anadolu', 'Karadeniz', 'Doğu Anadolu', 'Güneydoğu Anadolu'],
-    'ABD': ['Kuzey Amerika', 'Güney Amerika'],
-    'Almanya': ['Avrupa'],
-    'İngiltere': ['Avrupa'],
-    'Fransa': ['Avrupa'],
-    'İtalya': ['Avrupa'],
-    'İspanya': ['Avrupa'],
-    'Hollanda': ['Avrupa'],
-    'Çin': ['Asya'],
-    'Japonya': ['Asya'],
-    'Kanada': ['Kuzey Amerika'],
-    'Avustralya': ['Okyanusya']
-  };
+  useEffect(() => {
+    // Load people data and sort alphabetically
+    const sortedPeople = allPeople
+      .filter(person => person.status === 'active')
+      .sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'));
+    setAvailablePeople(sortedPeople);
+
+    // Load countries data
+    setAvailableCountries(getSortedCountries());
+  }, []);
+
+  useEffect(() => {
+    // Update cities when country changes
+    if (formData.country) {
+      const cities = getCitiesForCountry(formData.country);
+      setAvailableCities(cities);
+      
+      // Clear city selection if it doesn't exist in new country
+      if (formData.city && !cities.includes(formData.city)) {
+        setFormData(prev => ({ ...prev, city: '' }));
+      }
+      
+      // Update phone country code
+      const selectedCountry = availableCountries.find(c => c.code === formData.country);
+      if (selectedCountry) {
+        setFormData(prev => ({ ...prev, countryCode: formData.country }));
+      }
+    }
+  }, [formData.country, availableCountries]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
