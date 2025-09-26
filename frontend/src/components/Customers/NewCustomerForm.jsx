@@ -366,15 +366,41 @@ export default function NewCustomerForm({ onClose, onSave }) {
 
               {/* Contact Person */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  İletişim Kişisi *
-                </label>
-                <Input
-                  value={formData.contactPerson}
-                  onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                  placeholder="İletişim kişisinin adını giriniz"
-                  className="w-full"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-gray-700">
+                    İletişim Kişisi
+                  </label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPersonForm(true)}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Yeni Kişi
+                  </Button>
+                </div>
+                <Select value={formData.contactPersonId} onValueChange={(value) => handleInputChange('contactPersonId', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="İletişim kişisi seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePeople.map((person) => (
+                      <SelectItem key={person.id} value={person.id.toString()}>
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4" />
+                          <span>{person.fullName}</span>
+                          {person.title && (
+                            <Badge variant="secondary" className="text-xs">
+                              {person.title}
+                            </Badge>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Phone and Country Code */}
