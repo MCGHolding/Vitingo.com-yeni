@@ -145,6 +145,21 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
     return new Date(dateString).toLocaleDateString('tr-TR');
   };
 
+  // Get customer status badge with color coding
+  const getCustomerStatusBadge = (customer) => {
+    // Determine status based on business logic (can be enhanced later)
+    const lastActivityDate = new Date(customer.lastActivity);
+    const monthsSinceLastActivity = (new Date() - lastActivityDate) / (1000 * 60 * 60 * 24 * 30);
+    
+    if (monthsSinceLastActivity > 6) {
+      return <Badge className="bg-red-100 text-red-800 border-red-300 text-[10px] px-2 py-1">Pasif</Badge>;
+    } else if (customer.totalOrders >= 3) {
+      return <Badge className="bg-green-100 text-green-800 border-green-300 text-[10px] px-2 py-1">Aktif</Badge>;
+    } else {
+      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 text-[10px] px-2 py-1">Normal</Badge>;
+    }
+  };
+
   const getRelationshipBadge = (type) => {
     switch (type) {
       case 'customer':
