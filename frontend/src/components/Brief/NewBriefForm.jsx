@@ -98,6 +98,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
           person.status === 'active'
         );
         
+        console.log('Customer:', customer.companyName, 'Found people:', customerPeople.length, customerPeople);
+        
         setRelatedPeople(customerPeople);
         
         // If there are related people, don't auto-fill, let user choose
