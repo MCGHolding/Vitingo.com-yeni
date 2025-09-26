@@ -407,45 +407,32 @@ export default function NewCustomerForm({ onClose, onSave }) {
           
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Company Logo */}
+              {/* Company Avatar */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Şirket Logosu
+                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                  <Building className="h-4 w-4" />
+                  <span>Firma Logosu / Avatar</span>
                 </label>
                 <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-                    {logoUrl ? (
-                      <img src={logoUrl} alt="Logo" className="w-full h-full object-contain rounded-lg" />
-                    ) : (
-                      <Upload className="h-8 w-8 text-gray-400" />
-                    )}
-                  </div>
-                  <div className="space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => document.getElementById('logo-upload').click()}
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Resim Yükle
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Search className="h-4 w-4 mr-2" />
-                      Resim Bul
-                    </Button>
-                  </div>
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
+                  <CompanyAvatar
+                    companyName={formData.companyName}
+                    logoUrl={logoUrl}
+                    onLogoChange={handleLogoChange}
+                    onLogoRemove={handleLogoRemove}
+                    size="lg"
+                    editable={true}
                   />
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">
+                      Logo yüklemek için avatar'a tıklayın veya sürükleyip bırakın.
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Logo yoksa firma adından otomatik avatar oluşturulur.
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Desteklenen formatlar: JPG, PNG, GIF (Max 2MB)
+                    </p>
+                  </div>
                 </div>
               </div>
 
