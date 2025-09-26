@@ -427,9 +427,9 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                   {filteredCustomers.map((customer, index) => (
                     <tr 
                       key={customer.id}
-                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
-                      }`}
+                      className={`border-b border-gray-100 hover:bg-blue-50 transition-all duration-200 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      } hover:shadow-md`}
                     >
                       <td className="py-3 px-3">
                         <div className="flex items-center space-x-2">
