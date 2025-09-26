@@ -102,25 +102,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
         
         setRelatedPeople(customerPeople);
         
+        // Reset person selection when customer changes
+        setSelectedPersonId('');
+        
         // If there are related people, don't auto-fill, let user choose
-        // If no related people, fill with customer's default contact
+        // If no related people, auto-select customer default and fill data
         if (customerPeople.length === 0) {
-          setFormData(prev => ({
-            ...prev,
-            contactPerson: customer.contactPerson,
-            email: customer.email,
-            phone: customer.phone || ''
-          }));
           setSelectedPersonId('customer-default');
-        } else {
-          // Clear contact fields and let user select from people
-          setFormData(prev => ({
-            ...prev,
-            contactPerson: '',
-            email: '',
-            phone: ''
-          }));
-          setSelectedPersonId('');
         }
       }
     } else {
@@ -130,7 +118,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   }, [formData.customerId, customers]);
 
-  // Update contact info when a person is selected
+  // Update contact info when a person is selected - separate useEffect to prevent loops
   useEffect(() => {
     if (selectedPersonId && selectedCustomer) {
       if (selectedPersonId === 'customer-default') {
@@ -153,6 +141,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
           }));
         }
       }
+    } else if (!selectedPersonId) {
+      // Clear contact fields when no person is selected
+      setFormData(prev => ({
+        ...prev,
+        contactPerson: '',
+        email: '',
+        phone: ''
+      }));
     }
   }, [selectedPersonId, selectedCustomer, relatedPeople]);
 
