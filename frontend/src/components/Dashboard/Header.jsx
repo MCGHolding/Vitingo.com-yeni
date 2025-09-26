@@ -72,21 +72,33 @@ const Header = ({
     setShowNotifications(false);
   };
 
+  // Load notifications when component mounts or user changes
+  useEffect(() => {
+    loadNotifications();
+    
+    // Refresh notifications every 30 seconds
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [user?.id]);
+
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
       }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
     };
 
-    if (showUserMenu) {
+    if (showUserMenu || showNotifications) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [showUserMenu]);
+  }, [showUserMenu, showNotifications]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 lg:ml-64">
