@@ -232,7 +232,13 @@ export default function Sidebar({
   onExpenseReceipt,
   onPaymentRequests,
   onPurchaseInvoices,
-  onPurchaseApprovals
+  onPurchaseApprovals,
+  // Brief handlers
+  onNewBrief,
+  onAllBriefs,
+  onClosedBriefs,
+  onPassiveBriefs,
+  onRequestBrief
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
