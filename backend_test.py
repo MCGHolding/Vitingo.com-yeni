@@ -1030,8 +1030,8 @@ def test_create_customer():
             print("   ❌ FAIL: Response should be a dictionary")
             return False, None
         
-        # Check required fields
-        required_fields = ["id", "companyName", "relationshipType", "email", "website", "country", "sector", "phone", "countryCode"]
+        # Check required fields including Turkish-specific fields
+        required_fields = ["id", "companyName", "relationshipType", "contactPerson", "email", "website", "country", "sector", "phone", "countryCode", "companyTitle", "taxOffice", "taxNumber"]
         missing_fields = []
         for field in required_fields:
             if field not in data:
