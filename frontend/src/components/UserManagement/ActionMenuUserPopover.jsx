@@ -19,32 +19,49 @@ export default function ActionMenuUserPopover({ user, onAction }) {
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
 
-  const menuItems = [
-    {
-      icon: Trash2,
-      label: 'Sil',
-      action: 'delete',
-      color: 'text-red-600 hover:text-red-800 hover:bg-red-50'
-    },
-    {
-      icon: Share,
-      label: 'Paylaş',
-      action: 'share',
-      color: 'text-blue-600 hover:text-blue-800 hover:bg-blue-50'
-    },
-    {
-      icon: Send,
-      label: 'Mesaj',
-      action: 'message',
-      color: 'text-orange-600 hover:text-orange-800 hover:bg-orange-50'
-    },
-    {
-      icon: Mail,
-      label: 'E-posta',
-      action: 'email',
-      color: 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
+  // Build menu items based on current user's role
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        icon: Trash2,
+        label: 'Sil',
+        action: 'delete',
+        color: 'text-red-600 hover:text-red-800 hover:bg-red-50'
+      },
+      {
+        icon: Share,
+        label: 'Paylaş',
+        action: 'share',
+        color: 'text-blue-600 hover:text-blue-800 hover:bg-blue-50'
+      },
+      {
+        icon: Send,
+        label: 'Mesaj',
+        action: 'message',
+        color: 'text-orange-600 hover:text-orange-800 hover:bg-orange-50'
+      },
+      {
+        icon: Mail,
+        label: 'E-posta',
+        action: 'email',
+        color: 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50'
+      }
+    ];
+
+    // Add "Giriş" option only for super-admin and only if it's not their own account
+    if (currentUser?.role === 'super-admin' && currentUser?.id !== user?.id) {
+      baseItems.push({
+        icon: LogIn,
+        label: 'Giriş',
+        action: 'login',
+        color: 'text-green-600 hover:text-green-800 hover:bg-green-50'
+      });
     }
-  ];
+
+    return baseItems;
+  };
+
+  const menuItems = getMenuItems();
 
   const togglePopover = (e) => {
     e.preventDefault();
