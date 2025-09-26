@@ -534,15 +534,6 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                         className="min-w-[300px]"
                         emptyMessage="Ürün bulunamadı"
                       />
-                      {/* Fallback manual input if no product selected */}
-                      {!item.productId && (
-                        <Input
-                          value={item.name}
-                          onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                          placeholder="Özel ürün/hizmet adı giriniz"
-                          className="w-full mt-1"
-                        />
-                      )}
                     </td>
                     <td className="py-3 px-2">
                       <Input
