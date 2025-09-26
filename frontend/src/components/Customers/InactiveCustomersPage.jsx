@@ -52,16 +52,52 @@ export default function InactiveCustomersPage({ customers = [], onBackToDashboar
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  const getSectorCounts = () => {
-    const counts = {};
-    filteredCustomers.forEach(customer => {
-      const sector = customer.sector || 'Diğer';
-      counts[sector] = (counts[sector] || 0) + 1;
-    });
-    return counts;
-  };
+  // Filter and sort passive customers
+  const filteredCustomers = useMemo(() => {
+    let filtered = [...passiveCustomers];
 
-  const getCountryCounts = () => {
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(customer =>
+        customer.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.contactPerson?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply sector filter
+    if (sectorFilter !== 'all') {
+      filtered = filtered.filter(customer => customer.sector === sectorFilter);
+    }
+
+    // Apply country filter
+    if (countryFilter !== 'all') {
+      filtered = filtered.filter(customer => customer.country === countryFilter);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'monthsSinceLastInvoice':
+          return b.statusInfo.monthsSinceLastInvoice - a.statusInfo.monthsSinceLastInvoice;
+        case 'companyName':
+          return a.companyName.localeCompare(b.companyName, 'tr');
+        case 'totalRevenue':
+          return (b.totalRevenue || 0) - (a.totalRevenue || 0);
+        default:
+          return b.statusInfo.monthsSinceLastInvoice - a.statusInfo.monthsSinceLastInvoice;
+      }
+    });
+
+    return filtered;
+  }, [passiveCustomers, searchTerm, sectorFilter, countryFilter, sortBy]);
+
+  // Get statistics
+  const stats = getCustomerStatistics(customers, invoices);
+
+  // Get unique sectors and countries for filters
+  const uniqueSectors = [...new Set(passiveCustomers.map(c => c.sector).filter(Boolean))];
+  const uniqueCountries = [...new Set(passiveCustomers.map(c => c.country).filter(Boolean))];
     const counts = {};
     filteredCustomers.forEach(customer => {
       const country = customer.country || 'Bilinmiyor';
