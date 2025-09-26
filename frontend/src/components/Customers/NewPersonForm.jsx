@@ -83,11 +83,71 @@ export default function NewPersonForm({ onClose, onSave }) {
     { value: '+31', label: '+31 (Hollanda)' }
   ];
 
+  // Load customers on component mount
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    setIsLoadingCustomers(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/customers`);
+      
+      if (response.ok) {
+        const customerData = await response.json();
+        setCustomers(customerData);
+      } else {
+        console.error('Failed to fetch customers:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      toast({
+        title: "Hata",
+        description: "Şirketler yüklenirken bir hata oluştu.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingCustomers(false);
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  // Company handlers
+  const handleCompanySelect = (customerId) => {
+    const customer = customers.find(c => c.id === customerId);
+    setSelectedCustomer(customer);
+    setFormData(prev => ({
+      ...prev,
+      company: customer?.companyName || ''
+    }));
+  };
+
+  const handleNewCustomerAdded = (newCustomer) => {
+    // Add new customer to the list
+    setCustomers(prev => [...prev, newCustomer]);
+    
+    // Auto-select the newly added customer
+    setSelectedCustomer(newCustomer);
+    setFormData(prev => ({
+      ...prev,
+      company: newCustomer.companyName
+    }));
+    
+    // Close modal
+    setShowAddCompanyModal(false);
+    
+    // Show success message
+    toast({
+      title: "Şirket Eklendi",
+      description: `${newCustomer.companyName} başarıyla eklendi ve seçildi.`
+    });
   };
 
   // Geographic handlers
