@@ -139,15 +139,26 @@ class Person(BaseModel):
 
 class Customer(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    company_name: str
-    contact_person: str = ""
-    email: str = ""
+    companyName: str
+    relationshipType: str = ""
+    contactPerson: str = ""
+    contactPersonId: str = ""
     phone: str = ""
+    countryCode: str = "TR"
+    email: str = ""
+    website: str = ""
     address: str = ""
+    country: str = "TR"
     city: str = ""
-    country: str = ""
-    industry: str = ""
+    sector: str = ""
+    notes: str = ""
+    logo: str = ""
     status: str = "active"
+    customerSince: str = ""
+    lastActivity: str = ""
+    totalOrders: int = 0
+    totalRevenue: float = 0.0
+    currency: str = "TRY"
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Add your routes to the router instead of directly to app
