@@ -2112,6 +2112,231 @@ def test_customer_deletion_with_related_records():
         print(f"❌ FAIL: Error in related records test: {str(e)}")
         return False
 
+def test_logo_null_validation():
+    """
+    Test logo null validation fix for POST /api/customers endpoint.
+    
+    Test Scenarios:
+    1. Logo null ile müşteri oluşturma
+    2. Logo boş string ile müşteri oluşturma  
+    3. Logo alanı olmayan müşteri oluşturma
+    
+    Expected Results:
+    - All 3 test scenarios should return 200 status
+    - No logo validation errors should occur
+    - Optional[str] type should work for null, "", and missing values
+    - Created customers should be retrievable via GET /api/customers
+    """
+    
+    print("=" * 80)
+    print("TESTING LOGO NULL VALIDATION FIX - POST /api/customers")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test scenarios as specified in the review request
+    test_scenarios = [
+        {
+            "name": "Logo null ile müşteri oluşturma",
+            "data": {
+                "companyName": "Logo Null Test Şirketi",
+                "email": "logonull@test.com",
+                "country": "TR",
+                "logo": None,  # Explicitly null
+                "tags": ["TEKNOLOJI"]
+            }
+        },
+        {
+            "name": "Logo boş string ile müşteri oluşturma",
+            "data": {
+                "companyName": "Logo Empty Test Şirketi",
+                "email": "logoempty@test.com", 
+                "country": "TR",
+                "logo": "",  # Empty string
+                "tags": ["SANAYI"]
+            }
+        },
+        {
+            "name": "Logo alanı olmayan müşteri oluşturma",
+            "data": {
+                "companyName": "Logo Missing Test Şirketi",
+                "email": "logomissing@test.com",
+                "country": "TR",
+                "tags": ["TICARET"]
+                # logo field is completely missing
+            }
+        }
+    ]
+    
+    created_customers = []
+    all_tests_passed = True
+    
+    for i, scenario in enumerate(test_scenarios, 1):
+        print(f"\n{i}. {scenario['name']}")
+        print("-" * 60)
+        
+        try:
+            print(f"   Test Data: {scenario['data']}")
+            print("   Making POST request...")
+            
+            response = requests.post(endpoint, json=scenario['data'], timeout=30)
+            
+            print(f"   Status Code: {response.status_code}")
+            
+            # Test 1: Check status code is 200
+            if response.status_code == 200:
+                print("   ✅ PASS: Endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                all_tests_passed = False
+                continue
+            
+            # Test 2: Parse JSON response
+            try:
+                data = response.json()
+                print(f"   Response type: {type(data)}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+                continue
+            
+            # Test 3: Validate response structure
+            if not isinstance(data, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                all_tests_passed = False
+                continue
+            
+            # Test 4: Check customer ID is generated
+            customer_id = data.get("id")
+            if not customer_id:
+                print("   ❌ FAIL: Customer ID should be generated")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Customer created with ID: {customer_id}")
+            created_customers.append(customer_id)
+            
+            # Test 5: Verify logo field handling
+            logo_value = data.get("logo")
+            print(f"   Logo field in response: {repr(logo_value)}")
+            
+            # For null and missing cases, logo should default to empty string
+            # For empty string case, it should remain empty string
+            expected_logo = scenario['data'].get('logo', '')  # Default to empty string if missing
+            if expected_logo is None:
+                expected_logo = ''  # null should become empty string
+            
+            if logo_value == expected_logo:
+                print(f"   ✅ PASS: Logo field handled correctly: {repr(logo_value)}")
+            else:
+                print(f"   ❌ FAIL: Logo field mismatch. Expected: {repr(expected_logo)}, Got: {repr(logo_value)}")
+                all_tests_passed = False
+                continue
+            
+            # Test 6: Verify other fields are preserved
+            for field, expected_value in scenario['data'].items():
+                if field == 'logo':
+                    continue  # Already tested above
+                
+                actual_value = data.get(field)
+                if actual_value != expected_value:
+                    print(f"   ❌ FAIL: Field {field} mismatch. Expected: {expected_value}, Got: {actual_value}")
+                    all_tests_passed = False
+                    break
+            else:
+                print("   ✅ PASS: All other fields preserved correctly")
+            
+            # Test 7: Verify company name and email
+            print(f"   Company Name: {data.get('companyName')}")
+            print(f"   Email: {data.get('email')}")
+            print(f"   Country: {data.get('country')}")
+            print(f"   Tags: {data.get('tags')}")
+            
+        except requests.exceptions.RequestException as e:
+            print(f"   ❌ FAIL: Network error occurred: {str(e)}")
+            all_tests_passed = False
+        except Exception as e:
+            print(f"   ❌ FAIL: Unexpected error occurred: {str(e)}")
+            all_tests_passed = False
+    
+    # Test 8: Verify all created customers can be retrieved
+    if created_customers:
+        print(f"\n4. Verifying created customers can be retrieved via GET /api/customers")
+        print("-" * 60)
+        
+        try:
+            get_response = requests.get(endpoint, timeout=30)
+            
+            if get_response.status_code == 200:
+                print("   ✅ PASS: GET /api/customers responds with status 200")
+                
+                customers_list = get_response.json()
+                if isinstance(customers_list, list):
+                    print(f"   ✅ PASS: Retrieved {len(customers_list)} customers")
+                    
+                    # Check if our created customers are in the list
+                    found_customers = 0
+                    for customer_id in created_customers:
+                        for customer in customers_list:
+                            if customer.get('id') == customer_id:
+                                found_customers += 1
+                                print(f"   ✅ PASS: Found created customer: {customer.get('companyName')} (ID: {customer_id})")
+                                break
+                    
+                    if found_customers == len(created_customers):
+                        print(f"   ✅ PASS: All {len(created_customers)} created customers found in list")
+                    else:
+                        print(f"   ❌ FAIL: Only {found_customers}/{len(created_customers)} created customers found")
+                        all_tests_passed = False
+                else:
+                    print("   ❌ FAIL: GET response should be a list")
+                    all_tests_passed = False
+            else:
+                print(f"   ❌ FAIL: GET request failed with status {get_response.status_code}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error retrieving customers: {str(e)}")
+            all_tests_passed = False
+    
+    # Cleanup: Delete created test customers
+    if created_customers:
+        print(f"\n5. Cleanup: Deleting {len(created_customers)} test customers")
+        print("-" * 60)
+        
+        for customer_id in created_customers:
+            try:
+                delete_endpoint = f"{endpoint}/{customer_id}"
+                delete_response = requests.delete(delete_endpoint, timeout=30)
+                if delete_response.status_code == 200:
+                    print(f"   ✅ Cleaned up customer: {customer_id}")
+                else:
+                    print(f"   ⚠️  Could not delete customer {customer_id}: {delete_response.status_code}")
+            except Exception as e:
+                print(f"   ⚠️  Error deleting customer {customer_id}: {str(e)}")
+    
+    # Final Results
+    print("\n" + "=" * 80)
+    print("LOGO NULL VALIDATION TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ Scenario 1: Logo null ile müşteri oluşturma - PASSED")
+        print("✅ Scenario 2: Logo boş string ile müşteri oluşturma - PASSED") 
+        print("✅ Scenario 3: Logo alanı olmayan müşteri oluşturma - PASSED")
+        print("✅ All created customers retrievable via GET /api/customers - PASSED")
+        print("✅ Logo validation error fix working correctly - PASSED")
+        print("✅ Optional[str] type handling null, \"\", and missing values - PASSED")
+        print("\n🎉 LOGO NULL VALIDATION FIX TEST PASSED!")
+        print("   The logo validation error problem has been successfully resolved!")
+        return True
+    else:
+        print("❌ One or more logo validation tests failed")
+        print("   The logo validation error problem may still exist")
+        return False
+
 def main():
     """Run comprehensive backend tests including new customer email endpoint"""
     print("🇹🇷 BACKEND API TESTLERİ - MÜŞTERİ YÖNETİMİ VE EMAIL SİSTEMİ")
