@@ -275,7 +275,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 <div>
                   <p className="text-sm font-medium text-gray-600">Ort. Müşteri Değeri</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {Math.round(allCustomers.reduce((sum, c) => sum + c.totalRevenue, 0) / allCustomers.length / 1000)}K
+                    {customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / customers.length / 1000) : 0}K
                   </p>
                 </div>
               </div>
