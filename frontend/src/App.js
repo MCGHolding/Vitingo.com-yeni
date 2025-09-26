@@ -990,6 +990,12 @@ const Dashboard = () => {
         onPaymentRequests={handlePaymentRequests}
         onPurchaseInvoices={handlePurchaseInvoices}
         onPurchaseApprovals={handlePurchaseApprovals}
+        // Brief handlers
+        onNewBrief={handleNewBrief}
+        onAllBriefs={handleAllBriefs}
+        onClosedBriefs={handleClosedBriefs}
+        onPassiveBriefs={handlePassiveBriefs}
+        onRequestBrief={handleRequestBrief}
       />
       
       {/* Header */}
