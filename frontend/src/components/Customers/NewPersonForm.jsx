@@ -457,6 +457,52 @@ export default function NewPersonForm({ onClose, onSave }) {
                 />
               </div>
 
+              {/* Geographic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                    <Globe className="h-4 w-4" />
+                    <span>Ülke *</span>
+                  </label>
+                  <CountrySelect
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    placeholder="Ülke seçiniz"
+                    required={true}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>Şehir *</span>
+                  </label>
+                  <CitySelect
+                    country={formData.country}
+                    value={formData.city}
+                    onChange={handleCityChange}
+                    placeholder="Şehir seçiniz"
+                    required={true}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Adres:
+                </label>
+                <textarea
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  placeholder="Adres bilgilerini giriniz..."
+                  rows={3}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
               {/* Show More Fields Button */}
               <div className="border-t pt-4">
                 <Button
