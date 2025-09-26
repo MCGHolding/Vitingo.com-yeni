@@ -501,13 +501,22 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 <label className="text-sm font-medium text-gray-700">
                   Web Sitesi
                 </label>
-                <Input
-                  type="url"
-                  value={formData.website}
-                  onChange={(e) => handleInputChange('website', e.target.value)}
-                  placeholder="https://www.example.com"
-                  className="w-full"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Globe className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <Input
+                    value={formData.website}
+                    onChange={(e) => handleWebsiteChange(e.target.value)}
+                    placeholder="ornek.com (http:// olmadan)"
+                    className="pl-10 w-full"
+                  />
+                </div>
+                {formData.website && (
+                  <p className="text-xs text-gray-500">
+                    Önizleme: https://{formData.website}
+                  </p>
+                )}
               </div>
 
               {/* Address */}
