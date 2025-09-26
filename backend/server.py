@@ -2260,6 +2260,86 @@ async def delete_product(product_id: str):
         logger.error(f"Error deleting product {product_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== INVOICE ENDPOINTS =====================
+
+@api_router.post("/invoices", response_model=Invoice)
+async def create_invoice(invoice_input: InvoiceCreate):
+    """Create a new invoice"""
+    try:
+        invoice_dict = invoice_input.dict()
+        invoice_obj = Invoice(**invoice_dict)
+        
+        # Insert to MongoDB
+        result = await db.invoices.insert_one(invoice_obj.dict())
+        
+        if result.inserted_id:
+            logger.info(f"Invoice created successfully: {invoice_obj.invoice_number}")
+            return invoice_obj
+        else:
+            logger.error("Failed to insert invoice to database")
+            raise HTTPException(status_code=500, detail="Failed to create invoice")
+            
+    except Exception as e:
+        logger.error(f"Error creating invoice: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating invoice: {str(e)}")
+
+@api_router.get("/invoices", response_model=List[Invoice])
+async def get_invoices():
+    """Get all invoices"""
+    try:
+        invoices = await db.invoices.find().to_list(1000)
+        return [Invoice(**invoice) for invoice in invoices]
+    except Exception as e:
+        logger.error(f"Error getting invoices: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting invoices: {str(e)}")
+
+@api_router.get("/invoices/{invoice_id}", response_model=Invoice)
+async def get_invoice(invoice_id: str):
+    """Get a specific invoice"""
+    try:
+        invoice = await db.invoices.find_one({"id": invoice_id})
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Invoice not found")
+        
+        return Invoice(**invoice)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting invoice {invoice_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/invoices/{invoice_id}")
+async def update_invoice_status(invoice_id: str, status: str):
+    """Update invoice status"""
+    try:
+        # Update invoice status
+        result = await db.invoices.update_one(
+            {"id": invoice_id},
+            {"$set": {"status": status, "updated_at": datetime.utcnow()}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Invoice not found")
+        
+        return {"success": True, "message": f"Invoice status updated to {status}"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating invoice {invoice_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/invoices/status/{status}")
+async def get_invoices_by_status(status: str):
+    """Get invoices by status"""
+    try:
+        invoices = await db.invoices.find({"status": status}).to_list(1000)
+        return [Invoice(**invoice) for invoice in invoices]
+    except Exception as e:
+        logger.error(f"Error getting invoices by status {status}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== END CUSTOMER ENDPOINTS =====================
 
 # Include the router in the main app
