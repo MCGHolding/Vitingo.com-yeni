@@ -358,7 +358,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Turkish Conditional Fields in New Customer Form"
     - "Customer Form Submission Frontend Integration"
   stuck_tasks:
     - "Customer Form Submission Frontend Integration"
