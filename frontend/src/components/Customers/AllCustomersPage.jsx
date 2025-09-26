@@ -260,7 +260,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 <div>
                   <p className="text-sm font-medium text-gray-600">Toplam Gelir</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {(allCustomers.reduce((sum, c) => sum + c.totalRevenue, 0) / 1000000).toFixed(1)}M
+                    {customers.length > 0 ? (customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / 1000000).toFixed(1) : '0'}M
                   </p>
                 </div>
               </div>
