@@ -638,6 +638,39 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
           </CardContent>
         </Card>
       </div>
+
+      {/* View Customer Modal */}
+      {viewModalOpen && selectedCustomer && (
+        <ViewPersonModal
+          person={selectedCustomer}
+          isOpen={viewModalOpen}
+          onClose={() => {
+            setViewModalOpen(false);
+            setSelectedCustomer(null);
+          }}
+        />
+      )}
+
+      {/* Edit Customer Modal */}
+      {editModalOpen && selectedCustomer && (
+        <EditPersonModal
+          person={selectedCustomer}
+          isOpen={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setSelectedCustomer(null);
+          }}
+          onSave={(updatedCustomer) => {
+            // Handle customer update here
+            toast({
+              title: "Müşteri Güncellendi",
+              description: `${updatedCustomer.companyName || updatedCustomer.name} başarıyla güncellendi.`,
+            });
+            setEditModalOpen(false);
+            setSelectedCustomer(null);
+          }}
+        />
+      )}
     </div>
   );
 }
