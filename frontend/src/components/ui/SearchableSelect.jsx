@@ -1,0 +1,197 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Input } from './input';
+import { Button } from './button';
+import { ChevronDown, Search, X, User } from 'lucide-react';
+
+/**
+ * SearchableSelect - Aranabilir Select Component
+ * 
+ * Props:
+ * - options: Array of {id, label, sublabel?, icon?} objects
+ * - value: Selected option ID
+ * - onChange: (selectedId) => void
+ * - placeholder: Input placeholder
+ * - searchPlaceholder: Search placeholder
+ * - disabled: Boolean
+ * - className: Additional CSS classes
+ * - emptyMessage: Message when no options found
+ */
+export default function SearchableSelect({
+  options = [],
+  value = '',
+  onChange,
+  placeholder = "Seçim yapınız...",
+  searchPlaceholder = "Ara...",
+  disabled = false,
+  className = "",
+  emptyMessage = "Seçenek bulunamadı"
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredOptions, setFilteredOptions] = useState(options);
+
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Filter options based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredOptions(options);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = options.filter(option => 
+        option.label.toLowerCase().includes(query) ||
+        (option.sublabel && option.sublabel.toLowerCase().includes(query))
+      );
+      setFilteredOptions(filtered);
+    }
+  }, [searchQuery, options]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+        setSearchQuery('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(option => option.id === value);
+
+  const handleSelect = (optionId) => {
+    onChange(optionId);
+    setIsOpen(false);
+    setSearchQuery('');
+  };
+
+  const clearSelection = (e) => {
+    e.stopPropagation();
+    onChange('');
+  };
+
+  const toggleDropdown = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+      if (!isOpen) {
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
+    }
+  };
+
+  return (
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      {/* Main selector */}
+      <div
+        className={`
+          relative flex items-center justify-between p-2 border border-gray-300 rounded-md 
+          bg-white cursor-pointer transition-colors min-h-[40px]
+          ${disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'hover:border-gray-400'}
+          ${isOpen ? 'border-blue-500 ring-1 ring-blue-500' : ''}
+        `}
+        onClick={toggleDropdown}
+      >
+        <div className="flex items-center space-x-2 flex-1 min-w-0">
+          {selectedOption ? (
+            <>
+              {selectedOption.icon && <selectedOption.icon className="h-4 w-4 text-gray-500 flex-shrink-0" />}
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium text-gray-900 truncate">
+                  {selectedOption.label}
+                </span>
+                {selectedOption.sublabel && (
+                  <span className="text-xs text-gray-500 truncate">
+                    {selectedOption.sublabel}
+                  </span>
+                )}
+              </div>
+            </>
+          ) : (
+            <span className="text-sm text-gray-500">{placeholder}</span>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-1 flex-shrink-0">
+          {selectedOption && !disabled && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-gray-200"
+              onClick={clearSelection}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+          <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
+      </div>
+
+      {/* Dropdown */}
+      {isOpen && !disabled && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60">
+          {/* Search input */}
+          <div className="p-3 border-b border-gray-100">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                ref={inputRef}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={searchPlaceholder}
+                className="pl-10 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Options list */}
+          <div className="max-h-48 overflow-y-auto">
+            {filteredOptions.length > 0 ? (
+              <div className="py-1">
+                {filteredOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className={`
+                      w-full text-left px-3 py-2 text-sm hover:bg-blue-50 
+                      flex items-center space-x-2
+                      ${selectedOption?.id === option.id ? 'bg-blue-100 text-blue-900' : 'text-gray-700'}
+                    `}
+                    onClick={() => handleSelect(option.id)}
+                  >
+                    {option.icon ? (
+                      <option.icon className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                    ) : (
+                      <User className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                    )}
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-medium truncate">{option.label}</span>
+                      {option.sublabel && (
+                        <span className="text-xs text-gray-500 truncate">{option.sublabel}</span>
+                      )}
+                    </div>
+                    {selectedOption?.id === option.id && (
+                      <div className="text-blue-600 ml-auto">✓</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 text-center text-gray-500 text-sm">
+                {searchQuery ? `"${searchQuery}" için sonuç bulunamadı` : emptyMessage}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          {filteredOptions.length > 0 && (
+            <div className="p-2 border-t border-gray-100 text-xs text-gray-400 text-center">
+              {filteredOptions.length} seçenek gösteriliyor
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
