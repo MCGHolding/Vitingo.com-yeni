@@ -561,7 +561,7 @@ export default function NewCustomerForm({ onClose, onSave }) {
                   Telefon
                 </label>
                 <div className="flex space-x-2">
-                  <div className="w-32">
+                  <div className="w-40">  {/* Ülke kodları genişletildi */}
                     <Select 
                       value={phoneCountryCode} 
                       onValueChange={setPhoneCountryCode}
@@ -606,14 +606,32 @@ export default function NewCustomerForm({ onClose, onSave }) {
                             </div>
                           </div>
                         </SelectItem>
+                        <SelectItem value="FR">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇫🇷</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+33</span>
+                              <span className="text-xs text-gray-500">France</span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="AE">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">🇦🇪</span>
+                            <div className="flex flex-col">
+                              <span className="text-xs">+971</span>
+                              <span className="text-xs text-gray-500">UAE</span>
+                            </div>
+                          </div>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1">  {/* Telefon alanı daraltıldı */}
                     <Input
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="Telefon numarasını giriniz"
+                      placeholder="Telefon numarası"
                       className="w-full"
                     />
                   </div>
