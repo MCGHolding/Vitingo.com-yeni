@@ -403,15 +403,18 @@ test_plan:
 
   - task: "Turkish Conditional Fields in New Customer Form"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx, /app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "✅ TURKISH CONDITIONAL FIELDS IMPLEMENTED - Added conditional rendering of 3 Turkish-specific fields in NewCustomerForm.jsx: 1) Firma Unvanı (Company Title) - text input for company legal title ✅ 2) Vergi Dairesi (Tax Office) - dropdown with 30 Turkish tax offices sorted alphabetically ✅ 3) Vergi Numarası (Tax Number) - text input with 11-character limit ✅ 4) Fields only show when country='TR' (Türkiye) is selected ✅ 5) Backend Customer model updated to include companyTitle, taxOffice, taxNumber fields ✅ 6) Updated clearForm function to include Turkish fields ✅ 7) Ready for testing to verify conditional rendering and form submission with Turkish data"
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL AUTHENTICATION ISSUE FOUND - Turkish conditional fields testing could not be completed due to authentication problems. TESTING RESULTS: ❌ LOGIN ISSUE: Super Admin quick login option is visible on login page but clicking it does not properly authenticate the user or redirect to dashboard ❌ NAVIGATION BLOCKED: Cannot access Dashboard → Müşteriler → Yeni Müşteri due to authentication failure ❌ FORM ACCESS BLOCKED: Unable to open New Customer Form modal to test Turkish conditional fields ❌ TESTING INCOMPLETE: Could not verify Turkish fields visibility, conditional rendering, tax office dropdown, form data entry, or form submission ROOT CAUSE: Authentication system is not working properly with the quick login options. The login page shows Super Admin (murb/Murat2024!) option but clicking it does not complete the authentication process. IMPACT: Cannot test any of the Turkish conditional fields functionality until authentication is fixed. RECOMMENDATION: Main agent needs to fix the authentication system or provide working login credentials to enable testing of Turkish conditional fields."
 
 agent_communication:
   - agent: "main"
