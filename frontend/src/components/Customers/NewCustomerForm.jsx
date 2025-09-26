@@ -300,7 +300,7 @@ export default function NewCustomerForm({ onClose, onSave }) {
       ...formData,
       countryCode: phoneCountryCode, // Add phone country code
       contactPerson: selectedPerson ? selectedPerson.fullName : '',
-      logo: imagePreview,
+      logo: imagePreview || '', // Ensure logo is always a string
       status: 'active',
       customerSince: new Date().toISOString().split('T')[0],
       lastActivity: new Date().toISOString().split('T')[0],
