@@ -316,16 +316,19 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         {/* Invoice Header */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex justify-between items-start mb-8">
-            {/* Company Logo */}
+            {/* Company Logo & Info */}
             <div className="flex flex-col">
               <div className="w-48 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-white text-2xl font-bold">QUATTRO</span>
+                <span className="text-white text-xl font-bold">BAŞARI</span>
               </div>
-              <div className="text-sm text-gray-600">
-                <p>Quattro Stand Yapı ve Dekorasyon</p>
-                <p>Merkez Mah. Şehit Cevdet Sok. No:15</p>
-                <p>İstanbul / Türkiye</p>
-                <p>Tel: +90 212 123 45 67</p>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p className="font-semibold text-gray-800">Başarı Uluslararası Fuarcılık A.Ş.</p>
+                <p>Küçükyalı Merkez Mh. Şevki Çavuş Sok.</p>
+                <p>Merve Apt. No:9/7</p>
+                <p>34840 Maltepe / İstanbul</p>
+                <p className="mt-2 font-medium">Tel: +90 216 123 45 67</p>
+                <p className="text-xs text-gray-500 mt-2">Küçükyalı Vergi Dairesi</p>
+                <p className="text-xs text-gray-500">7210421828</p>
               </div>
             </div>
 
