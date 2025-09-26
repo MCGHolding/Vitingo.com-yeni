@@ -44,7 +44,9 @@ import {
   Briefcase,
   Archive,
   Pause,
-  MessageSquare
+  MessageSquare,
+  PenTool,
+  FolderOpen
 } from 'lucide-react';
 
 const navigation = [
