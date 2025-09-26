@@ -78,7 +78,7 @@ const Dashboard = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [opportunities, setOpportunities] = useState(openOpportunities);
   const [users, setUsers] = useState(mockUsers);
-  const [customers, setCustomers] = useState(allCustomers);
+  const [customers, setCustomers] = useState([]);
   const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
   const [showNewPersonForm, setShowNewPersonForm] = useState(false);
   const [people, setPeople] = useState(allPeople);
