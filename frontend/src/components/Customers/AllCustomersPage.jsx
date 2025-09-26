@@ -240,58 +240,62 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
       {/* Summary Cards */}
       <div className="px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Building className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-gradient-to-r from-green-400 to-green-600 rounded-xl shadow-md">
+                  <Building className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Toplam Müşteri</p>
-                  <p className="text-2xl font-bold text-gray-900">{customers.length}</p>
+                  <p className="text-3xl font-bold text-gray-900">{customers.length}</p>
+                  <p className="text-xs text-green-600 mt-1">↗ Sistemde kayıtlı</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-md">
+                  <Users className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Aktif Müşteri</p>
-                  <p className="text-2xl font-bold text-gray-900">{customers.filter(c => c.status === 'active').length}</p>
+                  <p className="text-3xl font-bold text-gray-900">{customers.filter(c => c.status === 'active').length}</p>
+                  <p className="text-xs text-blue-600 mt-1">📈 İşlem yapan</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                <div className="p-3 bg-gradient-to-r from-purple-400 to-purple-600 rounded-xl shadow-md">
+                  <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Toplam Gelir</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {customers.length > 0 ? (customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / 1000000).toFixed(1) : '0'}M
+                  <p className="text-3xl font-bold text-gray-900">
+                    {customers.length > 0 ? (customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / 1000000).toFixed(1) : '0'}M ₺
                   </p>
+                  <p className="text-xs text-purple-600 mt-1">💰 Toplam ciro</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <DollarSign className="h-6 w-6 text-orange-600" />
+                <div className="p-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-xl shadow-md">
+                  <DollarSign className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Ort. Müşteri Değeri</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / customers.length / 1000) : 0}K
+                  <p className="text-3xl font-bold text-gray-900">
+                    {customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + (c.totalRevenue || 0), 0) / customers.length / 1000) : 0}K ₺
                   </p>
+                  <p className="text-xs text-orange-600 mt-1">📊 Müşteri başına</p>
                 </div>
               </div>
             </CardContent>
