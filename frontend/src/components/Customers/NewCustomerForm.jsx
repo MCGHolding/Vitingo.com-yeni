@@ -367,6 +367,9 @@ export default function NewCustomerForm({ onClose, onSave }) {
     setSelectedImage(null);
     setImagePreview(null);
     setTagInput('');
+    // Clear geographic selections
+    setSelectedCountry(null);
+    setSelectedCity(null);
   };
 
   return (
