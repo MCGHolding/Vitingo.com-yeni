@@ -35,7 +35,11 @@ export default function NewCustomerForm({ onClose, onSave }) {
     country: 'TR',
     city: '',
     sector: '',
-    notes: ''
+    notes: '',
+    // Turkey-specific fields
+    companyTitle: '', // Firma Unvanı
+    taxOffice: '', // Vergi Dairesi
+    taxNumber: '' // Vergi Numarası
   });
 
   // Separate state for phone country code to avoid conflicts
