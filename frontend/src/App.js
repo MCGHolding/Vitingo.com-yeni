@@ -109,6 +109,31 @@ const Dashboard = () => {
     loadFairs();
   }, []);
 
+  // Load customers from backend API
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/customers`);
+        
+        if (response.ok) {
+          const customersData = await response.json();
+          setCustomers(customersData);
+          console.log('Customers loaded from database:', customersData.length);
+        } else {
+          console.log('Failed to load customers from API, using mock data');
+          setCustomers(allCustomers);
+        }
+      } catch (error) {
+        console.error('Error loading customers:', error);
+        console.log('Using mock data as fallback');
+        setCustomers(allCustomers);
+      }
+    };
+
+    loadCustomers();
+  }, []);
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
