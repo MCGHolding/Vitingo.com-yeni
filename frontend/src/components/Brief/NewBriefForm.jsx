@@ -488,8 +488,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 )}
                 
                 {relatedPeople.length > 0 && (
-                  <p className="text-xs text-blue-600 mt-2">
-                    Bu müşteriye bağlı {relatedPeople.length} kişi bulundu
+                  <p className="text-sm text-blue-600 mt-2 bg-blue-50 p-2 rounded">
+                    ✨ Bu müşteriye bağlı {relatedPeople.length} kişi bulundu
+                  </p>
+                )}
+                {selectedCustomer && relatedPeople.length === 0 && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Bu müşteri için kayıtlı ek kişi bulunamadı, varsayılan iletişim bilgileri kullanılacak
                   </p>
                 )}
               </div>
