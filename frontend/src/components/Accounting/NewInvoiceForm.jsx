@@ -279,6 +279,21 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     }
   };
 
+  const handleProductAdded = async (newProduct) => {
+    // Refresh products list to include the newly added product
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/products`);
+      
+      if (response.ok) {
+        const productData = await response.json();
+        setProducts(productData);
+      }
+    } catch (error) {
+      console.error('Error refreshing products:', error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
