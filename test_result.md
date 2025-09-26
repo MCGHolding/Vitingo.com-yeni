@@ -400,7 +400,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Customer Form Submission Frontend Integration"
+    - "Customer CRUD Endpoints with Tags Field"
   stuck_tasks:
     - "Customer Form Submission Frontend Integration"
   test_all: false
