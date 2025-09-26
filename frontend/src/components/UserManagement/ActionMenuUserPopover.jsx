@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { useToast } from '../../hooks/use-toast';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   MoreHorizontal,
   Trash2,
   Share,
   Send,
-  Mail
+  Mail,
+  LogIn
 } from 'lucide-react';
 
 export default function ActionMenuUserPopover({ user, onAction }) {
