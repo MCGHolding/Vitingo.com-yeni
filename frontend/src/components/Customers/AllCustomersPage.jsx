@@ -421,11 +421,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                   <tr className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">No.</th>
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Şirket</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">İletişim</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Sektör</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">İlişki</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Durum</th>
-                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Gelir</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Ciro</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Proje</th>
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Etiketler</th>
                     <th className="text-center py-3 px-3 font-semibold text-gray-700 text-xs">İşlemler</th>
                   </tr>
