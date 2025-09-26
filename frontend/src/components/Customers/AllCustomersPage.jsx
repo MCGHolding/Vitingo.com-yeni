@@ -411,15 +411,16 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Şirket</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Sektör</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İlişki</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Gelir</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
+                  <tr className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">No.</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Şirket</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">İletişim</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Sektör</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">İlişki</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Durum</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Gelir</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Etiketler</th>
+                    <th className="text-center py-3 px-3 font-semibold text-gray-700 text-xs">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
