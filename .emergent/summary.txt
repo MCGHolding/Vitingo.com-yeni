@@ -1,84 +1,76 @@
 <analysis>
-The AI engineer has significantly advanced the Vitingo CRM application. Initially, work focused on fixing issues and enhancing the dashboard, implementing customer surveys with multi-project and arbitrary email features, and developing a new Handover Form system. The trajectory details the transition from mock user data to real user data, fixing login page display, and defining user roles and departments.
-
-Subsequent efforts included creating a comprehensive Muhasebe (Accounting) menu with numerous sub-items and a detailed Yeni Fatura (New Invoice) form, complete with dynamic invoice numbering, currency selection, and item management. User management was enhanced by enabling password changes and default department selection in the edit modal, and adding Delete, Share, Message, and Email actions with a functional SendGrid integration. The logout functionality was relocated from the sidebar to a top-right header dropdown, with user profile details displayed correctly. Role-based access for Super Admin was fixed, allowing them to create new users. The Kullanıcı Yönetimi (User Management) menu was moved from the sidebar to the header dropdown, and its submenu display was changed. A Login As feature was added for Super Admins. A robust in-app messaging and notification system was implemented, including a notification bell, message modal, and user data synchronization. The latest task involves creating a Brief system, starting with its menu integration.
+The AI engineer significantly expanded the Vitingo CRM across multiple modules. Initially, a new Brief system was integrated, adding navigation and basic form structure. The core focus then shifted to extensively overhauling the Yeni Müşteri Ekle (New Customer Form) with dynamic fields, complex dropdowns, and country/city integrations. This involved prolonged debugging of React infinite loop errors (), eventually resolved with  identifying a state update conflict. Subsequently, customer persistence was addressed by implementing full CRUD API endpoints in the backend (FastAPI/MongoDB) and integrating them into the frontend. A critical frontend environment variable issue ( undefined) was fixed by standardizing to . Finally, an automatic customer classification system for Pasif Müşteriler (Inactive) and Favori Müşteriler (Favorite) based on invoice activity was introduced, currently being implemented into the UI. The latest task involves conditionally rendering specific fields for Türkiye in the new customer form.
 </analysis>
 
 <product_requirements>
-The Vitingo CRM aims to provide an intuitive interface with appealing graphics, expanding core functionalities from an MVP dashboard. Key requirements and current implementation status include:
-1.  **User Management**: Admin-restricted New User form, automatic username generation, specific department options, and strong password validation. The system now uses real user data, and roles (Super Admin, Admin, Müşteri Temsilcisi, Tasarım, Muhasebe, Üretim Müdürü) are defined. User editing allows password changes and department defaulting. User actions (Delete, Share, Message, Email) are partially implemented. Super Admin can now create new users. Kullanıcı Yönetimi is moved to the top-right header dropdown with a vertical submenu.
-2.  **Fair Management**: Fuarlar menu with sub-menus (Yeni Fuar form with specific fields). (Initial implementation done).
-3.  **Data Import/Export**: Import Data and Export Data sub-menus under Ayarlar with category dropdown, file browser, CSV warning, and sample templates. (Initial implementation done).
-4.  **Sales Opportunity Integration**: Yeni Satış Fırsatı form's Fuar Adı field should be a dropdown populated dynamically. (Initial implementation done).
-5.  **Dashboard Redesign**: Modern, dynamic dashboard with KPI cards, sales charts, geographic maps, multi-currency total revenue display, dynamic Sales Summary, Growth Rate, and Passive Leads. Now includes real-time survey statistics. Logout moved to a user menu in the top-right header, displaying user's full name and role.
-6.  **Customer Survey System**: Anketler sub-menu under Reports to send post-project satisfaction surveys. Enhanced with multi-project selection, arbitrary email sending, and customer representative filtering in results.
-7.  **Handover Form System (New)**: Teslim Formları under Reports for digital handover forms (language selection, signature, send button). Supports customer projects or arbitrary emails, statistics, and automatically sends surveys upon completion. (Initial implementation done).
-8.  **Accounting System (New)**: Muhasebe menu with Yeni Fatura, Tüm Faturalar, Onay Bekleyenler, etc. A Yeni Fatura form has been implemented with unique, currency-specific invoice numbering (e.g., USD-012025100001), currency/date selection, itemized product/service lines, KDV, discount, and totals. Number formatting for decimals and cents is implemented. Invoices are saved in local storage.
-9.  **Messaging System (New)**: In-app messaging via a MessageModal, integrated with a notification bell in the header that indicates unread messages.
-10. **Brief System (New)**: A new Brief menu with sub-items (Yeni Brief, Tüm Briefler, Kapanmış, Pasif, Brief Talep Et) is being implemented.
+The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP dashboard. Key requirements and implementation status:
+1.  **User Management**: Admin-restricted New User form, real user data, role definitions, password changes, actions (Delete, Share, Message, Email), Super Admin user creation, Kullanıcı Yönetimi in header dropdown, Login As for Super Admins.
+2.  **Fair Management**: Fuarlar menu with sub-menus and Yeni Fuar form.
+3.  **Data Import/Export**: Under Ayarlar with category dropdowns.
+4.  **Sales Opportunity Integration**: Dynamic Fuar Adı dropdown in Yeni Satış Fırsatı form.
+5.  **Dashboard Redesign**: Modern KPIs, charts, maps, multi-currency, real-time survey stats. Logout moved to header.
+6.  **Customer Survey System**: Post-project surveys with multi-project, arbitrary email, and rep filtering.
+7.  **Handover Form System**: Digital forms, language, signature, automatic survey upon completion.
+8.  **Accounting System**: Muhasebe menu, Yeni Fatura form with unique numbering, currency, item lines, KDV, discount, totals, localStorage persistence.
+9.  **Messaging System**: In-app messaging, notification bell.
+10. **Brief System (New)**: Brief menu with sub-items (Yeni Brief, Tüm Briefler, Kapanmış, Pasif, Brief Talep Et) implemented, with a comprehensive Yeni Brief form featuring dynamic customer/contact person selection and auto-fill.
+11. **Customer Status Logic (New)**: Customers without invoices for 6+ months are Pasif, and those with 3+ invoices in a year are Favori, displayed on respective pages.
+12. **New Customer Form Enhancements**: Overhauled form with dynamic İletişim Kişisi, İlişki Tipi, detailed country/city selection, professional phone input, and conditional fields for Türkiye (Firma Unvanı, Vergi Daireleri, Vergi Numarası).
 </product_requirements>
 
 <key_technical_concepts>
 -   **React**: Frontend framework.
--   **FastAPI/MongoDB**: Backend for API and data persistence.
+-   **FastAPI/MongoDB**: Backend for API and data persistence (UUIDs for IDs).
 -   **Shadcn UI/Tailwind CSS**: UI components and styling.
 -   **React Router DOM**: Client-side routing.
--   **Context API**: Global state management (e.g., AuthContext).
+-   **Context API**: Global state management (AuthContext).
 -   **SendGrid**: Email sending service.
--   **UUIDs**: Used for IDs instead of Mongo ObjectIDs for JSON serialization.
--   **LocalStorage**: Used for temporary persistence of users, invoices, and notifications.
+-   **LocalStorage**: Temporary persistence for users, invoices, notifications.
+-   **Frontend Environment Variables**: Proper usage of  for API URLs.
+-   **Troubleshooting**: Utilizing  for complex React debugging.
 </key_technical_concepts>
 
 <code_architecture>
 
 -   ****: API endpoints, data processing.
-    -   **Changes**: Added  for sending user-specific emails with attachments.
--   ****: Centralized SendGrid email sending.
-    -   **Changes**: Added  function to send emails from the user management module, including support for file attachments.
+    -   **Changes**: Updated  Pydantic model to reflect new form fields. Added comprehensive CRUD (Create, Read, Update, Delete) API endpoints for , ensuring data persistence.
 -   ****: Core frontend routing and state.
-    -   **Changes**: Added routes and handlers for Muhasebe (Accounting) sub-menus, integrating  and . Integrated  to manage user profile and notifications. Removed Kullanıcı Yönetimi routes from sidebar navigation and integrated their handlers into .
+    -   **Changes**: Integrated Brief system by adding  state,  related functions, and passing them to . Imported  and . Updated  to call backend API and added  to fetch customers from backend. Standardized environment variable access to . Passed  prop to  and .
 -   ****: Main navigation.
-    -   **Changes**: Added Muhasebe menu with 12 sub-items and their respective handlers. Removed Kullanıcı Yönetimi menu item and associated logic. Removed logout button and related imports/hooks.
--   ****: (New File) Top-right header for user profile, notifications, and Kullanıcı Yönetimi dropdown.
-    -   **Changes**: Displays current user's full name and role. Includes a dropdown for Profilim, Kullanıcı Yönetimi (with submenu), Ayarlar, and Çıkış Yap. Integrates notification bell with unread count and .
--   ****: (New File) Displays user notifications and allows viewing and replying to messages.
-    -   **Changes**: Fetches and displays notifications, marks them as read, and provides a reply interface.
--   ****: Login page.
-    -   **Changes**: Updated to display real user data for login (Super Admin, Admin, Müşteri Temsilcisi). Added Giriş Yap buttons for direct login as specific users.
--   ****: (New File) Form for creating new invoices.
-    -   **Changes**: Implements unique invoice numbering based on currency, month, year, and sequence. Supports dynamic addition of product/service lines, KDV, discount, and total calculations. Numbers are formatted (decimal/cents). Invoices are saved to .
--   ****: (New File) Displays all created invoices.
-    -   **Changes**: Reads invoices from  and presents them in a table.
--   ****: Modal for editing user details.
-    -   **Changes**: Added functionality to change user passwords. Ensured default department selection is correct by reverting to native select inputs.
--   ****: Action menu for user management table rows.
-    -   **Changes**: Added Sil (delete with warning), Paylaş (mobile-only), Mesaj (opens MessageModal), E-posta (opens EmailModal), and Giriş (login as user, for Super Admins only) options.
--   ****: (New File) In-app messaging modal.
-    -   **Changes**: Allows sending messages to other users, which generates a notification. Fixed  to use .
--   ****: (New File) Modal for sending emails to users.
-    -   **Changes**: Allows composing and sending emails with file attachments via the backend API.
--   ****: Modal for creating new users.
-    -   **Changes**: Corrected role-based access control to allow both 'admin' and 'super-admin' roles to create new users.
--   ****: Authentication context.
-    -   **Changes**: Updated  structure to include . Implemented  for Super Admins to log in as other users. Added  to store users data in .
--   ****: Mock user data.
-    -   **Changes**: Updated with real user data, departments, roles, and added  field for all users.
+    -   **Changes**: Added Brief menu with Yeni Brief, Tüm Briefler, Kapanmış, Pasif, and Brief Talep Et sub-items and their respective handlers.
+-   ****: (New File) Form for creating new briefs.
+    -   **Changes**: Implemented Temel Bilgiler, Etkinlik Bilgileri, Stand Gereksinimleri, Bütçe ve Gereksinimler sections. Added Müşteri dropdown using , with auto-fill for contact details from . Includes advanced/simple view toggle. Debugged and fixed multiple React infinite loop errors (Max Update Depth Exceeded) by refining  dependencies and state management.
+-   ****: (New File) Displays all created briefs. (Initial implementation, placeholder content)
+-   ****: Form for creating new customers.
+    -   **Changes**: Underwent a major overhaul. Implemented dynamic İlişki Tipi (Relationship Type) and İletişim Kişisi (Contact Person) dropdowns with add new options. Redesigned phone input with narrowed country code, flags, and country names. Removed Bölge and added Ülke and dependent Şehir dropdowns using . Implemented Sektör (Sector) dropdown with add new option. Resolved multiple Maximum update depth exceeded errors by isolating phone country code into a separate state and carefully managing  dependencies. Currently being updated to conditionally show fields for Türkiye.
+-   ****: (New File) Centralized data for countries and their respective cities, used in the .
+-   ****: Mock customer data.
+    -   **Changes**: Used to populate the customer dropdown in .
+-   ****: Mock people data.
+    -   **Changes**: Updated company names to match  for auto-fill functionality in . Added more mock entries for .
+-   ****: (New File) Utility functions to calculate customer status (active, passive, favorite) based on invoice history.
+-   ****: Displays passive customers.
+    -   **Changes**: Rewritten to dynamically filter and display customers based on the 6-month no-invoice rule using . Includes statistics cards and filtering options.
+-   ****: Displays favorite customers.
+    -   **Changes**: Rewritten to dynamically filter and display customers based on the 3+ invoices in 1-year rule using .
+
 </code_architecture>
 
 <pending_tasks>
--   Backend implementation for Sales Opportunities, Customer Prospects, Quotes, Customer Management, Person Management beyond basic CRUD endpoints.
+-   Backend implementation for Sales Opportunities, Customer Prospects, Quotes, Person Management beyond basic CRUD endpoints.
 -   Fully implementing  logic to save changes.
--   Developing Pasif Müşteriler and Favori Müşteriler pages with real data filtering.
 -   Further refining the UI of the date picker in .
--   Implementing the email notification system for new user creation (beyond simple SendGrid integration).
+-   Implementing the email notification system for new user creation.
 -   **Handover System Enhancements**: Handover form page (with signature) testing, backend endpoint testing for handovers, email sending tests, automatic survey triggering upon handover completion, and reminder email logic.
--   **Brief System Implementation**: Complete the Brief menu items and build the detailed Yeni Brief form.
+-   **Brief System Implementation**: Implement detailed functionality for Tüm Briefler, Kapanmış, Pasif, Brief Talep Et pages beyond initial structure.
+-   **New Customer Form Enhancements**: Complete the conditional rendering of Firma Unvanı, Vergi Daireleri (dropdown), and Vergi Numarası fields when Türkiye is selected.
+-   **Customer Status Logic**: Connect the customer status calculation with actual backend invoice data once the invoice system is integrated with the backend.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was tasked with implementing a new Brief system. This involves adding a new main menu item named Brief to the application's navigation. Under this main menu, there will be several sub-menu items: Yeni Brief (New Brief), Tüm Briefler (All Briefs), Kapanmış (Closed), Pasif (Passive), and Brief Talep Et (Request Brief). The AI engineer's very last action was to start integrating this new Brief menu into the  component. This foundational step is crucial before proceeding with the detailed Yeni Brief form, which will require a complex UI with dropdowns, multi-select options, text boxes, image uploads, and fields for stand dimensions (m2, number of closed sides, height).
+Immediately before this summary request, the AI engineer was implementing conditional fields in the Yeni Müşteri Ekle (New Customer Form) in . Specifically, the user requested that when Türkiye is selected as the country, three new fields should appear: Firma Unvanı (Company Title), a dropdown for Vergi Daireleri (Tax Offices), and a textbox for Vergi Numarası (Tax ID). The AI engineer has just started this task, having identified the relevant file and begun adding the necessary state variables for these new fields and defining the list of Turkish tax offices within . This is a continuation of the extensive overhaul of the New Customer Form.
 </current_work>
 
 <optional_next_step>
-The next step is to continue integrating the Brief menu and its sub-items into  as per the user's request.
+I will implement the conditional rendering of Firma Unvanı, Vergi Daireleri, and Vergi Numarası fields in  based on the selected country being Türkiye.
 </optional_next_step>
