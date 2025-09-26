@@ -98,12 +98,13 @@ export default function InactiveCustomersPage({ customers = [], onBackToDashboar
   // Get unique sectors and countries for filters
   const uniqueSectors = [...new Set(passiveCustomers.map(c => c.sector).filter(Boolean))];
   const uniqueCountries = [...new Set(passiveCustomers.map(c => c.country).filter(Boolean))];
-    const counts = {};
-    filteredCustomers.forEach(customer => {
-      const country = customer.country || 'Bilinmiyor';
-      counts[country] = (counts[country] || 0) + 1;
-    });
-    return counts;
+
+  const getInitials = (name) => {
+    return name?.split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'MŞ';
   };
 
   const filteredCustomers = useMemo(() => {
