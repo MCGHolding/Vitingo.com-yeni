@@ -470,16 +470,16 @@ export default function NewCustomerForm({ onClose, onSave }) {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
-                    Bölge
+                    Şehir
                   </label>
-                  <Select value={formData.region} onValueChange={(value) => handleInputChange('region', value)}>
+                  <Select value={formData.city} onValueChange={(value) => handleInputChange('city', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Bölge seçiniz" />
+                      <SelectValue placeholder="Şehir seçiniz" />
                     </SelectTrigger>
                     <SelectContent>
-                      {(regions[formData.country] || []).map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
+                      {availableCities.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
                         </SelectItem>
                       ))}
                     </SelectContent>
