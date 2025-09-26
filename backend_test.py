@@ -1497,7 +1497,42 @@ def main():
     print("OVERALL TEST SUMMARY")
     print("=" * 80)
     
+    # Customer CRUD functionality
+    print("--- CUSTOMER CRUD ENDPOINTS RESULTS ---")
+    
+    if create_customer_passed:
+        print("✅ Create Customer (POST): PASSED")
+    else:
+        print("❌ Create Customer (POST): FAILED")
+    
+    if get_all_customers_passed:
+        print("✅ Get All Customers (GET): PASSED")
+    else:
+        print("❌ Get All Customers (GET): FAILED")
+    
+    if get_specific_customer_passed:
+        print("✅ Get Specific Customer (GET): PASSED")
+    else:
+        print("❌ Get Specific Customer (GET): FAILED")
+    
+    if update_customer_passed:
+        print("✅ Update Customer (PUT): PASSED")
+    else:
+        print("❌ Update Customer (PUT): FAILED")
+    
+    if delete_customer_passed:
+        print("✅ Delete Customer (DELETE): PASSED")
+    else:
+        print("❌ Delete Customer (DELETE): FAILED")
+    
+    if customer_validation_passed:
+        print("✅ Customer Validation & Error Handling: PASSED")
+    else:
+        print("❌ Customer Validation & Error Handling: FAILED")
+    
     # Existing functionality
+    print("\n--- EXISTING FUNCTIONALITY RESULTS ---")
+    
     if currency_rates_test_passed:
         print("✅ Currency Rates Endpoint: PASSED")
     else:
@@ -1572,6 +1607,15 @@ def main():
         print("❌ Survey Statistics: FAILED")
     
     # Calculate overall results
+    customer_tests = [
+        create_customer_passed,
+        get_all_customers_passed,
+        get_specific_customer_passed,
+        update_customer_passed,
+        delete_customer_passed,
+        customer_validation_passed
+    ]
+    
     existing_tests = [
         currency_rates_test_passed,
         currency_conversion_test_passed,
@@ -1592,22 +1636,29 @@ def main():
         survey_stats_passed
     ]
     
-    all_tests_passed = all(existing_tests + survey_tests)
+    all_tests_passed = all(customer_tests + existing_tests + survey_tests)
+    customer_tests_passed = all(customer_tests)
     survey_tests_passed = all(survey_tests)
     
     print(f"\n--- SUMMARY ---")
+    print(f"Customer CRUD Endpoints: {sum(customer_tests)}/{len(customer_tests)} tests passed")
     print(f"Existing Functionality: {sum(existing_tests)}/{len(existing_tests)} tests passed")
     print(f"Enhanced Survey System: {sum(survey_tests)}/{len(survey_tests)} tests passed")
     
     if all_tests_passed:
         print("\n🎉 ALL TESTS PASSED!")
         return True
-    elif survey_tests_passed:
-        print("\n✅ ENHANCED SURVEY SYSTEM TESTS PASSED!")
-        print("⚠️  Some existing functionality tests failed")
+    elif customer_tests_passed:
+        print("\n✅ CUSTOMER CRUD ENDPOINTS TESTS PASSED!")
+        if not survey_tests_passed:
+            print("⚠️  Some survey system tests failed")
+        if not all(existing_tests):
+            print("⚠️  Some existing functionality tests failed")
         return True
     else:
         print("\n❌ SOME TESTS FAILED!")
+        if not customer_tests_passed:
+            print("❌ Customer CRUD endpoints have issues")
         return False
 
 if __name__ == "__main__":
