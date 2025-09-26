@@ -84,27 +84,22 @@ export default function NewCustomerForm({ onClose, onSave }) {
   }, []);
 
   useEffect(() => {
-    // Update cities when country changes
+    // Update cities when country changes - only when country actually changes
     if (formData.country) {
       const cities = getCitiesForCountry(formData.country);
       setAvailableCities(cities);
-      
-      // Clear city selection if it doesn't exist in new country
-      if (formData.city && !cities.includes(formData.city)) {
-        setFormData(prev => ({ ...prev, city: '' }));
-      }
     }
-  }, [formData.country, formData.city]);
+  }, [formData.country]);
 
-  // Separate useEffect for phone country code to avoid loops
   useEffect(() => {
+    // Update phone country code when country changes
     if (formData.country && availableCountries.length > 0) {
       const selectedCountry = availableCountries.find(c => c.code === formData.country);
       if (selectedCountry && formData.countryCode !== formData.country) {
         setFormData(prev => ({ ...prev, countryCode: formData.country }));
       }
     }
-  }, [formData.country, availableCountries.length]);
+  }, [formData.country, availableCountries.length, formData.countryCode]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
