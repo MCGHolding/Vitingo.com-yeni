@@ -47,7 +47,7 @@ export const allPeople = [
     firstName: 'Mehmet',
     lastName: 'Kaya',
     fullName: 'Mehmet Kaya',
-    company: 'Global Trade Inc.',
+    company: 'Global Pharma Inc.',
     jobTitle: 'Satış Direktörü',
     relationshipType: 'customer',
     relationshipText: 'Müşteri',
