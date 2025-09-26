@@ -413,9 +413,47 @@ metadata:
         agent: "testing"
         comment: "❌ FINAL DIAGNOSIS: KUBERNETES INGRESS ROUTING ISSUE IDENTIFIED - HARDCODED BACKEND URL FIXES ARE NOT THE SOLUTION. COMPREHENSIVE TESTING RESULTS: ✅ AUTHENTICATION: Successfully logged in with murb/Murat2024! credentials ✅ BACKEND API VERIFICATION: Direct curl test to https://api-routing-fix-6.preview.emergentagent.com/api/customers returns valid JSON with customer data - backend is working perfectly ✅ BACKEND LOGS: Show successful API requests and customer creation - backend functionality confirmed ❌ BROWSER API ACCESS: When accessing /api/customers through browser, returns HTML login page instead of JSON API response ❌ FRONTEND API CALLS: All API calls fail with 'TypeError: Failed to fetch' errors ❌ CONSOLE ERRORS: 'Using mock data as fallback' messages for customers, fairs, currency rates, and survey stats 🎯 ROOT CAUSE IDENTIFIED: Kubernetes ingress routing configuration is NOT routing /api/* requests to the backend service. Instead, all requests including /api/* are being served by the frontend React app. This explains why: 1) Backend works perfectly when accessed directly via curl 2) Frontend cannot reach API because /api/* requests are routed to frontend instead of backend 3) Browser shows login page when accessing API endpoints 4) All 'Failed to fetch' errors occur because requests never reach backend service 🔧 SOLUTION REQUIRED: Fix Kubernetes ingress configuration to properly route /api/* requests to backend service, not frontend service. The hardcoded URLs in frontend code are correct - the infrastructure routing is broken."
 
+  - task: "Customer Deletion Functionality - Can-Delete Check"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ CUSTOMER CAN-DELETE ENDPOINT FULLY TESTED AND WORKING - Comprehensive testing of GET /api/customers/{id}/can-delete endpoint completed successfully: 1) Endpoint responds with status 200 ✅ 2) Returns proper JSON response with correct Content-Type ✅ 3) Response structure validation: contains all required fields (canDelete, relatedRecords, message) ✅ 4) Field type validation: canDelete is boolean, relatedRecords is array, message is string ✅ 5) Logic validation: For new customer with no related records, canDelete=true and relatedRecords=[] ✅ 6) Turkish message support: 'Müşteri silinebilir' message displayed correctly ✅ 7) Related records checking: Backend properly checks invoices, quotes, opportunities, projects, surveys, handovers collections ✅ 8) Error handling: Proper 404 response for non-existent customer IDs ✅ Test performed with customer ID: 5a9f3c8f-5a1d-47b0-8fd2-7ed31c5484f9. All validation checks passed perfectly. The endpoint correctly determines deletion eligibility based on related records existence."
+
+  - task: "Customer Deletion Functionality - Delete Customer"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ CUSTOMER DELETION ENDPOINT FULLY TESTED AND WORKING - Comprehensive testing of DELETE /api/customers/{id} endpoint completed successfully: 1) Endpoint responds with status 200 for successful deletion ✅ 2) Returns proper JSON response with success=true and descriptive Turkish message ✅ 3) Response structure validation: contains required fields (success, message) ✅ 4) Successful deletion message: 'Müşteri 'Silinecek Test Şirketi' başarıyla silindi' ✅ 5) Database integration: Customer actually removed from MongoDB collection ✅ 6) Verification: Subsequent GET request returns 404 Not Found ✅ 7) Related records prevention: Backend checks for related records before deletion ✅ 8) Error handling: Proper 404 for non-existent customers, 400 for customers with related records ✅ Test performed with customer ID: 5a9f3c8f-5a1d-47b0-8fd2-7ed31c5484f9. Customer was successfully created, deleted, and verified as removed. The updated deletion functionality works perfectly with proper safety checks."
+
+  - task: "Customer Deletion Functionality - Comprehensive Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE CUSTOMER DELETION FUNCTIONALITY FULLY TESTED AND WORKING - Complete end-to-end testing of new customer deletion features completed with perfect results: STEP 1 - Customer Creation: Successfully created test customer 'Silinecek Test Şirketi' with Turkish data ✅ STEP 2 - Can-Delete Check: GET /api/customers/{id}/can-delete returned canDelete=true, relatedRecords=[], message='Müşteri silinebilir' ✅ STEP 3 - Customer Deletion: DELETE /api/customers/{id} returned success=true with Turkish success message ✅ STEP 4 - Deletion Verification: GET /api/customers/{id} returned 404 Not Found with proper error message ✅ ADDITIONAL TESTING: Related records scenario tested - endpoint correctly identifies when customers can/cannot be deleted ✅ ALL 4 TEST SCENARIOS PASSED: 1) Test customer creation ✅ 2) Can-delete check (no related records) ✅ 3) Successful deletion ✅ 4) Deleted customer 404 verification ✅ The new customer deletion functionality is production-ready and meets all requirements: proper safety checks, Turkish language support, comprehensive error handling, and database integrity maintenance."
+
 test_plan:
   current_focus:
-    - "Customer CRUD Endpoints with Tags Field"
+    - "Customer Deletion Functionality - Can-Delete Check"
+    - "Customer Deletion Functionality - Delete Customer"
+    - "Customer Deletion Functionality - Comprehensive Integration"
   stuck_tasks:
     - "Customer Form Submission Frontend Integration"
   test_all: false
