@@ -73,23 +73,20 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const [availableCities, setAvailableCities] = useState([]);
 
   useEffect(() => {
-    // Load people data and sort alphabetically
+    // Load people data and sort alphabetically - ONLY RUN ONCE
     const sortedPeople = allPeople
       .filter(person => person.status === 'active')
       .sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'));
     setAvailablePeople(sortedPeople);
 
-    // Load countries data
-    setAvailableCountries(getSortedCountries());
-  }, []);
-
-  useEffect(() => {
-    // Update cities when country changes - only when country actually changes
-    if (formData.country) {
-      const cities = getCitiesForCountry(formData.country);
-      setAvailableCities(cities);
-    }
-  }, [formData.country]);
+    // Load countries data - ONLY RUN ONCE
+    const countries = getSortedCountries();
+    setAvailableCountries(countries);
+    
+    // Set initial cities for default country (TR)
+    const initialCities = getCitiesForCountry('TR');
+    setAvailableCities(initialCities);
+  }, []); // EMPTY dependency array - runs only once
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
