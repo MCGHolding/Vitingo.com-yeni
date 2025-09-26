@@ -459,9 +459,9 @@ export default function NewCustomerForm({ onClose, onSave }) {
                       <SelectValue placeholder="Ülke seçiniz" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.map((country) => (
-                        <SelectItem key={country.value} value={country.value}>
-                          {country.label}
+                      {availableCountries.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
