@@ -14,6 +14,7 @@ import {
 
 export default function ActionMenuUserPopover({ user, onAction }) {
   const { toast } = useToast();
+  const { user: currentUser, switchUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
