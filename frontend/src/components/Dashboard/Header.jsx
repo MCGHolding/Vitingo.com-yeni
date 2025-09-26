@@ -40,12 +40,8 @@ const Header = ({
     if (!user?.id) return;
     
     const allNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
-    console.log('Loading notifications for user:', user.id, 'Total notifications:', allNotifications.length);
-    
     const userNotifications = allNotifications.filter(notif => notif.userId === user.id);
     const unreadNotifications = userNotifications.filter(notif => !notif.read);
-    
-    console.log('User notifications:', userNotifications.length, 'Unread:', unreadNotifications.length);
     
     setNotifications(userNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)));
     setUnreadCount(unreadNotifications.length);
