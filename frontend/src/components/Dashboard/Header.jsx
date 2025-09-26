@@ -357,6 +357,15 @@ const Header = ({
           </div>
         </div>
       </div>
+
+      {/* Notification Modal */}
+      {selectedNotification && (
+        <NotificationModal
+          notification={selectedNotification}
+          onClose={handleCloseNotificationModal}
+          onBack={handleBackToNotifications}
+        />
+      )}
     </header>
   );
 };
