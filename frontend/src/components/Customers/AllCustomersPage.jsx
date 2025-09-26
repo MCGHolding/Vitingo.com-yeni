@@ -236,7 +236,66 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
     });
   };
 
+  // Delete customer function
+  const handleDeleteCustomer = async (customer) => {
+    // Show confirmation dialog
+    const confirmDelete = window.confirm(
+      `"${customer.companyName}" müşterisini silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!`
+    );
+    
+    if (!confirmDelete) return;
+
+    try {
+      // Check if customer has related records before deletion
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      // First check if customer can be deleted (no related records)
+      const checkResponse = await fetch(`${backendUrl}/api/customers/${customer.id}/can-delete`);
+      const canDeleteData = await checkResponse.json();
+      
+      if (!canDeleteData.canDelete) {
+        // Customer has related records, show error
+        toast({
+          title: "Müşteri Silinemez",
+          description: `${customer.companyName} müşterisinin ilişkili kayıtları bulunduğu için silinemez.\n\nİlişkili kayıtlar: ${canDeleteData.relatedRecords.join(', ')}`,
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Customer can be deleted
+      const deleteResponse = await fetch(`${backendUrl}/api/customers/${customer.id}`, {
+        method: 'DELETE'
+      });
+      
+      if (deleteResponse.ok) {
+        toast({
+          title: "Müşteri Silindi",
+          description: `${customer.companyName} başarıyla silindi.`
+        });
+        
+        // Refresh the page or update the customer list
+        window.location.reload();
+      } else {
+        throw new Error('Silme işlemi başarısız');
+      }
+      
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteri silinirken bir hata oluştu. Lütfen tekrar deneyin.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleAction = (action, customer) => {
+    if (action === 'delete') {
+      handleDeleteCustomer(customer);
+      return;
+    }
+
     const actionMessages = {
       message: {
         title: "Mesaj Gönder",
