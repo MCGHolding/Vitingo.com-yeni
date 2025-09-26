@@ -344,24 +344,63 @@ export default function NewCustomerForm({ onClose, onSave }) {
 
               {/* Relationship Type */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  İlişki Tipi *
-                </label>
-                <div className="flex space-x-4">
-                  {relationshipTypes.map((type) => (
-                    <label key={type.value} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="relationshipType"
-                        value={type.value}
-                        checked={formData.relationshipType === type.value}
-                        onChange={(e) => handleInputChange('relationshipType', e.target.value)}
-                        className="text-blue-600"
-                      />
-                      <span className="text-sm text-gray-700">{type.label}</span>
-                    </label>
-                  ))}
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-gray-700">
+                    İlişki Tipi *
+                  </label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowNewRelationshipInput(true)}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Yeni İlişki Tipi
+                  </Button>
                 </div>
+                
+                {showNewRelationshipInput && (
+                  <div className="flex space-x-2 mb-2">
+                    <Input
+                      value={newRelationshipType}
+                      onChange={(e) => setNewRelationshipType(e.target.value)}
+                      placeholder="Yeni ilişki tipi adı"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleAddNewRelationshipType}
+                    >
+                      Ekle
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowNewRelationshipInput(false);
+                        setNewRelationshipType('');
+                      }}
+                    >
+                      İptal
+                    </Button>
+                  </div>
+                )}
+                
+                <Select value={formData.relationshipType} onValueChange={(value) => handleInputChange('relationshipType', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="İlişki tipi seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {relationshipTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Contact Person */}
