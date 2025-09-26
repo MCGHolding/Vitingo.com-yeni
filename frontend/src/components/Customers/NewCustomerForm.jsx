@@ -442,28 +442,43 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 </Select>
               </div>
 
-              {/* Phone and Country Code */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Santral
-                  </label>
-                  <Input
-                    value={formData.countryCode}
-                    onChange={(e) => handleInputChange('countryCode', e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Telefon
-                  </label>
-                  <Input
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="Telefon numarasını giriniz"
-                    className="w-full"
-                  />
+              {/* Phone */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Telefon
+                </label>
+                <div className="flex space-x-2">
+                  <div className="w-32">
+                    <Select 
+                      value={formData.countryCode} 
+                      onValueChange={(value) => handleInputChange('countryCode', value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Ülke" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableCountries.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{country.flag}</span>
+                              <div className="flex flex-col">
+                                <span className="text-xs">{country.phoneCode}</span>
+                                <span className="text-xs text-gray-500">{country.name}</span>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="Telefon numarasını giriniz"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               </div>
 
