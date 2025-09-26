@@ -39,8 +39,18 @@ export default function NewCustomerForm({ onClose, onSave }) {
     // Turkey-specific fields
     companyTitle: '', // Firma Unvanı
     taxOffice: '', // Vergi Dairesi
-    taxNumber: '' // Vergi Numarası
+    taxNumber: '', // Vergi Numarası
+    // Tags field
+    tags: [] // Etiketler
   });
+
+  // Tag management state
+  const [tagInput, setTagInput] = useState('');
+  const [availableTags] = useState([
+    'TEKNOLOJI', 'SANAYI', 'TICARET', 'HIZMET', 'ÜRETIM', 
+    'İHRACAT', 'İTHALAT', 'PERAKENDE', 'TOPTAN', 'LOJISTIK',
+    'INŞAAT', 'GIDA', 'TEKSTIL', 'OTOMOTIV', 'ENERJI'
+  ]);
 
   // Separate state for phone country code to avoid conflicts
   const [phoneCountryCode, setPhoneCountryCode] = useState('TR');
