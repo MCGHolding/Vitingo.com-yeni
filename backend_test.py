@@ -1702,59 +1702,75 @@ def main():
     else:
         print("⚠️  Currency Conversion Endpoint: SKIPPED/FAILED (Not primary focus)")
     
-    # Calculate overall results
+    # Calculate customer CRUD test results (PRIMARY FOCUS)
     customer_tests = [
         create_customer_passed,
+        turkish_data_passed,
         get_all_customers_passed,
         get_specific_customer_passed,
         update_customer_passed,
-        delete_customer_passed,
-        customer_validation_passed
+        customer_validation_passed,
+        delete_customer_passed
     ]
     
-    existing_tests = [
-        currency_rates_test_passed,
-        currency_conversion_test_passed,
-        fairs_test_passed,
-        invalid_test_passed
-    ]
-    
-    survey_tests = [
-        survey_questions_passed,
-        test_email_passed,
-        regular_invitation_passed,
-        arbitrary_invitation_passed,
-        regular_retrieval_passed,
-        arbitrary_retrieval_passed,
-        regular_submission_passed,
-        arbitrary_submission_passed,
-        invalid_token_passed,
-        survey_stats_passed
-    ]
-    
-    all_tests_passed = all(customer_tests + existing_tests + survey_tests)
     customer_tests_passed = all(customer_tests)
-    survey_tests_passed = all(survey_tests)
+    customer_tests_count = sum(customer_tests)
     
-    print(f"\n--- SUMMARY ---")
-    print(f"Customer CRUD Endpoints: {sum(customer_tests)}/{len(customer_tests)} tests passed")
-    print(f"Existing Functionality: {sum(existing_tests)}/{len(existing_tests)} tests passed")
-    print(f"Enhanced Survey System: {sum(survey_tests)}/{len(survey_tests)} tests passed")
+    print(f"\n--- FINAL SUMMARY ---")
+    print(f"🎯 PRIMARY FOCUS - Customer CRUD Endpoints: {customer_tests_count}/{len(customer_tests)} tests passed")
     
-    if all_tests_passed:
-        print("\n🎉 ALL TESTS PASSED!")
-        return True
-    elif customer_tests_passed:
-        print("\n✅ CUSTOMER CRUD ENDPOINTS TESTS PASSED!")
-        if not survey_tests_passed:
-            print("⚠️  Some survey system tests failed")
-        if not all(existing_tests):
-            print("⚠️  Some existing functionality tests failed")
+    if customer_tests_passed:
+        print("\n🎉 ALL CUSTOMER CRUD TESTS PASSED!")
+        print("✅ Customer backend endpoints are working correctly")
+        print("✅ Turkish data handling is working properly")
+        print("✅ Database integration is functional")
+        print("✅ JSON serialization is working correctly")
+        print("✅ UUID generation is working for customer IDs")
+        print("✅ All CRUD operations (Create, Read, Update, Delete) are functional")
+        
+        print("\n📋 DIAGNOSIS RESULTS:")
+        print("✅ POST /api/customers - Creates customers successfully with Turkish data")
+        print("✅ GET /api/customers - Retrieves all customers including newly created ones")
+        print("✅ GET /api/customers/{id} - Retrieves specific customers by ID")
+        print("✅ PUT /api/customers/{id} - Updates customer data correctly")
+        print("✅ DELETE /api/customers/{id} - Deletes customers successfully")
+        print("✅ Turkish characters (ı, ğ, ü, ş, ç, ö) are handled correctly")
+        print("✅ Turkish-specific fields (companyTitle, taxOffice, taxNumber) are persisted")
+        print("✅ Error handling works for invalid data and non-existent IDs")
+        
+        print("\n🔍 CONCLUSION:")
+        print("The customer backend CRUD operations are working perfectly.")
+        print("If new customers aren't appearing in the frontend list, the issue is likely:")
+        print("1. Frontend not calling the correct API endpoints")
+        print("2. Frontend environment variable configuration issues")
+        print("3. Frontend-backend integration problems")
+        print("4. Frontend state management or rendering issues")
+        
         return True
     else:
-        print("\n❌ SOME TESTS FAILED!")
-        if not customer_tests_passed:
-            print("❌ Customer CRUD endpoints have issues")
+        print(f"\n❌ CUSTOMER CRUD TESTS FAILED! ({customer_tests_count}/{len(customer_tests)} passed)")
+        print("❌ Customer backend endpoints have critical issues")
+        
+        # Detailed failure analysis
+        test_names = [
+            "Create Customer with Turkish Data",
+            "Turkish Data Handling",
+            "Get All Customers",
+            "Get Specific Customer",
+            "Update Customer",
+            "Customer Validation & Error Handling",
+            "Delete Customer"
+        ]
+        
+        print("\n📋 FAILED TESTS:")
+        for i, (test_passed, test_name) in enumerate(zip(customer_tests, test_names)):
+            if not test_passed:
+                print(f"❌ {i+1}. {test_name}")
+        
+        print("\n🔍 DIAGNOSIS:")
+        print("The customer backend has critical issues that need to be fixed before")
+        print("investigating frontend problems. Backend must work correctly first.")
+        
         return False
 
 if __name__ == "__main__":
