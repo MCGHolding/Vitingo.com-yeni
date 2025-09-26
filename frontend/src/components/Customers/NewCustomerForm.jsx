@@ -11,6 +11,8 @@ import { customerTagColors } from '../../mock/customersData';
 import NewPersonForm from './NewPersonForm';
 import CountrySelect from '../geo/CountrySelect';
 import CitySelect from '../geo/CitySelect';
+import SearchableSelect from '../ui/SearchableSelect';
+import CompanyAvatar from '../ui/CompanyAvatar';
 import { 
   X,
   Building,
