@@ -107,60 +107,7 @@ export default function InactiveCustomersPage({ customers = [], onBackToDashboar
       .slice(0, 2) || 'MŞ';
   };
 
-  const filteredCustomers = useMemo(() => {
-    let filtered = inactiveCustomers;
 
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(customer =>
-        customer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (customer.sector && customer.sector.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (customer.notes && customer.notes.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
-    // Tag search filter
-    if (tagSearch) {
-      filtered = filtered.filter(customer =>
-        customer.tags && customer.tags.some(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()))
-      );
-    }
-
-    // Sector filter
-    if (sectorFilter !== 'all') {
-      filtered = filtered.filter(customer => customer.sector === sectorFilter);
-    }
-
-    // Country filter
-    if (countryFilter !== 'all') {
-      filtered = filtered.filter(customer => customer.country === countryFilter);
-    }
-
-    // Relationship filter
-    if (relationshipFilter !== 'all') {
-      filtered = filtered.filter(customer => customer.relationshipType === relationshipFilter);
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'companyName':
-          return a.companyName.localeCompare(b.companyName);
-        case 'revenue':
-          return b.totalRevenue - a.totalRevenue;
-        case 'inactiveSince':
-          return new Date(b.inactiveSince) - new Date(a.inactiveSince);
-        case 'lastActivity':
-          return new Date(b.lastActivity) - new Date(a.lastActivity);
-        default:
-          return new Date(b.inactiveSince) - new Date(a.inactiveSince);
-      }
-    });
-
-    return filtered;
-  }, [searchTerm, tagSearch, sectorFilter, countryFilter, relationshipFilter, sortBy]);
 
   const sectorCounts = getSectorCounts();
   const countryCounts = getCountryCounts();
