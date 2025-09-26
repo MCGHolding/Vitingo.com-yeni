@@ -83,6 +83,42 @@ export default function NewPersonForm({ onClose, onSave }) {
     }));
   };
 
+  // Geographic handlers
+  const handleCountryChange = (countryData) => {
+    setSelectedCountry(countryData);
+    setSelectedCity(null); // Clear city when country changes
+    
+    if (countryData) {
+      setFormData(prev => ({
+        ...prev,
+        country: countryData.iso2,
+        city: '' // Clear city
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        country: '',
+        city: ''
+      }));
+    }
+  };
+
+  const handleCityChange = (cityData) => {
+    setSelectedCity(cityData);
+    
+    if (cityData) {
+      setFormData(prev => ({
+        ...prev,
+        city: cityData.name
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        city: ''
+      }));
+    }
+  };
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
