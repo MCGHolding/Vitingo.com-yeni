@@ -78,6 +78,40 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const [availableCountries, setAvailableCountries] = useState([]);
   const [availableCities, setAvailableCities] = useState([]);
 
+  // Turkish Tax Offices List
+  const turkishTaxOffices = [
+    'İstanbul Vergi Dairesi Başkanlığı',
+    'Ankara Vergi Dairesi Başkanlığı',
+    'İzmir Vergi Dairesi Başkanlığı',
+    'Bursa Vergi Dairesi Başkanlığı',
+    'Antalya Vergi Dairesi Başkanlığı',
+    'Adana Vergi Dairesi Başkanlığı',
+    'Konya Vergi Dairesi Başkanlığı',
+    'Gaziantep Vergi Dairesi Başkanlığı',
+    'Kayseri Vergi Dairesi Başkanlığı',
+    'Mersin Vergi Dairesi Başkanlığı',
+    'Eskişehir Vergi Dairesi Başkanlığı',
+    'Diyarbakır Vergi Dairesi Başkanlığı',
+    'Samsun Vergi Dairesi Başkanlığı',
+    'Denizli Vergi Dairesi Başkanlığı',
+    'Şanlıurfa Vergi Dairesi Başkanlığı',
+    'Adapazarı Vergi Dairesi Başkanlığı',
+    'Malatya Vergi Dairesi Başkanlığı',
+    'Kahramanmaraş Vergi Dairesi Başkanlığı',
+    'Erzurum Vergi Dairesi Başkanlığı',
+    'Van Vergi Dairesi Başkanlığı',
+    'Batman Vergi Dairesi Başkanlığı',
+    'Elazığ Vergi Dairesi Başkanlığı',
+    'İzmit Vergi Dairesi Başkanlığı',
+    'Manisa Vergi Dairesi Başkanlığı',
+    'Tarsus Vergi Dairesi Başkanlığı',
+    'Çorum Vergi Dairesi Başkanlığı',
+    'Balıkesir Vergi Dairesi Başkanlığı',
+    'Aydın Vergi Dairesi Başkanlığı',
+    'Hatay Vergi Dairesi Başkanlığı',
+    'Tekirdağ Vergi Dairesi Başkanlığı'
+  ].sort();
+
   useEffect(() => {
     // Load people data and sort alphabetically - ONLY RUN ONCE
     const sortedPeople = allPeople
