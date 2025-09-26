@@ -281,22 +281,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     }
   };
 
-  const handleProductAdded = async (newProduct) => {
-    // Refresh products list to include the newly added product
-    try {
-      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/products`);
-      
-      if (response.ok) {
-        const productData = await response.json();
-        setProducts(productData);
-      }
-    } catch (error) {
-      console.error('Error refreshing products:', error);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validate required fields
@@ -305,32 +290,67 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       return;
     }
 
-    // Create invoice object
-    const invoice = {
-      id: Date.now(), // Simple ID generation
-      invoiceNumber: formData.invoiceNumber,
-      customerName: 'Demo Müşteri', // In real app, this would come from customer selection
-      date: formData.date,
-      currency: formData.currency,
-      amount: totals.total,
-      status: 'draft',
-      items: formData.items.filter(item => item.name.trim()).length,
-      details: {
-        ...formData,
-        totals: totals
+    if (!formData.customerId) {
+      alert('Müşteri seçimi zorunludur');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      // Create invoice object for backend
+      const invoice = {
+        invoice_number: formData.invoiceNumber,
+        customer_id: formData.customerId,
+        customer_name: selectedCustomer ? selectedCustomer.companyName : 'Unknown Customer',
+        date: formData.date,
+        currency: formData.currency,
+        items: formData.items.filter(item => item.name.trim()).map(item => ({
+          id: item.id,
+          product_id: item.productId || null,
+          name: item.name,
+          quantity: parseNumber(item.quantity) || 0,
+          unit: item.unit,
+          unit_price: parseNumber(item.unitPrice) || 0,
+          total: item.total || 0
+        })),
+        subtotal: totals.subtotal,
+        vat_rate: formData.vatRate,
+        vat_amount: totals.vatAmount,
+        discount: parseNumber(formData.discount) || 0,
+        discount_amount: totals.discountAmount,
+        total: totals.total,
+        conditions: formData.conditions,
+        payment_term: formData.paymentTerm
+      };
+
+      const response = await fetch(`${backendUrl}/api/invoices`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(invoice)
+      });
+
+      if (response.ok) {
+        const savedInvoice = await response.json();
+        console.log('Invoice saved successfully:', savedInvoice);
+        
+        // Show success modal
+        setShowSuccessModal(true);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Fatura kaydedilirken hata oluştu');
       }
-    };
-
-    // Save to localStorage (in real app, would save to backend)
-    const existingInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-    existingInvoices.push(invoice);
-    localStorage.setItem('invoices', JSON.stringify(existingInvoices));
-
-    console.log('Invoice Data:', formData);
-    console.log('Totals:', totals);
-    
-    alert('Fatura başarıyla oluşturuldu!');
-    onBackToDashboard();
+      
+    } catch (error) {
+      console.error('Error saving invoice:', error);
+      alert(`Fatura kaydedilemedi: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const selectedCurrency = currencies.find(c => c.code === formData.currency);
