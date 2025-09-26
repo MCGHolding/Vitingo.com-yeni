@@ -719,6 +719,77 @@ const Dashboard = () => {
           </div>
         );
 
+      // Brief cases
+      case 'new-brief':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Yeni Brief</h1>
+            <p className="text-gray-600">Yeni brief formu yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'all-briefs':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tüm Briefler</h1>
+            <p className="text-gray-600">Tüm briefler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'closed-briefs':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Kapanmış Briefler</h1>
+            <p className="text-gray-600">Kapanmış briefler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'passive-briefs':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Pasif Briefler</h1>
+            <p className="text-gray-600">Pasif briefler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'request-brief':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Brief Talep Et</h1>
+            <p className="text-gray-600">Brief talep formu yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
       default:
         return (
           <>
