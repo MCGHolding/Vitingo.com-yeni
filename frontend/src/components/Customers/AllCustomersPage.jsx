@@ -494,6 +494,10 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                       </td>
                       
                       <td className="py-3 px-3">
+                        {getCustomerStatusBadge(customer)}
+                      </td>
+                      
+                      <td className="py-3 px-3">
                         <div className="flex items-center space-x-1">
                           <span className="font-semibold text-green-600 text-sm">
                             {formatCurrency(customer.totalRevenue, customer.currency)}
