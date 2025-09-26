@@ -92,8 +92,6 @@ export default function NewCustomerForm({ onClose, onSave }) {
   const [showNewRelationshipInput, setShowNewRelationshipInput] = useState(false);
   const [showNewSectorInput, setShowNewSectorInput] = useState(false);
   const [availablePeople, setAvailablePeople] = useState([]);
-  const [availableCountries, setAvailableCountries] = useState([]);
-  const [availableCities, setAvailableCities] = useState([]);
 
   // Turkish Tax Offices List
   const turkishTaxOffices = [
