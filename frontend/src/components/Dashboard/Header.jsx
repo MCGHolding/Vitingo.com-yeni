@@ -33,6 +33,45 @@ const Header = ({
     setShowUserMenu(false);
   };
 
+  // Load notifications for current user
+  const loadNotifications = () => {
+    if (!user?.id) return;
+    
+    const allNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    const userNotifications = allNotifications.filter(notif => notif.userId === user.id);
+    const unreadNotifications = userNotifications.filter(notif => !notif.read);
+    
+    setNotifications(userNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)));
+    setUnreadCount(unreadNotifications.length);
+  };
+
+  // Mark notification as read
+  const markAsRead = (notificationId) => {
+    const allNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    const updatedNotifications = allNotifications.map(notif => 
+      notif.id === notificationId ? { ...notif, read: true } : notif
+    );
+    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+    loadNotifications();
+  };
+
+  // Mark all notifications as read
+  const markAllAsRead = () => {
+    const allNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+    const updatedNotifications = allNotifications.map(notif => 
+      notif.userId === user?.id ? { ...notif, read: true } : notif
+    );
+    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+    loadNotifications();
+  };
+
+  // Handle notification click (open message thread)
+  const handleNotificationClick = (notification) => {
+    markAsRead(notification.id);
+    // Here you could open the message modal with the sender
+    setShowNotifications(false);
+  };
+
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
