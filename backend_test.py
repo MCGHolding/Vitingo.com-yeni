@@ -975,24 +975,32 @@ def test_survey_stats():
         return False
 
 def test_create_customer():
-    """Test creating a new customer with form data"""
+    """Test creating a new customer with Turkish form data including new Turkish fields"""
     print("=" * 80)
-    print("TESTING CREATE CUSTOMER ENDPOINT")
+    print("TESTING CREATE CUSTOMER ENDPOINT WITH TURKISH DATA")
     print("=" * 80)
     
     endpoint = f"{BACKEND_URL}/api/customers"
     print(f"Testing endpoint: {endpoint}")
     
-    # Test data matching the NewCustomerForm structure
+    # Test data matching the NewCustomerForm structure with Turkish-specific fields
     test_customer_data = {
         "companyName": "Test Şirketi A.Ş.",
         "relationshipType": "customer",
-        "email": "test@testsirket.com",
+        "contactPerson": "Ahmet Yılmaz",
+        "email": "ahmet@testsirket.com",
         "website": "testsirket.com",
-        "country": "TR",
-        "sector": "Teknoloji",
         "phone": "532 123 4567",
-        "countryCode": "TR"
+        "countryCode": "TR",
+        "address": "Maslak Mahallesi, Büyükdere Cad. No:123",
+        "country": "TR",
+        "city": "İstanbul",
+        "sector": "Teknoloji",
+        "notes": "Türkçe karakterli notlar: ğüşıöç",
+        # Turkish-specific fields
+        "companyTitle": "Test Şirketi Anonim Şirketi",
+        "taxOffice": "İstanbul Vergi Dairesi Başkanlığı",
+        "taxNumber": "1234567890"
     }
     
     try:
