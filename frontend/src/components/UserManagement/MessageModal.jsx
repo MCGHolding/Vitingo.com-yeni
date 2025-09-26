@@ -75,6 +75,25 @@ export default function MessageModal({ user, onClose }) {
       allMessages.push(message);
       localStorage.setItem('all_messages', JSON.stringify(allMessages));
 
+      // Create notification for the recipient
+      const notification = {
+        id: Date.now() + '_notif',
+        userId: user.id, // recipient
+        type: 'message',
+        title: `${currentUser.fullName} size mesaj gönderdi`,
+        message: newMessage.trim(),
+        senderId: currentUser.id,
+        senderName: currentUser.fullName,
+        timestamp: new Date().toISOString(),
+        read: false,
+        messageId: message.id
+      };
+
+      // Save notification to localStorage
+      const existingNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+      existingNotifications.push(notification);
+      localStorage.setItem('notifications', JSON.stringify(existingNotifications));
+
       setNewMessage('');
 
       toast({
