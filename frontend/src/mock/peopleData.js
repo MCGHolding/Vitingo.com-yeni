@@ -5,7 +5,7 @@ export const allPeople = [
     firstName: 'Ahmet',
     lastName: 'Yılmaz',
     fullName: 'Ahmet Yılmaz',
-    company: 'Tech Solutions A.Ş.',
+    company: 'TechCorp Solutions',
     jobTitle: 'Yazılım Geliştirici',
     relationshipType: 'customer',
     relationshipText: 'Müşteri',
