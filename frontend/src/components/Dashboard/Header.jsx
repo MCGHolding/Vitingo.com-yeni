@@ -20,7 +20,11 @@ const Header = ({
 }) => {
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const userMenuRef = useRef(null);
+  const notificationRef = useRef(null);
 
   const handleLogout = () => {
     if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
