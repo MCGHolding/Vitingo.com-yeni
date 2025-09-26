@@ -417,7 +417,7 @@ export default function NewCustomerForm({ onClose, onSave }) {
                     className="text-xs"
                   >
                     <Plus className="h-3 w-3 mr-1" />
-                    Yeni Kişi
+                    Yeni Kişi Ekle
                   </Button>
                 </div>
                 <Select value={formData.contactPersonId} onValueChange={(value) => handleInputChange('contactPersonId', value)}>
@@ -429,12 +429,12 @@ export default function NewCustomerForm({ onClose, onSave }) {
                       <SelectItem key={person.id} value={person.id.toString()}>
                         <div className="flex items-center space-x-2">
                           <User className="h-4 w-4" />
-                          <span>{person.fullName}</span>
-                          {person.title && (
-                            <Badge variant="secondary" className="text-xs">
-                              {person.title}
-                            </Badge>
-                          )}
+                          <div className="flex flex-col">
+                            <span>{person.fullName}</span>
+                            {person.jobTitle && (
+                              <span className="text-xs text-gray-500">{person.jobTitle}</span>
+                            )}
+                          </div>
                         </div>
                       </SelectItem>
                     ))}
