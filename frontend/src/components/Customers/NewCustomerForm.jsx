@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
 import { allPeople } from '../../mock/peopleData';
-import { getSortedCountries, getCitiesForCountry } from '../../data/countriesAndCities';
 import { customerTagColors } from '../../mock/customersData';
 import NewPersonForm from './NewPersonForm';
+import CountrySelect from '../geo/CountrySelect';
+import CitySelect from '../geo/CitySelect';
 import { 
   X,
   Building,
