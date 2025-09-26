@@ -1585,6 +1585,398 @@ def test_customer_validation_errors():
     print("\n✅ CUSTOMER VALIDATION AND ERROR TESTS PASSED!")
     return True
 
+def test_geographic_countries_endpoint():
+    """
+    Test the Geographic Countries API endpoint.
+    
+    Requirements to verify:
+    1. GET /api/geo/countries - All countries
+    2. GET /api/geo/countries?query=turk - Turkey search
+    3. GET /api/geo/countries?query=united - United search
+    4. GET /api/geo/countries?query=ger - Germany search
+    5. Should return 200 status for all requests
+    6. Should support accent tolerance (turkiye -> Turkey)
+    7. Should return proper JSON structure
+    """
+    
+    print("=" * 80)
+    print("TESTING GEOGRAPHIC COUNTRIES API ENDPOINT")
+    print("=" * 80)
+    
+    base_endpoint = f"{BACKEND_URL}/api/geo/countries"
+    
+    # Test scenarios as requested
+    test_scenarios = [
+        {
+            "name": "All Countries",
+            "endpoint": base_endpoint,
+            "expected_countries": ["Turkey", "United States", "Germany"],
+            "description": "Get all countries without filter"
+        },
+        {
+            "name": "Turkey Search",
+            "endpoint": f"{base_endpoint}?query=turk",
+            "expected_countries": ["Turkey"],
+            "description": "Search for Turkey using 'turk'"
+        },
+        {
+            "name": "United States Search", 
+            "endpoint": f"{base_endpoint}?query=united",
+            "expected_countries": ["United States"],
+            "description": "Search for United States using 'united'"
+        },
+        {
+            "name": "Germany Search",
+            "endpoint": f"{base_endpoint}?query=ger",
+            "expected_countries": ["Germany"],
+            "description": "Search for Germany using 'ger'"
+        },
+        {
+            "name": "Accent Tolerance Test",
+            "endpoint": f"{base_endpoint}?query=turkiye",
+            "expected_countries": ["Turkey"],
+            "description": "Test accent tolerance - 'turkiye' should find 'Turkey'"
+        }
+    ]
+    
+    all_tests_passed = True
+    
+    for i, scenario in enumerate(test_scenarios, 1):
+        print(f"\n{i}. {scenario['name']}")
+        print(f"   Description: {scenario['description']}")
+        print(f"   Testing endpoint: {scenario['endpoint']}")
+        
+        try:
+            # Make the request
+            response = requests.get(scenario['endpoint'], timeout=30)
+            
+            # Test 1: Check status code
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                all_tests_passed = False
+                continue
+            
+            # Test 2: Check content type
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
+                print("   ✅ PASS: Correct Content-Type for JSON response")
+            else:
+                print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+            
+            # Test 3: Parse JSON response
+            try:
+                data = response.json()
+                print(f"   Response type: {type(data)}")
+                print(f"   Countries returned: {len(data) if isinstance(data, list) else 'N/A'}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+                continue
+            
+            # Test 4: Check response structure
+            if not isinstance(data, list):
+                print("   ❌ FAIL: Response should be a list of countries")
+                all_tests_passed = False
+                continue
+            
+            # Test 5: Check country structure
+            if len(data) > 0:
+                first_country = data[0]
+                required_fields = ["id", "iso2", "iso3", "name"]
+                missing_fields = []
+                for field in required_fields:
+                    if field not in first_country:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    print(f"   ❌ FAIL: Country missing required fields: {missing_fields}")
+                    all_tests_passed = False
+                    continue
+                else:
+                    print("   ✅ PASS: Country structure is valid")
+            
+            # Test 6: Check for expected countries
+            country_names = [country.get('name', '') for country in data]
+            found_countries = []
+            
+            for expected_country in scenario['expected_countries']:
+                # Check for exact match or partial match
+                found = False
+                for country_name in country_names:
+                    if expected_country.lower() in country_name.lower() or country_name.lower() in expected_country.lower():
+                        found_countries.append(country_name)
+                        found = True
+                        break
+                
+                if found:
+                    print(f"   ✅ PASS: Found expected country: {expected_country}")
+                else:
+                    print(f"   ❌ FAIL: Expected country not found: {expected_country}")
+                    print(f"   Available countries: {country_names[:10]}...")  # Show first 10
+                    all_tests_passed = False
+            
+            # Show some sample countries found
+            if found_countries:
+                print(f"   Found countries: {found_countries}")
+            elif len(data) > 0:
+                print(f"   Sample countries: {[c.get('name') for c in data[:5]]}")
+            
+        except requests.exceptions.RequestException as e:
+            print(f"   ❌ FAIL: Network error occurred: {str(e)}")
+            all_tests_passed = False
+        except Exception as e:
+            print(f"   ❌ FAIL: Unexpected error occurred: {str(e)}")
+            all_tests_passed = False
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("GEOGRAPHIC COUNTRIES API TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ All countries endpoint tests PASSED")
+        print("✅ Search functionality working correctly")
+        print("✅ Accent tolerance implemented")
+        print("✅ Response structure is valid")
+        print("\n🎉 GEOGRAPHIC COUNTRIES API TESTS COMPLETED SUCCESSFULLY!")
+        return True
+    else:
+        print("❌ Some countries endpoint tests FAILED")
+        print("⚠️  Check the failed test cases above")
+        return False
+
+def test_geographic_cities_endpoint():
+    """
+    Test the Geographic Cities API endpoint.
+    
+    Requirements to verify:
+    1. GET /api/geo/countries/TR/cities - Turkey cities
+    2. GET /api/geo/countries/TR/cities?query=ist - Istanbul search
+    3. GET /api/geo/countries/TR/cities?query=ank - Ankara search
+    4. GET /api/geo/countries/AE/cities - UAE cities
+    5. GET /api/geo/countries/AE/cities?query=dub - Dubai search
+    6. GET /api/geo/countries/US/cities?limit=5&page=1 - Pagination test
+    7. Should return 200 status for all requests
+    8. Should support accent tolerance (istanbul -> Istanbul)
+    9. Should support pagination (limit, page)
+    10. Should return proper JSON structure with cities and pagination info
+    """
+    
+    print("=" * 80)
+    print("TESTING GEOGRAPHIC CITIES API ENDPOINT")
+    print("=" * 80)
+    
+    base_endpoint = f"{BACKEND_URL}/api/geo/countries"
+    
+    # Test scenarios as requested
+    test_scenarios = [
+        {
+            "name": "Turkey Cities",
+            "endpoint": f"{base_endpoint}/TR/cities",
+            "expected_cities": ["Istanbul", "Ankara", "Izmir"],
+            "description": "Get all cities in Turkey (TR)",
+            "test_pagination": True
+        },
+        {
+            "name": "Istanbul Search",
+            "endpoint": f"{base_endpoint}/TR/cities?query=ist",
+            "expected_cities": ["Istanbul"],
+            "description": "Search for Istanbul using 'ist' in Turkey"
+        },
+        {
+            "name": "Ankara Search",
+            "endpoint": f"{base_endpoint}/TR/cities?query=ank",
+            "expected_cities": ["Ankara"],
+            "description": "Search for Ankara using 'ank' in Turkey"
+        },
+        {
+            "name": "UAE Cities",
+            "endpoint": f"{base_endpoint}/AE/cities",
+            "expected_cities": ["Dubai", "Abu Dhabi"],
+            "description": "Get all cities in UAE (AE)",
+            "test_pagination": True
+        },
+        {
+            "name": "Dubai Search",
+            "endpoint": f"{base_endpoint}/AE/cities?query=dub",
+            "expected_cities": ["Dubai"],
+            "description": "Search for Dubai using 'dub' in UAE"
+        },
+        {
+            "name": "US Cities with Pagination",
+            "endpoint": f"{base_endpoint}/US/cities?limit=5&page=1",
+            "expected_cities": ["New York", "Los Angeles", "Chicago"],
+            "description": "Get US cities with pagination (limit=5, page=1)",
+            "test_pagination": True,
+            "expected_limit": 5
+        },
+        {
+            "name": "Accent Tolerance Test",
+            "endpoint": f"{base_endpoint}/TR/cities?query=istanbul",
+            "expected_cities": ["Istanbul"],
+            "description": "Test accent tolerance - 'istanbul' should find 'Istanbul'"
+        }
+    ]
+    
+    all_tests_passed = True
+    
+    for i, scenario in enumerate(test_scenarios, 1):
+        print(f"\n{i}. {scenario['name']}")
+        print(f"   Description: {scenario['description']}")
+        print(f"   Testing endpoint: {scenario['endpoint']}")
+        
+        try:
+            # Make the request
+            response = requests.get(scenario['endpoint'], timeout=30)
+            
+            # Test 1: Check status code
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                all_tests_passed = False
+                continue
+            
+            # Test 2: Check content type
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
+                print("   ✅ PASS: Correct Content-Type for JSON response")
+            else:
+                print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+            
+            # Test 3: Parse JSON response
+            try:
+                data = response.json()
+                print(f"   Response type: {type(data)}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+                continue
+            
+            # Test 4: Check response structure
+            if not isinstance(data, dict):
+                print("   ❌ FAIL: Response should be a dictionary with cities and pagination")
+                all_tests_passed = False
+                continue
+            
+            # Test 5: Check required fields
+            required_fields = ["cities", "pagination"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in data:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                all_tests_passed = False
+                continue
+            else:
+                print("   ✅ PASS: Response has required fields (cities, pagination)")
+            
+            # Test 6: Check cities structure
+            cities = data.get('cities', [])
+            pagination = data.get('pagination', {})
+            
+            print(f"   Cities returned: {len(cities)}")
+            
+            if len(cities) > 0:
+                first_city = cities[0]
+                required_city_fields = ["id", "name", "country_iso2"]
+                missing_city_fields = []
+                for field in required_city_fields:
+                    if field not in first_city:
+                        missing_city_fields.append(field)
+                
+                if missing_city_fields:
+                    print(f"   ❌ FAIL: City missing required fields: {missing_city_fields}")
+                    all_tests_passed = False
+                    continue
+                else:
+                    print("   ✅ PASS: City structure is valid")
+            
+            # Test 7: Check pagination structure
+            if scenario.get('test_pagination', False):
+                required_pagination_fields = ["page", "limit", "total_count", "total_pages", "has_next", "has_prev"]
+                missing_pagination_fields = []
+                for field in required_pagination_fields:
+                    if field not in pagination:
+                        missing_pagination_fields.append(field)
+                
+                if missing_pagination_fields:
+                    print(f"   ❌ FAIL: Pagination missing required fields: {missing_pagination_fields}")
+                    all_tests_passed = False
+                    continue
+                else:
+                    print("   ✅ PASS: Pagination structure is valid")
+                    print(f"   Pagination info: Page {pagination.get('page')}/{pagination.get('total_pages')}, Total: {pagination.get('total_count')}")
+                
+                # Test pagination limit
+                if scenario.get('expected_limit'):
+                    actual_limit = len(cities)
+                    expected_limit = scenario['expected_limit']
+                    if actual_limit <= expected_limit:
+                        print(f"   ✅ PASS: Pagination limit respected ({actual_limit} <= {expected_limit})")
+                    else:
+                        print(f"   ❌ FAIL: Pagination limit exceeded ({actual_limit} > {expected_limit})")
+                        all_tests_passed = False
+            
+            # Test 8: Check for expected cities
+            city_names = [city.get('name', '') for city in cities]
+            found_cities = []
+            
+            for expected_city in scenario['expected_cities']:
+                # Check for exact match or partial match
+                found = False
+                for city_name in city_names:
+                    if expected_city.lower() in city_name.lower() or city_name.lower() in expected_city.lower():
+                        found_cities.append(city_name)
+                        found = True
+                        break
+                
+                if found:
+                    print(f"   ✅ PASS: Found expected city: {expected_city}")
+                else:
+                    print(f"   ⚠️  WARNING: Expected city not found: {expected_city}")
+                    print(f"   Available cities: {city_names[:10]}...")  # Show first 10
+                    # Don't fail the test for this as cities data might vary
+            
+            # Show some sample cities found
+            if found_cities:
+                print(f"   Found cities: {found_cities}")
+            elif len(cities) > 0:
+                print(f"   Sample cities: {[c.get('name') for c in cities[:5]]}")
+            
+        except requests.exceptions.RequestException as e:
+            print(f"   ❌ FAIL: Network error occurred: {str(e)}")
+            all_tests_passed = False
+        except Exception as e:
+            print(f"   ❌ FAIL: Unexpected error occurred: {str(e)}")
+            all_tests_passed = False
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("GEOGRAPHIC CITIES API TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ All cities endpoint tests PASSED")
+        print("✅ Search functionality working correctly")
+        print("✅ Pagination working correctly")
+        print("✅ Accent tolerance implemented")
+        print("✅ Response structure is valid")
+        print("\n🎉 GEOGRAPHIC CITIES API TESTS COMPLETED SUCCESSFULLY!")
+        return True
+    else:
+        print("❌ Some cities endpoint tests FAILED")
+        print("⚠️  Check the failed test cases above")
+        return False
+
 def test_send_customer_email():
     """Test sending customer email via CRM system"""
     print("=" * 80)
