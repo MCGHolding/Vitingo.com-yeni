@@ -49,6 +49,13 @@ export default function ActionMenuUserPopover({ user, onAction }) {
     ];
 
     // Add "Giriş" option only for super-admin and only if it's not their own account
+    console.log('ActionMenu Debug:', {
+      currentUserRole: currentUser?.role,
+      currentUserId: currentUser?.id,
+      targetUserId: user?.id,
+      shouldShowLogin: currentUser?.role === 'super-admin' && currentUser?.id !== user?.id
+    });
+
     if (currentUser?.role === 'super-admin' && currentUser?.id !== user?.id) {
       baseItems.push({
         icon: LogIn,
