@@ -2103,6 +2103,118 @@ async def get_cities_by_country(
         logger.error(f"Error getting cities for country {iso2}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Products/Services API Endpoints
+@api_router.get("/products")
+async def get_products(category: str = None, search: str = None, active_only: bool = True):
+    """Get products/services with optional filtering"""
+    try:
+        # Create filter
+        filter_query = {}
+        if active_only:
+            filter_query["is_active"] = True
+        if category:
+            filter_query["category"] = category
+        if search:
+            filter_query["$or"] = [
+                {"name": {"$regex": search, "$options": "i"}},
+                {"name_en": {"$regex": search, "$options": "i"}}
+            ]
+        
+        # Get products
+        products = await db.products.find(filter_query)\
+            .sort([("category", 1), ("name", 1)])\
+            .to_list(length=None)
+        
+        return [Product(**product) for product in products]
+        
+    except Exception as e:
+        logger.error(f"Error getting products: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/products")
+async def create_product(product: Product):
+    """Create a new product/service"""
+    try:
+        # Check if product already exists
+        existing = await db.products.find_one({"name": product.name})
+        if existing:
+            raise HTTPException(status_code=400, detail="Product with this name already exists")
+        
+        product_dict = product.dict()
+        result = await db.products.insert_one(product_dict)
+        
+        if result.inserted_id:
+            return {"success": True, "message": "Product created successfully", "product": product}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create product")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating product: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/products/{product_id}")
+async def get_product(product_id: str):
+    """Get a specific product"""
+    try:
+        product = await db.products.find_one({"id": product_id})
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return Product(**product)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/products/{product_id}")
+async def update_product(product_id: str, product: Product):
+    """Update a product"""
+    try:
+        # Update product
+        product_dict = product.dict()
+        product_dict.pop("id", None)  # Remove ID from update data
+        
+        result = await db.products.update_one(
+            {"id": product_id},
+            {"$set": product_dict}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return {"success": True, "message": "Product updated successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/products/{product_id}")
+async def delete_product(product_id: str):
+    """Delete (deactivate) a product"""
+    try:
+        # Soft delete - just mark as inactive
+        result = await db.products.update_one(
+            {"id": product_id},
+            {"$set": {"is_active": False}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return {"success": True, "message": "Product deactivated successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== END CUSTOMER ENDPOINTS =====================
 
 # Include the router in the main app
