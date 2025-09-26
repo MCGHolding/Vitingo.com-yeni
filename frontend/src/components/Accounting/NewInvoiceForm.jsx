@@ -70,6 +70,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [totals, setTotals] = useState({
     subtotal: 0,
