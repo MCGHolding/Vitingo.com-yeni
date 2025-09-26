@@ -96,12 +96,15 @@ export default function NewCustomerForm({ onClose, onSave }) {
   };
 
   const handleCountryChange = (countryCode) => {
+    // Update cities for selected country
     const cities = getCitiesForCountry(countryCode);
+    setAvailableCities(cities);
     
+    // Update form data
     setFormData(prev => ({
       ...prev,
       country: countryCode,
-      city: '', // Always reset city when country changes
+      city: '', // Reset city when country changes
       countryCode: countryCode
     }));
   };
