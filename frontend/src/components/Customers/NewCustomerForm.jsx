@@ -93,14 +93,8 @@ export default function NewCustomerForm({ onClose, onSave }) {
       if (formData.city && !cities.includes(formData.city)) {
         setFormData(prev => ({ ...prev, city: '' }));
       }
-      
-      // Update phone country code
-      const selectedCountry = availableCountries.find(c => c.code === formData.country);
-      if (selectedCountry) {
-        setFormData(prev => ({ ...prev, countryCode: formData.country }));
-      }
     }
-  }, [formData.country, availableCountries]);
+  }, [formData.country, formData.city]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
