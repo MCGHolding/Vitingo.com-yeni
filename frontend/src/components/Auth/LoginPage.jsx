@@ -56,7 +56,7 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemoCredentials = (role) => {
+  const fillDemoCredentials = async (role) => {
     const credentials = {
       super_admin: { username: 'murb', password: 'Murat2024!' },
       admin: { username: 'biry', password: 'Birtan2024!' },
@@ -69,6 +69,21 @@ export default function LoginPage() {
       username: cred.username,
       password: cred.password
     }));
+
+    // Auto-submit after filling credentials
+    setLoading(true);
+    setError('');
+
+    try {
+      const success = await login(cred.username, cred.password);
+      if (!success) {
+        setError('Geçersiz kullanıcı adı veya şifre');
+      }
+    } catch (err) {
+      setError(err.message || 'Giriş yapılırken bir hata oluştu');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
