@@ -397,25 +397,22 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                 <DollarSign className="inline h-4 w-4 mr-1" />
                 Para Birimi
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {currencies.slice(0, 3).map((currency) => (
-                  <button
-                    key={currency.code}
-                    type="button"
-                    onClick={() => handleCurrencyChange(currency.code)}
-                    className={`p-2 rounded-lg border-2 transition-all ${
-                      formData.currency === currency.code
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div className="text-sm font-bold">{currency.symbol}</div>
-                      <div className="text-xs">{currency.code}</div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <Select value={formData.currency} onValueChange={handleCurrencyChange}>
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Para birimi seçin" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map((currency) => (
+                    <SelectItem key={currency.code} value={currency.code}>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{currency.symbol}</span>
+                        <span>{currency.code}</span>
+                        <span className="text-gray-500">- {currency.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Date - Daraltılmış */}
