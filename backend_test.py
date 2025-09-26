@@ -2113,10 +2113,10 @@ def test_customer_deletion_with_related_records():
         return False
 
 def main():
-    """Run comprehensive Turkish customer CRUD tests as requested by user"""
-    print("🇹🇷 TÜRK MÜŞTERİ YÖNETİMİ BACKEND TESTLERİ")
+    """Run comprehensive backend tests including new customer email endpoint"""
+    print("🇹🇷 BACKEND API TESTLERİ - MÜŞTERİ YÖNETİMİ VE EMAIL SİSTEMİ")
     print("=" * 80)
-    print("Müşteri yönetimi backend işlemlerinin kapsamlı testi")
+    print("Backend API endpoint'lerinin kapsamlı testi")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
@@ -2126,6 +2126,7 @@ def main():
     print("3. GET /api/customers/{id} - Belirli müşteri getir")
     print("4. PUT /api/customers/{id} - Müşteri güncelle")
     print("5. DELETE /api/customers/{id} - Müşteri sil")
+    print("6. POST /api/send-customer-email - Müşteriye email gönder (YENİ ENDPOINT)")
     
     print("\n🔍 ÖZEL TEST SENARYOLARI:")
     print("• Türk müşteri verisi ile test (companyTitle, taxOffice, taxNumber alanları dahil)")
