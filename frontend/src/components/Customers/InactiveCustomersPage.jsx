@@ -5,7 +5,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../../hooks/use-toast';
 import { getPassiveCustomers, formatDate, getCustomerStatistics } from '../../utils/customerStatus';
 import { 
@@ -13,12 +12,10 @@ import {
   Filter, 
   Eye, 
   Edit, 
-  MoreHorizontal,
   Calendar,
   User,
   DollarSign,
   FileText,
-  X,
   UserX,
   Users,
   TrendingDown,
