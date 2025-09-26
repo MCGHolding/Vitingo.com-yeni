@@ -290,7 +290,11 @@ export default function NewCustomerForm({ onClose, onSave }) {
       country: 'TR',
       city: '',
       sector: '',
-      notes: ''
+      notes: '',
+      // Turkey-specific fields
+      companyTitle: '',
+      taxOffice: '',
+      taxNumber: ''
     });
     setPhoneCountryCode('TR');
     setSelectedImage(null);
