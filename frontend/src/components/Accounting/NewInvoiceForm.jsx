@@ -53,6 +53,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     invoiceNumber: '',
     currency: 'USD',
     date: new Date().toISOString().split('T')[0],
+    customerId: '', // Selected customer ID
     items: [
       { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
     ],
@@ -61,6 +62,13 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
     paymentTerm: '30'
   });
+
+  // Customer and Products state
+  const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   const [totals, setTotals] = useState({
     subtotal: 0,
