@@ -540,26 +540,19 @@ export default function NewCustomerForm({ onClose, onSave }) {
                     Yeni Kişi Ekle
                   </Button>
                 </div>
-                <Select value={formData.contactPersonId} onValueChange={(value) => handleInputChange('contactPersonId', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="İletişim kişisi seçiniz" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availablePeople.map((person) => (
-                      <SelectItem key={person.id} value={person.id.toString()}>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4" />
-                          <div className="flex flex-col">
-                            <span>{person.fullName}</span>
-                            {person.jobTitle && (
-                              <span className="text-xs text-gray-500">{person.jobTitle}</span>
-                            )}
-                          </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  options={availablePeople.map(person => ({
+                    id: person.id.toString(),
+                    label: person.fullName,
+                    sublabel: person.jobTitle || person.email,
+                    icon: User
+                  }))}
+                  value={formData.contactPersonId}
+                  onChange={(value) => handleInputChange('contactPersonId', value)}
+                  placeholder="İletişim kişisi ara ve seç..."
+                  searchPlaceholder="Kişi ara (isim, unvan)..."
+                  emptyMessage="Kişi bulunamadı"
+                />
               </div>
 
               {/* Phone */}
