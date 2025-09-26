@@ -1060,10 +1060,37 @@ def test_create_customer():
         print("   ✅ PASS: All field values match input data")
         print(f"   Created Customer ID: {customer_id}")
         print(f"   Company Name: {data.get('companyName')}")
+        print(f"   Contact Person: {data.get('contactPerson')}")
         print(f"   Email: {data.get('email')}")
         print(f"   Sector: {data.get('sector')}")
+        print(f"   Company Title (Turkish): {data.get('companyTitle')}")
+        print(f"   Tax Office (Turkish): {data.get('taxOffice')}")
+        print(f"   Tax Number (Turkish): {data.get('taxNumber')}")
         
-        print("\n✅ CREATE CUSTOMER TEST PASSED!")
+        # Test Turkish character handling
+        print("\n5. Testing Turkish character handling...")
+        turkish_fields = {
+            'companyName': data.get('companyName'),
+            'contactPerson': data.get('contactPerson'),
+            'address': data.get('address'),
+            'city': data.get('city'),
+            'notes': data.get('notes'),
+            'companyTitle': data.get('companyTitle'),
+            'taxOffice': data.get('taxOffice')
+        }
+        
+        turkish_chars_found = False
+        for field_name, field_value in turkish_fields.items():
+            if field_value and any(char in field_value for char in 'ğüşıöçĞÜŞİÖÇ'):
+                print(f"   ✅ PASS: Turkish characters preserved in {field_name}: {field_value}")
+                turkish_chars_found = True
+        
+        if turkish_chars_found:
+            print("   ✅ PASS: Turkish characters handled correctly")
+        else:
+            print("   ⚠️  WARNING: No Turkish characters found in response")
+        
+        print("\n✅ CREATE CUSTOMER WITH TURKISH DATA TEST PASSED!")
         return True, customer_id
         
     except requests.exceptions.RequestException as e:
