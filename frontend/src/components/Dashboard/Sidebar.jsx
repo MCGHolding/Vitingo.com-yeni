@@ -525,6 +525,42 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Brief menu actions
+    if (subItem && subItem.name === 'Yeni Brief') {
+      if (onNewBrief) {
+        onNewBrief();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Briefler') {
+      if (onAllBriefs) {
+        onAllBriefs();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Kapanmış') {
+      if (onClosedBriefs) {
+        onClosedBriefs();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Pasif') {
+      if (onPassiveBriefs) {
+        onPassiveBriefs();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Brief Talep Et') {
+      if (onRequestBrief) {
+        onRequestBrief();
+      }
+      return;
+    }
     
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
