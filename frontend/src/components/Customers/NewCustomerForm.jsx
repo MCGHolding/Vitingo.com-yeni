@@ -578,9 +578,51 @@ export default function NewCustomerForm({ onClose, onSave }) {
 
               {/* Sector */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Sektör
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-gray-700">
+                    Sektör
+                  </label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowNewSectorInput(true)}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Yeni Sektör Ekle
+                  </Button>
+                </div>
+                
+                {showNewSectorInput && (
+                  <div className="flex space-x-2 mb-2">
+                    <Input
+                      value={newSector}
+                      onChange={(e) => setNewSector(e.target.value)}
+                      placeholder="Yeni sektör adı"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleAddNewSector}
+                    >
+                      Ekle
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowNewSectorInput(false);
+                        setNewSector('');
+                      }}
+                    >
+                      İptal
+                    </Button>
+                  </div>
+                )}
+                
                 <Select value={formData.sector} onValueChange={(value) => handleInputChange('sector', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Sektör seçiniz" />
