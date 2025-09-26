@@ -1586,192 +1586,149 @@ def test_customer_validation_errors():
     return True
 
 def main():
-    """Run comprehensive customer CRUD tests as requested"""
-    print("Starting Customer CRUD Backend API Tests")
+    """Run comprehensive Turkish customer CRUD tests as requested by user"""
+    print("🇹🇷 TÜRK MÜŞTERİ YÖNETİMİ BACKEND TESTLERİ")
+    print("=" * 80)
+    print("Müşteri yönetimi backend işlemlerinin kapsamlı testi")
     print(f"Backend URL: {BACKEND_URL}")
-    print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("\n🎯 FOCUS: Testing customer CRUD operations to diagnose why new customers aren't appearing in the customer list")
+    print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    print("\n🎯 TEST EDİLECEK BACKEND ENDPOINTS:")
+    print("1. GET /api/customers - Tüm müşterileri getir")
+    print("2. POST /api/customers - Yeni müşteri oluştur (Türk müşteri verisi ile)")
+    print("3. GET /api/customers/{id} - Belirli müşteri getir")
+    print("4. PUT /api/customers/{id} - Müşteri güncelle")
+    print("5. DELETE /api/customers/{id} - Müşteri sil")
+    
+    print("\n🔍 ÖZEL TEST SENARYOLARI:")
+    print("• Türk müşteri verisi ile test (companyTitle, taxOffice, taxNumber alanları dahil)")
+    print("• Türkçe karakter desteği (ğüşıöç)")
+    print("• UUID field'ların doğru çalışması")
+    print("• Validation işlemleri")
+    print("• Error handling (404, validation errors)")
     
     # Test Customer CRUD endpoints with Turkish data (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("TESTING CUSTOMER CRUD ENDPOINTS WITH TURKISH DATA")
+    print("🇹🇷 TÜRK MÜŞTERİ CRUD ENDPOINT TESTLERİ")
     print("=" * 80)
     
     # 1. Test POST /api/customers with Turkish data
+    print("\n1️⃣ POST /api/customers - Yeni Türk müşteri oluşturma testi")
     create_customer_passed, created_customer_id = test_create_customer()
     
     # 2. Test Turkish-specific data scenarios
+    print("\n2️⃣ Türkçe veri senaryoları testi")
     turkish_data_passed, turkish_customer_ids = test_turkish_customer_data()
     
     # 3. Test GET /api/customers to verify customers are saved and retrievable
+    print("\n3️⃣ GET /api/customers - Tüm müşterileri getirme testi")
     get_all_customers_passed = test_get_all_customers()
     
     # 4. Test GET /api/customers/{id} for specific customer retrieval
+    print("\n4️⃣ GET /api/customers/{id} - Belirli müşteri getirme testi")
     get_specific_customer_passed = test_get_specific_customer(created_customer_id)
     
     # 5. Test PUT /api/customers/{id} for updates
+    print("\n5️⃣ PUT /api/customers/{id} - Müşteri güncelleme testi")
     update_customer_passed = test_update_customer(created_customer_id)
     
     # 6. Test error handling and validation
+    print("\n6️⃣ Error handling ve validation testleri")
     customer_validation_passed = test_customer_validation_errors()
     
     # 7. Test DELETE /api/customers/{id} (run last to clean up)
+    print("\n7️⃣ DELETE /api/customers/{id} - Müşteri silme testi")
     delete_customer_passed = test_delete_customer(created_customer_id)
     
     # Clean up Turkish test customers
     if turkish_customer_ids:
         print("\n" + "=" * 80)
-        print("CLEANING UP TURKISH TEST CUSTOMERS")
+        print("🧹 TÜRK TEST MÜŞTERİLERİNİ TEMİZLEME")
         print("=" * 80)
         for customer_id in turkish_customer_ids:
             if customer_id:
                 test_delete_customer(customer_id)
     
-    # Optional: Test other endpoints if time permits (not primary focus)
-    print("\n" + "=" * 80)
-    print("OPTIONAL: TESTING OTHER BACKEND ENDPOINTS")
-    print("=" * 80)
-    print("Note: These are not the primary focus but tested for completeness")
+    # Final Results Summary
+    print("\n" + "=" * 100)
+    print("📊 TÜRK MÜŞTERİ YÖNETİMİ TEST SONUÇLARI")
+    print("=" * 100)
     
-    # Test currency endpoints (existing functionality)
-    try:
-        currency_rates_test_passed = test_currency_rates_endpoint()
-        currency_conversion_test_passed = test_currency_conversion_endpoint()
-    except:
-        currency_rates_test_passed = False
-        currency_conversion_test_passed = False
-        print("⚠️  WARNING: Currency endpoints testing skipped due to errors")
+    # Primary focus results (Customer CRUD)
+    print("\n🎯 TÜRK MÜŞTERİ CRUD ENDPOINT SONUÇLARI:")
+    print(f"   1. POST /api/customers (Türk verisi ile oluşturma): {'✅ BAŞARILI' if create_customer_passed else '❌ BAŞARISIZ'}")
+    print(f"   2. Türkçe Veri Senaryoları: {'✅ BAŞARILI' if turkish_data_passed else '❌ BAŞARISIZ'}")
+    print(f"   3. GET /api/customers (Tümünü getir): {'✅ BAŞARILI' if get_all_customers_passed else '❌ BAŞARISIZ'}")
+    print(f"   4. GET /api/customers/{{id}} (Belirli müşteri): {'✅ BAŞARILI' if get_specific_customer_passed else '❌ BAŞARISIZ'}")
+    print(f"   5. PUT /api/customers/{{id}} (Güncelleme): {'✅ BAŞARILI' if update_customer_passed else '❌ BAŞARISIZ'}")
+    print(f"   6. DELETE /api/customers/{{id}} (Silme): {'✅ BAŞARILI' if delete_customer_passed else '❌ BAŞARISIZ'}")
+    print(f"   7. Error Handling & Validation: {'✅ BAŞARILI' if customer_validation_passed else '❌ BAŞARISIZ'}")
     
-    # Skip survey system tests as they're not the focus
-    survey_tests_passed = True  # Assume passed for summary
-    
-    # Final summary focused on customer CRUD
-    print("\n" + "=" * 80)
-    print("CUSTOMER CRUD TESTING RESULTS SUMMARY")
-    print("=" * 80)
-    print("🎯 PRIMARY FOCUS: Customer CRUD operations for diagnosing customer list issues")
-    
-    # Customer CRUD functionality results
-    print("\n--- CUSTOMER CRUD ENDPOINTS RESULTS ---")
-    
-    if create_customer_passed:
-        print("✅ 1. Create Customer with Turkish Data (POST /api/customers): PASSED")
-    else:
-        print("❌ 1. Create Customer with Turkish Data (POST /api/customers): FAILED")
-    
-    if turkish_data_passed:
-        print("✅ 2. Turkish Data Handling (Multiple scenarios): PASSED")
-    else:
-        print("❌ 2. Turkish Data Handling (Multiple scenarios): FAILED")
-    
-    if get_all_customers_passed:
-        print("✅ 3. Get All Customers (GET /api/customers): PASSED")
-    else:
-        print("❌ 3. Get All Customers (GET /api/customers): FAILED")
-    
-    if get_specific_customer_passed:
-        print("✅ 4. Get Specific Customer (GET /api/customers/{id}): PASSED")
-    else:
-        print("❌ 4. Get Specific Customer (GET /api/customers/{id}): FAILED")
-    
-    if update_customer_passed:
-        print("✅ 5. Update Customer (PUT /api/customers/{id}): PASSED")
-    else:
-        print("❌ 5. Update Customer (PUT /api/customers/{id}): FAILED")
-    
-    if customer_validation_passed:
-        print("✅ 6. Customer Validation & Error Handling: PASSED")
-    else:
-        print("❌ 6. Customer Validation & Error Handling: FAILED")
-    
-    if delete_customer_passed:
-        print("✅ 7. Delete Customer (DELETE /api/customers/{id}): PASSED")
-    else:
-        print("❌ 7. Delete Customer (DELETE /api/customers/{id}): FAILED")
-    
-    # Optional tests results (not primary focus)
-    print("\n--- OPTIONAL TESTS RESULTS (Not Primary Focus) ---")
-    
-    if currency_rates_test_passed:
-        print("✅ Currency Rates Endpoint: PASSED")
-    else:
-        print("⚠️  Currency Rates Endpoint: SKIPPED/FAILED (Not primary focus)")
-    
-    if currency_conversion_test_passed:
-        print("✅ Currency Conversion Endpoint: PASSED")
-    else:
-        print("⚠️  Currency Conversion Endpoint: SKIPPED/FAILED (Not primary focus)")
-    
-    # Calculate customer CRUD test results (PRIMARY FOCUS)
-    customer_tests = [
-        create_customer_passed,
-        turkish_data_passed,
-        get_all_customers_passed,
-        get_specific_customer_passed,
-        update_customer_passed,
-        customer_validation_passed,
-        delete_customer_passed
+    # Count primary test results
+    primary_tests = [
+        create_customer_passed, turkish_data_passed, get_all_customers_passed,
+        get_specific_customer_passed, update_customer_passed, delete_customer_passed,
+        customer_validation_passed
     ]
+    primary_passed = sum(primary_tests)
+    primary_total = len(primary_tests)
     
-    customer_tests_passed = all(customer_tests)
-    customer_tests_count = sum(customer_tests)
+    print(f"\n🎯 TÜRK MÜŞTERİ CRUD TEST SONUCU: {primary_passed}/{primary_total} BAŞARILI")
     
-    print(f"\n--- FINAL SUMMARY ---")
-    print(f"🎯 PRIMARY FOCUS - Customer CRUD Endpoints: {customer_tests_count}/{len(customer_tests)} tests passed")
+    # Diagnosis for customer management
+    print("\n" + "=" * 100)
+    print("🔍 TÜRK MÜŞTERİ YÖNETİMİ BACKEND ANALİZİ")
+    print("=" * 100)
     
-    if customer_tests_passed:
-        print("\n🎉 ALL CUSTOMER CRUD TESTS PASSED!")
-        print("✅ Customer backend endpoints are working correctly")
-        print("✅ Turkish data handling is working properly")
-        print("✅ Database integration is functional")
-        print("✅ JSON serialization is working correctly")
-        print("✅ UUID generation is working for customer IDs")
-        print("✅ All CRUD operations (Create, Read, Update, Delete) are functional")
+    if primary_passed == primary_total:
+        print("✅ BACKEND ANALİZİ: Tüm Türk müşteri CRUD işlemleri mükemmel çalışıyor!")
+        print("   • POST /api/customers başarıyla Türk müşteri verisi ile müşteri oluşturuyor")
+        print("   • GET /api/customers tüm müşterileri başarıyla getiriyor")
+        print("   • Türkçe karakterler (ğüşıöç) doğru şekilde korunuyor")
+        print("   • Türk-özel alanlar (companyTitle, taxOffice, taxNumber) düzgün çalışıyor")
+        print("   • Tüm CRUD işlemleri (Oluştur, Oku, Güncelle, Sil) doğru çalışıyor")
+        print("   • Error handling geçersiz istekler için çalışıyor")
+        print("   • JSON response formatı doğru")
+        print("   • UUID field'lar doğru çalışıyor")
+        print("   • Validation işlemleri çalışıyor")
         
-        print("\n📋 DIAGNOSIS RESULTS:")
-        print("✅ POST /api/customers - Creates customers successfully with Turkish data")
-        print("✅ GET /api/customers - Retrieves all customers including newly created ones")
-        print("✅ GET /api/customers/{id} - Retrieves specific customers by ID")
-        print("✅ PUT /api/customers/{id} - Updates customer data correctly")
-        print("✅ DELETE /api/customers/{id} - Deletes customers successfully")
-        print("✅ Turkish characters (ı, ğ, ü, ş, ç, ö) are handled correctly")
-        print("✅ Turkish-specific fields (companyTitle, taxOffice, taxNumber) are persisted")
-        print("✅ Error handling works for invalid data and non-existent IDs")
+        print("\n🎯 SONUÇ: Backend'de hiçbir problem yok!")
+        print("   Eğer müşteriler frontend listesinde görünmüyorsa, sorun muhtemelen:")
+        print("   1. Frontend doğru API endpoint'lerini çağırmıyor")
+        print("   2. Frontend environment variable sorunları (REACT_APP_BACKEND_URL)")
+        print("   3. Frontend-backend entegrasyon problemleri")
+        print("   4. Frontend state management veya rendering sorunları")
+        print("   5. Frontend mock data kullanıyor, API data'sı yerine")
         
-        print("\n🔍 CONCLUSION:")
-        print("The customer backend CRUD operations are working perfectly.")
-        print("If new customers aren't appearing in the frontend list, the issue is likely:")
-        print("1. Frontend not calling the correct API endpoints")
-        print("2. Frontend environment variable configuration issues")
-        print("3. Frontend-backend integration problems")
-        print("4. Frontend state management or rendering issues")
+        print("\n✅ BEKLENİLEN SONUÇLAR ELDE EDİLDİ:")
+        print("   • Tüm CRUD işlemlerinin başarılı olması ✅")
+        print("   • JSON response formatının doğru olması ✅")
+        print("   • Türkçe verilerin doğru şekilde kaydedilip getirilmesi ✅")
+        print("   • Error handling'in düzgün çalışması ✅")
         
-        return True
     else:
-        print(f"\n❌ CUSTOMER CRUD TESTS FAILED! ({customer_tests_count}/{len(customer_tests)} passed)")
-        print("❌ Customer backend endpoints have critical issues")
+        print("❌ BACKEND'DE SORUNLAR BULUNDU:")
+        if not create_customer_passed:
+            print("   • Müşteri oluşturma (POST) başarısız")
+        if not get_all_customers_passed:
+            print("   • Müşteri getirme (GET all) başarısız")
+        if not get_specific_customer_passed:
+            print("   • Belirli müşteri getirme (GET by ID) başarısız")
+        if not update_customer_passed:
+            print("   • Müşteri güncelleme (PUT) başarısız")
+        if not delete_customer_passed:
+            print("   • Müşteri silme (DELETE) başarısız")
+        if not turkish_data_passed:
+            print("   • Türkçe veri işleme başarısız")
+        if not customer_validation_passed:
+            print("   • Error handling ve validation başarısız")
         
-        # Detailed failure analysis
-        test_names = [
-            "Create Customer with Turkish Data",
-            "Turkish Data Handling",
-            "Get All Customers",
-            "Get Specific Customer",
-            "Update Customer",
-            "Customer Validation & Error Handling",
-            "Delete Customer"
-        ]
-        
-        print("\n📋 FAILED TESTS:")
-        for i, (test_passed, test_name) in enumerate(zip(customer_tests, test_names)):
-            if not test_passed:
-                print(f"❌ {i+1}. {test_name}")
-        
-        print("\n🔍 DIAGNOSIS:")
-        print("The customer backend has critical issues that need to be fixed before")
-        print("investigating frontend problems. Backend must work correctly first.")
-        
-        return False
+        print("\n🎯 ÖNERİ: Önce yukarıdaki backend sorunlarını çözün, sonra frontend'i araştırın")
+    
+    print(f"\nTest tamamlanma zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    # Return success status for primary tests
+    return primary_passed == primary_total
 
 if __name__ == "__main__":
     success = main()
