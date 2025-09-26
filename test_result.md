@@ -344,10 +344,23 @@ metadata:
   test_sequence: 4
   run_ui: false
 
+  - task: "Customer Form Submission Frontend Integration"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL FRONTEND ISSUE FOUND - Customer form submission functionality has a critical environment variable configuration error. TESTING RESULTS: ✅ Form Access: Successfully navigated to Müşteriler → Yeni Müşteri, form modal opens correctly ✅ Form Filling: All fields filled successfully (Şirket İsmi: 'Test Şirketi Ltd.', İlişki Tipi: 'Müşteri', E-posta: 'test@testfirma.com', Website: 'testfirma.com', Telefon: '532 555 1234') ✅ Form UI/UX: Form validation, field interactions, and modal behavior work perfectly ✅ Submit Button: Form submission triggers correctly, modal closes as expected ❌ CRITICAL ERROR: JavaScript error in console: 'TypeError: Cannot read properties of undefined (reading REACT_APP_BACKEND_URL)' at saveCustomer function (App.js:222). The frontend code tries to access import.meta.env.REACT_APP_BACKEND_URL but it's undefined, causing API call to fail. ❌ Backend Integration: No POST /api/customers request reaches backend due to undefined URL ❌ Customer Not Saved: Customer does not appear in customer list because API call never executes. ROOT CAUSE: Frontend environment variable REACT_APP_BACKEND_URL is not properly configured for import.meta.env access in production build. Backend endpoints are working (confirmed in logs), but frontend cannot reach them."
+
 test_plan:
   current_focus:
-    - "Customer CRUD Endpoints"
-  stuck_tasks: []
+    - "Customer Form Submission Frontend Integration"
+  stuck_tasks:
+    - "Customer Form Submission Frontend Integration"
   test_all: false
   test_priority: "high_first"
 
