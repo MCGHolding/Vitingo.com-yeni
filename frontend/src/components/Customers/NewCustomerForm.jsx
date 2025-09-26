@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -6,12 +6,19 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
+import { allPeople } from '../../mock/peopleData';
+import { getSortedCountries, getCitiesForCountry } from '../../data/countriesAndCities';
+import NewPersonForm from './NewPersonForm';
 import { 
   X,
   Building,
   Upload,
   Search,
-  MapPin
+  MapPin,
+  Plus,
+  User,
+  Phone,
+  Globe
 } from 'lucide-react';
 
 export default function NewCustomerForm({ onClose, onSave }) {
