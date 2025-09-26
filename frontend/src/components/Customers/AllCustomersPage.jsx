@@ -32,7 +32,7 @@ import {
 import { customerTagColors } from '../../mock/customersData';
 import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
-import EmailModal from '../UserManagement/EmailModal';
+import CustomerEmailModal from './CustomerEmailModal';
 
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ customer, onAction }) => {
