@@ -6,6 +6,8 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
+import CountrySelect from '../geo/CountrySelect';
+import CitySelect from '../geo/CitySelect';
 import { 
   X,
   UserRound,
@@ -16,7 +18,9 @@ import {
   ChevronDown,
   Calendar,
   Phone,
-  Mail
+  Mail,
+  Globe,
+  MapPin
 } from 'lucide-react';
 
 export default function NewPersonForm({ onClose, onSave }) {
