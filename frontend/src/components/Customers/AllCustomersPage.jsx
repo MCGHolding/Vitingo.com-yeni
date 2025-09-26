@@ -58,7 +58,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
   };
 
   const filteredCustomers = useMemo(() => {
-    let filtered = allCustomers;
+    let filtered = customers;
 
     // Search filter
     if (searchTerm) {
