@@ -36,6 +36,122 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('vitingo_admin_session');
       }
     }
+
+    // Save users data to localStorage for other components to use
+    const users = [
+      {
+        id: 1,
+        username: 'murb',
+        password: 'Murat2024!',
+        fullName: 'Murat Bucak',
+        email: 'murat.bucak@quattrostand.com',
+        role: 'super-admin',
+        department: 'Süper Admin',
+        avatar: null,
+        permissions: ['all']
+      },
+      {
+        id: 2,
+        username: 'tame',
+        password: 'Tamer2024!',
+        fullName: 'Tamer Erdim',
+        email: 'tamer.erdim@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 3,
+        username: 'batc',
+        password: 'Batuhan2024!',
+        fullName: 'Batuhan Cücük',
+        email: 'batuhan.cucuk@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 4,
+        username: 'vatd',
+        password: 'Vatan2024!',
+        fullName: 'Vatan Dalkılıç',
+        email: 'vatan.dalkilic@quattrostand.com',
+        role: 'user',
+        department: 'Müşteri Temsilcisi',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 5,
+        username: 'biry',
+        password: 'Birtan2024!',
+        fullName: 'Birtan Yılmaz',
+        email: 'birtan.yilmaz@quattrostand.com',
+        role: 'admin',
+        department: 'Admin',
+        avatar: null,
+        permissions: ['all']
+      },
+      {
+        id: 6,
+        username: 'beyn',
+        password: 'Beyza2024!',
+        fullName: 'Beyza Nur',
+        email: 'beyza.nur@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 7,
+        username: 'niyk',
+        password: 'Niyazi2024!',
+        fullName: 'Niyazi Karahan',
+        email: 'niyazi.karahan@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 8,
+        username: 'sukb',
+        password: 'Sukran2024!',
+        fullName: 'Şükran Bucak',
+        email: 'sukran.bucak@quattrostand.com',
+        role: 'user',
+        department: 'Muhasebe',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 9,
+        username: 'icla',
+        password: 'Iclal2024!',
+        fullName: 'İclal Aksu',
+        email: 'iclal.aksu@quattrostand.com',
+        role: 'user',
+        department: 'Tasarım',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      },
+      {
+        id: 10,
+        username: 'meha',
+        password: 'Mehmet2024!',
+        fullName: 'Mehmet Ağdaş',
+        email: 'info@noktafuar.com',
+        role: 'user',
+        department: 'Üretim Müdürü',
+        avatar: null,
+        permissions: ['read_own', 'write_own']
+      }
+    ];
+    localStorage.setItem('vitingo_users', JSON.stringify(users));
+    
     setLoading(false);
   }, []);
 
