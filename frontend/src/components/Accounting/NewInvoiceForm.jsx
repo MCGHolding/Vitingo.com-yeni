@@ -132,6 +132,48 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     });
   }, [formData.items, formData.vatRate, formData.discount]);
 
+  // Load customers and products on mount
+  useEffect(() => {
+    loadInitialData();
+  }, []);
+
+  const loadInitialData = async () => {
+    setIsLoadingData(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      // Load customers and products in parallel
+      const [customersResponse, productsResponse] = await Promise.all([
+        fetch(`${backendUrl}/api/customers`),
+        fetch(`${backendUrl}/api/products`)
+      ]);
+      
+      if (customersResponse.ok) {
+        const customerData = await customersResponse.json();
+        setCustomers(customerData);
+      }
+      
+      if (productsResponse.ok) {
+        const productData = await productsResponse.json();
+        setProducts(productData);
+      }
+      
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  const handleCustomerChange = (customerId) => {
+    const customer = customers.find(c => c.id === customerId);
+    setSelectedCustomer(customer);
+    setFormData(prev => ({
+      ...prev,
+      customerId: customerId
+    }));
+  };
+
   const handleCurrencyChange = (currency) => {
     setFormData(prev => ({
       ...prev,
