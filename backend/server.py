@@ -1734,6 +1734,96 @@ async def get_survey_analytics(customer_id: str = None):
             "error": str(e)
         }
 
+# ===================== CUSTOMER CRUD ENDPOINTS =====================
+
+@api_router.post("/customers", response_model=Customer)
+async def create_customer(customer_data: dict):
+    """Create a new customer"""
+    try:
+        # Convert dict to Customer model
+        customer = Customer(**customer_data)
+        customer_dict = customer.dict()
+        
+        # Insert to MongoDB
+        await db.customers.insert_one(customer_dict)
+        
+        logger.info(f"Customer created: {customer.id}")
+        return customer
+        
+    except Exception as e:
+        logger.error(f"Error creating customer: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/customers", response_model=List[Customer])
+async def get_customers():
+    """Get all customers"""
+    try:
+        customers = await db.customers.find().to_list(length=None)
+        return [Customer(**customer) for customer in customers]
+        
+    except Exception as e:
+        logger.error(f"Error getting customers: {str(e)}")
+        return []
+
+@api_router.get("/customers/{customer_id}", response_model=Customer)
+async def get_customer(customer_id: str):
+    """Get a specific customer"""
+    try:
+        customer = await db.customers.find_one({"id": customer_id})
+        
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+            
+        return Customer(**customer)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting customer {customer_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/customers/{customer_id}", response_model=Customer)
+async def update_customer(customer_id: str, customer_data: dict):
+    """Update a customer"""
+    try:
+        # Update in MongoDB
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$set": customer_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Customer not found")
+            
+        # Get updated customer
+        updated_customer = await db.customers.find_one({"id": customer_id})
+        return Customer(**updated_customer)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating customer {customer_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/customers/{customer_id}")
+async def delete_customer(customer_id: str):
+    """Delete a customer"""
+    try:
+        result = await db.customers.delete_one({"id": customer_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Customer not found")
+            
+        return {"success": True, "message": "Customer deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting customer {customer_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== END CUSTOMER ENDPOINTS =====================
+
 # Include the router in the main app
 app.include_router(api_router)
 
