@@ -400,6 +400,18 @@ test_plan:
         agent: "testing"
         comment: "✅ FRONTEND TESTED SUCCESSFULLY - Arbitrary email survey UI working perfectly: 1) 'Manuel E-posta' mode toggle button working correctly ✅ 2) Form displays 4 input fields: İletişim Kişisi Adı, E-posta Adresi, Şirket Adı, Proje/Fuar Adı ✅ 3) Successfully filled test data: Test User, test@example.com, Test Company, Test Project ✅ 4) 'Anket Özeti' preview section appears with green background ✅ 5) Preview displays entered data correctly (Alıcı: Test User, Email: test@example.com, Şirket: Test Company, Proje: Test Project) ✅ 6) Form validation working - send button enabled when required fields filled ✅ 7) Mode switching between customer and arbitrary modes working smoothly ✅"
 
+  - task: "Turkish Conditional Fields in New Customer Form"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "✅ TURKISH CONDITIONAL FIELDS IMPLEMENTED - Added conditional rendering of 3 Turkish-specific fields in NewCustomerForm.jsx: 1) Firma Unvanı (Company Title) - text input for company legal title ✅ 2) Vergi Dairesi (Tax Office) - dropdown with 30 Turkish tax offices sorted alphabetically ✅ 3) Vergi Numarası (Tax Number) - text input with 11-character limit ✅ 4) Fields only show when country='TR' (Türkiye) is selected ✅ 5) Backend Customer model updated to include companyTitle, taxOffice, taxNumber fields ✅ 6) Updated clearForm function to include Turkish fields ✅ 7) Ready for testing to verify conditional rendering and form submission with Turkish data"
+
 agent_communication:
   - agent: "main"
     message: "SURVEY SYSTEM ENHANCEMENTS COMPLETED ✅ Implemented both requested features for the survey system: 1) MULTI-PROJECT SELECTION: Enhanced SurveyManagementPage.jsx to allow selecting any project from customer's project history instead of just the latest one. Added project dropdown showing all available projects with dates, updated UI to show selected project details, and modified survey sending logic to use selected project. 2) ARBITRARY EMAIL SURVEYS: Added complete support for sending surveys to any email address with manual input. Created toggle between 'customer' and 'arbitrary' modes, added input fields for name/email/company/project, created new backend endpoint /api/surveys/send-arbitrary, updated survey token handling to support both modes. Backend restart completed to load new endpoints. Ready for comprehensive testing of both enhanced survey functionalities."
