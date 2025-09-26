@@ -186,6 +186,18 @@ class City(BaseModel):
     is_capital: bool = Field(default=False, description="Is this city a capital?")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Product/Service Model for Invoicing
+class Product(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str = Field(..., description="Product/Service name")
+    name_en: Optional[str] = Field("", description="Product name in English")
+    category: str = Field(default="service", description="Product category")
+    unit: str = Field(default="adet", description="Unit of measurement")
+    default_price: Optional[float] = Field(None, description="Default price")
+    currency: str = Field(default="TRY", description="Default currency")
+    is_active: bool = Field(default=True, description="Is product active")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
