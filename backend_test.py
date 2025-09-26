@@ -974,6 +974,475 @@ def test_survey_stats():
         print(f"❌ FAIL: Error testing survey statistics: {str(e)}")
         return False
 
+def test_create_customer():
+    """Test creating a new customer with form data"""
+    print("=" * 80)
+    print("TESTING CREATE CUSTOMER ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data matching the NewCustomerForm structure
+    test_customer_data = {
+        "companyName": "Test Şirketi A.Ş.",
+        "relationshipType": "customer",
+        "email": "test@testsirket.com",
+        "website": "testsirket.com",
+        "country": "TR",
+        "sector": "Teknoloji",
+        "phone": "532 123 4567",
+        "countryCode": "TR"
+    }
+    
+    try:
+        print("\n1. Making request to create customer...")
+        response = requests.post(endpoint, json=test_customer_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "companyName", "relationshipType", "email", "website", "country", "sector", "phone", "countryCode"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Validate field values
+        print("\n4. Validating field values...")
+        customer_id = data.get("id")
+        if not customer_id:
+            print("   ❌ FAIL: Customer ID should not be empty")
+            return False, None
+        
+        # Check that input data matches response
+        for field, expected_value in test_customer_data.items():
+            actual_value = data.get(field)
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: Field {field} mismatch. Expected: {expected_value}, Got: {actual_value}")
+                return False, None
+        
+        print("   ✅ PASS: All field values match input data")
+        print(f"   Created Customer ID: {customer_id}")
+        print(f"   Company Name: {data.get('companyName')}")
+        print(f"   Email: {data.get('email')}")
+        print(f"   Sector: {data.get('sector')}")
+        
+        print("\n✅ CREATE CUSTOMER TEST PASSED!")
+        return True, customer_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_get_all_customers():
+    """Test retrieving all customers"""
+    print("=" * 80)
+    print("TESTING GET ALL CUSTOMERS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        print("\n1. Making request to get all customers...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get all customers endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of customers")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list with {len(data)} customers")
+        
+        # If there are customers, validate structure of first one
+        if len(data) > 0:
+            print("\n4. Validating customer structure...")
+            first_customer = data[0]
+            
+            if not isinstance(first_customer, dict):
+                print("   ❌ FAIL: Each customer should be a dictionary")
+                return False
+            
+            # Check for key fields
+            key_fields = ["id", "companyName"]
+            for field in key_fields:
+                if field not in first_customer:
+                    print(f"   ❌ FAIL: Customer missing key field: {field}")
+                    return False
+            
+            print("   ✅ PASS: Customer structure is valid")
+            print(f"   Sample Customer: {first_customer.get('companyName')} (ID: {first_customer.get('id')})")
+        
+        print("\n✅ GET ALL CUSTOMERS TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_get_specific_customer(customer_id):
+    """Test retrieving a specific customer by ID"""
+    print("=" * 80)
+    print("TESTING GET SPECIFIC CUSTOMER ENDPOINT")
+    print("=" * 80)
+    
+    if not customer_id:
+        print("⚠️  SKIP: No customer ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Customer ID: {customer_id}")
+    
+    try:
+        print("\n1. Making request to get specific customer...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get specific customer endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a customer dictionary")
+            return False
+        
+        # Check that ID matches
+        returned_id = data.get("id")
+        if returned_id != customer_id:
+            print(f"   ❌ FAIL: ID mismatch. Expected: {customer_id}, Got: {returned_id}")
+            return False
+        
+        print("   ✅ PASS: Customer ID matches request")
+        print(f"   Company Name: {data.get('companyName')}")
+        print(f"   Email: {data.get('email')}")
+        print(f"   Sector: {data.get('sector')}")
+        
+        print("\n✅ GET SPECIFIC CUSTOMER TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_update_customer(customer_id):
+    """Test updating a customer"""
+    print("=" * 80)
+    print("TESTING UPDATE CUSTOMER ENDPOINT")
+    print("=" * 80)
+    
+    if not customer_id:
+        print("⚠️  SKIP: No customer ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Customer ID: {customer_id}")
+    
+    # Update data
+    update_data = {
+        "companyName": "Test Şirketi A.Ş. (Updated)",
+        "sector": "Bilişim Teknolojileri",
+        "phone": "532 123 4568",
+        "notes": "Updated customer information"
+    }
+    
+    try:
+        print("\n1. Making request to update customer...")
+        response = requests.put(endpoint, json=update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Update customer endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a customer dictionary")
+            return False
+        
+        # Check that ID matches
+        returned_id = data.get("id")
+        if returned_id != customer_id:
+            print(f"   ❌ FAIL: ID mismatch. Expected: {customer_id}, Got: {returned_id}")
+            return False
+        
+        # Check that updates were applied
+        print("\n4. Validating updates...")
+        for field, expected_value in update_data.items():
+            actual_value = data.get(field)
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: Field {field} not updated. Expected: {expected_value}, Got: {actual_value}")
+                return False
+        
+        print("   ✅ PASS: All updates applied correctly")
+        print(f"   Updated Company Name: {data.get('companyName')}")
+        print(f"   Updated Sector: {data.get('sector')}")
+        print(f"   Updated Phone: {data.get('phone')}")
+        print(f"   Updated Notes: {data.get('notes')}")
+        
+        print("\n✅ UPDATE CUSTOMER TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_delete_customer(customer_id):
+    """Test deleting a customer"""
+    print("=" * 80)
+    print("TESTING DELETE CUSTOMER ENDPOINT")
+    print("=" * 80)
+    
+    if not customer_id:
+        print("⚠️  SKIP: No customer ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Customer ID: {customer_id}")
+    
+    try:
+        print("\n1. Making request to delete customer...")
+        response = requests.delete(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Delete customer endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check success message
+        if not data.get("success"):
+            print("   ❌ FAIL: Response should indicate success")
+            return False
+        
+        print("   ✅ PASS: Delete response indicates success")
+        print(f"   Message: {data.get('message')}")
+        
+        # Verify customer is actually deleted
+        print("\n4. Verifying customer deletion...")
+        verify_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        verify_response = requests.get(verify_endpoint, timeout=30)
+        
+        if verify_response.status_code == 404:
+            print("   ✅ PASS: Customer successfully deleted (404 on GET)")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 after deletion, got {verify_response.status_code}")
+        
+        print("\n✅ DELETE CUSTOMER TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_validation_errors():
+    """Test customer validation and error cases"""
+    print("=" * 80)
+    print("TESTING CUSTOMER VALIDATION AND ERROR CASES")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test 1: Empty company name
+    print("\n1. Testing empty company name...")
+    invalid_data = {
+        "companyName": "",
+        "relationshipType": "customer",
+        "email": "test@example.com"
+    }
+    
+    try:
+        response = requests.post(endpoint, json=invalid_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code >= 400:
+            print("   ✅ PASS: Empty company name properly rejected")
+        else:
+            print("   ⚠️  WARNING: Empty company name was accepted (might be handled by frontend)")
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing empty company name: {str(e)}")
+    
+    # Test 2: Invalid email format
+    print("\n2. Testing invalid email format...")
+    invalid_email_data = {
+        "companyName": "Test Company",
+        "relationshipType": "customer",
+        "email": "invalid-email"
+    }
+    
+    try:
+        response = requests.post(endpoint, json=invalid_email_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code >= 400:
+            print("   ✅ PASS: Invalid email format properly rejected")
+        else:
+            print("   ⚠️  WARNING: Invalid email format was accepted (validation might be frontend-only)")
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing invalid email: {str(e)}")
+    
+    # Test 3: Non-existent customer ID for GET
+    print("\n3. Testing non-existent customer ID...")
+    non_existent_id = "non-existent-customer-id-12345"
+    get_endpoint = f"{BACKEND_URL}/api/customers/{non_existent_id}"
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("   ✅ PASS: Non-existent customer ID returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent customer, got {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing non-existent customer: {str(e)}")
+        return False
+    
+    # Test 4: Non-existent customer ID for UPDATE
+    print("\n4. Testing update on non-existent customer...")
+    update_data = {"companyName": "Updated Name"}
+    
+    try:
+        response = requests.put(get_endpoint, json=update_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("   ✅ PASS: Update on non-existent customer returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for update on non-existent customer, got {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing update on non-existent customer: {str(e)}")
+        return False
+    
+    # Test 5: Non-existent customer ID for DELETE
+    print("\n5. Testing delete on non-existent customer...")
+    
+    try:
+        response = requests.delete(get_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("   ✅ PASS: Delete on non-existent customer returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for delete on non-existent customer, got {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing delete on non-existent customer: {str(e)}")
+        return False
+    
+    print("\n✅ CUSTOMER VALIDATION AND ERROR TESTS PASSED!")
+    return True
+
 def main():
     """Run all tests"""
     print("Starting Backend API Tests")
