@@ -64,8 +64,10 @@ export default function NewCustomerForm({ onClose, onSave }) {
   // Separate state for phone country code to avoid conflicts
   const [phoneCountryCode, setPhoneCountryCode] = useState('TR');
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  // Logo management state  
+  const [logoUrl, setLogoUrl] = useState('');
+  const [logoFile, setLogoFile] = useState(null);
+  
   const [showPersonForm, setShowPersonForm] = useState(false);
   const [relationshipTypes, setRelationshipTypes] = useState([
     { value: 'potential_customer', label: 'Potansiyel Müşteri' },
