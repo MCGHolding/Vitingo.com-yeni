@@ -219,7 +219,8 @@ const Dashboard = () => {
 
   const saveCustomer = async (customerData) => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'https://crm-turk-portal.preview.emergentagent.com';
+      console.log('Saving customer to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`, {
         method: 'POST',
         headers: {
