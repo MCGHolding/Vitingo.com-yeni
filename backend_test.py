@@ -1454,6 +1454,18 @@ def main():
     regular_survey_token = None
     arbitrary_survey_token = None
     
+    # Test Customer CRUD endpoints (NEW FUNCTIONALITY)
+    print("\n" + "=" * 80)
+    print("TESTING CUSTOMER CRUD ENDPOINTS")
+    print("=" * 80)
+    
+    create_customer_passed, created_customer_id = test_create_customer()
+    get_all_customers_passed = test_get_all_customers()
+    get_specific_customer_passed = test_get_specific_customer(created_customer_id)
+    update_customer_passed = test_update_customer(created_customer_id)
+    delete_customer_passed = test_delete_customer(created_customer_id)
+    customer_validation_passed = test_customer_validation_errors()
+    
     # Test currency conversion endpoints (existing functionality)
     currency_rates_test_passed = test_currency_rates_endpoint()
     currency_conversion_test_passed = test_currency_conversion_endpoint()
