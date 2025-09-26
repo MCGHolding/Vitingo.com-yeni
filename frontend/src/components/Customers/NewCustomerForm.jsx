@@ -8,6 +8,7 @@ import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
 import { allPeople } from '../../mock/peopleData';
 import { getSortedCountries, getCitiesForCountry } from '../../data/countriesAndCities';
+import { customerTagColors } from '../../mock/customersData';
 import NewPersonForm from './NewPersonForm';
 import { 
   X,
@@ -18,7 +19,8 @@ import {
   Plus,
   User,
   Phone,
-  Globe
+  Globe,
+  Tag
 } from 'lucide-react';
 
 export default function NewCustomerForm({ onClose, onSave }) {
