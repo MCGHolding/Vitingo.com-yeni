@@ -448,11 +448,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <div className="space-y-1">
-                                <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[140px] truncate flex items-center space-x-2">
+                                <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[160px] truncate flex items-center space-x-2">
                                   <Building className="h-3 w-3 text-gray-400" />
                                   <span>{customer.companyName}</span>
                                 </div>
-                                <div className="text-xs text-gray-500 max-w-[140px] truncate flex items-center space-x-1">
+                                <div className="text-xs text-gray-500 max-w-[160px] truncate flex items-center space-x-1">
                                   <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                                   <span>{customer.country}</span>
                                 </div>
@@ -461,44 +461,14 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                             <TooltipContent>
                               <p className="text-xs">
                                 {customer.companyName}<br/>
+                                İletişim: {customer.contactPerson}<br/>
+                                Email: {customer.email}<br/>
                                 Müşteri: {formatDate(customer.customerSince)}<br/>
                                 Son aktivite: {formatDate(customer.lastActivity)}
                               </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px]">
-                              {customer.contactPerson.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium text-gray-900 text-xs max-w-[100px] truncate">
-                              {customer.contactPerson}
-                            </div>
-                            <div className="text-xs text-gray-500 max-w-[100px] truncate">
-                              {customer.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="font-medium text-gray-900 text-sm max-w-[100px] truncate">
-                          {customer.sector || 'Belirtilmemiş'}
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        {getRelationshipBadge(customer.relationshipType)}
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        {getCustomerStatusBadge(customer)}
                       </td>
                       
                       <td className="py-3 px-3">
@@ -509,6 +479,17 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                         </div>
                         <div className="text-xs text-gray-500">
                           {customer.totalOrders} sipariş
+                        </div>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="text-center">
+                          <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                            {customer.totalProjects || Math.floor(Math.random() * 15) + 1}
+                          </span>
+                          <div className="text-xs text-gray-500 mt-1">
+                            proje
+                          </div>
                         </div>
                       </td>
                       
@@ -563,23 +544,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                             </Tooltip>
                           </TooltipProvider>
 
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                                  onClick={() => handleAction('more', customer)}
-                                >
-                                  <MoreHorizontal className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Daha Fazla İşlem</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <ActionMenuPopover customer={customer} onAction={handleAction} />
                         </div>
                       </td>
                     </tr>
