@@ -38,9 +38,16 @@ export default function NewPersonForm({ onClose, onSave }) {
     emailType: 'is', // 'is' for work, 'kisisel' for personal
     email: '',
     website: '',
+    country: 'TR', // Default to Turkey
+    city: '',
+    address: '',
     additionalFields: {},
     specialDays: []
   });
+
+  // Geographic data state
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
