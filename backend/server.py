@@ -1868,14 +1868,63 @@ async def check_customer_can_delete(customer_id: str):
 
 @api_router.delete("/customers/{customer_id}")
 async def delete_customer(customer_id: str):
-    """Delete a customer"""
+    """Delete a customer (only if no related records exist)"""
     try:
+        # First check if customer can be deleted
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        
+        # Check for related records
+        related_records = []
+        
+        # Check for related invoices
+        invoices_count = await db.invoices.count_documents({"customer_id": customer_id})
+        if invoices_count > 0:
+            related_records.append(f"{invoices_count} Fatura")
+        
+        # Check for related quotes
+        quotes_count = await db.quotes.count_documents({"customer_id": customer_id})
+        if quotes_count > 0:
+            related_records.append(f"{quotes_count} Teklif")
+        
+        # Check for related opportunities
+        opportunities_count = await db.opportunities.count_documents({"customer_id": customer_id})
+        if opportunities_count > 0:
+            related_records.append(f"{opportunities_count} Satış Fırsatı")
+        
+        # Check for related projects
+        projects_count = await db.projects.count_documents({"customer_id": customer_id})
+        if projects_count > 0:
+            related_records.append(f"{projects_count} Proje")
+        
+        # Check for related surveys
+        surveys_count = await db.survey_invitations.count_documents({"customer_id": customer_id})
+        if surveys_count > 0:
+            related_records.append(f"{surveys_count} Anket")
+        
+        # Check for related handovers
+        handovers_count = await db.handovers.count_documents({"customer_id": customer_id})
+        if handovers_count > 0:
+            related_records.append(f"{handovers_count} Teslim")
+        
+        # If there are related records, prevent deletion
+        if related_records:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Müşteri silinemez. İlişkili kayıtlar: {', '.join(related_records)}"
+            )
+        
+        # No related records, safe to delete
         result = await db.customers.delete_one({"id": customer_id})
         
         if result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="Customer not found")
             
-        return {"success": True, "message": "Customer deleted successfully"}
+        return {
+            "success": True, 
+            "message": f"Müşteri '{customer.get('companyName', customer_id)}' başarıyla silindi"
+        }
         
     except HTTPException:
         raise
