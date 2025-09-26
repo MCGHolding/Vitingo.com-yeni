@@ -414,8 +414,8 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 </label>
                 <div className="flex items-center space-x-4">
                   <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-                    {imagePreview ? (
-                      <img src={imagePreview} alt="Logo" className="w-full h-full object-contain rounded-lg" />
+                    {logoUrl ? (
+                      <img src={logoUrl} alt="Logo" className="w-full h-full object-contain rounded-lg" />
                     ) : (
                       <Upload className="h-8 w-8 text-gray-400" />
                     )}
