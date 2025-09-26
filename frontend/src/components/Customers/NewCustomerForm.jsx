@@ -170,6 +170,36 @@ export default function NewCustomerForm({ onClose, onSave }) {
     }));
   };
 
+  // Tag management functions
+  const addTag = (tag) => {
+    const upperTag = tag.toUpperCase();
+    if (upperTag && !formData.tags.includes(upperTag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, upperTag]
+      }));
+      setTagInput('');
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleTagInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag(tagInput);
+    }
+  };
+
+  const getTagColor = (tag) => {
+    return customerTagColors[tag] || 'bg-gray-500 text-white';
+  };
+
   const handleAddNewRelationshipType = () => {
     if (newRelationshipType.trim()) {
       const newType = {
