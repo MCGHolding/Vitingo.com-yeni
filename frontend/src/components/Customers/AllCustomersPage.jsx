@@ -299,8 +299,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
         </div>
 
         {/* Filters */}
-        <Card>
-          <CardHeader>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white">
             <CardTitle className="text-lg flex items-center space-x-2">
               <Filter className="h-5 w-5" />
               <span>Filtreler ve Arama</span>
