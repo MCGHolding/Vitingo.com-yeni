@@ -414,24 +414,74 @@ export default function NewPersonForm({ onClose, onSave }) {
 
               {/* Company */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Şirket:
-                </label>
-                <div className="flex space-x-2">
-                  <Input
-                    value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
-                    placeholder=""
-                    className="flex-1"
-                  />
+                <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+                  <span>Şirket:</span>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
+                    onClick={() => setShowAddCompanyModal(true)}
+                    className="text-xs flex items-center space-x-1"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-3 w-3" />
+                    <span>Şirket Ekle</span>
                   </Button>
-                </div>
+                </label>
+                <Select 
+                  value={selectedCustomer?.id || ''} 
+                  onValueChange={handleCompanySelect}
+                  disabled={isLoadingCustomers}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={
+                      isLoadingCustomers 
+                        ? "Şirketler yükleniyor..." 
+                        : customers.length === 0 
+                          ? "Henüz şirket bulunmuyor" 
+                          : "Şirket seçiniz"
+                    } />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium">{customer.companyName}</span>
+                          <span className="text-xs text-gray-500 ml-2">
+                            {customer.city && customer.country ? `${customer.city}, ${customer.country}` : customer.country}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                    {customers.length === 0 && !isLoadingCustomers && (
+                      <SelectItem value="no-companies" disabled>
+                        <span className="text-gray-500 text-sm">Henüz şirket eklenmemiş</span>
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {/* Show selected company details */}
+                {selectedCustomer && (
+                  <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border">
+                    <div className="flex items-center justify-between">
+                      <span><strong>Seçili:</strong> {selectedCustomer.companyName}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCustomer(null);
+                          setFormData(prev => ({ ...prev, company: '' }));
+                        }}
+                        className="h-5 w-5 p-0 hover:bg-red-100"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    {selectedCustomer.sector && (
+                      <div className="text-xs text-gray-500">Sektör: {selectedCustomer.sector}</div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Phone */}
