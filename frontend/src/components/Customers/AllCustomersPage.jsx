@@ -416,7 +416,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                       }`}
                     >
                       <td className="py-3 px-3">
-                        <span className="font-medium text-blue-600 text-sm">#{customer.id}</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-medium">
+                            {String(index + 1).padStart(3, '0')}
+                          </div>
+                        </div>
                       </td>
                       
                       <td className="py-3 px-3">
