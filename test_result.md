@@ -154,6 +154,54 @@ backend:
         comment: "✅ TEMPLATE UPDATED & FIXED - Backend CSV template for fairs category successfully updated: 1) Removed fairMonth column completely ✅ 2) Updated sample data with 4 Turkish examples (İstanbul, Ankara, İzmir, Bursa) ✅ 3) Consistent YYYY-MM-DD date format for all dates ✅ 4) Fixed StreamingResponse to use BytesIO for proper download ✅ 5) All required fields (name, city, country) filled with valid data ✅ 6) Proper CSV structure ready for import ✅"
 
 frontend:
+  - task: "CountrySelect Component Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/geo/CountrySelect.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test CountrySelect component: searchable country selection (type-ahead), 'turk' search should find 'Turkey', default Turkey selection, clear (X) button functionality, 300ms debounce, loading states"
+
+  - task: "CitySelect Component Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/geo/CitySelect.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test CitySelect component: city loading after country selection, 'ist' search should find 'Istanbul', 'ank' search should find 'Ankara', pagination (load more cities), 300ms debounce, loading states, disabled when no country selected"
+
+  - task: "NewCustomerForm Geo Integration Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test NewCustomerForm geo integration: geo components working in new customer form, city clearing when country changes, geo data included in form submission, Turkey default selection, Turkish character tolerance"
+
+  - task: "NewPersonForm Geo Integration Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Customers/NewPersonForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test NewPersonForm geo integration: geo components working in new person form, address field functionality, country/city selection working properly, form submission including geo data"
+
   - task: "CSV Template Download Frontend Integration"
     implemented: true
     working: true
