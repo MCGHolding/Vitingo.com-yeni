@@ -49,6 +49,12 @@ export default function NewPersonForm({ onClose, onSave }) {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
 
+  // Company management state
+  const [customers, setCustomers] = useState([]);
+  const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [showMoreFields, setShowMoreFields] = useState(false);
