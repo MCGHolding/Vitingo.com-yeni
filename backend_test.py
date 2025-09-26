@@ -1645,43 +1645,49 @@ def main():
     # Skip survey system tests as they're not the focus
     survey_tests_passed = True  # Assume passed for summary
     
-    # Final summary
+    # Final summary focused on customer CRUD
     print("\n" + "=" * 80)
-    print("OVERALL TEST SUMMARY")
+    print("CUSTOMER CRUD TESTING RESULTS SUMMARY")
     print("=" * 80)
+    print("🎯 PRIMARY FOCUS: Customer CRUD operations for diagnosing customer list issues")
     
-    # Customer CRUD functionality
-    print("--- CUSTOMER CRUD ENDPOINTS RESULTS ---")
+    # Customer CRUD functionality results
+    print("\n--- CUSTOMER CRUD ENDPOINTS RESULTS ---")
     
     if create_customer_passed:
-        print("✅ Create Customer (POST): PASSED")
+        print("✅ 1. Create Customer with Turkish Data (POST /api/customers): PASSED")
     else:
-        print("❌ Create Customer (POST): FAILED")
+        print("❌ 1. Create Customer with Turkish Data (POST /api/customers): FAILED")
+    
+    if turkish_data_passed:
+        print("✅ 2. Turkish Data Handling (Multiple scenarios): PASSED")
+    else:
+        print("❌ 2. Turkish Data Handling (Multiple scenarios): FAILED")
     
     if get_all_customers_passed:
-        print("✅ Get All Customers (GET): PASSED")
+        print("✅ 3. Get All Customers (GET /api/customers): PASSED")
     else:
-        print("❌ Get All Customers (GET): FAILED")
+        print("❌ 3. Get All Customers (GET /api/customers): FAILED")
     
     if get_specific_customer_passed:
-        print("✅ Get Specific Customer (GET): PASSED")
+        print("✅ 4. Get Specific Customer (GET /api/customers/{id}): PASSED")
     else:
-        print("❌ Get Specific Customer (GET): FAILED")
+        print("❌ 4. Get Specific Customer (GET /api/customers/{id}): FAILED")
     
     if update_customer_passed:
-        print("✅ Update Customer (PUT): PASSED")
+        print("✅ 5. Update Customer (PUT /api/customers/{id}): PASSED")
     else:
-        print("❌ Update Customer (PUT): FAILED")
-    
-    if delete_customer_passed:
-        print("✅ Delete Customer (DELETE): PASSED")
-    else:
-        print("❌ Delete Customer (DELETE): FAILED")
+        print("❌ 5. Update Customer (PUT /api/customers/{id}): FAILED")
     
     if customer_validation_passed:
-        print("✅ Customer Validation & Error Handling: PASSED")
+        print("✅ 6. Customer Validation & Error Handling: PASSED")
     else:
-        print("❌ Customer Validation & Error Handling: FAILED")
+        print("❌ 6. Customer Validation & Error Handling: FAILED")
+    
+    if delete_customer_passed:
+        print("✅ 7. Delete Customer (DELETE /api/customers/{id}): PASSED")
+    else:
+        print("❌ 7. Delete Customer (DELETE /api/customers/{id}): FAILED")
     
     # Existing functionality
     print("\n--- EXISTING FUNCTIONALITY RESULTS ---")
