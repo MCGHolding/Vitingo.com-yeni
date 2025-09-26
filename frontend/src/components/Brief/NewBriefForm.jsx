@@ -316,14 +316,36 @@ export default function NewBriefForm({ onBackToDashboard }) {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Müşteri Şirket *
+                  Müşteri *
                 </label>
-                <Input
-                  value={formData.clientCompany}
-                  onChange={(e) => handleInputChange('clientCompany', e.target.value)}
-                  placeholder="Şirket adı"
-                  required
-                />
+                <Select value={formData.customerId} onValueChange={(value) => handleInputChange('customerId', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Müşteri seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map(customer => (
+                      <SelectItem key={customer.id} value={customer.id.toString()}>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex flex-col">
+                            <span className="font-medium">{customer.companyName}</span>
+                            <span className="text-xs text-gray-500">{customer.contactPerson}</span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedCustomer && (
+                  <div className="mt-2 text-sm text-gray-600 bg-blue-50 p-2 rounded">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="h-4 w-4 text-blue-500" />
+                      <span>{selectedCustomer.companyName}</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {selectedCustomer.sector} • {selectedCustomer.country}
+                    </div>
+                  </div>
+                )}
               </div>
               
               <div>
@@ -335,7 +357,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   onChange={(e) => handleInputChange('contactPerson', e.target.value)}
                   placeholder="Ad Soyad"
                   required
+                  disabled={!!formData.customerId}
+                  className={formData.customerId ? 'bg-gray-50' : ''}
                 />
+                {formData.customerId && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen müşteriden otomatik dolduruldu
+                  </p>
+                )}
               </div>
               
               <div>
@@ -347,7 +376,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="email@example.com"
+                  disabled={!!formData.customerId}
+                  className={formData.customerId ? 'bg-gray-50' : ''}
                 />
+                {formData.customerId && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen müşteriden otomatik dolduruldu
+                  </p>
+                )}
               </div>
               
               <div>
@@ -358,7 +394,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="0532 000 00 00"
+                  disabled={!!formData.customerId}
+                  className={formData.customerId ? 'bg-gray-50' : ''}
                 />
+                {formData.customerId && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen müşteriden otomatik dolduruldu
+                  </p>
+                )}
               </div>
               
               <div>
