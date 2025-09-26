@@ -112,392 +112,246 @@ export default function InactiveCustomersPage({ customers = [], onBackToDashboar
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            onClick={onBackToDashboard}
+            className="flex items-center space-x-2"
+          >
+            <TrendingDown className="h-4 w-4" />
+            <span>Dashboard'a Dön</span>
+          </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-3">
-              <UserX className="h-8 w-8 text-red-600" />
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
+              <UserX className="h-8 w-8 text-orange-500" />
               <span>Pasif Müşteriler</span>
             </h1>
-            <p className="text-gray-600 mt-1">Aktif olmayan ve yeniden kazanılması gereken müşteriler</p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={exportToExcel}
-              className="bg-green-600 hover:bg-green-700 px-6"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Excel Aktarım
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onBackToDashboard}
-              className="px-6"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Kapat
-            </Button>
+            <p className="text-gray-600 text-sm mt-1">
+              6 aydan uzun süredir fatura kesilmemiş müşteriler
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="px-6 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <UserX className="h-6 w-6 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pasif Müşteri</p>
-                  <p className="text-2xl font-bold text-gray-900">{inactiveCustomers.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <TrendingDown className="h-6 w-6 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Kayıp Gelir</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {(inactiveCustomers.reduce((sum, c) => sum + c.totalRevenue, 0) / 1000000).toFixed(1)}M
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-yellow-100 rounded-lg">
-                  <Calendar className="h-6 w-6 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Ort. Pasif Süre</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {Math.round(inactiveCustomers.reduce((sum, c) => {
-                      const inactiveMonths = (new Date() - new Date(c.inactiveSince)) / (1000 * 60 * 60 * 24 * 30);
-                      return sum + inactiveMonths;
-                    }, 0) / inactiveCustomers.length)} ay
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <DollarSign className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Potansiyel Değer</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {Math.round(inactiveCustomers.reduce((sum, c) => sum + c.totalRevenue, 0) / inactiveCustomers.length / 1000)}K
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Filtreler ve Arama</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Şirket, kişi, e-posta, notlar ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <UserX className="h-6 w-6 text-orange-600" />
               </div>
-
-              <div className="relative">
-                <Input
-                  placeholder="Tag ara (örn: TECH)..."
-                  value={tagSearch}
-                  onChange={(e) => setTagSearch(e.target.value)}
-                />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Pasif Müşteri</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.passive}</p>
               </div>
-
-              <Select value={sectorFilter} onValueChange={setSectorFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sektör filtrele" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tüm Sektörler</SelectItem>
-                  {Object.keys(sectorCounts).map((sector) => (
-                    <SelectItem key={sector} value={sector}>
-                      {sector} ({sectorCounts[sector]})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={countryFilter} onValueChange={setCountryFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Ülke filtrele" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tüm Ülkeler</SelectItem>
-                  {Object.keys(countryCounts).map((country) => (
-                    <SelectItem key={country} value={country}>
-                      {country} ({countryCounts[country]})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <Select value={relationshipFilter} onValueChange={setRelationshipFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="İlişki türü" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tüm İlişkiler</SelectItem>
-                  <SelectItem value="customer">Eski Müşteri</SelectItem>
-                  <SelectItem value="potential_customer">Potansiyel Müşteri</SelectItem>
-                  <SelectItem value="supplier">Eski Tedarikçi</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sırala" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="inactiveSince">Pasiflik Tarihine Göre</SelectItem>
-                  <SelectItem value="companyName">Şirket Adına Göre</SelectItem>
-                  <SelectItem value="revenue">Gelire Göre</SelectItem>
-                  <SelectItem value="lastActivity">Son Aktiviteye Göre</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
-                <span className="text-red-600 font-bold">{filteredCustomers.length}</span> pasif müşteri bulundu
-              </span>
-              {(searchTerm || tagSearch || sectorFilter !== 'all' || countryFilter !== 'all' || relationshipFilter !== 'all' || sortBy !== 'inactiveSince') && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Filtreleri Temizle
-                </Button>
-              )}
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Customers Table */}
-      <div className="px-6 pb-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Pasif Müşteri Listesi</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Şirket</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Sektör</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Pasif Süre</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCustomers.map((customer, index) => (
-                    <tr 
-                      key={customer.id}
-                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
-                      }`}
-                    >
-                      <td className="py-3 px-3">
-                        <span className="font-medium text-blue-600 text-sm">#{customer.id}</span>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="space-y-1">
-                                <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[120px] truncate">
-                                  {customer.companyName}
-                                </div>
-                                <div className="text-xs text-gray-500 max-w-[120px] truncate">
-                                  {customer.country}
-                                </div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs">
-                                {customer.companyName}<br/>
-                                Pasif: {formatDate(customer.inactiveSince)}<br/>
-                                Son aktivite: {formatDate(customer.lastActivity)}<br/>
-                                Not: {customer.notes}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="bg-gradient-to-r from-red-500 to-orange-600 text-white text-[10px]">
-                              {customer.contactPerson.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium text-gray-900 text-xs max-w-[100px] truncate">
-                              {customer.contactPerson}
-                            </div>
-                            <div className="text-xs text-gray-500 max-w-[100px] truncate">
-                              {customer.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="font-medium text-gray-900 text-sm max-w-[100px] truncate">
-                          {customer.sector || 'Belirtilmemiş'}
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        {getRelationshipBadge(customer.relationshipType)}
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="space-y-1">
-                          <div className="text-sm text-red-600 font-medium">
-                            {Math.round((new Date() - new Date(customer.inactiveSince)) / (1000 * 60 * 60 * 24 * 30))} ay
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {formatDate(customer.inactiveSince)}
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="flex flex-wrap gap-1 max-w-xs">
-                          {customer.tags && customer.tags.map((tag, tagIndex) => (
-                            <Badge
-                              key={tagIndex}
-                              className={`text-[9px] px-1 py-0.5 ${customerTagColors[tag] || 'bg-gray-500 text-white'} border-0`}
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </td>
-                      
-                      <td className="py-3 px-3 text-center">
-                        <div className="flex items-center justify-center space-x-1">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                                  onClick={() => handleView(customer)}
-                                >
-                                  <Eye className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Detayları Görüntüle</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
-                                  onClick={() => handleEdit(customer)}
-                                >
-                                  <Edit className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Düzenle</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                                  onClick={() => handleAction('reactivate', customer)}
-                                >
-                                  <MoreHorizontal className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Yeniden Aktifleştir</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Toplam Müşteri</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              </div>
             </div>
+          </CardContent>
+        </Card>
 
-            {filteredCustomers.length === 0 && (
-              <div className="text-center py-12">
-                <div className="mx-auto h-12 w-12 text-gray-400">
-                  <UserX className="h-12 w-12" />
-                </div>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">Pasif müşteri bulunamadı</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Arama kriterlerinize uygun pasif müşteri bulunmamaktadır.
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <User className="h-6 w-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Aktif Müşteri</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.active + stats.favorite}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <AlertCircle className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Pasiflik Oranı</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total > 0 ? Math.round((stats.passive / stats.total) * 100) : 0}%
                 </p>
               </div>
-            )}
+            </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Filters */}
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Müşteri ara..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* Sector Filter */}
+            <Select value={sectorFilter} onValueChange={setSectorFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sektör" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tüm Sektörler</SelectItem>
+                {uniqueSectors.map(sector => (
+                  <SelectItem key={sector} value={sector}>{sector}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Country Filter */}
+            <Select value={countryFilter} onValueChange={setCountryFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Ülke" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tüm Ülkeler</SelectItem>
+                {uniqueCountries.map(country => (
+                  <SelectItem key={country} value={country}>{country}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Sort */}
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sıralama" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monthsSinceLastInvoice">Pasiflik Süresi</SelectItem>
+                <SelectItem value="companyName">Şirket Adı</SelectItem>
+                <SelectItem value="totalRevenue">Toplam Ciro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Filter className="h-4 w-4" />
+              <span>{filteredCustomers.length} pasif müşteri bulundu</span>
+            </div>
+            {(searchTerm || sectorFilter !== 'all' || countryFilter !== 'all') && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSectorFilter('all');
+                  setCountryFilter('all');
+                }}
+              >
+                Filtreleri Temizle
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Customer List */}
+      <div className="space-y-4">
+        {filteredCustomers.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <UserX className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Pasif müşteri bulunamadı</h3>
+              <p className="text-gray-600">
+                {searchTerm || sectorFilter !== 'all' || countryFilter !== 'all'
+                  ? 'Arama kriterlerine uygun pasif müşteri yok'
+                  : 'Tüm müşterilerin fatura aktivitesi son 6 ay içinde'
+                }
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredCustomers.map(customer => (
+            <Card key={customer.id} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarFallback className="bg-orange-100 text-orange-700 font-semibold">
+                        {getInitials(customer.companyName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {customer.companyName}
+                        </h3>
+                        <Badge className={customer.statusInfo.color}>
+                          <Clock className="h-3 w-3 mr-1" />
+                          {customer.statusInfo.label}
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4" />
+                          <span>{customer.contactPerson || 'Belirsiz'}</span>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="h-4 w-4" />
+                          <span>Son fatura: {formatDate(customer.statusInfo.lastInvoiceDate)}</span>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <FileText className="h-4 w-4" />
+                          <span>{customer.statusInfo.invoiceCount} toplam fatura</span>
+                        </div>
+                      </div>
+
+                      {/* Status description */}
+                      <div className="mt-3 text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded">
+                        <AlertCircle className="h-3 w-3 inline mr-1" />
+                        {customer.statusInfo.description}
+                        {customer.statusInfo.monthsSinceLastInvoice > 12 && (
+                          <span className="text-red-600 font-medium"> • Kritik pasiflik!</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Button size="sm" variant="outline">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
