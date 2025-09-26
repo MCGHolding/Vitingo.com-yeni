@@ -90,7 +90,7 @@ const Dashboard = () => {
   useEffect(() => {
     const loadFairs = async () => {
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'https://crm-turk-portal.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/fairs`);
         
         if (response.ok) {
@@ -113,7 +113,8 @@ const Dashboard = () => {
   useEffect(() => {
     const loadCustomers = async () => {
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'https://crm-turk-portal.preview.emergentagent.com';
+        console.log('Loading customers from:', backendUrl);
         const response = await fetch(`${backendUrl}/api/customers`);
         
         if (response.ok) {
