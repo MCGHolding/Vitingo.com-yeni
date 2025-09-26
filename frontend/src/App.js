@@ -340,6 +340,27 @@ const Dashboard = () => {
     setCurrentView('purchase-approvals');
   };
 
+  // Brief handlers
+  const handleNewBrief = () => {
+    setCurrentView('new-brief');
+  };
+
+  const handleAllBriefs = () => {
+    setCurrentView('all-briefs');
+  };
+
+  const handleClosedBriefs = () => {
+    setCurrentView('closed-briefs');
+  };
+
+  const handlePassiveBriefs = () => {
+    setCurrentView('passive-briefs');
+  };
+
+  const handleRequestBrief = () => {
+    setCurrentView('request-brief');
+  };
+
   const handleBackToDashboard = () => {
     setCurrentView('dashboard');
   };
