@@ -444,11 +444,13 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <div className="space-y-1">
-                                <div className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[120px] truncate">
-                                  {customer.companyName}
+                                <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[140px] truncate flex items-center space-x-2">
+                                  <Building className="h-3 w-3 text-gray-400" />
+                                  <span>{customer.companyName}</span>
                                 </div>
-                                <div className="text-xs text-gray-500 max-w-[120px] truncate">
-                                  {customer.country}
+                                <div className="text-xs text-gray-500 max-w-[140px] truncate flex items-center space-x-1">
+                                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                                  <span>{customer.country}</span>
                                 </div>
                               </div>
                             </TooltipTrigger>
