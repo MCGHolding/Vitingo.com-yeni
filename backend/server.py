@@ -159,6 +159,10 @@ class Customer(BaseModel):
     totalOrders: int = 0
     totalRevenue: float = 0.0
     currency: str = "TRY"
+    # Turkish-specific fields
+    companyTitle: str = ""  # Firma Unvanı
+    taxOffice: str = ""     # Vergi Dairesi  
+    taxNumber: str = ""     # Vergi Numarası
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Add your routes to the router instead of directly to app
