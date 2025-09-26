@@ -246,7 +246,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Aktif Müşteri</p>
-                  <p className="text-2xl font-bold text-gray-900">{allCustomers.filter(c => c.status === 'active').length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{customers.filter(c => c.status === 'active').length}</p>
                 </div>
               </div>
             </CardContent>
