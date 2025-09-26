@@ -24,6 +24,7 @@ const Header = ({
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [selectedNotification, setSelectedNotification] = useState(null);
   const userMenuRef = useRef(null);
   const notificationRef = useRef(null);
 
