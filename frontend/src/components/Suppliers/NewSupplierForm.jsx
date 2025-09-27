@@ -489,7 +489,7 @@ const NewSupplierForm = ({ onClose }) => {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setShowAddCategoryModal(true)}
+                    onClick={handleAddCategoryModal}
                     className="px-3"
                   >
                     <Plus className="h-4 w-4" />
