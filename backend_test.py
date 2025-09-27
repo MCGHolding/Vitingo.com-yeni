@@ -4620,93 +4620,113 @@ def test_invoice_creation_422_validation_debug():
     return False
 
 def main():
-    """Run comprehensive backend tests focusing on Invoice Number Generation API"""
-    print("🧾 BACKEND API TESTLERİ - INVOICE NUMBER GENERATION")
+    """Run comprehensive backend tests focusing on Bank Email API"""
+    print("🏦 BACKEND API TESTLERİ - BANK EMAIL API")
     print("=" * 80)
-    print("Invoice Number Generation API endpoint testing - Critical user requirement")
+    print("Bank Email API endpoint testing - New email functionality")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    print("\n🎯 TESTING INVOICE NUMBER GENERATION:")
-    print("1. GET /api/invoices/next-number/USD - Should return USD-012025100001 format")
-    print("2. GET /api/invoices/next-number/EUR - Should return EURU-012025100001 format")
-    print("3. GET /api/invoices/next-number/TRY - Should return TL-012025100001 format")
-    print("4. GET /api/invoices/next-number/GBP - Should return GBP-012025100001 format")
-    print("5. GET /api/invoices/next-number/AED - Should return AED-012025100001 format")
+    print("\n🎯 TESTING BANK EMAIL API:")
+    print("1. POST /api/send-bank-email - Send bank details via email")
+    print("2. GET /api/banks - Load bank data for email sending")
+    print("3. Test single bank mode (Turkey)")
+    print("4. Test multiple banks mode (UAE)")
+    print("5. Test USA bank format")
+    print("6. Test error handling")
     
     print("\n🔍 VALIDATION REQUIREMENTS:")
-    print("🧾 Invoice Number Format:")
-    print("   • Correct currency prefix mapping (TRY→TL, EUR→EURU)")
-    print("   • Current month/year format (MM/YYYY)")
-    print("   • Sequential numbering starting at 100001")
-    print("   • 6-digit sequence numbers")
-    print("   • Pattern: {PREFIX}-{MMYYYY}{SEQUENCE}")
+    print("📧 Bank Email Features:")
+    print("   • Accept all required fields (to, subject, body, from_name, from_email, banks, mode)")
+    print("   • Support single bank and multiple banks scenarios")
+    print("   • SendGrid integration working (real email sending)")
+    print("   • Email records saved to bank_emails collection")
+    print("   • Support Turkey/UAE (SWIFT+IBAN) and USA (Routing+Account) formats")
+    print("   • Error handling for missing required fields")
     
     print("\n📋 EXPECTED RESULTS:")
-    print("   • Each currency returns correct prefix")
-    print("   • Month/year matches current date")
-    print("   • Sequence numbers are 6 digits")
-    print("   • Sequential numbering increments by 1")
-    print("   • Critical for user's invoice numbering system")
+    print("   • All bank email scenarios work correctly")
+    print("   • Real emails sent via SendGrid")
+    print("   • Email records tracked in database")
+    print("   • Users can send bank details instead of mailto: links")
     
-    # Test Invoice Number Generation (PRIMARY FOCUS)
+    all_tests_passed = True
+    
+    # Test Banks Endpoint
     print("\n" + "=" * 80)
-    print("🧾 INVOICE NUMBER GENERATION API TEST (CRITICAL)")
+    print("🏦 BANKS ENDPOINT TEST")
     print("=" * 80)
     
-    print("\n🧾 Testing invoice number generation for all currencies")
-    generation_result = test_invoice_number_generation()
+    print("\n🏦 Testing banks endpoint for data loading")
+    banks_result = test_banks_endpoint()
+    if not banks_result:
+        all_tests_passed = False
+    
+    # Test Bank Email API (PRIMARY FOCUS)
+    print("\n" + "=" * 80)
+    print("📧 BANK EMAIL API TEST (CRITICAL)")
+    print("=" * 80)
+    
+    print("\n📧 Testing bank email API for all scenarios")
+    bank_email_result = test_bank_email_endpoint()
+    if not bank_email_result:
+        all_tests_passed = False
     
     # Final Results Summary
     print("\n" + "=" * 100)
-    print("📊 INVOICE NUMBER GENERATION TEST RESULTS")
+    print("📊 BANK EMAIL API TEST RESULTS")
     print("=" * 100)
     
     # Primary focus results
-    print("\n🎯 INVOICE NUMBER GENERATION RESULTS:")
-    print(f"   1. Invoice Number Generation: {'✅ PASSED' if generation_result else '❌ FAILED'}")
+    print("\n🎯 BANK EMAIL API RESULTS:")
+    print(f"   1. Banks Endpoint: {'✅ PASSED' if banks_result else '❌ FAILED'}")
+    print(f"   2. Bank Email API: {'✅ PASSED' if bank_email_result else '❌ FAILED'}")
     
     # Analysis
     print("\n" + "=" * 100)
-    print("🔍 INVOICE NUMBER GENERATION ANALYSIS")
+    print("🔍 BANK EMAIL API ANALYSIS")
     print("=" * 100)
     
-    if generation_result:
-        print("✅ SUCCESS: Invoice number generation is working correctly!")
-        print("   • All currency prefixes mapped correctly")
-        print("   • Month/year format is accurate")
-        print("   • Sequential numbering implemented")
-        print("   • 6-digit sequence format working")
-        print("   • User's invoice numbering system is functional")
-        print("   • Each new invoice will increment sequence by 1")
+    if all_tests_passed:
+        print("✅ SUCCESS: Bank Email API is working correctly!")
+        print("   • Banks endpoint loads bank data successfully")
+        print("   • Bank email endpoint accepts all required fields")
+        print("   • Single bank mode working (Turkey)")
+        print("   • Multiple banks mode working (UAE)")
+        print("   • USA bank format supported")
+        print("   • SendGrid integration working")
+        print("   • Email records saved to database")
+        print("   • Error handling working correctly")
     else:
-        print("❌ FAILURE: Invoice number generation has issues!")
-        print("   • Check currency prefix mappings")
-        print("   • Verify month/year format")
-        print("   • Review sequence number generation")
-        print("   • Fix pattern format issues")
-        print("   • Critical for user's invoice system")
+        print("❌ FAILURE: Bank Email API has issues!")
+        print("   • Check banks endpoint functionality")
+        print("   • Verify bank email endpoint implementation")
+        print("   • Review SendGrid integration")
+        print("   • Fix error handling issues")
+        print("   • Critical for user's email functionality")
         
     print("\n" + "=" * 100)
-    print("🎯 INVOICE NUMBER GENERATION STATUS:")
+    print("🎯 BANK EMAIL API STATUS:")
     print("=" * 100)
     
-    if generation_result:
-        print("🎉 INVOICE NUMBER GENERATION API IS WORKING CORRECTLY!")
-        print("   The user's invoice numbering system meets all requirements:")
-        print("   • USD → USD-012025100001 format ✅")
-        print("   • EUR → EURU-012025100001 format ✅") 
-        print("   • TRY → TL-012025100001 format ✅")
-        print("   • GBP → GBP-012025100001 format ✅")
-        print("   • AED → AED-012025100001 format ✅")
-        print("   • Sequential numbering increments by 1 ✅")
+    if all_tests_passed:
+        print("🎉 BANK EMAIL API IS WORKING CORRECTLY!")
+        print("   The new Bank Email functionality meets all requirements:")
+        print("   • Single bank email sending ✅")
+        print("   • Multiple banks email sending ✅") 
+        print("   • Turkey/UAE SWIFT+IBAN format ✅")
+        print("   • USA Routing+Account format ✅")
+        print("   • SendGrid integration ✅")
+        print("   • Database tracking ✅")
+        print("   • Error handling ✅")
+        print("   • Users can now send real bank emails instead of mailto: links ✅")
     else:
-        print("❌ INVOICE NUMBER GENERATION NEEDS FIXES!")
+        print("❌ BANK EMAIL API NEEDS FIXES!")
         print("   Review the detailed error messages above")
         print("   Fix the failing test cases")
-        print("   This is critical for the user's invoice system")
+        print("   This is critical for the user's email system")
     
-    return generation_result
+    return all_tests_passed
 
 def test_banks_endpoint():
     """
