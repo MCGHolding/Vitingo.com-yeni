@@ -386,11 +386,11 @@ const NewSupplierForm = ({ onClose }) => {
               </div>
               
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Tebrikler, Tedarikçi Başarı ile Oluşturuldu!
+                Tebrikler, {createdSupplierInfo?.is_individual ? 'Bireysel ' : ''}Tedarikçi Başarı ile Oluşturuldu!
               </h2>
               
               <p className="text-gray-600 mb-6">
-                <strong>{createdSupplierInfo?.company_name}</strong> tedarikçisi başarıyla sisteme eklendi.
+                <strong>{createdSupplierInfo?.company_name}</strong> {createdSupplierInfo?.is_individual ? 'bireysel tedarikçi' : 'tedarikçi şirketi'} başarıyla sisteme eklendi.
               </p>
               
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
