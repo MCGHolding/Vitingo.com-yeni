@@ -233,16 +233,14 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   };
 
   const handleContactMail = (contact, supplier) => {
-    // For now, we'll use mailto: link. Later this can be replaced with a proper mail modal
-    const subject = `İletişim: ${supplier.company_short_name} - ${contact.full_name}`;
-    const body = `Merhaba ${contact.full_name},\n\n${supplier.company_short_name} ile ilgili görüşmek istiyorum.\n\nSaygılarımla,`;
-    const mailtoLink = `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    window.open(mailtoLink, '_blank');
-    
+    setShowContactEmailModal({ contact, supplier });
+  };
+
+  const handleEmailSent = async () => {
+    setShowContactEmailModal(null);
     toast({
-      title: "Mail",
-      description: "Email istemciniz açıldı",
+      title: "Başarılı",
+      description: "E-posta başarıyla gönderildi",
       variant: "default"
     });
   };
