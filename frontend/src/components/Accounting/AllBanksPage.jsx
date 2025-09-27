@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Building2, Edit, Trash2, Search, Globe, Share2, Mail } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import BankEmailModal from './BankEmailModal';
 
 const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [banks, setBanks] = useState([]);
