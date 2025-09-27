@@ -304,7 +304,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleDelete(bank.id, bank.bank_name)}
+                            onClick={() => handleDelete(bank)}
                             className="flex items-center space-x-1 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                           >
                             <Trash2 className="h-4 w-4" />
