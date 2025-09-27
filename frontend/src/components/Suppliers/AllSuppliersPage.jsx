@@ -654,7 +654,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
           contact={showContactEmailModal.contact}
           supplier={showContactEmailModal.supplier}
           onClose={() => setShowContactEmailModal(null)}
-          onEmailSent={handleEmailSent}
+          onSent={handleEmailSent}
         />
       )}
 
