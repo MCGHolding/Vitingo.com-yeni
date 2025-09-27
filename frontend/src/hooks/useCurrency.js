@@ -77,12 +77,35 @@ export const useCurrency = () => {
     })}`;
   };
 
+  const getCurrencyOptions = () => {
+    return [
+      { value: 'USD', label: 'USD - US Dollar' },
+      { value: 'EUR', label: 'EUR - Euro' },
+      { value: 'GBP', label: 'GBP - British Pound' },
+      { value: 'TRY', label: 'TRY - Turkish Lira' },
+      { value: 'AED', label: 'AED - UAE Dirham' }
+    ];
+  };
+
+  const getCurrencySymbol = (currency) => {
+    const symbols = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      TRY: '₺',
+      AED: 'د.إ'
+    };
+    return symbols[currency] || currency;
+  };
+
   return {
     rates,
     loading,
     error,
     convertFromTRY,
     formatCurrency,
+    getCurrencyOptions,
+    getCurrencySymbol,
     refreshRates: fetchRates
   };
 };
