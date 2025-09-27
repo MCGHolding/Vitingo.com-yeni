@@ -672,6 +672,9 @@ const Dashboard = () => {
       case 'all-banks':
         return <AllBanksPage onBackToDashboard={handleBackToDashboard} onNewBank={handleNewBank} onEditBank={handleEditBank} />;
 
+      case 'new-supplier':
+        return <NewSupplierForm onClose={handleBackToDashboard} />;
+
       case 'pending-approval':
         return (
           <div className="p-6">
