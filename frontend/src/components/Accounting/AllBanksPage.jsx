@@ -20,6 +20,11 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [shareMode, setShareMode] = useState('single'); // 'single' or 'country'
   const [bankToShare, setBankToShare] = useState(null);
   const [selectedShareCountry, setSelectedShareCountry] = useState('');
+  
+  // Email modal state
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailBanks, setEmailBanks] = useState([]);
+  const [emailMode, setEmailMode] = useState('single'); // 'single' or 'country'
 
   const countries = [
     { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
