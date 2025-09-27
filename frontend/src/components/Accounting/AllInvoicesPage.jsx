@@ -17,6 +17,7 @@ import {
 const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
     currency: 'all',
@@ -25,8 +26,41 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
     dateTo: ''
   });
 
-  // Mock data for demo - In real app, this would come from backend
-  const mockInvoices = [
+  // Load invoices from backend
+  const loadInvoices = async () => {
+    setIsLoading(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices`);
+      
+      if (response.ok) {
+        const invoiceData = await response.json();
+        console.log('Loaded invoices:', invoiceData);
+        setInvoices(invoiceData);
+      } else {
+        console.error('Failed to load invoices:', response.statusText);
+        // Fallback to empty array
+        setInvoices([]);
+      }
+    } catch (error) {
+      console.error('Error loading invoices:', error);
+      // Fallback to empty array
+      setInvoices([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load invoices on component mount
+  useEffect(() => {
+    loadInvoices();
+  }, []);
+
+  // Auto-refresh invoices every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(loadInvoices, 30000);
+    return () => clearInterval(interval);
+  }, []);
     {
       id: 1,
       invoiceNumber: 'USD-092025001001',
