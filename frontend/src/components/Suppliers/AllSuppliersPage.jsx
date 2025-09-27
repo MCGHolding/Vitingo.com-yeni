@@ -26,7 +26,8 @@ import {
   UserX,
   Star,
   Ban,
-  MessageSquare
+  MessageSquare,
+  UserCheck
 } from 'lucide-react';
 
 // ActionMenuPopover Component for Suppliers
