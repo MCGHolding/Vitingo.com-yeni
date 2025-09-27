@@ -2741,6 +2741,10 @@ class Supplier(BaseModel):
     account_holder_name: Optional[str] = ""
     swift_code: Optional[str] = ""
     country: Optional[str] = ""
+    # USA Bank Information
+    routing_number: Optional[str] = ""
+    us_account_number: Optional[str] = ""
+    bank_address: Optional[str] = ""
     status: str = "active"  # active, passive, blacklist
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
