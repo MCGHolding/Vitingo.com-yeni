@@ -3143,6 +3143,7 @@ def test_invoice_api_endpoints():
         "vat_rate": 20.0,
         "vat_amount": 3700.0,
         "discount": 5.0,
+        "discount_type": "percentage",
         "discount_amount": 925.0,
         "total": 21275.0,
         "conditions": "Ödeme vadesi 30 gündür. Geç ödemeler için %2 faiz uygulanır.",
