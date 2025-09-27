@@ -414,7 +414,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                         <Button size="sm" variant="outline" onClick={() => handleEditSupplier(supplier)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <div className="relative">
+                        <div className="relative z-50">
                           <Button
                             size="sm"
                             variant="outline"
