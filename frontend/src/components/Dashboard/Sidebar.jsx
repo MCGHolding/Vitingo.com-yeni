@@ -270,11 +270,8 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null) => {
-    console.log('handleMenuClick called:', item.name, 'hasSubmenu:', item.hasSubmenu, 'subItem:', subItem);
-    
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
-      console.log('Toggling submenu for:', item.name);
       toggleSubmenu(item.name);
       return;
     }
