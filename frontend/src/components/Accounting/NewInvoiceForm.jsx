@@ -243,12 +243,6 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     return qty * price;
   };
 
-  const handleCurrencyChange = (currency) => {
-    setFormData(prev => ({
-      ...prev,
-      currency
-    }));
-  };
 
   const handleDateChange = (date) => {
     // Validate date (cannot be from previous year)
