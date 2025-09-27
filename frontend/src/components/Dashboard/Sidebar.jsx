@@ -264,6 +264,7 @@ export default function Sidebar({
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
   const toggleSubmenu = (itemName) => {
+    console.log('toggleSubmenu called for:', itemName, 'current openSubmenu:', openSubmenu);
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
   };
 
