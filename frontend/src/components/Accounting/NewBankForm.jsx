@@ -274,7 +274,11 @@ const NewBankForm = ({ onBackToDashboard }) => {
               <Input
                 value={formData.bankName}
                 onChange={(e) => handleInputChange('bankName', e.target.value)}
-                placeholder="Örn: Garanti BBVA"
+                placeholder={
+                  formData.country === 'Turkey' ? 'Örn: Garanti BBVA' :
+                  formData.country === 'UAE' ? 'Örn: Emirates Islamic Bank' :
+                  formData.country === 'USA' ? 'Örn: Chase Bank' : 'Banka adını giriniz'
+                }
                 className="w-full"
                 required
               />
@@ -290,7 +294,9 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.swiftCode}
                     onChange={(e) => handleInputChange('swiftCode', e.target.value)}
-                    placeholder="Örn: TGBATRIS"
+                    placeholder={
+                      formData.country === 'Turkey' ? 'Örn: TGBATRIS' : 'Örn: EIBKAEADXXX'
+                    }
                     className="w-full"
                     required
                   />
@@ -301,11 +307,21 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   </label>
                   <Input
                     value={formData.iban}
-                    onChange={(e) => handleInputChange('iban', e.target.value)}
-                    placeholder="Örn: TR32 0006 2000 0000 0006 2958 16"
+                    onChange={(e) => handleIBANChange(e.target.value)}
+                    placeholder={
+                      formData.country === 'Turkey' ? 
+                      'Örn: TR32 0006 2000 0000 0006 2958 16' : 
+                      'Örn: AE07 0331 2345 6789 0123 456'
+                    }
                     className="w-full"
                     required
                   />
+                  {ibanError && (
+                    <p className="text-xs text-red-600 mt-1">{ibanError}</p>
+                  )}
+                  {!ibanError && formData.country === 'Turkey' && (
+                    <p className="text-xs text-gray-500 mt-1">Lütfen örneğe uygun şekilde giriş yapınız</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
