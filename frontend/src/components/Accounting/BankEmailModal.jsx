@@ -224,17 +224,24 @@ Finans Departmanı`
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                {mode === 'single' ? <Building2 className="h-5 w-5 text-blue-600" /> : <Globe className="h-5 w-5 text-blue-600" />}
+              <div className={`p-2 rounded-lg ${emailSent ? 'bg-green-100' : 'bg-blue-100'}`}>
+                {emailSent ? (
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                ) : (
+                  mode === 'single' ? <Building2 className="h-5 w-5 text-blue-600" /> : <Globe className="h-5 w-5 text-blue-600" />
+                )}
               </div>
               <div>
                 <CardTitle className="text-xl">
-                  {mode === 'single' ? 'Banka Bilgisi Gönder' : 'Ülke Bankalarını Gönder'}
+                  {emailSent ? 'Email Gönderildi!' : (mode === 'single' ? 'Banka Bilgisi Gönder' : 'Ülke Bankalarını Gönder')}
                 </CardTitle>
                 <p className="text-sm text-gray-500 mt-1">
-                  {mode === 'single' 
-                    ? `${banks[0]?.bank_name} banka bilgilerini email ile gönderin`
-                    : `${banks[0]?.country} ülkesine ait ${banks.length} banka bilgisini email ile gönderin`
+                  {emailSent 
+                    ? `${sentEmailInfo?.to || ''} adresine email başarıyla gönderildi`
+                    : (mode === 'single' 
+                      ? `${banks[0]?.bank_name} banka bilgilerini email ile gönderin`
+                      : `${banks[0]?.country} ülkesine ait ${banks.length} banka bilgisini email ile gönderin`
+                    )
                   }
                 </p>
               </div>
