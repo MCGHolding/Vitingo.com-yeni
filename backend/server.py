@@ -2764,6 +2764,107 @@ async def send_bank_email(request: BankEmailRequest):
             "error": str(e)
         }
 
+# ===================== SUPPLIER MANAGEMENT MODELS =====================
+
+class SupplierCategory(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # Tedarikçi, Usta, 3D Tasarımcı, Grafik Tasarımcı, Yazılımcı, Partner
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SupplierSpecialty(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    category_id: str  # Which SupplierCategory this belongs to
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Supplier(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_short_name: str
+    company_title: str
+    address: Optional[str] = ""
+    phone: Optional[str] = ""
+    mobile: Optional[str] = ""
+    email: Optional[str] = ""
+    tax_office: Optional[str] = ""
+    tax_number: Optional[str] = ""
+    services: List[str] = []  # Array of service tags (etiket sistemi)
+    supplier_type_id: str  # Reference to SupplierCategory
+    specialty_id: str  # Reference to SupplierSpecialty
+    status: str = "active"  # active, passive, blacklist
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SupplierContact(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    supplier_id: str  # Reference to Supplier
+    full_name: str
+    mobile: Optional[str] = ""
+    email: Optional[str] = ""
+    position: Optional[str] = ""  # Görevi
+    tags: List[str] = []  # Array of tags (etiket sistemi)
+    notes: Optional[str] = ""  # Additional notes
+    unique_url_key: str = Field(default_factory=lambda: str(uuid.uuid4()).replace('-', ''))  # For unique page URL
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Create/Update Models for API
+class SupplierCategoryCreate(BaseModel):
+    name: str
+
+class SupplierSpecialtyCreate(BaseModel):
+    name: str
+    category_id: str
+
+class SupplierCreate(BaseModel):
+    company_short_name: str
+    company_title: str
+    address: Optional[str] = ""
+    phone: Optional[str] = ""
+    mobile: Optional[str] = ""
+    email: Optional[str] = ""
+    tax_office: Optional[str] = ""
+    tax_number: Optional[str] = ""
+    services: List[str] = []
+    supplier_type_id: str
+    specialty_id: str
+
+class SupplierContactCreate(BaseModel):
+    supplier_id: str
+    full_name: str
+    mobile: Optional[str] = ""
+    email: Optional[str] = ""
+    position: Optional[str] = ""
+    tags: List[str] = []
+    notes: Optional[str] = ""
+
+class SupplierUpdate(BaseModel):
+    company_short_name: Optional[str] = None
+    company_title: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    mobile: Optional[str] = None
+    email: Optional[str] = None
+    tax_office: Optional[str] = None
+    tax_number: Optional[str] = None
+    services: Optional[List[str]] = None
+    supplier_type_id: Optional[str] = None
+    specialty_id: Optional[str] = None
+    status: Optional[str] = None
+
+class SupplierContactUpdate(BaseModel):
+    full_name: Optional[str] = None
+    mobile: Optional[str] = None
+    email: Optional[str] = None
+    position: Optional[str] = None
+    tags: Optional[List[str]] = None
+    notes: Optional[str] = None
+    is_active: Optional[bool] = None
+
 # Include the router in the main app
 app.include_router(api_router)
 
