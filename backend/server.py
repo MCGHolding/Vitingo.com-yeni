@@ -2704,6 +2704,66 @@ async def add_country(country_data: dict):
         logger.error(f"Error adding country: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error adding country: {str(e)}")
 
+# ===================== BANK EMAIL ENDPOINTS =====================
+
+class BankEmailRequest(BaseModel):
+    to: str
+    cc: Optional[str] = ""
+    bcc: Optional[str] = ""
+    subject: str
+    body: str
+    from_name: str
+    from_email: str
+    to_name: str
+    banks: List[Dict]
+    mode: str  # 'single' or 'group'
+    attachments: Optional[List[Dict]] = []
+
+@api_router.post("/send-bank-email")
+async def send_bank_email(request: BankEmailRequest):
+    """Send bank details via email using SendGrid"""
+    try:
+        result = email_service.send_user_email(
+            to_email=request.to,
+            to_name=request.to_name,
+            from_email=request.from_email,
+            from_name=request.from_name,
+            subject=request.subject,
+            body=request.body,
+            cc=request.cc,
+            bcc=request.bcc,
+            attachments=request.attachments
+        )
+        
+        # Save email to bank_emails collection for tracking
+        email_record = {
+            "id": str(uuid.uuid4()),
+            "from": request.from_email,
+            "from_name": request.from_name,
+            "to": request.to,
+            "to_name": request.to_name,
+            "cc": request.cc,
+            "bcc": request.bcc,
+            "subject": request.subject,
+            "body": request.body,
+            "banks": request.banks,
+            "mode": request.mode,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "sent" if result.get("success") else "failed",
+            "attachments": len(request.attachments) if request.attachments else 0,
+            "sendgrid_message_id": result.get("message_id")
+        }
+        
+        await db.bank_emails.insert_one(email_record)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error sending bank email: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 # Include the router in the main app
 app.include_router(api_router)
 
