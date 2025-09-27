@@ -417,6 +417,15 @@ const Dashboard = () => {
     // Store bank data for editing if needed
   };
 
+  // Supplier handlers
+  const handleNewSupplier = () => {
+    setCurrentView('new-supplier');
+  };
+
+  const handleAllSuppliers = () => {
+    setCurrentView('all-suppliers');
+  };
+
   // Brief handlers
   const handleNewBrief = () => {
     setCurrentView('new-brief');
