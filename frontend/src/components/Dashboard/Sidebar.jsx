@@ -544,12 +544,7 @@ export default function Sidebar({
       return;
     }
 
-    if (subItem && subItem.name === 'Gider Makbuzu') {
-      if (onExpenseReceipt) {
-        onExpenseReceipt();
-      }
-      return;
-    }
+    // Gider Makbuzu nested submenu handling moved below
 
     if (subItem && subItem.name === 'Ödeme Talepleri') {
       if (onPaymentRequests) {
