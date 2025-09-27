@@ -85,19 +85,23 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
-  const handleDelete = async (bankId, bankName) => {
-    if (!confirm(`"${bankName}" bankasını silmek istediğinizden emin misiniz?`)) {
-      return;
-    }
+  const handleDelete = (bank) => {
+    setBankToDelete(bank);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!bankToDelete) return;
 
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/banks/${bankId}`, {
+      const response = await fetch(`${backendUrl}/api/banks/${bankToDelete.id}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        alert('Banka başarıyla silindi');
+        setShowDeleteModal(false);
+        setBankToDelete(null);
         loadBanks(); // Reload banks
       } else {
         const errorData = await response.json();
