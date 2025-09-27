@@ -310,8 +310,24 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!formData.items.some(item => item.name.trim())) {
+    const validItems = formData.items.filter(item => item.name && item.name.trim());
+    
+    if (validItems.length === 0) {
       alert('En az bir ürün/hizmet adı girilmelidir');
+      return;
+    }
+
+    // Validate that each item has required fields
+    const invalidItems = validItems.filter(item => 
+      !item.name.trim() || 
+      isNaN(parseNumber(item.quantity)) || 
+      parseNumber(item.quantity) <= 0 ||
+      isNaN(parseNumber(item.unitPrice)) ||
+      parseNumber(item.unitPrice) <= 0
+    );
+
+    if (invalidItems.length > 0) {
+      alert('Tüm ürün/hizmetler için geçerli miktar ve birim fiyat girilmelidir');
       return;
     }
 
@@ -322,29 +338,29 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       
       // Create invoice object for backend
       const invoice = {
-        invoice_number: formData.invoiceNumber,
+        invoice_number: formData.invoiceNumber || `INV-${Date.now()}`,
         customer_id: formData.customerId || null,
         customer_name: selectedCustomer ? selectedCustomer.companyName : (formData.customerName || 'Genel Müşteri'),
         date: formData.date,
         currency: formData.currency,
-        items: formData.items.filter(item => item.name.trim()).map(item => ({
-          id: item.id,
+        items: validItems.map(item => ({
+          id: item.id || `item-${Date.now()}-${Math.random()}`,
           product_id: item.productId || null,
-          name: item.name,
-          quantity: parseNumber(item.quantity) || 0,
-          unit: item.unit,
-          unit_price: parseNumber(item.unitPrice) || 0,
-          total: item.total || 0
+          name: item.name.trim(),
+          quantity: parseFloat(parseNumber(item.quantity)) || 1,
+          unit: item.unit || 'adet',
+          unit_price: parseFloat(parseNumber(item.unitPrice)) || 0,
+          total: parseFloat(item.total) || 0
         })),
-        subtotal: totals.subtotal,
-        vat_rate: formData.vatRate,
-        vat_amount: totals.vatAmount,
-        discount: parseNumber(formData.discount) || 0,
-        discount_type: formData.discountType,
-        discount_amount: totals.discountAmount,
-        total: totals.total,
-        conditions: formData.conditions,
-        payment_term: formData.paymentTerm
+        subtotal: parseFloat(totals.subtotal) || 0,
+        vat_rate: parseFloat(formData.vatRate) || 0,
+        vat_amount: parseFloat(totals.vatAmount) || 0,
+        discount: parseFloat(parseNumber(formData.discount)) || 0,
+        discount_type: formData.discountType || 'percentage',
+        discount_amount: parseFloat(totals.discountAmount) || 0,
+        total: parseFloat(totals.total) || 0,
+        conditions: formData.conditions || '',
+        payment_term: formData.paymentTerm || '30'
       };
 
       const response = await fetch(`${backendUrl}/api/invoices`, {
