@@ -95,10 +95,8 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSupplier, setExpandedSupplier] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
-  const [showActionMenu, setShowActionMenu] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [showViewModal, setShowViewModal] = useState(null);
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     loadData();
