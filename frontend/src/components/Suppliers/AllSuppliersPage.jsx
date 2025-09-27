@@ -112,16 +112,11 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     try {
       setIsLoading(true);
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      console.log('🔧 Loading suppliers and categories from:', backendUrl);
       
-      // Load suppliers, categories, and specialties in parallel
       const [suppliersRes, categoriesRes] = await Promise.all([
         fetch(`${backendUrl}/api/suppliers`),
         fetch(`${backendUrl}/api/supplier-categories`)
       ]);
-
-      console.log('🔧 Suppliers response:', suppliersRes.ok, suppliersRes.status);
-      console.log('🔧 Categories response:', categoriesRes.ok, categoriesRes.status);
 
       if (suppliersRes.ok && categoriesRes.ok) {
         const [suppliersData, categoriesData] = await Promise.all([
