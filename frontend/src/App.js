@@ -676,6 +676,9 @@ const Dashboard = () => {
       case 'new-supplier':
         return <NewSupplierForm onClose={handleBackToDashboard} />;
 
+      case 'all-suppliers':
+        return <AllSuppliersPage onBackToDashboard={handleBackToDashboard} onNewSupplier={handleNewSupplier} />;
+
       case 'pending-approval':
         return (
           <div className="p-6">
