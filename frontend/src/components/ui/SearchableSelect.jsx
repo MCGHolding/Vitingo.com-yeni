@@ -9,7 +9,8 @@ import { ChevronDown, Search, X, User } from 'lucide-react';
  * Props:
  * - options: Array of {id, label, sublabel?, icon?} objects
  * - value: Selected option ID
- * - onChange: (selectedId) => void
+ * - onChange: (selectedId) => void (legacy support)
+ * - onValueChange: (selectedId) => void (preferred)
  * - placeholder: Input placeholder
  * - searchPlaceholder: Search placeholder
  * - disabled: Boolean
