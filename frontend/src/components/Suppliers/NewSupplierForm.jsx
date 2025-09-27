@@ -54,7 +54,11 @@ const NewSupplierForm = ({ onClose }) => {
     bank_branch: '',
     account_holder_name: '',
     swift_code: '',
-    country: ''
+    country: '',
+    // USA Bank Information
+    routing_number: '',
+    us_account_number: '',
+    bank_address: ''
   });
 
   const [currentService, setCurrentService] = useState('');
