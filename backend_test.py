@@ -3255,6 +3255,66 @@ def test_invoice_api_endpoints():
         print(f"   ❌ FAIL: Error creating invoice: {str(e)}")
         all_tests_passed = False
     
+    # Test 1b: POST /api/invoices - Create invoice with FIXED discount type
+    print("\n1b. Testing POST /api/invoices endpoint (Create Invoice with Fixed Discount)...")
+    created_invoice_id_fixed = None
+    
+    try:
+        response = requests.post(create_endpoint, json=test_invoice_data_fixed_discount, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Create invoice with fixed discount endpoint responds with status 200")
+            
+            # Parse response
+            data = response.json()
+            if not isinstance(data, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                all_tests_passed = False
+            else:
+                # Check required fields
+                required_fields = ["id", "invoice_number", "customer_name", "date", "currency", "items", "subtotal", "vat_rate", "vat_amount", "discount_type", "total"]
+                missing_fields = []
+                for field in required_fields:
+                    if field not in data:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                    all_tests_passed = False
+                else:
+                    print("   ✅ PASS: Response has all required fields")
+                    created_invoice_id_fixed = data.get("id")
+                    
+                    # Verify data integrity
+                    print(f"   Created Invoice ID: {created_invoice_id_fixed}")
+                    print(f"   Invoice Number: {data.get('invoice_number')}")
+                    print(f"   Customer: {data.get('customer_name')}")
+                    print(f"   Total Amount: {data.get('total')} {data.get('currency')}")
+                    print(f"   Discount Type: {data.get('discount_type')}")
+                    print(f"   Discount Amount: {data.get('discount_amount')}")
+                    
+                    # Verify fixed discount calculations
+                    if data.get('discount_type') == 'fixed':
+                        print("   ✅ PASS: Fixed discount type correctly set")
+                    else:
+                        print(f"   ❌ FAIL: Expected discount_type 'fixed', got {data.get('discount_type')}")
+                        all_tests_passed = False
+                    
+                    if data.get('discount_amount') == test_invoice_data_fixed_discount['discount_amount']:
+                        print("   ✅ PASS: Fixed discount amount correct")
+                    else:
+                        print(f"   ❌ FAIL: Fixed discount amount mismatch. Expected: {test_invoice_data_fixed_discount['discount_amount']}, Got: {data.get('discount_amount')}")
+                        all_tests_passed = False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating invoice with fixed discount: {str(e)}")
+        all_tests_passed = False
+    
     # Test 2: GET /api/invoices - Get all invoices
     print("\n2. Testing GET /api/invoices endpoint (Get All Invoices)...")
     get_all_endpoint = f"{BACKEND_URL}/api/invoices"
