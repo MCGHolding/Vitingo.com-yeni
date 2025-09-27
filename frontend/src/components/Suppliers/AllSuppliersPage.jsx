@@ -580,6 +580,65 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
           </div>
         </div>
       )}
+
+      {/* Portal-based Action Menu Dropdown */}
+      {showActionMenu && (
+        <div 
+          className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]"
+          style={{
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`
+          }}
+        >
+          <div className="py-1">
+            <button
+              onClick={() => {
+                const supplier = suppliers.find(s => s.id === showActionMenu);
+                if (supplier) {
+                  setShowDeleteModal(supplier);
+                }
+                setShowActionMenu(null);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Sil
+            </button>
+            <button
+              onClick={() => {
+                handleSetPassive(showActionMenu);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 flex items-center"
+            >
+              <UserX className="h-4 w-4 mr-2" />
+              Pasif
+            </button>
+            <button
+              onClick={() => {
+                setShowActionMenu(null);
+                toast({
+                  title: "Özellik",
+                  description: "Puanlama özelliği yakında aktif olacak",
+                  variant: "default"
+                });
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 flex items-center"
+            >
+              <Star className="h-4 w-4 mr-2" />
+              Puan
+            </button>
+            <button
+              onClick={() => {
+                handleSetBlacklist(showActionMenu);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+            >
+              <Ban className="h-4 w-4 mr-2" />
+              Kara Liste
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
