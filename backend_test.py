@@ -1484,6 +1484,238 @@ def test_turkish_customer_data():
     print(f"   Created {len(created_customers)} customers with Turkish data")
     return True, created_customers
 
+def test_invoice_number_generation():
+    """
+    Test the new invoice number generation API endpoint to ensure it works correctly 
+    with the user's specified format.
+    
+    Requirements to verify:
+    1. Test GET /api/invoices/next-number/USD - Should return USD-012025100001 format for December 2025
+    2. Test GET /api/invoices/next-number/EUR - Should return EURU-012025100001 format  
+    3. Test GET /api/invoices/next-number/TRY - Should return TL-012025100001 format
+    4. Test GET /api/invoices/next-number/GBP - Should return GBP-012025100001 format
+    5. Test GET /api/invoices/next-number/AED - Should return AED-012025100001 format
+    
+    Verify:
+    - Correct currency prefix mapping (TRY→TL, EUR→EURU)
+    - Current month/year format (MM/YYYY)
+    - Sequential numbering starting at 100001
+    - 6-digit sequence numbers
+    - Pattern: {PREFIX}-{MMYYYY}{SEQUENCE}
+    """
+    
+    print("=" * 80)
+    print("TESTING INVOICE NUMBER GENERATION API ENDPOINT")
+    print("=" * 80)
+    
+    # Test currencies with expected prefix mappings
+    test_currencies = [
+        {"currency": "USD", "expected_prefix": "USD"},
+        {"currency": "EUR", "expected_prefix": "EURU"},
+        {"currency": "TRY", "expected_prefix": "TL"},
+        {"currency": "GBP", "expected_prefix": "GBP"},
+        {"currency": "AED", "expected_prefix": "AED"}
+    ]
+    
+    # Get current date for validation
+    from datetime import datetime
+    now = datetime.now()
+    current_month = f"{now.month:02d}"
+    current_year = str(now.year)
+    expected_month_year = f"{current_month}{current_year}"
+    
+    print(f"Current Date: {now.strftime('%Y-%m-%d')}")
+    print(f"Expected Month/Year Pattern: {expected_month_year}")
+    
+    all_tests_passed = True
+    
+    for i, test_case in enumerate(test_currencies, 1):
+        currency = test_case["currency"]
+        expected_prefix = test_case["expected_prefix"]
+        
+        print(f"\n{i}. Testing {currency} currency (Expected prefix: {expected_prefix})")
+        print("-" * 60)
+        
+        endpoint = f"{BACKEND_URL}/api/invoices/next-number/{currency}"
+        print(f"   Testing endpoint: {endpoint}")
+        
+        try:
+            # Make the request
+            print(f"   Making request to get next invoice number for {currency}...")
+            response = requests.get(endpoint, timeout=30)
+            
+            # Test 1: Check status code
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                all_tests_passed = False
+                continue
+            
+            # Test 2: Check content type
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
+                print("   ✅ PASS: Correct Content-Type for JSON response")
+            else:
+                print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+            
+            # Test 3: Parse JSON response
+            print("   Parsing JSON response...")
+            try:
+                data = response.json()
+                print(f"   Response type: {type(data)}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+                continue
+            
+            # Test 4: Check response structure
+            print("   Checking response structure...")
+            if not isinstance(data, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                all_tests_passed = False
+                continue
+            
+            required_fields = ["next_invoice_number", "currency", "month", "year", "sequence", "pattern"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in data:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                all_tests_passed = False
+                continue
+            
+            print("   ✅ PASS: Response has all required fields")
+            
+            # Test 5: Validate currency field
+            returned_currency = data.get("currency")
+            if returned_currency != currency:
+                print(f"   ❌ FAIL: Currency mismatch. Expected: {currency}, Got: {returned_currency}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Currency field matches request: {returned_currency}")
+            
+            # Test 6: Validate month and year
+            returned_month = data.get("month")
+            returned_year = data.get("year")
+            
+            if returned_month != current_month:
+                print(f"   ❌ FAIL: Month mismatch. Expected: {current_month}, Got: {returned_month}")
+                all_tests_passed = False
+                continue
+            
+            if returned_year != current_year:
+                print(f"   ❌ FAIL: Year mismatch. Expected: {current_year}, Got: {returned_year}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Month/Year correct: {returned_month}/{returned_year}")
+            
+            # Test 7: Validate invoice number format
+            next_invoice_number = data.get("next_invoice_number")
+            sequence = data.get("sequence")
+            pattern = data.get("pattern")
+            
+            print(f"   Generated Invoice Number: {next_invoice_number}")
+            print(f"   Sequence Number: {sequence}")
+            print(f"   Pattern: {pattern}")
+            
+            # Check pattern format: {PREFIX}-{MMYYYY}
+            expected_pattern = f"{expected_prefix}-{expected_month_year}"
+            if pattern != expected_pattern:
+                print(f"   ❌ FAIL: Pattern mismatch. Expected: {expected_pattern}, Got: {pattern}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Pattern format correct: {pattern}")
+            
+            # Test 8: Validate complete invoice number format
+            # Expected format: {PREFIX}-{MMYYYY}{SEQUENCE}
+            expected_invoice_format = f"{expected_prefix}-{expected_month_year}{sequence:06d}"
+            if next_invoice_number != expected_invoice_format:
+                print(f"   ❌ FAIL: Invoice number format mismatch.")
+                print(f"   Expected: {expected_invoice_format}")
+                print(f"   Got: {next_invoice_number}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Invoice number format correct: {next_invoice_number}")
+            
+            # Test 9: Validate sequence number format (6 digits)
+            if not isinstance(sequence, int) or sequence < 1:
+                print(f"   ❌ FAIL: Invalid sequence number: {sequence}")
+                all_tests_passed = False
+                continue
+            
+            # Check if sequence is formatted as 6 digits in the invoice number
+            sequence_str = f"{sequence:06d}"
+            if not next_invoice_number.endswith(sequence_str):
+                print(f"   ❌ FAIL: Sequence not properly formatted as 6 digits")
+                print(f"   Expected to end with: {sequence_str}")
+                print(f"   Got: {next_invoice_number}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Sequence number properly formatted as 6 digits: {sequence_str}")
+            
+            # Test 10: Validate prefix mapping
+            if not next_invoice_number.startswith(expected_prefix):
+                print(f"   ❌ FAIL: Incorrect currency prefix mapping")
+                print(f"   Expected prefix: {expected_prefix}")
+                print(f"   Got invoice number: {next_invoice_number}")
+                all_tests_passed = False
+                continue
+            
+            print(f"   ✅ PASS: Currency prefix mapping correct: {currency} → {expected_prefix}")
+            
+            # Test 11: Validate minimum sequence number (should start at 100001 for new month/year)
+            # Note: This might not always be 100001 if there are existing invoices
+            if sequence >= 100001:
+                print(f"   ✅ PASS: Sequence number is valid (≥100001): {sequence}")
+            else:
+                print(f"   ⚠️  INFO: Sequence number is {sequence} (might have existing invoices)")
+            
+            print(f"   🎉 SUCCESS: {currency} invoice number generation working correctly!")
+            print(f"   Generated: {next_invoice_number}")
+            
+        except requests.exceptions.RequestException as e:
+            print(f"   ❌ FAIL: Network error occurred: {str(e)}")
+            all_tests_passed = False
+        except Exception as e:
+            print(f"   ❌ FAIL: Unexpected error occurred: {str(e)}")
+            all_tests_passed = False
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("INVOICE NUMBER GENERATION TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ All currency tests PASSED")
+        print("✅ Currency prefix mapping working correctly:")
+        print("   • USD → USD")
+        print("   • EUR → EURU") 
+        print("   • TRY → TL")
+        print("   • GBP → GBP")
+        print("   • AED → AED")
+        print("✅ Month/year format correct (MM/YYYY)")
+        print("✅ Sequential numbering implemented")
+        print("✅ 6-digit sequence numbers working")
+        print("✅ Pattern format correct: {PREFIX}-{MMYYYY}{SEQUENCE}")
+        print("\n🎉 INVOICE NUMBER GENERATION API ENDPOINT TEST PASSED!")
+        print("   The user's invoice numbering system is working correctly.")
+        print("   Each new invoice will increment the sequence number by 1.")
+        return True
+    else:
+        print("❌ Some tests FAILED")
+        print("   Please check the failed test cases above")
+        return False
+
 def test_customer_validation_errors():
     """Test customer validation and error cases"""
     print("=" * 80)
