@@ -76,8 +76,15 @@ export default function SearchableSelect({
   };
 
   const clearSelection = (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    onChange('');
+    // Support both onChange and onValueChange for compatibility
+    if (onChange) {
+      onChange('');
+    }
+    if (onValueChange) {
+      onValueChange('');
+    }
   };
 
   const toggleDropdown = () => {
