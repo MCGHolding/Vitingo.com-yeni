@@ -570,7 +570,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                                     <Button size="sm" variant="outline" onClick={() => handleViewSupplier(supplier)}>
                                       <Eye className="h-4 w-4" />
                                     </Button>
-                                    <Button size="sm" variant="outline" onClick={() => handleEditSupplier(supplier)}>
+                                    <Button size="sm" variant="outline" onClick={() => handleEditContact(contact, supplier)}>
                                       <Edit className="h-4 w-4" />
                                     </Button>
                                     <Button 
