@@ -2823,6 +2823,10 @@ class SupplierUpdate(BaseModel):
     account_holder_name: Optional[str] = None
     swift_code: Optional[str] = None
     country: Optional[str] = None
+    # USA Bank Information
+    routing_number: Optional[str] = None
+    us_account_number: Optional[str] = None
+    bank_address: Optional[str] = None
     status: Optional[str] = None
 
 class SupplierContactUpdate(BaseModel):
