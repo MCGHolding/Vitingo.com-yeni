@@ -522,6 +522,8 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "✅ COMPREHENSIVE NEWINVOICEFORM ENHANCED DISCOUNT SYSTEM TESTING COMPLETED SUCCESSFULLY - All requested features tested and working perfectly: 1) Login and navigation ✅ 2) Discount type toggle (percentage/fixed) ✅ 3) Currency change impact on discount display ✅ 4) Percentage discount with validation ✅ 5) Fixed amount discount with validation ✅ 6) Calculation accuracy ✅ 7) Visual design verification ✅ 8) Form submission readiness ✅. The enhanced discount system meets all user requirements and is production-ready. Screenshots captured showing perfect functionality including currency symbol updates, calculation accuracy, and professional UI design."
+  - agent: "testing"
+    message: "✅ INVOICE API ENDPOINTS COMPREHENSIVE TESTING WITH NEW DISCOUNT_TYPE FIELD COMPLETED SUCCESSFULLY - Critical user issue addressed: User reported invoices not being saved when clicking 'Fatura Oluştur' button and not visible in 'Tüm Faturalar' section. BACKEND DIAGNOSIS: All Invoice API endpoints (POST/GET/PUT) are 100% FUNCTIONAL. Tested both percentage and fixed discount types with new discount_type field. Backend successfully saves and retrieves invoices with Turkish character support, VAT calculations, and proper JSON serialization. If user cannot see invoices in frontend, the issue is in FRONTEND integration, not backend. Backend is production-ready and working perfectly. All 7 test scenarios passed including error handling."
 
   - task: "Customer Form Submission Frontend Integration"
     implemented: true
