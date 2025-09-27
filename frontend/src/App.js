@@ -87,6 +87,9 @@ const Dashboard = () => {
   const [fairs, setFairs] = useState(mockFairs);
   const [showNewFairForm, setShowNewFairForm] = useState(false);
   const [surveyInitialTab, setSurveyInitialTab] = useState('send');
+  // Supplier states
+  const [showNewSupplierForm, setShowNewSupplierForm] = useState(false);
+  const [showAllSuppliersPage, setShowAllSuppliersPage] = useState(false);
 
   // Load fairs from backend API
   useEffect(() => {
