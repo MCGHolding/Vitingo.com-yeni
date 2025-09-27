@@ -144,7 +144,6 @@ const navigation = [
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
       { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
       { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard },
-      { name: 'Gider Makbuzu', href: '/accounting/expense-receipt', icon: Wallet },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
