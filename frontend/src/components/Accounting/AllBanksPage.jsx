@@ -251,6 +251,14 @@ ${bankToShare.account_holder ? `Hesap Sahibi: ${bankToShare.account_holder}` : '
             <span>Yeni Banka</span>
           </Button>
           <Button
+            onClick={handleShareByCountry}
+            variant="outline"
+            className="flex items-center space-x-2 border-blue-200 text-blue-600 hover:bg-blue-50"
+          >
+            <Share2 className="h-4 w-4" />
+            <span>Paylaş</span>
+          </Button>
+          <Button
             variant="outline"
             onClick={onNewBank}
             className="flex items-center space-x-2"
