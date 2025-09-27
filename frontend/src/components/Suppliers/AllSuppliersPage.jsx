@@ -459,6 +459,15 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         </CardContent>
       </Card>
 
+      {/* Edit Supplier Modal */}
+      {showEditModal && (
+        <EditSupplierModal 
+          supplier={showEditModal}
+          onClose={() => setShowEditModal(null)}
+          onSave={handleEditSave}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
