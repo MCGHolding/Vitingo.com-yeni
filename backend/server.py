@@ -2639,6 +2639,66 @@ async def delete_bank(bank_id: str):
         logger.error(f"Error deleting bank {bank_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== COUNTRY ENDPOINTS =====================
+
+@api_router.get("/countries")
+async def get_countries():
+    """Get all countries"""
+    try:
+        countries = await db.countries.find().to_list(1000)
+        # Add default countries if none exist
+        if not countries:
+            default_countries = [
+                {"code": "Turkey", "name": "Türkiye", "flag": "🇹🇷"},
+                {"code": "UAE", "name": "BAE", "flag": "🇦🇪"},
+                {"code": "USA", "name": "ABD", "flag": "🇺🇸"}
+            ]
+            for country in default_countries:
+                await db.countries.insert_one(country)
+            countries = await db.countries.find().to_list(1000)
+        
+        return countries
+    except Exception as e:
+        logger.error(f"Error getting countries: {str(e)}")
+        return [
+            {"code": "Turkey", "name": "Türkiye", "flag": "🇹🇷"},
+            {"code": "UAE", "name": "BAE", "flag": "🇦🇪"},
+            {"code": "USA", "name": "ABD", "flag": "🇺🇸"}
+        ]
+
+@api_router.post("/countries")
+async def add_country(country_name: str):
+    """Add a new country"""
+    try:
+        # Generate country code from name
+        country_code = country_name.replace(' ', '_').upper()
+        
+        # Check if country already exists
+        existing = await db.countries.find_one({"$or": [{"code": country_code}, {"name": country_name}]})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu ülke zaten mevcut")
+        
+        # Add country
+        country_data = {
+            "code": country_code,
+            "name": country_name,
+            "flag": "🌍"  # Default flag
+        }
+        
+        result = await db.countries.insert_one(country_data)
+        
+        if result.inserted_id:
+            logger.info(f"Country added successfully: {country_name}")
+            return country_data
+        else:
+            raise HTTPException(status_code=500, detail="Ülke eklenemedi")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding country: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error adding country: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
