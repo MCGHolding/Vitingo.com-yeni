@@ -101,6 +101,8 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [showEditModal, setShowEditModal] = useState(null);
   const [showViewModal, setShowViewModal] = useState(null);
   const [showEditContactModal, setShowEditContactModal] = useState(null);
+  const [showScoreModal, setShowScoreModal] = useState(null);
+  const [showBlacklistModal, setShowBlacklistModal] = useState(null);
 
   useEffect(() => {
     loadData();
