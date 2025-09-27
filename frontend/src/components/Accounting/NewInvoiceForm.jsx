@@ -492,6 +492,19 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                 disabled={isLoadingData}
                 className="w-full"
               />
+              
+              {/* Fallback Manual Customer Input */}
+              <div className="mt-2">
+                <label className="block text-xs text-gray-500 mb-1">
+                  Veya müşteri adını manuel giriniz:
+                </label>
+                <Input
+                  value={formData.customerName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, customerName: e.target.value }))}
+                  placeholder="Örn: ABC Şirketi"
+                  className="w-full text-sm"
+                />
+              </div>
             </div>
           </div>
 
