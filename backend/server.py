@@ -3336,6 +3336,151 @@ async def update_contact_by_registration_key(registration_key: str, contact_data
         logger.error(f"Error updating contact by registration key: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== EXPENSE RECEIPT ENDPOINTS =====================
+
+def generate_expense_receipt_number(currency: str) -> str:
+    """Generate expense receipt number: USD-GM-012025100001"""
+    now = datetime.now(timezone.utc)
+    month_year = now.strftime("%m%Y")
+    
+    # Get the current sequence number for this month/year
+    # This is a simplified version - in production, you'd want atomic counters
+    import random
+    sequence = random.randint(100001, 999999)  # Temporary - implement proper sequence
+    
+    return f"{currency}-GM-{month_year}{sequence}"
+
+@api_router.post("/expense-receipts", response_model=ExpenseReceipt)
+async def create_expense_receipt(receipt_data: ExpenseReceiptCreate):
+    """Create new expense receipt"""
+    try:
+        # Get supplier information
+        supplier = await db.suppliers.find_one({"id": receipt_data.supplier_id})
+        if not supplier:
+            raise HTTPException(status_code=404, detail="Supplier not found")
+        
+        # Get sender bank info if provided
+        sender_bank_name = ""
+        if receipt_data.sender_bank_id:
+            bank = await db.banks.find_one({"id": receipt_data.sender_bank_id})
+            if bank:
+                sender_bank_name = bank.get("bank_name", "")
+        
+        # Generate receipt number
+        receipt_number = generate_expense_receipt_number(receipt_data.currency)
+        
+        # Generate approval link
+        approval_key = str(uuid.uuid4()).replace('-', '')
+        approval_link = f"/expense-receipt-approval/{approval_key}"
+        
+        # Create expense receipt
+        expense_receipt = ExpenseReceipt(
+            receipt_number=receipt_number,
+            date=receipt_data.date,
+            currency=receipt_data.currency,
+            supplier_id=receipt_data.supplier_id,
+            supplier_name=supplier.get("company_short_name", ""),
+            supplier_phone=supplier.get("phone", ""),
+            supplier_iban=supplier.get("iban", ""),
+            supplier_bank_name=supplier.get("bank_name", ""),
+            supplier_country=supplier.get("country", ""),
+            sender_bank_id=receipt_data.sender_bank_id,
+            sender_bank_name=sender_bank_name,
+            amount=receipt_data.amount,
+            description=receipt_data.description,
+            approval_link=approval_key,
+            created_by="current_user"  # TODO: Get from auth context
+        )
+        
+        # Save to database
+        receipt_dict = expense_receipt.dict()
+        receipt_dict['date'] = receipt_dict['date'].isoformat()
+        await db.expense_receipts.insert_one(receipt_dict)
+        
+        # Send email to supplier
+        # TODO: Implement email sending with approval link
+        
+        return expense_receipt
+    except Exception as e:
+        logger.error(f"Error creating expense receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/expense-receipts", response_model=List[ExpenseReceipt])
+async def get_expense_receipts(status: Optional[str] = None):
+    """Get expense receipts, optionally filtered by status"""
+    try:
+        query = {}
+        if status:
+            query["status"] = status
+            
+        receipts = await db.expense_receipts.find(query).to_list(length=None)
+        
+        # Parse dates
+        for receipt in receipts:
+            if isinstance(receipt.get('date'), str):
+                receipt['date'] = datetime.fromisoformat(receipt['date']).date()
+        
+        return [ExpenseReceipt(**receipt) for receipt in receipts]
+    except Exception as e:
+        logger.error(f"Error getting expense receipts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/expense-receipts/{receipt_id}", response_model=ExpenseReceipt)
+async def get_expense_receipt(receipt_id: str):
+    """Get expense receipt by ID"""
+    try:
+        receipt = await db.expense_receipts.find_one({"id": receipt_id})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Expense receipt not found")
+            
+        # Parse date
+        if isinstance(receipt.get('date'), str):
+            receipt['date'] = datetime.fromisoformat(receipt['date']).date()
+            
+        return ExpenseReceipt(**receipt)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting expense receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/expense-receipts/{receipt_id}", response_model=ExpenseReceipt)
+async def update_expense_receipt(receipt_id: str, receipt_data: ExpenseReceiptUpdate):
+    """Update expense receipt"""
+    try:
+        # Check if receipt exists
+        existing_receipt = await db.expense_receipts.find_one({"id": receipt_id})
+        if not existing_receipt:
+            raise HTTPException(status_code=404, detail="Expense receipt not found")
+        
+        # Update fields
+        update_data = {k: v for k, v in receipt_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Convert date to string if provided
+        if 'date' in update_data:
+            update_data['date'] = update_data['date'].isoformat()
+        
+        result = await db.expense_receipts.update_one(
+            {"id": receipt_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Expense receipt not found")
+        
+        # Return updated receipt
+        updated_receipt = await db.expense_receipts.find_one({"id": receipt_id})
+        if isinstance(updated_receipt.get('date'), str):
+            updated_receipt['date'] = datetime.fromisoformat(updated_receipt['date']).date()
+            
+        return ExpenseReceipt(**updated_receipt)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating expense receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== CONTACT EMAIL ENDPOINTS =====================
 
 class ContactEmailRequest(BaseModel):
