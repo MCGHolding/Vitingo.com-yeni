@@ -6,6 +6,8 @@ import { useToast } from '../../hooks/use-toast';
 import EditSupplierModal from './EditSupplierModal';
 import ViewSupplierModal from './ViewSupplierModal';
 import EditContactModal from './EditContactModal';
+import ScoreSupplierModal from './ScoreSupplierModal';
+import BlacklistSupplierModal from './BlacklistSupplierModal';
 import { 
   Building2, 
   Phone, 
