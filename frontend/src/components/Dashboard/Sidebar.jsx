@@ -47,7 +47,9 @@ import {
   Pause,
   MessageSquare,
   PenTool,
-  FolderOpen
+  FolderOpen,
+  Truck,
+  UserCheck
 } from 'lucide-react';
 
 const navigation = [
