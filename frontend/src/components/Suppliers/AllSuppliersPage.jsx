@@ -533,10 +533,19 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                                     <Button size="sm" variant="outline" onClick={() => handleEditSupplier(supplier)}>
                                       <Edit className="h-4 w-4" />
                                     </Button>
-                                    <Button size="sm" variant="outline">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => handleContactMessage(contact, supplier)}
+                                    >
                                       <MessageSquare className="h-4 w-4" />
                                     </Button>
-                                    <Button size="sm" variant="outline">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => handleContactMail(contact, supplier)}
+                                      disabled={!contact.email}
+                                    >
                                       <Mail className="h-4 w-4" />
                                     </Button>
                                   </div>
