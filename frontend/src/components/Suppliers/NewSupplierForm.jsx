@@ -221,41 +221,34 @@ const NewSupplierForm = ({ onClose }) => {
     }
   };
 
-  const handleAddSpecialty = async () => {
-    if (!newSpecialtyName.trim() || !formData.supplier_type_id) return;
-    
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/supplier-specialties`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: newSpecialtyName.trim(),
-          category_id: formData.supplier_type_id
-        })
-      });
+  const handleAddCategoryModal = () => {
+    setShowAddCategoryModal(true);
+  };
 
-      if (response.ok) {
-        await loadSpecialties(formData.supplier_type_id);
-        setNewSpecialtyName('');
-        setShowAddSpecialtyModal(false);
-        toast({
-          title: "Başarılı",
-          description: "Yeni uzmanlık alanı eklendi",
-          variant: "default"
-        });
-      } else {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to add specialty');
-      }
-    } catch (error) {
-      console.error('Error adding specialty:', error);
+  const handleAddSpecialtyModal = () => {
+    if (!formData.supplier_type_id) {
       toast({
         title: "Hata",
-        description: error.message || "Uzmanlık alanı eklenirken hata oluştu",
+        description: "Önce bir kategori seçin",
         variant: "destructive"
       });
+      return;
     }
+    setShowAddSpecialtyModal(true);
+  };
+
+  const handleCategorySaved = async (newCategory) => {
+    // Reload categories and select the new one
+    await loadCategories();
+    setFormData(prev => ({ ...prev, supplier_type_id: newCategory.id }));
+    setShowAddCategoryModal(false);
+  };
+
+  const handleSpecialtySaved = async (newSpecialty) => {
+    // Reload specialties and select the new one
+    await loadSpecialties(formData.supplier_type_id);
+    setFormData(prev => ({ ...prev, specialty_id: newSpecialty.id }));
+    setShowAddSpecialtyModal(false);
   };
 
   const handleSubmit = async (e) => {
