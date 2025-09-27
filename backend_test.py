@@ -6263,6 +6263,26 @@ def test_bank_email_endpoint():
     
     return True
 
+def main():
+    """Main test runner for expense receipt APIs"""
+    print("🚀 STARTING EXPENSE RECEIPT CRUD API TESTING")
+    print("=" * 80)
+    
+    try:
+        # Run the comprehensive expense receipt CRUD test
+        success = test_expense_receipt_crud_apis()
+        
+        if success:
+            print("\n🎉 ALL EXPENSE RECEIPT TESTS COMPLETED SUCCESSFULLY!")
+            return True
+        else:
+            print("\n❌ SOME EXPENSE RECEIPT TESTS FAILED!")
+            return False
+            
+    except Exception as e:
+        print(f"\n❌ CRITICAL ERROR IN TESTING: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
