@@ -1,0 +1,459 @@
+import React, { useState } from 'react';
+import { ArrowLeft, Building2, Globe, Save } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+
+const NewBankForm = ({ onBackToDashboard }) => {
+  const [formData, setFormData] = useState({
+    country: '',
+    bankName: '',
+    // Turkey/UAE fields
+    swiftCode: '',
+    iban: '',
+    branchName: '',
+    branchCode: '',
+    accountHolder: '',
+    accountNumber: '',
+    // USA fields
+    routingNumber: '',
+    usAccountNumber: '',
+    bankAddress: '',
+    recipientAddress: '',
+    recipientName: '',
+    recipientZipCode: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const countries = [
+    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+  ];
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCountryChange = (country) => {
+    setFormData(prev => ({
+      ...prev,
+      country,
+      // Clear country-specific fields when country changes
+      swiftCode: '',
+      iban: '',
+      branchName: '',
+      branchCode: '',
+      accountHolder: '',
+      accountNumber: '',
+      routingNumber: '',
+      usAccountNumber: '',
+      bankAddress: '',
+      recipientAddress: '',
+      recipientName: '',
+      recipientZipCode: ''
+    }));
+  };
+
+  const validateForm = () => {
+    if (!formData.country || !formData.bankName) {
+      alert('Ülke ve banka adı gereklidir');
+      return false;
+    }
+
+    if (formData.country === 'Turkey' || formData.country === 'UAE') {
+      if (!formData.swiftCode || !formData.iban) {
+        alert('SWIFT kodu ve IBAN gereklidir');
+        return false;
+      }
+    } else if (formData.country === 'USA') {
+      if (!formData.routingNumber || !formData.usAccountNumber) {
+        alert('Routing Number ve Account Number gereklidir');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      // Prepare bank data based on country
+      const bankData = {
+        country: formData.country,
+        bank_name: formData.bankName
+      };
+
+      if (formData.country === 'Turkey' || formData.country === 'UAE') {
+        bankData.swift_code = formData.swiftCode;
+        bankData.iban = formData.iban;
+        bankData.branch_name = formData.branchName || null;
+        bankData.branch_code = formData.branchCode || null;
+        bankData.account_holder = formData.accountHolder || null;
+        bankData.account_number = formData.accountNumber || null;
+      } else if (formData.country === 'USA') {
+        bankData.routing_number = formData.routingNumber;
+        bankData.us_account_number = formData.usAccountNumber;
+        bankData.bank_address = formData.bankAddress || null;
+        bankData.recipient_address = formData.recipientAddress || null;
+        bankData.recipient_name = formData.recipientName || null;
+        bankData.recipient_zip_code = formData.recipientZipCode || null;
+      }
+
+      console.log('Sending bank data:', bankData);
+
+      const response = await fetch(`${backendUrl}/api/banks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bankData)
+      });
+
+      if (response.ok) {
+        const savedBank = await response.json();
+        console.log('Bank saved successfully:', savedBank);
+        setShowSuccessModal(true);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Banka kaydedilirken hata oluştu');
+      }
+      
+    } catch (error) {
+      console.error('Error saving bank:', error);
+      alert(`Banka kaydedilemedi: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const clearForm = () => {
+    setFormData({
+      country: '',
+      bankName: '',
+      swiftCode: '',
+      iban: '',
+      branchName: '',
+      branchCode: '',
+      accountHolder: '',
+      accountNumber: '',
+      routingNumber: '',
+      usAccountNumber: '',
+      bankAddress: '',
+      recipientAddress: '',
+      recipientName: '',
+      recipientZipCode: ''
+    });
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-green-100 rounded-lg">
+            <Building2 className="h-6 w-6 text-green-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Yeni Banka</h1>
+            <p className="text-gray-600">Banka bilgilerini ekleyin</p>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          onClick={onBackToDashboard}
+          className="flex items-center space-x-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Geri Dön</span>
+        </Button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Country Selection */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="flex items-center space-x-2 mb-6">
+            <Globe className="h-5 w-5 text-gray-600" />
+            <h3 className="text-xl font-semibold text-gray-900">Ülke Seçimi</h3>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ülke *
+            </label>
+            <Select value={formData.country} onValueChange={handleCountryChange}>
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="Ülke seçiniz" />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">{country.flag}</span>
+                      <span>{country.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Bank Information */}
+        {formData.country && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center space-x-2 mb-6">
+              <Building2 className="h-5 w-5 text-gray-600" />
+              <h3 className="text-xl font-semibold text-gray-900">Banka Bilgileri</h3>
+            </div>
+
+            {/* Common field - Bank Name */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Banka Adı *
+              </label>
+              <Input
+                value={formData.bankName}
+                onChange={(e) => handleInputChange('bankName', e.target.value)}
+                placeholder="Örn: Garanti BBVA"
+                className="w-full"
+                required
+              />
+            </div>
+
+            {/* Turkey/UAE Fields */}
+            {(formData.country === 'Turkey' || formData.country === 'UAE') && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    SWIFT Kodu *
+                  </label>
+                  <Input
+                    value={formData.swiftCode}
+                    onChange={(e) => handleInputChange('swiftCode', e.target.value)}
+                    placeholder="Örn: TGBATRIS"
+                    className="w-full"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    IBAN *
+                  </label>
+                  <Input
+                    value={formData.iban}
+                    onChange={(e) => handleInputChange('iban', e.target.value)}
+                    placeholder="Örn: TR32 0006 2000 0000 0006 2958 16"
+                    className="w-full"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Şube Adı
+                  </label>
+                  <Input
+                    value={formData.branchName}
+                    onChange={(e) => handleInputChange('branchName', e.target.value)}
+                    placeholder="Örn: Levent Şubesi"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Şube Kodu
+                  </label>
+                  <Input
+                    value={formData.branchCode}
+                    onChange={(e) => handleInputChange('branchCode', e.target.value)}
+                    placeholder="Örn: 620"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hesap Sahibi
+                  </label>
+                  <Input
+                    value={formData.accountHolder}
+                    onChange={(e) => handleInputChange('accountHolder', e.target.value)}
+                    placeholder="Örn: Başarı Uluslararası Fuarcılık A.Ş."
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hesap Numarası
+                  </label>
+                  <Input
+                    value={formData.accountNumber}
+                    onChange={(e) => handleInputChange('accountNumber', e.target.value)}
+                    placeholder="Örn: 6295816"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* USA Fields */}
+            {formData.country === 'USA' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Routing Number *
+                  </label>
+                  <Input
+                    value={formData.routingNumber}
+                    onChange={(e) => handleInputChange('routingNumber', e.target.value)}
+                    placeholder="Örn: 021000021"
+                    className="w-full"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Account Number *
+                  </label>
+                  <Input
+                    value={formData.usAccountNumber}
+                    onChange={(e) => handleInputChange('usAccountNumber', e.target.value)}
+                    placeholder="Örn: 1234567890"
+                    className="w-full"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Banka Adresi
+                  </label>
+                  <Input
+                    value={formData.bankAddress}
+                    onChange={(e) => handleInputChange('bankAddress', e.target.value)}
+                    placeholder="Örn: 1 Chase Manhattan Plaza, New York, NY 10005"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Alıcı Adresi
+                  </label>
+                  <Input
+                    value={formData.recipientAddress}
+                    onChange={(e) => handleInputChange('recipientAddress', e.target.value)}
+                    placeholder="Örn: 123 Main St, New York, NY 10001"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Alıcı İsmi
+                  </label>
+                  <Input
+                    value={formData.recipientName}
+                    onChange={(e) => handleInputChange('recipientName', e.target.value)}
+                    placeholder="Örn: John Doe"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Alıcı Zip Code
+                  </label>
+                  <Input
+                    value={formData.recipientZipCode}
+                    onChange={(e) => handleInputChange('recipientZipCode', e.target.value)}
+                    placeholder="Örn: 10001"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Submit Buttons */}
+        {formData.country && (
+          <div className="flex justify-center space-x-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={clearForm}
+              className="px-8 py-3"
+            >
+              Temizle
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+            >
+              <Save className="mr-2 h-5 w-5" />
+              {isSubmitting ? 'Kaydediliyor...' : 'Bankayı Ekle'}
+            </Button>
+          </div>
+        )}
+      </form>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 text-center">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">🎉 Başarılı!</h3>
+            <div className="bg-green-50 p-4 rounded-lg mb-6">
+              <p className="text-gray-700 text-base leading-relaxed">
+                <strong>Yeni banka başarıyla eklendi!</strong>
+                <br /><br />
+                Banka bilgileriniz sisteme kaydedilmiştir.
+                <br />
+                <span className="font-bold text-green-600">Tüm Bankalar</span> bölümünden görüntüleyebilirsiniz.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  onBackToDashboard();
+                }}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
+              >
+                📊 Dashboard'a Dön
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  clearForm();
+                }}
+                variant="outline"
+                className="flex-1 py-3"
+              >
+                ➕ Yeni Banka
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default NewBankForm;
