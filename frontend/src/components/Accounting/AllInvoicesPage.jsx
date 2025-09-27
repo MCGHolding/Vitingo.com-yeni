@@ -61,57 +61,6 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
     const interval = setInterval(loadInvoices, 30000);
     return () => clearInterval(interval);
   }, []);
-    {
-      id: 1,
-      invoiceNumber: 'USD-092025001001',
-      customerName: 'Acme Corporation',
-      date: '2025-09-25',
-      currency: 'USD',
-      amount: 15750.50,
-      status: 'paid',
-      items: 3
-    },
-    {
-      id: 2,
-      invoiceNumber: 'EUR-092025001002',
-      customerName: 'Tech Solutions GmbH',
-      date: '2025-09-24',
-      currency: 'EUR',
-      amount: 8420.75,
-      status: 'pending',
-      items: 2
-    },
-    {
-      id: 3,
-      invoiceNumber: 'TL-092025001003',
-      customerName: 'İstanbul Mimarlık Ltd.',
-      date: '2025-09-23',
-      currency: 'TL',
-      amount: 125300.00,
-      status: 'overdue',
-      items: 5
-    },
-    {
-      id: 4,
-      invoiceNumber: 'GBP-092025001004',
-      customerName: 'London Exhibitions Ltd',
-      date: '2025-09-22',
-      currency: 'GBP',
-      amount: 9850.25,
-      status: 'draft',
-      items: 1
-    },
-    {
-      id: 5,
-      invoiceNumber: 'AED-092025001005',
-      customerName: 'Dubai Trade Center',
-      date: '2025-09-21',
-      currency: 'AED',
-      amount: 42680.80,
-      status: 'paid',
-      items: 4
-    }
-  ];
 
   const currencies = [
     { code: 'all', symbol: '', name: 'Tüm Para Birimleri' },
