@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Kullanıcı CSV dosyasında format hataları nedeniyle import edilen fuar verilerinin Tüm Fuarlar listesinde görünmediğini bildirdi. Şablon download işlevinin düzeltilmiş CSV formatıyla güncellenmesi isteniyor. CSV şablonunda fairMonth kolonunun kaldırılması, tutarlı tarih formatları (YYYY-MM-DD), zorunlu alanların doldurulması ve proper Türkçe örneklerin eklenmesi gerekiyor."
+user_problem_statement: "Mail modal pencere açılmış ama mail göndermiyor. Maili gönderip ardınan aynı pencede Tebriker, Mailiniz başarı ile gönderilmiştir mesajı ve Geri Dön, Dashboard butonları olması lazım"
 
 backend:
   - task: "Invoice Number Generation API Endpoint"
