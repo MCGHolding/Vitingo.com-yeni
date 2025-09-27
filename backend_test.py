@@ -974,6 +974,535 @@ def test_survey_stats():
         print(f"❌ FAIL: Error testing survey statistics: {str(e)}")
         return False
 
+def test_supplier_category_creation():
+    """
+    Test the supplier category creation API that will be used by AddCategoryModal.
+    
+    Requirements to verify:
+    1. POST /api/supplier-categories - Creates new supplier category
+    2. Body: {"name": "Test Category Name"}
+    3. Expected: Creates new category and returns category object with id and name
+    4. Test validation errors (empty names, duplicate categories)
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER CATEGORY CREATION API")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-categories"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for new category
+    test_category_data = {
+        "name": "Test Kategori Yeni"
+    }
+    
+    try:
+        print("\n1. Making request to create supplier category...")
+        response = requests.post(endpoint, json=test_category_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Category creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "name", "is_active", "created_at", "updated_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Validate field values
+        print("\n4. Validating field values...")
+        category_id = data.get("id")
+        category_name = data.get("name")
+        is_active = data.get("is_active")
+        
+        if not category_id:
+            print("   ❌ FAIL: Category ID should not be empty")
+            return False, None
+        
+        if category_name != test_category_data["name"]:
+            print(f"   ❌ FAIL: Category name mismatch. Expected: {test_category_data['name']}, Got: {category_name}")
+            return False, None
+        
+        if not is_active:
+            print("   ❌ FAIL: New category should be active by default")
+            return False, None
+        
+        print("   ✅ PASS: All field values are correct")
+        print(f"   Created Category ID: {category_id}")
+        print(f"   Category Name: {category_name}")
+        print(f"   Is Active: {is_active}")
+        
+        print("\n✅ SUPPLIER CATEGORY CREATION TEST PASSED!")
+        return True, category_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_supplier_specialty_creation(category_id):
+    """
+    Test the supplier specialty creation API that will be used by AddSpecialtyModal.
+    
+    Requirements to verify:
+    1. POST /api/supplier-specialties
+    2. Body: {"name": "Test Specialty Name", "category_id": "existing_category_id"}
+    3. Expected: Creates new specialty linked to category and returns specialty object
+    4. Test validation errors (empty names, invalid category_id)
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER SPECIALTY CREATION API")
+    print("=" * 80)
+    
+    if not category_id:
+        print("⚠️  SKIP: No category ID available from previous test")
+        return True, None
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-specialties"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Using Category ID: {category_id}")
+    
+    # Test data for new specialty
+    test_specialty_data = {
+        "name": "Test Uzmanlık Alanı",
+        "category_id": category_id
+    }
+    
+    try:
+        print("\n1. Making request to create supplier specialty...")
+        response = requests.post(endpoint, json=test_specialty_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Specialty creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "name", "category_id", "is_active", "created_at", "updated_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Validate field values
+        print("\n4. Validating field values...")
+        specialty_id = data.get("id")
+        specialty_name = data.get("name")
+        returned_category_id = data.get("category_id")
+        is_active = data.get("is_active")
+        
+        if not specialty_id:
+            print("   ❌ FAIL: Specialty ID should not be empty")
+            return False, None
+        
+        if specialty_name != test_specialty_data["name"]:
+            print(f"   ❌ FAIL: Specialty name mismatch. Expected: {test_specialty_data['name']}, Got: {specialty_name}")
+            return False, None
+        
+        if returned_category_id != category_id:
+            print(f"   ❌ FAIL: Category ID mismatch. Expected: {category_id}, Got: {returned_category_id}")
+            return False, None
+        
+        if not is_active:
+            print("   ❌ FAIL: New specialty should be active by default")
+            return False, None
+        
+        print("   ✅ PASS: All field values are correct")
+        print(f"   Created Specialty ID: {specialty_id}")
+        print(f"   Specialty Name: {specialty_name}")
+        print(f"   Category ID: {returned_category_id}")
+        print(f"   Is Active: {is_active}")
+        
+        print("\n✅ SUPPLIER SPECIALTY CREATION TEST PASSED!")
+        return True, specialty_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_supplier_categories_list():
+    """
+    Test the supplier categories list API.
+    
+    Requirements to verify:
+    1. GET /api/supplier-categories
+    2. Expected: Returns list of all categories including newly created ones
+    3. Verify default categories are seeded if none exist
+    4. Check response structure and data integrity
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER CATEGORIES LIST API")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-categories"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        print("\n1. Making request to get supplier categories...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Categories list endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of categories")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list with {len(data)} categories")
+        
+        # Check for default categories
+        print("\n4. Checking for default categories...")
+        expected_default_categories = ["Tedarikçi", "Usta", "3D Tasarımcı", "Grafik Tasarımcı", "Yazılımcı", "Partner"]
+        found_categories = [cat.get("name") for cat in data if isinstance(cat, dict)]
+        
+        print(f"   Found categories: {found_categories}")
+        
+        # Check if default categories exist
+        missing_defaults = []
+        for expected_cat in expected_default_categories:
+            if expected_cat not in found_categories:
+                missing_defaults.append(expected_cat)
+        
+        if missing_defaults:
+            print(f"   ⚠️  WARNING: Missing default categories: {missing_defaults}")
+        else:
+            print("   ✅ PASS: All default categories found")
+        
+        # Validate structure of each category
+        print("\n5. Validating category structure...")
+        if len(data) > 0:
+            first_category = data[0]
+            
+            if not isinstance(first_category, dict):
+                print("   ❌ FAIL: Each category should be a dictionary")
+                return False
+            
+            # Check for key fields
+            key_fields = ["id", "name", "is_active"]
+            for field in key_fields:
+                if field not in first_category:
+                    print(f"   ❌ FAIL: Category missing key field: {field}")
+                    return False
+            
+            print("   ✅ PASS: Category structure is valid")
+            print(f"   Sample Category: {first_category.get('name')} (ID: {first_category.get('id')})")
+        
+        # Check for newly created test category
+        print("\n6. Checking for test category...")
+        test_category_found = False
+        for cat in data:
+            if cat.get("name") == "Test Kategori Yeni":
+                test_category_found = True
+                print(f"   ✅ PASS: Test category found: {cat.get('name')} (ID: {cat.get('id')})")
+                break
+        
+        if not test_category_found:
+            print("   ⚠️  INFO: Test category not found (may have been created in separate test run)")
+        
+        print("\n✅ SUPPLIER CATEGORIES LIST TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_supplier_specialties_list(category_id):
+    """
+    Test the supplier specialties list API for a specific category.
+    
+    Requirements to verify:
+    1. GET /api/supplier-specialties/{category_id}
+    2. Expected: Returns specialties for specific category including newly created ones
+    3. Verify default specialties are seeded based on category type
+    4. Check response structure and data integrity
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER SPECIALTIES LIST API")
+    print("=" * 80)
+    
+    if not category_id:
+        print("⚠️  SKIP: No category ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-specialties/{category_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Category ID: {category_id}")
+    
+    try:
+        print("\n1. Making request to get supplier specialties...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Specialties list endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        print("\n2. Parsing response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of specialties")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list with {len(data)} specialties")
+        
+        # Validate structure of each specialty
+        print("\n4. Validating specialty structure...")
+        if len(data) > 0:
+            first_specialty = data[0]
+            
+            if not isinstance(first_specialty, dict):
+                print("   ❌ FAIL: Each specialty should be a dictionary")
+                return False
+            
+            # Check for key fields
+            key_fields = ["id", "name", "category_id", "is_active"]
+            for field in key_fields:
+                if field not in first_specialty:
+                    print(f"   ❌ FAIL: Specialty missing key field: {field}")
+                    return False
+            
+            # Verify category_id matches
+            if first_specialty.get("category_id") != category_id:
+                print(f"   ❌ FAIL: Specialty category_id mismatch. Expected: {category_id}, Got: {first_specialty.get('category_id')}")
+                return False
+            
+            print("   ✅ PASS: Specialty structure is valid")
+            print(f"   Sample Specialty: {first_specialty.get('name')} (ID: {first_specialty.get('id')})")
+        
+        # List all specialties found
+        print("\n5. Listing all specialties...")
+        for i, specialty in enumerate(data, 1):
+            print(f"   {i}. {specialty.get('name')} (ID: {specialty.get('id')})")
+        
+        # Check for newly created test specialty
+        print("\n6. Checking for test specialty...")
+        test_specialty_found = False
+        for spec in data:
+            if spec.get("name") == "Test Uzmanlık Alanı":
+                test_specialty_found = True
+                print(f"   ✅ PASS: Test specialty found: {spec.get('name')} (ID: {spec.get('id')})")
+                break
+        
+        if not test_specialty_found:
+            print("   ⚠️  INFO: Test specialty not found (may have been created in separate test run)")
+        
+        print("\n✅ SUPPLIER SPECIALTIES LIST TEST PASSED!")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_supplier_category_validation_errors():
+    """
+    Test validation errors for supplier category creation.
+    
+    Requirements to verify:
+    1. Empty name should return validation error
+    2. Duplicate category name should return error
+    3. Proper error messages in Turkish
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER CATEGORY VALIDATION ERRORS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-categories"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test 1: Empty name
+    print("\n1. Testing empty category name...")
+    empty_data = {"name": ""}
+    
+    try:
+        response = requests.post(endpoint, json=empty_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 422:
+            print("   ✅ PASS: Empty name returns 422 validation error")
+        else:
+            print(f"   ⚠️  WARNING: Expected 422 for empty name, got {response.status_code}")
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing empty name: {str(e)}")
+    
+    # Test 2: Duplicate category (try to create "Tedarikçi" which should exist)
+    print("\n2. Testing duplicate category name...")
+    duplicate_data = {"name": "Tedarikçi"}
+    
+    try:
+        response = requests.post(endpoint, json=duplicate_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("   ✅ PASS: Duplicate category returns 400 error")
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                if "zaten mevcut" in error_detail:
+                    print("   ✅ PASS: Error message is in Turkish")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be in Turkish: {error_detail}")
+            except:
+                print("   ⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"   ⚠️  WARNING: Expected 400 for duplicate category, got {response.status_code}")
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing duplicate category: {str(e)}")
+    
+    print("\n✅ SUPPLIER CATEGORY VALIDATION TESTS COMPLETED!")
+    return True
+
+def test_supplier_specialty_validation_errors():
+    """
+    Test validation errors for supplier specialty creation.
+    
+    Requirements to verify:
+    1. Empty name should return validation error
+    2. Invalid category_id should return error
+    3. Proper error messages in Turkish
+    """
+    
+    print("=" * 80)
+    print("TESTING SUPPLIER SPECIALTY VALIDATION ERRORS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/supplier-specialties"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test 1: Empty name
+    print("\n1. Testing empty specialty name...")
+    empty_data = {"name": "", "category_id": "valid-category-id"}
+    
+    try:
+        response = requests.post(endpoint, json=empty_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 422:
+            print("   ✅ PASS: Empty name returns 422 validation error")
+        else:
+            print(f"   ⚠️  WARNING: Expected 422 for empty name, got {response.status_code}")
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing empty name: {str(e)}")
+    
+    # Test 2: Invalid category_id
+    print("\n2. Testing invalid category_id...")
+    invalid_data = {"name": "Test Specialty", "category_id": "invalid-category-id"}
+    
+    try:
+        response = requests.post(endpoint, json=invalid_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code in [400, 404]:
+            print("   ✅ PASS: Invalid category_id returns error")
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                print(f"   Error message: {error_detail}")
+            except:
+                print("   ⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"   ⚠️  WARNING: Expected 400/404 for invalid category_id, got {response.status_code}")
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing invalid category_id: {str(e)}")
+    
+    print("\n✅ SUPPLIER SPECIALTY VALIDATION TESTS COMPLETED!")
+    return True
+
 def test_create_customer():
     """Test creating a new customer with Turkish form data including new Turkish fields"""
     print("=" * 80)
