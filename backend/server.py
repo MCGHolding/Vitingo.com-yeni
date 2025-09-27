@@ -3205,6 +3205,65 @@ async def send_bank_email(request: BankEmailRequest):
             "error": str(e)
         }
 
+# ===================== CONTACT REGISTRATION ENDPOINTS =====================
+
+@api_router.get("/contact-registration/{registration_key}")
+async def get_contact_by_registration_key(registration_key: str):
+    """Get contact and supplier info by registration key"""
+    try:
+        # Find contact by registration key
+        contact = await db.supplier_contacts.find_one({"unique_url_key": registration_key, "is_active": True})
+        
+        if not contact:
+            raise HTTPException(status_code=404, detail="Kayıt linki bulunamadı veya geçersiz")
+        
+        # Get supplier info
+        supplier = await db.suppliers.find_one({"id": contact["supplier_id"]})
+        
+        if not supplier:
+            raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        
+        return {
+            "contact": SupplierContact(**contact),
+            "supplier": Supplier(**supplier)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting contact by registration key: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/contact-registration/{registration_key}")
+async def update_contact_by_registration_key(registration_key: str, contact_data: SupplierContactUpdate):
+    """Update contact via registration key"""
+    try:
+        # Find contact by registration key
+        existing_contact = await db.supplier_contacts.find_one({"unique_url_key": registration_key, "is_active": True})
+        
+        if not existing_contact:
+            raise HTTPException(status_code=404, detail="Kayıt linki bulunamadı veya geçersiz")
+        
+        # Update fields
+        update_data = {k: v for k, v in contact_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        result = await db.supplier_contacts.update_one(
+            {"unique_url_key": registration_key},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Kayıt güncellenemedi")
+        
+        # Return updated contact
+        updated_contact = await db.supplier_contacts.find_one({"unique_url_key": registration_key})
+        return SupplierContact(**updated_contact)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating contact by registration key: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== CONTACT EMAIL ENDPOINTS =====================
 
 class ContactEmailRequest(BaseModel):
