@@ -750,6 +750,7 @@ const NewSupplierForm = ({ onClose }) => {
           </Button>
         </div>
       </form>
+      )}
 
       {/* Add Category Modal */}
       {showAddCategoryModal && (
