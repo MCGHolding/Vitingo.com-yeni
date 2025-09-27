@@ -27,6 +27,12 @@ const NewBankForm = ({ onBackToDashboard }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ibanError, setIbanError] = useState('');
+  
+  // Country management
+  const [countries, setCountries] = useState([]);
+  const [showAddCountryModal, setShowAddCountryModal] = useState(false);
+  const [newCountryName, setNewCountryName] = useState('');
+  const [isAddingCountry, setIsAddingCountry] = useState(false);
 
   const countries = [
     { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
