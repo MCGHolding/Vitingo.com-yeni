@@ -7,7 +7,7 @@ import { ChevronDown, Search, X, User } from 'lucide-react';
  * SearchableSelect - Aranabilir Select Component
  * 
  * Props:
- * - options: Array of {id, label, sublabel?, icon?} objects
+ * - options: Array of {id/value, label, sublabel?, icon?} objects
  * - value: Selected option ID
  * - onChange: (selectedId) => void (legacy support)
  * - onValueChange: (selectedId) => void (preferred)
