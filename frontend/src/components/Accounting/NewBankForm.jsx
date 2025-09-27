@@ -302,9 +302,21 @@ const NewBankForm = ({ onBackToDashboard }) => {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Country Selection */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="flex items-center space-x-2 mb-6">
-            <Globe className="h-5 w-5 text-gray-600" />
-            <h3 className="text-xl font-semibold text-gray-900">Ülke Seçimi</h3>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2">
+              <Globe className="h-5 w-5 text-gray-600" />
+              <h3 className="text-xl font-semibold text-gray-900">Ülke Seçimi</h3>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAddCountryModal(true)}
+              className="flex items-center space-x-1 text-green-600 border-green-200 hover:bg-green-50"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Ülke Ekle</span>
+            </Button>
           </div>
           
           <div>
