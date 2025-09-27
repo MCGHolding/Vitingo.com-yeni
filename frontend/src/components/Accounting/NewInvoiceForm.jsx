@@ -122,8 +122,16 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   // Calculate totals
   useEffect(() => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.total || 0), 0);
-    const discountPercent = parseNumber(formData.discount) || 0;
-    const discountAmount = (subtotal * discountPercent) / 100;
+    const discountValue = parseNumber(formData.discount) || 0;
+    
+    // Calculate discount amount based on discount type
+    let discountAmount = 0;
+    if (formData.discountType === 'percentage') {
+      discountAmount = (subtotal * discountValue) / 100;
+    } else if (formData.discountType === 'fixed') {
+      discountAmount = discountValue;
+    }
+    
     const discountedSubtotal = subtotal - discountAmount;
     const vatAmount = (discountedSubtotal * formData.vatRate) / 100;
     const total = discountedSubtotal + vatAmount;
@@ -134,7 +142,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       discountAmount,
       total
     });
-  }, [formData.items, formData.vatRate, formData.discount]);
+  }, [formData.items, formData.vatRate, formData.discount, formData.discountType]);
 
   // Load customers and products on mount
   useEffect(() => {
