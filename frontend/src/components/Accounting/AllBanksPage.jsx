@@ -126,14 +126,25 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   };
 
   const handleShareSingle = (bank) => {
-    setBankToShare(bank);
-    setShareMode('single');
-    setShowShareModal(true);
+    setEmailBanks([bank]);
+    setEmailMode('single');
+    setShowEmailModal(true);
   };
 
   const handleShareByCountry = () => {
     setShareMode('country');
     setShowShareModal(true);
+  };
+
+  const handleCountryShareConfirm = () => {
+    if (!selectedShareCountry) return;
+    
+    const countryBanks = filteredBanks.filter(bank => bank.country === selectedShareCountry);
+    setEmailBanks(countryBanks);
+    setEmailMode('country');
+    setShowShareModal(false);
+    setShowEmailModal(true);
+    setSelectedShareCountry('');
   };
 
   const generateEmailContent = () => {
