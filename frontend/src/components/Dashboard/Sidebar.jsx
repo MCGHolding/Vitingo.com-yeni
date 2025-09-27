@@ -562,6 +562,21 @@ export default function Sidebar({
       return;
     }
 
+    // Handle Supplier menu actions
+    if (subItem && subItem.name === 'Yeni Tedarikçi') {
+      if (onNewSupplier) {
+        onNewSupplier();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Tedarikçiler') {
+      if (onAllSuppliers) {
+        onAllSuppliers();
+      }
+      return;
+    }
+
     // Handle Brief menu actions
     if (subItem && subItem.name === 'Yeni Brief') {
       if (onNewBrief) {
