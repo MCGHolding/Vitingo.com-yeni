@@ -120,6 +120,10 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     }
   };
 
+  const handleViewSupplier = (supplier) => {
+    setShowViewModal(supplier);
+  };
+
   const handleEditSupplier = (supplier) => {
     setShowEditModal(supplier);
   };
