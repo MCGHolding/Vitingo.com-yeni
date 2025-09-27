@@ -57,8 +57,8 @@
 ##   test_priority: "high_first"  # or "sequential" or "stuck_first"
 ##
 ## agent_communication:
-##     -agent: "main"  # or "testing" or "user"
-##     -message: "Communication message between agents"
+##     -agent: "main"
+##     -message: "User reported BankEmailModal opens but doesn't send actual emails, only opens mailto links. Fixed by adding backend /api/send-bank-email endpoint using SendGrid email service and updated frontend to show success message 'Tebriker, Mailiniz başarı ile gönderilmiştir' with 'Geri Dön' and 'Dashboard' buttons as requested. Both backend and frontend components need testing to verify real email sending functionality."
 
 # Protocol Guidelines for Main agent
 #
