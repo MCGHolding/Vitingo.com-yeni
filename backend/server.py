@@ -3205,6 +3205,73 @@ async def send_bank_email(request: BankEmailRequest):
             "error": str(e)
         }
 
+# ===================== CONTACT EMAIL ENDPOINTS =====================
+
+class ContactEmailRequest(BaseModel):
+    to: str
+    subject: str
+    message: str
+    contact_id: Optional[str] = None
+    supplier_id: Optional[str] = None
+
+@api_router.post("/send-contact-email")
+async def send_contact_email(request: ContactEmailRequest):
+    """Send email to supplier contact via SendGrid"""
+    try:
+        # Get contact and supplier info for logging/tracking
+        contact = None
+        supplier = None
+        
+        if request.contact_id:
+            contact = await db.supplier_contacts.find_one({"id": request.contact_id})
+        
+        if request.supplier_id:
+            supplier = await db.suppliers.find_one({"id": request.supplier_id})
+        
+        # Use default sender info (can be made configurable)
+        from_email = "noreply@vendormate.com"
+        from_name = "VendorMate CRM"
+        
+        result = email_service.send_user_email(
+            to_email=request.to,
+            to_name=contact.get("full_name", "Değerli Müşterimiz") if contact else "Değerli Müşterimiz",
+            from_email=from_email,
+            from_name=from_name,
+            subject=request.subject,
+            body=request.message,
+            cc="",
+            bcc="",
+            attachments=[]
+        )
+        
+        # Save email to contact_emails collection for tracking
+        email_record = {
+            "id": str(uuid.uuid4()),
+            "from": from_email,
+            "from_name": from_name,
+            "to": request.to,
+            "to_name": contact.get("full_name", "Bilinmiyor") if contact else "Bilinmiyor",
+            "subject": request.subject,
+            "message": request.message,
+            "contact_id": request.contact_id,
+            "supplier_id": request.supplier_id,
+            "contact_name": contact.get("full_name") if contact else None,
+            "supplier_name": supplier.get("company_short_name") if supplier else None,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "sent" if result.get("success") else "failed",
+            "sendgrid_message_id": result.get("message_id")
+        }
+        
+        await db.contact_emails.insert_one(email_record)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error sending contact email: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 # ===================== SUPPLIER MANAGEMENT MODELS =====================
 
 # Include the router in the main app
