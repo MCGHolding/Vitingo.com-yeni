@@ -2734,6 +2734,13 @@ class Supplier(BaseModel):
     services: List[str] = []  # Array of service tags (etiket sistemi)
     supplier_type_id: str  # Reference to SupplierCategory
     specialty_id: str  # Reference to SupplierSpecialty
+    # Bank/Payment Information
+    iban: Optional[str] = ""
+    bank_name: Optional[str] = ""
+    bank_branch: Optional[str] = ""
+    account_holder_name: Optional[str] = ""
+    swift_code: Optional[str] = ""
+    country: Optional[str] = ""
     status: str = "active"  # active, passive, blacklist
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
