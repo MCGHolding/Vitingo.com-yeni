@@ -811,27 +811,12 @@ const NewSupplierForm = ({ onClose }) => {
       />
 
       {/* Add Specialty Modal */}
-      {showAddSpecialtyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Yeni Uzmanlık Alanı Ekle</h3>
-            <Input
-              value={newSpecialtyName}
-              onChange={(e) => setNewSpecialtyName(e.target.value)}
-              placeholder="Uzmanlık alanı adı..."
-              onKeyPress={(e) => e.key === 'Enter' && handleAddSpecialty()}
-            />
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setShowAddSpecialtyModal(false)}>
-                İptal
-              </Button>
-              <Button onClick={handleAddSpecialty}>
-                Kaydet
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AddSpecialtyModal
+        isOpen={showAddSpecialtyModal}
+        onClose={() => setShowAddSpecialtyModal(false)}
+        onSave={handleSpecialtySaved}
+        categoryId={formData.supplier_type_id}
+      />
     </div>
   );
 };
