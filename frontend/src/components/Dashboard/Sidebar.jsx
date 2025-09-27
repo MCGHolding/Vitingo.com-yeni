@@ -148,6 +148,7 @@ const navigation = [
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
       { 
         name: 'Bankalar', 
+        icon: Building2,
         hasSubmenu: true,
         submenu: [
           { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Plus },
