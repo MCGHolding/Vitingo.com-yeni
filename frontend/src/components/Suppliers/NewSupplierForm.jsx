@@ -47,7 +47,14 @@ const NewSupplierForm = ({ onClose }) => {
     tax_number: '',
     services: [],
     supplier_type_id: '',
-    specialty_id: ''
+    specialty_id: '',
+    // Bank/Payment Information
+    iban: '',
+    bank_name: '',
+    bank_branch: '',
+    account_holder_name: '',
+    swift_code: '',
+    country: ''
   });
 
   const [currentService, setCurrentService] = useState('');
