@@ -195,6 +195,26 @@ const NewSupplierForm = ({ onClose }) => {
     }
   };
 
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : 'Bilinmiyor';
+  };
+
+  const getSpecialtyName = (specialtyId) => {
+    const specialty = specialties.find(spec => spec.id === specialtyId);
+    return specialty ? specialty.name : 'Bilinmiyor';
+  };
+
+  const handleGoBack = () => {
+    setSupplierCreated(false);
+  };
+
+  const handleGoToDashboard = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   const handleAddSpecialty = async () => {
     if (!newSpecialtyName.trim() || !formData.supplier_type_id) return;
     
