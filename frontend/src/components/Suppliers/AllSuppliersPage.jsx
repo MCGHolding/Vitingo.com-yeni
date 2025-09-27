@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import { useToast } from '../../hooks/use-toast';
 import EditSupplierModal from './EditSupplierModal';
 import ViewSupplierModal from './ViewSupplierModal';
+import EditContactModal from './EditContactModal';
 import { 
   Building2, 
   Phone, 
