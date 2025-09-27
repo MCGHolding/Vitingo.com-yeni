@@ -1173,6 +1173,10 @@ function App() {
               path="/handover/:token" 
               element={<HandoverFormPage />} 
             />
+            <Route 
+              path="/contact-registration/:registrationKey" 
+              element={<ContactRegistrationPage />} 
+            />
           </Routes>
         </BrowserRouter>
       </div>
