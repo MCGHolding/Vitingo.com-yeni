@@ -333,48 +333,59 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     e.preventDefault();
     
     console.log('SUBMIT TRIGGERED - Form Data:', formData);
+    console.log('Current totals:', totals);
     
+    // Validate that we have customer name
+    if (!formData.customerName || formData.customerName.trim() === '') {
+      alert('Müşteri adı girilmelidir');
+      return;
+    }
+
+    // Validate that we have at least one item with name, quantity, and price
+    const validItems = formData.items.filter(item => 
+      item.name && item.name.trim() !== '' &&
+      item.quantity && parseFloat(item.quantity) > 0 &&
+      item.unitPrice && parseFloat(item.unitPrice) > 0
+    );
+
+    if (validItems.length === 0) {
+      alert('En az bir ürün/hizmet girmeniz gerekiyor (ad, miktar ve birim fiyat ile)');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      console.log('Backend URL:', backendUrl);
       
-      // Minimal validation - just ensure we have some data
-      if (!formData.invoiceNumber || formData.invoiceNumber.trim() === '') {
-        formData.invoiceNumber = `INV-${Date.now()}`;
-      }
-      
-      // Create simple, guaranteed working invoice object
+      // Create invoice object with REAL form data
       const invoice = {
-        invoice_number: formData.invoiceNumber || `INV-${Date.now()}`,
-        customer_id: null,
-        customer_name: formData.customerName || 'Test Müşteri',
+        invoice_number: formData.invoiceNumber,
+        customer_id: formData.customerId || null,
+        customer_name: formData.customerName.trim(), // USE REAL CUSTOMER NAME
         date: formData.date,
         currency: formData.currency,
-        items: [
-          {
-            id: "test-item-1",
-            product_id: null,
-            name: "Test Ürün",
-            quantity: 1,
-            unit: "adet",
-            unit_price: 100,
-            total: 100
-          }
-        ],
-        subtotal: 100,
-        vat_rate: 20,
-        vat_amount: 20,
-        discount: 0,
-        discount_type: "percentage",
-        discount_amount: 0,
-        total: 120,
-        conditions: formData.conditions || "",
-        payment_term: "30"
+        items: validItems.map(item => ({
+          id: item.id || `item-${Date.now()}-${Math.random()}`,
+          product_id: item.productId || null,
+          name: item.name.trim(), // USE REAL PRODUCT NAME
+          quantity: parseFloat(item.quantity), // USE REAL QUANTITY
+          unit: item.unit || 'adet',
+          unit_price: parseFloat(item.unitPrice), // USE REAL UNIT PRICE
+          total: parseFloat(item.quantity) * parseFloat(item.unitPrice) // CALCULATE REAL TOTAL
+        })),
+        subtotal: totals.subtotal, // USE REAL SUBTOTAL
+        vat_rate: parseFloat(formData.vatRate),
+        vat_amount: totals.vatAmount, // USE REAL VAT AMOUNT
+        discount: parseFloat(formData.discount) || 0, // USE REAL DISCOUNT
+        discount_type: formData.discountType,
+        discount_amount: totals.discountAmount, // USE REAL DISCOUNT AMOUNT
+        total: totals.total, // USE REAL TOTAL
+        conditions: formData.conditions,
+        payment_term: formData.paymentTerm
       };
 
-      console.log('Sending SIMPLE invoice data to backend:', JSON.stringify(invoice, null, 2));
+      console.log('Sending REAL invoice data to backend:', JSON.stringify(invoice, null, 2));
 
       const response = await fetch(`${backendUrl}/api/invoices`, {
         method: 'POST',
