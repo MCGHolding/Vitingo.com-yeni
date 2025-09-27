@@ -789,7 +789,8 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Automatic Invoice Number Generation System Testing"
+    - "BankEmailModal Real Email Sending with Success State"
+    - "Bank Email API Endpoint"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
