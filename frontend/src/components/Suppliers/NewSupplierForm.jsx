@@ -396,8 +396,16 @@ const NewSupplierForm = ({ onClose }) => {
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                 <div className="text-left space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">Firma Adı:</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {createdSupplierInfo?.is_individual ? 'Kişi Adı:' : 'Firma Adı:'}
+                    </span>
                     <span className="text-sm text-gray-900">{createdSupplierInfo?.company_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Tür:</span>
+                    <span className="text-sm text-gray-900">
+                      {createdSupplierInfo?.is_individual ? 'Bireysel' : 'Şirket'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm font-medium text-gray-700">Kategori:</span>
@@ -408,7 +416,9 @@ const NewSupplierForm = ({ onClose }) => {
                     <span className="text-sm text-gray-900">{createdSupplierInfo?.specialty}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">Yetkili Kişiler:</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {createdSupplierInfo?.is_individual ? 'İletişim Bilgileri:' : 'Yetkili Kişiler:'}
+                    </span>
                     <span className="text-sm text-gray-900">{createdSupplierInfo?.contacts_count} kişi</span>
                   </div>
                 </div>
