@@ -605,6 +605,59 @@ const NewBankForm = ({ onBackToDashboard }) => {
           </div>
         </div>
       )}
+
+      {/* Add Country Modal */}
+      {showAddCountryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <Plus className="w-8 h-8 text-blue-600" />
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 text-center mb-6">Yeni Ülke Ekle</h3>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Ülke Adı *
+              </label>
+              <Input
+                value={newCountryName}
+                onChange={(e) => setNewCountryName(e.target.value)}
+                placeholder="Örn: Almanya, Fransa, İtalya"
+                className="w-full"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddCountry();
+                  }
+                }}
+              />
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={() => {
+                  setShowAddCountryModal(false);
+                  setNewCountryName('');
+                }}
+                variant="outline"
+                className="flex-1 py-3"
+                disabled={isAddingCountry}
+              >
+                İptal
+              </Button>
+              <Button
+                onClick={handleAddCountry}
+                disabled={isAddingCountry || !newCountryName.trim()}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 disabled:opacity-50"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {isAddingCountry ? 'Ekleniyor...' : 'Ülke Ekle'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
