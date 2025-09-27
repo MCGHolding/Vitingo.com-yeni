@@ -1063,6 +1063,9 @@ const Dashboard = () => {
         // Bank handlers
         onNewBank={handleNewBank}
         onAllBanks={handleAllBanks}
+        // Supplier handlers  
+        onNewSupplier={handleNewSupplier}
+        onAllSuppliers={handleAllSuppliers}
         // Brief handlers
         onNewBrief={handleNewBrief}
         onAllBriefs={handleAllBriefs}
