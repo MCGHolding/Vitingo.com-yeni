@@ -627,6 +627,16 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         />
       )}
 
+      {/* Edit Contact Modal */}
+      {showEditContactModal && (
+        <EditContactModal 
+          contact={showEditContactModal.contact}
+          supplier={showEditContactModal.supplier}
+          onClose={() => setShowEditContactModal(null)}
+          onSave={handleContactSave}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
