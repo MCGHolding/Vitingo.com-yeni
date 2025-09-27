@@ -246,6 +246,32 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     });
   };
 
+  const handleContactRegistration = (contact) => {
+    if (!contact.unique_url_key) {
+      toast({
+        title: "Hata",
+        description: "Bu kişi için kayıt linki oluşturulmamış",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Create registration URL
+    const registrationUrl = `${window.location.origin}/contact-registration/${contact.unique_url_key}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(registrationUrl).then(() => {
+      toast({
+        title: "Başarılı",
+        description: "Kayıt linki kopyalandı",
+        variant: "default"
+      });
+    }).catch(() => {
+      // Fallback - show URL in alert if clipboard doesn't work
+      alert(`Kayıt linki: ${registrationUrl}`);
+    });
+  };
+
   const handleContactMessage = (contact, supplier) => {
     toast({
       title: "Özellik",
