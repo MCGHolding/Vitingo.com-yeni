@@ -147,26 +147,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     { value: '90', label: '90 Gün' }
   ];
 
-  // Generate unique invoice number
-  const generateInvoiceNumber = (currency, date) => {
-    const invoiceDate = new Date(date);
-    const month = String(invoiceDate.getMonth() + 1).padStart(2, '0');
-    const year = invoiceDate.getFullYear();
-    
-    // For demo purposes, using a simple counter (in real app, this would come from backend)
-    const invoiceCounter = String(1001).padStart(6, '0');
-    
-    return `${currency}-${month}${year}${invoiceCounter}`;
-  };
 
-  // Update invoice number when currency or date changes
-  useEffect(() => {
-    const newInvoiceNumber = generateInvoiceNumber(formData.currency, formData.date);
-    setFormData(prev => ({
-      ...prev,
-      invoiceNumber: newInvoiceNumber
-    }));
-  }, [formData.currency, formData.date]);
 
   // Calculate totals
   useEffect(() => {
