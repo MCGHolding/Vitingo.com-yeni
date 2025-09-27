@@ -258,8 +258,13 @@ export default function Sidebar({
   onOverdueInvoices,
   onCurrentAccounts,
   onCollectionReceipt,
-  onExpenseReceipt,
   onPaymentRequests,
+  // Expense Receipt handlers
+  onNewExpenseReceipt,
+  onAllExpenseReceipts,
+  onPendingExpenseReceipts,
+  onApprovedExpenseReceipts,
+  onPaidExpenseReceipts,
   onPurchaseInvoices,
   onPurchaseApprovals,
   // Bank handlers
