@@ -118,6 +118,16 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     }
   };
 
+  const handleEditSupplier = (supplier) => {
+    setShowEditModal(supplier);
+  };
+
+  const handleEditSave = () => {
+    // Reload data after edit
+    loadData();
+    setShowEditModal(null);
+  };
+
   const handleDeleteSupplier = async (supplierId) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
