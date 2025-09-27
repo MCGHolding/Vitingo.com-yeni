@@ -134,6 +134,68 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     setShowEditModal(null);
   };
 
+  const handleSetPassive = async (supplierId) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/suppliers/${supplierId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'passive' })
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Tedarikçi pasif duruma alındı",
+          variant: "default"
+        });
+        await loadData();
+      } else {
+        throw new Error('Failed to set supplier passive');
+      }
+    } catch (error) {
+      console.error('Error setting supplier passive:', error);
+      toast({
+        title: "Hata",
+        description: "Tedarikçi pasif duruma alınırken hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setShowActionMenu(null);
+    }
+  };
+
+  const handleSetBlacklist = async (supplierId) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/suppliers/${supplierId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'blacklist' })
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Tedarikçi kara listeye alındı",
+          variant: "default"
+        });
+        await loadData();
+      } else {
+        throw new Error('Failed to blacklist supplier');
+      }
+    } catch (error) {
+      console.error('Error blacklisting supplier:', error);
+      toast({
+        title: "Hata",
+        description: "Tedarikçi kara listeye alınırken hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setShowActionMenu(null);
+    }
+  };
+
   const handleDeleteSupplier = async (supplierId) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
