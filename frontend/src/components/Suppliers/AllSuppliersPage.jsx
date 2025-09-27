@@ -102,8 +102,6 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     loadData();
   }, []);
 
- 
-
   const loadData = async () => {
     try {
       setIsLoading(true);
