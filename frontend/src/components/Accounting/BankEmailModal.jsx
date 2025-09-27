@@ -11,7 +11,10 @@ import {
   Paperclip,
   Type,
   Building2,
-  Globe
+  Globe,
+  CheckCircle,
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 
 export default function BankEmailModal({ banks, mode, onClose }) {
