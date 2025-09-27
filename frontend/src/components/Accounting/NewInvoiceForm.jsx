@@ -341,15 +341,39 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       return;
     }
 
-    // Validate that we have at least one item with name, quantity, and price
-    const validItems = formData.items.filter(item => 
-      item.name && item.name.trim() !== '' &&
-      item.quantity && parseFloat(item.quantity) > 0 &&
-      item.unitPrice && parseFloat(item.unitPrice) > 0
+    // Check if we have items with data
+    const itemsWithData = formData.items.filter(item => 
+      item.name && item.name.trim() !== ''
     );
 
+    if (itemsWithData.length === 0) {
+      alert('En az bir ürün/hizmet adı girilmelidir');
+      return;
+    }
+
+    // Calculate valid items for submission
+    const validItems = formData.items.filter(item => {
+      const hasName = item.name && item.name.trim() !== '';
+      const hasQuantity = item.quantity && parseNumber(item.quantity) > 0;
+      const hasPrice = item.unitPrice && parseNumber(item.unitPrice) > 0;
+      
+      if (hasName) {
+        console.log('Item validation:', {
+          name: item.name,
+          quantity: item.quantity,
+          parsedQuantity: parseNumber(item.quantity),
+          unitPrice: item.unitPrice,
+          parsedPrice: parseNumber(item.unitPrice),
+          hasQuantity,
+          hasPrice
+        });
+      }
+      
+      return hasName && hasQuantity && hasPrice;
+    });
+
     if (validItems.length === 0) {
-      alert('En az bir ürün/hizmet girmeniz gerekiyor (ad, miktar ve birim fiyat ile)');
+      alert('Girdiğiniz ürünler için geçerli miktar ve birim fiyat giriniz');
       return;
     }
 
