@@ -64,9 +64,15 @@ export default function SearchableSelect({
   const selectedOption = options.find(option => option.id === value);
 
   const handleSelect = (optionId) => {
-    onChange(optionId);
     setIsOpen(false);
     setSearchQuery('');
+    // Support both onChange and onValueChange for compatibility
+    if (onChange) {
+      onChange(optionId);
+    }
+    if (onValueChange) {
+      onValueChange(optionId);
+    }
   };
 
   const clearSelection = (e) => {
