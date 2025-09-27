@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useToast } from '../../hooks/use-toast';
+import EditSupplierModal from './EditSupplierModal';
 import { 
   Building2, 
   Phone, 
