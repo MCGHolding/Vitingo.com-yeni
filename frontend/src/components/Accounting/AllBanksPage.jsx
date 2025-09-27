@@ -471,12 +471,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                 İptal
               </Button>
               <Button
-                onClick={handleSendEmail}
+                onClick={handleCountryShareConfirm}
                 disabled={shareMode === 'country' && !selectedShareCountry}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 disabled:opacity-50"
               >
                 <Mail className="h-4 w-4 mr-2" />
-                E-posta Gönder
+                Email Penceresini Aç
               </Button>
             </div>
           </div>
