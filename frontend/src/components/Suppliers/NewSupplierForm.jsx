@@ -279,11 +279,27 @@ const NewSupplierForm = ({ onClose }) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
+      // Prepare supplier data based on type
+      const supplierData = isIndividualSupplier 
+        ? {
+            ...formData,
+            company_short_name: contacts[0]?.full_name || 'Bireysel Tedarikçi',
+            company_title: contacts[0]?.full_name || 'Bireysel Tedarikçi',
+            address: '',
+            phone: contacts[0]?.mobile || '',
+            mobile: contacts[0]?.mobile || '',
+            email: contacts[0]?.email || '',
+            tax_office: '',
+            tax_number: '',
+            services: []
+          }
+        : formData;
+
       // Create supplier first
       const supplierResponse = await fetch(`${backendUrl}/api/suppliers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(supplierData)
       });
 
       if (!supplierResponse.ok) {
