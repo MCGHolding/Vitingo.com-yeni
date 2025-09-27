@@ -537,6 +537,21 @@ export default function Sidebar({
       return;
     }
 
+    // Handle Bank menu actions
+    if (subItem && subItem.name === 'Yeni Banka') {
+      if (onNewBank) {
+        onNewBank();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Bankalar') {
+      if (onAllBanks) {
+        onAllBanks();
+      }
+      return;
+    }
+
     // Handle Brief menu actions
     if (subItem && subItem.name === 'Yeni Brief') {
       if (onNewBrief) {
