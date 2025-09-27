@@ -362,13 +362,46 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         // Show success modal
         setShowSuccessModal(true);
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Fatura kaydedilirken hata oluştu');
+        // Handle different error types
+        let errorMessage = 'Fatura kaydedilirken hata oluştu';
+        
+        try {
+          const errorData = await response.json();
+          console.error('Backend error:', errorData);
+          
+          // Handle different error response formats
+          if (errorData.detail) {
+            errorMessage = errorData.detail;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          } else if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          } else {
+            errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          }
+        } catch (parseError) {
+          console.error('Error parsing response:', parseError);
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
       
     } catch (error) {
       console.error('Error saving invoice:', error);
-      alert(`Fatura kaydedilemedi: ${error.message}`);
+      
+      // Better error display
+      let displayMessage = 'Bilinmeyen bir hata oluştu';
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        displayMessage = 'Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.';
+      } else if (error.message) {
+        displayMessage = error.message;
+      }
+      
+      alert(`Fatura kaydedilemedi: ${displayMessage}`);
     } finally {
       setIsSubmitting(false);
     }
