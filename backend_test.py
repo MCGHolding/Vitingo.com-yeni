@@ -3150,6 +3150,34 @@ def test_invoice_api_endpoints():
         "payment_term": "30"
     }
     
+    # Test data with fixed discount type
+    test_invoice_data_fixed_discount = {
+        "invoice_number": "FTR-2024-002",
+        "customer_id": "test-customer-456",
+        "customer_name": "İnşaat Şirketi Ltd.",
+        "date": "2024-01-16",
+        "currency": "TRY",
+        "items": [
+            {
+                "product_id": "prod-003",
+                "name": "Stand Kurulumu",
+                "quantity": 2.0,
+                "unit": "adet",
+                "unit_price": 5000.0,
+                "total": 10000.0
+            }
+        ],
+        "subtotal": 10000.0,
+        "vat_rate": 20.0,
+        "vat_amount": 2000.0,
+        "discount": 1000.0,
+        "discount_type": "fixed",
+        "discount_amount": 1000.0,
+        "total": 11000.0,
+        "conditions": "Sabit iskonto uygulandı.",
+        "payment_term": "15"
+    }
+    
     created_invoice_id = None
     all_tests_passed = True
     
