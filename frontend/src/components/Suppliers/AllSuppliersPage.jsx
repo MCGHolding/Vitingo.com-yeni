@@ -224,7 +224,6 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         variant: "destructive"
       });
     } finally {
-      setShowActionMenu(null);
     }
   };
 
@@ -301,7 +300,6 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         variant: "destructive"
       });
     } finally {
-      setShowActionMenu(null);
     }
   };
 
