@@ -63,6 +63,7 @@ const NewSupplierForm = ({ onClose }) => {
 
   const [currentService, setCurrentService] = useState('');
   const [currentContactTag, setCurrentContactTag] = useState('');
+  const [isUSABankFormat, setIsUSABankFormat] = useState(false);
 
   // Load categories on mount
   useEffect(() => {
