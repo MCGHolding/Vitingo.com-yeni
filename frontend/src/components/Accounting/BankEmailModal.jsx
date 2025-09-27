@@ -383,19 +383,35 @@ Finans Departmanı`
 
         {/* Footer */}
         <div className="flex justify-between items-center p-6 border-t bg-gray-50 rounded-b-lg">
-          <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4 mr-2" />
-            İptal
-          </Button>
-          
-          <Button 
-            onClick={handleSendEmail}
-            disabled={isLoading || !emailData.to.trim() || !emailData.subject.trim()}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Send className="h-4 w-4 mr-2" />
-            {isLoading ? 'Gönderiliyor...' : 'Email Gönder'}
-          </Button>
+          {emailSent ? (
+            <>
+              <Button variant="outline" onClick={handleGoBack} className="flex items-center space-x-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span>Geri Dön</span>
+              </Button>
+              
+              <Button onClick={handleGoToDashboard} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
+                <Home className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" onClick={onClose}>
+                <X className="h-4 w-4 mr-2" />
+                İptal
+              </Button>
+              
+              <Button 
+                onClick={handleSendEmail}
+                disabled={isLoading || !emailData.to.trim() || !emailData.subject.trim()}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {isLoading ? 'Gönderiliyor...' : 'Email Gönder'}
+              </Button>
+            </>
+          )}
         </div>
       </Card>
     </div>
