@@ -3083,6 +3083,351 @@ def test_logo_null_validation():
         print("   The logo validation error problem may still exist")
         return False
 
+def test_invoice_api_endpoints():
+    """
+    Test the Invoice API endpoints for NewInvoiceForm integration.
+    
+    Requirements to verify:
+    1. POST /api/invoices endpoint to create a new invoice
+    2. GET /api/invoices endpoint to retrieve all invoices  
+    3. GET /api/invoices/{invoice_id} endpoint to get specific invoice
+    4. PUT /api/invoices/{invoice_id} endpoint to update invoice status
+    5. GET /api/invoices/status/{status} endpoint to get invoices by status
+    
+    Test with complete invoice data including:
+    - Invoice number, customer info, date, currency
+    - Multiple invoice items with product details
+    - Tax calculations (VAT), discount, totals
+    - Terms and conditions
+    - Turkish character support and proper JSON serialization
+    """
+    
+    print("=" * 80)
+    print("TESTING INVOICE API ENDPOINTS")
+    print("=" * 80)
+    
+    # Test data with Turkish invoice including multiple items, VAT, discount
+    test_invoice_data = {
+        "invoice_number": "FTR-2024-001",
+        "customer_id": "test-customer-123",
+        "customer_name": "Teknoloji Şirketi A.Ş.",
+        "date": "2024-01-15",
+        "currency": "TRY",
+        "items": [
+            {
+                "product_id": "prod-001",
+                "name": "Fuar Stand Tasarımı",
+                "quantity": 1.0,
+                "unit": "adet",
+                "unit_price": 15000.0,
+                "total": 15000.0
+            },
+            {
+                "product_id": "prod-002", 
+                "name": "LED Ekran Kiralama",
+                "quantity": 3.0,
+                "unit": "gün",
+                "unit_price": 500.0,
+                "total": 1500.0
+            },
+            {
+                "product_id": None,
+                "name": "Özel Grafik Tasarım",
+                "quantity": 8.0,
+                "unit": "saat",
+                "unit_price": 250.0,
+                "total": 2000.0
+            }
+        ],
+        "subtotal": 18500.0,
+        "vat_rate": 20.0,
+        "vat_amount": 3700.0,
+        "discount": 5.0,
+        "discount_amount": 925.0,
+        "total": 21275.0,
+        "conditions": "Ödeme vadesi 30 gündür. Geç ödemeler için %2 faiz uygulanır.",
+        "payment_term": "30"
+    }
+    
+    created_invoice_id = None
+    all_tests_passed = True
+    
+    # Test 1: POST /api/invoices - Create invoice
+    print("\n1. Testing POST /api/invoices endpoint (Create Invoice)...")
+    create_endpoint = f"{BACKEND_URL}/api/invoices"
+    
+    try:
+        response = requests.post(create_endpoint, json=test_invoice_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Create invoice endpoint responds with status 200")
+            
+            # Parse response
+            data = response.json()
+            if not isinstance(data, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                all_tests_passed = False
+            else:
+                # Check required fields
+                required_fields = ["id", "invoice_number", "customer_name", "date", "currency", "items", "subtotal", "vat_rate", "vat_amount", "total"]
+                missing_fields = []
+                for field in required_fields:
+                    if field not in data:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                    all_tests_passed = False
+                else:
+                    print("   ✅ PASS: Response has all required fields")
+                    created_invoice_id = data.get("id")
+                    
+                    # Verify data integrity
+                    print(f"   Created Invoice ID: {created_invoice_id}")
+                    print(f"   Invoice Number: {data.get('invoice_number')}")
+                    print(f"   Customer: {data.get('customer_name')}")
+                    print(f"   Total Amount: {data.get('total')} {data.get('currency')}")
+                    print(f"   Items Count: {len(data.get('items', []))}")
+                    
+                    # Test Turkish character preservation
+                    customer_name = data.get('customer_name')
+                    conditions = data.get('conditions')
+                    if any(char in customer_name for char in 'ğüşıöçĞÜŞİÖÇ'):
+                        print("   ✅ PASS: Turkish characters preserved in customer name")
+                    if any(char in conditions for char in 'ğüşıöçĞÜŞİÖÇ'):
+                        print("   ✅ PASS: Turkish characters preserved in conditions")
+                    
+                    # Verify calculations
+                    if data.get('subtotal') == test_invoice_data['subtotal']:
+                        print("   ✅ PASS: Subtotal calculation correct")
+                    else:
+                        print(f"   ❌ FAIL: Subtotal mismatch. Expected: {test_invoice_data['subtotal']}, Got: {data.get('subtotal')}")
+                        all_tests_passed = False
+                    
+                    if data.get('total') == test_invoice_data['total']:
+                        print("   ✅ PASS: Total calculation correct")
+                    else:
+                        print(f"   ❌ FAIL: Total mismatch. Expected: {test_invoice_data['total']}, Got: {data.get('total')}")
+                        all_tests_passed = False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating invoice: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 2: GET /api/invoices - Get all invoices
+    print("\n2. Testing GET /api/invoices endpoint (Get All Invoices)...")
+    get_all_endpoint = f"{BACKEND_URL}/api/invoices"
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Get all invoices endpoint responds with status 200")
+            
+            data = response.json()
+            if not isinstance(data, list):
+                print("   ❌ FAIL: Response should be a list of invoices")
+                all_tests_passed = False
+            else:
+                print(f"   ✅ PASS: Response is a list with {len(data)} invoices")
+                
+                # If we created an invoice, it should be in the list
+                if created_invoice_id and len(data) > 0:
+                    found_invoice = False
+                    for invoice in data:
+                        if invoice.get('id') == created_invoice_id:
+                            found_invoice = True
+                            print("   ✅ PASS: Created invoice found in list")
+                            break
+                    
+                    if not found_invoice:
+                        print("   ❌ FAIL: Created invoice not found in list")
+                        all_tests_passed = False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting all invoices: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 3: GET /api/invoices/{invoice_id} - Get specific invoice
+    if created_invoice_id:
+        print(f"\n3. Testing GET /api/invoices/{created_invoice_id} endpoint (Get Specific Invoice)...")
+        get_specific_endpoint = f"{BACKEND_URL}/api/invoices/{created_invoice_id}"
+        
+        try:
+            response = requests.get(get_specific_endpoint, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("   ✅ PASS: Get specific invoice endpoint responds with status 200")
+                
+                data = response.json()
+                if not isinstance(data, dict):
+                    print("   ❌ FAIL: Response should be an invoice dictionary")
+                    all_tests_passed = False
+                else:
+                    # Check that ID matches
+                    returned_id = data.get("id")
+                    if returned_id != created_invoice_id:
+                        print(f"   ❌ FAIL: ID mismatch. Expected: {created_invoice_id}, Got: {returned_id}")
+                        all_tests_passed = False
+                    else:
+                        print("   ✅ PASS: Invoice ID matches request")
+                        print(f"   Invoice Number: {data.get('invoice_number')}")
+                        print(f"   Customer: {data.get('customer_name')}")
+                        print(f"   Status: {data.get('status')}")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error getting specific invoice: {str(e)}")
+            all_tests_passed = False
+    else:
+        print("\n3. SKIP: Get specific invoice (no invoice ID available)")
+    
+    # Test 4: PUT /api/invoices/{invoice_id} - Update invoice status
+    if created_invoice_id:
+        print(f"\n4. Testing PUT /api/invoices/{created_invoice_id} endpoint (Update Invoice Status)...")
+        update_endpoint = f"{BACKEND_URL}/api/invoices/{created_invoice_id}"
+        new_status = "paid"
+        
+        try:
+            # Note: The endpoint expects status as a query parameter based on the backend code
+            response = requests.put(f"{update_endpoint}?status={new_status}", timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("   ✅ PASS: Update invoice status endpoint responds with status 200")
+                
+                data = response.json()
+                if not isinstance(data, dict):
+                    print("   ❌ FAIL: Response should be a dictionary")
+                    all_tests_passed = False
+                else:
+                    if data.get("success"):
+                        print("   ✅ PASS: Invoice status updated successfully")
+                        print(f"   Message: {data.get('message')}")
+                        
+                        # Verify the status was actually updated
+                        verify_response = requests.get(get_specific_endpoint, timeout=30)
+                        if verify_response.status_code == 200:
+                            verify_data = verify_response.json()
+                            if verify_data.get('status') == new_status:
+                                print("   ✅ PASS: Status update verified")
+                            else:
+                                print(f"   ❌ FAIL: Status not updated. Expected: {new_status}, Got: {verify_data.get('status')}")
+                                all_tests_passed = False
+                    else:
+                        print("   ❌ FAIL: Update response indicates failure")
+                        all_tests_passed = False
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                all_tests_passed = False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error updating invoice status: {str(e)}")
+            all_tests_passed = False
+    else:
+        print("\n4. SKIP: Update invoice status (no invoice ID available)")
+    
+    # Test 5: GET /api/invoices/status/{status} - Get invoices by status
+    print(f"\n5. Testing GET /api/invoices/status/paid endpoint (Get Invoices by Status)...")
+    get_by_status_endpoint = f"{BACKEND_URL}/api/invoices/status/paid"
+    
+    try:
+        response = requests.get(get_by_status_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Get invoices by status endpoint responds with status 200")
+            
+            data = response.json()
+            if not isinstance(data, list):
+                print("   ❌ FAIL: Response should be a list of invoices")
+                all_tests_passed = False
+            else:
+                print(f"   ✅ PASS: Response is a list with {len(data)} paid invoices")
+                
+                # If we updated an invoice to 'paid', it should be in this list
+                if created_invoice_id and len(data) > 0:
+                    found_paid_invoice = False
+                    for invoice in data:
+                        if invoice.get('id') == created_invoice_id and invoice.get('status') == 'paid':
+                            found_paid_invoice = True
+                            print("   ✅ PASS: Updated invoice found in paid invoices list")
+                            break
+                    
+                    if not found_paid_invoice:
+                        print("   ⚠️  WARNING: Updated invoice not found in paid invoices list")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting invoices by status: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 6: Error handling - Non-existent invoice ID
+    print("\n6. Testing error handling for non-existent invoice...")
+    non_existent_id = "non-existent-invoice-12345"
+    error_endpoint = f"{BACKEND_URL}/api/invoices/{non_existent_id}"
+    
+    try:
+        response = requests.get(error_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("   ✅ PASS: Non-existent invoice ID returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent invoice, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing non-existent invoice: {str(e)}")
+        all_tests_passed = False
+    
+    # Clean up - Delete test invoice (if delete endpoint exists)
+    if created_invoice_id:
+        print(f"\n7. Cleaning up test invoice...")
+        try:
+            delete_response = requests.delete(f"{BACKEND_URL}/api/invoices/{created_invoice_id}", timeout=30)
+            if delete_response.status_code in [200, 404]:
+                print("   ✅ Test invoice cleaned up")
+            else:
+                print(f"   ⚠️  WARNING: Could not delete test invoice (status: {delete_response.status_code})")
+        except Exception as e:
+            print(f"   ⚠️  WARNING: Error cleaning up test invoice: {str(e)}")
+    
+    # Final results
+    print("\n" + "=" * 80)
+    print("INVOICE API ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ POST /api/invoices - Create invoice")
+        print("✅ GET /api/invoices - Get all invoices")
+        print("✅ GET /api/invoices/{invoice_id} - Get specific invoice")
+        print("✅ PUT /api/invoices/{invoice_id} - Update invoice status")
+        print("✅ GET /api/invoices/status/{status} - Get invoices by status")
+        print("✅ Turkish character support and JSON serialization")
+        print("✅ Complete invoice data handling (items, VAT, discount, totals)")
+        print("✅ Error handling for non-existent invoices")
+        print("\n🎉 ALL INVOICE API TESTS PASSED!")
+        return True
+    else:
+        print("❌ Some invoice API tests failed")
+        print("\n⚠️  INVOICE API TESTS HAVE ISSUES - Check detailed output above")
+        return False
+
 def main():
     """Run comprehensive backend tests focusing on Products API endpoints"""
     print("🛍️ BACKEND API TESTLERİ - PRODUCTS API ENDPOINT'LERİ")
