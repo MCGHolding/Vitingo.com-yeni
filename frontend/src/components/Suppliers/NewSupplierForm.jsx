@@ -516,7 +516,7 @@ const NewSupplierForm = ({ onClose }) => {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setShowAddSpecialtyModal(true)}
+                    onClick={handleAddSpecialtyModal}
                     disabled={!formData.supplier_type_id}
                     className="px-3"
                   >
