@@ -676,16 +676,52 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">İskonto (%)</label>
-                <Input
-                  type="text"
-                  value={formData.discount ? formatNumber(formData.discount) : ''}
-                  onChange={(e) => {
-                    const value = parseNumber(e.target.value);
-                    setFormData(prev => ({ ...prev, discount: value }));
-                  }}
-                  placeholder="0,00"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">İskonto Türü</label>
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, discountType: 'percentage', discount: '' }))}
+                    className={`p-2 rounded-lg border-2 transition-all text-sm font-medium ${
+                      formData.discountType === 'percentage'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                    }`}
+                  >
+                    Yüzdelik (%)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, discountType: 'fixed', discount: '' }))}
+                    className={`p-2 rounded-lg border-2 transition-all text-sm font-medium ${
+                      formData.discountType === 'fixed'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                    }`}
+                  >
+                    Sabit Tutar ({selectedCurrency?.symbol || '$'})
+                  </button>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3 top-3 text-gray-500 text-sm">
+                    {formData.discountType === 'percentage' ? '%' : selectedCurrency?.symbol || '$'}
+                  </span>
+                  <Input
+                    type="text"
+                    value={formData.discount ? formatNumber(formData.discount) : ''}
+                    onChange={(e) => {
+                      const value = parseNumber(e.target.value);
+                      setFormData(prev => ({ ...prev, discount: value }));
+                    }}
+                    placeholder={formData.discountType === 'percentage' ? '0,00' : '0,00'}
+                    className="pl-8"
+                  />
+                </div>
+                {formData.discountType === 'percentage' && formData.discount > 100 && (
+                  <p className="text-xs text-red-600 mt-1">İskonto oranı %100'den fazla olamaz</p>
+                )}
+                {formData.discountType === 'fixed' && parseNumber(formData.discount) > totals.subtotal && (
+                  <p className="text-xs text-red-600 mt-1">Sabit iskonto ara toplamdan fazla olamaz</p>
+                )}
               </div>
 
               <div>
