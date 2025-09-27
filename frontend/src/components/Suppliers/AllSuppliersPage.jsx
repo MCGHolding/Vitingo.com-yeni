@@ -323,7 +323,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
 
                       {/* Action Buttons */}
                       <div className="flex items-center space-x-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => handleViewSupplier(supplier)}>
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => handleEditSupplier(supplier)}>
