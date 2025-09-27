@@ -352,9 +352,68 @@ const NewSupplierForm = ({ onClose }) => {
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Kategori Seçimi */}
+      {supplierCreated ? (
+        /* Success State */
         <Card>
+          <CardContent className="p-8">
+            <div className="text-center">
+              <div className="mx-auto mb-6 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Tebrikler, Tedarikçi Başarı ile Oluşturuldu!
+              </h2>
+              
+              <p className="text-gray-600 mb-6">
+                <strong>{createdSupplierInfo?.company_name}</strong> tedarikçisi başarıyla sisteme eklendi.
+              </p>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="text-left space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Firma Adı:</span>
+                    <span className="text-sm text-gray-900">{createdSupplierInfo?.company_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Kategori:</span>
+                    <span className="text-sm text-gray-900">{createdSupplierInfo?.supplier_type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Uzmanlık:</span>
+                    <span className="text-sm text-gray-900">{createdSupplierInfo?.specialty}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Yetkili Kişiler:</span>
+                    <span className="text-sm text-gray-900">{createdSupplierInfo?.contacts_count} kişi</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-sm">
+                  🎉 Tedarikçi başarıyla kaydedildi ve artık "Tüm Tedarikçiler" listesinde görüntülenebilir.
+                </p>
+              </div>
+              
+              <div className="flex justify-center space-x-4">
+                <Button variant="outline" onClick={handleGoBack} className="flex items-center space-x-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Yeni Tedarikçi Ekle</span>
+                </Button>
+                
+                <Button onClick={handleGoToDashboard} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
+                  <Home className="h-4 w-4" />
+                  <span>Dashboard'a Dön</span>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Kategori Seçimi */}
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Tag className="h-5 w-5" />
