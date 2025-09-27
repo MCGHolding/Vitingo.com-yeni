@@ -1,0 +1,318 @@
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Building2, Edit, Trash2, Search, Globe } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+
+const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
+  const [banks, setBanks] = useState([]);
+  const [filteredBanks, setFilteredBanks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('all');
+
+  const countries = [
+    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+  ];
+
+  // Load banks from backend
+  const loadBanks = async () => {
+    setIsLoading(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/banks`);
+      
+      if (response.ok) {
+        const banksData = await response.json();
+        console.log('Loaded banks:', banksData);
+        setBanks(banksData);
+      } else {
+        console.error('Failed to load banks:', response.statusText);
+        setBanks([]);
+      }
+    } catch (error) {
+      console.error('Error loading banks:', error);
+      setBanks([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load banks on component mount
+  useEffect(() => {
+    loadBanks();
+  }, []);
+
+  // Filter banks based on search and country
+  useEffect(() => {
+    let filtered = [...banks];
+
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(bank => 
+        bank.bank_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        bank.country.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Country filter
+    if (selectedCountry !== 'all') {
+      filtered = filtered.filter(bank => bank.country === selectedCountry);
+    }
+
+    setFilteredBanks(filtered);
+  }, [banks, searchQuery, selectedCountry]);
+
+  // Group banks by country
+  const groupedBanks = filteredBanks.reduce((groups, bank) => {
+    const country = bank.country;
+    if (!groups[country]) {
+      groups[country] = [];
+    }
+    groups[country].push(bank);
+    return groups;
+  }, {});
+
+  const handleEdit = (bank) => {
+    console.log('Edit bank:', bank);
+    if (onEditBank) {
+      onEditBank(bank);
+    }
+  };
+
+  const handleDelete = async (bankId, bankName) => {
+    if (!confirm(`"${bankName}" bankasını silmek istediğinizden emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/banks/${bankId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        alert('Banka başarıyla silindi');
+        loadBanks(); // Reload banks
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Banka silinirken hata oluştu');
+      }
+    } catch (error) {
+      console.error('Error deleting bank:', error);
+      alert(`Banka silinemedi: ${error.message}`);
+    }
+  };
+
+  const getCountryInfo = (countryCode) => {
+    return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦' };
+  };
+
+  const renderBankDetails = (bank) => {
+    if (bank.country === 'Turkey' || bank.country === 'UAE') {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+          {bank.swift_code && (
+            <div><span className="font-medium">SWIFT:</span> {bank.swift_code}</div>
+          )}
+          {bank.iban && (
+            <div><span className="font-medium">IBAN:</span> {bank.iban}</div>
+          )}
+          {bank.branch_name && (
+            <div><span className="font-medium">Şube:</span> {bank.branch_name}</div>
+          )}
+          {bank.branch_code && (
+            <div><span className="font-medium">Şube Kodu:</span> {bank.branch_code}</div>
+          )}
+          {bank.account_holder && (
+            <div><span className="font-medium">Hesap Sahibi:</span> {bank.account_holder}</div>
+          )}
+          {bank.account_number && (
+            <div><span className="font-medium">Hesap No:</span> {bank.account_number}</div>
+          )}
+        </div>
+      );
+    } else if (bank.country === 'USA') {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+          {bank.routing_number && (
+            <div><span className="font-medium">Routing Number:</span> {bank.routing_number}</div>
+          )}
+          {bank.us_account_number && (
+            <div><span className="font-medium">Account Number:</span> {bank.us_account_number}</div>
+          )}
+          {bank.bank_address && (
+            <div><span className="font-medium">Banka Adresi:</span> {bank.bank_address}</div>
+          )}
+          {bank.recipient_address && (
+            <div><span className="font-medium">Alıcı Adresi:</span> {bank.recipient_address}</div>
+          )}
+          {bank.recipient_name && (
+            <div><span className="font-medium">Alıcı İsmi:</span> {bank.recipient_name}</div>
+          )}
+          {bank.recipient_zip_code && (
+            <div><span className="font-medium">Zip Code:</span> {bank.recipient_zip_code}</div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-blue-100 rounded-lg">
+            <Building2 className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Tüm Bankalar</h1>
+            <p className="text-gray-600">Kayıtlı banka bilgilerinizi yönetin</p>
+          </div>
+        </div>
+        <div className="flex space-x-3">
+          <Button
+            onClick={onNewBank}
+            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+          >
+            <Building2 className="h-4 w-4" />
+            <span>Yeni Banka</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onBackToDashboard}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Geri Dön</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          {/* Search */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Banka ara..."
+              className="pl-10"
+            />
+          </div>
+
+          {/* Country Filter */}
+          <div className="flex items-center space-x-2">
+            <Globe className="h-4 w-4 text-gray-500" />
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            >
+              <option value="all">Tüm Ülkeler</option>
+              {countries.map(country => (
+                <option key={country.code} value={country.code}>
+                  {country.flag} {country.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="text-sm text-gray-500">
+            Toplam {filteredBanks.length} banka
+          </div>
+        </div>
+      </div>
+
+      {/* Banks List */}
+      <div className="space-y-6">
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500">Bankalar yükleniyor...</div>
+          </div>
+        ) : Object.keys(groupedBanks).length === 0 ? (
+          <div className="text-center py-12">
+            <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz banka eklenmemiş</h3>
+            <p className="text-gray-500 mb-4">
+              {banks.length === 0 ? 'İlk bankanızı ekleyerek başlayın' : 'Arama kriterlerinize uygun banka bulunamadı'}
+            </p>
+            {banks.length === 0 && (
+              <Button onClick={onNewBank} className="bg-green-600 hover:bg-green-700">
+                <Building2 className="h-4 w-4 mr-2" />
+                Yeni Banka Ekle
+              </Button>
+            )}
+          </div>
+        ) : (
+          Object.entries(groupedBanks).map(([country, countryBanks]) => {
+            const countryInfo = getCountryInfo(country);
+            return (
+              <div key={country} className="bg-white rounded-xl shadow-sm border border-gray-200">
+                {/* Country Header */}
+                <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">{countryInfo.flag}</span>
+                    <h2 className="text-xl font-semibold text-gray-900">{countryInfo.name}</h2>
+                    <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">
+                      {countryBanks.length} banka
+                    </span>
+                  </div>
+                </div>
+
+                {/* Banks in this country */}
+                <div className="p-6 space-y-4">
+                  {countryBanks.map((bank) => (
+                    <div key={bank.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <Building2 className="h-5 w-5 text-blue-600" />
+                            <h3 className="text-lg font-bold text-gray-900">{bank.bank_name}</h3>
+                          </div>
+                          
+                          {renderBankDetails(bank)}
+                          
+                          <div className="mt-3 text-xs text-gray-400">
+                            Ekleme: {new Date(bank.created_at).toLocaleDateString('tr-TR')}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-2 ml-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(bank)}
+                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(bank.id, bank.bank_name)}
+                            className="flex items-center space-x-1 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AllBanksPage;
