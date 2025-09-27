@@ -28,6 +28,7 @@ const NewSupplierForm = ({ onClose }) => {
   const [createdSupplierInfo, setCreatedSupplierInfo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [specialties, setSpecialties] = useState([]);
+  const [isIndividualSupplier, setIsIndividualSupplier] = useState(false);
   const [contacts, setContacts] = useState([{ full_name: '', mobile: '', email: '', position: '', tags: [] }]);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [showAddSpecialtyModal, setShowAddSpecialtyModal] = useState(false);
