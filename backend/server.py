@@ -1116,7 +1116,7 @@ async def send_survey_invitation(
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        base_url = os.environ.get('FRONTEND_URL', 'https://vendormate-6.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://supplier-hub-14.preview.emergentagent.com')
         survey_link = f"{base_url}/survey/{survey_token}"
         
         # Prepare customer and project data for email
@@ -1312,7 +1312,7 @@ async def send_arbitrary_survey_invitation(request: ArbitrarySurveyRequest):
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        base_url = os.environ.get('FRONTEND_URL', 'https://vendormate-6.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://supplier-hub-14.preview.emergentagent.com')
         survey_link = f"{base_url}/survey/{survey_token}"
         
         # Prepare customer and project data for email
@@ -1405,7 +1405,7 @@ async def send_handover_form(request: HandoverRequest):
     try:
         # Generate unique handover token
         handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
-        base_url = os.environ.get('FRONTEND_URL', 'https://vendormate-6.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://supplier-hub-14.preview.emergentagent.com')
         handover_link = f"{base_url}/handover/{handover_token}"
         
         # Prepare customer and project data for email
@@ -1484,7 +1484,7 @@ async def send_arbitrary_handover_form(request: ArbitraryHandoverRequest):
     try:
         # Generate unique handover token
         handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
-        base_url = os.environ.get('FRONTEND_URL', 'https://vendormate-6.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://supplier-hub-14.preview.emergentagent.com')
         handover_link = f"{base_url}/handover/{handover_token}"
         
         # Prepare customer and project data for email
