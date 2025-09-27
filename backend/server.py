@@ -218,7 +218,8 @@ class Invoice(BaseModel):
     subtotal: float = Field(..., description="Subtotal before tax")
     vat_rate: float = Field(..., description="VAT rate percentage")
     vat_amount: float = Field(..., description="VAT amount")
-    discount: float = Field(0.0, description="Discount percentage")
+    discount: float = Field(0.0, description="Discount value (percentage or fixed amount)")
+    discount_type: str = Field("percentage", description="Discount type: percentage or fixed")
     discount_amount: float = Field(0.0, description="Discount amount")
     total: float = Field(..., description="Final total amount")
     conditions: str = Field("", description="Terms and conditions")
@@ -238,6 +239,7 @@ class InvoiceCreate(BaseModel):
     vat_rate: float
     vat_amount: float
     discount: float = 0.0
+    discount_type: str = "percentage"
     discount_amount: float = 0.0
     total: float
     conditions: str = ""
