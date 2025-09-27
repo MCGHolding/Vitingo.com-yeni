@@ -267,6 +267,29 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     });
   };
 
+  const handleSupplierAction = (action, supplier) => {
+    switch (action) {
+      case 'delete':
+        setShowDeleteModal(supplier);
+        break;
+      case 'passive':
+        handleSetPassive(supplier.id);
+        break;
+      case 'blacklist':
+        handleSetBlacklist(supplier.id);
+        break;
+      case 'rating':
+        toast({
+          title: "Özellik",
+          description: "Puanlama özelliği yakında aktif olacak",
+          variant: "default"
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleSetBlacklist = async (supplierId) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
