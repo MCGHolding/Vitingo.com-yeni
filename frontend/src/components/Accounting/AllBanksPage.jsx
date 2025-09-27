@@ -13,6 +13,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [bankToDelete, setBankToDelete] = useState(null);
+  
+  // Share modal state
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareMode, setShareMode] = useState('single'); // 'single' or 'country'
+  const [bankToShare, setBankToShare] = useState(null);
+  const [selectedShareCountry, setSelectedShareCountry] = useState('');
 
   const countries = [
     { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
