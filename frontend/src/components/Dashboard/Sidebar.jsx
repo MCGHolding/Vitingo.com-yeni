@@ -544,7 +544,7 @@ export default function Sidebar({
       return;
     }
 
-    // Gider Makbuzu nested submenu handling moved below
+    // Gider Makbuzu removed from Muhasebe submenu
 
     if (subItem && subItem.name === 'Ödeme Talepleri') {
       if (onPaymentRequests) {
