@@ -246,6 +246,65 @@ class InvoiceCreate(BaseModel):
     conditions: str = ""
     payment_term: str = "30"
 
+# ===================== BANK MODELS =====================
+
+class Bank(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    country: str = Field(..., description="Country: USA, Turkey, UAE")
+    bank_name: str = Field(..., description="Bank name")
+    
+    # Common fields for Turkey/UAE
+    swift_code: Optional[str] = Field(None, description="SWIFT code (Turkey/UAE)")
+    iban: Optional[str] = Field(None, description="IBAN (Turkey/UAE)")
+    branch_name: Optional[str] = Field(None, description="Branch name (Turkey/UAE)")
+    branch_code: Optional[str] = Field(None, description="Branch code (Turkey/UAE)")
+    account_holder: Optional[str] = Field(None, description="Account holder (Turkey/UAE)")
+    account_number: Optional[str] = Field(None, description="Account number (Turkey/UAE)")
+    
+    # USA specific fields
+    routing_number: Optional[str] = Field(None, description="Routing number (USA)")
+    us_account_number: Optional[str] = Field(None, description="Account number (USA)")
+    bank_address: Optional[str] = Field(None, description="Bank address (USA)")
+    recipient_address: Optional[str] = Field(None, description="Recipient address (USA)")
+    recipient_name: Optional[str] = Field(None, description="Recipient name (USA)")
+    recipient_zip_code: Optional[str] = Field(None, description="Recipient zip code (USA)")
+    
+    is_active: bool = Field(default=True, description="Is bank active")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class BankCreate(BaseModel):
+    country: str
+    bank_name: str
+    swift_code: Optional[str] = None
+    iban: Optional[str] = None
+    branch_name: Optional[str] = None
+    branch_code: Optional[str] = None
+    account_holder: Optional[str] = None
+    account_number: Optional[str] = None
+    routing_number: Optional[str] = None
+    us_account_number: Optional[str] = None
+    bank_address: Optional[str] = None
+    recipient_address: Optional[str] = None
+    recipient_name: Optional[str] = None
+    recipient_zip_code: Optional[str] = None
+
+class BankUpdate(BaseModel):
+    country: Optional[str] = None
+    bank_name: Optional[str] = None
+    swift_code: Optional[str] = None
+    iban: Optional[str] = None
+    branch_name: Optional[str] = None
+    branch_code: Optional[str] = None
+    account_holder: Optional[str] = None
+    account_number: Optional[str] = None
+    routing_number: Optional[str] = None
+    us_account_number: Optional[str] = None
+    bank_address: Optional[str] = None
+    recipient_address: Optional[str] = None
+    recipient_name: Optional[str] = None
+    recipient_zip_code: Optional[str] = None
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
