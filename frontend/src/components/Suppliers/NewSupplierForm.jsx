@@ -22,6 +22,8 @@ import {
 const NewSupplierForm = ({ onClose }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [supplierCreated, setSupplierCreated] = useState(false);
+  const [createdSupplierInfo, setCreatedSupplierInfo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [contacts, setContacts] = useState([{ full_name: '', mobile: '', email: '', position: '', tags: [] }]);
