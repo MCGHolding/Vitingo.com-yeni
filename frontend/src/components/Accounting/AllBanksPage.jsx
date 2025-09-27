@@ -365,6 +365,14 @@ ${bankToShare.account_holder ? `Hesap Sahibi: ${bankToShare.account_holder}` : '
                           <Button
                             variant="outline"
                             size="sm"
+                            onClick={() => handleShareSingle(bank)}
+                            className="flex items-center space-x-1 text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
+                          >
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => handleEdit(bank)}
                             className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
                           >
