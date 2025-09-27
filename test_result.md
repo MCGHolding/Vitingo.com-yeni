@@ -873,3 +873,19 @@ agent_communication:
       - working: "NA"
         agent: "testing"
         comment: "NewCustomerForm iyileştirmelerinin kapsamlı testi gerekiyor: 1) SearchableSelect component ile aranabilir iletişim kişisi seçimi (type-ahead search functionality, klavyede harf girme ve filtreleme, kişi seçimi ve temizleme) 2) CompanyAvatar component ile otomatik avatar oluşturma (firma adından avatar, logo upload drag&drop, logo remove functionality) 3) Layout iyileştirmeleri (telefon ülke kodu genişletilmiş w-40, telefon input daraltılmış, yeni ülke kodları France +33 ve UAE +971 eklendi, Resim Bul ve Harita işaretle butonları kaldırılmış) 4) Integration test (tüm alanları doldur, form submission, verilerin doğru kaydedilmesi)"
+
+  - task: "Invoice Real Data Submission Testing - Critical User Issue"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
+    stuck_count: 2
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL ISSUE CONFIRMED: Real form data submission testing reveals that the user's complaint is VALID. The invoice form is NOT saving real user input data. Instead, it continues to save hardcoded values like 'Test Müşteri' and '120 USD'. DETAILED FINDINGS: ✅ Form captures real data correctly (console logs show: customerName: 'ABC Şirketi Ltd', subtotal: 30000, total: 36000) ❌ Form validation prevents API submission (no POST requests to /api/invoices in backend logs) ❌ All recent invoices show hardcoded data: USD-092025001001 through USD-092025001006 all have 'Test Müşteri' and '120 USD' ❌ No instances of real data found in invoice list (no 'ABC Şirketi', no 'Stand Tasarımı', no TRY currency) ✅ Backend is functional (GET requests working, invoice number generation working) ROOT CAUSE: Frontend form validation is failing before API call, preventing real data from reaching backend. The form fills correctly but submission fails silently. URGENT FIX NEEDED: Main agent must debug frontend form validation logic and ensure real form data reaches the POST /api/invoices endpoint."
+
+agent_communication:
+    -agent: "testing"
+    -message: "🚨 CRITICAL ISSUE CONFIRMED: Real form data submission testing reveals that the user's complaint is VALID. The invoice form is NOT saving real user input data. Instead, it continues to save hardcoded values like 'Test Müşteri' and '120 USD'. Frontend form validation is preventing API calls from reaching the backend - no POST requests to /api/invoices found in backend logs. The form captures real data (ABC Şirketi Ltd, Stand Tasarımı, 15000 TRY) in console logs but fails to submit due to validation issues. All recent invoices (USD-092025001001 through USD-092025001006) show hardcoded 'Test Müşteri' and '120 USD' values, confirming the user's reported problem. URGENT: Main agent needs to fix frontend form validation and ensure real data reaches the backend API."
