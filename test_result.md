@@ -557,9 +557,9 @@ frontend:
 frontend:
   - task: "Invoice Creation 422 Validation Error Fix - Critical Testing"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
