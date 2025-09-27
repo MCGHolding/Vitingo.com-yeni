@@ -465,6 +465,18 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         </CardContent>
       </Card>
 
+      {/* View Supplier Modal */}
+      {showViewModal && (
+        <ViewSupplierModal 
+          supplier={showViewModal}
+          onClose={() => setShowViewModal(null)}
+          onEdit={(supplier) => {
+            setShowViewModal(null);
+            setShowEditModal(supplier);
+          }}
+        />
+      )}
+
       {/* Edit Supplier Modal */}
       {showEditModal && (
         <EditSupplierModal 
