@@ -24,6 +24,7 @@ import {
   ClipboardList,
   Files,
   Building,
+  Building2,
   UserX,
   Star,
   UserRound,
