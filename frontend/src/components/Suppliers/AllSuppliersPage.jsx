@@ -25,6 +25,67 @@ import {
   MessageSquare
 } from 'lucide-react';
 
+// ActionMenuPopover Component for Suppliers
+const SupplierActionMenuPopover = ({ supplier, onAction }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = [
+    { label: 'Sil', icon: Trash2, color: 'text-red-600 hover:text-red-800', action: 'delete' },
+    { label: 'Pasif', icon: UserX, color: 'text-yellow-600 hover:text-yellow-800', action: 'passive' },
+    { label: 'Puan', icon: Star, color: 'text-gray-600 hover:text-gray-800', action: 'rating' },
+    { label: 'Kara Liste', icon: Ban, color: 'text-red-700 hover:text-red-900', action: 'blacklist' },
+  ];
+
+  const handleMenuAction = (action) => {
+    onAction(action, supplier);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              onMouseEnter={() => setIsOpen(true)}
+              onMouseLeave={() => setIsOpen(false)}
+            >
+              <MoreHorizontal className="h-3 w-3" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Daha Fazla İşlem</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      {isOpen && (
+        <div 
+          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]"
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+        >
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-full text-left px-3 py-2 text-sm ${item.color} hover:bg-gray-50 flex items-center space-x-2 ${
+                index === 0 ? 'rounded-t-lg' : ''
+              } ${index === menuItems.length - 1 ? 'rounded-b-lg' : ''}`}
+              onClick={() => handleMenuAction(item.action)}
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const { toast } = useToast();
   const [suppliers, setSuppliers] = useState([]);
