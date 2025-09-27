@@ -4425,7 +4425,7 @@ def main():
     print("=" * 80)
     
     print("\n🧾 Invoice 422 validation error debug")
-    debug_result = test_invoice_422_validation_debug()
+    debug_result = test_invoice_creation_422_validation_debug()
     
     # Also run the existing invoice test to compare
     print("\n" + "=" * 80)
