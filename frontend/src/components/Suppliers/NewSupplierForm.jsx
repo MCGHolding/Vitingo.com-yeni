@@ -35,8 +35,6 @@ const NewSupplierForm = ({ onClose }) => {
   const [contacts, setContacts] = useState([{ full_name: '', mobile: '', email: '', position: '', tags: [] }]);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [showAddSpecialtyModal, setShowAddSpecialtyModal] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newSpecialtyName, setNewSpecialtyName] = useState('');
 
   const [formData, setFormData] = useState({
     company_short_name: '',
