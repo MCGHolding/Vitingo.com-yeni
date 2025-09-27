@@ -1157,8 +1157,13 @@ const Dashboard = () => {
         onOverdueInvoices={handleOverdueInvoices}
         onCurrentAccounts={handleCurrentAccounts}
         onCollectionReceipt={handleCollectionReceipt}
-        onExpenseReceipt={handleExpenseReceipt}
         onPaymentRequests={handlePaymentRequests}
+        // Expense Receipt handlers
+        onNewExpenseReceipt={handleNewExpenseReceipt}
+        onAllExpenseReceipts={handleAllExpenseReceipts}
+        onPendingExpenseReceipts={handlePendingExpenseReceipts}
+        onApprovedExpenseReceipts={handleApprovedExpenseReceipts}
+        onPaidExpenseReceipts={handlePaidExpenseReceipts}
         onPurchaseInvoices={handlePurchaseInvoices}
         onPurchaseApprovals={handlePurchaseApprovals}
         // Bank handlers
