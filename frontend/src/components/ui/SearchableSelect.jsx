@@ -167,13 +167,13 @@ export default function SearchableSelect({
               <div className="py-1">
                 {filteredOptions.map((option) => (
                   <button
-                    key={option.id}
+                    key={option.id || option.value}
                     className={`
                       w-full text-left px-3 py-2 text-sm hover:bg-blue-50 
                       flex items-center space-x-2
-                      ${selectedOption?.id === option.id ? 'bg-blue-100 text-blue-900' : 'text-gray-700'}
+                      ${(selectedOption?.id || selectedOption?.value) === (option.id || option.value) ? 'bg-blue-100 text-blue-900' : 'text-gray-700'}
                     `}
-                    onClick={() => handleSelect(option.id)}
+                    onClick={() => handleSelect(option.id || option.value)}
                   >
                     {option.icon ? (
                       <option.icon className="h-4 w-4 text-gray-500 flex-shrink-0" />
