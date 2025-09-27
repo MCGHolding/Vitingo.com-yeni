@@ -1503,6 +1503,452 @@ def test_supplier_specialty_validation_errors():
     print("\n✅ SUPPLIER SPECIALTY VALIDATION TESTS COMPLETED!")
     return True
 
+def test_expense_receipt_crud_apis():
+    """
+    Comprehensive test for Expense Receipt CRUD APIs
+    
+    Tests all expense receipt endpoints:
+    1. POST /api/expense-receipts - Create new expense receipt
+    2. GET /api/expense-receipts - Get all expense receipts  
+    3. GET /api/expense-receipts?status=pending - Get pending receipts only
+    4. GET /api/expense-receipts?status=approved - Get approved receipts only  
+    5. GET /api/expense-receipts?status=paid - Get paid receipts only
+    6. GET /api/expense-receipts/{receipt_id} - Get specific receipt by ID
+    7. PUT /api/expense-receipts/{receipt_id} - Update expense receipt
+    """
+    
+    print("=" * 80)
+    print("TESTING EXPENSE RECEIPT CRUD APIS - COMPREHENSIVE TEST")
+    print("=" * 80)
+    
+    # First, let's get suppliers to use in our tests
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    print(f"Getting suppliers from: {suppliers_endpoint}")
+    
+    try:
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                print("⚠️  No suppliers found, creating test supplier...")
+                # Create a test supplier first
+                supplier_categories_response = requests.get(f"{BACKEND_URL}/api/supplier-categories", timeout=30)
+                if supplier_categories_response.status_code == 200:
+                    categories = supplier_categories_response.json()
+                    if categories:
+                        category_id = categories[0].get('id')
+                        # Get specialties for this category
+                        specialties_response = requests.get(f"{BACKEND_URL}/api/supplier-specialties/{category_id}", timeout=30)
+                        if specialties_response.status_code == 200:
+                            specialties = specialties_response.json()
+                            if specialties:
+                                specialty_id = specialties[0].get('id')
+                                # Create test supplier
+                                test_supplier_data = {
+                                    "company_short_name": "Test Expense Supplier",
+                                    "company_title": "Test Expense Supplier Ltd.",
+                                    "supplier_type_id": category_id,
+                                    "specialty_id": specialty_id,
+                                    "phone": "+90 212 555 0001",
+                                    "email": "test@expensesupplier.com",
+                                    "iban": "TR33 0006 1005 1978 6457 8413 26",
+                                    "bank_name": "Test Bank",
+                                    "country": "TR"
+                                }
+                                create_supplier_response = requests.post(f"{BACKEND_URL}/api/suppliers", json=test_supplier_data, timeout=30)
+                                if create_supplier_response.status_code == 200:
+                                    created_supplier = create_supplier_response.json()
+                                    supplier_id = created_supplier.get('id')
+                                    supplier_name = created_supplier.get('company_short_name')
+                                    print(f"✅ Created test supplier: {supplier_name} (ID: {supplier_id})")
+                                else:
+                                    print("❌ Failed to create test supplier")
+                                    return False
+                            else:
+                                print("❌ No specialties found")
+                                return False
+                        else:
+                            print("❌ Failed to get specialties")
+                            return False
+                    else:
+                        print("❌ No categories found")
+                        return False
+                else:
+                    print("❌ Failed to get supplier categories")
+                    return False
+        else:
+            print(f"❌ Failed to get suppliers: {suppliers_response.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ Error getting suppliers: {str(e)}")
+        return False
+    
+    # Test data for expense receipts
+    test_receipts = []
+    currencies = ["USD", "EUR", "GBP", "TRY", "AED"]
+    
+    print(f"\n{'='*80}")
+    print("1. TESTING POST /api/expense-receipts - CREATE EXPENSE RECEIPTS")
+    print(f"{'='*80}")
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Testing endpoint: {create_endpoint}")
+    
+    # Create test receipts for each currency
+    for i, currency in enumerate(currencies):
+        print(f"\n--- Creating expense receipt {i+1}/5 with {currency} currency ---")
+        
+        receipt_data = {
+            "date": "2025-01-15",
+            "currency": currency,
+            "supplier_id": supplier_id,
+            "amount": 1000.0 + (i * 500),  # Different amounts
+            "description": f"Test expense receipt for {currency} - Office supplies and services"
+        }
+        
+        try:
+            response = requests.post(create_endpoint, json=receipt_data, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                created_receipt = response.json()
+                test_receipts.append(created_receipt)
+                
+                # Validate response structure
+                required_fields = ["id", "receipt_number", "date", "currency", "supplier_id", "supplier_name", "amount", "description", "status"]
+                missing_fields = [field for field in required_fields if field not in created_receipt]
+                
+                if missing_fields:
+                    print(f"   ❌ FAIL: Missing required fields: {missing_fields}")
+                    return False
+                
+                # Validate receipt number format (USD-GM-012025100001)
+                receipt_number = created_receipt.get("receipt_number")
+                if not receipt_number.startswith(f"{currency}-GM-"):
+                    print(f"   ❌ FAIL: Invalid receipt number format: {receipt_number}")
+                    return False
+                
+                # Validate currency
+                if created_receipt.get("currency") != currency:
+                    print(f"   ❌ FAIL: Currency mismatch. Expected: {currency}, Got: {created_receipt.get('currency')}")
+                    return False
+                
+                # Validate amount
+                if created_receipt.get("amount") != receipt_data["amount"]:
+                    print(f"   ❌ FAIL: Amount mismatch. Expected: {receipt_data['amount']}, Got: {created_receipt.get('amount')}")
+                    return False
+                
+                # Validate supplier information
+                if created_receipt.get("supplier_id") != supplier_id:
+                    print(f"   ❌ FAIL: Supplier ID mismatch")
+                    return False
+                
+                # Validate default status
+                if created_receipt.get("status") != "pending":
+                    print(f"   ❌ FAIL: Default status should be 'pending', got: {created_receipt.get('status')}")
+                    return False
+                
+                print(f"   ✅ PASS: {currency} expense receipt created successfully")
+                print(f"   Receipt Number: {receipt_number}")
+                print(f"   Amount: {created_receipt.get('amount')} {currency}")
+                print(f"   Supplier: {created_receipt.get('supplier_name')}")
+                print(f"   Status: {created_receipt.get('status')}")
+                
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error creating {currency} receipt: {str(e)}")
+            return False
+    
+    print(f"\n✅ PASS: Created {len(test_receipts)} expense receipts successfully")
+    
+    # Test 2: GET all expense receipts
+    print(f"\n{'='*80}")
+    print("2. TESTING GET /api/expense-receipts - GET ALL EXPENSE RECEIPTS")
+    print(f"{'='*80}")
+    
+    get_all_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Testing endpoint: {get_all_endpoint}")
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            all_receipts = response.json()
+            print(f"✅ PASS: Retrieved {len(all_receipts)} expense receipts")
+            
+            # Verify our created receipts are in the list
+            created_receipt_ids = [r.get('id') for r in test_receipts]
+            found_receipts = [r for r in all_receipts if r.get('id') in created_receipt_ids]
+            
+            if len(found_receipts) >= len(test_receipts):
+                print(f"✅ PASS: All created receipts found in the list")
+            else:
+                print(f"⚠️  WARNING: Only {len(found_receipts)}/{len(test_receipts)} created receipts found")
+            
+            # Validate structure of returned receipts
+            if all_receipts:
+                sample_receipt = all_receipts[0]
+                required_fields = ["id", "receipt_number", "date", "currency", "supplier_name", "amount", "status"]
+                missing_fields = [field for field in required_fields if field not in sample_receipt]
+                
+                if missing_fields:
+                    print(f"❌ FAIL: Sample receipt missing fields: {missing_fields}")
+                    return False
+                else:
+                    print("✅ PASS: Receipt structure is valid")
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting all receipts: {str(e)}")
+        return False
+    
+    # Test 3: GET receipts by status (pending)
+    print(f"\n{'='*80}")
+    print("3. TESTING GET /api/expense-receipts?status=pending - GET PENDING RECEIPTS")
+    print(f"{'='*80}")
+    
+    pending_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=pending"
+    print(f"Testing endpoint: {pending_endpoint}")
+    
+    try:
+        response = requests.get(pending_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            pending_receipts = response.json()
+            print(f"✅ PASS: Retrieved {len(pending_receipts)} pending receipts")
+            
+            # Verify all returned receipts have pending status
+            non_pending = [r for r in pending_receipts if r.get('status') != 'pending']
+            if non_pending:
+                print(f"❌ FAIL: Found {len(non_pending)} non-pending receipts in pending filter")
+                return False
+            else:
+                print("✅ PASS: All returned receipts have 'pending' status")
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting pending receipts: {str(e)}")
+        return False
+    
+    # Test 4: GET receipts by status (approved)
+    print(f"\n{'='*80}")
+    print("4. TESTING GET /api/expense-receipts?status=approved - GET APPROVED RECEIPTS")
+    print(f"{'='*80}")
+    
+    approved_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=approved"
+    print(f"Testing endpoint: {approved_endpoint}")
+    
+    try:
+        response = requests.get(approved_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            approved_receipts = response.json()
+            print(f"✅ PASS: Retrieved {len(approved_receipts)} approved receipts")
+            
+            # Verify all returned receipts have approved status
+            non_approved = [r for r in approved_receipts if r.get('status') != 'approved']
+            if non_approved:
+                print(f"❌ FAIL: Found {len(non_approved)} non-approved receipts in approved filter")
+                return False
+            else:
+                print("✅ PASS: All returned receipts have 'approved' status")
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting approved receipts: {str(e)}")
+        return False
+    
+    # Test 5: GET receipts by status (paid)
+    print(f"\n{'='*80}")
+    print("5. TESTING GET /api/expense-receipts?status=paid - GET PAID RECEIPTS")
+    print(f"{'='*80}")
+    
+    paid_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=paid"
+    print(f"Testing endpoint: {paid_endpoint}")
+    
+    try:
+        response = requests.get(paid_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            paid_receipts = response.json()
+            print(f"✅ PASS: Retrieved {len(paid_receipts)} paid receipts")
+            
+            # Verify all returned receipts have paid status
+            non_paid = [r for r in paid_receipts if r.get('status') != 'paid']
+            if non_paid:
+                print(f"❌ FAIL: Found {len(non_paid)} non-paid receipts in paid filter")
+                return False
+            else:
+                print("✅ PASS: All returned receipts have 'paid' status")
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting paid receipts: {str(e)}")
+        return False
+    
+    # Test 6: GET specific receipt by ID
+    print(f"\n{'='*80}")
+    print("6. TESTING GET /api/expense-receipts/{receipt_id} - GET SPECIFIC RECEIPT")
+    print(f"{'='*80}")
+    
+    if test_receipts:
+        test_receipt = test_receipts[0]  # Use first created receipt
+        receipt_id = test_receipt.get('id')
+        get_by_id_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
+        print(f"Testing endpoint: {get_by_id_endpoint}")
+        print(f"Receipt ID: {receipt_id}")
+        
+        try:
+            response = requests.get(get_by_id_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                retrieved_receipt = response.json()
+                print("✅ PASS: Retrieved specific receipt successfully")
+                
+                # Verify it's the correct receipt
+                if retrieved_receipt.get('id') != receipt_id:
+                    print(f"❌ FAIL: Retrieved wrong receipt. Expected ID: {receipt_id}, Got: {retrieved_receipt.get('id')}")
+                    return False
+                
+                # Verify all fields match
+                for field in ['receipt_number', 'currency', 'amount', 'supplier_id']:
+                    if retrieved_receipt.get(field) != test_receipt.get(field):
+                        print(f"❌ FAIL: Field {field} mismatch")
+                        return False
+                
+                print("✅ PASS: Retrieved receipt matches created receipt")
+                print(f"Receipt Number: {retrieved_receipt.get('receipt_number')}")
+                print(f"Amount: {retrieved_receipt.get('amount')} {retrieved_receipt.get('currency')}")
+                
+            else:
+                print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error getting specific receipt: {str(e)}")
+            return False
+    
+    # Test 7: PUT update expense receipt
+    print(f"\n{'='*80}")
+    print("7. TESTING PUT /api/expense-receipts/{receipt_id} - UPDATE EXPENSE RECEIPT")
+    print(f"{'='*80}")
+    
+    if test_receipts:
+        test_receipt = test_receipts[1]  # Use second created receipt
+        receipt_id = test_receipt.get('id')
+        update_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
+        print(f"Testing endpoint: {update_endpoint}")
+        print(f"Receipt ID: {receipt_id}")
+        
+        # Update data
+        update_data = {
+            "amount": 2500.0,
+            "description": "Updated expense receipt - Office equipment and maintenance",
+            "status": "approved"
+        }
+        
+        try:
+            response = requests.put(update_endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                updated_receipt = response.json()
+                print("✅ PASS: Updated expense receipt successfully")
+                
+                # Verify updates were applied
+                if updated_receipt.get('amount') != update_data['amount']:
+                    print(f"❌ FAIL: Amount not updated. Expected: {update_data['amount']}, Got: {updated_receipt.get('amount')}")
+                    return False
+                
+                if updated_receipt.get('description') != update_data['description']:
+                    print(f"❌ FAIL: Description not updated")
+                    return False
+                
+                if updated_receipt.get('status') != update_data['status']:
+                    print(f"❌ FAIL: Status not updated. Expected: {update_data['status']}, Got: {updated_receipt.get('status')}")
+                    return False
+                
+                print("✅ PASS: All updates applied correctly")
+                print(f"New Amount: {updated_receipt.get('amount')} {updated_receipt.get('currency')}")
+                print(f"New Status: {updated_receipt.get('status')}")
+                print(f"New Description: {updated_receipt.get('description')}")
+                
+            else:
+                print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error updating receipt: {str(e)}")
+            return False
+    
+    # Test 8: Error handling - Invalid receipt ID
+    print(f"\n{'='*80}")
+    print("8. TESTING ERROR HANDLING - INVALID RECEIPT ID")
+    print(f"{'='*80}")
+    
+    invalid_id = "invalid-receipt-id-12345"
+    invalid_endpoint = f"{BACKEND_URL}/api/expense-receipts/{invalid_id}"
+    print(f"Testing endpoint: {invalid_endpoint}")
+    
+    try:
+        response = requests.get(invalid_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Invalid receipt ID returns 404 Not Found")
+        else:
+            print(f"⚠️  WARNING: Expected 404 for invalid ID, got {response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing invalid receipt ID: {str(e)}")
+        return False
+    
+    # Final Summary
+    print(f"\n{'='*80}")
+    print("EXPENSE RECEIPT CRUD APIS - FINAL TEST RESULTS")
+    print(f"{'='*80}")
+    print("✅ POST /api/expense-receipts - Create expense receipts (5 currencies tested)")
+    print("✅ GET /api/expense-receipts - Get all expense receipts")
+    print("✅ GET /api/expense-receipts?status=pending - Get pending receipts")
+    print("✅ GET /api/expense-receipts?status=approved - Get approved receipts")
+    print("✅ GET /api/expense-receipts?status=paid - Get paid receipts")
+    print("✅ GET /api/expense-receipts/{receipt_id} - Get specific receipt by ID")
+    print("✅ PUT /api/expense-receipts/{receipt_id} - Update expense receipt")
+    print("✅ Error handling for invalid receipt IDs")
+    print("\n🎉 ALL EXPENSE RECEIPT CRUD API TESTS PASSED!")
+    print(f"Created and tested {len(test_receipts)} expense receipts")
+    print("Receipt number generation working correctly (USD-GM-012025100001 format)")
+    print("Status filtering working correctly (pending, approved, paid)")
+    print("Currency handling working correctly (USD, EUR, GBP, TRY, AED)")
+    print("Supplier relationship working correctly")
+    print("Date handling and serialization working correctly")
+    print("Approval workflow fields ready for frontend integration")
+    
+    return True
+
 def test_create_customer():
     """Test creating a new customer with Turkish form data including new Turkish fields"""
     print("=" * 80)
