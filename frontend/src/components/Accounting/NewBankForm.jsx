@@ -67,6 +67,41 @@ const NewBankForm = ({ onBackToDashboard }) => {
     loadCountries();
   }, []);
 
+  const handleAddCountry = async () => {
+    if (!newCountryName.trim()) {
+      alert('Ülke adı girilmelidir');
+      return;
+    }
+
+    setIsAddingCountry(true);
+    
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/countries`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ country_name: newCountryName })
+      });
+
+      if (response.ok) {
+        await loadCountries(); // Reload countries
+        setNewCountryName('');
+        setShowAddCountryModal(false);
+        alert('Ülke başarıyla eklendi');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Ülke eklenirken hata oluştu');
+      }
+    } catch (error) {
+      console.error('Error adding country:', error);
+      alert(`Ülke eklenemedi: ${error.message}`);
+    } finally {
+      setIsAddingCountry(false);
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
