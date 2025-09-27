@@ -330,7 +330,9 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.branchName}
                     onChange={(e) => handleInputChange('branchName', e.target.value)}
-                    placeholder="Örn: Levent Şubesi"
+                    placeholder={
+                      formData.country === 'Turkey' ? 'Örn: Levent Şubesi' : 'Örn: Downtown Dubai Branch'
+                    }
                     className="w-full"
                   />
                 </div>
@@ -341,7 +343,9 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.branchCode}
                     onChange={(e) => handleInputChange('branchCode', e.target.value)}
-                    placeholder="Örn: 620"
+                    placeholder={
+                      formData.country === 'Turkey' ? 'Örn: 620' : 'Örn: 033'
+                    }
                     className="w-full"
                   />
                 </div>
@@ -352,7 +356,11 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.accountHolder}
                     onChange={(e) => handleInputChange('accountHolder', e.target.value)}
-                    placeholder="Örn: Başarı Uluslararası Fuarcılık A.Ş."
+                    placeholder={
+                      formData.country === 'Turkey' ? 
+                      'Örn: Başarı Uluslararası Fuarcılık A.Ş.' : 
+                      'Örn: Basari International Exhibition LLC'
+                    }
                     className="w-full"
                   />
                 </div>
@@ -363,7 +371,9 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.accountNumber}
                     onChange={(e) => handleInputChange('accountNumber', e.target.value)}
-                    placeholder="Örn: 6295816"
+                    placeholder={
+                      formData.country === 'Turkey' ? 'Örn: 6295816' : 'Örn: 1234567890123456'
+                    }
                     className="w-full"
                   />
                 </div>
