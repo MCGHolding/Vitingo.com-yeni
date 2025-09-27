@@ -153,6 +153,17 @@ const navigation = [
     ]
   },
   { 
+    name: 'Tedarikçi', 
+    href: '/accounting/suppliers', 
+    icon: Truck, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Tedarikçi', href: '/accounting/suppliers/new', icon: Plus },
+      { name: 'Tüm Tedarikçiler', href: '/accounting/suppliers/all', icon: UserCheck }
+    ]
+  },
+  { 
     name: 'Brief', 
     href: '/brief', 
     icon: PenTool, 
