@@ -2268,22 +2268,48 @@ async def delete_product(product_id: str):
 async def create_invoice(invoice_input: InvoiceCreate):
     """Create a new invoice"""
     try:
+        logger.info(f"Received invoice creation request: {invoice_input.invoice_number}")
+        
+        # Validate required fields
+        if not invoice_input.invoice_number or not invoice_input.invoice_number.strip():
+            raise HTTPException(status_code=400, detail="Fatura numarası zorunludur")
+        
+        if not invoice_input.date:
+            raise HTTPException(status_code=400, detail="Fatura tarihi zorunludur")
+        
+        if not invoice_input.currency:
+            raise HTTPException(status_code=400, detail="Para birimi zorunludur")
+            
+        if not invoice_input.items or len(invoice_input.items) == 0:
+            raise HTTPException(status_code=400, detail="En az bir ürün/hizmet eklenmelidir")
+        
+        # Check for duplicate invoice number
+        existing_invoice = await db.invoices.find_one({"invoice_number": invoice_input.invoice_number})
+        if existing_invoice:
+            raise HTTPException(status_code=400, detail=f"Bu fatura numarası zaten kullanılmış: {invoice_input.invoice_number}")
+        
         invoice_dict = invoice_input.dict()
+        logger.info(f"Creating invoice object with data: {invoice_dict}")
+        
         invoice_obj = Invoice(**invoice_dict)
         
         # Insert to MongoDB
+        logger.info("Inserting invoice to database...")
         result = await db.invoices.insert_one(invoice_obj.dict())
         
         if result.inserted_id:
-            logger.info(f"Invoice created successfully: {invoice_obj.invoice_number}")
+            logger.info(f"Invoice created successfully: {invoice_obj.invoice_number} with ID: {result.inserted_id}")
             return invoice_obj
         else:
-            logger.error("Failed to insert invoice to database")
-            raise HTTPException(status_code=500, detail="Failed to create invoice")
+            logger.error("Failed to insert invoice to database - no inserted_id returned")
+            raise HTTPException(status_code=500, detail="Veritabanına kaydetme başarısız")
             
+    except HTTPException:
+        # Re-raise HTTP exceptions (like validation errors)
+        raise
     except Exception as e:
-        logger.error(f"Error creating invoice: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error creating invoice: {str(e)}")
+        logger.error(f"Unexpected error creating invoice: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Fatura kaydedilirken beklenmeyen hata: {str(e)}")
 
 @api_router.get("/invoices", response_model=List[Invoice])
 async def get_invoices():
