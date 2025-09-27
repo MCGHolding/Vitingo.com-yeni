@@ -2852,6 +2852,198 @@ async def get_default_specialties_for_category(category_name: str):
     
     return specialties_map.get(category_name, [])
 
+# Supplier CRUD Endpoints
+@api_router.post("/suppliers", response_model=Supplier)
+async def create_supplier(supplier_data: SupplierCreate):
+    """Create a new supplier"""
+    try:
+        # Validate that category and specialty exist
+        category = await db.supplier_categories.find_one({"id": supplier_data.supplier_type_id, "is_active": True})
+        if not category:
+            raise HTTPException(status_code=400, detail="Geçersiz tedarikçi türü")
+        
+        specialty = await db.supplier_specialties.find_one({"id": supplier_data.specialty_id, "is_active": True})
+        if not specialty:
+            raise HTTPException(status_code=400, detail="Geçersiz uzmanlık alanı")
+        
+        # Check if supplier already exists with same name
+        existing = await db.suppliers.find_one({"company_short_name": supplier_data.company_short_name})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu firma adıyla tedarikçi zaten mevcut")
+        
+        supplier = Supplier(**supplier_data.dict())
+        await db.suppliers.insert_one(supplier.dict())
+        
+        logger.info(f"Supplier created: {supplier.company_short_name}")
+        return supplier
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating supplier: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/suppliers", response_model=List[Supplier])
+async def get_suppliers():
+    """Get all suppliers"""
+    try:
+        suppliers = await db.suppliers.find().to_list(1000)
+        return [Supplier(**supplier) for supplier in suppliers]
+    except Exception as e:
+        logger.error(f"Error getting suppliers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/suppliers/{supplier_id}", response_model=Supplier)
+async def get_supplier(supplier_id: str):
+    """Get a specific supplier"""
+    try:
+        supplier = await db.suppliers.find_one({"id": supplier_id})
+        if not supplier:
+            raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        return Supplier(**supplier)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting supplier {supplier_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/suppliers/{supplier_id}", response_model=Supplier)
+async def update_supplier(supplier_id: str, supplier_data: SupplierUpdate):
+    """Update a supplier"""
+    try:
+        # Check if supplier exists
+        existing = await db.suppliers.find_one({"id": supplier_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        
+        # Update fields
+        update_data = {k: v for k, v in supplier_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        result = await db.suppliers.update_one(
+            {"id": supplier_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        
+        # Return updated supplier
+        updated_supplier = await db.suppliers.find_one({"id": supplier_id})
+        return Supplier(**updated_supplier)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating supplier {supplier_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/suppliers/{supplier_id}")
+async def delete_supplier(supplier_id: str):
+    """Delete or deactivate a supplier based on related records"""
+    try:
+        # Check if supplier exists
+        supplier = await db.suppliers.find_one({"id": supplier_id})
+        if not supplier:
+            raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        
+        # Check for related records (invoices, projects, etc.)
+        # For now, we'll just check contacts
+        contacts_count = await db.supplier_contacts.count_documents({"supplier_id": supplier_id, "is_active": True})
+        
+        if contacts_count > 0:
+            # Has related records - set to passive instead of delete
+            await db.suppliers.update_one(
+                {"id": supplier_id},
+                {"$set": {"status": "passive", "updated_at": datetime.now(timezone.utc)}}
+            )
+            return {"success": True, "message": "Tedarikçi pasif duruma alındı (ilişkili kayıtlar bulunduğu için silinemedi)"}
+        else:
+            # No related records - safe to delete
+            await db.suppliers.delete_one({"id": supplier_id})
+            return {"success": True, "message": "Tedarikçi başarıyla silindi"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting supplier {supplier_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Supplier Contact CRUD Endpoints
+@api_router.post("/supplier-contacts", response_model=SupplierContact)
+async def create_supplier_contact(contact_data: SupplierContactCreate):
+    """Create a new supplier contact"""
+    try:
+        # Validate that supplier exists
+        supplier = await db.suppliers.find_one({"id": contact_data.supplier_id})
+        if not supplier:
+            raise HTTPException(status_code=400, detail="Geçersiz tedarikçi ID")
+        
+        contact = SupplierContact(**contact_data.dict())
+        await db.supplier_contacts.insert_one(contact.dict())
+        
+        logger.info(f"Supplier contact created: {contact.full_name} for supplier {contact.supplier_id}")
+        return contact
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating supplier contact: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/supplier-contacts/{supplier_id}", response_model=List[SupplierContact])
+async def get_supplier_contacts(supplier_id: str):
+    """Get all contacts for a specific supplier"""
+    try:
+        contacts = await db.supplier_contacts.find({
+            "supplier_id": supplier_id, 
+            "is_active": True
+        }).to_list(1000)
+        return [SupplierContact(**contact) for contact in contacts]
+    except Exception as e:
+        logger.error(f"Error getting supplier contacts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/supplier-contacts/{contact_id}", response_model=SupplierContact)
+async def update_supplier_contact(contact_id: str, contact_data: SupplierContactUpdate):
+    """Update a supplier contact"""
+    try:
+        # Update fields
+        update_data = {k: v for k, v in contact_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        result = await db.supplier_contacts.update_one(
+            {"id": contact_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Yetkili kişi bulunamadı")
+        
+        # Return updated contact
+        updated_contact = await db.supplier_contacts.find_one({"id": contact_id})
+        return SupplierContact(**updated_contact)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating supplier contact {contact_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/supplier-contacts/{contact_id}")
+async def delete_supplier_contact(contact_id: str):
+    """Deactivate a supplier contact"""
+    try:
+        result = await db.supplier_contacts.update_one(
+            {"id": contact_id},
+            {"$set": {"is_active": False, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Yetkili kişi bulunamadı")
+        
+        return {"success": True, "message": "Yetkili kişi başarıyla silindi"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting supplier contact {contact_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== BANK EMAIL ENDPOINTS =====================
 
 class BankEmailRequest(BaseModel):
