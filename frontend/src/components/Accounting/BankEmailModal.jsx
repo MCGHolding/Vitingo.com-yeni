@@ -29,6 +29,8 @@ export default function BankEmailModal({ banks, mode, onClose }) {
     attachments: []
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [sentEmailInfo, setSentEmailInfo] = useState(null);
 
   function generateDefaultBody() {
     if (mode === 'single' && banks.length === 1) {
