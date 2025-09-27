@@ -175,23 +175,14 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   };
 
   const handleExpandSupplier = async (supplierId) => {
-    console.log('🔧 handleExpandSupplier called with supplierId:', supplierId);
-    console.log('🔧 Current expandedSupplier:', expandedSupplier);
-    console.log('🔧 Current supplierContacts:', supplierContacts);
-    
     if (expandedSupplier === supplierId) {
-      console.log('🔧 Collapsing supplier');
       setExpandedSupplier(null);
     } else {
-      console.log('🔧 Expanding supplier');
       setExpandedSupplier(supplierId);
       
       // Load contacts if not already loaded
       if (!supplierContacts[supplierId]) {
-        console.log('🔧 Loading contacts for supplier:', supplierId);
         await loadSupplierContacts(supplierId);
-      } else {
-        console.log('🔧 Contacts already loaded:', supplierContacts[supplierId]);
       }
     }
   };
