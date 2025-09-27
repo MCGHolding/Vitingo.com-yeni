@@ -55,6 +55,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     currency: 'USD',
     date: new Date().toISOString().split('T')[0],
     customerId: '', // Selected customer ID
+    customerName: '', // Manual customer name input
     items: [
       { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
     ],
