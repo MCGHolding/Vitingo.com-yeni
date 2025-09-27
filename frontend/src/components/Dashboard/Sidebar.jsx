@@ -144,7 +144,15 @@ const navigation = [
       { name: 'Gider Makbuzu', href: '/accounting/expense-receipt', icon: Wallet },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
-      { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX }
+      { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
+      { 
+        name: 'Bankalar', 
+        hasSubmenu: true,
+        submenu: [
+          { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Plus },
+          { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: List }
+        ]
+      }
     ]
   },
   { 
