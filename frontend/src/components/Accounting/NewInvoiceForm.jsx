@@ -410,6 +410,21 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
       // Create invoice object with REAL form data
+      const subtotalAmount = validItems.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
+      const discountValue = parseNumber(formData.discount) || 0;
+      
+      // Calculate discount amount based on discount type
+      let discountAmount = 0;
+      if (formData.discountType === 'percentage') {
+        discountAmount = (subtotalAmount * discountValue) / 100;
+      } else if (formData.discountType === 'fixed') {
+        discountAmount = discountValue;
+      }
+      
+      const discountedSubtotal = subtotalAmount - discountAmount;
+      const vatAmount = (discountedSubtotal * formData.vatRate) / 100;
+      const totalAmount = discountedSubtotal + vatAmount;
+      
       const invoice = {
         invoice_number: formData.invoiceNumber,
         customer_id: formData.customerId || null,
