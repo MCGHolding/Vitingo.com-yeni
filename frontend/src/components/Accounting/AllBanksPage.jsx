@@ -9,6 +9,10 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
+  
+  // Delete confirmation modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [bankToDelete, setBankToDelete] = useState(null);
 
   const countries = [
     { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
