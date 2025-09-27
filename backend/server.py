@@ -2512,6 +2512,133 @@ async def get_invoices_by_status(status: str):
 
 # ===================== END CUSTOMER ENDPOINTS =====================
 
+# ===================== BANK ENDPOINTS =====================
+
+@api_router.post("/banks", response_model=Bank)
+async def create_bank(bank_input: BankCreate):
+    """Create a new bank"""
+    try:
+        logger.info(f"Creating bank: {bank_input.bank_name} in {bank_input.country}")
+        
+        # Validate required fields based on country
+        if bank_input.country in ["Turkey", "UAE"]:
+            if not bank_input.swift_code or not bank_input.iban:
+                raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
+        elif bank_input.country == "USA":
+            if not bank_input.routing_number or not bank_input.us_account_number:
+                raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
+        
+        bank_dict = bank_input.dict()
+        bank_obj = Bank(**bank_dict)
+        
+        # Insert to MongoDB
+        result = await db.banks.insert_one(bank_obj.dict())
+        
+        if result.inserted_id:
+            logger.info(f"Bank created successfully: {bank_obj.bank_name}")
+            return bank_obj
+        else:
+            logger.error("Failed to insert bank to database")
+            raise HTTPException(status_code=500, detail="Failed to create bank")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating bank: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating bank: {str(e)}")
+
+@api_router.get("/banks", response_model=List[Bank])
+async def get_banks():
+    """Get all banks grouped by country"""
+    try:
+        banks = await db.banks.find({"is_active": True}).to_list(1000)
+        return [Bank(**bank) for bank in banks]
+    except Exception as e:
+        logger.error(f"Error getting banks: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting banks: {str(e)}")
+
+@api_router.get("/banks/{bank_id}", response_model=Bank)
+async def get_bank(bank_id: str):
+    """Get a specific bank"""
+    try:
+        bank = await db.banks.find_one({"id": bank_id, "is_active": True})
+        if not bank:
+            raise HTTPException(status_code=404, detail="Bank not found")
+        
+        return Bank(**bank)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting bank {bank_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/banks/{bank_id}", response_model=Bank)
+async def update_bank(bank_id: str, bank_update: BankUpdate):
+    """Update a bank"""
+    try:
+        # Get existing bank
+        existing_bank = await db.banks.find_one({"id": bank_id, "is_active": True})
+        if not existing_bank:
+            raise HTTPException(status_code=404, detail="Bank not found")
+        
+        # Update fields
+        update_data = {k: v for k, v in bank_update.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.utcnow()
+        
+        # Validate updated data based on country
+        country = update_data.get("country", existing_bank.get("country"))
+        if country in ["Turkey", "UAE"]:
+            swift_code = update_data.get("swift_code", existing_bank.get("swift_code"))
+            iban = update_data.get("iban", existing_bank.get("iban"))
+            if not swift_code or not iban:
+                raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
+        elif country == "USA":
+            routing_number = update_data.get("routing_number", existing_bank.get("routing_number"))
+            us_account_number = update_data.get("us_account_number", existing_bank.get("us_account_number"))
+            if not routing_number or not us_account_number:
+                raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
+        
+        # Update in database
+        result = await db.banks.update_one(
+            {"id": bank_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bank not found")
+        
+        # Return updated bank
+        updated_bank = await db.banks.find_one({"id": bank_id})
+        return Bank(**updated_bank)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating bank {bank_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/banks/{bank_id}")
+async def delete_bank(bank_id: str):
+    """Delete (deactivate) a bank"""
+    try:
+        # Soft delete by setting is_active to False
+        result = await db.banks.update_one(
+            {"id": bank_id},
+            {"$set": {"is_active": False, "updated_at": datetime.utcnow()}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bank not found")
+        
+        return {"success": True, "message": "Bank deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting bank {bank_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
