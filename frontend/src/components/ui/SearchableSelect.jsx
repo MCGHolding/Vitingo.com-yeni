@@ -20,6 +20,7 @@ export default function SearchableSelect({
   options = [],
   value = '',
   onChange,
+  onValueChange,
   placeholder = "Seçim yapınız...",
   searchPlaceholder = "Ara...",
   disabled = false,
