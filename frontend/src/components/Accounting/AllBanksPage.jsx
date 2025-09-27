@@ -396,6 +396,119 @@ ${bankToShare.account_holder ? `Hesap Sahibi: ${bankToShare.account_holder}` : '
           })
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 text-center">
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trash2 className="w-10 h-10 text-red-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">⚠️ Dikkat!</h3>
+            <div className="bg-red-50 p-4 rounded-lg mb-6">
+              <p className="text-gray-700 text-base leading-relaxed">
+                <strong>"{bankToDelete?.bank_name}"</strong> bankası kayıtlarımızdan silinecektir.
+                <br /><br />
+                Bu işlem geri alınamaz. Onaylıyor musunuz?
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setBankToDelete(null);
+                }}
+                variant="outline"
+                className="flex-1 py-3"
+              >
+                İptal Et
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3"
+              >
+                ✓ Onaylıyorum
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <Mail className="w-8 h-8 text-blue-600" />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
+              {shareMode === 'single' ? 'Banka Bilgisi Paylaş' : 'Ülke Bankalarını Paylaş'}
+            </h3>
+            
+            {shareMode === 'country' && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Paylaşılacak Ülkeyi Seçin
+                </label>
+                <select
+                  value={selectedShareCountry}
+                  onChange={(e) => setSelectedShareCountry(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                >
+                  <option value="">Ülke seçin...</option>
+                  {countries.map(country => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {shareMode === 'single' && bankToShare && (
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h4 className="font-semibold text-gray-900">{bankToShare.bank_name}</h4>
+                <p className="text-sm text-gray-600">{getCountryInfo(bankToShare.country).flag} {getCountryInfo(bankToShare.country).name}</p>
+              </div>
+            )}
+
+            {shareMode === 'country' && selectedShareCountry && (
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h4 className="font-semibold text-gray-900">
+                  {getCountryInfo(selectedShareCountry).flag} {getCountryInfo(selectedShareCountry).name} 
+                </h4>
+                <p className="text-sm text-gray-600">
+                  {filteredBanks.filter(bank => bank.country === selectedShareCountry).length} banka bilgisi paylaşılacak
+                </p>
+              </div>
+            )}
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={() => {
+                  setShowShareModal(false);
+                  setBankToShare(null);
+                  setSelectedShareCountry('');
+                }}
+                variant="outline"
+                className="flex-1 py-3"
+              >
+                İptal
+              </Button>
+              <Button
+                onClick={handleSendEmail}
+                disabled={shareMode === 'country' && !selectedShareCountry}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 disabled:opacity-50"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                E-posta Gönder
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
