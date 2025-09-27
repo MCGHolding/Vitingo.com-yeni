@@ -60,6 +60,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     ],
     vatRate: 20,
     discount: '',
+    discountType: 'percentage', // 'percentage' or 'fixed'
     conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
     paymentTerm: '30'
   });
