@@ -439,7 +439,6 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🔧 Expansion button clicked for supplier:', supplier.id);
                             handleExpandSupplier(supplier.id);
                           }}
                           className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
