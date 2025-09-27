@@ -602,6 +602,42 @@ export default function Sidebar({
       return;
     }
 
+    // Handle Expense Receipt menu actions
+    if (subItem && subItem.name === 'Yeni Gider Makbuzu') {
+      if (onNewExpenseReceipt) {
+        onNewExpenseReceipt();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Makbuzlar') {
+      if (onAllExpenseReceipts) {
+        onAllExpenseReceipts();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Onay Bekleyen Makbuzlar') {
+      if (onPendingExpenseReceipts) {
+        onPendingExpenseReceipts();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Onaylanmış Makbuzlar') {
+      if (onApprovedExpenseReceipts) {
+        onApprovedExpenseReceipts();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Ödenmiş Makbuzlar') {
+      if (onPaidExpenseReceipts) {
+        onPaidExpenseReceipts();
+      }
+      return;
+    }
+
     // Handle Brief menu actions
     if (subItem && subItem.name === 'Yeni Brief') {
       if (onNewBrief) {
