@@ -462,7 +462,8 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         </div>
