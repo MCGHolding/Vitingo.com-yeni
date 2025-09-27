@@ -448,8 +448,15 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                       <div className="flex items-center space-x-4 flex-1">
                         {/* Expansion Button */}
                         <button
-                          onClick={() => handleExpandSupplier(supplier.id)}
-                          className="text-gray-400 hover:text-gray-600"
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🔧 Expansion button clicked for supplier:', supplier.id);
+                            handleExpandSupplier(supplier.id);
+                          }}
+                          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          aria-label={expandedSupplier === supplier.id ? "Tedarikçiyi daralt" : "Tedarikçiyi genişlet"}
                         >
                           {expandedSupplier === supplier.id ? (
                             <ChevronDown className="h-5 w-5" />
