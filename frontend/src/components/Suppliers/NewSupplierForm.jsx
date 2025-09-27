@@ -16,7 +16,9 @@ import {
   X,
   Save,
   ArrowLeft,
-  User
+  User,
+  CheckCircle,
+  Home
 } from 'lucide-react';
 
 const NewSupplierForm = ({ onClose }) => {
