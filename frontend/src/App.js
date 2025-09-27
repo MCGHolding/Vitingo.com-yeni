@@ -57,6 +57,8 @@ import HandoverManagementPage from './components/Handovers/HandoverManagementPag
 import HandoverFormPage from './components/Handovers/HandoverFormPage';
 import NewInvoiceForm from './components/Accounting/NewInvoiceForm';
 import AllInvoicesPage from './components/Accounting/AllInvoicesPage';
+import NewBankForm from './components/Accounting/NewBankForm';
+import AllBanksPage from './components/Accounting/AllBanksPage';
 import NewBriefForm from './components/Brief/NewBriefForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
 import Header from './components/Dashboard/Header';
