@@ -416,10 +416,29 @@ const NewSupplierForm = ({ onClose }) => {
           {/* Kategori Seçimi */}
           <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Tag className="h-5 w-5" />
-              <span>Kategori Seçimi</span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <Tag className="h-5 w-5" />
+                <span>Kategori Seçimi</span>
+              </CardTitle>
+              
+              {/* Individual Supplier Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="individual-supplier"
+                  checked={isIndividualSupplier}
+                  onChange={(e) => setIsIndividualSupplier(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                />
+                <label 
+                  htmlFor="individual-supplier" 
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Bireysel Tedarikçi
+                </label>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Tedarikçi Türü */}
