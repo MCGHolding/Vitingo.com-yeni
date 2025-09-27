@@ -147,50 +147,6 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setSelectedShareCountry('');
   };
 
-  const generateEmailContent = () => {
-    if (shareMode === 'single' && bankToShare) {
-      return `Banka Bilgileri:
-
-Banka Adı: ${bankToShare.bank_name}
-Ülke: ${bankToShare.country}
-${bankToShare.swift_code ? `SWIFT: ${bankToShare.swift_code}` : ''}
-${bankToShare.iban ? `IBAN: ${bankToShare.iban}` : ''}
-${bankToShare.routing_number ? `Routing Number: ${bankToShare.routing_number}` : ''}
-${bankToShare.us_account_number ? `Account Number: ${bankToShare.us_account_number}` : ''}
-${bankToShare.branch_name ? `Şube: ${bankToShare.branch_name}` : ''}
-${bankToShare.account_holder ? `Hesap Sahibi: ${bankToShare.account_holder}` : ''}`;
-    } else if (shareMode === 'country' && selectedShareCountry) {
-      const countryBanks = filteredBanks.filter(bank => bank.country === selectedShareCountry);
-      let content = `${selectedShareCountry} Banka Bilgileri:\n\n`;
-      
-      countryBanks.forEach((bank, index) => {
-        content += `${index + 1}. ${bank.bank_name}\n`;
-        if (bank.swift_code) content += `   SWIFT: ${bank.swift_code}\n`;
-        if (bank.iban) content += `   IBAN: ${bank.iban}\n`;
-        if (bank.routing_number) content += `   Routing Number: ${bank.routing_number}\n`;
-        if (bank.us_account_number) content += `   Account Number: ${bank.us_account_number}\n`;
-        content += '\n';
-      });
-      
-      return content;
-    }
-    return '';
-  };
-
-  const handleSendEmail = () => {
-    const subject = shareMode === 'single' 
-      ? `Banka Bilgileri - ${bankToShare?.bank_name}` 
-      : `${selectedShareCountry} Banka Bilgileri`;
-    
-    const body = generateEmailContent();
-    
-    // Create mailto link
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-    
-    setShowShareModal(false);
-  };
-
   const getCountryInfo = (countryCode) => {
     return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦' };
   };
