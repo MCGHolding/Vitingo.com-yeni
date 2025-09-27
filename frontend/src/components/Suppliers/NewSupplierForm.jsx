@@ -804,27 +804,11 @@ const NewSupplierForm = ({ onClose }) => {
       )}
 
       {/* Add Category Modal */}
-      {showAddCategoryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Yeni Kategori Ekle</h3>
-            <Input
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="Kategori adı..."
-              onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
-            />
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setShowAddCategoryModal(false)}>
-                İptal
-              </Button>
-              <Button onClick={handleAddCategory}>
-                Kaydet
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AddCategoryModal
+        isOpen={showAddCategoryModal}
+        onClose={() => setShowAddCategoryModal(false)}
+        onSave={handleCategorySaved}
+      />
 
       {/* Add Specialty Modal */}
       {showAddSpecialtyModal && (
