@@ -41,6 +41,49 @@ const NewBankForm = ({ onBackToDashboard }) => {
     }));
   };
 
+  const formatIBAN = (value) => {
+    // Remove all spaces and convert to uppercase
+    const cleanValue = value.replace(/\s/g, '').toUpperCase();
+    
+    // Add spaces every 4 characters
+    const formatted = cleanValue.replace(/(.{4})/g, '$1 ').trim();
+    
+    return formatted;
+  };
+
+  const validateIBAN = (iban) => {
+    const cleanIban = iban.replace(/\s/g, '');
+    
+    // Check if starts with TR and has correct length (26 characters for Turkey)
+    if (!cleanIban.startsWith('TR')) {
+      return 'IBAN TR ile başlamalıdır';
+    }
+    
+    if (cleanIban.length < 26) {
+      return 'IBAN eksik - 26 karakter olmalıdır';
+    }
+    
+    if (cleanIban.length > 26) {
+      return 'IBAN çok uzun - 26 karakter olmalıdır';
+    }
+    
+    // Check if contains only TR + numbers
+    const numberPart = cleanIban.substring(2);
+    if (!/^\d+$/.test(numberPart)) {
+      return 'IBAN sadece TR ve rakamlardan oluşmalıdır';
+    }
+    
+    return '';
+  };
+
+  const handleIBANChange = (value) => {
+    const formattedValue = formatIBAN(value);
+    setFormData(prev => ({ ...prev, iban: formattedValue }));
+    
+    const error = validateIBAN(formattedValue);
+    setIbanError(error);
+  };
+
   const handleCountryChange = (country) => {
     setFormData(prev => ({
       ...prev,
