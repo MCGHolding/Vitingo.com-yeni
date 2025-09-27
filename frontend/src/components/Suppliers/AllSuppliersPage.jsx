@@ -42,6 +42,22 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     loadData();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showActionMenu) {
+        setShowActionMenu(null);
+      }
+    };
+
+    if (showActionMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
+  }, [showActionMenu]);
+
   const loadData = async () => {
     try {
       setIsLoading(true);
