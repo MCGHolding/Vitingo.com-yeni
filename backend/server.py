@@ -2808,6 +2808,13 @@ class SupplierUpdate(BaseModel):
     services: Optional[List[str]] = None
     supplier_type_id: Optional[str] = None
     specialty_id: Optional[str] = None
+    # Bank/Payment Information
+    iban: Optional[str] = None
+    bank_name: Optional[str] = None
+    bank_branch: Optional[str] = None
+    account_holder_name: Optional[str] = None
+    swift_code: Optional[str] = None
+    country: Optional[str] = None
     status: Optional[str] = None
 
 class SupplierContactUpdate(BaseModel):
