@@ -275,14 +275,10 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
         handleSetPassive(supplier.id);
         break;
       case 'blacklist':
-        handleSetBlacklist(supplier.id);
+        handleSetBlacklist(supplier);
         break;
       case 'rating':
-        toast({
-          title: "Özellik",
-          description: "Puanlama özelliği yakında aktif olacak",
-          variant: "default"
-        });
+        handleSetScore(supplier);
         break;
       default:
         break;
