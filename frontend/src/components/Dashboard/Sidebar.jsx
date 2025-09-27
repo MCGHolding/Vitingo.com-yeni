@@ -148,7 +148,20 @@ const navigation = [
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
       { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Building2 },
-      { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building }
+      { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building },
+      { 
+        name: 'Gider Makbuzu', 
+        href: '/accounting/expense-receipts', 
+        icon: Wallet, 
+        hasSubmenu: true,
+        submenu: [
+          { name: 'Yeni Gider Makbuzu', href: '/accounting/expense-receipts/new', icon: Plus },
+          { name: 'Tüm Makbuzlar', href: '/accounting/expense-receipts/all', icon: Receipt },
+          { name: 'Onay Bekleyen Makbuzlar', href: '/accounting/expense-receipts/pending', icon: Clock },
+          { name: 'Onaylanmış Makbuzlar', href: '/accounting/expense-receipts/approved', icon: CheckCircle },
+          { name: 'Ödenmiş Makbuzlar', href: '/accounting/expense-receipts/paid', icon: CreditCard }
+        ]
+      }
     ]
   },
   { 
