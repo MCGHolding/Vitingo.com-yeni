@@ -159,18 +159,6 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
     return statusOption ? statusOption.color : 'bg-gray-100 text-gray-800';
   };
 
-  // Load invoices on component mount
-  useEffect(() => {
-    // Load invoices from localStorage
-    const savedInvoices = JSON.parse(localStorage.getItem('invoices') || '[]');
-    
-    // Combine with mock data for demo
-    const allInvoices = [...mockInvoices, ...savedInvoices];
-    
-    setInvoices(allInvoices);
-    setFilteredInvoices(allInvoices);
-  }, []);
-
   // Apply filters
   useEffect(() => {
     let filtered = [...invoices];
@@ -178,8 +166,8 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
     // Search filter
     if (filters.search) {
       filtered = filtered.filter(invoice => 
-        invoice.invoiceNumber.toLowerCase().includes(filters.search.toLowerCase()) ||
-        invoice.customerName.toLowerCase().includes(filters.search.toLowerCase())
+        invoice.invoice_number.toLowerCase().includes(filters.search.toLowerCase()) ||
+        invoice.customer_name.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
