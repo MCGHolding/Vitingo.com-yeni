@@ -704,18 +704,7 @@ const Dashboard = () => {
 
       // Expense Receipt cases
       case 'new-expense-receipt':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Yeni Gider Makbuzu</h1>
-            <p className="text-gray-600">Gider makbuzu formu yakında eklenecek...</p>
-            <button
-              onClick={handleBackToDashboard}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Dashboard'a Dön
-            </button>
-          </div>
-        );
+        return <NewExpenseReceiptForm onBackToDashboard={handleBackToDashboard} />;
 
       case 'all-expense-receipts':
         return (
