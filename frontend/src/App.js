@@ -429,6 +429,27 @@ const Dashboard = () => {
     setCurrentView('all-suppliers');
   };
 
+  // Expense Receipt handlers
+  const handleNewExpenseReceipt = () => {
+    setCurrentView('new-expense-receipt');
+  };
+
+  const handleAllExpenseReceipts = () => {
+    setCurrentView('all-expense-receipts');
+  };
+
+  const handlePendingExpenseReceipts = () => {
+    setCurrentView('pending-expense-receipts');
+  };
+
+  const handleApprovedExpenseReceipts = () => {
+    setCurrentView('approved-expense-receipts');
+  };
+
+  const handlePaidExpenseReceipts = () => {
+    setCurrentView('paid-expense-receipts');
+  };
+
   // Brief handlers
   const handleNewBrief = () => {
     setCurrentView('new-brief');
