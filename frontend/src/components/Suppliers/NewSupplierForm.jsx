@@ -165,40 +165,6 @@ const NewSupplierForm = ({ onClose }) => {
     }
   };
 
-  const handleAddCategory = async () => {
-    if (!newCategoryName.trim()) return;
-    
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/supplier-categories`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName.trim() })
-      });
-
-      if (response.ok) {
-        await loadCategories();
-        setNewCategoryName('');
-        setShowAddCategoryModal(false);
-        toast({
-          title: "Başarılı",
-          description: "Yeni kategori eklendi",
-          variant: "default"
-        });
-      } else {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to add category');
-      }
-    } catch (error) {
-      console.error('Error adding category:', error);
-      toast({
-        title: "Hata",
-        description: error.message || "Kategori eklenirken hata oluştu",
-        variant: "destructive"
-      });
-    }
-  };
-
   const getCategoryName = (categoryId) => {
     const category = categories.find(cat => cat.id === categoryId);
     return category ? category.name : 'Bilinmiyor';
