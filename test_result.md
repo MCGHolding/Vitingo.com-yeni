@@ -197,6 +197,18 @@ backend:
         agent: "main"
         comment: "✅ TEMPLATE UPDATED & FIXED - Backend CSV template for fairs category successfully updated: 1) Removed fairMonth column completely ✅ 2) Updated sample data with 4 Turkish examples (İstanbul, Ankara, İzmir, Bursa) ✅ 3) Consistent YYYY-MM-DD date format for all dates ✅ 4) Fixed StreamingResponse to use BytesIO for proper download ✅ 5) All required fields (name, city, country) filled with valid data ✅ 6) Proper CSV structure ready for import ✅"
 
+  - task: "Expense Receipt CRUD APIs"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Backend CRUD APIs for expense receipts already implemented: ExpenseReceipt, ExpenseReceiptCreate, ExpenseReceiptUpdate Pydantic models; POST /api/expense-receipts, GET /api/expense-receipts (with status filter), GET /api/expense-receipts/{id}, PUT /api/expense-receipts/{id} endpoints. Generate receipt number function implemented. Approval link generation ready for email workflow."
+
 frontend:
   - task: "NewInvoiceForm AddProductModal Frontend Integration Testing"
     implemented: true
