@@ -5148,56 +5148,181 @@ def test_invoice_creation_422_validation_debug():
     
     return False
 
-def main():
-    """Run comprehensive backend tests focusing on Bank Email API"""
-    print("🏦 BACKEND API TESTLERİ - BANK EMAIL API")
+def test_supplier_category_and_specialty_apis():
+    """
+    Run comprehensive tests for supplier category and specialty APIs
+    that will be used by AddCategoryModal and AddSpecialtyModal components.
+    """
+    print("🏗️ SUPPLIER CATEGORY & SPECIALTY API TESTS")
     print("=" * 80)
-    print("Bank Email API endpoint testing - New email functionality")
+    print("Testing APIs for AddCategoryModal and AddSpecialtyModal components")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    print("\n🎯 TESTING BANK EMAIL API:")
-    print("1. POST /api/send-bank-email - Send bank details via email")
-    print("2. GET /api/banks - Load bank data for email sending")
-    print("3. Test single bank mode (Turkey)")
-    print("4. Test multiple banks mode (UAE)")
-    print("5. Test USA bank format")
-    print("6. Test error handling")
+    print("\n🎯 TESTING SUPPLIER APIS:")
+    print("1. POST /api/supplier-categories - Create new supplier category")
+    print("2. POST /api/supplier-specialties - Create new supplier specialty")
+    print("3. GET /api/supplier-categories - List all categories")
+    print("4. GET /api/supplier-specialties/{category_id} - List specialties for category")
+    print("5. Validation error testing")
     
     print("\n🔍 VALIDATION REQUIREMENTS:")
-    print("📧 Bank Email Features:")
-    print("   • Accept all required fields (to, subject, body, from_name, from_email, banks, mode)")
-    print("   • Support single bank and multiple banks scenarios")
-    print("   • SendGrid integration working (real email sending)")
-    print("   • Email records saved to bank_emails collection")
-    print("   • Support Turkey/UAE (SWIFT+IBAN) and USA (Routing+Account) formats")
-    print("   • Error handling for missing required fields")
+    print("📋 Category Creation Features:")
+    print("   • Accept category name and create new category")
+    print("   • Return category object with id and name")
+    print("   • Handle validation errors (empty names, duplicates)")
+    print("   • Turkish error messages")
+    
+    print("\n📋 Specialty Creation Features:")
+    print("   • Accept specialty name and category_id")
+    print("   • Create specialty linked to category")
+    print("   • Return specialty object with proper structure")
+    print("   • Handle validation errors (empty names, invalid category_id)")
+    
+    print("\n📋 List APIs Features:")
+    print("   • Return all categories including newly created ones")
+    print("   • Return specialties for specific category")
+    print("   • Proper JSON structure and data integrity")
+    
+    all_tests_passed = True
+    created_category_id = None
+    created_specialty_id = None
+    
+    # Test 1: Categories List (to see existing data)
+    print("\n" + "=" * 80)
+    print("📋 SUPPLIER CATEGORIES LIST TEST")
+    print("=" * 80)
+    
+    categories_list_result = test_supplier_categories_list()
+    if not categories_list_result:
+        all_tests_passed = False
+    
+    # Test 2: Category Creation
+    print("\n" + "=" * 80)
+    print("➕ SUPPLIER CATEGORY CREATION TEST")
+    print("=" * 80)
+    
+    category_creation_result, created_category_id = test_supplier_category_creation()
+    if not category_creation_result:
+        all_tests_passed = False
+    
+    # Test 3: Specialty Creation (using created category)
+    print("\n" + "=" * 80)
+    print("➕ SUPPLIER SPECIALTY CREATION TEST")
+    print("=" * 80)
+    
+    specialty_creation_result, created_specialty_id = test_supplier_specialty_creation(created_category_id)
+    if not specialty_creation_result:
+        all_tests_passed = False
+    
+    # Test 4: Categories List (to verify new category appears)
+    print("\n" + "=" * 80)
+    print("📋 SUPPLIER CATEGORIES LIST TEST (AFTER CREATION)")
+    print("=" * 80)
+    
+    categories_list_after_result = test_supplier_categories_list()
+    if not categories_list_after_result:
+        all_tests_passed = False
+    
+    # Test 5: Specialties List (to verify new specialty appears)
+    print("\n" + "=" * 80)
+    print("📋 SUPPLIER SPECIALTIES LIST TEST")
+    print("=" * 80)
+    
+    specialties_list_result = test_supplier_specialties_list(created_category_id)
+    if not specialties_list_result:
+        all_tests_passed = False
+    
+    # Test 6: Category Validation Errors
+    print("\n" + "=" * 80)
+    print("❌ SUPPLIER CATEGORY VALIDATION TESTS")
+    print("=" * 80)
+    
+    category_validation_result = test_supplier_category_validation_errors()
+    if not category_validation_result:
+        all_tests_passed = False
+    
+    # Test 7: Specialty Validation Errors
+    print("\n" + "=" * 80)
+    print("❌ SUPPLIER SPECIALTY VALIDATION TESTS")
+    print("=" * 80)
+    
+    specialty_validation_result = test_supplier_specialty_validation_errors()
+    if not specialty_validation_result:
+        all_tests_passed = False
+    
+    # Final Summary
+    print("\n" + "=" * 80)
+    print("🎯 SUPPLIER API TESTS SUMMARY")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("🎉 ALL SUPPLIER API TESTS PASSED SUCCESSFULLY!")
+        print("\n✅ COMPREHENSIVE TEST RESULTS:")
+        print("✅ Category creation API working correctly")
+        print("✅ Specialty creation API working correctly")
+        print("✅ Categories list API returns all categories")
+        print("✅ Specialties list API returns category-specific specialties")
+        print("✅ Validation errors handled properly")
+        print("✅ Turkish error messages working")
+        print("✅ New categories and specialties appear in list APIs")
+        print("✅ Backend APIs ready for AddCategoryModal and AddSpecialtyModal")
+        
+        if created_category_id:
+            print(f"\n📋 Test Data Created:")
+            print(f"   • Category ID: {created_category_id}")
+            if created_specialty_id:
+                print(f"   • Specialty ID: {created_specialty_id}")
+        
+        print("\n🎯 CONCLUSION:")
+        print("   The backend APIs are fully functional and ready for frontend modal integration.")
+        print("   AddCategoryModal and AddSpecialtyModal can safely use these endpoints.")
+        
+    else:
+        print("❌ SOME SUPPLIER API TESTS FAILED!")
+        print("\n⚠️  Issues found that need to be addressed before frontend integration.")
+        print("   Please check the detailed test results above for specific failures.")
+    
+    return all_tests_passed
+
+def main():
+    """Run comprehensive backend tests focusing on Supplier Category and Specialty APIs"""
+    print("🏗️ BACKEND API TESTLERİ - SUPPLIER CATEGORY & SPECIALTY APIs")
+    print("=" * 80)
+    print("Supplier Category and Specialty API endpoint testing for AddCategoryModal and AddSpecialtyModal")
+    print(f"Backend URL: {BACKEND_URL}")
+    print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    print("\n🎯 TESTING SUPPLIER CATEGORY & SPECIALTY APIs:")
+    print("1. POST /api/supplier-categories - Create new supplier category")
+    print("2. POST /api/supplier-specialties - Create new supplier specialty")
+    print("3. GET /api/supplier-categories - List all categories")
+    print("4. GET /api/supplier-specialties/{category_id} - List specialties for category")
+    print("5. Validation error testing")
+    
+    print("\n🔍 VALIDATION REQUIREMENTS:")
+    print("📋 Category & Specialty Features:")
+    print("   • Create new categories and specialties")
+    print("   • Return proper object structures with id and name")
+    print("   • Handle validation errors (empty names, duplicates, invalid IDs)")
+    print("   • List APIs return all items including newly created ones")
+    print("   • Turkish error messages for better UX")
     
     print("\n📋 EXPECTED RESULTS:")
-    print("   • All bank email scenarios work correctly")
-    print("   • Real emails sent via SendGrid")
-    print("   • Email records tracked in database")
-    print("   • Users can send bank details instead of mailto: links")
+    print("   • All category and specialty CRUD operations work correctly")
+    print("   • New items appear in respective list APIs")
+    print("   • Validation errors handled gracefully")
+    print("   • Backend ready for AddCategoryModal and AddSpecialtyModal integration")
     
     all_tests_passed = True
     
-    # Test Banks Endpoint
+    # Run Supplier API Tests
     print("\n" + "=" * 80)
-    print("🏦 BANKS ENDPOINT TEST")
+    print("🏗️ SUPPLIER CATEGORY & SPECIALTY API TESTS (PRIMARY FOCUS)")
     print("=" * 80)
     
-    print("\n🏦 Testing banks endpoint for data loading")
-    banks_result = test_banks_endpoint()
-    if not banks_result:
-        all_tests_passed = False
-    
-    # Test Bank Email API (PRIMARY FOCUS)
-    print("\n" + "=" * 80)
-    print("📧 BANK EMAIL API TEST (CRITICAL)")
-    print("=" * 80)
-    
-    print("\n📧 Testing bank email API for all scenarios")
-    bank_email_result = test_bank_email_endpoint()
+    print("\n🏗️ Testing supplier category and specialty APIs for modal integration")
+    supplier_api_result = test_supplier_category_and_specialty_apis()
     if not bank_email_result:
         all_tests_passed = False
     
