@@ -45,8 +45,11 @@ const NewBankForm = ({ onBackToDashboard }) => {
     // Remove all spaces and convert to uppercase
     const cleanValue = value.replace(/\s/g, '').toUpperCase();
     
+    // Limit to 26 characters for Turkey
+    const limitedValue = cleanValue.slice(0, 26);
+    
     // Add spaces every 4 characters
-    const formatted = cleanValue.replace(/(.{4})/g, '$1 ').trim();
+    const formatted = limitedValue.replace(/(.{4})/g, '$1 ').trim();
     
     return formatted;
   };
