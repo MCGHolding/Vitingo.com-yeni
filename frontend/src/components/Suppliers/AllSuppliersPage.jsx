@@ -581,6 +581,15 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                                     >
                                       <Mail className="h-4 w-4" />
                                     </Button>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => handleContactRegistration(contact)}
+                                      disabled={!contact.unique_url_key}
+                                      className="text-purple-600 hover:text-purple-800"
+                                    >
+                                      <UserCheck className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
                               </div>
