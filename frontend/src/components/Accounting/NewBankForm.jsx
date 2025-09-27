@@ -34,11 +34,44 @@ const NewBankForm = ({ onBackToDashboard }) => {
   const [newCountryName, setNewCountryName] = useState('');
   const [isAddingCountry, setIsAddingCountry] = useState(false);
 
-  const countries = [
-    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
-    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
-    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
-  ];
+  // Country management
+  const [countries, setCountries] = useState([]);
+  const [showAddCountryModal, setShowAddCountryModal] = useState(false);
+  const [newCountryName, setNewCountryName] = useState('');
+  const [isAddingCountry, setIsAddingCountry] = useState(false);
+
+  // Load countries from backend
+  const loadCountries = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/countries`);
+      
+      if (response.ok) {
+        const countriesData = await response.json();
+        setCountries(countriesData);
+      } else {
+        // Fallback to default countries
+        setCountries([
+          { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+          { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+          { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error loading countries:', error);
+      // Fallback to default countries
+      setCountries([
+        { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+        { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+        { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+      ]);
+    }
+  };
+
+  // Load countries on component mount
+  useEffect(() => {
+    loadCountries();
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
