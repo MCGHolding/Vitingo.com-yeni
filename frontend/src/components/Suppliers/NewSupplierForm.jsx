@@ -259,10 +259,16 @@ const NewSupplierForm = ({ onClose }) => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.company_short_name || !formData.company_title || !formData.supplier_type_id || !formData.specialty_id) {
+    const requiredFieldsValid = isIndividualSupplier 
+      ? formData.supplier_type_id && formData.specialty_id  // For individual: only category and specialty required
+      : formData.company_short_name && formData.company_title && formData.supplier_type_id && formData.specialty_id; // For company: all fields required
+    
+    if (!requiredFieldsValid) {
       toast({
         title: "Hata",
-        description: "Zorunlu alanları doldurunuz",
+        description: isIndividualSupplier 
+          ? "Tedarikçi türü ve uzmanlık alanı seçimi zorunludur"
+          : "Zorunlu alanları doldurunuz (Firma adı, ünvan, kategori, uzmanlık)",
         variant: "destructive"
       });
       return;
