@@ -482,6 +482,18 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           </div>
         </div>
       )}
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <BankEmailModal
+          banks={emailBanks}
+          mode={emailMode}
+          onClose={() => {
+            setShowEmailModal(false);
+            setEmailBanks([]);
+          }}
+        />
+      )}
     </div>
   );
 };
