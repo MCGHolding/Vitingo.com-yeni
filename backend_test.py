@@ -3239,6 +3239,13 @@ def test_invoice_api_endpoints():
                     else:
                         print(f"   ❌ FAIL: Total mismatch. Expected: {test_invoice_data['total']}, Got: {data.get('total')}")
                         all_tests_passed = False
+                    
+                    # Test NEW discount_type field
+                    if data.get('discount_type') == test_invoice_data['discount_type']:
+                        print(f"   ✅ PASS: discount_type field correct: {data.get('discount_type')}")
+                    else:
+                        print(f"   ❌ FAIL: discount_type mismatch. Expected: {test_invoice_data['discount_type']}, Got: {data.get('discount_type')}")
+                        all_tests_passed = False
         else:
             print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
             print(f"   Response: {response.text}")
