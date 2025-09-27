@@ -3525,130 +3525,92 @@ def test_invoice_api_endpoints():
         return False
 
 def main():
-    """Run comprehensive backend tests focusing on Products API endpoints"""
-    print("🛍️ BACKEND API TESTLERİ - PRODUCTS API ENDPOINT'LERİ")
+    """Run comprehensive backend tests focusing on Invoice API endpoints"""
+    print("🧾 BACKEND API TESTLERİ - INVOICE API ENDPOINT'LERİ")
     print("=" * 80)
-    print("Products API endpoint'lerinin kapsamlı testi - NewInvoiceForm AddProductModal entegrasyonu için")
+    print("Invoice API endpoint'lerinin kapsamlı testi - NewInvoiceForm entegrasyonu için")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    print("\n🎯 TEST EDİLECEK PRODUCTS API ENDPOINTS:")
-    print("1. GET /api/products - Tüm ürünleri getir")
-    print("2. POST /api/products - Yeni ürün oluştur")
-    print("3. GET /api/products/{id} - Belirli ürünü getir")
-    print("4. Error handling - Geçersiz veri testi")
+    print("\n🎯 TEST EDİLECEK INVOICE API ENDPOINTS:")
+    print("1. POST /api/invoices - Yeni fatura oluştur")
+    print("2. GET /api/invoices - Tüm faturaları getir")
+    print("3. GET /api/invoices/{id} - Belirli faturayı getir")
+    print("4. PUT /api/invoices/{id} - Fatura durumunu güncelle")
+    print("5. GET /api/invoices/status/{status} - Duruma göre faturaları getir")
     
     print("\n🔍 TEST SENARYOLARI:")
-    print("📦 Products Test:")
-    print("   • GET /api/products (tüm ürünler)")
-    print("   • POST /api/products (Türkçe ürün adları ile)")
-    print("   • Category filtering (fair_services)")
-    print("   • Search functionality (Stand arama)")
-    print("   • Turkish product names (Fuar Stand Tasarımı)")
-    print("   • Units in Turkish (adet, saat, gün)")
-    print("   • Currency support (TRY)")
-    print("   • Error handling (duplicate names, invalid data)")
+    print("🧾 Invoice Test:")
+    print("   • POST /api/invoices (complete invoice data)")
+    print("   • GET /api/invoices (tüm faturalar)")
+    print("   • Invoice items with products")
+    print("   • VAT calculations (KDV hesaplamaları)")
+    print("   • Discount calculations (İskonto hesaplamaları)")
+    print("   • NEW: discount_type field (percentage/fixed)")
+    print("   • Turkish customer names and conditions")
+    print("   • Currency support (TRY, USD, EUR)")
+    print("   • Error handling (non-existent invoices)")
     
     print("\n📋 BEKLENİLEN SONUÇLAR:")
     print("   • Tüm endpoints 200 status dönmeli")
-    print("   • Turkish product names korunmalı")
-    print("   • fair_services kategorisi desteklenmeli")
-    print("   • adet, saat, gün birimleri çalışmalı")
-    print("   • TRY para birimi desteklenmeli")
-    print("   • Search ve filtering çalışmalı")
+    print("   • Faturalar kaydedilmeli ve görüntülenebilmeli")
+    print("   • Turkish character support çalışmalı")
+    print("   • discount_type field (percentage/fixed) desteklenmeli")
+    print("   • VAT ve discount hesaplamaları doğru olmalı")
+    print("   • Invoice items doğru şekilde kaydedilmeli")
     print("   • Error handling doğru çalışmalı")
     
-    # Test Products API (PRIMARY FOCUS)
+    # Test Invoice API (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("🛍️ PRODUCTS API TESTİ (ÖNCELIK)")
+    print("🧾 INVOICE API TESTİ (ÖNCELIK)")
     print("=" * 80)
     
-    print("\n🛍️ Products API endpoint'leri testi")
-    products_passed, created_product_ids = test_products_api_endpoints()
+    print("\n🧾 Invoice API endpoint'leri testi")
+    invoice_passed = test_invoice_api_endpoints()
     
     # Final Results Summary
     print("\n" + "=" * 100)
-    print("📊 PRODUCTS API TEST SONUÇLARI")
+    print("📊 INVOICE API TEST SONUÇLARI")
     print("=" * 100)
     
-    # Primary focus results (Products API)
-    print("\n🎯 PRODUCTS API ENDPOINT SONUÇLARI:")
-    print(f"   1. Products API (GET/POST /api/products): {'✅ BAŞARILI' if products_passed else '❌ BAŞARISIZ'}")
+    # Primary focus results (Invoice API)
+    print("\n🎯 INVOICE API ENDPOINT SONUÇLARI:")
+    print(f"   1. Invoice API (POST/GET /api/invoices): {'✅ BAŞARILI' if invoice_passed else '❌ BAŞARISIZ'}")
     
     # Count primary test results
-    primary_tests = [products_passed]
+    primary_tests = [invoice_passed]
     primary_passed = sum(primary_tests)
     primary_total = len(primary_tests)
     
-    print(f"\n🎯 PRODUCTS API TEST SONUCU: {primary_passed}/{primary_total} BAŞARILI")
+    print(f"\n🎯 INVOICE API TEST SONUCU: {primary_passed}/{primary_total} BAŞARILI")
     
-    # Diagnosis for products API
+    # Diagnosis for invoice API
     print("\n" + "=" * 100)
-    print("🔍 PRODUCTS API BACKEND ANALİZİ")
+    print("🔍 INVOICE API BACKEND ANALİZİ")
     print("=" * 100)
     
     if primary_passed == primary_total:
-        print("✅ BACKEND ANALİZİ: Tüm Products API işlemleri mükemmel çalışıyor!")
-        print("   • GET /api/products başarıyla ürün listesi döndürüyor")
-        print("   • POST /api/products başarıyla yeni ürün oluşturuyor")
-        print("   • GET /api/products/{id} başarıyla belirli ürün döndürüyor")
-        print("   • Turkish product names korunuyor (Fuar Stand Tasarımı)")
-        print("   • fair_services kategorisi destekleniyor")
-        print("   • Turkish units çalışıyor (adet, saat, gün)")
-        print("   • TRY currency destekleniyor")
-        print("   • Search functionality çalışıyor")
-        print("   • Category filtering çalışıyor")
-        print("   • Error handling çalışıyor (duplicate names, invalid data)")
-        print("   • Response yapısı doğru (success, product data)")
-        print("   • Tüm endpoints 200 status döndürüyor")
-        print("   • JSON response formatı doğru")
-        
-        print("\n🎯 SONUÇ: Products API backend'de hiçbir problem yok!")
-        print("   NewInvoiceForm AddProductModal entegrasyonu için hazır:")
-        print("   ✅ GET /api/products - Modal ürün listesi yükleyebilir")
-        print("   ✅ POST /api/products - Modal yeni ürün ekleyebilir")
-        print("   ✅ Turkish product names - Türkçe ürün adları destekleniyor")
-        print("   ✅ fair_services category - Fuar hizmetleri kategorisi mevcut")
-        print("   ✅ Turkish units (adet) - Türkçe birimler destekleniyor")
-        print("   ✅ TRY currency - Türk Lirası destekleniyor")
-        print("   ✅ Search functionality - Ürün arama çalışıyor")
-        print("   ✅ Error handling - Hata yönetimi çalışıyor")
-        
-        if created_product_ids:
-            print(f"\n📦 OLUŞTURULAN TEST ÜRÜNLERİ ({len(created_product_ids)}):")
-            print("   • Fuar Stand Tasarımı (fair_services) - 15,000 TRY")
-            print("   • Stand Kurulumu ve Montajı (fair_services) - 8,500 TRY")
-            print("   • Grafik Tasarım Hizmetleri (design_services) - 250 TRY/saat")
-            print("   • LED Ekran Kiralama (equipment_rental) - 500 TRY/gün")
-        
-        print("\n✅ BEKLENİLEN SONUÇLAR ELDE EDİLDİ:")
-        print("   • Tüm endpoints 200 status döndürüyor ✅")
-        print("   • Turkish product names korunuyor ✅")
-        print("   • fair_services kategorisi destekleniyor ✅")
-        print("   • Turkish units (adet, saat, gün) çalışıyor ✅")
-        print("   • TRY currency destekleniyor ✅")
-        print("   • Search ve filtering çalışıyor ✅")
-        print("   • Error handling doğru çalışıyor ✅")
-        
+        print("✅ BACKEND ANALİZİ: Tüm Invoice API işlemleri mükemmel çalışıyor!")
+        print("   • POST /api/invoices başarıyla fatura oluşturuyor")
+        print("   • GET /api/invoices başarıyla fatura listesi döndürüyor")
+        print("   • GET /api/invoices/{id} başarıyla belirli fatura döndürüyor")
+        print("   • Turkish customer names ve conditions korunuyor")
+        print("   • discount_type field destekleniyor (percentage/fixed)")
+        print("   • VAT ve discount hesaplamaları doğru çalışıyor")
+        print("   • Invoice items doğru şekilde kaydediliyor")
+        print("   • Error handling doğru çalışıyor")
+        print("\n🎉 TÜM INVOICE API TESTLERİ BAŞARILI!")
+        print("   NewInvoiceForm backend entegrasyonu hazır!")
+        print("   Fatura oluşturma ve görüntüleme işlemleri çalışıyor!")
+        return True
     else:
-        print("❌ BACKEND'DE SORUNLAR BULUNDU:")
-        if not products_passed:
-            print("   • Products API (GET/POST /api/products) başarısız")
-            print("     - Endpoint'ler çalışmıyor olabilir")
-            print("     - Turkish character support eksik olabilir")
-            print("     - Database connection sorunu olabilir")
-            print("     - Response format yanlış olabilir")
-        
-        print("\n🎯 ÖNERİ: Yukarıdaki backend sorunlarını çözün")
-        print("   • Database'de products collection'ının mevcut olduğundan emin olun")
-        print("   • Turkish character encoding'in doğru çalıştığından emin olun")
-        print("   • Product model validation'ının doğru çalıştığından emin olun")
-        print("   • API endpoint routing'inin doğru çalıştığından emin olun")
-    
-    print(f"\nTest tamamlanma zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
-    # Return success status for primary tests
-    return primary_passed == primary_total
+        print("❌ BACKEND ANALİZİ: Invoice API'de sorunlar tespit edildi!")
+        print("   • Bazı invoice endpoints çalışmıyor")
+        print("   • Fatura kaydetme/görüntüleme sorunları olabilir")
+        print("   • discount_type field sorunları olabilir")
+        print("   • VAT/discount hesaplama sorunları olabilir")
+        print("\n⚠️  INVOICE API'DE SORUNLAR VAR - Detaylı çıktıyı kontrol edin")
+        return False
 
 if __name__ == "__main__":
     success = main()
