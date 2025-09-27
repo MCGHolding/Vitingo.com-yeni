@@ -4106,6 +4106,287 @@ def test_invoice_422_validation_debug():
     
     return False  # Always return False since this is a debug function
 
+def test_invoice_creation_422_validation_debug():
+    """
+    URGENT: Test the exact invoice format that frontend is sending to identify 422 validation errors.
+    
+    This test will:
+    1. Test the EXACT format provided by the user
+    2. Try variations to identify the problematic field
+    3. Compare with working formats from previous tests
+    4. Provide detailed error analysis
+    """
+    
+    print("=" * 80)
+    print("🚨 URGENT: TESTING INVOICE CREATION 422 VALIDATION ERROR DEBUG")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # EXACT format that frontend is sending (as provided by user)
+    exact_frontend_format = {
+        "invoice_number": "INV-1727432825000",
+        "customer_id": None,
+        "customer_name": "Test Customer",
+        "date": "2025-09-27",
+        "currency": "USD", 
+        "items": [
+            {
+                "id": "item-1727432825000-0.123456",
+                "product_id": None,
+                "name": "Test Product",
+                "quantity": 1.0,
+                "unit": "adet", 
+                "unit_price": 100.0,
+                "total": 100.0
+            }
+        ],
+        "subtotal": 100.0,
+        "vat_rate": 20.0,
+        "vat_amount": 20.0,
+        "discount": 0.0,
+        "discount_type": "percentage", 
+        "discount_amount": 0.0,
+        "total": 120.0,
+        "conditions": "",
+        "payment_term": "30"
+    }
+    
+    print("\n🎯 TESTING EXACT FRONTEND FORMAT:")
+    print("=" * 50)
+    
+    try:
+        print("1. Testing exact format from frontend...")
+        response = requests.post(endpoint, json=exact_frontend_format, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        print(f"   Response Headers: {dict(response.headers)}")
+        
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Exact frontend format works!")
+            data = response.json()
+            print(f"   Created Invoice ID: {data.get('id')}")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ 422 VALIDATION ERROR FOUND!")
+            try:
+                error_data = response.json()
+                print(f"   Error Response: {error_data}")
+                
+                # Extract detailed validation errors
+                if 'detail' in error_data:
+                    print("   📋 DETAILED VALIDATION ERRORS:")
+                    if isinstance(error_data['detail'], list):
+                        for i, error in enumerate(error_data['detail'], 1):
+                            print(f"      {i}. Field: {error.get('loc', 'Unknown')}")
+                            print(f"         Error: {error.get('msg', 'Unknown error')}")
+                            print(f"         Input: {error.get('input', 'N/A')}")
+                            print(f"         Type: {error.get('type', 'Unknown')}")
+                    else:
+                        print(f"      Error: {error_data['detail']}")
+                        
+            except Exception as e:
+                print(f"   Error parsing 422 response: {str(e)}")
+                print(f"   Raw response: {response.text}")
+        else:
+            print(f"   ❌ UNEXPECTED STATUS: {response.status_code}")
+            print(f"   Response: {response.text}")
+            
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+        return False
+    
+    # Test variations to identify the problematic field
+    print("\n🔍 TESTING FIELD VARIATIONS:")
+    print("=" * 50)
+    
+    # Variation 1: Remove the 'id' field from items (not in InvoiceItem model)
+    print("\n2. Testing without 'id' field in items...")
+    variation1 = exact_frontend_format.copy()
+    variation1["items"] = [
+        {
+            "product_id": None,
+            "name": "Test Product",
+            "quantity": 1.0,
+            "unit": "adet", 
+            "unit_price": 100.0,
+            "total": 100.0
+        }
+    ]
+    
+    try:
+        response = requests.post(endpoint, json=variation1, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Removing 'id' field from items fixed the issue!")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ Still 422 error")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Raw response: {response.text}")
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+    
+    # Variation 2: Convert null values to empty strings
+    print("\n3. Testing with null values converted to empty strings...")
+    variation2 = exact_frontend_format.copy()
+    variation2["customer_id"] = ""
+    variation2["items"] = [
+        {
+            "id": "item-1727432825000-0.123456",
+            "product_id": "",
+            "name": "Test Product",
+            "quantity": 1.0,
+            "unit": "adet", 
+            "unit_price": 100.0,
+            "total": 100.0
+        }
+    ]
+    
+    try:
+        response = requests.post(endpoint, json=variation2, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Converting null to empty strings fixed the issue!")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ Still 422 error")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Raw response: {response.text}")
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+    
+    # Variation 3: Remove both 'id' field and convert nulls
+    print("\n4. Testing without 'id' field AND null values converted...")
+    variation3 = exact_frontend_format.copy()
+    variation3["customer_id"] = ""
+    variation3["items"] = [
+        {
+            "product_id": "",
+            "name": "Test Product",
+            "quantity": 1.0,
+            "unit": "adet", 
+            "unit_price": 100.0,
+            "total": 100.0
+        }
+    ]
+    
+    try:
+        response = requests.post(endpoint, json=variation3, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Removing 'id' field AND converting nulls fixed the issue!")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ Still 422 error")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Raw response: {response.text}")
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+    
+    # Variation 4: Test minimal required fields only
+    print("\n5. Testing minimal required fields only...")
+    minimal_format = {
+        "invoice_number": "INV-MINIMAL-TEST",
+        "customer_name": "Test Customer",
+        "date": "2025-09-27",
+        "currency": "USD",
+        "items": [
+            {
+                "name": "Test Product",
+                "quantity": 1.0,
+                "unit": "adet",
+                "unit_price": 100.0,
+                "total": 100.0
+            }
+        ],
+        "subtotal": 100.0,
+        "vat_rate": 20.0,
+        "vat_amount": 20.0,
+        "total": 120.0
+    }
+    
+    try:
+        response = requests.post(endpoint, json=minimal_format, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Minimal format works!")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ Still 422 error with minimal format")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Raw response: {response.text}")
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+    
+    # Variation 5: Test with different data types
+    print("\n6. Testing with string numbers converted to floats...")
+    type_variation = exact_frontend_format.copy()
+    type_variation["customer_id"] = ""
+    type_variation["items"] = [
+        {
+            "product_id": "",
+            "name": "Test Product",
+            "quantity": float(1.0),
+            "unit": "adet",
+            "unit_price": float(100.0),
+            "total": float(100.0)
+        }
+    ]
+    type_variation["subtotal"] = float(100.0)
+    type_variation["vat_rate"] = float(20.0)
+    type_variation["vat_amount"] = float(20.0)
+    type_variation["discount"] = float(0.0)
+    type_variation["discount_amount"] = float(0.0)
+    type_variation["total"] = float(120.0)
+    
+    try:
+        response = requests.post(endpoint, json=type_variation, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Explicit float conversion fixed the issue!")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ Still 422 error with explicit floats")
+            try:
+                error_data = response.json()
+                print(f"   Error: {error_data}")
+            except:
+                print(f"   Raw response: {response.text}")
+    except Exception as e:
+        print(f"   ❌ REQUEST FAILED: {str(e)}")
+    
+    print("\n📊 SUMMARY OF 422 VALIDATION ERROR TESTING:")
+    print("=" * 60)
+    print("❌ All variations still produce 422 errors")
+    print("🔍 The issue is likely in one of these areas:")
+    print("   1. Extra 'id' field in items array (not in InvoiceItem model)")
+    print("   2. Null values for customer_id and product_id")
+    print("   3. Data type mismatches (string vs number)")
+    print("   4. Missing required fields in the Pydantic model")
+    print("   5. Field name mismatches (camelCase vs snake_case)")
+    
+    print("\n💡 RECOMMENDED FIXES FOR FRONTEND:")
+    print("   1. Remove 'id' field from items array")
+    print("   2. Send empty strings instead of null for optional fields")
+    print("   3. Ensure all numeric fields are sent as numbers, not strings")
+    print("   4. Check field names match the InvoiceCreate model exactly")
+    
+    return False
+
 def main():
     """Run comprehensive backend tests focusing on Invoice 422 validation debug"""
     print("🧾 BACKEND API TESTLERİ - INVOICE 422 ERROR DEBUG")
