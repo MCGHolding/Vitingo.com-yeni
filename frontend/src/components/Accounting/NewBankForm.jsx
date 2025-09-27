@@ -34,12 +34,6 @@ const NewBankForm = ({ onBackToDashboard }) => {
   const [newCountryName, setNewCountryName] = useState('');
   const [isAddingCountry, setIsAddingCountry] = useState(false);
 
-  // Country management
-  const [countries, setCountries] = useState([]);
-  const [showAddCountryModal, setShowAddCountryModal] = useState(false);
-  const [newCountryName, setNewCountryName] = useState('');
-  const [isAddingCountry, setIsAddingCountry] = useState(false);
-
   // Load countries from backend
   const loadCountries = async () => {
     try {
