@@ -253,96 +253,132 @@ Finans Departmanı`
         </CardHeader>
 
         <CardContent className="flex-1 overflow-y-auto space-y-6">
-          {/* Email Templates */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Type className="inline h-4 w-4 mr-1" />
-              Hazır Şablonlar
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {emailTemplates.map((template, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleTemplateSelect(template)}
-                  className="text-left justify-start h-auto p-3"
-                >
-                  <div>
-                    <div className="font-medium text-sm">{template.name}</div>
-                    <div className="text-xs text-gray-500 truncate mt-1">
-                      {template.subject}
-                    </div>
-                  </div>
-                </Button>
-              ))}
+          {emailSent ? (
+            /* Success Message */
+            <div className="text-center py-8">
+              <div className="mx-auto mb-6 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Tebrikler, Mailiniz Başarı ile Gönderilmiştir
+              </h2>
+              
+              <p className="text-gray-600 mb-6">
+                {mode === 'single' 
+                  ? `${banks[0]?.bank_name} banka bilgileri ${sentEmailInfo?.to || ''} adresine başarıyla gönderildi.`
+                  : `${banks[0]?.country} ülkesine ait ${banks.length} banka bilgisi ${sentEmailInfo?.to || ''} adresine başarıyla gönderildi.`
+                }
+              </p>
+              
+              {sentEmailInfo?.message_id && (
+                <div className="bg-gray-50 p-3 rounded-lg mb-6">
+                  <p className="text-sm text-gray-500">
+                    <strong>Email ID:</strong> {sentEmailInfo.message_id}
+                  </p>
+                </div>
+              )}
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <p className="text-green-800 text-sm">
+                  📧 Email başarıyla gönderildi ve alıcı tarafından kısa sürede okunacaktır.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Email Templates */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Type className="inline h-4 w-4 mr-1" />
+                  Hazır Şablonlar
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {emailTemplates.map((template, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleTemplateSelect(template)}
+                      className="text-left justify-start h-auto p-3"
+                    >
+                      <div>
+                        <div className="font-medium text-sm">{template.name}</div>
+                        <div className="text-xs text-gray-500 truncate mt-1">
+                          {template.subject}
+                        </div>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Recipients */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Alıcı *
-              </label>
-              <Input
-                type="email"
-                value={emailData.to}
-                onChange={(e) => handleInputChange('to', e.target.value)}
-                placeholder="ornek@email.com"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                CC
-              </label>
-              <Input
-                type="email"
-                value={emailData.cc}
-                onChange={(e) => handleInputChange('cc', e.target.value)}
-                placeholder="cc@email.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                BCC
-              </label>
-              <Input
-                type="email"
-                value={emailData.bcc}
-                onChange={(e) => handleInputChange('bcc', e.target.value)}
-                placeholder="bcc@email.com"
-              />
-            </div>
-          </div>
+              {/* Recipients */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Alıcı *
+                  </label>
+                  <Input
+                    type="email"
+                    value={emailData.to}
+                    onChange={(e) => handleInputChange('to', e.target.value)}
+                    placeholder="ornek@email.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    CC
+                  </label>
+                  <Input
+                    type="email"
+                    value={emailData.cc}
+                    onChange={(e) => handleInputChange('cc', e.target.value)}
+                    placeholder="cc@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    BCC
+                  </label>
+                  <Input
+                    type="email"
+                    value={emailData.bcc}
+                    onChange={(e) => handleInputChange('bcc', e.target.value)}
+                    placeholder="bcc@email.com"
+                  />
+                </div>
+              </div>
 
-          {/* Subject */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Konu *
-            </label>
-            <Input
-              value={emailData.subject}
-              onChange={(e) => handleInputChange('subject', e.target.value)}
-              placeholder="Email konusunu giriniz"
-              required
-            />
-          </div>
+              {/* Subject */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Konu *
+                </label>
+                <Input
+                  value={emailData.subject}
+                  onChange={(e) => handleInputChange('subject', e.target.value)}
+                  placeholder="Email konusunu giriniz"
+                  required
+                />
+              </div>
 
-          {/* Body */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              İçerik *
-            </label>
-            <textarea
-              value={emailData.body}
-              onChange={(e) => handleInputChange('body', e.target.value)}
-              placeholder="Email içeriğinizi yazınız..."
-              className="w-full h-64 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+              {/* Body */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  İçerik *
+                </label>
+                <textarea
+                  value={emailData.body}
+                  onChange={(e) => handleInputChange('body', e.target.value)}
+                  placeholder="Email içeriğinizi yazınız..."
+                  className="w-full h-64 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+            </>
+          )}
         </CardContent>
 
         {/* Footer */}
