@@ -2667,9 +2667,14 @@ async def get_countries():
         ]
 
 @api_router.post("/countries")
-async def add_country(country_name: str):
+async def add_country(country_data: dict):
     """Add a new country"""
     try:
+        country_name = country_data.get("country_name", "").strip()
+        
+        if not country_name:
+            raise HTTPException(status_code=400, detail="Ülke adı gereklidir")
+        
         # Generate country code from name
         country_code = country_name.replace(' ', '_').upper()
         
@@ -2679,17 +2684,17 @@ async def add_country(country_name: str):
             raise HTTPException(status_code=400, detail="Bu ülke zaten mevcut")
         
         # Add country
-        country_data = {
+        new_country = {
             "code": country_code,
             "name": country_name,
             "flag": "🌍"  # Default flag
         }
         
-        result = await db.countries.insert_one(country_data)
+        result = await db.countries.insert_one(new_country)
         
         if result.inserted_id:
             logger.info(f"Country added successfully: {country_name}")
-            return country_data
+            return new_country
         else:
             raise HTTPException(status_code=500, detail="Ülke eklenemedi")
             
