@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useToast } from '../../hooks/use-toast';
-import { SearchableSelect } from '../ui/SearchableSelect';
+import SearchableSelect from '../ui/SearchableSelect';
 import { 
   Building2, 
   Users, 
