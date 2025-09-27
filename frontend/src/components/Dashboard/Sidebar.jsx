@@ -597,7 +597,7 @@ export default function Sidebar({
       return;
     }
 
-    // Handle nested Gider Makbuzu submenu actions (under Muhasebe)
+    // Handle Expense Receipt menu actions
     if (subItem && subItem.name === 'Yeni Gider Makbuzu') {
       if (onNewExpenseReceipt) {
         onNewExpenseReceipt();
