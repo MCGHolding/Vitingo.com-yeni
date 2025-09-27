@@ -645,6 +645,7 @@ const NewSupplierForm = ({ onClose }) => {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Yetkili Kişi Bilgileri */}
         <Card>
