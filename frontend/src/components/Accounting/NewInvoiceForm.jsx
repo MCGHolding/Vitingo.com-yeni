@@ -803,35 +803,57 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
 
       {/* Success Modal */}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]" 
+             style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0}}>
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 text-center animate-pulse">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Tebrikler!</h3>
-            <p className="text-gray-600 mb-6">
-              Yeni bir fatura oluşturdunuz. Faturanız yönetici onayına sunulmuştur. 
-              <br /><br />
-              Faturanızın durumunu <span className="font-semibold text-blue-600">Onay Bekleyen Faturalar</span> bölümünden takip edebilirsiniz.
-            </p>
-            <div className="flex space-x-3">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">🎉 Tebrikler!</h3>
+            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+              <p className="text-gray-700 text-base leading-relaxed">
+                <strong>Yeni bir fatura oluşturdunuz!</strong>
+                <br /><br />
+                Faturanız yönetici onayına sunulmuştur.
+                <br /><br />
+                Faturanızın durumunu <span className="font-bold text-blue-600">Onay Bekleyen Faturalar</span> bölümünden takip edebilirsiniz.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 onClick={() => {
                   setShowSuccessModal(false);
                   onBackToDashboard();
                 }}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-semibold"
               >
-                Dashboard'a Dön
+                📊 Dashboard'a Dön
               </Button>
               <Button
-                onClick={() => setShowSuccessModal(false)}
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  // Reset form for new invoice
+                  setFormData({
+                    invoiceNumber: '',
+                    currency: 'USD',
+                    date: new Date().toISOString().split('T')[0],
+                    customerId: '',
+                    items: [
+                      { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
+                    ],
+                    vatRate: 20,
+                    discount: '',
+                    discountType: 'percentage',
+                    conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
+                    paymentTerm: '30'
+                  });
+                }}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 py-3 text-base font-semibold"
               >
-                Yeni Fatura
+                ➕ Yeni Fatura
               </Button>
             </div>
           </div>
