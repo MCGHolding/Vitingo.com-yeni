@@ -1,76 +1,103 @@
 <analysis>
-The AI engineer's trajectory involved implementing conditional fields for Türkiye in the new customer form, which was confirmed complete after initial testing. However, this revealed a critical authentication bug (), promptly fixed. A subsequent user report exposed that new customers weren't appearing in the list. This led to extensive debugging, first identifying that the customer list was displaying mock data and, more significantly, that the  environment variable was inaccessible in the React production build, causing API call failures. Attempts to resolve this evolved into diagnosing a Kubernetes ingress routing issue, where API requests were misdirected. The latest effort focused on runtime environment variable injection using  and verifying backend accessibility via , indicating a persistent infrastructure-level challenge over simple code bugs.
+The AI engineer's work involved an iterative process of feature development, bug fixing, and refinement, primarily focusing on the  and the new Banks module. Initially, the engineer integrated the  into  and addressed various UI/UX issues, including currency selection and product table design, along with seeding products into the database. Significant effort was then directed towards resolving critical invoice saving issues, which involved developing backend API endpoints for invoices, integrating frontend submission logic, implementing a success modal, and debugging complex 422 validation errors stemming from frontend-backend data format mismatches. A key feature implemented was the automated, currency-based invoice numbering system. Subsequently, a full Banks module was developed, comprising backend models/APIs, frontend forms (), and a listing page () with conditional fields, edit/delete, and grouping by country. The latest phase involved refining this Banks module, adding delete confirmation, advanced IBAN validation (including length and formatting), Share via Email functionality for individual and grouped banks (using a new ), and a dynamic Add Country feature directly from the . The process involved continuous feedback loops with the user, leading to multiple revisions and targeted fixes to ensure functionality and adherence to specific design and business rules.
 </analysis>
 
 <product_requirements>
-The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP dashboard. Key requirements include:
-1.  **User Management**: Admin-restricted forms, real user data, roles, password changes, actions (Delete, Share, Message, Email), Super Admin Login As.
-2.  **Fair Management**: Fuarlar menu with sub-menus and Yeni Fuar form.
-3.  **Data Import/Export**: Under Ayarlar with category dropdowns.
-4.  **Sales Opportunity Integration**: Dynamic Fuar Adı dropdown in Yeni Satış Fırsatı form.
-5.  **Dashboard Redesign**: Modern KPIs, charts, maps, multi-currency, real-time survey stats, relocated logout.
-6.  **Customer Survey System**: Post-project surveys with multi-project, arbitrary email, and rep filtering.
-7.  **Handover Form System**: Digital forms, language, signature, automatic survey, upon completion.
-8.  **Accounting System**: Muhasebe menu, Yeni Fatura form with unique numbering, currency, item lines, KDV, discount, totals, localStorage persistence.
-9.  **Messaging System**: In-app messaging, notification bell.
-10. **Brief System (New)**: Fully implemented Brief menu with sub-items and a comprehensive Yeni Brief form featuring dynamic customer/contact person selection and auto-fill.
-11. **Customer Status Logic (New)**: Pasif (6+ months no invoice) and Favori (3+ invoices in a year) status calculations and display.
-12. **New Customer Form Enhancements**: Overhauled form with dynamic İletişim Kişisi, İlişki Tipi, detailed country/city selection, professional phone input. Conditional fields for Türkiye (Firma Unvanı, Vergi Daireleri, Vergi Numarası) are being implemented.
+The Vitingo CRM aims for an intuitive, graphic-rich interface, expanding its MVP dashboard. Key requirements covered so far include:
+1.  **All Customers Page Improvements:** Replacing UUIDs with sequential numbers, redesigning the table, renaming Gelir to Ciro, adding Proje, and implementing functional action icons (View/Edit modals, ... menu with Message, Mail, Offer, Invoice, Passive, Favorite options, and conditional Delete).
+2.  **New Customer Form - Tags:** Adding a field to allow users to add tags to new customers, displaying these color-coded.
+3.  **Customer Email System:** Integrating email sending functionality for individual customers.
+4.  **Logo Validation Fix:** Resolving a bug where new customers couldn't be created without a logo.
+5.  **Centralized Geo System:** Database-driven, searchable country/city dropdowns in forms.
+6.  **New Person Form - Company Integration:** Linking company selection to existing customers, with an Add Company modal.
+7.  **New Customer Form UI/UX Refinements:** Searchable Contact Person, Add Avatar button, adjusted phone layout, removed map option.
+8.  **New Invoice Form Enhancements:** Hardcoded company info, customer selection, narrowed invoice date, Products database/API, dynamic product selection with Add Product button/modal.
+9.  **Invoice Saving & Display:** Successfully save invoices to backend, display on All Invoices, show success popup.
+10. **Invoice Discount System:** Implement both percentage (%) and fixed amount ($) discounts.
+11. **Automated Invoice Numbering:** Generate unique invoice numbers (e.g., USD-012025100001) based on currency, month, year, and sequential order.
+12. **Banks Module:**
+    *    and  menu items under Accounting.
+    *    with conditional fields for ABD, Türkiye, BAE.
+    *   Bank details saved, displayed on  with bold name, edit/delete icons, grouped by country.
+    *   Delete confirmation modal.
+    *   Return button on  to  page.
+    *   Global Share button on  to email banks by country.
+    *   Add Country button on  page to dynamically add countries.
+    *   Individual Share button per bank on .
+    *   IBAN validation (4-digit spacing, format, max 26 characters).
+    *   Placeholder updates for UAE and USA fields.
 </product_requirements>
 
 <key_technical_concepts>
 -   **React**: Frontend framework.
--   **FastAPI/MongoDB**: Backend for API and data persistence (UUIDs for IDs).
+-   **FastAPI/MongoDB**: Backend for API and data persistence (UUIDs for IDs, Pydantic for models).
 -   **Shadcn UI/Tailwind CSS**: UI components and styling.
 -   **React Router DOM**: Client-side routing.
 -   **Context API**: Global state management (AuthContext).
--   **Frontend Environment Variables**: Proper usage of  (and  / ) for API URLs.
--   **Kubernetes Ingress Routing**: Infrastructure-level routing for API calls.
+-   **Kubernetes Ingress**: API routing.
+-   **UUID**: Unique identifiers.
+-   **datetime.timezone.utc**: Timezone-aware date/time.
 </key_technical_concepts>
 
 <code_architecture>
 
--   ****: Handles API endpoints and data processing.
-    -   **Changes**: Updated  Pydantic model to include , , and  to support new conditional fields for Turkish customers. Implements comprehensive CRUD endpoints for .
--   ****: Core frontend routing and state management.
-    -   **Changes**: Integrated Brief system. Modified  to use backend API. Includes a  to fetch customers from the backend. Critically, updated to use  for environment variable access, and passes  prop to various customer-related pages.
--   ****: Main navigation component.
-    -   **Changes**: Added Brief menu items and handlers.
--   ****: (New File) Form for creating new briefs.
-    -   **Changes**: Implemented multi-section form with customer/contact person dropdowns and auto-fill.
--   ****: Form for creating new customers.
-    -   **Changes**: Major overhaul with dynamic dropdowns, professional phone input, country/city selection. Currently being updated to conditionally render Firma Unvanı, Vergi Daireleri, and Vergi Numarası when Türkiye is selected. State variables and a list of Turkish tax offices were added.
--   ****: Displays all customers.
-    -   **Changes**: Modified to receive  as a prop and display real data instead of mock data, fixing a bug where newly added customers weren't visible.
--   ****: Handles user authentication.
-    -   **Changes**: Fixed a bug in the  function that was causing authentication failures.
--   ****: (New File) Provides country and city data for the new customer form.
--   ****: (New File) Utility for customer status calculation.
--   ****: (New File) Created for runtime environment variable injection, to store  for the frontend.
--   ****: Main HTML file.
-    -   **Changes**: Modified to include  script for runtime environment configuration.
+-   ****:
+    -   **Importance**: Core backend API for all services.
+    -   **Changes**: Added , , and  Pydantic models. Implemented CRUD for Products (), Invoices (, ), and Banks (). Extended geo API with  for dynamic country management.
+-   ****: (New) Seeds specific fair service products.
+-   ****:
+    -   **Importance**: Manages global routing and state.
+    -   **Changes**: Integrated routes and handlers for , , , and .
+-   ****:
+    -   **Importance**: Primary navigation.
+    -   **Changes**: Updated Muhasebe submenu to directly include Yeni Fatura, Tüm Faturalar, Yeni Banka, and Tüm Bankalar links.
+-   ****:
+    -   **Importance**: Invoice creation interface.
+    -   **Changes**: Implemented customer/product selection, dynamic product addition, discount types (percentage/fixed), automated invoice number generation, robust frontend-backend data mapping, validation, error handling, and success modal integration.
+-   ****:
+    -   **Importance**: Lists all created invoices.
+    -   **Changes**: Converted from mock data to fetching real invoice data from backend.
+-   ****: (New)
+    -   **Importance**: Form for creating new bank accounts.
+    -   **Changes**: Implemented country-conditional fields (TR/UAE vs. USA), IBAN validation (formatting, 26-char limit), placeholder updates, dynamic country loading, and Add Country modal.
+-   ****: (New)
+    -   **Importance**: Displays and manages bank accounts.
+    -   **Changes**: Displays banks grouped by country, includes delete confirmation modal, Return navigation, global and individual Share buttons to open .
+-   ****:
+    -   **Importance**: Modal for adding new products on-the-fly.
+    -   **Changes**: Integrated into .
+-   ****: (New)
+    -   **Importance**: Sends bank details via email.
+    -   **Changes**: Adapted from , integrated into .
+-   ****:
+    -   **Importance**: Generic searchable dropdown.
+    -   **Changes**: Adjusted z-index for correct dropdown overflow behavior.
 </code_architecture>
 
 <pending_tasks>
--   Backend implementation for Sales Opportunities, Customer Prospects, Quotes, Person Management beyond basic CRUD endpoints.
--   Fully implementing  logic to save changes.
+-   Frontend testing for the centralized Geo System implementation.
+-   Frontend testing for the  company dropdown and Add Company modal feature.
+-   Frontend testing for the  UI/UX refinements (searchable contact, avatar, phone layout, no map).
 -   Further refining the UI of the date picker in .
 -   Implementing the email notification system for new user creation.
--   **Handover System Enhancements**: Handover form page (with signature) testing, backend endpoint testing for handovers, email sending tests, automatic survey triggering upon handover completion, and reminder email logic.
--   **Brief System Implementation**: Implement detailed functionality for Tüm Briefler, Kapanmış, Pasif, Brief Talep Et pages beyond initial structure.
--   **New Customer Form Enhancements**: Address the persistent issue of  inaccessibility and Kubernetes ingress routing.
--   **Customer Status Logic**: Connect the customer status calculation with actual backend invoice data once the invoice system is integrated with the backend.
+-   Implementing the Handover System Enhancements (testing, backend endpoints, email, survey triggering).
+-   Implementing detailed functionality for Tüm Briefler, Kapanmış, Pasif, Brief Talep Et pages.
+-   Connecting the customer status calculation with actual backend invoice data.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was deep into diagnosing and resolving critical infrastructure-level issues affecting the frontend-backend communication. The initial task of implementing conditional fields for Türkiye in  was ostensibly completed, but it unveiled a cascade of problems.
-First, a  bug in  was fixed, addressing a broken authentication.
-Subsequently, a user reported that newly added customers, though seemingly submitted, were not appearing in the . This led to the discovery that  was still using mock data and, more fundamentally, that the  environment variable was not being correctly accessed in the React production build, preventing proper API calls.
-The AI engineer attempted several fixes for the environment variable issue (e.g., trying , temporary hardcoding) which eventually revealed a deeper Kubernetes ingress routing problem where  requests intended for the backend were erroneously routed to the frontend.
-The latest approach involved implementing runtime environment variable injection by creating , including it in , and updating  to read the  from . The last action was a successful  request to the backend at , confirming the backend is serving data, setting the stage to re-test frontend API access.
+Immediately before this summary, the AI engineer was actively working on enhancing the Banks module based on recent user feedback (Chat 384). The user identified four specific issues: improving email sharing functionality for banks, adding an Add Country button to , refining IBAN validation with a 26-character limit, and updating placeholder texts for UAE and USA bank fields.
+
+The AI engineer addressed these by:
+1.  **Bank Email Modals**: Created  by adapting the existing  and integrated it into  to enable emailing bank details for both individual banks and groups of banks by country (Chat 437-453).
+2.  **Add Country Button**: Added a new backend endpoint  to allow adding new countries. On the frontend, an Ülke Ekle button was integrated into , which opens a modal to add new countries dynamically to the dropdown (Chat 456-477, 479).
+3.  **IBAN Validation**: Enhanced the IBAN validation logic in  to enforce a maximum of 26 characters and automatically format the input with 4-digit spacing, along with a custom error message (Chat 454-455).
+4.  **Placeholder Updates**: Updated the example texts for the specific bank fields in  when UAE and USA are selected, using relevant examples like Emirates Islamic and Chase (Chat 399-410).
+
+The last action recorded was a final test (Chat 480-482) which confirmed that all these recent modifications to the Banks module were successfully implemented and working as requested by the user.
 </current_work>
 
 <optional_next_step>
-Test frontend API access through the application after implementing runtime config injection.
+Frontend testing for the centralized Geo System implementation.
 </optional_next_step>
 
