@@ -20,6 +20,7 @@ from pathlib import Path
 import requests
 import xml.etree.ElementTree as ET
 from decimal import Decimal
+import re
 
 
 ROOT_DIR = Path(__file__).parent
