@@ -420,10 +420,10 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
           id: item.id || `item-${Date.now()}-${Math.random()}`,
           product_id: item.productId || null,
           name: item.name.trim(), // USE REAL PRODUCT NAME
-          quantity: parseFloat(item.quantity), // USE REAL QUANTITY
+          quantity: parseFloat(item.quantity) || 1.0, // USE REAL QUANTITY with fallback
           unit: item.unit || 'adet',
-          unit_price: parseFloat(item.unitPrice), // USE REAL UNIT PRICE
-          total: parseFloat(item.quantity) * parseFloat(item.unitPrice) // CALCULATE REAL TOTAL
+          unit_price: parseFloat(item.unitPrice) || parseFloat(item.unit_price) || 0.0, // USE REAL UNIT PRICE with fallback
+          total: parseFloat(item.total) || (parseFloat(item.quantity || 1) * parseFloat(item.unitPrice || item.unit_price || 0)) // CALCULATE REAL TOTAL with fallback
         })),
         subtotal: totals.subtotal, // USE REAL SUBTOTAL
         vat_rate: parseFloat(formData.vatRate),
