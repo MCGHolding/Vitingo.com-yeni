@@ -62,7 +62,7 @@ export default function SearchableSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const selectedOption = options.find(option => option.id === value);
+  const selectedOption = options.find(option => (option.id || option.value) === value);
 
   const handleSelect = (optionId) => {
     setIsOpen(false);
