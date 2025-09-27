@@ -2704,6 +2704,154 @@ async def add_country(country_data: dict):
         logger.error(f"Error adding country: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error adding country: {str(e)}")
 
+# ===================== SUPPLIER MANAGEMENT ENDPOINTS =====================
+
+# Supplier Categories (Tedarikçi Türü) Endpoints
+@api_router.get("/supplier-categories", response_model=List[SupplierCategory])
+async def get_supplier_categories():
+    """Get all supplier categories"""
+    try:
+        categories = await db.supplier_categories.find({"is_active": True}).to_list(1000)
+        if not categories:
+            # Seed default categories if none exist
+            default_categories = [
+                {"name": "Tedarikçi"},
+                {"name": "Usta"},
+                {"name": "3D Tasarımcı"},
+                {"name": "Grafik Tasarımcı"},
+                {"name": "Yazılımcı"},
+                {"name": "Partner"}
+            ]
+            for cat_data in default_categories:
+                category = SupplierCategory(**cat_data)
+                await db.supplier_categories.insert_one(category.dict())
+            
+            categories = await db.supplier_categories.find({"is_active": True}).to_list(1000)
+        
+        return [SupplierCategory(**category) for category in categories]
+    except Exception as e:
+        logger.error(f"Error getting supplier categories: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/supplier-categories", response_model=SupplierCategory)
+async def create_supplier_category(category_data: SupplierCategoryCreate):
+    """Create a new supplier category"""
+    try:
+        # Check if category already exists
+        existing = await db.supplier_categories.find_one({"name": category_data.name, "is_active": True})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu kategori zaten mevcut")
+        
+        category = SupplierCategory(**category_data.dict())
+        await db.supplier_categories.insert_one(category.dict())
+        
+        logger.info(f"Supplier category created: {category.name}")
+        return category
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating supplier category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Supplier Specialties (Uzmanlık Alanı) Endpoints
+@api_router.get("/supplier-specialties/{category_id}", response_model=List[SupplierSpecialty])
+async def get_supplier_specialties(category_id: str):
+    """Get specialties for a specific category"""
+    try:
+        specialties = await db.supplier_specialties.find({
+            "category_id": category_id, 
+            "is_active": True
+        }).to_list(1000)
+        
+        if not specialties:
+            # Seed default specialties based on category
+            category = await db.supplier_categories.find_one({"id": category_id})
+            if category:
+                default_specialties = await get_default_specialties_for_category(category["name"])
+                for spec_data in default_specialties:
+                    spec_data["category_id"] = category_id
+                    specialty = SupplierSpecialty(**spec_data)
+                    await db.supplier_specialties.insert_one(specialty.dict())
+                
+                specialties = await db.supplier_specialties.find({
+                    "category_id": category_id, 
+                    "is_active": True
+                }).to_list(1000)
+        
+        return [SupplierSpecialty(**specialty) for specialty in specialties]
+    except Exception as e:
+        logger.error(f"Error getting supplier specialties: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/supplier-specialties", response_model=SupplierSpecialty)
+async def create_supplier_specialty(specialty_data: SupplierSpecialtyCreate):
+    """Create a new supplier specialty"""
+    try:
+        # Check if specialty already exists in this category
+        existing = await db.supplier_specialties.find_one({
+            "name": specialty_data.name, 
+            "category_id": specialty_data.category_id,
+            "is_active": True
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu uzmanlık alanı zaten mevcut")
+        
+        specialty = SupplierSpecialty(**specialty_data.dict())
+        await db.supplier_specialties.insert_one(specialty.dict())
+        
+        logger.info(f"Supplier specialty created: {specialty.name}")
+        return specialty
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating supplier specialty: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Helper function for default specialties
+async def get_default_specialties_for_category(category_name: str):
+    """Get default specialties based on category name"""
+    specialties_map = {
+        "Tedarikçi": [
+            {"name": "Lojistik Şirketi"},
+            {"name": "Ahşap Atölyesi"},
+            {"name": "Reklam Atölyesi"},
+            {"name": "Baskı Atölyesi"},
+            {"name": "Demir Atölyesi"}
+        ],
+        "Usta": [
+            {"name": "Usta Marangoz"},
+            {"name": "Marangoz"},
+            {"name": "Çırak Marangoz"},
+            {"name": "Usta Elektrikçi"},
+            {"name": "Elektrikçi"},
+            {"name": "Çırak Elektrikçi"},
+            {"name": "Reklam + Elektrik bilen usta"},
+            {"name": "Elektrik bilen usta"},
+            {"name": "Reklam bilen usta"}
+        ],
+        "3D Tasarımcı": [
+            {"name": "Deneyimli 3D Tasarımcı"},
+            {"name": "3D Tasarımcı"}
+        ],
+        "Grafik Tasarımcı": [
+            {"name": "Deneyimli Grafik Tasarımcı"},
+            {"name": "Grafik Tasarımcı"}
+        ],
+        "Yazılımcı": [
+            {"name": "Deneyimli Yazılımcı"},
+            {"name": "Yazılımcı"}
+        ],
+        "Partner": [
+            {"name": "Hindistan"},
+            {"name": "Almanya"},
+            {"name": "Fransa"},
+            {"name": "Malezya"},
+            {"name": "Singapur"}
+        ]
+    }
+    
+    return specialties_map.get(category_name, [])
+
 # ===================== BANK EMAIL ENDPOINTS =====================
 
 class BankEmailRequest(BaseModel):
