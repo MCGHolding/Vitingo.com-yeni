@@ -156,17 +156,21 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const loadSupplierContacts = async (supplierId) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      console.log('🔧 Loading contacts from:', `${backendUrl}/api/supplier-contacts/${supplierId}`);
       const response = await fetch(`${backendUrl}/api/supplier-contacts/${supplierId}`);
       
       if (response.ok) {
         const contacts = await response.json();
+        console.log('🔧 Loaded contacts:', contacts);
         setSupplierContacts(prev => ({
           ...prev,
           [supplierId]: contacts
         }));
+      } else {
+        console.log('🔧 Response not ok:', response.status, response.statusText);
       }
     } catch (error) {
-      console.error('Error loading supplier contacts:', error);
+      console.error('🔧 Error loading supplier contacts:', error);
     }
   };
 
