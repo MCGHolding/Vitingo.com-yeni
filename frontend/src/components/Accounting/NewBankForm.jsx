@@ -390,7 +390,7 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.routingNumber}
                     onChange={(e) => handleInputChange('routingNumber', e.target.value)}
-                    placeholder="Örn: 021000021"
+                    placeholder="Örn: 021000021 (Chase Bank)"
                     className="w-full"
                     required
                   />
@@ -402,7 +402,7 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.usAccountNumber}
                     onChange={(e) => handleInputChange('usAccountNumber', e.target.value)}
-                    placeholder="Örn: 1234567890"
+                    placeholder="Örn: 1234567890123456"
                     className="w-full"
                     required
                   />
@@ -414,7 +414,7 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.bankAddress}
                     onChange={(e) => handleInputChange('bankAddress', e.target.value)}
-                    placeholder="Örn: 1 Chase Manhattan Plaza, New York, NY 10005"
+                    placeholder="Örn: 383 Madison Ave, New York, NY 10179"
                     className="w-full"
                   />
                 </div>
@@ -425,7 +425,7 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.recipientAddress}
                     onChange={(e) => handleInputChange('recipientAddress', e.target.value)}
-                    placeholder="Örn: 123 Main St, New York, NY 10001"
+                    placeholder="Örn: 123 Business St, New York, NY 10001"
                     className="w-full"
                   />
                 </div>
@@ -436,7 +436,7 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   <Input
                     value={formData.recipientName}
                     onChange={(e) => handleInputChange('recipientName', e.target.value)}
-                    placeholder="Örn: John Doe"
+                    placeholder="Örn: Basari International LLC"
                     className="w-full"
                   />
                 </div>
