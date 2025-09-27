@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { SearchableSelect } from '../ui/SearchableSelect';
+import SearchableSelect from '../ui/SearchableSelect';
 import { useToast } from '../../hooks/use-toast';
 import { useCurrency } from '../../hooks/useCurrency';
 import { 
