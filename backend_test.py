@@ -3199,7 +3199,7 @@ def test_invoice_api_endpoints():
                 all_tests_passed = False
             else:
                 # Check required fields
-                required_fields = ["id", "invoice_number", "customer_name", "date", "currency", "items", "subtotal", "vat_rate", "vat_amount", "total"]
+                required_fields = ["id", "invoice_number", "customer_name", "date", "currency", "items", "subtotal", "vat_rate", "vat_amount", "discount_type", "total"]
                 missing_fields = []
                 for field in required_fields:
                     if field not in data:
