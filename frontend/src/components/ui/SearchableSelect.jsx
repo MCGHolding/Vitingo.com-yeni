@@ -186,7 +186,7 @@ export default function SearchableSelect({
                         <span className="text-xs text-gray-500 truncate">{option.sublabel}</span>
                       )}
                     </div>
-                    {selectedOption?.id === option.id && (
+                    {(selectedOption?.id || selectedOption?.value) === (option.id || option.value) && (
                       <div className="text-blue-600 ml-auto">✓</div>
                     )}
                   </button>
