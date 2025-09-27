@@ -98,6 +98,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(null);
   const [showEditModal, setShowEditModal] = useState(null);
   const [showViewModal, setShowViewModal] = useState(null);
+  const [showEditContactModal, setShowEditContactModal] = useState(null);
 
   useEffect(() => {
     loadData();
