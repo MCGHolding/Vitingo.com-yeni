@@ -373,8 +373,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         name: "Test Hizmet",
         quantity: 1,
         unit: "adet",
-        unit_price: 1000,
-        total: 1000
+        unit_price: 1000.0,
+        total: 1000.0
       }];
     } else {
       // Calculate valid items for submission normally
