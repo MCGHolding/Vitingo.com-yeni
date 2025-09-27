@@ -33,6 +33,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [expandedSupplier, setExpandedSupplier] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
   const [showActionMenu, setShowActionMenu] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(null);
 
   useEffect(() => {
     loadData();
