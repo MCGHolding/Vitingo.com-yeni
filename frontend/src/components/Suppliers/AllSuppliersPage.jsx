@@ -8,6 +8,7 @@ import ViewSupplierModal from './ViewSupplierModal';
 import EditContactModal from './EditContactModal';
 import ScoreSupplierModal from './ScoreSupplierModal';
 import BlacklistSupplierModal from './BlacklistSupplierModal';
+import ContactEmailModal from './ContactEmailModal';
 import { 
   Building2, 
   Phone, 
