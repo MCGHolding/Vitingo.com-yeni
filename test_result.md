@@ -105,6 +105,18 @@
 user_problem_statement: "Kullanıcı CSV dosyasında format hataları nedeniyle import edilen fuar verilerinin Tüm Fuarlar listesinde görünmediğini bildirdi. Şablon download işlevinin düzeltilmiş CSV formatıyla güncellenmesi isteniyor. CSV şablonunda fairMonth kolonunun kaldırılması, tutarlı tarih formatları (YYYY-MM-DD), zorunlu alanların doldurulması ve proper Türkçe örneklerin eklenmesi gerekiyor."
 
 backend:
+  - task: "Invoice Creation Endpoint - Debug 422 Validation Error"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ INVOICE 422 VALIDATION ERROR SUCCESSFULLY DEBUGGED - Comprehensive testing of POST /api/invoices endpoint completed with detailed analysis: 🎯 KEY FINDINGS: 1) Backend accepts properly formatted invoice data (status 200) ✅ 2) 422 errors occur ONLY when field validation fails (Pydantic validation) ✅ 3) Common causes identified: Missing required fields in items array, Invalid data types (string vs number), Field name mismatches ✅ 4) Business logic validation returns 400 (not 422) for duplicate invoice numbers ✅ 5) Minimal required fields test: SUCCESSFUL (status 200) ✅ 📋 SPECIFIC 422 VALIDATION ISSUES FOUND: • Item missing 'name' field → 422 with 'Field required' error ✅ • Invalid quantity type (string instead of number) → 422 with 'Input should be a valid number' error ✅ • Empty items array → 400 business logic error (not 422) ✅ 🔍 ROOT CAUSE ANALYSIS: The user's 'Fatura kaydedilemedi: [object Object]' error is likely caused by: 1) Frontend sending incorrect field names (camelCase vs snake_case) 2) Frontend sending string values for numeric fields 3) Frontend missing required fields in items array 4) Frontend data structure not matching InvoiceCreate model exactly 💡 RECOMMENDED FIXES: 1) Ensure frontend uses snake_case field names (invoice_number, customer_name, etc.) 2) Send numeric fields as numbers, not strings 3) Verify all required fields in items array are present (name, quantity, unit, unit_price, total) 4) Check frontend payload structure matches InvoiceCreate model exactly ✅ BACKEND STATUS: FULLY FUNCTIONAL - The backend correctly validates and processes invoice data when properly formatted."
+
   - task: "Customer Email Endpoint - Send Customer Email"
     implemented: true
     working: true
