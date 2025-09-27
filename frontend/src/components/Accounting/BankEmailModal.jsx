@@ -155,31 +155,67 @@ Finans Departmanı`
     setIsLoading(true);
     
     try {
-      // Create mailto link for now (can be replaced with email service)
-      const mailtoLink = `mailto:${emailData.to}${emailData.cc ? `?cc=${emailData.cc}` : ''}${emailData.bcc ? `&bcc=${emailData.bcc}` : ''}&subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
-      window.location.href = mailtoLink;
-      
-      toast({
-        title: "Başarılı",
-        description: "Email istemciniz açıldı",
-        variant: "default"
+      const requestData = {
+        to: emailData.to,
+        cc: emailData.cc,
+        bcc: emailData.bcc,
+        subject: emailData.subject,
+        body: emailData.body,
+        from_name: currentUser?.fullName || 'Vitingo CRM Kullanıcısı',
+        from_email: currentUser?.email || 'info@quattrostand.com',
+        to_name: emailData.to.split('@')[0],
+        banks: banks,
+        mode: mode,
+        attachments: emailData.attachments
+      };
+
+      const response = await fetch(`${backendUrl}/api/send-bank-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
       });
-      
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSentEmailInfo({
+          to: emailData.to,
+          subject: emailData.subject,
+          message_id: result.message_id
+        });
+        setEmailSent(true);
+        
+        toast({
+          title: "Başarılı",
+          description: "Email başarıyla gönderildi",
+          variant: "default"
+        });
+      } else {
+        throw new Error(result.error || 'Email gönderilemedi');
+      }
 
     } catch (error) {
       console.error('Error sending email:', error);
       toast({
         title: "Hata",
-        description: "Email gönderilirken bir hata oluştu",
+        description: error.message || "Email gönderilirken bir hata oluştu",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  const handleGoBack = () => {
+    setEmailSent(false);
+  };
+  
+  const handleGoToDashboard = () => {
+    onClose();
   };
 
   return (
