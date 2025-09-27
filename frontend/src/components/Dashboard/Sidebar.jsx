@@ -241,6 +241,9 @@ export default function Sidebar({
   onPaymentRequests,
   onPurchaseInvoices,
   onPurchaseApprovals,
+  // Bank handlers
+  onNewBank,
+  onAllBanks,
   // Brief handlers
   onNewBrief,
   onAllBriefs,
