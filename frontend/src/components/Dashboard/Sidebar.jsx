@@ -268,6 +268,12 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null) => {
+    // If no subItem and the item has submenu, toggle submenu
+    if (!subItem && item.hasSubmenu) {
+      toggleSubmenu(item.name);
+      return;
+    }
+    
     // Handle Dashboard main menu
     if (item.name === 'Dashboard' && !subItem) {
       if (onDashboard) {
