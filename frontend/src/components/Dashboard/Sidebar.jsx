@@ -251,6 +251,9 @@ export default function Sidebar({
   // Bank handlers
   onNewBank,
   onAllBanks,
+  // Supplier handlers
+  onNewSupplier,
+  onAllSuppliers,
   // Brief handlers
   onNewBrief,
   onAllBriefs,
