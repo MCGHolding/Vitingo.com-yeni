@@ -768,19 +768,22 @@ const NewSupplierForm = ({ onClose }) => {
       )}
 
       {/* Add Category Modal */}
-      <AddCategoryModal
-        isOpen={showAddCategoryModal}
-        onClose={() => setShowAddCategoryModal(false)}
-        onSave={handleCategorySaved}
-      />
+      {showAddCategoryModal && (
+        <AddCategoryModal
+          onClose={() => setShowAddCategoryModal(false)}
+          onSave={handleCategorySaved}
+        />
+      )}
 
       {/* Add Specialty Modal */}
-      <AddSpecialtyModal
-        isOpen={showAddSpecialtyModal}
-        onClose={() => setShowAddSpecialtyModal(false)}
-        onSave={handleSpecialtySaved}
-        categoryId={formData.supplier_type_id}
-      />
+      {showAddSpecialtyModal && (
+        <AddSpecialtyModal
+          onClose={() => setShowAddSpecialtyModal(false)}
+          onSave={handleSpecialtySaved}
+          categoryId={formData.supplier_type_id}
+          categoryName={getCategoryName(formData.supplier_type_id)}
+        />
+      )}
     </div>
   );
 };
