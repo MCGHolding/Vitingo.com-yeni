@@ -5,7 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 import os
 import logging
 from motor.motor_asyncio import AsyncIOMotorClient
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 import uuid
