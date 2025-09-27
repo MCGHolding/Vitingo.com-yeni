@@ -74,6 +74,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingInvoiceNumber, setIsGeneratingInvoiceNumber] = useState(false);
 
   const [totals, setTotals] = useState({
     subtotal: 0,
@@ -81,6 +82,53 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     discountAmount: 0,
     total: 0
   });
+
+  // Generate invoice number when component mounts or currency changes
+  const generateInvoiceNumber = async (currency) => {
+    setIsGeneratingInvoiceNumber(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices/next-number/${currency}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Generated invoice number:', data);
+        setFormData(prev => ({ 
+          ...prev, 
+          invoiceNumber: data.next_invoice_number 
+        }));
+      } else {
+        console.error('Failed to generate invoice number');
+        // Fallback
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const fallback = `${currency}-${month}${year}100001`;
+        setFormData(prev => ({ ...prev, invoiceNumber: fallback }));
+      }
+    } catch (error) {
+      console.error('Error generating invoice number:', error);
+      // Fallback
+      const now = new Date();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const fallback = `${currency}-${month}${year}100001`;
+      setFormData(prev => ({ ...prev, invoiceNumber: fallback }));
+    } finally {
+      setIsGeneratingInvoiceNumber(false);
+    }
+  };
+
+  // Generate invoice number on mount
+  useEffect(() => {
+    generateInvoiceNumber(formData.currency);
+  }, []);
+
+  // Regenerate invoice number when currency changes
+  const handleCurrencyChange = (newCurrency) => {
+    setFormData(prev => ({ ...prev, currency: newCurrency }));
+    generateInvoiceNumber(newCurrency);
+  };
 
   const currencies = [
     { code: 'USD', symbol: '$', name: 'US Dollar' },
