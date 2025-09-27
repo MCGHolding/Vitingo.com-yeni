@@ -314,11 +314,6 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       return;
     }
 
-    if (!formData.customerId) {
-      alert('Müşteri seçimi zorunludur');
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -327,8 +322,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       // Create invoice object for backend
       const invoice = {
         invoice_number: formData.invoiceNumber,
-        customer_id: formData.customerId,
-        customer_name: selectedCustomer ? selectedCustomer.companyName : 'Unknown Customer',
+        customer_id: formData.customerId || null,
+        customer_name: selectedCustomer ? selectedCustomer.companyName : (formData.customerName || 'Genel Müşteri'),
         date: formData.date,
         currency: formData.currency,
         items: formData.items.filter(item => item.name.trim()).map(item => ({
