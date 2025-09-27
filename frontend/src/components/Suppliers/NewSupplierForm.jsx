@@ -649,85 +649,208 @@ const NewSupplierForm = ({ onClose }) => {
         {!isIndividualSupplier && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Building2 className="h-5 w-5" />
-                <span>Banka / Ödeme Bilgileri</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="h-5 w-5" />
+                  <span>Banka / Ödeme Bilgileri</span>
+                </div>
+                {/* USA Format Checkbox */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="usa-format"
+                    checked={isUSABankFormat}
+                    onChange={(e) => setIsUSABankFormat(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                  <label htmlFor="usa-format" className="text-sm font-medium text-gray-700">
+                    ABD Bankası
+                  </label>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* IBAN */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    IBAN <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    value={formData.iban}
-                    onChange={(e) => handleInputChange('iban', e.target.value)}
-                    placeholder="TR00 0000 0000 0000 0000 0000 00"
-                  />
-                </div>
+              {!isUSABankFormat ? (
+                /* IBAN Format (International) */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* IBAN */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      IBAN <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      value={formData.iban}
+                      onChange={(e) => handleInputChange('iban', e.target.value)}
+                      placeholder="TR00 0000 0000 0000 0000 0000 00"
+                    />
+                  </div>
 
-                {/* Banka Adı */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Banka Adı
-                  </label>
-                  <Input
-                    value={formData.bank_name}
-                    onChange={(e) => handleInputChange('bank_name', e.target.value)}
-                    placeholder="Örn: Türkiye İş Bankası"
-                  />
-                </div>
+                  {/* Banka Adı */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Banka Adı
+                    </label>
+                    <Input
+                      value={formData.bank_name}
+                      onChange={(e) => handleInputChange('bank_name', e.target.value)}
+                      placeholder="Örn: Türkiye İş Bankası"
+                    />
+                  </div>
 
-                {/* Şube */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Şube
-                  </label>
-                  <Input
-                    value={formData.bank_branch}
-                    onChange={(e) => handleInputChange('bank_branch', e.target.value)}
-                    placeholder="Şube adı"
-                  />
-                </div>
+                  {/* Şube */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Şube
+                    </label>
+                    <Input
+                      value={formData.bank_branch}
+                      onChange={(e) => handleInputChange('bank_branch', e.target.value)}
+                      placeholder="Şube adı"
+                    />
+                  </div>
 
-                {/* Hesap Sahibi */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hesap Sahibi Adı
-                  </label>
-                  <Input
-                    value={formData.account_holder_name}
-                    onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
-                    placeholder="Hesap sahibinin adı"
-                  />
-                </div>
+                  {/* Hesap Sahibi */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hesap Sahibi Adı
+                    </label>
+                    <Input
+                      value={formData.account_holder_name}
+                      onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
+                      placeholder="Hesap sahibinin adı"
+                    />
+                  </div>
 
-                {/* SWIFT Kodu */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    SWIFT Kodu
-                  </label>
-                  <Input
-                    value={formData.swift_code}
-                    onChange={(e) => handleInputChange('swift_code', e.target.value)}
-                    placeholder="SWIFT/BIC kodu"
-                  />
-                </div>
+                  {/* SWIFT Kodu */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SWIFT Kodu
+                    </label>
+                    <Input
+                      value={formData.swift_code}
+                      onChange={(e) => handleInputChange('swift_code', e.target.value)}
+                      placeholder="SWIFT/BIC kodu"
+                    />
+                  </div>
 
-                {/* Ülke */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ülke
-                  </label>
-                  <Input
-                    value={formData.country}
-                    onChange={(e) => handleInputChange('country', e.target.value)}
-                    placeholder="Türkiye"
-                  />
+                  {/* Ülke */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ülke
+                    </label>
+                    <Input
+                      value={formData.country}
+                      onChange={(e) => handleInputChange('country', e.target.value)}
+                      placeholder="Türkiye"
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* USA Format */
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="h-4 w-4 text-blue-600" />
+                      <span className="text-blue-800 font-medium text-sm">ABD Banka Formatı</span>
+                    </div>
+                    <p className="text-blue-700 text-sm mt-1">
+                      Amerika'da IBAN kullanılmaz. Routing Number ve Account Number kullanılır.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Routing Number */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Routing Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.routing_number}
+                        onChange={(e) => handleInputChange('routing_number', e.target.value)}
+                        placeholder="Örn: 021000021 (Chase Bank)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">9 haneli banka routing numarası</p>
+                    </div>
+
+                    {/* Account Number */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.us_account_number}
+                        onChange={(e) => handleInputChange('us_account_number', e.target.value)}
+                        placeholder="Örn: 1234567890123456"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Hesap numarası</p>
+                    </div>
+
+                    {/* Banka Adı */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adı
+                      </label>
+                      <Input
+                        value={formData.bank_name}
+                        onChange={(e) => handleInputChange('bank_name', e.target.value)}
+                        placeholder="Örn: Chase Bank, Bank of America"
+                      />
+                    </div>
+
+                    {/* Hesap Sahibi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hesap Sahibi Adı
+                      </label>
+                      <Input
+                        value={formData.account_holder_name}
+                        onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
+                        placeholder="Örn: John Doe LLC"
+                      />
+                    </div>
+
+                    {/* Banka Adresi */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adresi
+                      </label>
+                      <Input
+                        value={formData.bank_address}
+                        onChange={(e) => handleInputChange('bank_address', e.target.value)}
+                        placeholder="Örn: 383 Madison Ave, New York, NY 10179"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Banka şubesi adresi</p>
+                    </div>
+
+                    {/* SWIFT (Opsiyonel) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        SWIFT Code
+                      </label>
+                      <Input
+                        value={formData.swift_code}
+                        onChange={(e) => handleInputChange('swift_code', e.target.value)}
+                        placeholder="Örn: CHASUS33 (Chase)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Uluslararası transferler için</p>
+                    </div>
+
+                    {/* Ülke (ABD olarak sabitlendi) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke
+                      </label>
+                      <Input
+                        value={isUSABankFormat ? 'USA' : formData.country}
+                        onChange={(e) => !isUSABankFormat && handleInputChange('country', e.target.value)}
+                        placeholder="USA"
+                        disabled={isUSABankFormat}
+                        className={isUSABankFormat ? 'bg-gray-100' : ''}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
