@@ -334,7 +334,8 @@ const NewSupplierForm = ({ onClose }) => {
         company_name: supplier.company_short_name,
         supplier_type: getCategoryName(supplier.supplier_type_id),
         specialty: getSpecialtyName(supplier.specialty_id),
-        contacts_count: contacts.filter(c => c.full_name.trim()).length
+        contacts_count: contacts.filter(c => c.full_name.trim()).length,
+        is_individual: isIndividualSupplier
       });
       setSupplierCreated(true);
 
