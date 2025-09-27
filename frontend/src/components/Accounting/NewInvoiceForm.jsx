@@ -425,7 +425,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
           unit_price: parseFloat(item.unitPrice) || parseFloat(item.unit_price) || 0.0, // USE REAL UNIT PRICE with fallback
           total: parseFloat(item.total) || (parseFloat(item.quantity || 1) * parseFloat(item.unitPrice || item.unit_price || 0)) // CALCULATE REAL TOTAL with fallback
         })),
-        subtotal: totals.subtotal, // USE REAL SUBTOTAL
+        subtotal: validItems.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0), // USE REAL SUBTOTAL with fallback
         vat_rate: parseFloat(formData.vatRate),
         vat_amount: totals.vatAmount, // USE REAL VAT AMOUNT
         discount: parseFloat(formData.discount) || 0, // USE REAL DISCOUNT
