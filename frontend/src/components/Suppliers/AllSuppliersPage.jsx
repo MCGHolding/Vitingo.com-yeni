@@ -250,6 +250,18 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     });
   };
 
+  const handleEditContact = (contact, supplier) => {
+    setShowEditContactModal({ contact, supplier });
+  };
+
+  const handleContactSave = async () => {
+    // Reload contacts for the current supplier
+    if (showEditContactModal?.supplier?.id) {
+      await loadSupplierContacts(showEditContactModal.supplier.id);
+    }
+    setShowEditContactModal(null);
+  };
+
   const handleSupplierAction = (action, supplier) => {
     switch (action) {
       case 'delete':
