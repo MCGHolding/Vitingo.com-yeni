@@ -516,28 +516,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                         <Button size="sm" variant="outline" onClick={() => handleEditSupplier(supplier)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <div className="relative">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={(e) => {
-                              if (showActionMenu === supplier.id) {
-                                setShowActionMenu(null);
-                              } else {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                setMenuPosition({
-                                  top: rect.bottom + window.scrollY,
-                                  left: rect.right - 192 + window.scrollX // 192px = w-48 (12rem * 16px)
-                                });
-                                setShowActionMenu(supplier.id);
-                              }
-                            }}
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-
-                          {/* Empty - dropdown moved to portal */}
-                        </div>
+                        <SupplierActionMenuPopover supplier={supplier} onAction={handleSupplierAction} />
                       </div>
                     </div>
                   </div>
