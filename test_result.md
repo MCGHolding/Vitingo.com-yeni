@@ -105,6 +105,18 @@
 user_problem_statement: "Mail modal pencere açılmış ama mail göndermiyor. Maili gönderip ardınan aynı pencede Tebriker, Mailiniz başarı ile gönderilmiştir mesajı ve Geri Dön, Dashboard butonları olması lazım"
 
 backend:
+  - task: "Bank Email API Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/send-bank-email endpoint to enable real email sending for bank details. Uses existing SendGrid email service and saves email records to bank_emails collection for tracking. Supports both single bank and group bank email sending."
+
   - task: "Invoice Number Generation API Endpoint"
     implemented: true
     working: true
