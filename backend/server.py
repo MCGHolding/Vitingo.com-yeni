@@ -2779,6 +2779,13 @@ class SupplierCreate(BaseModel):
     services: List[str] = []
     supplier_type_id: str
     specialty_id: str
+    # Bank/Payment Information
+    iban: Optional[str] = ""
+    bank_name: Optional[str] = ""
+    bank_branch: Optional[str] = ""
+    account_holder_name: Optional[str] = ""
+    swift_code: Optional[str] = ""
+    country: Optional[str] = ""
 
 class SupplierContactCreate(BaseModel):
     supplier_id: str
