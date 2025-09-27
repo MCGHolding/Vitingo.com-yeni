@@ -363,6 +363,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         payment_term: formData.paymentTerm || '30'
       };
 
+      console.log('Sending invoice data to backend:', JSON.stringify(invoice, null, 2));
+
       const response = await fetch(`${backendUrl}/api/invoices`, {
         method: 'POST',
         headers: {
