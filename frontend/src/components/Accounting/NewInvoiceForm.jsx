@@ -344,6 +344,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         vat_rate: formData.vatRate,
         vat_amount: totals.vatAmount,
         discount: parseNumber(formData.discount) || 0,
+        discount_type: formData.discountType,
         discount_amount: totals.discountAmount,
         total: totals.total,
         conditions: formData.conditions,
