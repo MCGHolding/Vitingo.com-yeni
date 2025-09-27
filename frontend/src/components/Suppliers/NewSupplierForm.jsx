@@ -284,15 +284,20 @@ const NewSupplierForm = ({ onClose }) => {
         }
       }
 
+      // Set success state with supplier info
+      setCreatedSupplierInfo({
+        company_name: supplier.company_short_name,
+        supplier_type: getCategoryName(supplier.supplier_type_id),
+        specialty: getSpecialtyName(supplier.specialty_id),
+        contacts_count: contacts.filter(c => c.full_name.trim()).length
+      });
+      setSupplierCreated(true);
+
       toast({
         title: "Başarılı",
         description: "Tedarikçi başarıyla oluşturuldu",
         variant: "default"
       });
-
-      if (onClose) {
-        onClose();
-      }
 
     } catch (error) {
       console.error('Error creating supplier:', error);
