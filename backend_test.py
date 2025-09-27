@@ -5383,18 +5383,7 @@ def main():
         print("   • Test again after fixes")
         
     print(f"\n⏰ Test tamamlanma zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 100) 
-        print("   • Turkey/UAE SWIFT+IBAN format ✅")
-        print("   • USA Routing+Account format ✅")
-        print("   • SendGrid integration ✅")
-        print("   • Database tracking ✅")
-        print("   • Error handling ✅")
-        print("   • Users can now send real bank emails instead of mailto: links ✅")
-    else:
-        print("❌ BANK EMAIL API NEEDS FIXES!")
-        print("   Review the detailed error messages above")
-        print("   Fix the failing test cases")
-        print("   This is critical for the user's email system")
+    print("=" * 100)
     
     return all_tests_passed
 
