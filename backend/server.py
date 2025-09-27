@@ -3233,6 +3233,50 @@ async def send_bank_email(request: BankEmailRequest):
             "error": str(e)
         }
 
+# ===================== EXPENSE RECEIPT MODELS =====================
+
+class ExpenseReceipt(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    receipt_number: str  # USD-GM-012025100001 format
+    date: date
+    currency: str  # USD, EUR, GBP, TRY, AED
+    supplier_id: str  # Reference to supplier
+    supplier_name: str  # Cached for performance
+    supplier_phone: Optional[str] = ""
+    supplier_iban: Optional[str] = ""
+    supplier_bank_name: Optional[str] = ""
+    supplier_country: Optional[str] = ""
+    sender_bank_id: Optional[str] = ""  # Reference to user's bank
+    sender_bank_name: Optional[str] = ""
+    amount: float
+    description: str
+    status: str = "pending"  # pending, approved, paid
+    approval_link: Optional[str] = ""  # Unique link for supplier approval
+    signature_data: Optional[str] = ""  # Base64 signature when approved
+    signed_at: Optional[datetime] = None
+    paid_at: Optional[datetime] = None
+    created_by: str  # User who created the receipt
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ExpenseReceiptCreate(BaseModel):
+    date: date
+    currency: str
+    supplier_id: str
+    sender_bank_id: Optional[str] = None
+    amount: float
+    description: str
+
+class ExpenseReceiptUpdate(BaseModel):
+    date: Optional[date] = None
+    currency: Optional[str] = None
+    supplier_id: Optional[str] = None
+    sender_bank_id: Optional[str] = None
+    amount: Optional[float] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    signature_data: Optional[str] = None
+
 # ===================== CONTACT REGISTRATION ENDPOINTS =====================
 
 @api_router.get("/contact-registration/{registration_key}")
