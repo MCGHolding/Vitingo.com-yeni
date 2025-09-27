@@ -2265,6 +2265,88 @@ async def delete_product(product_id: str):
 
 # ===================== INVOICE ENDPOINTS =====================
 
+@api_router.get("/invoices/next-number/{currency}")
+async def get_next_invoice_number(currency: str):
+    """Get the next invoice number for a specific currency"""
+    try:
+        # Get current date
+        now = datetime.now()
+        current_month = f"{now.month:02d}"
+        current_year = str(now.year)
+        
+        # Currency prefix mapping
+        currency_prefixes = {
+            "USD": "USD",
+            "EUR": "EURU", 
+            "GBP": "GBP",
+            "TRY": "TL",
+            "AED": "AED"
+        }
+        
+        currency_prefix = currency_prefixes.get(currency, currency)
+        
+        # Create the pattern for current month/year
+        pattern_prefix = f"{currency_prefix}-{current_month}{current_year}"
+        
+        # Find the highest invoice number for this currency/month/year combination
+        regex_pattern = f"^{currency_prefix}-{current_month}{current_year}(\d{{6}})$"
+        
+        invoices = await db.invoices.find({
+            "invoice_number": {"$regex": regex_pattern}
+        }).to_list(1000)
+        
+        logger.info(f"Found {len(invoices)} invoices matching pattern {regex_pattern}")
+        
+        # Find the highest sequence number
+        max_sequence = 0
+        for invoice in invoices:
+            # Extract the sequence number (last 6 digits)
+            match = re.search(r'(\d{6})$', invoice["invoice_number"])
+            if match:
+                sequence = int(match.group(1))
+                max_sequence = max(max_sequence, sequence)
+                logger.info(f"Found invoice {invoice['invoice_number']} with sequence {sequence}")
+        
+        # Generate next number
+        next_sequence = max_sequence + 1
+        next_invoice_number = f"{pattern_prefix}{next_sequence:06d}"
+        
+        logger.info(f"Generated next invoice number: {next_invoice_number}")
+        
+        return {
+            "next_invoice_number": next_invoice_number,
+            "currency": currency,
+            "month": current_month,
+            "year": current_year,
+            "sequence": next_sequence,
+            "pattern": pattern_prefix
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating next invoice number: {str(e)}")
+        # Fallback - generate first number for this month/year
+        now = datetime.now()
+        current_month = f"{now.month:02d}"
+        current_year = str(now.year)
+        currency_prefixes = {
+            "USD": "USD",
+            "EUR": "EURU", 
+            "GBP": "GBP",
+            "TRY": "TL",
+            "AED": "AED"
+        }
+        currency_prefix = currency_prefixes.get(currency, currency)
+        fallback_number = f"{currency_prefix}-{current_month}{current_year}100001"
+        
+        return {
+            "next_invoice_number": fallback_number,
+            "currency": currency,
+            "month": current_month,
+            "year": current_year,
+            "sequence": 1,
+            "pattern": f"{currency_prefix}-{current_month}{current_year}"
+        }
+
 @api_router.post("/invoices", response_model=Invoice)
 async def create_invoice(invoice_input: InvoiceCreate):
     """Create a new invoice"""
