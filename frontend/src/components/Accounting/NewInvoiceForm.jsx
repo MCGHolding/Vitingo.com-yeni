@@ -485,9 +485,27 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               <h2 className="text-3xl font-bold text-gray-900 mb-4">FATURA</h2>
               <div className="space-y-2">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Fatura No:</label>
-                  <p className="text-lg font-mono bg-gray-100 px-3 py-1 rounded">
-                    {formData.invoiceNumber}
+                  <label className="text-sm font-medium text-gray-600 block mb-1">Fatura No:</label>
+                  <div className="flex items-center justify-end space-x-2">
+                    <p className="text-lg font-mono bg-blue-50 border border-blue-200 px-3 py-2 rounded-md">
+                      {isGeneratingInvoiceNumber ? 'Oluşturuluyor...' : formData.invoiceNumber}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => generateInvoiceNumber(formData.currency)}
+                      disabled={isGeneratingInvoiceNumber}
+                      className="flex items-center space-x-1"
+                      title="Yeni numara oluştur"
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Para birimi: {formData.currency} | Ay: {new Date().getMonth() + 1}/{new Date().getFullYear()}
                   </p>
                 </div>
               </div>
