@@ -400,6 +400,20 @@ const Dashboard = () => {
     setCurrentView('purchase-approvals');
   };
 
+  // Bank handlers
+  const handleNewBank = () => {
+    setCurrentView('new-bank');
+  };
+
+  const handleAllBanks = () => {
+    setCurrentView('all-banks');
+  };
+
+  const handleEditBank = (bank) => {
+    setCurrentView('edit-bank');
+    // Store bank data for editing if needed
+  };
+
   // Brief handlers
   const handleNewBrief = () => {
     setCurrentView('new-brief');
