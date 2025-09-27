@@ -175,20 +175,7 @@ const navigation = [
       { name: 'Tüm Tedarikçiler', href: '/accounting/suppliers/all', icon: UserCheck }
     ]
   },
-  { 
-    name: 'Gider Makbuzu', 
-    href: '/accounting/expense-receipts', 
-    icon: Wallet, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Gider Makbuzu', href: '/accounting/expense-receipts/new', icon: Plus },
-      { name: 'Tüm Makbuzlar', href: '/accounting/expense-receipts/all', icon: Receipt },
-      { name: 'Onay Bekleyen Makbuzlar', href: '/accounting/expense-receipts/pending', icon: Clock },
-      { name: 'Onaylanmış Makbuzlar', href: '/accounting/expense-receipts/approved', icon: CheckCircle },
-      { name: 'Ödenmiş Makbuzlar', href: '/accounting/expense-receipts/paid', icon: CreditCard }
-    ]
-  },
+  // Gider Makbuzu moved to Muhasebe submenu
   { 
     name: 'Brief', 
     href: '/brief', 
