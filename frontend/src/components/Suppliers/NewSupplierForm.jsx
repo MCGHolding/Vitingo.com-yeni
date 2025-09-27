@@ -21,6 +21,9 @@ import {
   Home
 } from 'lucide-react';
 
+import AddCategoryModal from './AddCategoryModal';
+import AddSpecialtyModal from './AddSpecialtyModal';
+
 const NewSupplierForm = ({ onClose }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
