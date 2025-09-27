@@ -4620,92 +4620,93 @@ def test_invoice_creation_422_validation_debug():
     return False
 
 def main():
-    """Run comprehensive backend tests focusing on Invoice 422 validation debug"""
-    print("🧾 BACKEND API TESTLERİ - INVOICE 422 ERROR DEBUG")
+    """Run comprehensive backend tests focusing on Invoice Number Generation API"""
+    print("🧾 BACKEND API TESTLERİ - INVOICE NUMBER GENERATION")
     print("=" * 80)
-    print("Invoice API 422 validation error debug - NewInvoiceForm entegrasyonu için")
+    print("Invoice Number Generation API endpoint testing - Critical user requirement")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    print("\n🎯 DEBUGGING 422 VALIDATION ERROR:")
-    print("1. POST /api/invoices - Complete data test")
-    print("2. POST /api/invoices - Minimal required fields test")
-    print("3. Individual field validation tests")
-    print("4. Items array validation tests")
-    print("5. Identify specific Pydantic validation issues")
+    print("\n🎯 TESTING INVOICE NUMBER GENERATION:")
+    print("1. GET /api/invoices/next-number/USD - Should return USD-012025100001 format")
+    print("2. GET /api/invoices/next-number/EUR - Should return EURU-012025100001 format")
+    print("3. GET /api/invoices/next-number/TRY - Should return TL-012025100001 format")
+    print("4. GET /api/invoices/next-number/GBP - Should return GBP-012025100001 format")
+    print("5. GET /api/invoices/next-number/AED - Should return AED-012025100001 format")
     
-    print("\n🔍 DEBUG SENARYOLARI:")
-    print("🧾 422 Error Debug:")
-    print("   • Test with complete invoice data matching frontend")
-    print("   • Test with minimal required fields only")
-    print("   • Test each field individually")
-    print("   • Test items array validation")
-    print("   • Identify missing/invalid fields")
-    print("   • Compare InvoiceCreate model with frontend data")
-    print("   • Check field types and formats")
-    print("   • Analyze Pydantic validation errors")
+    print("\n🔍 VALIDATION REQUIREMENTS:")
+    print("🧾 Invoice Number Format:")
+    print("   • Correct currency prefix mapping (TRY→TL, EUR→EURU)")
+    print("   • Current month/year format (MM/YYYY)")
+    print("   • Sequential numbering starting at 100001")
+    print("   • 6-digit sequence numbers")
+    print("   • Pattern: {PREFIX}-{MMYYYY}{SEQUENCE}")
     
-    print("\n📋 BEKLENİLEN SONUÇLAR:")
-    print("   • Identify which fields cause 422 errors")
-    print("   • Show detailed Pydantic validation messages")
-    print("   • Compare frontend data structure with backend model")
-    print("   • Provide specific fixes for validation issues")
+    print("\n📋 EXPECTED RESULTS:")
+    print("   • Each currency returns correct prefix")
+    print("   • Month/year matches current date")
+    print("   • Sequence numbers are 6 digits")
+    print("   • Sequential numbering increments by 1")
+    print("   • Critical for user's invoice numbering system")
     
-    # Test Invoice 422 Debug (PRIMARY FOCUS)
+    # Test Invoice Number Generation (PRIMARY FOCUS)
     print("\n" + "=" * 80)
-    print("🧾 INVOICE 422 VALIDATION ERROR DEBUG (ÖNCELIK)")
+    print("🧾 INVOICE NUMBER GENERATION API TEST (CRITICAL)")
     print("=" * 80)
     
-    print("\n🧾 Invoice 422 validation error debug")
-    debug_result = test_invoice_creation_422_validation_debug()
-    
-    # Also run the existing invoice test to compare
-    print("\n" + "=" * 80)
-    print("🧾 EXISTING INVOICE API TEST (COMPARISON)")
-    print("=" * 80)
-    
-    print("\n🧾 Existing Invoice API endpoint'leri testi")
-    invoice_passed = test_invoice_api_endpoints()
+    print("\n🧾 Testing invoice number generation for all currencies")
+    generation_result = test_invoice_number_generation()
     
     # Final Results Summary
     print("\n" + "=" * 100)
-    print("📊 INVOICE 422 DEBUG SONUÇLARI")
+    print("📊 INVOICE NUMBER GENERATION TEST RESULTS")
     print("=" * 100)
     
-    # Primary focus results (422 Debug)
-    print("\n🎯 422 VALIDATION DEBUG SONUÇLARI:")
-    print(f"   1. 422 Validation Debug: {'✅ COMPLETED' if not debug_result else '❌ UNEXPECTED SUCCESS'}")
-    print(f"   2. Existing Invoice API Test: {'✅ BAŞARILI' if invoice_passed else '❌ BAŞARISIZ'}")
+    # Primary focus results
+    print("\n🎯 INVOICE NUMBER GENERATION RESULTS:")
+    print(f"   1. Invoice Number Generation: {'✅ PASSED' if generation_result else '❌ FAILED'}")
     
-    # Diagnosis for 422 error
+    # Analysis
     print("\n" + "=" * 100)
-    print("🔍 422 VALIDATION ERROR ANALİZİ")
+    print("🔍 INVOICE NUMBER GENERATION ANALYSIS")
     print("=" * 100)
     
-    if invoice_passed:
-        print("✅ BACKEND ANALİZİ: Existing invoice test passes - 422 error might be frontend-specific!")
-        print("   • POST /api/invoices works with test data")
-        print("   • Issue might be in frontend data format")
-        print("   • Check NewInvoiceForm data structure")
-        print("   • Compare frontend payload with working test data")
+    if generation_result:
+        print("✅ SUCCESS: Invoice number generation is working correctly!")
+        print("   • All currency prefixes mapped correctly")
+        print("   • Month/year format is accurate")
+        print("   • Sequential numbering implemented")
+        print("   • 6-digit sequence format working")
+        print("   • User's invoice numbering system is functional")
+        print("   • Each new invoice will increment sequence by 1")
     else:
-        print("❌ BACKEND ANALİZİ: Invoice API has validation issues!")
-        print("   • POST /api/invoices failing with test data")
-        print("   • Check backend model validation")
-        print("   • Review InvoiceCreate and InvoiceItem models")
-        print("   • Fix Pydantic validation errors")
+        print("❌ FAILURE: Invoice number generation has issues!")
+        print("   • Check currency prefix mappings")
+        print("   • Verify month/year format")
+        print("   • Review sequence number generation")
+        print("   • Fix pattern format issues")
+        print("   • Critical for user's invoice system")
         
     print("\n" + "=" * 100)
-    print("🎯 NEXT STEPS FOR FIXING 422 ERROR:")
+    print("🎯 INVOICE NUMBER GENERATION STATUS:")
     print("=" * 100)
-    print("1. Review the detailed validation errors above")
-    print("2. Compare InvoiceCreate model fields with frontend data")
-    print("3. Check for missing required fields")
-    print("4. Verify field types match (string vs number)")
-    print("5. Ensure items array structure is correct")
-    print("6. Test with exact frontend payload data")
     
-    return True  # Always return True for debug completion
+    if generation_result:
+        print("🎉 INVOICE NUMBER GENERATION API IS WORKING CORRECTLY!")
+        print("   The user's invoice numbering system meets all requirements:")
+        print("   • USD → USD-012025100001 format ✅")
+        print("   • EUR → EURU-012025100001 format ✅") 
+        print("   • TRY → TL-012025100001 format ✅")
+        print("   • GBP → GBP-012025100001 format ✅")
+        print("   • AED → AED-012025100001 format ✅")
+        print("   • Sequential numbering increments by 1 ✅")
+    else:
+        print("❌ INVOICE NUMBER GENERATION NEEDS FIXES!")
+        print("   Review the detailed error messages above")
+        print("   Fix the failing test cases")
+        print("   This is critical for the user's invoice system")
+    
+    return generation_result
 
 if __name__ == "__main__":
     success = main()
