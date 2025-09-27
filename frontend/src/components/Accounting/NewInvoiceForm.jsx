@@ -747,7 +747,9 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                 </div>
                 {formData.discount > 0 && (
                   <div className="flex justify-between text-red-600">
-                    <span>İskonto ({formatNumber(formData.discount)}%):</span>
+                    <span>
+                      İskonto ({formatNumber(formData.discount)}{formData.discountType === 'percentage' ? '%' : selectedCurrency?.symbol}):
+                    </span>
                     <span>-{selectedCurrency?.symbol}{formatNumber(totals.discountAmount.toFixed(2))}</span>
                   </div>
                 )}
