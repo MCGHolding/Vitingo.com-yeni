@@ -3524,11 +3524,302 @@ def test_invoice_api_endpoints():
         print("\n⚠️  INVOICE API TESTS HAVE ISSUES - Check detailed output above")
         return False
 
+def test_invoice_422_validation_debug():
+    """
+    Debug the 422 Unprocessable Entity error for POST /api/invoices endpoint.
+    
+    This test specifically focuses on identifying which fields are causing validation errors
+    by testing with data that closely matches what the frontend NewInvoiceForm sends.
+    """
+    
+    print("=" * 80)
+    print("DEBUGGING 422 VALIDATION ERROR FOR POST /api/invoices")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data that closely matches what NewInvoiceForm would send
+    complete_invoice_data = {
+        "invoice_number": "FTR-2025-001",
+        "customer_id": "test-customer-uuid-123",
+        "customer_name": "Test Şirketi A.Ş.",
+        "date": "2025-01-15",
+        "currency": "TRY",
+        "items": [
+            {
+                "id": "item-1",
+                "product_id": "prod-001",
+                "name": "Stand Tasarımı ve Kurulum",
+                "quantity": 2.0,
+                "unit": "adet",
+                "unit_price": 5000.0,
+                "total": 10000.0
+            },
+            {
+                "id": "item-2", 
+                "product_id": None,
+                "name": "LED Ekran Kiralama",
+                "quantity": 3.0,
+                "unit": "gün",
+                "unit_price": 500.0,
+                "total": 1500.0
+            }
+        ],
+        "subtotal": 11500.0,
+        "vat_rate": 20.0,
+        "vat_amount": 2300.0,
+        "discount": 10.0,
+        "discount_type": "percentage",
+        "discount_amount": 1150.0,
+        "total": 12650.0,
+        "conditions": "Ödeme vadesi 30 gündür.",
+        "payment_term": "30"
+    }
+    
+    print("\n1. Testing with COMPLETE invoice data (all fields)...")
+    print(f"   Invoice Number: {complete_invoice_data['invoice_number']}")
+    print(f"   Customer: {complete_invoice_data['customer_name']}")
+    print(f"   Items Count: {len(complete_invoice_data['items'])}")
+    print(f"   Currency: {complete_invoice_data['currency']}")
+    print(f"   Discount Type: {complete_invoice_data['discount_type']}")
+    print(f"   Total: {complete_invoice_data['total']}")
+    
+    try:
+        response = requests.post(endpoint, json=complete_invoice_data, timeout=30)
+        print(f"\n   Status Code: {response.status_code}")
+        print(f"   Response Headers: {dict(response.headers)}")
+        
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Complete invoice data accepted")
+            data = response.json()
+            print(f"   Created Invoice ID: {data.get('id')}")
+            return True
+        elif response.status_code == 422:
+            print("   ❌ 422 VALIDATION ERROR: Analyzing response...")
+            try:
+                error_data = response.json()
+                print(f"   Error Response: {error_data}")
+                
+                # Check if it's a Pydantic validation error
+                if "detail" in error_data:
+                    detail = error_data["detail"]
+                    if isinstance(detail, list):
+                        print("   📋 PYDANTIC VALIDATION ERRORS:")
+                        for i, error in enumerate(detail, 1):
+                            print(f"      {i}. Field: {error.get('loc', 'unknown')}")
+                            print(f"         Type: {error.get('type', 'unknown')}")
+                            print(f"         Message: {error.get('msg', 'unknown')}")
+                            print(f"         Input: {error.get('input', 'unknown')}")
+                    else:
+                        print(f"   Error Detail: {detail}")
+            except:
+                print(f"   Raw Response Text: {response.text}")
+        else:
+            print(f"   ❌ UNEXPECTED STATUS: {response.status_code}")
+            print(f"   Response: {response.text}")
+            
+    except Exception as e:
+        print(f"   ❌ REQUEST ERROR: {str(e)}")
+    
+    # Test 2: Minimal required fields only
+    print("\n2. Testing with MINIMAL required fields...")
+    minimal_invoice_data = {
+        "invoice_number": "FTR-2025-002",
+        "customer_name": "Minimal Test Şirketi",
+        "date": "2025-01-15",
+        "currency": "TRY",
+        "items": [
+            {
+                "name": "Test Hizmeti",
+                "quantity": 1.0,
+                "unit": "adet",
+                "unit_price": 1000.0,
+                "total": 1000.0
+            }
+        ],
+        "subtotal": 1000.0,
+        "vat_rate": 20.0,
+        "vat_amount": 200.0,
+        "total": 1200.0
+    }
+    
+    try:
+        response = requests.post(endpoint, json=minimal_invoice_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ SUCCESS: Minimal invoice data accepted")
+        elif response.status_code == 422:
+            print("   ❌ 422 VALIDATION ERROR with minimal data:")
+            try:
+                error_data = response.json()
+                if "detail" in error_data and isinstance(error_data["detail"], list):
+                    for error in error_data["detail"]:
+                        print(f"      Missing/Invalid: {error.get('loc', 'unknown')} - {error.get('msg', 'unknown')}")
+            except:
+                print(f"   Raw Response: {response.text}")
+                
+    except Exception as e:
+        print(f"   ❌ REQUEST ERROR: {str(e)}")
+    
+    # Test 3: Field-by-field validation
+    print("\n3. Testing individual field requirements...")
+    
+    # Base minimal data
+    base_data = {
+        "invoice_number": "FTR-2025-003",
+        "date": "2025-01-15",
+        "currency": "TRY",
+        "items": [],
+        "subtotal": 0.0,
+        "vat_rate": 0.0,
+        "vat_amount": 0.0,
+        "total": 0.0
+    }
+    
+    # Test each field individually
+    test_fields = [
+        ("customer_name", "Test Customer"),
+        ("customer_id", "test-id-123"),
+        ("discount", 0.0),
+        ("discount_type", "percentage"),
+        ("discount_amount", 0.0),
+        ("conditions", "Test conditions"),
+        ("payment_term", "30")
+    ]
+    
+    for field_name, field_value in test_fields:
+        test_data = base_data.copy()
+        test_data[field_name] = field_value
+        
+        try:
+            response = requests.post(endpoint, json=test_data, timeout=30)
+            status = "✅ OK" if response.status_code == 200 else f"❌ {response.status_code}"
+            print(f"   {field_name}: {status}")
+            
+            if response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data and isinstance(error_data["detail"], list):
+                        for error in error_data["detail"]:
+                            if field_name in str(error.get('loc', '')):
+                                print(f"      Error: {error.get('msg', 'unknown')}")
+                except:
+                    pass
+                    
+        except Exception as e:
+            print(f"   {field_name}: ❌ ERROR - {str(e)}")
+    
+    # Test 4: Items array validation
+    print("\n4. Testing items array validation...")
+    
+    items_test_cases = [
+        {
+            "name": "Empty items array",
+            "items": []
+        },
+        {
+            "name": "Single item - minimal fields",
+            "items": [
+                {
+                    "name": "Test Item",
+                    "quantity": 1.0,
+                    "unit": "adet",
+                    "unit_price": 100.0,
+                    "total": 100.0
+                }
+            ]
+        },
+        {
+            "name": "Single item - with optional fields",
+            "items": [
+                {
+                    "id": "item-1",
+                    "product_id": "prod-123",
+                    "name": "Test Item",
+                    "quantity": 1.0,
+                    "unit": "adet", 
+                    "unit_price": 100.0,
+                    "total": 100.0
+                }
+            ]
+        },
+        {
+            "name": "Item missing required field (name)",
+            "items": [
+                {
+                    "quantity": 1.0,
+                    "unit": "adet",
+                    "unit_price": 100.0,
+                    "total": 100.0
+                }
+            ]
+        },
+        {
+            "name": "Item with invalid quantity type",
+            "items": [
+                {
+                    "name": "Test Item",
+                    "quantity": "invalid",
+                    "unit": "adet",
+                    "unit_price": 100.0,
+                    "total": 100.0
+                }
+            ]
+        }
+    ]
+    
+    for test_case in items_test_cases:
+        test_data = {
+            "invoice_number": f"FTR-2025-{test_case['name'][:3]}",
+            "customer_name": "Test Customer",
+            "date": "2025-01-15",
+            "currency": "TRY",
+            "items": test_case["items"],
+            "subtotal": 100.0,
+            "vat_rate": 20.0,
+            "vat_amount": 20.0,
+            "total": 120.0
+        }
+        
+        try:
+            response = requests.post(endpoint, json=test_data, timeout=30)
+            status = "✅ OK" if response.status_code == 200 else f"❌ {response.status_code}"
+            print(f"   {test_case['name']}: {status}")
+            
+            if response.status_code == 422:
+                try:
+                    error_data = response.json()
+                    if "detail" in error_data and isinstance(error_data["detail"], list):
+                        for error in error_data["detail"]:
+                            if "items" in str(error.get('loc', '')):
+                                print(f"      Items Error: {error.get('msg', 'unknown')}")
+                except:
+                    pass
+                    
+        except Exception as e:
+            print(f"   {test_case['name']}: ❌ ERROR - {str(e)}")
+    
+    print("\n" + "=" * 80)
+    print("422 VALIDATION DEBUG SUMMARY")
+    print("=" * 80)
+    print("This test identified specific validation issues with the POST /api/invoices endpoint.")
+    print("Check the detailed output above to see which fields are causing 422 errors.")
+    print("Common issues to look for:")
+    print("• Missing required fields in InvoiceCreate model")
+    print("• Type mismatches (string vs number, etc.)")
+    print("• Invalid enum values")
+    print("• Array validation issues in items")
+    print("• Field name mismatches between frontend and backend models")
+    
+    return False  # Always return False since this is a debug function
+
 def main():
     """Run comprehensive backend tests focusing on Invoice API endpoints"""
-    print("🧾 BACKEND API TESTLERİ - INVOICE API ENDPOINT'LERİ")
+    print("🧾 BACKEND API TESTLERİ - INVOICE 422 ERROR DEBUG")
     print("=" * 80)
-    print("Invoice API endpoint'lerinin kapsamlı testi - NewInvoiceForm entegrasyonu için")
+    print("Invoice API 422 validation error debug - NewInvoiceForm entegrasyonu için")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
