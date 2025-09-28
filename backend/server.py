@@ -3032,11 +3032,22 @@ async def get_suppliers():
 
 @api_router.get("/suppliers/{supplier_id}", response_model=Supplier)
 async def get_supplier(supplier_id: str):
-    """Get a specific supplier"""
+    """Get a specific supplier with specialty name"""
     try:
         supplier = await db.suppliers.find_one({"id": supplier_id})
         if not supplier:
             raise HTTPException(status_code=404, detail="Tedarikçi bulunamadı")
+        
+        # Add specialty name
+        if supplier.get('specialty_id'):
+            specialty = await db.supplier_specialties.find_one({"id": supplier['specialty_id']})
+            if specialty:
+                supplier['specialty'] = specialty['name']
+            else:
+                supplier['specialty'] = 'Belirtilmemiş'
+        else:
+            supplier['specialty'] = 'Belirtilmemiş'
+            
         return Supplier(**supplier)
     except HTTPException:
         raise
