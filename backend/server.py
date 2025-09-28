@@ -3012,9 +3012,19 @@ async def create_supplier(supplier_data: SupplierCreate):
 
 @api_router.get("/suppliers", response_model=List[Supplier])
 async def get_suppliers():
-    """Get all suppliers"""
+    """Get all suppliers with specialty names"""
     try:
         suppliers = await db.suppliers.find().to_list(1000)
+        # Add specialty names to suppliers
+        for supplier in suppliers:
+            if supplier.get('specialty_id'):
+                specialty = await db.supplier_specialties.find_one({"id": supplier['specialty_id']})
+                if specialty:
+                    supplier['specialty'] = specialty['name']
+                else:
+                    supplier['specialty'] = 'Belirtilmemiş'
+            else:
+                supplier['specialty'] = 'Belirtilmemiş'
         return [Supplier(**supplier) for supplier in suppliers]
     except Exception as e:
         logger.error(f"Error getting suppliers: {str(e)}")
