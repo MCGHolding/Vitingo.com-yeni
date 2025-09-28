@@ -3276,6 +3276,11 @@ class ExpenseReceiptCreate(BaseModel):
     sender_bank_id: Optional[str] = None
     amount: float
     description: str
+    # USA bank fields
+    is_usa_bank: Optional[bool] = False
+    supplier_routing_number: Optional[str] = ""
+    supplier_us_account_number: Optional[str] = ""
+    supplier_bank_address: Optional[str] = ""
 
 class ExpenseReceiptUpdate(BaseModel):
     date: Optional[date] = None
