@@ -2855,6 +2855,9 @@ class SupplierContactUpdate(BaseModel):
     position: Optional[str] = None
     tags: Optional[List[str]] = None
     notes: Optional[str] = None
+    address: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
     is_active: Optional[bool] = None
 
 # ===================== SUPPLIER MANAGEMENT ENDPOINTS =====================
