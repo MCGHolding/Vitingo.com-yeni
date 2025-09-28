@@ -5,7 +5,7 @@ import { useCurrency } from '../../hooks/useCurrency';
 
 const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const { user } = useAuth();
-  const { exchangeRates, formatCurrency: formatCurrencyHook } = useCurrency();
+  const { rates: exchangeRates, formatCurrency: formatCurrencyHook } = useCurrency();
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
