@@ -21,8 +21,8 @@ export default function EmailModal({ user, onClose, defaultSubject = '', default
     to: user.email,
     cc: '',
     bcc: '',
-    subject: '',
-    body: '',
+    subject: defaultSubject,
+    body: defaultBody,
     attachments: []
   });
   const [isLoading, setIsLoading] = useState(false);
