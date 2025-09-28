@@ -14,8 +14,9 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showStandardSuccess, setShowStandardSuccess] = useState(false);
+  const [successData, setSuccessData] = useState(null);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [emailForm, setEmailForm] = useState({
     to: '',
