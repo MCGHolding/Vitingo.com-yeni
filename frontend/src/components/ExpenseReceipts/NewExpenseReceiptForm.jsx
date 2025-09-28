@@ -540,7 +540,10 @@ Vitingo CRM Sistemi`;
 
             {formData.supplier_id && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">Seçili Tedarikçi Bilgileri</h4>
+                <h4 className="font-medium text-blue-900 mb-3 flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>Seçili Tedarikçi Bilgileri</span>
+                </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center space-x-2">
                     <User className="h-4 w-4 text-blue-600" />
@@ -550,7 +553,38 @@ Vitingo CRM Sistemi`;
                   <div className="flex items-center space-x-2">
                     <Building2 className="h-4 w-4 text-blue-600" />
                     <span className="font-medium">Uzmanlık:</span>
-                    <span>{getSupplierSpecialty()}</span>
+                    <span className="flex items-center space-x-2">
+                      {getSupplierSpecialty()}
+                      {getSupplierSpecialty() === 'Belirtilmemiş' && (
+                        <button className="bg-pink-200 text-pink-800 px-2 py-1 rounded text-xs hover:bg-pink-300">
+                          Belirtilmemiş
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Yetkili Kişi Bilgileri */}
+            {selectedContact && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>Yetkili Kişi Bilgileri</span>
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium">Adı Soyadı:</span>
+                    <span>{selectedContact.full_name}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium">Telefon:</span>
+                    <span>{selectedContact.mobile || 'Belirtilmemiş'}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium">Mail:</span>
+                    <span>{selectedContact.email || 'Belirtilmemiş'}</span>
                   </div>
                 </div>
               </div>
