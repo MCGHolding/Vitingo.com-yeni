@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, DollarSign, Eye, CheckCircle2, Calendar, Building, Mail, FileCheck } from 'lucide-react';
 import { useCurrency } from '../../hooks/useCurrency';
+import { useAuth } from '../../contexts/AuthContext';
 
 const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const { exchangeRates, formatCurrency: formatCurrencyHook } = useCurrency();
