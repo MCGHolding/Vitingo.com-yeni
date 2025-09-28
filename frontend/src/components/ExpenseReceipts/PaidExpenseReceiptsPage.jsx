@@ -180,7 +180,8 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...emailForm,
-          receipt_id: selectedReceipt.id
+          receipt_id: selectedReceipt.id,
+          sender_name: user?.fullName || 'Kullanıcı'
         })
       });
 
