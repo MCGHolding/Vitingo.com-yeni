@@ -250,6 +250,7 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
       amount: '',
       description: ''
     });
+    setIsUSABank(false);
   };
 
   const handleSendEmail = () => {
