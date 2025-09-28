@@ -57,6 +57,7 @@ const NewSupplierForm = ({ onClose }) => {
     account_holder_name: '',
     swift_code: '',
     country: '',
+    city: '',
     // USA Bank Information
     routing_number: '',
     us_account_number: '',
