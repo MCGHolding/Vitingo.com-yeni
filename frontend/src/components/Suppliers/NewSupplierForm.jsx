@@ -600,7 +600,10 @@ const NewSupplierForm = ({ onClose }) => {
                 <CitySelect
                   country={formData.country}
                   value={formData.city}
-                  onChange={(city) => handleInputChange('city', city)}
+                  onChange={(city) => {
+                    const cityName = city ? city.name : '';
+                    handleInputChange('city', cityName);
+                  }}
                   placeholder="Şehir seçiniz..."
                   disabled={!formData.country}
                 />
