@@ -3787,6 +3787,7 @@ class ExpenseReceiptEmailRequest(BaseModel):
     subject: str
     message: str
     receipt_id: str
+    sender_name: Optional[str] = None  # Name of the user sending the email
 
 @api_router.post("/send-expense-receipt-email")
 async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
