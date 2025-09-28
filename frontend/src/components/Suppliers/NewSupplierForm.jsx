@@ -1032,7 +1032,10 @@ const NewSupplierForm = ({ onClose }) => {
                     <CitySelect
                       country={contact.country}
                       value={contact.city}
-                      onChange={(city) => handleContactChange(contactIndex, 'city', city)}
+                      onChange={(city) => {
+                        const cityName = city ? city.name : '';
+                        handleContactChange(contactIndex, 'city', cityName);
+                      }}
                       placeholder="Şehir seçiniz..."
                       disabled={!contact.country}
                     />
