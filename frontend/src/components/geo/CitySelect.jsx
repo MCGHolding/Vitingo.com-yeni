@@ -265,10 +265,7 @@ export default function CitySelect({
                       w-full text-left px-3 py-2 text-sm hover:bg-blue-50 
                       ${selectedCity?.name === city.name ? 'bg-blue-100 text-blue-900' : 'text-gray-700'}
                     `}
-                    onClick={() => {
-                      console.log('🔍 City button clicked:', city);
-                      handleCitySelect(city);
-                    }}
+                    onClick={() => handleCitySelect(city)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
