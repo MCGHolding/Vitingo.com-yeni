@@ -79,6 +79,7 @@ const PhoneInput = ({
           value={countryCode}
           onValueChange={handleCountryCodeChange}
           placeholder="Ülke kodu"
+          className="phone-country-select"
         />
       </div>
       
