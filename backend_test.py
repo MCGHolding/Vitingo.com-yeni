@@ -9086,6 +9086,76 @@ def main():
         print("⚠️  Some tests failed. Please check the output above for details.")
         return False
 
+def test_geo_endpoints_for_cityselect():
+    """
+    Main test function for geo endpoints used by CitySelect component in NewSupplierForm.
+    This is the specific test requested for the bug where city selection is not working.
+    """
+    
+    print("🌍 TESTING GEO ENDPOINTS FOR CITYSELECT COMPONENT")
+    print("=" * 80)
+    print("Testing geo endpoints that are used by the CitySelect component in NewSupplierForm")
+    print("User reported: Turkey can be selected but clicking on Istanbul doesn't select it")
+    print("=" * 80)
+    
+    all_tests_passed = True
+    
+    # Test 1: Countries endpoint
+    print("\n🔍 TEST 1: GET /api/geo/countries endpoint")
+    countries_result = test_geo_countries_endpoint()
+    if not countries_result:
+        all_tests_passed = False
+    
+    # Test 2: Cities endpoint for Turkey
+    print("\n🔍 TEST 2: GET /api/geo/countries/TR/cities endpoint")
+    cities_result = test_geo_cities_endpoint()
+    if not cities_result:
+        all_tests_passed = False
+    
+    # Test 3: Invalid country handling
+    print("\n🔍 TEST 3: Invalid country error handling")
+    invalid_result = test_geo_cities_invalid_country()
+    if not invalid_result:
+        all_tests_passed = False
+    
+    # Final summary for geo endpoints
+    print("\n" + "=" * 80)
+    print("🎯 GEO ENDPOINTS TEST SUMMARY FOR CITYSELECT")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ ALL GEO ENDPOINT TESTS PASSED!")
+        print("✅ Countries endpoint returns proper data including Turkey (TR)")
+        print("✅ Cities endpoint returns Turkish cities including Istanbul")
+        print("✅ Search functionality works for 'Istanbul'")
+        print("✅ API responses have correct structure for CitySelect component")
+        print("✅ All required fields present: id, name, is_capital, admin1, population, lat, lng")
+        print("\n🎉 BACKEND GEO APIS ARE WORKING CORRECTLY!")
+        print("🔍 The issue with city selection in NewSupplierForm is likely in the frontend")
+        print("   CitySelect component's onClick handler or form state management.")
+    else:
+        print("❌ SOME GEO ENDPOINT TESTS FAILED!")
+        print("🔍 Backend geo API issues found that may be causing the city selection problem.")
+    
+    print("=" * 80)
+    
+    return all_tests_passed
+
 if __name__ == "__main__":
-    success = main()
-    sys.exit(0 if success else 1)
+    print("🚀 STARTING GEO ENDPOINTS TESTING FOR CITYSELECT COMPONENT")
+    print("=" * 80)
+    print(f"Backend URL: {BACKEND_URL}")
+    print("Testing specific geo endpoints used by CitySelect component in NewSupplierForm")
+    print("=" * 80)
+    
+    # Run the specific geo endpoints test
+    success = test_geo_endpoints_for_cityselect()
+    
+    if success:
+        print("\n🎉 GEO ENDPOINTS TESTING COMPLETED SUCCESSFULLY!")
+        print("Backend APIs are working correctly for city selection functionality.")
+        sys.exit(0)
+    else:
+        print("\n❌ GEO ENDPOINTS TESTING FAILED!")
+        print("Backend API issues found that need to be addressed.")
+        sys.exit(1)
