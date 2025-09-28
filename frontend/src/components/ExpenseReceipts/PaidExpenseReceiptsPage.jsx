@@ -202,8 +202,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         recipientEmail = supplier.email || '';
         recipientName = supplier.authorized_person_name || supplier.company_short_name || supplier.name || '';
         recipientCompany = supplier.company_title || supplier.name || '';
-        console.log('Using supplier fallback info');
-        console.log('Final values:', { recipientEmail, recipientName, recipientCompany });
+        // console.log('Using supplier fallback info');
       }
     } else {
       console.log('No supplier found for ID:', receipt.supplier_id);
