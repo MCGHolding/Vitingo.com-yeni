@@ -3968,7 +3968,7 @@ async def get_expense_receipt_for_approval(approval_key: str):
                 first_contact = contacts[0]
                 supplier_info.update({
                     "supplier_contact_name": first_contact.get("full_name", ""),
-                    "supplier_contact_specialty": ", ".join(first_contact.get("tags", [])),  # Using tags as specialty
+                    "supplier_contact_specialty": first_contact.get("position", ""),  # Using position as title/role
                     "supplier_contact_email": first_contact.get("email", "")
                 })
             else:
