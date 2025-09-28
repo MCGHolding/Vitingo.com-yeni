@@ -1130,9 +1130,7 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Geo Countries API Endpoint"
-    - "Geo Cities API Endpoint"
-    - "NewSupplierForm Geo Integration"
+    - "NewExpenseReceiptForm Supplier Contact Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
