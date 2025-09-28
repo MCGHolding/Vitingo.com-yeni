@@ -3686,11 +3686,39 @@ async def get_expense_receipt_for_approval(approval_key: str):
                 "status": receipt.get("status")
             }
         
+        # Get supplier details for pre-filling form
+        supplier = await db.suppliers.find_one({"id": receipt.get("supplier_id")})
+        
         # Parse date string back to date object for response
         if isinstance(receipt.get('date'), str):
             receipt['date'] = datetime.fromisoformat(receipt['date']).date()
         
-        return ExpenseReceipt(**receipt)
+        # Add supplier contact info for form pre-filling
+        supplier_info = {}
+        if supplier:
+            supplier_info = {
+                "supplier_company_name": supplier.get("company_short_name", ""),
+                "supplier_contact_name": "",
+                "supplier_contact_specialty": "",
+                "supplier_contact_email": ""
+            }
+            
+            # Get first contact info if available
+            contacts = supplier.get("contacts", [])
+            if contacts:
+                first_contact = contacts[0]
+                supplier_info.update({
+                    "supplier_contact_name": first_contact.get("name", ""),
+                    "supplier_contact_specialty": first_contact.get("tags", ""),  # Using tags as specialty
+                    "supplier_contact_email": first_contact.get("email", "")
+                })
+        
+        # Create response with receipt and supplier info
+        receipt_response = ExpenseReceipt(**receipt)
+        response_dict = receipt_response.dict()
+        response_dict.update(supplier_info)
+        
+        return response_dict
         
     except HTTPException:
         raise
