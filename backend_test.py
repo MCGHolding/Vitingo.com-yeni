@@ -8385,9 +8385,9 @@ def test_expense_receipt_payment_endpoint():
         print(f"❌ FAIL: Error updating receipt status: {str(e)}")
         return False
     
-    # Step 3: Test payment endpoint with approved receipt
+    # Step 4: Test payment endpoint with approved receipt
     payment_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}/payment"
-    print(f"\n--- Step 3: Testing payment endpoint with approved receipt ---")
+    print(f"\n--- Step 4: Testing payment endpoint with approved receipt ---")
     print(f"Payment endpoint: {payment_endpoint}")
     
     try:
