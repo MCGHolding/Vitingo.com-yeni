@@ -971,7 +971,8 @@ frontend:
         comment: "Created centralized IBAN validation system using useIban hook and applied it to both NewSupplierForm and NewExpenseReceiptForm. Features: automatic IBAN formatting (4-character groups with spaces), mod 97 checksum validation, comprehensive validation rules (15-34 characters, format checks), Turkish error messages with red styling, consistent placeholder text across forms. Both forms now use the same robust validation and formatting system for IBAN fields."
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "IBAN Validation System - useIban Hook Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
