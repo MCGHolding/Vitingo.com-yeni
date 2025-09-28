@@ -16,6 +16,9 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [suppliers, setSuppliers] = useState({});
+  const [showBankInfoModal, setShowBankInfoModal] = useState(false);
+  const [selectedBankInfo, setSelectedBankInfo] = useState(null);
   
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
