@@ -561,20 +561,138 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
         </div>
       )}
 
-      {/* Success Modal */}
-      {showSuccessModal && (
+      {/* Payment Confirmation Modal */}
+      {showPaymentModal && selectedReceipt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <div className="text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Başarılı!</h3>
-              <p className="text-gray-600 mb-6">{successMessage}</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Ödeme Onayı</h3>
+            
+            {/* Receipt Summary */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Makbuz No:</span>
+                  <span className="font-medium">{selectedReceipt.receipt_number}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tedarikçi:</span>
+                  <span className="font-medium">{selectedReceipt.supplier_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tutar:</span>
+                  <span className="font-medium text-green-600">
+                    {formatCurrency(selectedReceipt.amount, selectedReceipt.currency)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-gray-700 mb-6">
+              <strong>Ödemeyi tamamla</strong> butonuna basarak bu gider makbuzunu 
+              ödenmiş olarak işaretleyeceksin, onaylıyor musun?
+            </p>
+            
+            <div className="flex space-x-3">
               <button
-                onClick={() => setShowSuccessModal(false)}
-                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                onClick={() => {
+                  setShowPaymentModal(false);
+                  setSelectedReceipt(null);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
-                Tamam
+                İptal
               </button>
+              <button
+                onClick={confirmPayment}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium"
+              >
+                ÖDEMEYİ TAMAMLA
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Standard Success Format */}
+      {showStandardSuccess && successData && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-95 z-50 overflow-y-auto">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-8">
+              {/* Success Icon */}
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-10 h-10 text-green-600" />
+                </div>
+                
+                {/* Success Title */}
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">{successData.title}</h1>
+                <p className="text-gray-600">{successData.subtitle}</p>
+              </div>
+
+              {/* Data Summary Section */}
+              <div className="bg-green-50 rounded-lg p-6 mb-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Makbuz No:</span>
+                    <span className="font-medium text-right">{successData.receiptNumber}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Tedarikçi:</span>
+                    <span className="font-medium text-right">{successData.supplier}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Tutar:</span>
+                    <span className="font-medium text-right">{successData.amount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-700">Durum:</span>
+                    <span className="font-medium text-green-600 text-right">{successData.status}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informational Banner */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <p className="text-blue-800 text-sm">
+                    Makbuz başarıyla ödenmiş olarak işaretlendi. Artık "Ödenmiş Makbuzlar" bölümünde görüntüleyebilirsiniz.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={() => onNewExpenseReceipt()}
+                  className="flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <DollarSign className="w-5 h-5 mr-2" />
+                  Yeni Makbuz Oluştur
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setShowStandardSuccess(false);
+                    // TODO: Navigate to Paid Receipts page
+                  }}
+                  className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Eye className="w-5 h-5 mr-2" />
+                  Ödenmiş Makbuzları Görüntüle
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setShowStandardSuccess(false);
+                    onBackToDashboard();
+                  }}
+                  className="flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  Dashboard'a Dön
+                </button>
+              </div>
             </div>
           </div>
         </div>
