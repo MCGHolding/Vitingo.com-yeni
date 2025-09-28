@@ -179,12 +179,34 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   // Handle send email
   const handleSendEmail = (receipt) => {
     setSelectedReceipt(receipt);
+    
+    // Get supplier info from database
+    const supplier = suppliers[receipt.supplier_id];
+    let recipientEmail = '';
+    let recipientName = '';
+    let recipientCompany = '';
+    
+    if (supplier) {
+      // First, try to get contact info if available
+      if (supplier.contacts && supplier.contacts.length > 0) {
+        const primaryContact = supplier.contacts[0]; // Get first contact
+        recipientEmail = primaryContact.email || '';
+        recipientName = primaryContact.name || '';
+        recipientCompany = supplier.name || '';
+      } else {
+        // Fallback to supplier info
+        recipientEmail = supplier.email || '';
+        recipientName = supplier.authorized_person_name || supplier.name || '';
+        recipientCompany = supplier.name || '';
+      }
+    }
+    
     setEmailForm({
-      to: '',
+      to: recipientEmail,
       subject: `Gider Makbuzu: ${receipt.receipt_number}`,
       message: '', // Mesaj artık template'de otomatik oluşturuluyor
-      recipient_name: '',
-      recipient_company: ''
+      recipient_name: recipientName,
+      recipient_company: recipientCompany
     });
     setShowEmailModal(true);
   };
