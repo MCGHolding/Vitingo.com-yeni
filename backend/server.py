@@ -4149,13 +4149,10 @@ async def get_countries(query: str = ""):
 async def get_cities(country_code: str, query: str = ""):
     """Get cities for a specific country"""
     try:
-        filter_query = {"country": country_code.upper()}
+        filter_query = {"country_iso2": country_code.upper()}
         if query:
             query_regex = {"$regex": query, "$options": "i"}
-            filter_query["$or"] = [
-                {"name": query_regex},
-                {"tr_name": query_regex}
-            ]
+            filter_query["name"] = query_regex
         
         cities = await db.cities.find(filter_query).sort("name", 1).to_list(length=None)
         
