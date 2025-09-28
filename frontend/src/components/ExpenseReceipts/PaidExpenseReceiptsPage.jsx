@@ -330,6 +330,17 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
             </div>
             
             <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">Tüm Durumlar</option>
+              <option value="pending">Onay Bekleyen</option>
+              <option value="approved">Onaylandı</option>
+              <option value="paid">Ödendi</option>
+            </select>
+
+            <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
