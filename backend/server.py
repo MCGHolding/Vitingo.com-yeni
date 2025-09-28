@@ -4092,11 +4092,13 @@ async def get_countries(query: str = ""):
         # Use database instead of hardcoded data
         filter_query = {}
         if query:
-            query_regex = {"$regex": query, "$options": "i"}
+            # Support fuzzy search with accent tolerance
+            query_regex = query.replace("i", "[iıİI]").replace("u", "[uüUÜ]").replace("o", "[oöOÖ]").replace("c", "[cçCÇ]").replace("s", "[sşSŞ]").replace("g", "[gğGĞ]")
             filter_query = {
                 "$or": [
-                    {"name": query_regex},
-                    {"iso2": query_regex}
+                    {"name": {"$regex": query_regex, "$options": "i"}},
+                    {"iso2": {"$regex": query, "$options": "i"}},
+                    {"iso3": {"$regex": query, "$options": "i"}}
                 ]
             }
         
