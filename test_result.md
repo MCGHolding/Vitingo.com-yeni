@@ -1130,6 +1130,7 @@ agent_communication:
 
 test_plan:
   current_focus:
+    - "NewSupplierForm International Phone Input Component"
     - "NewExpenseReceiptForm Supplier Contact Integration"
   stuck_tasks: []
   test_all: false
