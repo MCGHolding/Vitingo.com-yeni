@@ -14,6 +14,10 @@ print(f"DEBUG: SENDGRID_API_KEY exists: {'SENDGRID_API_KEY' in os.environ}")
 print(f"DEBUG: SENDGRID_API_KEY value: {os.environ.get('SENDGRID_API_KEY', 'NOT_FOUND')[:20]}...")
 
 from email_service import email_service
+try:
+    from sendgrid.helpers.mail import Mail
+except ImportError:
+    Mail = None
 import csv
 import io
 from pathlib import Path
