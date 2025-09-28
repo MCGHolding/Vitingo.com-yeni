@@ -234,7 +234,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
             <h1 className="text-3xl font-bold text-gray-900">
               Ödenmiş Makbuzlar
             </h1>
-            <p className="text-gray-600 mt-2">Tamamlanmış ve ödenmiş gider makbuzları</p>
+            <p className="text-gray-600 mt-2">ödenmiş gider makbuzları</p>
           </div>
           <div className="flex space-x-3">
             <button
