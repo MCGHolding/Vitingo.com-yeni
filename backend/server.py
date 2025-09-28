@@ -2717,6 +2717,7 @@ class Supplier(BaseModel):
     services: List[str] = []  # Array of service tags (etiket sistemi)
     supplier_type_id: str  # Reference to SupplierCategory
     specialty_id: str  # Reference to SupplierSpecialty
+    specialty: Optional[str] = "Belirtilmemiş"  # Populated specialty name from SupplierSpecialty
     # Bank/Payment Information
     iban: Optional[str] = ""
     bank_name: Optional[str] = ""
