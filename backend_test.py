@@ -8446,9 +8446,9 @@ def test_expense_receipt_payment_endpoint():
         print(f"❌ FAIL: Error testing payment endpoint: {str(e)}")
         return False
     
-    # Step 4: Verify receipt status changed to "paid" in database
+    # Step 5: Verify receipt status changed to "paid" in database
     get_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
-    print(f"\n--- Step 4: Verifying receipt status changed to 'paid' ---")
+    print(f"\n--- Step 5: Verifying receipt status changed to 'paid' ---")
     
     try:
         response = requests.get(get_endpoint, timeout=30)
