@@ -9412,20 +9412,20 @@ def test_expense_receipt_approval_system():
         return False
 
 if __name__ == "__main__":
-    print("🚀 STARTING GEO ENDPOINTS TESTING FOR CITYSELECT COMPONENT")
+    print("🚀 STARTING EXPENSE RECEIPT APPROVAL SYSTEM TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing specific geo endpoints used by CitySelect component in NewSupplierForm")
+    print("Testing expense receipt approval system to verify position field usage")
     print("=" * 80)
     
-    # Run the specific geo endpoints test
-    success = test_geo_endpoints_for_cityselect()
+    # Run the specific expense receipt approval test
+    success = test_expense_receipt_approval_system()
     
     if success:
-        print("\n🎉 GEO ENDPOINTS TESTING COMPLETED SUCCESSFULLY!")
-        print("Backend APIs are working correctly for city selection functionality.")
+        print("\n🎉 EXPENSE RECEIPT APPROVAL SYSTEM TESTING COMPLETED SUCCESSFULLY!")
+        print("Backend API correctly uses contact's position instead of tags for supplier_contact_specialty.")
         sys.exit(0)
     else:
-        print("\n❌ GEO ENDPOINTS TESTING FAILED!")
+        print("\n❌ EXPENSE RECEIPT APPROVAL SYSTEM TESTING FAILED!")
         print("Backend API issues found that need to be addressed.")
         sys.exit(1)
