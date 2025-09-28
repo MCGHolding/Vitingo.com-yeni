@@ -328,7 +328,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              <CheckCircle className="w-8 h-8 mr-3 text-green-600" />
+              <FileCheck className="w-8 h-8 mr-3 text-green-600" />
               Onaylanmış Makbuzlar
             </h1>
             <p className="text-gray-600 mt-2">Tedarikçi tarafından onaylanmış, ödeme bekleyen makbuzlar</p>
