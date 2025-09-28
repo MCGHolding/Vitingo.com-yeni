@@ -9001,25 +9001,27 @@ def test_expense_receipt_payment_endpoint():
     return True
 
 def main():
-    """Main test runner for expense receipt creation and listing issue diagnosis"""
-    print("🚀 STARTING COMPREHENSIVE BACKEND API TESTING")
+    """Main test runner for geo endpoints testing for NewSupplierForm"""
+    print("🚀 STARTING GEO ENDPOINTS BACKEND API TESTING")
     print("=" * 80)
+    print("Testing geo endpoints for NewSupplierForm country and city selection")
+    print(f"Backend URL: {BACKEND_URL}")
+    print(f"Test başlangıç zamanı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    print("\n🎯 TESTING GEO ENDPOINTS:")
+    print("1. GET /api/geo/countries - Get all countries")
+    print("2. GET /api/geo/countries/{country_code}/cities - Get cities for country")
+    print("3. Search functionality testing")
+    print("4. Turkish cities verification (Istanbul, Ankara, Izmir, Bursa)")
+    print("5. Error handling for invalid country codes")
     
     # Track test results
     test_results = []
     
-    # Run existing tests
-    test_results.append(("Expense Receipt Creation and Listing Issue", test_expense_receipt_creation_and_listing_issue()))
-    
-    # NEW EXPENSE RECEIPT ENDPOINTS TESTS
-    test_results.append(("Expense Receipt Delete Endpoint", test_expense_receipt_delete_endpoint()))
-    test_results.append(("Expense Receipt Email Endpoint", test_expense_receipt_email_endpoint()))
-    
-    # NEW EXPENSE RECEIPT APPROVAL WORKFLOW TESTS
-    test_results.append(("Expense Receipt Approval with Supplier Pre-fill", test_expense_receipt_approval_supplier_prefill()))
-    
-    # NEW EXPENSE RECEIPT PAYMENT ENDPOINT TEST
-    test_results.append(("Expense Receipt Payment Endpoint", test_expense_receipt_payment_endpoint()))
+    # GEO ENDPOINTS TESTS
+    test_results.append(("Geo Countries Endpoint", test_geo_countries_endpoint()))
+    test_results.append(("Geo Cities Endpoint", test_geo_cities_endpoint()))
+    test_results.append(("Geo Cities Invalid Country", test_geo_cities_invalid_country()))
     
     # Print final summary
     print("\n" + "=" * 80)
