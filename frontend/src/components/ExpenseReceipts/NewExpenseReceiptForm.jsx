@@ -164,6 +164,13 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     setSupplierData(prev => ({ ...prev, [field]: value }));
   };
 
+  // IBAN handler - hook'tan gelen fonksiyonu kullan
+  const handleIbanInput = (value) => {
+    handleIbanChange(value, (formattedValue) => {
+      handleSupplierDataChange('iban', formattedValue);
+    });
+  };
+
   const getSupplierName = () => {
     const supplier = suppliers.find(s => s.id === formData.supplier_id);
     return supplier ? supplier.company_short_name : '';
