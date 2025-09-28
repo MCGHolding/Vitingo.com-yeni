@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, DollarSign, Eye, Edit2, MoreHorizontal, CheckCircle2, Calendar, Building, Trash2, Mail } from 'lucide-react';
+import { Search, DollarSign, Eye, Edit2, MoreHorizontal, CheckCircle2, Calendar, Building, Trash2, Mail, FileCheck } from 'lucide-react';
 import { useCurrency } from '../../hooks/useCurrency';
 
 const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
