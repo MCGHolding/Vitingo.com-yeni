@@ -1013,7 +1013,8 @@ const NewSupplierForm = ({ onClose }) => {
                     <CountrySelect
                       value={contact.country}
                       onChange={(country) => {
-                        handleContactChange(contactIndex, 'country', country);
+                        const countryCode = country ? country.iso2 : '';
+                        handleContactChange(contactIndex, 'country', countryCode);
                         // Reset city when country changes
                         if (contact.city) {
                           handleContactChange(contactIndex, 'city', '');
