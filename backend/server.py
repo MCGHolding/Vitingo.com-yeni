@@ -4145,8 +4145,8 @@ async def get_countries(query: str = ""):
         logger.error(f"Error fetching countries: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/geo/cities/{country_code}")
-async def get_cities(country_code: str, query: str = ""):
+@api_router.get("/geo/countries/{country_code}/cities")
+async def get_cities(country_code: str, query: str = "", limit: int = 50, page: int = 1):
     """Get cities for a specific country"""
     try:
         filter_query = {"country_iso2": country_code.upper()}
