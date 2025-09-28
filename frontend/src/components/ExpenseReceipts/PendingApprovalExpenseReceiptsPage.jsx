@@ -261,6 +261,17 @@ const PendingApprovalExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseRec
             </div>
 
             <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            >
+              <option value="all">Tüm Durumlar</option>
+              <option value="pending">Onay Bekleyen</option>
+              <option value="approved">Onaylandı</option>
+              <option value="paid">Ödendi</option>
+            </select>
+
+            <select
               value={currencyFilter}
               onChange={(e) => setCurrencyFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
