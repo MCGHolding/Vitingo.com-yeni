@@ -127,13 +127,10 @@ export default function CitySelect({
 
   // Seçili şehri güncelle
   useEffect(() => {
-    console.log('🔍 CitySelect - useEffect for selectedCity called with value:', value, 'cities:', cities.length);
     if (value && cities.length > 0) {
       const city = cities.find(c => c.name === value);
-      console.log('🔍 CitySelect - Found city for value:', city);
       setSelectedCity(city);
     } else if (!value) {
-      console.log('🔍 CitySelect - Clearing selectedCity because no value');
       setSelectedCity(null);
     }
   }, [value, cities]);
