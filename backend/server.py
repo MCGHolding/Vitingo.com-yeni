@@ -2770,6 +2770,9 @@ class SupplierContact(BaseModel):
     position: Optional[str] = ""  # Görevi
     tags: List[str] = []  # Array of tags (etiket sistemi)
     notes: Optional[str] = ""  # Additional notes
+    address: Optional[str] = ""  # Contact address
+    country: Optional[str] = ""  # Contact country  
+    city: Optional[str] = ""  # Contact city
     unique_url_key: str = Field(default_factory=lambda: str(uuid.uuid4()).replace('-', ''))  # For unique page URL
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
