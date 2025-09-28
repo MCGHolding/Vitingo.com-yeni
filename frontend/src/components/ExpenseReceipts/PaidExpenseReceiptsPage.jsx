@@ -205,7 +205,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         // console.log('Using supplier fallback info');
       }
     } else {
-      console.log('No supplier found for ID:', receipt.supplier_id);
+      // console.log('No supplier found for ID:', receipt.supplier_id);
     }
     
     setEmailForm({
