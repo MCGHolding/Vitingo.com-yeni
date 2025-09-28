@@ -3805,10 +3805,18 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
         if not sendgrid_api_key:
             return {"success": False, "message": "E-posta servisi yapılandırılmamış"}
         
-        # Create simple email message - like format 1 in user's screenshots
-        plain_content = f"""
-{request.message}
-        """
+        # Create standard email content with proper Vitingo format
+        recipient_line = f"Sayın {request.recipient_name}" if request.recipient_name else "Sayın Yetkili"
+        company_line = f"{request.recipient_company}" if request.recipient_company else ""
+        
+        plain_content = f"""{recipient_line}
+{company_line}
+
+İmzalamış olduğunuz gider makbuzunun imzalı kopyası ekte sunulmuştur.
+
+İyi çalışmalar dileriz
+
+Vitingo CRM Sistemi"""
         
         # Create HTML email content matching Vitingo CRM format
         html_content = f"""
@@ -3817,28 +3825,34 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
 <head>
     <meta charset="UTF-8">
     <style>
-        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }}
-        .container {{ background-color: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-        .header {{ background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 30px; }}
-        .content {{ font-size: 14px; line-height: 1.6; color: #333; }}
-        .footer {{ margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666; text-align: center; }}
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }}
+        .email-container {{ background-color: white; max-width: 600px; margin: 20px auto; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+        .content {{ font-size: 16px; line-height: 1.8; color: #333; font-family: Arial, sans-serif; }}
+        .recipient {{ font-weight: bold; margin-bottom: 5px; }}
+        .company {{ color: #666; margin-bottom: 20px; }}
+        .message {{ margin: 20px 0; }}
+        .signature {{ margin-top: 30px; color: #333; }}
+        .system {{ font-weight: bold; color: #4f46e5; }}
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>Vitingo CRM</h2>
-        </div>
+    <div class="email-container">
         <div class="content">
-            {request.message.replace(chr(10), '<br/>')}
-        </div>
-        <div class="footer">
-            Bu e-posta Vitingo CRM sistemi tarafından otomatik olarak gönderilmiştir.
+            <div class="recipient">{recipient_line}</div>
+            {f'<div class="company">{company_line}</div>' if company_line else ''}
+            
+            <div class="message">
+                İmzalamış olduğunuz gider makbuzunun imzalı kopyası ekte sunulmuştur.
+            </div>
+            
+            <div class="signature">
+                İyi çalışmalar dileriz<br><br>
+                <span class="system">Vitingo CRM Sistemi</span>
+            </div>
         </div>
     </div>
 </body>
-</html>
-        """
+</html>"""
         
         # Generate PDF for the receipt
         pdf_data = generate_expense_receipt_pdf(receipt)
