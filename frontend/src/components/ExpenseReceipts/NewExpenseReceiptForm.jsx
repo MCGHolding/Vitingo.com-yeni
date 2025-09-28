@@ -38,8 +38,14 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     phone: '',
     iban: '',
     bank_name: '',
-    country: ''
+    country: '',
+    // USA bank fields
+    routing_number: '',
+    us_account_number: '',
+    bank_address: ''
   });
+
+  const [isUSABank, setIsUSABank] = useState(false);
   
   const [suppliers, setSuppliers] = useState([]);
   const [banks, setBanks] = useState([]);
