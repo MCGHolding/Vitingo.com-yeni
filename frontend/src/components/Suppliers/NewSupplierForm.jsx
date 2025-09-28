@@ -166,6 +166,39 @@ const NewSupplierForm = ({ onClose }) => {
     setContacts(updatedContacts);
   };
 
+  // IBAN validasyonu
+  const validateIban = (iban) => {
+    const cleanIban = iban.replace(/\s/g, '').toUpperCase();
+    
+    if (!cleanIban) {
+      return '';
+    }
+    
+    if (cleanIban.length !== 26) {
+      return `IBAN 26 karakter olmalıdır (girilen: ${cleanIban.length} karakter)`;
+    }
+    
+    // İlk iki karakter harf olmalı (ülke kodu)
+    if (!/^[A-Z]{2}/.test(cleanIban)) {
+      return 'IBAN ülke kodu ile başlamalıdır (örn: TR)';
+    }
+    
+    // 3. ve 4. karakter rakam olmalı (kontrol numarası)
+    if (!/^[A-Z]{2}[0-9]{2}/.test(cleanIban)) {
+      return 'IBAN formatı hatalı (3. ve 4. karakter rakam olmalı)';
+    }
+    
+    return '';
+  };
+
+  const handleIbanChange = (value) => {
+    const formattedValue = value.toUpperCase();
+    handleInputChange('iban', formattedValue);
+    
+    const error = validateIban(formattedValue);
+    setIbanError(error);
+  };
+
   const handleAddContactTag = (contactIndex) => {
     if (currentContactTag.trim()) {
       const updatedContacts = [...contacts];
