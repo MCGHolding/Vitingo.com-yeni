@@ -3,6 +3,7 @@ import { Search, DollarSign, Eye, Edit2, MoreHorizontal, CheckCircle2, Calendar,
 import { useCurrency } from '../../hooks/useCurrency';
 
 const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
+  const { exchangeRates, formatCurrency: formatCurrencyHook } = useCurrency();
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
