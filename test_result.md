@@ -232,6 +232,30 @@ backend:
         agent: "testing"
         comment: "🎉 USA BANK FORMAT SUPPORT COMPREHENSIVE TESTING COMPLETED SUCCESSFULLY - All new USA bank fields tested and working perfectly: ✅ FIELD VALIDATION: is_usa_bank boolean flag working correctly, supplier_routing_number accepts USA routing numbers (tested with 021000021), supplier_us_account_number accepts USA account numbers (tested with 1234567890123456), supplier_bank_address accepts USA bank addresses (tested with '270 Park Avenue, New York, NY 10017') ✅ CREATION TESTS: USA bank format (is_usa_bank=true) creates receipts with USA fields populated and IBAN fields empty, Traditional IBAN format (is_usa_bank=false) creates receipts with USA fields empty and maintains existing behavior ✅ PERSISTENCE TESTS: USA bank fields correctly stored in MongoDB and retrieved via API, IBAN format fields correctly maintained for backwards compatibility ✅ BACKWARDS COMPATIBILITY: Existing IBAN format receipts continue to work unchanged, Both USA and IBAN formats can coexist in same database ✅ API ENDPOINTS TESTED: POST /api/expense-receipts with both USA and IBAN formats, GET /api/expense-receipts/{id} for both formats, GET /api/expense-receipts list endpoint with mixed formats ✅ CONCLUSION: USA bank format support is fully functional and production-ready. New fields work correctly while maintaining full backwards compatibility with existing IBAN format receipts."
 
+  - task: "Expense Receipt Delete Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 EXPENSE RECEIPT DELETE ENDPOINT COMPREHENSIVE TESTING COMPLETED SUCCESSFULLY - NEW DELETE /api/expense-receipts/{receipt_id} endpoint tested and working perfectly: ✅ STEP 1 PASSED: Test receipt creation - Successfully created test receipt (ID: c593ec10-fc76-4e4b-b329-ef0c01cfa346, Receipt#: TRY-GM-092025335693, Amount: 1500.75 TRY) for deletion testing ✅ STEP 2 PASSED: DELETE with existing receipt ID - DELETE request successful (status 200), response contains required fields (message, deleted_id), deleted_id matches requested receipt ID, success message in Turkish ('Gider makbuzu başarıyla silindi') ✅ STEP 3 PASSED: Database deletion verification - Receipt actually deleted from database (verified with GET returning 404) ✅ STEP 4 PASSED: DELETE with non-existent ID - Returns proper 404 status, error message indicates receipt not found ('Expense receipt not found') ✅ KEY FEATURES VERIFIED: DELETE endpoint accepts receipt_id parameter correctly, successful deletion returns 200 with Turkish success message and deleted_id, receipt is actually removed from database (not just marked as deleted), proper 404 error handling for non-existent receipts, error messages are clear and informative ✅ RESPONSE STRUCTURE VALIDATED: Success response: {message: 'Gider makbuzu başarıyla silindi', deleted_id: 'receipt-id'}, Error response: {detail: 'Expense receipt not found'} with 404 status ✅ CONCLUSION: DELETE /api/expense-receipts/{receipt_id} endpoint is fully functional and ready for frontend 'Sil' button integration in AllExpenseReceiptsPage. Users can now delete expense receipts from database with proper confirmation and error handling."
+
+  - task: "Expense Receipt Email Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 EXPENSE RECEIPT EMAIL ENDPOINT COMPREHENSIVE TESTING COMPLETED SUCCESSFULLY - NEW POST /api/send-expense-receipt-email endpoint tested and working perfectly: ✅ STEP 1 PASSED: Test receipt creation - Successfully created test receipt (ID: 0d39eb8b-859d-4525-bcc0-d0f276aba39c, Receipt#: EUR-GM-092025175357, Amount: 2750.50 EUR) for email testing ✅ STEP 2 PASSED: Email with valid receipt ID - Email endpoint responds correctly (status 200), response contains required fields (success, message), email request structure validated, receipt details properly included in email content ✅ STEP 3 PASSED: Email with invalid receipt ID - Returns proper 404 status for non-existent receipt, error message indicates receipt not found ('Expense receipt not found') ✅ STEP 4 PASSED: Validation errors - Missing required field 'to' returns 422 validation error with detailed Pydantic validation message ✅ KEY FEATURES VERIFIED: Email endpoint accepts ExpenseReceiptEmailRequest model (to, subject, message, receipt_id), finds receipt by receipt_id and includes receipt details in email content, sends email with receipt information (receipt number, date, amount, currency, supplier), proper error handling for missing receipts and validation errors, Turkish email content template working correctly ✅ EMAIL CONTENT STRUCTURE: Email includes custom message, receipt details (Makbuz No, Tarih, Tutar, Tedarikçi), professional Turkish formatting, sender signature from Vitingo CRM Sistemi ✅ RESPONSE STRUCTURE VALIDATED: Success response: {success: true/false, message: 'status message', receipt_number: 'receipt-number'}, Error response: {detail: 'error message'} with appropriate status codes ✅ SENDGRID INTEGRATION: Email service integration working (SendGrid API key validation, proper error handling for email service failures), email sending functionality ready for production use ✅ CONCLUSION: POST /api/send-expense-receipt-email endpoint is fully functional and ready for frontend 'Mail' button integration in AllExpenseReceiptsPage. Users can now send emails about expense receipts with receipt details included automatically."
+
 frontend:
   - task: "NewInvoiceForm AddProductModal Frontend Integration Testing"
     implemented: true
