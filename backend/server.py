@@ -3506,6 +3506,88 @@ async def update_expense_receipt(receipt_id: str, receipt_data: ExpenseReceiptUp
         logger.error(f"Error updating expense receipt: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.delete("/expense-receipts/{receipt_id}")
+async def delete_expense_receipt(receipt_id: str):
+    """Delete an expense receipt"""
+    try:
+        result = await db.expense_receipts.delete_one({"id": receipt_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Expense receipt not found")
+        
+        return {"message": "Gider makbuzu başarıyla silindi", "deleted_id": receipt_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting expense receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== EXPENSE RECEIPT EMAIL ENDPOINTS =====================
+
+class ExpenseReceiptEmailRequest(BaseModel):
+    to: str
+    subject: str
+    message: str
+    receipt_id: str
+
+@api_router.post("/send-expense-receipt-email")
+async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
+    """Send email about expense receipt via SendGrid"""
+    try:
+        # Get receipt details for email context
+        receipt = await db.expense_receipts.find_one({"id": request.receipt_id})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Expense receipt not found")
+        
+        # Get SendGrid settings from environment
+        sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+        if not sendgrid_api_key:
+            return {"success": False, "message": "E-posta servisi yapılandırılmamış"}
+        
+        # Create email message with receipt context
+        email_content = f"""
+Sayın Yetkili,
+
+{request.message}
+
+Makbuz Detayları:
+- Makbuz No: {receipt.get('receipt_number', 'N/A')}
+- Tarih: {receipt.get('date', 'N/A')}
+- Tutar: {receipt.get('amount', 'N/A')} {receipt.get('currency', 'N/A')}
+- Tedarikçi: {receipt.get('supplier_name', 'N/A')}
+
+İyi çalışmalar,
+Vitingo CRM Sistemi
+"""
+        
+        # Send email using SendGrid
+        message = Mail(
+            from_email='noreply@vitingo.com',
+            to_emails=request.to,
+            subject=request.subject,
+            plain_text_content=email_content
+        )
+        
+        try:
+            from sendgrid import SendGridAPIClient
+            sg = SendGridAPIClient(api_key=sendgrid_api_key)
+            response = sg.send(message)
+            
+            return {
+                "success": True, 
+                "message": "E-posta başarıyla gönderildi",
+                "receipt_number": receipt.get('receipt_number')
+            }
+        except Exception as e:
+            logger.error(f"SendGrid error: {str(e)}")
+            return {"success": False, "message": f"E-posta gönderilemedi: {str(e)}"}
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending expense receipt email: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== CONTACT EMAIL ENDPOINTS =====================
 
 class ContactEmailRequest(BaseModel):
