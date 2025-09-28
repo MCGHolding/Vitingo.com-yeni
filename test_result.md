@@ -328,15 +328,18 @@ frontend:
 
   - task: "AllExpenseReceiptsPage Implementation"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/ExpenseReceipts/AllExpenseReceiptsPage.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "✅ ALLEXPENSERECEIPTSPAGE IMPLEMENTATION COMPLETED - Comprehensive expense receipts list page with: 1) Summary cards showing total receipts, pending, approved, paid counts ✅ 2) Search functionality (receipt number, supplier name, description) ✅ 3) Status filter dropdown (all, pending, approved, paid) ✅ 4) Professional table layout with receipt number, date, supplier, amount, description, status badges ✅ 5) Action buttons (View, Edit, More options) ✅ 6) Currency formatting with symbols (USD $, EUR €, GBP £, TRY ₺, AED د.إ) ✅ 7) Status badges with icons (Clock for pending, CheckCircle for approved, DollarSign for paid) ✅ 8) Loading states, error handling, empty states ✅ 9) Responsive design with proper styling ✅ 10) Backend integration using REACT_APP_BACKEND_URL ✅"
+      - working: false
+        agent: "testing"
+        comment: "❌ FRONTEND ISSUE CONFIRMED - User reported expense receipts not appearing in AllExpenseReceiptsPage despite successful creation. Backend testing confirms all APIs working perfectly (POST /api/expense-receipts creates receipts, GET /api/expense-receipts returns them correctly). Issue is in frontend: 1) AllExpenseReceiptsPage not calling correct API endpoint 2) Environment variable REACT_APP_BACKEND_URL misconfiguration 3) Frontend state management/rendering issues 4) Data fetching or display logic problems. Backend has 9 expense receipts available but frontend not displaying them. URGENT: Debug frontend API calls, check network tab, verify environment variables, and test data rendering logic in AllExpenseReceiptsPage component."
 
   - task: "PendingApprovalExpenseReceiptsPage Implementation" 
     implemented: true
