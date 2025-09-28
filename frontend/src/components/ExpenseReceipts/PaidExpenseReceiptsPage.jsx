@@ -271,7 +271,8 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+              <FileCheck className="w-8 h-8 mr-3 text-green-600" />
               Ödenmiş Makbuzlar
             </h1>
             <p className="text-gray-600 mt-2">ödenmiş gider makbuzları</p>
