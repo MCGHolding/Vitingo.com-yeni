@@ -8488,7 +8488,7 @@ def test_expense_receipt_payment_endpoint():
         pending_receipt_data = {
             "date": "2025-01-16",
             "currency": "EUR",
-            "supplier_id": "test-supplier-pending-456",
+            "supplier_id": supplier_id,
             "amount": 1200.00,
             "description": "Test pending receipt for error testing"
         }
