@@ -77,6 +77,7 @@ const NewSupplierForm = ({ onClose }) => {
   const [currentService, setCurrentService] = useState('');
   const [currentContactTag, setCurrentContactTag] = useState('');
   const [isUSABankFormat, setIsUSABankFormat] = useState(false);
+  const [ibanError, setIbanError] = useState('');
 
   // Load categories on mount
   useEffect(() => {
