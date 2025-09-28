@@ -4113,8 +4113,64 @@ async def send_contact_email(request: ContactEmailRequest):
 
 # ===================== GEO DATA ENDPOINTS =====================
 
-# First check if we need to seed geo data
-async def seed_comprehensive_geo_data():
+@api_router.get("/geo/countries")
+async def get_countries(query: str = ""):
+    """Get all countries with optional search query"""
+    try:
+        # Use database instead of hardcoded data
+        filter_query = {}
+        if query:
+            query_regex = {"$regex": query, "$options": "i"}
+            filter_query = {
+                "$or": [
+                    {"name": query_regex},
+                    {"tr_name": query_regex},
+                    {"iso2": query_regex}
+                ]
+            }
+        
+        countries = await db.countries.find(filter_query).sort("tr_name", 1).to_list(length=None)
+        
+        # Convert MongoDB documents to API format
+        result = []
+        for country in countries:
+            result.append({
+                "code": country.get("iso2", ""),
+                "name": country.get("name", ""),
+                "tr_name": country.get("tr_name", country.get("name", ""))
+            })
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching countries: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/geo/cities/{country_code}")
+async def get_cities(country_code: str, query: str = ""):
+    """Get cities for a specific country"""
+    try:
+        filter_query = {"country": country_code.upper()}
+        if query:
+            query_regex = {"$regex": query, "$options": "i"}
+            filter_query["$or"] = [
+                {"name": query_regex},
+                {"tr_name": query_regex}
+            ]
+        
+        cities = await db.cities.find(filter_query).sort("name", 1).to_list(length=None)
+        
+        # Convert to API format
+        result = []
+        for city in cities:
+            result.append({
+                "name": city.get("tr_name", city.get("name", "")),
+                "country_code": country_code.upper()
+            })
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching cities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     """Seed comprehensive country and city data if not exists"""
     try:
         # Check if we have sufficient countries
