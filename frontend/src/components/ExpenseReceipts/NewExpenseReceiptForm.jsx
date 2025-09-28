@@ -162,6 +162,27 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
       return;
     }
 
+    // Bank validation
+    if (isUSABank) {
+      if (!supplierData.routing_number || !supplierData.us_account_number) {
+        toast({
+          title: "Hata",
+          description: "ABD bankası için Routing Number ve Account Number gereklidir",
+          variant: "destructive"
+        });
+        return;
+      }
+    } else {
+      if (!supplierData.iban) {
+        toast({
+          title: "Hata",
+          description: "Alıcı IBAN bilgisi gereklidir",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     if (parseFloat(formData.amount) <= 0) {
       toast({
         title: "Hata",
