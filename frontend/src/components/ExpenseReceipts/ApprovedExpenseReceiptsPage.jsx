@@ -369,7 +369,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
               <h2 className="text-2xl font-bold">
                 {totals.displayCurrency} {totals.total.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}
               </h2>
-              <p className="text-yellow-100">Toplam Ödeme Tutarı</p>
+              <p className="text-yellow-100">Ödeme Bekleyen Tutar</p>
             </div>
             <CreditCard className="w-8 h-8 text-yellow-200" />
           </div>
