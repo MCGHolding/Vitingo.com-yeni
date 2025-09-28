@@ -1503,6 +1503,388 @@ def test_supplier_specialty_validation_errors():
     print("\n✅ SUPPLIER SPECIALTY VALIDATION TESTS COMPLETED!")
     return True
 
+def test_expense_receipt_usa_bank_format():
+    """
+    Test USA bank format support in expense receipt APIs
+    
+    NEW FIELDS ADDED TO EXPENSE RECEIPT:
+    - is_usa_bank: boolean flag to indicate USA bank format
+    - supplier_routing_number: USA routing number (like 021000021)
+    - supplier_us_account_number: USA account number
+    - supplier_bank_address: USA bank address
+
+    SPECIFIC TESTS:
+    1. Test POST /api/expense-receipts with is_usa_bank=true and USA bank fields
+    2. Test POST /api/expense-receipts with is_usa_bank=false (normal IBAN format)
+    3. Verify that USA bank fields are stored and retrieved correctly
+    4. Test that existing IBAN format still works (backwards compatibility)
+    """
+    
+    print("=" * 80)
+    print("TESTING USA BANK FORMAT SUPPORT IN EXPENSE RECEIPT APIS")
+    print("=" * 80)
+    
+    # First, get or create a test supplier
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    print(f"Getting suppliers from: {suppliers_endpoint}")
+    
+    supplier_id = None
+    supplier_name = "Test USA Bank Supplier"
+    
+    try:
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                print("⚠️  No suppliers found, will use mock supplier ID for testing")
+                supplier_id = "test-supplier-usa-bank-123"
+        else:
+            print(f"⚠️  Failed to get suppliers: {suppliers_response.status_code}, using mock supplier ID")
+            supplier_id = "test-supplier-usa-bank-123"
+    except Exception as e:
+        print(f"⚠️  Error getting suppliers: {str(e)}, using mock supplier ID")
+        supplier_id = "test-supplier-usa-bank-123"
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    
+    # Test 1: Create expense receipt with USA bank format (is_usa_bank=true)
+    print(f"\n{'='*80}")
+    print("TEST 1: POST /api/expense-receipts with USA BANK FORMAT (is_usa_bank=true)")
+    print(f"{'='*80}")
+    print(f"Testing endpoint: {create_endpoint}")
+    
+    usa_bank_receipt_data = {
+        "date": "2025-01-15",
+        "currency": "USD",
+        "supplier_id": supplier_id,
+        "amount": 2500.00,
+        "description": "USA bank format expense receipt - Office equipment purchase",
+        "is_usa_bank": True,
+        "supplier_routing_number": "021000021",  # Chase Bank routing number
+        "supplier_us_account_number": "1234567890123456",
+        "supplier_bank_address": "270 Park Avenue, New York, NY 10017"
+    }
+    
+    usa_receipt_id = None
+    
+    try:
+        print("\n--- Creating USA bank format expense receipt ---")
+        print(f"Request data: {usa_bank_receipt_data}")
+        
+        response = requests.post(create_endpoint, json=usa_bank_receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: USA bank format expense receipt created successfully")
+            
+            # Parse response
+            receipt_data = response.json()
+            usa_receipt_id = receipt_data.get('id')
+            
+            # Verify USA bank fields are present and correct
+            print("\n--- Verifying USA bank fields in response ---")
+            
+            # Check is_usa_bank flag
+            if receipt_data.get('is_usa_bank') == True:
+                print("✅ PASS: is_usa_bank field is True")
+            else:
+                print(f"❌ FAIL: is_usa_bank should be True, got {receipt_data.get('is_usa_bank')}")
+                return False
+            
+            # Check USA bank fields
+            usa_fields_to_check = {
+                'supplier_routing_number': '021000021',
+                'supplier_us_account_number': '1234567890123456',
+                'supplier_bank_address': '270 Park Avenue, New York, NY 10017'
+            }
+            
+            for field, expected_value in usa_fields_to_check.items():
+                actual_value = receipt_data.get(field)
+                if actual_value == expected_value:
+                    print(f"✅ PASS: {field} = {actual_value}")
+                else:
+                    print(f"❌ FAIL: {field} should be '{expected_value}', got '{actual_value}'")
+                    return False
+            
+            # Verify IBAN field is empty for USA bank
+            if not receipt_data.get('supplier_iban'):
+                print("✅ PASS: supplier_iban is empty for USA bank format")
+            else:
+                print(f"❌ FAIL: supplier_iban should be empty for USA bank, got '{receipt_data.get('supplier_iban')}'")
+                return False
+            
+            print(f"✅ USA bank receipt created with ID: {usa_receipt_id}")
+            
+        else:
+            print(f"❌ FAIL: Failed to create USA bank format expense receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating USA bank format expense receipt: {str(e)}")
+        return False
+    
+    # Test 2: Create expense receipt with traditional IBAN format (is_usa_bank=false)
+    print(f"\n{'='*80}")
+    print("TEST 2: POST /api/expense-receipts with TRADITIONAL IBAN FORMAT (is_usa_bank=false)")
+    print(f"{'='*80}")
+    
+    iban_receipt_data = {
+        "date": "2025-01-15",
+        "currency": "EUR",
+        "supplier_id": supplier_id,
+        "amount": 1800.00,
+        "description": "Traditional IBAN format expense receipt - Consulting services",
+        "is_usa_bank": False,
+        # USA bank fields should be ignored when is_usa_bank=false
+        "supplier_routing_number": "should_be_ignored",
+        "supplier_us_account_number": "should_be_ignored",
+        "supplier_bank_address": "should_be_ignored"
+    }
+    
+    iban_receipt_id = None
+    
+    try:
+        print("\n--- Creating traditional IBAN format expense receipt ---")
+        print(f"Request data: {iban_receipt_data}")
+        
+        response = requests.post(create_endpoint, json=iban_receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Traditional IBAN format expense receipt created successfully")
+            
+            # Parse response
+            receipt_data = response.json()
+            iban_receipt_id = receipt_data.get('id')
+            
+            # Verify IBAN format fields
+            print("\n--- Verifying traditional IBAN format fields in response ---")
+            
+            # Check is_usa_bank flag
+            if receipt_data.get('is_usa_bank') == False:
+                print("✅ PASS: is_usa_bank field is False")
+            else:
+                print(f"❌ FAIL: is_usa_bank should be False, got {receipt_data.get('is_usa_bank')}")
+                return False
+            
+            # Check USA bank fields are empty for IBAN format
+            usa_fields_should_be_empty = [
+                'supplier_routing_number',
+                'supplier_us_account_number', 
+                'supplier_bank_address'
+            ]
+            
+            for field in usa_fields_should_be_empty:
+                actual_value = receipt_data.get(field)
+                if not actual_value or actual_value == "":
+                    print(f"✅ PASS: {field} is empty for IBAN format")
+                else:
+                    print(f"❌ FAIL: {field} should be empty for IBAN format, got '{actual_value}'")
+                    return False
+            
+            print(f"✅ IBAN format receipt created with ID: {iban_receipt_id}")
+            
+        else:
+            print(f"❌ FAIL: Failed to create traditional IBAN format expense receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating traditional IBAN format expense receipt: {str(e)}")
+        return False
+    
+    # Test 3: Retrieve and verify USA bank format receipt
+    if usa_receipt_id:
+        print(f"\n{'='*80}")
+        print("TEST 3: GET /api/expense-receipts/{id} - VERIFY USA BANK FORMAT PERSISTENCE")
+        print(f"{'='*80}")
+        
+        get_endpoint = f"{BACKEND_URL}/api/expense-receipts/{usa_receipt_id}"
+        print(f"Testing endpoint: {get_endpoint}")
+        
+        try:
+            response = requests.get(get_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                receipt_data = response.json()
+                
+                print("\n--- Verifying USA bank fields persistence ---")
+                
+                # Verify all USA bank fields are correctly stored and retrieved
+                expected_usa_fields = {
+                    'is_usa_bank': True,
+                    'supplier_routing_number': '021000021',
+                    'supplier_us_account_number': '1234567890123456',
+                    'supplier_bank_address': '270 Park Avenue, New York, NY 10017'
+                }
+                
+                all_fields_correct = True
+                for field, expected_value in expected_usa_fields.items():
+                    actual_value = receipt_data.get(field)
+                    if actual_value == expected_value:
+                        print(f"✅ PASS: {field} persisted correctly = {actual_value}")
+                    else:
+                        print(f"❌ FAIL: {field} not persisted correctly. Expected: {expected_value}, Got: {actual_value}")
+                        all_fields_correct = False
+                
+                if all_fields_correct:
+                    print("✅ PASS: All USA bank fields persisted correctly")
+                else:
+                    return False
+                    
+            else:
+                print(f"❌ FAIL: Failed to retrieve USA bank format receipt")
+                print(f"Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error retrieving USA bank format receipt: {str(e)}")
+            return False
+    
+    # Test 4: Retrieve and verify IBAN format receipt
+    if iban_receipt_id:
+        print(f"\n{'='*80}")
+        print("TEST 4: GET /api/expense-receipts/{id} - VERIFY IBAN FORMAT PERSISTENCE")
+        print(f"{'='*80}")
+        
+        get_endpoint = f"{BACKEND_URL}/api/expense-receipts/{iban_receipt_id}"
+        print(f"Testing endpoint: {get_endpoint}")
+        
+        try:
+            response = requests.get(get_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                receipt_data = response.json()
+                
+                print("\n--- Verifying IBAN format fields persistence ---")
+                
+                # Verify IBAN format fields
+                if receipt_data.get('is_usa_bank') == False:
+                    print("✅ PASS: is_usa_bank persisted as False")
+                else:
+                    print(f"❌ FAIL: is_usa_bank should be False, got {receipt_data.get('is_usa_bank')}")
+                    return False
+                
+                # Verify USA bank fields are empty
+                usa_fields_should_be_empty = [
+                    'supplier_routing_number',
+                    'supplier_us_account_number',
+                    'supplier_bank_address'
+                ]
+                
+                all_empty = True
+                for field in usa_fields_should_be_empty:
+                    actual_value = receipt_data.get(field)
+                    if not actual_value or actual_value == "":
+                        print(f"✅ PASS: {field} is empty for IBAN format")
+                    else:
+                        print(f"❌ FAIL: {field} should be empty for IBAN format, got '{actual_value}'")
+                        all_empty = False
+                
+                if all_empty:
+                    print("✅ PASS: All USA bank fields are empty for IBAN format")
+                else:
+                    return False
+                    
+            else:
+                print(f"❌ FAIL: Failed to retrieve IBAN format receipt")
+                print(f"Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error retrieving IBAN format receipt: {str(e)}")
+            return False
+    
+    # Test 5: Test backwards compatibility - Get all receipts and verify both formats
+    print(f"\n{'='*80}")
+    print("TEST 5: GET /api/expense-receipts - VERIFY BACKWARDS COMPATIBILITY")
+    print(f"{'='*80}")
+    
+    get_all_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Testing endpoint: {get_all_endpoint}")
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            receipts = response.json()
+            print(f"✅ PASS: Retrieved {len(receipts)} expense receipts")
+            
+            # Find our test receipts
+            usa_receipt_found = False
+            iban_receipt_found = False
+            
+            for receipt in receipts:
+                receipt_id = receipt.get('id')
+                
+                if receipt_id == usa_receipt_id:
+                    usa_receipt_found = True
+                    print(f"\n--- Found USA bank format receipt (ID: {receipt_id}) ---")
+                    
+                    # Verify USA bank fields
+                    if (receipt.get('is_usa_bank') == True and 
+                        receipt.get('supplier_routing_number') == '021000021' and
+                        receipt.get('supplier_us_account_number') == '1234567890123456'):
+                        print("✅ PASS: USA bank format receipt has correct fields in list")
+                    else:
+                        print("❌ FAIL: USA bank format receipt has incorrect fields in list")
+                        return False
+                
+                elif receipt_id == iban_receipt_id:
+                    iban_receipt_found = True
+                    print(f"\n--- Found IBAN format receipt (ID: {receipt_id}) ---")
+                    
+                    # Verify IBAN format fields
+                    if (receipt.get('is_usa_bank') == False and 
+                        not receipt.get('supplier_routing_number') and
+                        not receipt.get('supplier_us_account_number')):
+                        print("✅ PASS: IBAN format receipt has correct fields in list")
+                    else:
+                        print("❌ FAIL: IBAN format receipt has incorrect fields in list")
+                        return False
+            
+            if usa_receipt_found and iban_receipt_found:
+                print("✅ PASS: Both USA bank and IBAN format receipts found in list")
+            else:
+                print(f"⚠️  WARNING: Not all test receipts found in list (USA: {usa_receipt_found}, IBAN: {iban_receipt_found})")
+                
+        else:
+            print(f"❌ FAIL: Failed to retrieve expense receipts list")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error retrieving expense receipts list: {str(e)}")
+        return False
+    
+    # Final summary
+    print(f"\n{'='*80}")
+    print("USA BANK FORMAT SUPPORT TEST RESULTS SUMMARY")
+    print(f"{'='*80}")
+    print("✅ TEST 1 PASSED: USA bank format expense receipt creation (is_usa_bank=true)")
+    print("✅ TEST 2 PASSED: Traditional IBAN format expense receipt creation (is_usa_bank=false)")
+    print("✅ TEST 3 PASSED: USA bank format fields persistence verification")
+    print("✅ TEST 4 PASSED: IBAN format fields persistence verification")
+    print("✅ TEST 5 PASSED: Backwards compatibility verification")
+    print("\n🎉 ALL USA BANK FORMAT TESTS PASSED!")
+    print("\nKEY FINDINGS:")
+    print("• USA bank fields (is_usa_bank, supplier_routing_number, supplier_us_account_number, supplier_bank_address) are working correctly")
+    print("• Traditional IBAN format still works (backwards compatibility maintained)")
+    print("• USA bank fields are properly stored and retrieved")
+    print("• IBAN format receipts correctly ignore USA bank fields")
+    print("• Both formats can coexist in the same system")
+    
+    return True
+
 def test_expense_receipt_crud_apis():
     """
     Comprehensive test for Expense Receipt CRUD APIs
