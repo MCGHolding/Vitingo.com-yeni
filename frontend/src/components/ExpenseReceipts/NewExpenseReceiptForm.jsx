@@ -69,8 +69,12 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
         phone: '',
         iban: '',
         bank_name: '',
-        country: ''
+        country: '',
+        routing_number: '',
+        us_account_number: '',
+        bank_address: ''
       });
+      setIsUSABank(false);
     }
   }, [formData.supplier_id]);
 
