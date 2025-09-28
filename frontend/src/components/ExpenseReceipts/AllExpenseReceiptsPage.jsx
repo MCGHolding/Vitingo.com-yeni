@@ -6,8 +6,21 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [currencyFilter, setCurrencyFilter] = useState('all');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Modal states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [emailForm, setEmailForm] = useState({
+    to: '',
+    subject: '',
+    message: ''
+  });
 
   // Load expense receipts from backend
   useEffect(() => {
