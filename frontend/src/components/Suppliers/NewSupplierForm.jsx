@@ -765,7 +765,7 @@ const NewSupplierForm = ({ onClose }) => {
                       </label>
                       <Input
                         value={formData.iban}
-                        onChange={(e) => handleIbanChange(e.target.value)}
+                        onChange={(e) => handleIbanInput(e.target.value)}
                         placeholder="TR00 0000 0000 0000 0000 00 00"
                         className={ibanError ? 'border-red-500' : ''}
                       />
