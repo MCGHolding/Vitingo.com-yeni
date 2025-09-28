@@ -14,7 +14,7 @@ import {
   Users
 } from 'lucide-react';
 
-export default function EmailModal({ user, onClose }) {
+export default function EmailModal({ user, onClose, defaultSubject = '', defaultBody = '' }) {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
   const [emailData, setEmailData] = useState({
