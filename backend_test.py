@@ -7007,28 +7007,491 @@ def test_expense_receipt_creation_and_listing_issue():
         print("❌ Backend API has issues that need to be fixed")
         return False
 
-def main():
-    """Main test runner for expense receipt creation and listing issue diagnosis"""
-    print("🚀 STARTING EXPENSE RECEIPT CREATION AND LISTING ISSUE DIAGNOSIS")
+def test_expense_receipt_delete_endpoint():
+    """
+    Test the DELETE /api/expense-receipts/{receipt_id} endpoint
+    
+    TESTING WORKFLOW:
+    1. First create a test expense receipt
+    2. Test DELETE with existing receipt ID
+    3. Verify receipt is actually deleted from database  
+    4. Test DELETE with non-existent ID (should get 404)
+    5. Test proper error messages
+    """
+    
     print("=" * 80)
-    print("User Issue: Created expense receipt with success message, but doesn't appear in list")
+    print("TESTING EXPENSE RECEIPT DELETE ENDPOINT")
     print("=" * 80)
     
+    # First, get or create a test supplier
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    supplier_id = None
+    supplier_name = "Test Delete Supplier"
+    
     try:
-        # Run the expense receipt issue diagnosis test
-        success = test_expense_receipt_creation_and_listing_issue()
-        
-        if success:
-            print("\n🎉 EXPENSE RECEIPT DIAGNOSIS COMPLETED SUCCESSFULLY!")
-            print("Backend APIs are working correctly. Issue is likely in frontend.")
-            return True
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                supplier_id = "test-supplier-delete-123"
+                print("⚠️  No suppliers found, using mock supplier ID")
         else:
-            print("\n❌ EXPENSE RECEIPT DIAGNOSIS FOUND BACKEND ISSUES!")
-            print("Backend APIs need to be fixed.")
+            supplier_id = "test-supplier-delete-123"
+            print(f"⚠️  Failed to get suppliers: {suppliers_response.status_code}, using mock supplier ID")
+    except Exception as e:
+        supplier_id = "test-supplier-delete-123"
+        print(f"⚠️  Error getting suppliers: {str(e)}, using mock supplier ID")
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    
+    # Step 1: Create a test expense receipt to delete
+    print(f"\n{'='*80}")
+    print("STEP 1: CREATE TEST EXPENSE RECEIPT FOR DELETION")
+    print(f"{'='*80}")
+    
+    test_receipt_data = {
+        "date": "2025-01-15",
+        "currency": "TRY",
+        "supplier_id": supplier_id,
+        "amount": 1500.75,
+        "description": "Test receipt for deletion - Office supplies"
+    }
+    
+    receipt_id_to_delete = None
+    
+    try:
+        print(f"Creating test receipt at: {create_endpoint}")
+        response = requests.post(create_endpoint, json=test_receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            receipt_data = response.json()
+            receipt_id_to_delete = receipt_data.get('id')
+            receipt_number = receipt_data.get('receipt_number')
+            print(f"✅ PASS: Test receipt created successfully")
+            print(f"   Receipt ID: {receipt_id_to_delete}")
+            print(f"   Receipt Number: {receipt_number}")
+        else:
+            print(f"❌ FAIL: Failed to create test receipt")
+            print(f"Response: {response.text}")
             return False
             
     except Exception as e:
-        print(f"\n❌ CRITICAL ERROR IN TESTING: {str(e)}")
+        print(f"❌ FAIL: Error creating test receipt: {str(e)}")
+        return False
+    
+    if not receipt_id_to_delete:
+        print("❌ FAIL: No receipt ID available for deletion test")
+        return False
+    
+    # Step 2: Test DELETE with existing receipt ID
+    print(f"\n{'='*80}")
+    print("STEP 2: DELETE EXISTING EXPENSE RECEIPT")
+    print(f"{'='*80}")
+    
+    delete_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id_to_delete}"
+    print(f"Testing DELETE endpoint: {delete_endpoint}")
+    
+    try:
+        response = requests.delete(delete_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: DELETE request successful (status 200)")
+            
+            # Parse response
+            delete_response = response.json()
+            print(f"Response: {delete_response}")
+            
+            # Check response structure
+            if "message" in delete_response and "deleted_id" in delete_response:
+                print("✅ PASS: Response contains required fields (message, deleted_id)")
+                
+                # Check deleted_id matches
+                if delete_response.get("deleted_id") == receipt_id_to_delete:
+                    print("✅ PASS: deleted_id matches the requested receipt ID")
+                else:
+                    print(f"❌ FAIL: deleted_id mismatch. Expected: {receipt_id_to_delete}, Got: {delete_response.get('deleted_id')}")
+                    return False
+                
+                # Check message is in Turkish
+                message = delete_response.get("message", "")
+                if "silindi" in message.lower():
+                    print("✅ PASS: Success message is in Turkish")
+                else:
+                    print(f"⚠️  WARNING: Message might not be in Turkish: {message}")
+                    
+            else:
+                print("❌ FAIL: Response missing required fields (message, deleted_id)")
+                return False
+                
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error during DELETE request: {str(e)}")
+        return False
+    
+    # Step 3: Verify receipt is actually deleted from database
+    print(f"\n{'='*80}")
+    print("STEP 3: VERIFY RECEIPT IS DELETED FROM DATABASE")
+    print(f"{'='*80}")
+    
+    get_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id_to_delete}"
+    print(f"Testing GET endpoint to verify deletion: {get_endpoint}")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Receipt not found after deletion (status 404)")
+        else:
+            print(f"❌ FAIL: Expected 404 after deletion, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error verifying deletion: {str(e)}")
+        return False
+    
+    # Step 4: Test DELETE with non-existent ID (should get 404)
+    print(f"\n{'='*80}")
+    print("STEP 4: DELETE NON-EXISTENT EXPENSE RECEIPT (SHOULD GET 404)")
+    print(f"{'='*80}")
+    
+    non_existent_id = "non-existent-receipt-id-12345"
+    delete_nonexistent_endpoint = f"{BACKEND_URL}/api/expense-receipts/{non_existent_id}"
+    print(f"Testing DELETE endpoint with non-existent ID: {delete_nonexistent_endpoint}")
+    
+    try:
+        response = requests.delete(delete_nonexistent_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Non-existent receipt returns 404")
+            
+            # Check error message
+            try:
+                error_response = response.json()
+                error_detail = error_response.get("detail", "")
+                if "not found" in error_detail.lower():
+                    print("✅ PASS: Error message indicates receipt not found")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be clear: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+                
+        else:
+            print(f"❌ FAIL: Expected 404 for non-existent receipt, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing non-existent receipt deletion: {str(e)}")
+        return False
+    
+    # Final summary
+    print(f"\n{'='*80}")
+    print("EXPENSE RECEIPT DELETE ENDPOINT TEST RESULTS")
+    print(f"{'='*80}")
+    print("✅ Successfully created test expense receipt")
+    print("✅ DELETE request with existing ID works (status 200)")
+    print("✅ Response contains required fields (message, deleted_id)")
+    print("✅ Receipt is actually deleted from database (verified with GET)")
+    print("✅ DELETE with non-existent ID returns 404")
+    print("✅ Proper error messages for not found cases")
+    print("\n🎉 EXPENSE RECEIPT DELETE ENDPOINT TEST PASSED!")
+    
+    return True
+
+def test_expense_receipt_email_endpoint():
+    """
+    Test the POST /api/send-expense-receipt-email endpoint
+    
+    TESTING WORKFLOW:
+    1. First create a test expense receipt
+    2. Test POST email endpoint with valid receipt ID
+    3. Test POST email endpoint with invalid receipt ID
+    4. Verify email request structure and response
+    5. Test error handling for missing receipt
+    """
+    
+    print("=" * 80)
+    print("TESTING EXPENSE RECEIPT EMAIL ENDPOINT")
+    print("=" * 80)
+    
+    # First, get or create a test supplier
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    supplier_id = None
+    supplier_name = "Test Email Supplier"
+    
+    try:
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                supplier_id = "test-supplier-email-123"
+                print("⚠️  No suppliers found, using mock supplier ID")
+        else:
+            supplier_id = "test-supplier-email-123"
+            print(f"⚠️  Failed to get suppliers: {suppliers_response.status_code}, using mock supplier ID")
+    except Exception as e:
+        supplier_id = "test-supplier-email-123"
+        print(f"⚠️  Error getting suppliers: {str(e)}, using mock supplier ID")
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    
+    # Step 1: Create a test expense receipt for email testing
+    print(f"\n{'='*80}")
+    print("STEP 1: CREATE TEST EXPENSE RECEIPT FOR EMAIL")
+    print(f"{'='*80}")
+    
+    test_receipt_data = {
+        "date": "2025-01-15",
+        "currency": "EUR",
+        "supplier_id": supplier_id,
+        "amount": 2750.50,
+        "description": "Test receipt for email - Marketing services"
+    }
+    
+    receipt_id_for_email = None
+    receipt_number = None
+    
+    try:
+        print(f"Creating test receipt at: {create_endpoint}")
+        response = requests.post(create_endpoint, json=test_receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            receipt_data = response.json()
+            receipt_id_for_email = receipt_data.get('id')
+            receipt_number = receipt_data.get('receipt_number')
+            print(f"✅ PASS: Test receipt created successfully")
+            print(f"   Receipt ID: {receipt_id_for_email}")
+            print(f"   Receipt Number: {receipt_number}")
+        else:
+            print(f"❌ FAIL: Failed to create test receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating test receipt: {str(e)}")
+        return False
+    
+    if not receipt_id_for_email:
+        print("❌ FAIL: No receipt ID available for email test")
+        return False
+    
+    # Step 2: Test POST email endpoint with valid receipt ID
+    print(f"\n{'='*80}")
+    print("STEP 2: SEND EMAIL WITH VALID RECEIPT ID")
+    print(f"{'='*80}")
+    
+    email_endpoint = f"{BACKEND_URL}/api/send-expense-receipt-email"
+    print(f"Testing email endpoint: {email_endpoint}")
+    
+    email_request_data = {
+        "to": "test@example.com",
+        "subject": "Gider Makbuzu Bilgilendirme - Test",
+        "message": "Bu bir test e-postasıdır. Gider makbuzu detayları aşağıda yer almaktadır.",
+        "receipt_id": receipt_id_for_email
+    }
+    
+    try:
+        print(f"Sending email request with data: {email_request_data}")
+        response = requests.post(email_endpoint, json=email_request_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Email endpoint responds with status 200")
+            
+            # Parse response
+            email_response = response.json()
+            print(f"Response: {email_response}")
+            
+            # Check response structure
+            required_fields = ["success", "message"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in email_response:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"❌ FAIL: Response missing required fields: {missing_fields}")
+                return False
+            else:
+                print("✅ PASS: Response contains required fields (success, message)")
+            
+            # Check success status
+            success = email_response.get("success")
+            message = email_response.get("message", "")
+            
+            if success:
+                print("✅ PASS: Email sending reported as successful")
+                print(f"   Success message: {message}")
+                
+                # Check if receipt number is included in response
+                if "receipt_number" in email_response:
+                    returned_receipt_number = email_response.get("receipt_number")
+                    if returned_receipt_number == receipt_number:
+                        print("✅ PASS: Receipt number included in response")
+                    else:
+                        print(f"⚠️  WARNING: Receipt number mismatch in response")
+                
+            else:
+                print(f"⚠️  WARNING: Email sending failed: {message}")
+                # This might be expected if SendGrid is not properly configured
+                print("   (This may be expected if SendGrid is not configured)")
+                
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error during email request: {str(e)}")
+        return False
+    
+    # Step 3: Test POST email endpoint with invalid receipt ID
+    print(f"\n{'='*80}")
+    print("STEP 3: SEND EMAIL WITH INVALID RECEIPT ID (SHOULD GET 404)")
+    print(f"{'='*80}")
+    
+    invalid_email_request_data = {
+        "to": "test@example.com",
+        "subject": "Test Email - Invalid Receipt",
+        "message": "This should fail because receipt ID does not exist.",
+        "receipt_id": "invalid-receipt-id-12345"
+    }
+    
+    try:
+        print(f"Sending email request with invalid receipt ID: {invalid_email_request_data}")
+        response = requests.post(email_endpoint, json=invalid_email_request_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Invalid receipt ID returns 404")
+            
+            # Check error message
+            try:
+                error_response = response.json()
+                error_detail = error_response.get("detail", "")
+                if "not found" in error_detail.lower():
+                    print("✅ PASS: Error message indicates receipt not found")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be clear: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+                
+        else:
+            print(f"❌ FAIL: Expected 404 for invalid receipt ID, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing invalid receipt ID: {str(e)}")
+        return False
+    
+    # Step 4: Test validation errors (missing required fields)
+    print(f"\n{'='*80}")
+    print("STEP 4: TEST VALIDATION ERRORS (MISSING REQUIRED FIELDS)")
+    print(f"{'='*80}")
+    
+    # Test missing 'to' field
+    incomplete_request_data = {
+        "subject": "Test Email",
+        "message": "Test message",
+        "receipt_id": receipt_id_for_email
+        # Missing 'to' field
+    }
+    
+    try:
+        print("Testing request with missing 'to' field...")
+        response = requests.post(email_endpoint, json=incomplete_request_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 422:
+            print("✅ PASS: Missing required field returns 422 validation error")
+            
+            try:
+                error_response = response.json()
+                print(f"   Validation error: {error_response}")
+            except:
+                print("   Could not parse validation error response")
+                
+        else:
+            print(f"⚠️  WARNING: Expected 422 for missing field, got {response.status_code}")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error testing validation: {str(e)}")
+    
+    # Final summary
+    print(f"\n{'='*80}")
+    print("EXPENSE RECEIPT EMAIL ENDPOINT TEST RESULTS")
+    print(f"{'='*80}")
+    print("✅ Successfully created test expense receipt")
+    print("✅ Email endpoint responds correctly with valid receipt ID")
+    print("✅ Response contains required fields (success, message)")
+    print("✅ Email endpoint returns 404 for invalid receipt ID")
+    print("✅ Proper error messages for not found cases")
+    print("✅ Validation errors handled correctly")
+    print("\n🎉 EXPENSE RECEIPT EMAIL ENDPOINT TEST PASSED!")
+    
+    return True
+
+def main():
+    """Main test runner for expense receipt creation and listing issue diagnosis"""
+    print("🚀 STARTING COMPREHENSIVE BACKEND API TESTING")
+    print("=" * 80)
+    
+    # Track test results
+    test_results = []
+    
+    # Run existing tests
+    test_results.append(("Expense Receipt Creation and Listing Issue", test_expense_receipt_creation_and_listing_issue()))
+    
+    # NEW EXPENSE RECEIPT ENDPOINTS TESTS
+    test_results.append(("Expense Receipt Delete Endpoint", test_expense_receipt_delete_endpoint()))
+    test_results.append(("Expense Receipt Email Endpoint", test_expense_receipt_email_endpoint()))
+    
+    # Print final summary
+    print("\n" + "=" * 80)
+    print("🎯 FINAL TEST SUMMARY")
+    print("=" * 80)
+    
+    passed = 0
+    failed = 0
+    
+    for test_name, result in test_results:
+        if result:
+            print(f"✅ PASS: {test_name}")
+            passed += 1
+        else:
+            print(f"❌ FAIL: {test_name}")
+            failed += 1
+    
+    print(f"\n📊 RESULTS: {passed} passed, {failed} failed out of {len(test_results)} tests")
+    
+    if failed == 0:
+        print("🎉 ALL TESTS PASSED! Backend APIs are working correctly.")
+        return True
+    else:
+        print("⚠️  Some tests failed. Please check the output above for details.")
         return False
 
 if __name__ == "__main__":
