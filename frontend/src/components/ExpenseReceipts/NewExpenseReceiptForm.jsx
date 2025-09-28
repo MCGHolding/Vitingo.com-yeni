@@ -459,72 +459,152 @@ Tarih: ${new Date(createdReceipt.date).toLocaleDateString('tr-TR')}`}
               </div>
             )}
 
-            {/* Otomatik doldurulacak alanlar */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Telefon */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Telefon Numarası
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    value={supplierData.phone}
-                    onChange={(e) => handleSupplierDataChange('phone', e.target.value)}
-                    placeholder="Otomatik doldurulur"
-                    className="pl-10"
-                    readOnly
-                  />
+            {/* Banka Bilgileri */}
+            <div className="space-y-4">
+              {/* Telefon - Always show */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Telefon Numarası
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      value={supplierData.phone}
+                      onChange={(e) => handleSupplierDataChange('phone', e.target.value)}
+                      placeholder="Otomatik doldurulur"
+                      className="pl-10"
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                {/* Ülke - Always show */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ülke
+                  </label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      value={supplierData.country}
+                      onChange={(e) => handleSupplierDataChange('country', e.target.value)}
+                      placeholder="Ülke"
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* IBAN */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Alıcı IBAN
-                </label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    value={supplierData.iban}
-                    onChange={(e) => handleSupplierDataChange('iban', e.target.value)}
-                    placeholder="Tedarikçi IBAN'ı"
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+              {/* Conditional Bank Fields */}
+              {!isUSABank ? (
+                // IBAN Format (Default)
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Alıcı IBAN <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        value={supplierData.iban}
+                        onChange={(e) => handleSupplierDataChange('iban', e.target.value)}
+                        placeholder="Tedarikçi IBAN'ı"
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              {/* Banka Adı */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Banka Adı
-                </label>
-                <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    value={supplierData.bank_name}
-                    onChange={(e) => handleSupplierDataChange('bank_name', e.target.value)}
-                    placeholder="Banka adı"
-                    className="pl-10"
-                  />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Banka Adı
+                    </label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        value={supplierData.bank_name}
+                        onChange={(e) => handleSupplierDataChange('bank_name', e.target.value)}
+                        placeholder="Banka adı"
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                // USA Bank Format
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-blue-800 text-sm">
+                      🇺🇸 <strong>ABD Banka Formatı:</strong> Amerika'da IBAN sistemi kullanılmadığı için Routing Number ve Account Number bilgilerini kullanın.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Routing Number <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          value={supplierData.routing_number}
+                          onChange={(e) => handleSupplierDataChange('routing_number', e.target.value)}
+                          placeholder="Örn: 021000021 (Chase Bank)"
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
 
-              {/* Ülke */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ülke
-                </label>
-                <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    value={supplierData.country}
-                    onChange={(e) => handleSupplierDataChange('country', e.target.value)}
-                    placeholder="Ülke"
-                    className="pl-10"
-                  />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Number <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          value={supplierData.us_account_number}
+                          onChange={(e) => handleSupplierDataChange('us_account_number', e.target.value)}
+                          placeholder="Örn: 1234567890123456"
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adı
+                      </label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          value={supplierData.bank_name}
+                          onChange={(e) => handleSupplierDataChange('bank_name', e.target.value)}
+                          placeholder="Örn: Chase Bank"
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adresi
+                      </label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          value={supplierData.bank_address}
+                          onChange={(e) => handleSupplierDataChange('bank_address', e.target.value)}
+                          placeholder="Örn: 383 Madison Ave, New York, NY 10179"
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
