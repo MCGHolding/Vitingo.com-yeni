@@ -217,22 +217,40 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     }
   };
 
-  // Calculate total amount paid
-  const totalPaid = filteredReceipts.reduce((sum, receipt) => sum + receipt.amount, 0);
-
-  // Group by currency for better display
-  const groupByCurrency = (receipts) => {
-    const grouped = receipts.reduce((acc, receipt) => {
-      if (!acc[receipt.currency]) {
-        acc[receipt.currency] = 0;
-      }
-      acc[receipt.currency] += receipt.amount;
-      return acc;
-    }, {});
-    return grouped;
+  // Calculate totals based on currency filter
+  const calculateTotals = () => {
+    let receiptsToCalculate = filteredReceipts;
+    
+    // If specific currency is selected, filter by that currency
+    if (currencyFilter !== 'all') {
+      receiptsToCalculate = filteredReceipts.filter(r => r.currency === currencyFilter);
+    }
+    
+    if (currencyFilter === 'all') {
+      // For "all currencies", show total in TRY
+      const totalInTRY = receiptsToCalculate.reduce((sum, receipt) => {
+        return sum + convertToTRY(receipt.amount, receipt.currency);
+      }, 0);
+      return {
+        total: totalInTRY,
+        average: receiptsToCalculate.length > 0 ? totalInTRY / receiptsToCalculate.length : 0,
+        currency: 'TRY',
+        displayCurrency: '₺'
+      };
+    } else {
+      // For specific currency, show in that currency
+      const total = receiptsToCalculate.reduce((sum, receipt) => sum + receipt.amount, 0);
+      const symbols = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'TRY': '₺', 'AED': 'د.إ' };
+      return {
+        total: total,
+        average: receiptsToCalculate.length > 0 ? total / receiptsToCalculate.length : 0,
+        currency: currencyFilter,
+        displayCurrency: symbols[currencyFilter] || currencyFilter
+      };
+    }
   };
 
-  const currencyTotals = groupByCurrency(filteredReceipts);
+  const totals = calculateTotals();
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
