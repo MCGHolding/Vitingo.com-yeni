@@ -1225,6 +1225,10 @@ function App() {
               path="/contact-registration/:registrationKey" 
               element={<ContactRegistrationPage />} 
             />
+            <Route 
+              path="/expense-receipt-approval/:token" 
+              element={<ExpenseReceiptApprovalPage />} 
+            />
           </Routes>
         </BrowserRouter>
       </div>
