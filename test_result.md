@@ -361,15 +361,18 @@ frontend:
 
   - task: "ApprovedExpenseReceiptsPage Implementation"
     implemented: true
-    working: "NA" 
+    working: true
     file: "/app/frontend/src/components/ExpenseReceipts/ApprovedExpenseReceiptsPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "✅ APPROVEDEXPENSERECEIPTSPAGE IMPLEMENTATION COMPLETED - Role-based payment management page with: 1) Green-themed design for approved status ✅ 2) Role-based access control for payment actions (admin, super_admin, accounting only) ✅ 3) Permission notice for non-authorized users ✅ 4) Payment button with confirmation dialog ✅ 5) Bank information display (IBAN last 4 digits, bank name) ✅ 6) Summary card with total approved receipts and payment amount ✅ 7) Backend integration with status=approved filter ✅ 8) Professional payment-ready interface ✅"
+      - working: true
+        agent: "testing"
+        comment: "✅ APPROVEDEXPENSERECEIPTSPAGE TESTED AND WORKING - Fixed environment variable issue (import.meta.env → process.env) and confirmed page functionality: 1) Page loads without errors ✅ 2) Backend integration working correctly ✅ 3) No JavaScript console errors ✅ 4) Navigation working properly ✅ 5) Displays approved expense receipts as expected ✅"
 
   - task: "PaidExpenseReceiptsPage Implementation"
     implemented: true
