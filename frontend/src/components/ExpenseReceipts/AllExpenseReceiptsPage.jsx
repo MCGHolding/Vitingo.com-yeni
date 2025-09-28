@@ -14,7 +14,7 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
     const loadReceipts = async () => {
       setLoading(true);
       try {
-        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/expense-receipts`);
         
         if (!response.ok) {
