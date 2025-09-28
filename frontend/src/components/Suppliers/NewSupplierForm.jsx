@@ -20,6 +20,7 @@ import {
   CheckCircle,
   Home
 } from 'lucide-react';
+import PhoneInput from '../ui/PhoneInput';
 
 import AddCategoryModal from './AddCategoryModal';
 import AddSpecialtyModal from './AddSpecialtyModal';
