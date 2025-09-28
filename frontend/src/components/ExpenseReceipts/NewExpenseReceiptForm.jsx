@@ -110,8 +110,17 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
           phone: supplier.phone || '',
           iban: supplier.iban || '',
           bank_name: supplier.bank_name || '',
-          country: supplier.country || ''
+          country: supplier.country || '',
+          // USA bank fields from supplier
+          routing_number: supplier.usa_routing_number || '',
+          us_account_number: supplier.usa_account_number || '',
+          bank_address: supplier.usa_bank_address || ''
         });
+        
+        // Auto-detect USA bank if supplier has USA bank info
+        if (supplier.is_usa_bank || supplier.usa_routing_number) {
+          setIsUSABank(true);
+        }
       }
     } catch (error) {
       console.error('Error loading supplier details:', error);
