@@ -3788,13 +3788,38 @@ Makbuz Detayları:
 Vitingo CRM Sistemi
 """
         
+        # Generate PDF for the receipt
+        pdf_data = generate_expense_receipt_pdf(receipt)
+        
         # Send email using SendGrid
         message = Mail(
-            from_email='noreply@vitingo.com',
+            from_email='info@quattrostand.com',  # Use validated sender
             to_emails=request.to,
             subject=request.subject,
             plain_text_content=email_content
         )
+        
+        # Add PDF attachment if generated successfully
+        if pdf_data:
+            try:
+                from sendgrid.helpers.mail import Attachment, FileContent, FileName, FileType, Disposition
+                
+                # Convert PDF to base64
+                pdf_base64 = base64.b64encode(pdf_data).decode()
+                
+                # Create attachment
+                attachment = Attachment()
+                attachment.file_content = FileContent(pdf_base64)
+                attachment.file_type = FileType('application/pdf')
+                attachment.file_name = FileName(f"Gider_Makbuzu_{receipt.get('receipt_number', 'N_A')}.pdf")
+                attachment.disposition = Disposition('attachment')
+                
+                message.attachment = [attachment]
+                logger.info(f"PDF attachment created for receipt {receipt.get('receipt_number')}")
+                
+            except Exception as pdf_error:
+                logger.error(f"Error adding PDF attachment: {str(pdf_error)}")
+                # Continue without attachment
         
         try:
             from sendgrid import SendGridAPIClient
