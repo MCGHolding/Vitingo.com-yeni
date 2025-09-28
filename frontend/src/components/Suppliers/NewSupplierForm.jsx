@@ -220,10 +220,23 @@ const NewSupplierForm = ({ onClose }) => {
     return '';
   };
 
+  // IBAN formatla - her 4 karakterde bir boşluk
+  const formatIban = (iban) => {
+    const cleanIban = iban.replace(/\s/g, '').toUpperCase();
+    let formatted = '';
+    for (let i = 0; i < cleanIban.length; i += 4) {
+      if (i > 0) formatted += ' ';
+      formatted += cleanIban.slice(i, i + 4);
+    }
+    return formatted;
+  };
+
   const handleIbanChange = (value) => {
-    const formattedValue = value.toUpperCase();
+    // Önce formatla
+    const formattedValue = formatIban(value);
     handleInputChange('iban', formattedValue);
     
+    // Sonra validate et
     const error = validateIban(formattedValue);
     setIbanError(error);
   };
