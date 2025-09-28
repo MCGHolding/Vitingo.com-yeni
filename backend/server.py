@@ -3528,6 +3528,78 @@ async def delete_expense_receipt(receipt_id: str):
 
 # ===================== EXPENSE RECEIPT EMAIL ENDPOINTS =====================
 
+async def send_expense_receipt_approval_email(receipt, approval_key):
+    """Send approval email to supplier when expense receipt is created"""
+    try:
+        # Get supplier contacts for email
+        supplier = await db.suppliers.find_one({"id": receipt.supplier_id})
+        if not supplier:
+            logger.error(f"Supplier not found for receipt: {receipt.id}")
+            return
+        
+        # Get supplier contacts
+        contacts = supplier.get("contacts", [])
+        if not contacts:
+            logger.error(f"No contacts found for supplier: {receipt.supplier_id}")
+            return
+        
+        # Use first contact's email
+        contact_email = contacts[0].get("email")
+        if not contact_email:
+            logger.error(f"No email found for supplier contact: {receipt.supplier_id}")
+            return
+        
+        # Get SendGrid settings
+        sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+        if not sendgrid_api_key:
+            logger.warning("SendGrid API key not configured")
+            return
+        
+        # Create approval URL
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://supplier-hub-14.preview.emergentagent.com')
+        approval_url = f"{frontend_url}/expense-receipt-approval/{approval_key}"
+        
+        # Create email content
+        email_content = f"""
+Sayın {contacts[0].get('name', 'Yetkili')},
+
+{receipt.receipt_number} numaralı gider makbuzunuz onayınızı bekliyor.
+
+Makbuz Detayları:
+- Makbuz No: {receipt.receipt_number}
+- Tarih: {receipt.date}
+- Tutar: {receipt.amount} {receipt.currency}
+- Açıklama: {receipt.description}
+
+Makbuzu onaylamak için aşağıdaki linke tıklayın:
+{approval_url}
+
+Bu link 30 gün süreyle geçerlidir.
+
+İyi çalışmalar,
+Vitingo CRM Sistemi
+"""
+        
+        # Send email
+        if Mail:
+            message = Mail(
+                from_email='noreply@vitingo.com',
+                to_emails=contact_email,
+                subject=f'Gider Makbuzu Onayı - {receipt.receipt_number}',
+                plain_text_content=email_content
+            )
+            
+            try:
+                from sendgrid import SendGridAPIClient
+                sg = SendGridAPIClient(api_key=sendgrid_api_key)
+                response = sg.send(message)
+                logger.info(f"Approval email sent for receipt {receipt.receipt_number} to {contact_email}")
+            except Exception as e:
+                logger.error(f"SendGrid error: {str(e)}")
+        
+    except Exception as e:
+        logger.error(f"Error sending approval email: {str(e)}")
+
 class ExpenseReceiptEmailRequest(BaseModel):
     to: str
     subject: str
