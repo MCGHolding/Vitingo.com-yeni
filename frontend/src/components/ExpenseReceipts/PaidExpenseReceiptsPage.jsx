@@ -486,34 +486,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Makbuzu Sil</h3>
-            <p className="text-gray-600 mb-6">
-              <strong>{selectedReceipt?.receipt_number}</strong> numaralı gider makbuzunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setSelectedReceipt(null);
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
-                İptal
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                Sil
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Removed delete modal for paid receipts */}
 
       {/* Email Modal */}
       {showEmailModal && (
