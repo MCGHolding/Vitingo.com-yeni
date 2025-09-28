@@ -601,10 +601,12 @@ const NewSupplierForm = ({ onClose }) => {
                   country={formData.country}
                   value={formData.city}
                   onChange={(city) => {
-                    console.log('City selected:', city);
+                    console.log('🔍 NewSupplierForm - City selected:', city);
                     const cityName = city ? city.name : '';
-                    console.log('City name extracted:', cityName);
+                    console.log('🔍 NewSupplierForm - City name extracted:', cityName);
+                    console.log('🔍 NewSupplierForm - Before handleInputChange, formData.city:', formData.city);
                     handleInputChange('city', cityName);
+                    console.log('🔍 NewSupplierForm - After handleInputChange called');
                   }}
                   placeholder="Şehir seçiniz..."
                   disabled={!formData.country}
