@@ -26,7 +26,9 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   const [emailForm, setEmailForm] = useState({
     to: '',
     subject: '',
-    message: ''
+    message: '',
+    recipient_name: '',
+    recipient_company: ''
   });
 
   // Load paid expense receipts from backend
