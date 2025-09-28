@@ -3251,6 +3251,11 @@ class ExpenseReceipt(BaseModel):
     supplier_iban: Optional[str] = ""
     supplier_bank_name: Optional[str] = ""
     supplier_country: Optional[str] = ""
+    # USA bank fields
+    is_usa_bank: Optional[bool] = False
+    supplier_routing_number: Optional[str] = ""
+    supplier_us_account_number: Optional[str] = ""
+    supplier_bank_address: Optional[str] = ""
     sender_bank_id: Optional[str] = ""  # Reference to user's bank
     sender_bank_name: Optional[str] = ""
     amount: float
