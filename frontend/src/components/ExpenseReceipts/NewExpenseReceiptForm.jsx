@@ -128,8 +128,29 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
           setIsUSABank(true);
         }
       }
+      
+      // Load supplier contacts
+      await loadSupplierContacts(supplierId);
     } catch (error) {
       console.error('Error loading supplier details:', error);
+    }
+  };
+
+  const loadSupplierContacts = async (supplierId) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/supplier-contacts/${supplierId}`);
+      if (response.ok) {
+        const contacts = await response.json();
+        setSupplierContacts(contacts);
+        // Auto select first contact if available
+        if (contacts.length > 0) {
+          setSelectedContact(contacts[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading supplier contacts:', error);
+      setSupplierContacts([]);
     }
   };
 
