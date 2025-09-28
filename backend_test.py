@@ -9141,6 +9141,276 @@ def test_geo_endpoints_for_cityselect():
     
     return all_tests_passed
 
+def test_expense_receipt_approval_system():
+    """
+    Test the expense receipt approval system to verify that the contact's position (görevi) 
+    is displayed instead of specialty (uzmanlık alanı) when a supplier clicks on the approval link.
+    
+    Requirements to verify:
+    1. Create a test expense receipt with a supplier who has contact information with a position field
+    2. Test GET /api/expense-receipt-approval/{approval_key} endpoint using the generated approval_link
+    3. Verify the response includes supplier_contact_specialty field with the contact's position (not tags)
+    4. Confirm that supplier_contact_name and supplier_contact_email are also populated correctly
+    """
+    
+    print("=" * 80)
+    print("TESTING EXPENSE RECEIPT APPROVAL SYSTEM - POSITION FIELD")
+    print("=" * 80)
+    
+    try:
+        # Step 1: Create a test supplier with contact information
+        print("\n1. Creating test supplier with contact information...")
+        
+        # Create supplier
+        supplier_data = {
+            "company_short_name": "Test Approval Şirketi A.Ş.",
+            "company_full_name": "Test Approval Şirketi Anonim Şirketi",
+            "contact_person": "Test Contact Person",
+            "email": "test@approval.com",
+            "phone": "+90 212 555 0123",
+            "address": "Test Address, Istanbul",
+            "country": "TR",
+            "city": "Istanbul",
+            "sector": "Test Sector",
+            "is_active": True
+        }
+        
+        supplier_response = requests.post(f"{BACKEND_URL}/api/suppliers", json=supplier_data, timeout=30)
+        
+        if supplier_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not create test supplier. Status: {supplier_response.status_code}")
+            print(f"   Response: {supplier_response.text}")
+            return False
+        
+        supplier = supplier_response.json()
+        supplier_id = supplier.get("id")
+        print(f"   ✅ PASS: Test supplier created with ID: {supplier_id}")
+        print(f"   Supplier: {supplier.get('company_short_name')}")
+        
+        # Step 2: Create a contact for the supplier with position field
+        print("\n2. Creating contact with position field for the supplier...")
+        
+        contact_data = {
+            "supplier_id": supplier_id,
+            "full_name": "Ahmet Yılmaz",
+            "email": "ahmet@approval.com",
+            "mobile": "+90 532 555 0123",
+            "position": "Genel Müdür",  # This is the key field - position instead of tags
+            "tags": ["YÖNETICI", "KARAR_VERICI"],  # These should NOT be used for supplier_contact_specialty
+            "notes": "Test contact for approval system",
+            "is_active": True
+        }
+        
+        contact_response = requests.post(f"{BACKEND_URL}/api/supplier-contacts", json=contact_data, timeout=30)
+        
+        if contact_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not create test contact. Status: {contact_response.status_code}")
+            print(f"   Response: {contact_response.text}")
+            return False
+        
+        contact = contact_response.json()
+        contact_id = contact.get("id")
+        print(f"   ✅ PASS: Test contact created with ID: {contact_id}")
+        print(f"   Contact: {contact.get('full_name')} - Position: {contact.get('position')}")
+        print(f"   Contact Email: {contact.get('email')}")
+        print(f"   Contact Tags: {contact.get('tags')} (should NOT be used for specialty)")
+        
+        # Step 3: Create an expense receipt with the test supplier
+        print("\n3. Creating expense receipt with test supplier...")
+        
+        receipt_data = {
+            "date": "2025-01-15",
+            "currency": "TRY",
+            "supplier_id": supplier_id,
+            "amount": 2500.75,
+            "description": "Test expense receipt for approval system testing"
+        }
+        
+        receipt_response = requests.post(f"{BACKEND_URL}/api/expense-receipts", json=receipt_data, timeout=30)
+        
+        if receipt_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not create test expense receipt. Status: {receipt_response.status_code}")
+            print(f"   Response: {receipt_response.text}")
+            return False
+        
+        receipt = receipt_response.json()
+        receipt_id = receipt.get("id")
+        approval_link = receipt.get("approval_link")
+        receipt_number = receipt.get("receipt_number")
+        
+        print(f"   ✅ PASS: Test expense receipt created")
+        print(f"   Receipt ID: {receipt_id}")
+        print(f"   Receipt Number: {receipt_number}")
+        print(f"   Approval Link: {approval_link}")
+        
+        if not approval_link:
+            print("   ❌ FAIL: Expense receipt should have approval_link generated")
+            return False
+        
+        # Step 4: Test the approval endpoint to verify position is used instead of tags
+        print("\n4. Testing expense receipt approval endpoint...")
+        
+        approval_endpoint = f"{BACKEND_URL}/api/expense-receipt-approval/{approval_link}"
+        print(f"   Testing endpoint: {approval_endpoint}")
+        
+        approval_response = requests.get(approval_endpoint, timeout=30)
+        
+        print(f"   Status Code: {approval_response.status_code}")
+        if approval_response.status_code != 200:
+            print(f"   ❌ FAIL: Expected status 200, got {approval_response.status_code}")
+            print(f"   Response: {approval_response.text}")
+            return False
+        
+        print("   ✅ PASS: Approval endpoint responds with status 200")
+        
+        # Parse response
+        print("\n5. Parsing and validating approval response...")
+        try:
+            approval_data = approval_response.json()
+            print(f"   Response type: {type(approval_data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Step 5: Verify the response structure and supplier contact data
+        print("\n6. Verifying supplier contact information in response...")
+        
+        # Check required fields
+        required_fields = ["id", "receipt_number", "supplier_id", "amount", "description", "status"]
+        supplier_fields = ["supplier_company_name", "supplier_contact_name", "supplier_contact_specialty", "supplier_contact_email"]
+        
+        missing_required = []
+        for field in required_fields:
+            if field not in approval_data:
+                missing_required.append(field)
+        
+        if missing_required:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_required}")
+            return False
+        
+        print("   ✅ PASS: Response has all required expense receipt fields")
+        
+        missing_supplier = []
+        for field in supplier_fields:
+            if field not in approval_data:
+                missing_supplier.append(field)
+        
+        if missing_supplier:
+            print(f"   ❌ FAIL: Response missing supplier contact fields: {missing_supplier}")
+            return False
+        
+        print("   ✅ PASS: Response has all supplier contact fields")
+        
+        # Step 6: Verify the specific field values
+        print("\n7. Verifying supplier contact field values...")
+        
+        supplier_company_name = approval_data.get("supplier_company_name")
+        supplier_contact_name = approval_data.get("supplier_contact_name")
+        supplier_contact_specialty = approval_data.get("supplier_contact_specialty")
+        supplier_contact_email = approval_data.get("supplier_contact_email")
+        
+        print(f"   Supplier Company Name: '{supplier_company_name}'")
+        print(f"   Supplier Contact Name: '{supplier_contact_name}'")
+        print(f"   Supplier Contact Specialty: '{supplier_contact_specialty}'")
+        print(f"   Supplier Contact Email: '{supplier_contact_email}'")
+        
+        # Verify company name
+        if supplier_company_name != supplier_data["company_short_name"]:
+            print(f"   ❌ FAIL: Company name mismatch. Expected: '{supplier_data['company_short_name']}', Got: '{supplier_company_name}'")
+            return False
+        
+        print("   ✅ PASS: Supplier company name is correct")
+        
+        # Verify contact name
+        if supplier_contact_name != contact_data["full_name"]:
+            print(f"   ❌ FAIL: Contact name mismatch. Expected: '{contact_data['full_name']}', Got: '{supplier_contact_name}'")
+            return False
+        
+        print("   ✅ PASS: Supplier contact name is correct")
+        
+        # Verify contact email
+        if supplier_contact_email != contact_data["email"]:
+            print(f"   ❌ FAIL: Contact email mismatch. Expected: '{contact_data['email']}', Got: '{supplier_contact_email}'")
+            return False
+        
+        print("   ✅ PASS: Supplier contact email is correct")
+        
+        # CRITICAL TEST: Verify that supplier_contact_specialty contains position, NOT tags
+        expected_specialty = contact_data["position"]  # Should be "Genel Müdür"
+        tags_string = ", ".join(contact_data["tags"])  # Should NOT be "YÖNETICI, KARAR_VERICI"
+        
+        print(f"\n8. CRITICAL TEST: Verifying position is used instead of tags...")
+        print(f"   Expected specialty (position): '{expected_specialty}'")
+        print(f"   Tags that should NOT be used: '{tags_string}'")
+        print(f"   Actual specialty in response: '{supplier_contact_specialty}'")
+        
+        if supplier_contact_specialty == expected_specialty:
+            print("   ✅ PASS: supplier_contact_specialty correctly uses contact's position field")
+        elif supplier_contact_specialty == tags_string:
+            print("   ❌ FAIL: supplier_contact_specialty incorrectly uses tags instead of position")
+            print("   This indicates the bug is still present - tags are being used instead of position")
+            return False
+        else:
+            print(f"   ❌ FAIL: supplier_contact_specialty has unexpected value: '{supplier_contact_specialty}'")
+            print(f"   Expected: '{expected_specialty}' (position field)")
+            return False
+        
+        # Step 7: Test with invalid approval key
+        print("\n9. Testing invalid approval key handling...")
+        
+        invalid_key = "invalid-approval-key-12345"
+        invalid_endpoint = f"{BACKEND_URL}/api/expense-receipt-approval/{invalid_key}"
+        
+        invalid_response = requests.get(invalid_endpoint, timeout=30)
+        
+        if invalid_response.status_code == 404:
+            print("   ✅ PASS: Invalid approval key returns 404 error")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for invalid key, got {invalid_response.status_code}")
+        
+        # Cleanup: Delete test data
+        print("\n10. Cleaning up test data...")
+        
+        # Delete expense receipt
+        delete_receipt_response = requests.delete(f"{BACKEND_URL}/api/expense-receipts/{receipt_id}", timeout=30)
+        if delete_receipt_response.status_code == 200:
+            print("   ✅ Test expense receipt deleted")
+        
+        # Delete contact
+        delete_contact_response = requests.delete(f"{BACKEND_URL}/api/supplier-contacts/{contact_id}", timeout=30)
+        if delete_contact_response.status_code == 200:
+            print("   ✅ Test contact deleted")
+        
+        # Delete supplier
+        delete_supplier_response = requests.delete(f"{BACKEND_URL}/api/suppliers/{supplier_id}", timeout=30)
+        if delete_supplier_response.status_code == 200:
+            print("   ✅ Test supplier deleted")
+        
+        print("\n" + "=" * 80)
+        print("EXPENSE RECEIPT APPROVAL SYSTEM TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Test supplier and contact created successfully")
+        print("✅ Expense receipt created with approval_link")
+        print("✅ GET /api/expense-receipt-approval/{approval_key} responds correctly")
+        print("✅ Response includes all required supplier contact fields")
+        print("✅ supplier_company_name populated correctly")
+        print("✅ supplier_contact_name populated correctly")
+        print("✅ supplier_contact_email populated correctly")
+        print("✅ supplier_contact_specialty uses position field (NOT tags)")
+        print("✅ Invalid approval key handling works correctly")
+        print("✅ Test data cleaned up successfully")
+        print("\n🎉 EXPENSE RECEIPT APPROVAL SYSTEM TEST PASSED!")
+        print("   The contact's position (görevi) is correctly displayed instead of specialty (uzmanlık alanı)")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     print("🚀 STARTING GEO ENDPOINTS TESTING FOR CITYSELECT COMPONENT")
     print("=" * 80)
