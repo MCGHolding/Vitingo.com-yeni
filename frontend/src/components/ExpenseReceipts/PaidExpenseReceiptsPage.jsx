@@ -186,6 +186,10 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     let recipientName = '';
     let recipientCompany = '';
     
+    console.log('Receipt supplier_id:', receipt.supplier_id);
+    console.log('Available suppliers:', Object.keys(suppliers));
+    console.log('Selected supplier:', supplier);
+    
     if (supplier) {
       // First, try to get contact info if available
       if (supplier.contacts && supplier.contacts.length > 0) {
@@ -193,12 +197,16 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         recipientEmail = primaryContact.email || '';
         recipientName = primaryContact.name || '';
         recipientCompany = supplier.name || '';
+        console.log('Using primary contact:', primaryContact);
       } else {
         // Fallback to supplier info
         recipientEmail = supplier.email || '';
         recipientName = supplier.authorized_person_name || supplier.name || '';
         recipientCompany = supplier.name || '';
+        console.log('Using supplier fallback info');
       }
+    } else {
+      console.log('No supplier found for ID:', receipt.supplier_id);
     }
     
     setEmailForm({
