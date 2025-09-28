@@ -962,10 +962,10 @@ const NewSupplierForm = ({ onClose }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Cep Telefonu
                     </label>
-                    <Input
+                    <PhoneInput
                       value={contact.mobile}
-                      onChange={(e) => handleContactChange(contactIndex, 'mobile', e.target.value)}
-                      placeholder="0535 555 0000"
+                      onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
+                      placeholder="Cep telefonu numarası"
                     />
                   </div>
                   <div>
