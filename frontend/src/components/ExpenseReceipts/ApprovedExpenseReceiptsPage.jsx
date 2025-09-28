@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle, Eye, Edit2, MoreHorizontal, CreditCard, User, Building, Trash2, Mail } from 'lucide-react';
+import { Search, CheckCircle, Eye, Edit2, MoreHorizontal, CreditCard, User, Building, Trash2, Mail, DollarSign } from 'lucide-react';
 
 const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const [receipts, setReceipts] = useState([]);
