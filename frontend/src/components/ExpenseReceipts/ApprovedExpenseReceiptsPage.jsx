@@ -33,30 +33,44 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     message: ''
   });
 
-  // Load approved expense receipts from backend
+  // Load approved expense receipts and suppliers from backend
   useEffect(() => {
-    const loadApprovedReceipts = async () => {
+    const loadData = async () => {
       setLoading(true);
       try {
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
-        const response = await fetch(`${backendUrl}/api/expense-receipts?status=approved`);
         
-        if (!response.ok) {
+        // Load receipts
+        const receiptsResponse = await fetch(`${backendUrl}/api/expense-receipts?status=approved`);
+        if (!receiptsResponse.ok) {
           throw new Error('Failed to fetch approved expense receipts');
         }
+        const receiptsData = await receiptsResponse.json();
+        setReceipts(receiptsData);
+        setFilteredReceipts(receiptsData);
         
-        const data = await response.json();
-        setReceipts(data);
-        setFilteredReceipts(data);
+        // Load suppliers
+        const suppliersResponse = await fetch(`${backendUrl}/api/suppliers`);
+        if (suppliersResponse.ok) {
+          const suppliersData = await suppliersResponse.json();
+          // Create suppliers map for easy lookup
+          const suppliersMap = {};
+          suppliersData.forEach(supplier => {
+            suppliersMap[supplier.id] = supplier;
+          });
+          setSuppliers(suppliersMap);
+        }
+        
+        setError('');
       } catch (error) {
-        console.error('Error loading approved expense receipts:', error);
+        console.error('Error loading data:', error);
         setError('Onaylanmış makbuzlar yüklenirken hata oluştu');
       } finally {
         setLoading(false);
       }
     };
 
-    loadApprovedReceipts();
+    loadData();
   }, []);
 
   // Filter receipts based on search, status and currency
