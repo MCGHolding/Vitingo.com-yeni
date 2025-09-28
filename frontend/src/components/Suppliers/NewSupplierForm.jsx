@@ -180,7 +180,16 @@ const NewSupplierForm = ({ onClose }) => {
   };
 
   const handleAddContact = () => {
-    setContacts([...contacts, { full_name: '', mobile: '', email: '', position: '', tags: [] }]);
+    setContacts([...contacts, { 
+      full_name: '', 
+      mobile: '', 
+      email: '', 
+      position: '', 
+      tags: [],
+      address: '',
+      country: '',
+      city: ''
+    }]);
   };
 
   const handleRemoveContact = (index) => {
