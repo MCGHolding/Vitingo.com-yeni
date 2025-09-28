@@ -261,6 +261,47 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     alert(`Makbuz düzenleme: ${receipt.receipt_number}`);
   };
 
+  // Handle bank info click
+  const handleBankInfoClick = (receipt) => {
+    const supplier = suppliers[receipt.supplier_id];
+    if (supplier) {
+      setSelectedBankInfo({
+        supplier_name: supplier.name,
+        bank_name: supplier.bank_name,
+        iban: supplier.iban,
+        swift_code: supplier.swift_code,
+        bank_address: supplier.bank_address,
+        is_usa_bank: supplier.is_usa_bank,
+        usa_routing_number: supplier.usa_routing_number,
+        usa_account_number: supplier.usa_account_number,
+        usa_bank_address: supplier.usa_bank_address
+      });
+      setShowBankInfoModal(true);
+    }
+  };
+
+  // Copy bank info to clipboard
+  const copyBankInfo = (info) => {
+    let textToCopy = '';
+    
+    if (info.is_usa_bank) {
+      textToCopy = `Banka: ${info.bank_name}
+Routing Number: ${info.usa_routing_number}
+Account Number: ${info.usa_account_number}
+Adres: ${info.usa_bank_address}`;
+    } else {
+      textToCopy = `Banka: ${info.bank_name}
+IBAN: ${info.iban}
+Swift: ${info.swift_code}`;
+    }
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('Banka bilgileri kopyalandı!');
+    }).catch(() => {
+      alert('Kopyalama başarısız!');
+    });
+  };
+
   // Handle delete receipt
   const handleDeleteReceipt = (receipt) => {
     setSelectedReceipt(receipt);
