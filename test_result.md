@@ -346,15 +346,18 @@ frontend:
 
   - task: "PendingApprovalExpenseReceiptsPage Implementation" 
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/ExpenseReceipts/PendingApprovalExpenseReceiptsPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "✅ PENDINGAPPROVALEXPENSERECEIPTSPAGE IMPLEMENTATION COMPLETED - Specialized page for pending approval receipts with: 1) Yellow-themed design for pending status ✅ 2) Summary card showing total pending receipts, total amount, average waiting days ✅ 3) Days waiting calculation and color-coded badges (green <3 days, yellow 3-7 days, red >7 days) ✅ 4) Urgent receipts highlighting (red background for >7 days) ✅ 5) Send reminder button for each receipt ✅ 6) Search functionality specific to pending receipts ✅ 7) Backend integration with status=pending filter ✅ 8) Professional table with waiting time tracking ✅"
+      - working: true
+        agent: "testing"
+        comment: "✅ PENDINGAPPROVALEXPENSERECEIPTSPAGE TESTED AND WORKING - Fixed environment variable issue (import.meta.env → process.env) and confirmed page functionality: 1) Page loads without errors ✅ 2) Displays 8 pending expense receipts correctly ✅ 3) API calls working with proper backend integration ✅ 4) No JavaScript console errors ✅ 5) Navigation from Gider Makbuzu → Onay Bekleyen Makbuzlar working perfectly ✅"
 
   - task: "ApprovedExpenseReceiptsPage Implementation"
     implemented: true
