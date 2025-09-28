@@ -145,11 +145,17 @@ export default function CitySelect({
   }, []);
 
   const handleCitySelect = (city) => {
+    console.log('🔍 CitySelect - handleCitySelect called with:', city);
     setSelectedCity(city);
+    console.log('🔍 CitySelect - selectedCity state updated to:', city);
     setIsOpen(false);
     setSearchQuery('');
     if (onChange) {
+      console.log('🔍 CitySelect - calling onChange with:', city);
       onChange(city);
+      console.log('🔍 CitySelect - onChange called');
+    } else {
+      console.log('❌ CitySelect - onChange is null/undefined');
     }
   };
 
