@@ -49,9 +49,14 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     loadApprovedReceipts();
   }, []);
 
-  // Filter receipts based on search and currency
+  // Filter receipts based on search, status and currency
   useEffect(() => {
     let filtered = receipts;
+    
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(receipt => receipt.status === statusFilter);
+    }
     
     // Currency filter
     if (currencyFilter !== 'all') {
@@ -66,7 +71,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     }
     
     setFilteredReceipts(filtered);
-  }, [receipts, searchTerm, currencyFilter]);
+  }, [receipts, searchTerm, statusFilter, currencyFilter]);
 
   // Format currency
   const formatCurrency = (amount, currency) => {
