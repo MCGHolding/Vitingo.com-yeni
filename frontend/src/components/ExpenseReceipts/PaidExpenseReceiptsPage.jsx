@@ -275,7 +275,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
               <FileCheck className="w-8 h-8 mr-3 text-green-600" />
               Ödenmiş Makbuzlar
             </h1>
-            <p className="text-gray-600 mt-2">ödenmiş gider makbuzları</p>
+            <p className="text-gray-600 mt-2">Ödenmiş gider makbuzları</p>
           </div>
           <div className="flex space-x-3">
             <button
