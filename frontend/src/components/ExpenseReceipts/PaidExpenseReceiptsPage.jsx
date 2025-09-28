@@ -5,6 +5,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [currencyFilter, setCurrencyFilter] = useState('all');
   const [loading, setLoading] = useState(false);
