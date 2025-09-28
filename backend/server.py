@@ -3703,15 +3703,21 @@ async def get_expense_receipt_for_approval(approval_key: str):
                 "supplier_contact_email": ""
             }
             
-            # Get first contact info if available
-            contacts = supplier.get("contacts", [])
+            # Get first contact info if available from supplier_contacts collection
+            contacts = await db.supplier_contacts.find({
+                "supplier_id": receipt.get("supplier_id"),
+                "is_active": True
+            }).to_list(length=None)
+            
             if contacts:
                 first_contact = contacts[0]
                 supplier_info.update({
-                    "supplier_contact_name": first_contact.get("name", ""),
-                    "supplier_contact_specialty": first_contact.get("tags", ""),  # Using tags as specialty
+                    "supplier_contact_name": first_contact.get("full_name", ""),
+                    "supplier_contact_specialty": ", ".join(first_contact.get("tags", [])),  # Using tags as specialty
                     "supplier_contact_email": first_contact.get("email", "")
                 })
+            else:
+                logger.error(f"No contacts found for supplier: {receipt.get('supplier_id')}")
         
         # Create response with receipt and supplier info
         receipt_response = ExpenseReceipt(**receipt)
