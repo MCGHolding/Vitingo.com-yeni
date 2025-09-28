@@ -103,9 +103,12 @@ export default function CitySelect({
 
   // Ülke değiştiğinde şehirleri yükle
   useEffect(() => {
+    console.log('🔍 CitySelect - useEffect for country called with country:', country);
     if (country) {
+      console.log('🔍 CitySelect - Fetching cities for country:', country);
       fetchCities('', 1, false);
     } else {
+      console.log('🔍 CitySelect - No country, clearing cities and selectedCity');
       setCities([]);
       setSelectedCity(null);
       if (onChange) {
