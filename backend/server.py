@@ -25,6 +25,13 @@ import requests
 import xml.etree.ElementTree as ET
 from decimal import Decimal
 import re
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
+import base64
 
 
 ROOT_DIR = Path(__file__).parent
