@@ -3841,9 +3841,12 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
         # Generate PDF for the receipt
         pdf_data = generate_expense_receipt_pdf(receipt)
         
+        # Create sender name in format "Vitingo CRM - {User Name}"
+        sender_name = f"Vitingo CRM - {request.sender_name}" if request.sender_name else "Vitingo CRM"
+        
         # Send email using SendGrid
         message = Mail(
-            from_email='info@quattrostand.com',  # Use validated sender
+            from_email=(sender_name, 'info@quattrostand.com'),  # (name, email) tuple
             to_emails=request.to,
             subject=request.subject,
             plain_text_content=plain_content,
