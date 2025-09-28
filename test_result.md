@@ -958,6 +958,18 @@ frontend:
         agent: "testing"
         comment: "🔍 ENHANCED FORM VALIDATION DEBUG TESTING COMPLETED - CRITICAL ISSUE IDENTIFIED: Conducted comprehensive debug testing as requested to identify exact form validation failure cause. ✅ DEBUG LOGS CAPTURED: Successfully captured 'SUBMIT TRIGGERED - Form Data: {invoiceNumber: USD-092025001007, currency: USD, date: 2025-09-27, customerId: , customerName: }' showing form submission is triggered but data is empty. ❌ ROOT CAUSE IDENTIFIED: 1) Customer name input field accepts data but doesn't persist in React state (customerName shows empty in debug logs despite manual input) 2) Product table inputs not properly connected to React state (only 2 table inputs detected instead of 3+) 3) Form validation correctly prevents submission when required fields are empty 4) No API calls made because validation fails before backend submission ✅ VALIDATION LOGIC WORKING: parseNumber function works correctly (tested: 5→5, 12000→12000), form validation prevents submission with empty fields as expected. 🎯 EXACT ISSUE: Frontend form field state management problem - input fields not updating formData state properly. The issue is NOT 422 backend validation but frontend React state synchronization between input fields and form state. Manual customer input and product table inputs need proper onChange handlers to update component state."
 
+  - task: "IBAN Validation System - useIban Hook Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/hooks/useIban.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created centralized IBAN validation system using useIban hook and applied it to both NewSupplierForm and NewExpenseReceiptForm. Features: automatic IBAN formatting (4-character groups with spaces), mod 97 checksum validation, comprehensive validation rules (15-34 characters, format checks), Turkish error messages with red styling, consistent placeholder text across forms. Both forms now use the same robust validation and formatting system for IBAN fields."
+
 test_plan:
   current_focus: []
   stuck_tasks: []
