@@ -1116,8 +1116,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "BankEmailModal Real Email Sending with Success State"
-    - "Bank Email API Endpoint"
+    - "Geo Countries API Endpoint"
+    - "Geo Cities API Endpoint"
+    - "NewSupplierForm Geo Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
