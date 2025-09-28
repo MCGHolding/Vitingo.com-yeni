@@ -1229,6 +1229,22 @@ function App() {
               path="/expense-receipt-approval/:token" 
               element={<ExpenseReceiptApprovalPage />} 
             />
+            <Route 
+              path="/suppliers/new" 
+              element={
+                <ProtectedRoute>
+                  <NewSupplierForm onClose={() => window.location.href = '/'} />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/suppliers" 
+              element={
+                <ProtectedRoute>
+                  <AllSuppliersPage onBackToDashboard={() => window.location.href = '/'} onNewSupplier={() => window.location.href = '/suppliers/new'} />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </BrowserRouter>
       </div>
