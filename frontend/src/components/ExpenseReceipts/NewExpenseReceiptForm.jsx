@@ -197,13 +197,19 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
+      const submitData = {
+        ...formData,
+        amount: parseFloat(formData.amount),
+        is_usa_bank: isUSABank,
+        supplier_routing_number: isUSABank ? supplierData.routing_number : "",
+        supplier_us_account_number: isUSABank ? supplierData.us_account_number : "",
+        supplier_bank_address: isUSABank ? supplierData.bank_address : ""
+      };
+
       const response = await fetch(`${backendUrl}/api/expense-receipts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          amount: parseFloat(formData.amount)
-        })
+        body: JSON.stringify(submitData)
       });
 
       if (!response.ok) {
