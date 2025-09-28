@@ -1503,6 +1503,454 @@ def test_supplier_specialty_validation_errors():
     print("\n✅ SUPPLIER SPECIALTY VALIDATION TESTS COMPLETED!")
     return True
 
+def test_expense_receipt_approval_workflow():
+    """
+    Test the complete expense receipt approval workflow
+    
+    NEW ENDPOINTS ADDED:
+    1. GET /api/expense-receipt-approval/{approval_key} - Get expense receipt for approval
+    2. POST /api/expense-receipt-approval/{approval_key} - Submit approval with signature
+
+    NEW FUNCTIONALITY:
+    1. When expense receipt is created, automatic approval email is sent to supplier
+    2. Email contains unique approval link
+    3. Supplier can view receipt details and sign it
+    4. Status changes from "pending" to "approved" after signature
+
+    BACKEND TESTING NEEDED:
+    1. Create expense receipt - should generate approval_link
+    2. Test GET approval endpoint with valid approval_key
+    3. Test GET approval endpoint with invalid approval_key (should return 404)
+    4. Test POST approval endpoint with signature data
+    5. Verify status changes from pending to approved
+    6. Test that already approved receipts cannot be approved again
+    7. Verify signer information is stored correctly
+
+    NEW MODEL FIELDS TO TEST:
+    - approval_link: unique key for approval
+    - signature_data: base64 signature
+    - signer_name, signer_title, signer_company: person who signed
+    - signed_at: timestamp when approved
+    """
+    
+    print("=" * 80)
+    print("TESTING EXPENSE RECEIPT APPROVAL WORKFLOW")
+    print("=" * 80)
+    
+    # First, get or create a test supplier
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    print(f"Getting suppliers from: {suppliers_endpoint}")
+    
+    supplier_id = None
+    supplier_name = "Test Approval Supplier"
+    
+    try:
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                print("⚠️  No suppliers found, will use mock supplier ID for testing")
+                supplier_id = "test-supplier-approval-123"
+        else:
+            print(f"⚠️  Failed to get suppliers: {suppliers_response.status_code}, using mock supplier ID")
+            supplier_id = "test-supplier-approval-123"
+    except Exception as e:
+        print(f"⚠️  Error getting suppliers: {str(e)}, using mock supplier ID")
+        supplier_id = "test-supplier-approval-123"
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    
+    # Test 1: Create expense receipt and verify approval_link is generated
+    print(f"\n{'='*80}")
+    print("TEST 1: CREATE EXPENSE RECEIPT - VERIFY APPROVAL_LINK GENERATION")
+    print(f"{'='*80}")
+    print(f"Testing endpoint: {create_endpoint}")
+    
+    receipt_data = {
+        "date": "2025-01-15",
+        "currency": "USD",
+        "supplier_id": supplier_id,
+        "amount": 1500.00,
+        "description": "Test expense receipt for approval workflow testing"
+    }
+    
+    approval_key = None
+    receipt_id = None
+    
+    try:
+        print("\n--- Creating expense receipt ---")
+        print(f"Request data: {receipt_data}")
+        
+        response = requests.post(create_endpoint, json=receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Expense receipt created successfully")
+            
+            # Parse response
+            receipt_response = response.json()
+            receipt_id = receipt_response.get('id')
+            approval_link = receipt_response.get('approval_link')
+            
+            # Verify approval_link is generated
+            if approval_link:
+                print(f"✅ PASS: approval_link generated: {approval_link}")
+                # Extract approval_key from the link
+                if "/expense-receipt-approval/" in approval_link:
+                    approval_key = approval_link.split("/expense-receipt-approval/")[1]
+                    print(f"✅ PASS: approval_key extracted: {approval_key}")
+                else:
+                    print(f"❌ FAIL: approval_link format incorrect: {approval_link}")
+                    return False
+            else:
+                print("❌ FAIL: approval_link not generated")
+                return False
+            
+            # Verify status is pending
+            if receipt_response.get('status') == 'pending':
+                print("✅ PASS: Receipt status is 'pending'")
+            else:
+                print(f"❌ FAIL: Receipt status should be 'pending', got '{receipt_response.get('status')}'")
+                return False
+            
+            print(f"✅ Receipt created with ID: {receipt_id}")
+            
+        else:
+            print(f"❌ FAIL: Failed to create expense receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating expense receipt: {str(e)}")
+        return False
+    
+    if not approval_key:
+        print("❌ FAIL: Cannot continue tests without approval_key")
+        return False
+    
+    # Test 2: GET approval endpoint with valid approval_key
+    print(f"\n{'='*80}")
+    print("TEST 2: GET EXPENSE RECEIPT FOR APPROVAL - VALID APPROVAL_KEY")
+    print(f"{'='*80}")
+    
+    get_approval_endpoint = f"{BACKEND_URL}/api/expense-receipt-approval/{approval_key}"
+    print(f"Testing endpoint: {get_approval_endpoint}")
+    
+    try:
+        print("\n--- Getting expense receipt for approval ---")
+        
+        response = requests.get(get_approval_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET approval endpoint responds with status 200")
+            
+            # Parse response
+            approval_data = response.json()
+            
+            # Verify receipt data is returned
+            if approval_data.get('id') == receipt_id:
+                print("✅ PASS: Correct receipt returned")
+            else:
+                print(f"❌ FAIL: Wrong receipt returned. Expected ID: {receipt_id}, Got: {approval_data.get('id')}")
+                return False
+            
+            # Verify status is still pending
+            if approval_data.get('status') == 'pending':
+                print("✅ PASS: Receipt status is still 'pending'")
+            else:
+                print(f"❌ FAIL: Receipt status should be 'pending', got '{approval_data.get('status')}'")
+                return False
+            
+            # Verify approval fields are empty
+            approval_fields = ['signature_data', 'signer_name', 'signer_title', 'signer_company', 'signed_at']
+            for field in approval_fields:
+                value = approval_data.get(field)
+                if not value or value == "":
+                    print(f"✅ PASS: {field} is empty (not yet approved)")
+                else:
+                    print(f"❌ FAIL: {field} should be empty, got '{value}'")
+                    return False
+            
+        else:
+            print(f"❌ FAIL: GET approval endpoint failed")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting expense receipt for approval: {str(e)}")
+        return False
+    
+    # Test 3: GET approval endpoint with invalid approval_key (should return 404)
+    print(f"\n{'='*80}")
+    print("TEST 3: GET EXPENSE RECEIPT FOR APPROVAL - INVALID APPROVAL_KEY")
+    print(f"{'='*80}")
+    
+    invalid_approval_key = "invalid-approval-key-12345"
+    invalid_get_endpoint = f"{BACKEND_URL}/api/expense-receipt-approval/{invalid_approval_key}"
+    print(f"Testing endpoint: {invalid_get_endpoint}")
+    
+    try:
+        print("\n--- Testing invalid approval key ---")
+        
+        response = requests.get(invalid_get_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Invalid approval_key returns 404")
+            
+            # Check error message
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                if "bulunamadı" in error_detail or "geçersiz" in error_detail:
+                    print("✅ PASS: Error message is in Turkish")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be in Turkish: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"❌ FAIL: Expected 404 for invalid approval_key, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing invalid approval key: {str(e)}")
+        return False
+    
+    # Test 4: POST approval endpoint with signature data
+    print(f"\n{'='*80}")
+    print("TEST 4: APPROVE EXPENSE RECEIPT - SUBMIT SIGNATURE DATA")
+    print(f"{'='*80}")
+    
+    post_approval_endpoint = f"{BACKEND_URL}/api/expense-receipt-approval/{approval_key}"
+    print(f"Testing endpoint: {post_approval_endpoint}")
+    
+    # Test signature data
+    signature_data = {
+        "signature_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        "signer_name": "Ahmet Yılmaz",
+        "signer_title": "Genel Müdür",
+        "signer_company": "Test Tedarikçi A.Ş."
+    }
+    
+    try:
+        print("\n--- Submitting approval with signature ---")
+        print(f"Signature data: {signature_data}")
+        
+        response = requests.post(post_approval_endpoint, json=signature_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Approval submitted successfully")
+            
+            # Parse response
+            approval_response = response.json()
+            
+            # Verify success response
+            if approval_response.get('success'):
+                print("✅ PASS: Approval response indicates success")
+            else:
+                print(f"❌ FAIL: Approval response should indicate success")
+                return False
+            
+            # Verify status is approved
+            if approval_response.get('status') == 'approved':
+                print("✅ PASS: Receipt status changed to 'approved'")
+            else:
+                print(f"❌ FAIL: Receipt status should be 'approved', got '{approval_response.get('status')}'")
+                return False
+            
+            # Verify message is in Turkish
+            message = approval_response.get('message', '')
+            if "başarıyla onaylandı" in message:
+                print("✅ PASS: Success message is in Turkish")
+                print(f"   Message: {message}")
+            else:
+                print(f"⚠️  WARNING: Success message might not be in Turkish: {message}")
+            
+        else:
+            print(f"❌ FAIL: Approval submission failed")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error submitting approval: {str(e)}")
+        return False
+    
+    # Test 5: Verify status changes from pending to approved
+    print(f"\n{'='*80}")
+    print("TEST 5: VERIFY STATUS CHANGE - PENDING TO APPROVED")
+    print(f"{'='*80}")
+    
+    get_receipt_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
+    print(f"Testing endpoint: {get_receipt_endpoint}")
+    
+    try:
+        print("\n--- Getting updated receipt to verify status change ---")
+        
+        response = requests.get(get_receipt_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Receipt retrieved successfully")
+            
+            # Parse response
+            updated_receipt = response.json()
+            
+            # Verify status is approved
+            if updated_receipt.get('status') == 'approved':
+                print("✅ PASS: Receipt status is now 'approved'")
+            else:
+                print(f"❌ FAIL: Receipt status should be 'approved', got '{updated_receipt.get('status')}'")
+                return False
+            
+            # Verify signer information is stored correctly
+            signer_fields = {
+                'signature_data': signature_data['signature_data'],
+                'signer_name': signature_data['signer_name'],
+                'signer_title': signature_data['signer_title'],
+                'signer_company': signature_data['signer_company']
+            }
+            
+            for field, expected_value in signer_fields.items():
+                actual_value = updated_receipt.get(field)
+                if actual_value == expected_value:
+                    print(f"✅ PASS: {field} stored correctly")
+                else:
+                    print(f"❌ FAIL: {field} not stored correctly. Expected: '{expected_value}', Got: '{actual_value}'")
+                    return False
+            
+            # Verify signed_at timestamp is set
+            signed_at = updated_receipt.get('signed_at')
+            if signed_at:
+                print(f"✅ PASS: signed_at timestamp is set: {signed_at}")
+            else:
+                print("❌ FAIL: signed_at timestamp should be set")
+                return False
+            
+        else:
+            print(f"❌ FAIL: Failed to retrieve updated receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error retrieving updated receipt: {str(e)}")
+        return False
+    
+    # Test 6: Test that already approved receipts cannot be approved again
+    print(f"\n{'='*80}")
+    print("TEST 6: PREVENT DOUBLE APPROVAL - ALREADY APPROVED RECEIPT")
+    print(f"{'='*80}")
+    
+    print(f"Testing endpoint: {post_approval_endpoint}")
+    
+    # Try to approve the same receipt again
+    duplicate_signature_data = {
+        "signature_data": "data:image/png;base64,different_signature_data",
+        "signer_name": "Different Signer",
+        "signer_title": "Different Title",
+        "signer_company": "Different Company"
+    }
+    
+    try:
+        print("\n--- Attempting to approve already approved receipt ---")
+        print(f"Duplicate signature data: {duplicate_signature_data}")
+        
+        response = requests.post(post_approval_endpoint, json=duplicate_signature_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("✅ PASS: Already approved receipt returns 400 error")
+            
+            # Check error message
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                if "zaten onaylanmış" in error_detail:
+                    print("✅ PASS: Error message is in Turkish and indicates already approved")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be appropriate: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"❌ FAIL: Expected 400 for already approved receipt, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing double approval prevention: {str(e)}")
+        return False
+    
+    # Test 7: Verify GET approval endpoint returns error for already approved receipt
+    print(f"\n{'='*80}")
+    print("TEST 7: GET APPROVAL FOR ALREADY APPROVED RECEIPT")
+    print(f"{'='*80}")
+    
+    print(f"Testing endpoint: {get_approval_endpoint}")
+    
+    try:
+        print("\n--- Getting approval page for already approved receipt ---")
+        
+        response = requests.get(get_approval_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            # Parse response
+            approval_data = response.json()
+            
+            # Should return error indicating already approved
+            if approval_data.get('error'):
+                print("✅ PASS: GET approval returns error for already approved receipt")
+                
+                error_message = approval_data.get('message', '')
+                if "zaten onaylanmış" in error_message:
+                    print("✅ PASS: Error message indicates already approved")
+                    print(f"   Error message: {error_message}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be appropriate: {error_message}")
+                
+                # Verify status is returned
+                if approval_data.get('status') == 'approved':
+                    print("✅ PASS: Current status is returned as 'approved'")
+                else:
+                    print(f"⚠️  WARNING: Status should be 'approved', got '{approval_data.get('status')}'")
+            else:
+                print("❌ FAIL: GET approval should return error for already approved receipt")
+                return False
+        else:
+            print(f"❌ FAIL: GET approval endpoint failed")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing GET approval for approved receipt: {str(e)}")
+        return False
+    
+    # Final summary
+    print(f"\n{'='*80}")
+    print("EXPENSE RECEIPT APPROVAL WORKFLOW TEST RESULTS")
+    print(f"{'='*80}")
+    print("✅ TEST 1: Create expense receipt - approval_link generated")
+    print("✅ TEST 2: GET approval endpoint with valid approval_key")
+    print("✅ TEST 3: GET approval endpoint with invalid approval_key (404)")
+    print("✅ TEST 4: POST approval endpoint with signature data")
+    print("✅ TEST 5: Verify status changes from pending to approved")
+    print("✅ TEST 6: Prevent double approval - already approved receipt")
+    print("✅ TEST 7: GET approval for already approved receipt returns error")
+    print("\n🎉 ALL EXPENSE RECEIPT APPROVAL WORKFLOW TESTS PASSED!")
+    print(f"   Receipt ID: {receipt_id}")
+    print(f"   Approval Key: {approval_key}")
+    print(f"   Final Status: approved")
+    print(f"   Signer: {signature_data['signer_name']} ({signature_data['signer_title']})")
+    
+    return True
+
 def test_expense_receipt_usa_bank_format():
     """
     Test USA bank format support in expense receipt APIs
