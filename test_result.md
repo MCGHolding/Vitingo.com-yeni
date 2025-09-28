@@ -149,9 +149,9 @@ backend:
 
   - task: "NewSupplierForm Geo Integration"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/Suppliers/NewSupplierForm.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -161,6 +161,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "🎉 NEWSUPPLIERFORM GEO INTEGRATION VERIFICATION COMPLETED SUCCESSFULLY! ✅ FRONTEND INTEGRATION VERIFIED: 1) Route Access: /suppliers/new route exists and renders NewSupplierForm component ✅ 2) Component Imports: CountrySelect and CitySelect components properly imported from '../geo/' ✅ 3) Form Integration: Both geo components integrated in supplier form and contact forms ✅ 4) API Integration: Components use proper backend URL (process.env.REACT_APP_BACKEND_URL) ✅ 5) Event Handling: Country change resets city selection, proper onChange handlers ✅ 6) Form Fields: Geo fields included in both company and contact information sections ✅ 7) Component Props: Proper value, onChange, placeholder, disabled props passed ✅ TECHNICAL VERIFICATION: ✅ CountrySelect: Lines 581-591, 1009-1019 - properly integrated ✅ CitySelect: Lines 599-606, 1027-1034 - country dependency working ✅ Form State: formData.country and formData.city managed correctly ✅ Contact Geo: Each contact has separate country/city fields ✅ Reset Logic: City cleared when country changes ✅ Backend Integration: Geo API endpoints called correctly ✅ Route Configuration: /suppliers/new route properly configured in App.js 🎯 CONCLUSION: NewSupplierForm geo integration is 100% complete and functional. CountrySelect and CitySelect components are properly integrated, backend API calls working, and form functionality is ready for production use."
+      - working: false
+        agent: "testing"
+        comment: "🔍 USER ISSUE CONFIRMED - PARTIAL FUNCTIONALITY WORKING: Comprehensive testing of user-reported issue 'ülkeler gözüküyor ama bir ülkeyi seçtiğinde ülke seçilemiyor, ülke seçilemediği için de şehirler gelmiyor' completed with mixed results. ✅ COUNTRY SELECTION: WORKING - Successfully accessed NewSupplierForm via Tedarikçi > Yeni Tedarikçi menu, country dropdown opens correctly, shows all countries including Turkey, search functionality works ('Turkey' search finds Turkey), Turkey selection works and displays 'Turkey (TR)' in field. ❌ CITY SELECTION: PARTIALLY BROKEN - City field becomes enabled after country selection, city dropdown opens, search works ('Istanbul' search finds Istanbul), but city selection mechanism fails - Istanbul option clicks but doesn't get selected/displayed in field. 🔧 TECHNICAL FINDINGS: Backend geo APIs working correctly (countries and cities data available), CountrySelect component working properly, CitySelect component has selection issue - onClick handler not properly updating form state, React warning found: 'Each child in a list should have a unique key prop' in CountrySelect component. 🎯 ROOT CAUSE: City selection onClick handler in CitySelect component not properly updating the form state, causing selected city to not persist in the field display. User complaint is PARTIALLY VALID - country selection works but city selection is broken."
 
   - task: "Bank Email API Endpoint"
     implemented: true
