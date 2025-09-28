@@ -259,7 +259,49 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
   };
 
   const handleSendEmail = () => {
-    setShowEmailModal(true);
+    if (createdReceipt) {
+      setEmailForm({
+        to: '',
+        subject: `Gider Makbuzu: ${createdReceipt.receipt_number}`,
+        message: `${createdReceipt.receipt_number} numaralı gider makbuzu hakkında...`
+      });
+      setShowEmailModal(true);
+    }
+  };
+
+  const sendEmail = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const response = await fetch(`${backendUrl}/api/send-expense-receipt-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...emailForm,
+          receipt_id: createdReceipt.id
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowEmailModal(false);
+        setEmailForm({ to: '', subject: '', message: '' });
+        toast({
+          title: "Başarılı",
+          description: "E-posta başarıyla gönderildi",
+          variant: "default"
+        });
+      } else {
+        throw new Error(result.message || 'E-posta gönderilemedi');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast({
+        title: "Hata",
+        description: "E-posta gönderilirken hata oluştu",
+        variant: "destructive"
+      });
+    }
   };
 
   if (receiptCreated) {
