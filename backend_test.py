@@ -6646,19 +6646,19 @@ def test_bank_email_endpoint():
     return True
 
 def main():
-    """Main test runner for expense receipt APIs"""
-    print("🚀 STARTING EXPENSE RECEIPT CRUD API TESTING")
+    """Main test runner for expense receipt USA bank format testing"""
+    print("🚀 STARTING USA BANK FORMAT SUPPORT TESTING FOR EXPENSE RECEIPTS")
     print("=" * 80)
     
     try:
-        # Run the comprehensive expense receipt CRUD test
-        success = test_expense_receipt_crud_apis()
+        # Run the USA bank format support test
+        success = test_expense_receipt_usa_bank_format()
         
         if success:
-            print("\n🎉 ALL EXPENSE RECEIPT TESTS COMPLETED SUCCESSFULLY!")
+            print("\n🎉 ALL USA BANK FORMAT TESTS COMPLETED SUCCESSFULLY!")
             return True
         else:
-            print("\n❌ SOME EXPENSE RECEIPT TESTS FAILED!")
+            print("\n❌ SOME USA BANK FORMAT TESTS FAILED!")
             return False
             
     except Exception as e:
