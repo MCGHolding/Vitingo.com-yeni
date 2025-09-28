@@ -19,7 +19,7 @@ import {
   CheckCircle,
   Mail
 } from 'lucide-react';
-// EmailModal removed - using inline email modal instead
+import EmailModal from '../UserManagement/EmailModal';
 
 const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
   const { toast } = useToast();
