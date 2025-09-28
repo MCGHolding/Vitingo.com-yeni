@@ -278,6 +278,8 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
       amount: '',
       description: ''
     });
+    setSupplierContacts([]);
+    setSelectedContact(null);
     setIsUSABank(false);
   };
 
