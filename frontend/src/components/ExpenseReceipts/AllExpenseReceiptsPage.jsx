@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Eye, Edit2, MoreHorizontal, FileText, CheckCircle, XCircle, Clock, DollarSign } from 'lucide-react';
+import { Search, Plus, Eye, Edit2, MoreHorizontal, FileText, CheckCircle, XCircle, Clock, DollarSign, Trash2, Mail } from 'lucide-react';
 
 const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const [receipts, setReceipts] = useState([]);
