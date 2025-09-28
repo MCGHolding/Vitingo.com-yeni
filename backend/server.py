@@ -4129,7 +4129,7 @@ async def get_countries(query: str = ""):
                 ]
             }
         
-        countries = await db.countries.find(filter_query).sort("tr_name", 1).to_list(length=None)
+        countries = await db.countries.find(filter_query).sort("name", 1).to_list(length=None)
         
         # Convert MongoDB documents to API format
         result = []
