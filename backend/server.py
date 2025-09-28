@@ -2752,6 +2752,7 @@ class Supplier(BaseModel):
     account_holder_name: Optional[str] = ""
     swift_code: Optional[str] = ""
     country: Optional[str] = ""
+    city: Optional[str] = ""
     # USA Bank Information
     routing_number: Optional[str] = ""
     us_account_number: Optional[str] = ""
@@ -2801,6 +2802,7 @@ class SupplierCreate(BaseModel):
     account_holder_name: Optional[str] = ""
     swift_code: Optional[str] = ""
     country: Optional[str] = ""
+    city: Optional[str] = ""
     # USA Bank Information
     routing_number: Optional[str] = ""
     us_account_number: Optional[str] = ""
