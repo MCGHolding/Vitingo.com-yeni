@@ -168,7 +168,9 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     setEmailForm({
       to: '',
       subject: `Gider Makbuzu: ${receipt.receipt_number}`,
-      message: `${receipt.receipt_number} numaralı gider makbuzu hakkında...`
+      message: '', // Mesaj artık template'de otomatik oluşturuluyor
+      recipient_name: '',
+      recipient_company: ''
     });
     setShowEmailModal(true);
   };
