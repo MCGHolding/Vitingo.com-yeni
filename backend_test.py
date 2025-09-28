@@ -9251,8 +9251,8 @@ def test_expense_receipt_approval_system():
         print(f"   ✅ PASS: Test supplier created with ID: {supplier_id}")
         print(f"   Supplier: {supplier.get('company_short_name')}")
         
-        # Step 2: Create a contact for the supplier with position field
-        print("\n2. Creating contact with position field for the supplier...")
+        # Step 3: Create a contact for the supplier with position field
+        print("\n3. Creating contact with position field for the supplier...")
         
         contact_data = {
             "supplier_id": supplier_id,
