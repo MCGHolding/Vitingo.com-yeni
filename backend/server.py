@@ -4136,7 +4136,8 @@ async def get_countries(query: str = ""):
             result.append({
                 "code": country.get("iso2", ""),
                 "name": country.get("name", ""),
-                "tr_name": country.get("tr_name", country.get("name", ""))
+                "iso2": country.get("iso2", ""),
+                "iso3": country.get("iso3", "")
             })
         
         return result
