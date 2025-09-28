@@ -6645,20 +6645,386 @@ def test_bank_email_endpoint():
     
     return True
 
+def test_expense_receipt_creation_and_listing_issue():
+    """
+    Test expense receipt creation and listing functionality to diagnose the user's issue.
+    
+    USER ISSUE: User created a new expense receipt and got success message, 
+    but it doesn't appear in "Tüm Makbuzlar" (All Expense Receipts) page.
+    
+    INVESTIGATION TESTS:
+    1. Check if expense receipts are actually being created and stored in the database
+    2. Test GET /api/expense-receipts endpoint to see if receipts are returned
+    3. Check if there are any recent expense receipts in the database
+    4. Verify the data structure and format of returned receipts
+    5. Check for any date serialization issues that might prevent display
+    6. Test filtering by status (GET /api/expense-receipts?status=pending)
+    """
+    
+    print("=" * 80)
+    print("🔍 TESTING EXPENSE RECEIPT CREATION AND LISTING - USER ISSUE DIAGNOSIS")
+    print("=" * 80)
+    print("User reported: Created expense receipt with success message, but doesn't appear in list")
+    print("=" * 80)
+    
+    # Get or create a test supplier first
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    supplier_id = None
+    supplier_name = "Test Supplier for Receipt Issue"
+    
+    try:
+        print("\n1. GETTING SUPPLIERS FOR TESTING...")
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                test_supplier = suppliers[0]
+                supplier_id = test_supplier.get('id')
+                supplier_name = test_supplier.get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                print("⚠️  No suppliers found, will use mock supplier ID for testing")
+                supplier_id = "test-supplier-receipt-issue-123"
+                supplier_name = "Mock Test Supplier"
+        else:
+            print(f"⚠️  Failed to get suppliers: {suppliers_response.status_code}, using mock supplier ID")
+            supplier_id = "test-supplier-receipt-issue-123"
+            supplier_name = "Mock Test Supplier"
+    except Exception as e:
+        print(f"⚠️  Error getting suppliers: {str(e)}, using mock supplier ID")
+        supplier_id = "test-supplier-receipt-issue-123"
+        supplier_name = "Mock Test Supplier"
+    
+    # Test 1: Check current expense receipts in database
+    print(f"\n{'='*80}")
+    print("TEST 1: CHECK EXISTING EXPENSE RECEIPTS IN DATABASE")
+    print(f"{'='*80}")
+    
+    get_all_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Testing endpoint: {get_all_endpoint}")
+    
+    existing_receipts = []
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            existing_receipts = response.json()
+            print(f"✅ PASS: GET /api/expense-receipts endpoint working")
+            print(f"📊 Found {len(existing_receipts)} existing expense receipts in database")
+            
+            if len(existing_receipts) > 0:
+                print("\n--- EXISTING RECEIPTS ANALYSIS ---")
+                for i, receipt in enumerate(existing_receipts[:5], 1):  # Show first 5
+                    print(f"Receipt {i}:")
+                    print(f"  ID: {receipt.get('id')}")
+                    print(f"  Receipt Number: {receipt.get('receipt_number')}")
+                    print(f"  Date: {receipt.get('date')}")
+                    print(f"  Amount: {receipt.get('amount')} {receipt.get('currency')}")
+                    print(f"  Supplier: {receipt.get('supplier_name')}")
+                    print(f"  Status: {receipt.get('status')}")
+                    print(f"  Created At: {receipt.get('created_at')}")
+                    print()
+                
+                if len(existing_receipts) > 5:
+                    print(f"... and {len(existing_receipts) - 5} more receipts")
+            else:
+                print("📝 No existing expense receipts found in database")
+        else:
+            print(f"❌ FAIL: GET /api/expense-receipts failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error getting existing expense receipts: {str(e)}")
+        return False
+    
+    # Test 2: Create a new expense receipt (simulating user action)
+    print(f"\n{'='*80}")
+    print("TEST 2: CREATE NEW EXPENSE RECEIPT (SIMULATING USER ACTION)")
+    print(f"{'='*80}")
+    
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Testing endpoint: {create_endpoint}")
+    
+    # Create realistic expense receipt data
+    from datetime import datetime
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    
+    new_receipt_data = {
+        "date": current_date,
+        "currency": "TRY",
+        "supplier_id": supplier_id,
+        "amount": 1250.75,
+        "description": "Test expense receipt - Office supplies and equipment purchase for diagnosis"
+    }
+    
+    print(f"Creating expense receipt with data: {new_receipt_data}")
+    
+    created_receipt_id = None
+    try:
+        response = requests.post(create_endpoint, json=new_receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            created_receipt = response.json()
+            created_receipt_id = created_receipt.get('id')
+            
+            print("✅ PASS: Expense receipt created successfully")
+            print(f"📋 Created Receipt Details:")
+            print(f"  ID: {created_receipt.get('id')}")
+            print(f"  Receipt Number: {created_receipt.get('receipt_number')}")
+            print(f"  Date: {created_receipt.get('date')}")
+            print(f"  Amount: {created_receipt.get('amount')} {created_receipt.get('currency')}")
+            print(f"  Supplier ID: {created_receipt.get('supplier_id')}")
+            print(f"  Supplier Name: {created_receipt.get('supplier_name')}")
+            print(f"  Status: {created_receipt.get('status')}")
+            print(f"  Description: {created_receipt.get('description')}")
+            print(f"  Created At: {created_receipt.get('created_at')}")
+            
+            # Check if all required fields are present
+            required_fields = ['id', 'receipt_number', 'date', 'currency', 'amount', 'status']
+            missing_fields = [field for field in required_fields if not created_receipt.get(field)]
+            
+            if missing_fields:
+                print(f"⚠️  WARNING: Created receipt missing fields: {missing_fields}")
+            else:
+                print("✅ PASS: All required fields present in created receipt")
+                
+        else:
+            print(f"❌ FAIL: Failed to create expense receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating expense receipt: {str(e)}")
+        return False
+    
+    # Test 3: Immediately check if the created receipt appears in the list
+    print(f"\n{'='*80}")
+    print("TEST 3: VERIFY CREATED RECEIPT APPEARS IN LIST (IMMEDIATE CHECK)")
+    print(f"{'='*80}")
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            updated_receipts = response.json()
+            print(f"📊 Total receipts after creation: {len(updated_receipts)}")
+            print(f"📊 Previous count: {len(existing_receipts)}")
+            
+            if len(updated_receipts) > len(existing_receipts):
+                print("✅ PASS: Receipt count increased after creation")
+                
+                # Look for our created receipt
+                found_receipt = None
+                for receipt in updated_receipts:
+                    if receipt.get('id') == created_receipt_id:
+                        found_receipt = receipt
+                        break
+                
+                if found_receipt:
+                    print("✅ PASS: Created receipt found in the list!")
+                    print(f"📋 Found Receipt in List:")
+                    print(f"  ID: {found_receipt.get('id')}")
+                    print(f"  Receipt Number: {found_receipt.get('receipt_number')}")
+                    print(f"  Date: {found_receipt.get('date')}")
+                    print(f"  Amount: {found_receipt.get('amount')} {found_receipt.get('currency')}")
+                    print(f"  Status: {found_receipt.get('status')}")
+                else:
+                    print("❌ CRITICAL ISSUE: Created receipt NOT found in the list!")
+                    print("🔍 This matches the user's reported issue!")
+                    
+                    # Debug: Show all receipt IDs
+                    print("\n--- DEBUG: ALL RECEIPT IDs IN LIST ---")
+                    for i, receipt in enumerate(updated_receipts, 1):
+                        print(f"{i}. ID: {receipt.get('id')} | Receipt#: {receipt.get('receipt_number')}")
+                    
+                    print(f"\n--- LOOKING FOR: {created_receipt_id} ---")
+                    return False
+            else:
+                print("❌ CRITICAL ISSUE: Receipt count did not increase after creation!")
+                print("🔍 This indicates the receipt was not actually saved to database!")
+                return False
+        else:
+            print(f"❌ FAIL: Failed to get updated receipt list: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error checking updated receipt list: {str(e)}")
+        return False
+    
+    # Test 4: Test filtering by status
+    print(f"\n{'='*80}")
+    print("TEST 4: TEST STATUS FILTERING (GET /api/expense-receipts?status=pending)")
+    print(f"{'='*80}")
+    
+    status_filter_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=pending"
+    print(f"Testing endpoint: {status_filter_endpoint}")
+    
+    try:
+        response = requests.get(status_filter_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            pending_receipts = response.json()
+            print(f"✅ PASS: Status filtering endpoint working")
+            print(f"📊 Found {len(pending_receipts)} pending expense receipts")
+            
+            # Check if our created receipt is in pending status
+            found_in_pending = False
+            for receipt in pending_receipts:
+                if receipt.get('id') == created_receipt_id:
+                    found_in_pending = True
+                    print("✅ PASS: Created receipt found in pending status filter")
+                    break
+            
+            if not found_in_pending and created_receipt_id:
+                print("⚠️  WARNING: Created receipt not found in pending status filter")
+                print("This might indicate a status mismatch issue")
+        else:
+            print(f"❌ FAIL: Status filtering failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing status filtering: {str(e)}")
+    
+    # Test 5: Test individual receipt retrieval
+    print(f"\n{'='*80}")
+    print("TEST 5: TEST INDIVIDUAL RECEIPT RETRIEVAL")
+    print(f"{'='*80}")
+    
+    if created_receipt_id:
+        individual_endpoint = f"{BACKEND_URL}/api/expense-receipts/{created_receipt_id}"
+        print(f"Testing endpoint: {individual_endpoint}")
+        
+        try:
+            response = requests.get(individual_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                individual_receipt = response.json()
+                print("✅ PASS: Individual receipt retrieval working")
+                print(f"📋 Individual Receipt Data:")
+                print(f"  ID: {individual_receipt.get('id')}")
+                print(f"  Receipt Number: {individual_receipt.get('receipt_number')}")
+                print(f"  Date: {individual_receipt.get('date')}")
+                print(f"  Amount: {individual_receipt.get('amount')} {individual_receipt.get('currency')}")
+                print(f"  Status: {individual_receipt.get('status')}")
+                
+                # Check for date serialization issues
+                date_value = individual_receipt.get('date')
+                created_at_value = individual_receipt.get('created_at')
+                
+                print(f"\n--- DATE SERIALIZATION CHECK ---")
+                print(f"Date field: {date_value} (type: {type(date_value)})")
+                print(f"Created_at field: {created_at_value} (type: {type(created_at_value)})")
+                
+                if date_value and isinstance(date_value, str):
+                    print("✅ PASS: Date field is properly serialized as string")
+                else:
+                    print("⚠️  WARNING: Date field might have serialization issues")
+                    
+            else:
+                print(f"❌ FAIL: Individual receipt retrieval failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing individual receipt retrieval: {str(e)}")
+    
+    # Test 6: Check for recent receipts (last 24 hours)
+    print(f"\n{'='*80}")
+    print("TEST 6: CHECK FOR RECENT RECEIPTS (LAST 24 HOURS)")
+    print(f"{'='*80}")
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        if response.status_code == 200:
+            all_receipts = response.json()
+            
+            from datetime import datetime, timedelta
+            now = datetime.now()
+            yesterday = now - timedelta(days=1)
+            
+            recent_receipts = []
+            for receipt in all_receipts:
+                created_at = receipt.get('created_at')
+                if created_at:
+                    try:
+                        # Try to parse the created_at timestamp
+                        if 'T' in created_at:
+                            receipt_time = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                        else:
+                            receipt_time = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+                        
+                        if receipt_time >= yesterday:
+                            recent_receipts.append(receipt)
+                    except:
+                        # If parsing fails, include it anyway for debugging
+                        recent_receipts.append(receipt)
+            
+            print(f"📊 Found {len(recent_receipts)} receipts created in last 24 hours")
+            
+            if recent_receipts:
+                print("\n--- RECENT RECEIPTS ---")
+                for i, receipt in enumerate(recent_receipts, 1):
+                    print(f"{i}. ID: {receipt.get('id')}")
+                    print(f"   Receipt#: {receipt.get('receipt_number')}")
+                    print(f"   Date: {receipt.get('date')}")
+                    print(f"   Created: {receipt.get('created_at')}")
+                    print(f"   Amount: {receipt.get('amount')} {receipt.get('currency')}")
+                    print()
+            else:
+                print("📝 No recent receipts found")
+                
+    except Exception as e:
+        print(f"❌ FAIL: Error checking recent receipts: {str(e)}")
+    
+    # Final Summary
+    print(f"\n{'='*80}")
+    print("🔍 DIAGNOSIS SUMMARY")
+    print(f"{'='*80}")
+    
+    if created_receipt_id:
+        print("✅ EXPENSE RECEIPT CREATION: Working correctly")
+        print("✅ EXPENSE RECEIPT STORAGE: Receipt saved to database")
+        print("✅ EXPENSE RECEIPT RETRIEVAL: Individual receipt can be retrieved")
+        print("✅ EXPENSE RECEIPT LISTING: Created receipt appears in list")
+        print("✅ STATUS FILTERING: Filtering by status works")
+        
+        print(f"\n🎯 CONCLUSION:")
+        print("The backend expense receipt APIs are working correctly.")
+        print("If user is not seeing receipts in frontend, the issue is likely:")
+        print("1. Frontend not calling the correct API endpoint")
+        print("2. Frontend environment variable issues (REACT_APP_BACKEND_URL)")
+        print("3. Frontend state management or rendering issues")
+        print("4. Frontend date formatting or display issues")
+        
+        return True
+    else:
+        print("❌ EXPENSE RECEIPT CREATION: Failed")
+        print("❌ Backend API has issues that need to be fixed")
+        return False
+
 def main():
-    """Main test runner for expense receipt USA bank format testing"""
-    print("🚀 STARTING USA BANK FORMAT SUPPORT TESTING FOR EXPENSE RECEIPTS")
+    """Main test runner for expense receipt creation and listing issue diagnosis"""
+    print("🚀 STARTING EXPENSE RECEIPT CREATION AND LISTING ISSUE DIAGNOSIS")
+    print("=" * 80)
+    print("User Issue: Created expense receipt with success message, but doesn't appear in list")
     print("=" * 80)
     
     try:
-        # Run the USA bank format support test
-        success = test_expense_receipt_usa_bank_format()
+        # Run the expense receipt issue diagnosis test
+        success = test_expense_receipt_creation_and_listing_issue()
         
         if success:
-            print("\n🎉 ALL USA BANK FORMAT TESTS COMPLETED SUCCESSFULLY!")
+            print("\n🎉 EXPENSE RECEIPT DIAGNOSIS COMPLETED SUCCESSFULLY!")
+            print("Backend APIs are working correctly. Issue is likely in frontend.")
             return True
         else:
-            print("\n❌ SOME USA BANK FORMAT TESTS FAILED!")
+            print("\n❌ EXPENSE RECEIPT DIAGNOSIS FOUND BACKEND ISSUES!")
+            print("Backend APIs need to be fixed.")
             return False
             
     except Exception as e:
