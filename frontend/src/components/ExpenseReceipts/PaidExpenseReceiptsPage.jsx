@@ -156,40 +156,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     setShowViewModal(true);
   };
 
-  // Handle edit receipt
-  const handleEditReceipt = (receipt) => {
-    setSelectedReceipt(receipt);
-    setShowEditModal(true);
-  };
-
-  // Handle delete receipt
-  const handleDeleteReceipt = (receipt) => {
-    setSelectedReceipt(receipt);
-    setShowDeleteModal(true);
-  };
-
-  // Confirm delete
-  const confirmDelete = async () => {
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
-      const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        setReceipts(receipts.filter(r => r.id !== selectedReceipt.id));
-        setShowDeleteModal(false);
-        setSelectedReceipt(null);
-        setSuccessMessage('Gider makbuzu başarıyla silindi');
-        setShowSuccessModal(true);
-      } else {
-        throw new Error('Silme işlemi başarısız');
-      }
-    } catch (error) {
-      console.error('Error deleting receipt:', error);
-      alert('Makbuz silinirken hata oluştu');
-    }
-  };
+  // Removed edit and delete functionality for paid receipts
 
   // Handle send email
   const handleSendEmail = (receipt) => {
