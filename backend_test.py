@@ -9279,8 +9279,8 @@ def test_expense_receipt_approval_system():
         print(f"   Contact Email: {contact.get('email')}")
         print(f"   Contact Tags: {contact.get('tags')} (should NOT be used for specialty)")
         
-        # Step 3: Create an expense receipt with the test supplier
-        print("\n3. Creating expense receipt with test supplier...")
+        # Step 4: Create an expense receipt with the test supplier
+        print("\n4. Creating expense receipt with test supplier...")
         
         receipt_data = {
             "date": "2025-01-15",
