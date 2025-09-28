@@ -3842,11 +3842,17 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
         pdf_data = generate_expense_receipt_pdf(receipt)
         
         # Create sender name in format "Vitingo CRM - {User Name}"
-        sender_name = f"Vitingo CRM - {request.sender_name}" if request.sender_name else "Vitingo CRM"
+        sender_display_name = f"Vitingo CRM - {request.sender_name}" if request.sender_name else "Vitingo CRM"
         
-        # Send email using SendGrid
+        # Send email using SendGrid with proper from_email format
+        try:
+            from sendgrid.helpers.mail import Email
+            from_email_obj = Email(email='info@quattrostand.com', name=sender_display_name)
+        except ImportError:
+            from_email_obj = f"{sender_display_name} <info@quattrostand.com>"
+        
         message = Mail(
-            from_email=(sender_name, 'info@quattrostand.com'),  # (name, email) tuple
+            from_email=from_email_obj,
             to_emails=request.to,
             subject=request.subject,
             plain_text_content=plain_content,
