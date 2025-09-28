@@ -1503,34 +1503,29 @@ def test_supplier_specialty_validation_errors():
     print("\n✅ SUPPLIER SPECIALTY VALIDATION TESTS COMPLETED!")
     return True
 
-def test_expense_receipt_approval_workflow():
+def test_expense_receipt_approval_with_supplier_prefill():
     """
-    Test the complete expense receipt approval workflow
+    Test the updated expense receipt approval system with supplier information pre-filling
     
-    NEW ENDPOINTS ADDED:
-    1. GET /api/expense-receipt-approval/{approval_key} - Get expense receipt for approval
-    2. POST /api/expense-receipt-approval/{approval_key} - Submit approval with signature
+    UPDATED FUNCTIONALITY (as per review request):
+    1. GET /api/expense-receipt-approval/{approval_key} now returns additional supplier info:
+       - supplier_company_name: from supplier.company_short_name
+       - supplier_contact_name: from first contact.name (full_name in SupplierContact model)
+       - supplier_contact_specialty: from first contact.tags (as specialty)
+       - supplier_contact_email: from first contact.email
 
-    NEW FUNCTIONALITY:
-    1. When expense receipt is created, automatic approval email is sent to supplier
-    2. Email contains unique approval link
-    3. Supplier can view receipt details and sign it
-    4. Status changes from "pending" to "approved" after signature
+    2. Frontend will use this data to pre-fill the approval form:
+       - Name field: supplier_contact_name
+       - Specialty field (was Position): supplier_contact_specialty  
+       - Company field: supplier_company_name
 
-    BACKEND TESTING NEEDED:
-    1. Create expense receipt - should generate approval_link
-    2. Test GET approval endpoint with valid approval_key
-    3. Test GET approval endpoint with invalid approval_key (should return 404)
-    4. Test POST approval endpoint with signature data
-    5. Verify status changes from pending to approved
-    6. Test that already approved receipts cannot be approved again
-    7. Verify signer information is stored correctly
-
-    NEW MODEL FIELDS TO TEST:
-    - approval_link: unique key for approval
-    - signature_data: base64 signature
-    - signer_name, signer_title, signer_company: person who signed
-    - signed_at: timestamp when approved
+    TESTING NEEDED:
+    1. Test GET approval endpoint with valid approval_key
+    2. Verify response includes new supplier fields
+    3. Check that supplier lookup works correctly
+    4. Verify contact information is properly extracted
+    5. Test with suppliers that have/don't have contacts
+    6. Ensure original expense receipt data is still returned correctly
     """
     
     print("=" * 80)
