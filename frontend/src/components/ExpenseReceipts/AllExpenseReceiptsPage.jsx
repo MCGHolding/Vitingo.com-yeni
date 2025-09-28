@@ -391,11 +391,11 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredReceipts.map((receipt) => (
+                {filteredReceipts.map((receipt, index) => (
                   <tr key={receipt.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-blue-600">
-                        #{receipt.receipt_number}
+                      <div className="text-sm font-medium text-gray-900">
+                        {index + 1}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -418,25 +418,46 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
                         {formatCurrency(receipt.amount, receipt.currency)}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
-                        {receipt.description}
-                      </div>
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(receipt.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-3">
-                        <button className="text-blue-600 hover:text-blue-900 transition-colors">
+                        <button 
+                          onClick={() => handleViewReceipt(receipt)}
+                          className="text-blue-600 hover:text-blue-900 transition-colors"
+                          title="Görüntüle"
+                        >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button className="text-green-600 hover:text-green-900 transition-colors">
+                        <button 
+                          onClick={() => handleEditReceipt(receipt)}
+                          className="text-green-600 hover:text-green-900 transition-colors"
+                          title="Düzenle"
+                        >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button className="text-gray-600 hover:text-gray-900 transition-colors">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
+                        <div className="relative group">
+                          <button className="text-gray-600 hover:text-gray-900 transition-colors">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                          <div className="absolute right-0 top-6 w-32 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <button
+                              onClick={() => handleDeleteReceipt(receipt)}
+                              className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center space-x-2"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              <span>Sil</span>
+                            </button>
+                            <button
+                              onClick={() => handleSendEmail(receipt)}
+                              className="w-full px-4 py-2 text-left text-blue-600 hover:bg-blue-50 flex items-center space-x-2"
+                            >
+                              <Mail className="w-4 h-4" />
+                              <span>Mail</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
