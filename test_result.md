@@ -114,7 +114,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Mail modal pencere açılmış ama mail göndermiyor. Maili gönderip ardınan aynı pencede Tebriker, Mailiniz başarı ile gönderilmiştir mesajı ve Geri Dön, Dashboard butonları olması lazım"
+user_problem_statement: "Yeni tedarikçi formu (NewSupplierForm) için ülke ve şehir seçimi özelliğinin test edilmesi gerekiyor. Backend geo endpoint'lerini test et ve sonrasında frontend entegrasyonunu kontrol et."
 
 backend:
   - task: "Bank Email API Endpoint"
