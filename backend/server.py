@@ -2139,35 +2139,7 @@ async def delete_customer(customer_id: str):
         logger.error(f"Error deleting customer {customer_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Geographic API Endpoints
-@api_router.get("/geo/countries")
-async def get_countries(query: str = ""):
-    """Get countries with optional search query (type-ahead support)"""
-    try:
-        # Create search filter
-        search_filter = {}
-        if query:
-            # Support fuzzy search with accent tolerance
-            query_regex = query.replace("i", "[iıİI]").replace("u", "[uüUÜ]").replace("o", "[oöOÖ]").replace("c", "[cçCÇ]").replace("s", "[sşSŞ]").replace("g", "[gğGĞ]")
-            search_filter = {
-                "$or": [
-                    {"name": {"$regex": query_regex, "$options": "i"}},
-                    {"iso2": {"$regex": query, "$options": "i"}},
-                    {"iso3": {"$regex": query, "$options": "i"}}
-                ]
-            }
-        
-        # Get countries with limit (250 max as specified)
-        countries = await db.countries.find(search_filter)\
-            .sort([("name", 1)])\
-            .limit(250)\
-            .to_list(length=250)
-        
-        return [Country(**country) for country in countries]
-        
-    except Exception as e:
-        logger.error(f"Error getting countries: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+# Geographic API Endpoints (Removed - using newer endpoint at line 4117)
 
 @api_router.get("/geo/countries/{iso2}/cities")
 async def get_cities_by_country(
