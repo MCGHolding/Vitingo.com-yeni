@@ -505,19 +505,37 @@ Vitingo CRM Sistemi`;
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Tedarikçi Seçimi */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Alıcı Adı (Tedarikçi) <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
-                options={suppliers.map(supplier => ({
-                  value: supplier.id,
-                  label: `${supplier.company_short_name} - ${supplier.specialty || 'Belirtilmemiş'}`
-                }))}
-                value={formData.supplier_id}
-                onValueChange={(value) => handleInputChange('supplier_id', value)}
-                placeholder="Tedarikçi seçin"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Alıcı Adı (Tedarikçi) <span className="text-red-500">*</span>
+                </label>
+                <SearchableSelect
+                  options={suppliers.map(supplier => ({
+                    value: supplier.id,
+                    label: `${supplier.company_short_name} - ${supplier.specialty || 'Belirtilmemiş'}`
+                  }))}
+                  value={formData.supplier_id}
+                  onValueChange={(value) => handleInputChange('supplier_id', value)}
+                  placeholder="Tedarikçi seçin"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Yetkili Kişi
+                </label>
+                <SearchableSelect
+                  options={supplierContacts.map(contact => ({
+                    value: contact.id,
+                    label: contact.full_name
+                  }))}
+                  value={selectedContact?.id || ''}
+                  onValueChange={handleContactChange}
+                  placeholder="Yetkili kişi seçin"
+                  disabled={!formData.supplier_id || supplierContacts.length === 0}
+                />
+              </div>
             </div>
 
             {formData.supplier_id && (
