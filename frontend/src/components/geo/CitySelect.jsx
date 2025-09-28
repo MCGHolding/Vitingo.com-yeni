@@ -24,6 +24,15 @@ export default function CitySelect({
   disabled = false,
   className = ""
 }) {
+  console.log('🔍 CitySelect - Component rendered with props:', { 
+    country, 
+    value, 
+    onChange: !!onChange, 
+    placeholder, 
+    required, 
+    disabled, 
+    className 
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cities, setCities] = useState([]);
