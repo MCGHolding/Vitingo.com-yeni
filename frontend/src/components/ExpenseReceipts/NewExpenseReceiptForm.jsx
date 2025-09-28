@@ -372,28 +372,59 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
         </Card>
 
         {/* Email Modal */}
-        {showEmailModal && createdReceipt && (
-          <EmailModal 
-            recipientEmail={suppliers.find(s => s.id === createdReceipt.supplier_id)?.email || ''}
-            recipientName={createdReceipt.supplier_name}
-            subject={`Gider Makbuzu Onay - ${createdReceipt.receipt_number}`}
-            defaultMessage={`Tebrikler, Firmamız tarafından oluşturulan gider makbuzu ektedir, Ödemenizin gerçekleşebilmesi için Onaylıyorum butonuna basmanız ve ardından formu imzalayıp Gönder butonuna basmanız gerekmektedir. Ödemeniz bu formda belirtilen banka hesabınıza 3 gün içerisinde gönderilecektir.
-
-Link: ${window.location.origin}/expense-receipt-approval/${createdReceipt.approval_link}
-
-Makbuz Numarası: ${createdReceipt.receipt_number}
-Tutar: ${formatCurrency(createdReceipt.amount, createdReceipt.currency)}
-Tarih: ${new Date(createdReceipt.date).toLocaleDateString('tr-TR')}`}
-            onClose={() => setShowEmailModal(false)}
-            onSent={() => {
-              setShowEmailModal(false);
-              toast({
-                title: "Başarılı",
-                description: "Onay e-postası tedarikçiye gönderildi",
-                variant: "default"
-              });
-            }}
-          />
+        {showEmailModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">E-posta Gönder</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Alıcı E-posta</label>
+                  <input
+                    type="email"
+                    value={emailForm.to}
+                    onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="ornek@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Konu</label>
+                  <input
+                    type="text"
+                    value={emailForm.subject}
+                    onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mesaj</label>
+                  <textarea
+                    value={emailForm.message}
+                    onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowEmailModal(false);
+                    setEmailForm({ to: '', subject: '', message: '' });
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={sendEmail}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Gönder
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
