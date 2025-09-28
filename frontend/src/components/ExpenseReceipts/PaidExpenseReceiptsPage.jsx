@@ -108,8 +108,19 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
       );
     }
     
+    // Date range filter
+    if (startDate && endDate) {
+      filtered = filtered.filter(receipt => {
+        const receiptDate = new Date(receipt.paid_at || receipt.date);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Include end date
+        return receiptDate >= start && receiptDate <= end;
+      });
+    }
+    
     setFilteredReceipts(filtered);
-  }, [receipts, searchTerm, statusFilter, dateFilter, currencyFilter]);
+  }, [receipts, searchTerm, statusFilter, dateFilter, currencyFilter, startDate, endDate]);
 
   // Format currency
   const formatCurrency = (amount, currency) => {
