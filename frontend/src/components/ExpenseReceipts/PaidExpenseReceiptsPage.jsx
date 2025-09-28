@@ -34,7 +34,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     const loadPaidReceipts = async () => {
       setLoading(true);
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/expense-receipts?status=paid`);
         
         if (!response.ok) {
@@ -173,7 +173,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   // Confirm delete
   const confirmDelete = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}`, {
         method: 'DELETE'
       });
@@ -207,7 +207,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   // Send email
   const sendEmail = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/send-expense-receipt-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
