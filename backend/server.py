@@ -3529,6 +3529,50 @@ async def delete_expense_receipt(receipt_id: str):
         logger.error(f"Error deleting expense receipt: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/expense-receipts/{receipt_id}/payment")
+async def mark_expense_receipt_as_paid(receipt_id: str):
+    """Mark an expense receipt as paid - only for accounting/admin users"""
+    try:
+        # Check if receipt exists and is approved
+        receipt = await db.expense_receipts.find_one({"id": receipt_id})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Gider makbuzu bulunamadı")
+        
+        if receipt.get("status") != "approved":
+            raise HTTPException(
+                status_code=400, 
+                detail="Sadece onaylanmış makbuzlar ödeme olarak işaretlenebilir"
+            )
+        
+        # Update status to paid
+        result = await db.expense_receipts.update_one(
+            {"id": receipt_id},
+            {
+                "$set": {
+                    "status": "paid",
+                    "paid_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Makbuz güncellenemedi")
+        
+        return {
+            "success": True,
+            "message": "Gider makbuzu başarıyla ödendi olarak işaretlendi",
+            "receipt_number": receipt.get("receipt_number"),
+            "status": "paid"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error marking receipt as paid: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== EXPENSE RECEIPT EMAIL ENDPOINTS =====================
 
 async def send_expense_receipt_approval_email(receipt, approval_key):
