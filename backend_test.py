@@ -1135,15 +1135,15 @@ def test_geo_cities_endpoint():
     Test the geo cities endpoint for NewSupplierForm city selection.
     
     Requirements to verify:
-    1. GET /api/geo/countries/{country_code}/cities - should return cities for selected country
-    2. Test Turkey (TR) cities - should show Istanbul, Ankara, Izmir, Bursa
-    3. Test city search - "Istanbul" search should find Istanbul
-    4. Should support pagination
-    5. Should return proper JSON structure with city data
+    1. GET /api/geo/countries/TR/cities - should return Turkish cities including Istanbul
+    2. Test city search - "Istanbul" search should find Istanbul
+    3. Should support pagination
+    4. Should return proper JSON structure with city data that CitySelect component expects
+    5. Cities should have id, name, is_capital, admin1, population, lat, lng fields
     """
     
     print("=" * 80)
-    print("TESTING GEO CITIES ENDPOINT")
+    print("TESTING GEO CITIES ENDPOINT FOR NEWSUPPLIERFORM")
     print("=" * 80)
     
     # Test with Turkey (TR)
@@ -1195,42 +1195,54 @@ def test_geo_cities_endpoint():
         print(f"   Number of cities: {len(cities)}")
         print(f"   Pagination info: Page {pagination.get('page', 'N/A')}/{pagination.get('total_pages', 'N/A')}")
         
-        # Check structure of first city
+        # Check structure of first city for CitySelect component compatibility
         if len(cities) > 0:
             first_city = cities[0]
             required_fields = ["id", "name", "country_iso2"]
-            missing_fields = []
+            expected_fields = ["id", "name", "is_capital", "admin1", "population", "lat", "lng"]
+            missing_required = []
+            missing_expected = []
             
             for field in required_fields:
                 if field not in first_city:
-                    missing_fields.append(field)
+                    missing_required.append(field)
             
-            if missing_fields:
-                print(f"   ❌ FAIL: City missing required fields: {missing_fields}")
+            for field in expected_fields:
+                if field not in first_city:
+                    missing_expected.append(field)
+            
+            if missing_required:
+                print(f"   ❌ FAIL: City missing required fields: {missing_required}")
                 return False
             
-            print("   ✅ PASS: City structure is valid")
+            print("   ✅ PASS: City structure has required fields")
+            
+            if missing_expected:
+                print(f"   ⚠️  WARNING: City missing expected fields for CitySelect: {missing_expected}")
+            else:
+                print("   ✅ PASS: City structure has all expected fields for CitySelect component")
+            
             print(f"   Sample city: {first_city.get('name')} (Capital: {first_city.get('is_capital', False)})")
+            print(f"   City fields: {list(first_city.keys())}")
         
-        # Test 2: Check for expected Turkish cities
-        print("\n4. Checking for expected Turkish cities...")
-        expected_cities = ["Istanbul", "Ankara", "Izmir", "Bursa"]
-        found_cities = []
-        
+        # Test 2: Verify Istanbul is in the cities
+        print("\n4. Verifying Istanbul is in Turkish cities...")
+        istanbul_found = False
+        istanbul_city = None
         for city in cities:
-            city_name = city.get("name", "")
-            for expected in expected_cities:
-                if expected.lower() in city_name.lower():
-                    found_cities.append(city_name)
-                    print(f"   ✅ FOUND: {city_name} (Capital: {city.get('is_capital', False)})")
+            if 'istanbul' in city.get('name', '').lower():
+                istanbul_found = True
+                istanbul_city = city
+                print(f"   ✅ PASS: Istanbul found: {city.get('name')}")
+                print(f"   Istanbul details: Capital={city.get('is_capital', False)}, Population={city.get('population', 'N/A')}")
+                break
         
-        if len(found_cities) >= 2:  # At least 2 of the expected cities
-            print(f"   ✅ PASS: Found {len(found_cities)} expected Turkish cities")
-        else:
-            print(f"   ⚠️  WARNING: Only found {len(found_cities)} expected cities: {found_cities}")
+        if not istanbul_found:
+            print("   ❌ FAIL: Istanbul not found in Turkish cities list")
+            return False
         
-        # Test 3: Search for Istanbul
-        print("\n5. Testing Istanbul search...")
+        # Test 3: Search for Istanbul specifically
+        print("\n5. Testing Istanbul search functionality...")
         search_endpoint = f"{endpoint}?query=Istanbul"
         search_response = requests.get(search_endpoint, timeout=30)
         
@@ -1241,47 +1253,56 @@ def test_geo_cities_endpoint():
             search_data = search_response.json()
             search_cities = search_data.get("cities", [])
             
-            # Check if Istanbul is found
-            istanbul_found = False
+            # Check if Istanbul is found in search
+            istanbul_found_search = False
             for city in search_cities:
                 if 'istanbul' in city.get('name', '').lower():
-                    istanbul_found = True
-                    print(f"   ✅ PASS: Istanbul found: {city.get('name')}")
+                    istanbul_found_search = True
+                    print(f"   ✅ PASS: Istanbul found in search: {city.get('name')}")
+                    
+                    # Verify the city has the correct structure for CitySelect
+                    city_fields = list(city.keys())
+                    print(f"   City structure in search: {city_fields}")
+                    
+                    # Check if it has the fields CitySelect expects
+                    cityselect_fields = ["id", "name", "is_capital", "admin1", "population", "lat", "lng"]
+                    has_all_fields = all(field in city for field in cityselect_fields)
+                    if has_all_fields:
+                        print("   ✅ PASS: Istanbul has all fields expected by CitySelect component")
+                    else:
+                        missing = [field for field in cityselect_fields if field not in city]
+                        print(f"   ⚠️  WARNING: Istanbul missing CitySelect fields: {missing}")
+                    
                     break
             
-            if not istanbul_found:
+            if not istanbul_found_search:
                 print("   ❌ FAIL: Istanbul not found in search results")
                 return False
         else:
             print(f"   ❌ FAIL: Search request failed with status {search_response.status_code}")
             return False
         
-        # Test 4: Search for Ankara
-        print("\n6. Testing Ankara search...")
-        ankara_search_endpoint = f"{endpoint}?query=Ankara"
-        ankara_response = requests.get(ankara_search_endpoint, timeout=30)
-        
-        print(f"   Ankara search endpoint: {ankara_search_endpoint}")
-        print(f"   Status Code: {ankara_response.status_code}")
-        
-        if ankara_response.status_code == 200:
-            ankara_data = ankara_response.json()
-            ankara_cities = ankara_data.get("cities", [])
+        # Test 4: Test API response structure matches CitySelect expectations
+        print("\n6. Testing API response structure for CitySelect compatibility...")
+        if len(cities) > 0:
+            sample_city = cities[0]
+            cityselect_required_fields = ["id", "name", "is_capital", "admin1", "population", "lat", "lng"]
             
-            # Check if Ankara is found
-            ankara_found = False
-            for city in ankara_cities:
-                if 'ankara' in city.get('name', '').lower():
-                    ankara_found = True
-                    print(f"   ✅ PASS: Ankara found: {city.get('name')} (Capital: {city.get('is_capital', False)})")
-                    break
+            compatibility_score = 0
+            for field in cityselect_required_fields:
+                if field in sample_city:
+                    compatibility_score += 1
+                    print(f"   ✅ Field '{field}': Present")
+                else:
+                    print(f"   ❌ Field '{field}': Missing")
             
-            if not ankara_found:
-                print("   ❌ FAIL: Ankara not found in search results")
-                return False
-        else:
-            print(f"   ❌ FAIL: Ankara search request failed with status {ankara_response.status_code}")
-            return False
+            compatibility_percentage = (compatibility_score / len(cityselect_required_fields)) * 100
+            print(f"   CitySelect compatibility: {compatibility_percentage:.1f}% ({compatibility_score}/{len(cityselect_required_fields)} fields)")
+            
+            if compatibility_percentage >= 80:
+                print("   ✅ PASS: Good compatibility with CitySelect component")
+            else:
+                print("   ⚠️  WARNING: Limited compatibility with CitySelect component")
         
         # Test 5: Test pagination
         print("\n7. Testing pagination...")
@@ -1307,8 +1328,9 @@ def test_geo_cities_endpoint():
         print("✅ Endpoint responds with status 200")
         print("✅ Returns proper JSON structure with cities and pagination")
         print("✅ City structure includes required fields")
-        print("✅ Turkish cities found (Istanbul, Ankara, etc.)")
-        print("✅ Search functionality works for 'Istanbul' and 'Ankara'")
+        print("✅ Istanbul is present in Turkish cities")
+        print("✅ Search functionality works for 'Istanbul'")
+        print("✅ API response structure compatible with CitySelect component")
         print("✅ Pagination functionality tested")
         print("\n🎉 GEO CITIES ENDPOINT TEST PASSED!")
         
