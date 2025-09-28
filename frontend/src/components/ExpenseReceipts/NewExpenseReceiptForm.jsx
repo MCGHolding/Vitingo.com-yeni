@@ -171,6 +171,26 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     const supplier = suppliers.find(s => s.id === formData.supplier_id);
     return supplier ? supplier.specialty || 'Belirtilmemiş' : '';
   };
+  // Para birimi simgesi ikonu döndüren fonksiyon
+  const getCurrencyIcon = (currency) => {
+    const iconMap = {
+      'USD': DollarSign,
+      'EUR': () => <span className="text-sm font-semibold">€</span>,
+      'GBP': () => <span className="text-sm font-semibold">£</span>,
+      'JPY': () => <span className="text-sm font-semibold">¥</span>,
+      'TRY': () => <span className="text-sm font-semibold">₺</span>,
+      'CAD': DollarSign,
+      'AUD': DollarSign,
+      'CHF': () => <span className="text-sm font-semibold">Fr</span>,
+      'CNY': () => <span className="text-sm font-semibold">¥</span>,
+      'INR': () => <span className="text-sm font-semibold">₹</span>
+    };
+    
+    const IconComponent = iconMap[currency] || DollarSign;
+    return typeof IconComponent === 'function' && IconComponent !== DollarSign 
+      ? IconComponent() 
+      : <IconComponent className="h-4 w-4" />;
+  };
 
   const handleContactChange = (contactId) => {
     const contact = supplierContacts.find(c => c.id === contactId);
