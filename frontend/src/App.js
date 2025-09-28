@@ -67,6 +67,7 @@ import AllExpenseReceiptsPage from './components/ExpenseReceipts/AllExpenseRecei
 import PendingApprovalExpenseReceiptsPage from './components/ExpenseReceipts/PendingApprovalExpenseReceiptsPage';
 import ApprovedExpenseReceiptsPage from './components/ExpenseReceipts/ApprovedExpenseReceiptsPage';
 import PaidExpenseReceiptsPage from './components/ExpenseReceipts/PaidExpenseReceiptsPage';
+import ExpenseReceiptApprovalPage from './components/ExpenseReceipts/ExpenseReceiptApprovalPage';
 import NewBriefForm from './components/Brief/NewBriefForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
 import Header from './components/Dashboard/Header';
