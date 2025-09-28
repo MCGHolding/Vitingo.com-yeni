@@ -8622,6 +8622,9 @@ def main():
     # NEW EXPENSE RECEIPT APPROVAL WORKFLOW TESTS
     test_results.append(("Expense Receipt Approval with Supplier Pre-fill", test_expense_receipt_approval_supplier_prefill()))
     
+    # NEW EXPENSE RECEIPT PAYMENT ENDPOINT TEST
+    test_results.append(("Expense Receipt Payment Endpoint", test_expense_receipt_payment_endpoint()))
+    
     # Print final summary
     print("\n" + "=" * 80)
     print("🎯 FINAL TEST SUMMARY")
