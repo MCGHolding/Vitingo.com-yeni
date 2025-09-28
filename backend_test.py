@@ -1600,12 +1600,15 @@ def test_expense_receipt_approval_workflow():
             # Verify approval_link is generated
             if approval_link:
                 print(f"✅ PASS: approval_link generated: {approval_link}")
-                # Extract approval_key from the link
-                if "/expense-receipt-approval/" in approval_link:
-                    approval_key = approval_link.split("/expense-receipt-approval/")[1]
-                    print(f"✅ PASS: approval_key extracted: {approval_key}")
+                # The approval_link field contains just the approval key
+                approval_key = approval_link
+                print(f"✅ PASS: approval_key: {approval_key}")
+                
+                # Verify it's a valid UUID format (without dashes)
+                if len(approval_key) == 32 and approval_key.isalnum():
+                    print("✅ PASS: approval_key format is valid (32 character UUID without dashes)")
                 else:
-                    print(f"❌ FAIL: approval_link format incorrect: {approval_link}")
+                    print(f"❌ FAIL: approval_key format invalid: {approval_key}")
                     return False
             else:
                 print("❌ FAIL: approval_link not generated")
