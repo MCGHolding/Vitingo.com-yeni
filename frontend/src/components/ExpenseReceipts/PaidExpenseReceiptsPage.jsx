@@ -154,12 +154,14 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
 
   // Handle view receipt
   const handleViewReceipt = (receipt) => {
-    alert(`Makbuz görüntüleme: ${receipt.receipt_number}`);
+    setSelectedReceipt(receipt);
+    setShowViewModal(true);
   };
 
   // Handle edit receipt
   const handleEditReceipt = (receipt) => {
-    alert(`Makbuz düzenleme: ${receipt.receipt_number}`);
+    setSelectedReceipt(receipt);
+    setShowEditModal(true);
   };
 
   // Handle delete receipt
