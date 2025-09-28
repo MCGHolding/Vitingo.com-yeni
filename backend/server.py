@@ -3426,8 +3426,8 @@ async def create_expense_receipt(receipt_data: ExpenseReceiptCreate):
         receipt_dict['date'] = receipt_dict['date'].isoformat()
         await db.expense_receipts.insert_one(receipt_dict)
         
-        # Send email to supplier
-        # TODO: Implement email sending with approval link
+        # Send approval email to supplier
+        await send_expense_receipt_approval_email(expense_receipt, approval_key)
         
         return expense_receipt
     except Exception as e:
