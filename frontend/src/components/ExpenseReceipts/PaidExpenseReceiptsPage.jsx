@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const { exchangeRates, formatCurrency: formatCurrencyHook } = useCurrency();
+  const { user } = useAuth();
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
