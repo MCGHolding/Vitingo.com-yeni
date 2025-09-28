@@ -902,6 +902,141 @@ Swift: ${info.swift_code}`;
           </div>
         </div>
       )}
+
+      {/* Bank Info Modal */}
+      {showBankInfoModal && selectedBankInfo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Banka Bilgileri</h3>
+              <button
+                onClick={() => setShowBankInfoModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tedarikçi</label>
+                <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                  {selectedBankInfo.supplier_name}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Banka Adı</label>
+                <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                  {selectedBankInfo.bank_name}
+                </div>
+              </div>
+
+              {selectedBankInfo.is_usa_bank ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Routing Number</label>
+                    <div className="flex items-center">
+                      <div className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                        {selectedBankInfo.usa_routing_number}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedBankInfo.usa_routing_number)}
+                        className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        title="Kopyala"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+                    <div className="flex items-center">
+                      <div className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                        {selectedBankInfo.usa_account_number}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedBankInfo.usa_account_number)}
+                        className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        title="Kopyala"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Banka Adresi</label>
+                    <div className="flex items-center">
+                      <div className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                        {selectedBankInfo.usa_bank_address}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedBankInfo.usa_bank_address)}
+                        className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        title="Kopyala"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">IBAN</label>
+                    <div className="flex items-center">
+                      <div className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm break-all">
+                        {selectedBankInfo.iban}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedBankInfo.iban)}
+                        className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        title="Kopyala"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Swift Kodu</label>
+                    <div className="flex items-center">
+                      <div className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm">
+                        {selectedBankInfo.swift_code}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedBankInfo.swift_code)}
+                        className="ml-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        title="Kopyala"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => copyBankInfo(selectedBankInfo)}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Tümünü Kopyala
+              </button>
+              <button
+                onClick={() => setShowBankInfoModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
