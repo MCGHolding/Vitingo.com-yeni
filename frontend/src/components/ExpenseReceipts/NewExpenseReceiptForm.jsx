@@ -172,6 +172,11 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     return supplier ? supplier.specialty || 'Belirtilmemiş' : '';
   };
 
+  const handleContactChange = (contactId) => {
+    const contact = supplierContacts.find(c => c.id === contactId);
+    setSelectedContact(contact);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
