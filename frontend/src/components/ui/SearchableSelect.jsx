@@ -102,8 +102,8 @@ export default function SearchableSelect({
       {/* Main selector */}
       <div
         className={`
-          relative flex items-center justify-between p-2 border border-gray-300 rounded-md 
-          bg-white cursor-pointer transition-colors min-h-[40px]
+          relative flex items-center justify-between px-3 py-1 border border-gray-300 rounded-md 
+          bg-white cursor-pointer transition-colors h-9
           ${disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'hover:border-gray-400'}
           ${isOpen ? 'border-blue-500 ring-1 ring-blue-500' : ''}
         `}
