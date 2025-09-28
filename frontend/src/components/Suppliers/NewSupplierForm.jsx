@@ -132,15 +132,10 @@ const NewSupplierForm = ({ onClose }) => {
   };
 
   const handleInputChange = (field, value) => {
-    console.log('🔍 handleInputChange called with:', field, value);
-    setFormData(prev => {
-      const newFormData = {
-        ...prev,
-        [field]: value
-      };
-      console.log('🔍 handleInputChange - new formData:', newFormData);
-      return newFormData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleAddService = () => {
