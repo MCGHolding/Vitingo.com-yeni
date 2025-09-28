@@ -347,14 +347,14 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
       {/* Filters */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
-          <div className="relative">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Ara..."
+              placeholder="Makbuz no, tedarikçi ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-32"
+              className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
             />
           </div>
           
