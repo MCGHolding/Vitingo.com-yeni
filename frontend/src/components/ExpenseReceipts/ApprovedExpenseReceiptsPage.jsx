@@ -48,20 +48,24 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     loadApprovedReceipts();
   }, []);
 
-  // Filter receipts based on search
+  // Filter receipts based on search and currency
   useEffect(() => {
     let filtered = receipts;
+    
+    // Currency filter
+    if (currencyFilter !== 'all') {
+      filtered = filtered.filter(receipt => receipt.currency === currencyFilter);
+    }
     
     if (searchTerm) {
       filtered = filtered.filter(receipt => 
         receipt.receipt_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        receipt.supplier_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        receipt.description.toLowerCase().includes(searchTerm.toLowerCase())
+        receipt.supplier_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
     setFilteredReceipts(filtered);
-  }, [receipts, searchTerm]);
+  }, [receipts, searchTerm, currencyFilter]);
 
   // Format currency
   const formatCurrency = (amount, currency) => {
