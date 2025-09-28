@@ -616,20 +616,20 @@ const NewSupplierForm = ({ onClose }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Telefon
                 </label>
-                <Input
+                <PhoneInput
                   value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="0212 555 0000"
+                  onChange={(value) => handleInputChange('phone', value)}
+                  placeholder="Telefon numarası"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Cep Telefonu
                 </label>
-                <Input
+                <PhoneInput
                   value={formData.mobile}
-                  onChange={(e) => handleInputChange('mobile', e.target.value)}
-                  placeholder="0535 555 0000"
+                  onChange={(value) => handleInputChange('mobile', value)}
+                  placeholder="Cep telefonu numarası"
                 />
               </div>
               <div>
