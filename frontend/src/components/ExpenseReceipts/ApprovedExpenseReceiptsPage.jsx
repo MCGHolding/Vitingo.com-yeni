@@ -3,6 +3,7 @@ import { Search, CheckCircle, Eye, Edit2, MoreHorizontal, CreditCard, User, Buil
 import { useAuth } from '../../contexts/AuthContext';
 
 const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
+  const { user } = useAuth();
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,7 +11,6 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   const [currencyFilter, setCurrencyFilter] = useState('all');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [userRole, setUserRole] = useState('admin'); // TODO: Get from auth context
   
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
