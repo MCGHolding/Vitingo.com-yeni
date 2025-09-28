@@ -48,7 +48,7 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
     loadReceipts();
   }, []);
 
-  // Filter receipts based on search and status
+  // Filter receipts based on search, status, and currency
   useEffect(() => {
     let filtered = receipts;
     
@@ -57,17 +57,21 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
       filtered = filtered.filter(receipt => receipt.status === statusFilter);
     }
     
+    // Currency filter
+    if (currencyFilter !== 'all') {
+      filtered = filtered.filter(receipt => receipt.currency === currencyFilter);
+    }
+    
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(receipt => 
         receipt.receipt_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        receipt.supplier_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        receipt.description.toLowerCase().includes(searchTerm.toLowerCase())
+        receipt.supplier_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
     setFilteredReceipts(filtered);
-  }, [receipts, searchTerm, statusFilter]);
+  }, [receipts, searchTerm, statusFilter, currencyFilter]);
 
   // Get status badge component
   const getStatusBadge = (status) => {
