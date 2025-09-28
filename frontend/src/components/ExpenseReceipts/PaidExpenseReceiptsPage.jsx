@@ -296,15 +296,8 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold">
-                {Object.keys(currencyTotals).length > 0 ? 
-                  Object.entries(currencyTotals).map(([currency, amount]) => (
-                    <div key={currency} className="text-sm">
-                      {formatCurrency(amount, currency)}
-                    </div>
-                  ))
-                  : '0 ₺'
-                }
+              <h2 className="text-2xl font-bold">
+                {totals.displayCurrency} {totals.total.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}
               </h2>
               <p className="text-green-100">Toplam Ödenen</p>
             </div>
@@ -316,10 +309,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold">
-                {filteredReceipts.length > 0 ? 
-                  Math.round(totalPaid / filteredReceipts.length).toLocaleString('tr-TR') 
-                  : '0'
-                } ₺
+                {totals.displayCurrency} {totals.average.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}
               </h2>
               <p className="text-purple-100">Ort. Makbuz</p>
             </div>
