@@ -351,31 +351,53 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
         </div>
       </div>
 
-      {/* Summary Card */}
-      <div className="bg-gradient-to-r from-green-400 to-green-600 rounded-xl p-6 text-white mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">{receipts.length} Onaylanmış Makbuz</h2>
-            <p className="text-green-100 mt-1">Ödeme için hazır makbuzlar</p>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">{filteredReceipts.length}</h2>
+              <p className="text-green-100">Onaylanmış Makbuz</p>
+            </div>
+            <CheckCircle className="w-8 h-8 text-green-200" />
           </div>
-          <CreditCard className="w-12 h-12 text-green-200" />
         </div>
-        {receipts.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+
+        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl p-6 text-white">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100">Toplam Ödeme Tutarı</p>
-              <p className="text-2xl font-bold">
-                {totalAmount.toLocaleString('tr-TR')} ₺
-              </p>
+              <h2 className="text-2xl font-bold">
+                {totals.displayCurrency} {totals.total.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}
+              </h2>
+              <p className="text-yellow-100">Toplam Ödeme Tutarı</p>
             </div>
-            <div>
-              <p className="text-green-100">Ortalama Makbuz</p>
-              <p className="font-semibold">
-                {(totalAmount / receipts.length).toLocaleString('tr-TR')} ₺
-              </p>
-            </div>
+            <CreditCard className="w-8 h-8 text-yellow-200" />
           </div>
-        )}
+        </div>
+
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">
+                {totals.displayCurrency} {totals.average.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}
+              </h2>
+              <p className="text-purple-100">Ort. Makbuz</p>
+            </div>
+            <Building className="w-8 h-8 text-purple-200" />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">
+                {new Set(filteredReceipts.map(r => r.supplier_id)).size}
+              </h2>
+              <p className="text-blue-100">Tedarikçi</p>
+            </div>
+            <Building className="w-8 h-8 text-blue-200" />
+          </div>
+        </div>
       </div>
 
       {/* Permission Notice */}
