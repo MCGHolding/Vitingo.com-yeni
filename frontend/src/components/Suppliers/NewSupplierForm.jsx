@@ -581,7 +581,8 @@ const NewSupplierForm = ({ onClose }) => {
                 <CountrySelect
                   value={formData.country}
                   onChange={(country) => {
-                    handleInputChange('country', country);
+                    const countryCode = country ? country.iso2 : '';
+                    handleInputChange('country', countryCode);
                     // Reset city when country changes
                     if (formData.city) {
                       handleInputChange('city', '');
