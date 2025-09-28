@@ -53,11 +53,6 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
   const [receiptCreated, setReceiptCreated] = useState(false);
   const [createdReceipt, setCreatedReceipt] = useState(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailForm, setEmailForm] = useState({
-    to: '',
-    subject: '',
-    message: ''
-  });
 
   // Load suppliers and banks on mount
   useEffect(() => {
