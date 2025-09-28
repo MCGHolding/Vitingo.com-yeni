@@ -186,10 +186,8 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     let recipientName = '';
     let recipientCompany = '';
     
-    console.log('Receipt supplier_id:', receipt.supplier_id);
-    console.log('Available suppliers:', Object.keys(suppliers));
-    console.log('Selected supplier:', supplier);
-    console.log('Supplier fields:', supplier ? Object.keys(supplier) : 'No supplier');
+    // Debug info (remove in production)
+    // console.log('Receipt supplier_id:', receipt.supplier_id);
     
     if (supplier) {
       // First, try to get contact info if available
