@@ -3777,21 +3777,10 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
         if not sendgrid_api_key:
             return {"success": False, "message": "E-posta servisi yapılandırılmamış"}
         
-        # Create email message with receipt context
+        # Create simple email message - like format 1 in user's screenshots
         email_content = f"""
-Sayın Yetkili,
-
 {request.message}
-
-Makbuz Detayları:
-- Makbuz No: {receipt.get('receipt_number', 'N/A')}
-- Tarih: {receipt.get('date', 'N/A')}
-- Tutar: {receipt.get('amount', 'N/A')} {receipt.get('currency', 'N/A')}
-- Tedarikçi: {receipt.get('supplier_name', 'N/A')}
-
-İyi çalışmalar,
-Vitingo CRM Sistemi
-"""
+        """
         
         # Generate PDF for the receipt
         pdf_data = generate_expense_receipt_pdf(receipt)
