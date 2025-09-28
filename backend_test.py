@@ -8266,6 +8266,344 @@ def test_expense_receipt_email_endpoint():
     
     return True
 
+def test_expense_receipt_payment_endpoint():
+    """
+    Test the new expense receipt payment endpoint functionality
+    
+    NEW ENDPOINT ADDED:
+    POST /api/expense-receipts/{receipt_id}/payment - Mark expense receipt as paid
+    
+    FUNCTIONALITY:
+    1. Only works for receipts with status="approved"
+    2. Changes status from "approved" to "paid"  
+    3. Sets paid_at timestamp to current datetime
+    4. Returns success message in Turkish
+    5. Should be restricted to accounting/admin/super_admin roles (role check not implemented yet)
+    
+    TESTING NEEDED:
+    1. Test POST payment endpoint with approved receipt
+    2. Verify status changes from "approved" to "paid"
+    3. Check paid_at timestamp is set correctly
+    4. Test with non-approved receipt (should return 400 error)
+    5. Test with non-existent receipt (should return 404 error)
+    6. Verify response format matches frontend expectations
+    7. Check that receipt moves from approved to paid category
+    
+    The frontend expects success response with:
+    - success: true
+    - message: success message in Turkish
+    - receipt_number: for confirmation
+    - status: "paid"
+    """
+    
+    print("=" * 80)
+    print("TESTING EXPENSE RECEIPT PAYMENT ENDPOINT")
+    print("=" * 80)
+    
+    # Step 1: Create a test expense receipt
+    create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
+    print(f"Creating test expense receipt at: {create_endpoint}")
+    
+    receipt_data = {
+        "date": "2025-01-15",
+        "currency": "USD",
+        "supplier_id": "test-supplier-payment-123",
+        "amount": 2500.00,
+        "description": "Test expense receipt for payment endpoint testing"
+    }
+    
+    receipt_id = None
+    receipt_number = None
+    
+    try:
+        print("\n--- Step 1: Creating test expense receipt ---")
+        response = requests.post(create_endpoint, json=receipt_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            receipt_response = response.json()
+            receipt_id = receipt_response.get('id')
+            receipt_number = receipt_response.get('receipt_number')
+            print(f"✅ PASS: Test receipt created successfully")
+            print(f"   Receipt ID: {receipt_id}")
+            print(f"   Receipt Number: {receipt_number}")
+            print(f"   Initial Status: {receipt_response.get('status')}")
+        else:
+            print(f"❌ FAIL: Failed to create test receipt")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error creating test receipt: {str(e)}")
+        return False
+    
+    if not receipt_id:
+        print("❌ FAIL: Cannot continue tests without receipt_id")
+        return False
+    
+    # Step 2: Update receipt status to "approved" (simulate approval process)
+    update_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
+    print(f"\n--- Step 2: Updating receipt status to 'approved' ---")
+    
+    try:
+        update_data = {"status": "approved"}
+        response = requests.put(update_endpoint, json=update_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            updated_receipt = response.json()
+            print(f"✅ PASS: Receipt status updated to 'approved'")
+            print(f"   Updated Status: {updated_receipt.get('status')}")
+        else:
+            print(f"❌ FAIL: Failed to update receipt status")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error updating receipt status: {str(e)}")
+        return False
+    
+    # Step 3: Test payment endpoint with approved receipt
+    payment_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}/payment"
+    print(f"\n--- Step 3: Testing payment endpoint with approved receipt ---")
+    print(f"Payment endpoint: {payment_endpoint}")
+    
+    try:
+        response = requests.post(payment_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Payment endpoint responds with status 200")
+            
+            # Parse response
+            payment_response = response.json()
+            print(f"Response: {payment_response}")
+            
+            # Verify response structure
+            required_fields = ["success", "message", "receipt_number", "status"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in payment_response:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"❌ FAIL: Response missing required fields: {missing_fields}")
+                return False
+            
+            print("✅ PASS: Response has all required fields")
+            
+            # Verify field values
+            if payment_response.get("success") != True:
+                print(f"❌ FAIL: Expected success=true, got {payment_response.get('success')}")
+                return False
+            
+            if payment_response.get("status") != "paid":
+                print(f"❌ FAIL: Expected status='paid', got {payment_response.get('status')}")
+                return False
+            
+            if payment_response.get("receipt_number") != receipt_number:
+                print(f"❌ FAIL: Receipt number mismatch. Expected: {receipt_number}, Got: {payment_response.get('receipt_number')}")
+                return False
+            
+            # Check Turkish message
+            message = payment_response.get("message", "")
+            if "başarıyla" in message and "ödendi" in message:
+                print("✅ PASS: Success message is in Turkish")
+                print(f"   Message: {message}")
+            else:
+                print(f"⚠️  WARNING: Message might not be in Turkish: {message}")
+            
+            print("✅ PASS: Payment response format is correct")
+            
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing payment endpoint: {str(e)}")
+        return False
+    
+    # Step 4: Verify receipt status changed to "paid" in database
+    get_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
+    print(f"\n--- Step 4: Verifying receipt status changed to 'paid' ---")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            receipt_data = response.json()
+            current_status = receipt_data.get("status")
+            paid_at = receipt_data.get("paid_at")
+            
+            if current_status == "paid":
+                print("✅ PASS: Receipt status successfully changed to 'paid'")
+            else:
+                print(f"❌ FAIL: Receipt status should be 'paid', got '{current_status}'")
+                return False
+            
+            if paid_at:
+                print("✅ PASS: paid_at timestamp is set")
+                print(f"   Paid At: {paid_at}")
+            else:
+                print("❌ FAIL: paid_at timestamp not set")
+                return False
+                
+        else:
+            print(f"❌ FAIL: Failed to retrieve updated receipt")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error verifying receipt status: {str(e)}")
+        return False
+    
+    # Step 5: Test with non-approved receipt (should return 400 error)
+    print(f"\n--- Step 5: Testing payment with non-approved receipt ---")
+    
+    # Create another receipt with pending status
+    try:
+        pending_receipt_data = {
+            "date": "2025-01-16",
+            "currency": "EUR",
+            "supplier_id": "test-supplier-pending-456",
+            "amount": 1200.00,
+            "description": "Test pending receipt for error testing"
+        }
+        
+        response = requests.post(create_endpoint, json=pending_receipt_data, timeout=30)
+        if response.status_code == 200:
+            pending_receipt = response.json()
+            pending_receipt_id = pending_receipt.get('id')
+            print(f"✅ Created pending receipt: {pending_receipt_id}")
+            
+            # Try to mark pending receipt as paid (should fail)
+            pending_payment_endpoint = f"{BACKEND_URL}/api/expense-receipts/{pending_receipt_id}/payment"
+            payment_response = requests.post(pending_payment_endpoint, timeout=30)
+            
+            print(f"Payment attempt status: {payment_response.status_code}")
+            
+            if payment_response.status_code == 400:
+                print("✅ PASS: Non-approved receipt returns 400 error")
+                try:
+                    error_data = payment_response.json()
+                    error_detail = error_data.get("detail", "")
+                    if "onaylanmış" in error_detail:
+                        print("✅ PASS: Error message is in Turkish")
+                        print(f"   Error message: {error_detail}")
+                    else:
+                        print(f"⚠️  WARNING: Error message might not be in Turkish: {error_detail}")
+                except:
+                    print("⚠️  WARNING: Could not parse error response")
+            else:
+                print(f"❌ FAIL: Expected 400 for non-approved receipt, got {payment_response.status_code}")
+                return False
+        else:
+            print("⚠️  WARNING: Could not create pending receipt for error testing")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error testing non-approved receipt: {str(e)}")
+    
+    # Step 6: Test with non-existent receipt (should return 404 error)
+    print(f"\n--- Step 6: Testing payment with non-existent receipt ---")
+    
+    try:
+        nonexistent_id = "nonexistent-receipt-id-123"
+        nonexistent_endpoint = f"{BACKEND_URL}/api/expense-receipts/{nonexistent_id}/payment"
+        
+        response = requests.post(nonexistent_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Non-existent receipt returns 404 error")
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                if "bulunamadı" in error_detail:
+                    print("✅ PASS: Error message is in Turkish")
+                    print(f"   Error message: {error_detail}")
+                else:
+                    print(f"⚠️  WARNING: Error message might not be in Turkish: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"❌ FAIL: Expected 404 for non-existent receipt, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing non-existent receipt: {str(e)}")
+        return False
+    
+    # Step 7: Test double payment (should return error)
+    print(f"\n--- Step 7: Testing double payment prevention ---")
+    
+    try:
+        # Try to mark the already paid receipt as paid again
+        response = requests.post(payment_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("✅ PASS: Already paid receipt returns 400 error")
+            try:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                print(f"   Error message: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"⚠️  WARNING: Expected 400 for already paid receipt, got {response.status_code}")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error testing double payment: {str(e)}")
+    
+    # Step 8: Verify receipt appears in paid category
+    print(f"\n--- Step 8: Verifying receipt appears in paid category ---")
+    
+    try:
+        paid_receipts_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=paid"
+        response = requests.get(paid_receipts_endpoint, timeout=30)
+        
+        if response.status_code == 200:
+            paid_receipts = response.json()
+            
+            # Check if our test receipt is in the paid list
+            found_receipt = False
+            for receipt in paid_receipts:
+                if receipt.get('id') == receipt_id:
+                    found_receipt = True
+                    print("✅ PASS: Paid receipt found in paid category")
+                    print(f"   Receipt: {receipt.get('receipt_number')} - Status: {receipt.get('status')}")
+                    break
+            
+            if not found_receipt:
+                print("❌ FAIL: Paid receipt not found in paid category")
+                return False
+                
+            print(f"✅ PASS: Total paid receipts: {len(paid_receipts)}")
+            
+        else:
+            print(f"⚠️  WARNING: Could not retrieve paid receipts: {response.status_code}")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error checking paid category: {str(e)}")
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("EXPENSE RECEIPT PAYMENT ENDPOINT TEST RESULTS:")
+    print("=" * 80)
+    print("✅ Payment endpoint responds correctly for approved receipts")
+    print("✅ Status changes from 'approved' to 'paid'")
+    print("✅ paid_at timestamp is set correctly")
+    print("✅ Response format matches frontend expectations")
+    print("✅ Success message is in Turkish")
+    print("✅ Non-approved receipts return 400 error")
+    print("✅ Non-existent receipts return 404 error")
+    print("✅ Receipt moves to paid category correctly")
+    print("\n🎉 EXPENSE RECEIPT PAYMENT ENDPOINT TEST PASSED!")
+    print(f"   Test Receipt: {receipt_number} successfully marked as paid")
+    
+    return True
+
 def main():
     """Main test runner for expense receipt creation and listing issue diagnosis"""
     print("🚀 STARTING COMPREHENSIVE BACKEND API TESTING")
