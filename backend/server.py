@@ -3803,8 +3803,38 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
             return {"success": False, "message": "E-posta servisi yapılandırılmamış"}
         
         # Create simple email message - like format 1 in user's screenshots
-        email_content = f"""
+        plain_content = f"""
 {request.message}
+        """
+        
+        # Create HTML email content matching Vitingo CRM format
+        html_content = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }}
+        .container {{ background-color: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+        .header {{ background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 30px; }}
+        .content {{ font-size: 14px; line-height: 1.6; color: #333; }}
+        .footer {{ margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666; text-align: center; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Vitingo CRM</h2>
+        </div>
+        <div class="content">
+            {request.message.replace(chr(10), '<br/>')}
+        </div>
+        <div class="footer">
+            Bu e-posta Vitingo CRM sistemi tarafından otomatik olarak gönderilmiştir.
+        </div>
+    </div>
+</body>
+</html>
         """
         
         # Generate PDF for the receipt
@@ -3815,7 +3845,8 @@ async def send_expense_receipt_email(request: ExpenseReceiptEmailRequest):
             from_email='info@quattrostand.com',  # Use validated sender
             to_emails=request.to,
             subject=request.subject,
-            plain_text_content=email_content
+            plain_text_content=plain_content,
+            html_content=html_content
         )
         
         # Add PDF attachment if generated successfully
