@@ -8338,7 +8338,7 @@ def test_expense_receipt_payment_endpoint():
     receipt_number = None
     
     try:
-        print("\n--- Step 1: Creating test expense receipt ---")
+        print("\n--- Step 2: Creating test expense receipt ---")
         response = requests.post(create_endpoint, json=receipt_data, timeout=30)
         print(f"Status Code: {response.status_code}")
         
