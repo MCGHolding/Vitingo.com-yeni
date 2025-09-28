@@ -8300,14 +8300,36 @@ def test_expense_receipt_payment_endpoint():
     print("TESTING EXPENSE RECEIPT PAYMENT ENDPOINT")
     print("=" * 80)
     
-    # Step 1: Create a test expense receipt
+    # Step 1: Get existing supplier for testing
+    suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+    supplier_id = None
+    
+    try:
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        if suppliers_response.status_code == 200:
+            suppliers = suppliers_response.json()
+            if suppliers and len(suppliers) > 0:
+                supplier_id = suppliers[0].get('id')
+                supplier_name = suppliers[0].get('company_short_name', 'Test Supplier')
+                print(f"✅ Using existing supplier: {supplier_name} (ID: {supplier_id})")
+            else:
+                print("❌ FAIL: No suppliers found in database")
+                return False
+        else:
+            print(f"❌ FAIL: Failed to get suppliers: {suppliers_response.status_code}")
+            return False
+    except Exception as e:
+        print(f"❌ FAIL: Error getting suppliers: {str(e)}")
+        return False
+    
+    # Step 2: Create a test expense receipt
     create_endpoint = f"{BACKEND_URL}/api/expense-receipts"
     print(f"Creating test expense receipt at: {create_endpoint}")
     
     receipt_data = {
         "date": "2025-01-15",
         "currency": "USD",
-        "supplier_id": "test-supplier-payment-123",
+        "supplier_id": supplier_id,
         "amount": 2500.00,
         "description": "Test expense receipt for payment endpoint testing"
     }
