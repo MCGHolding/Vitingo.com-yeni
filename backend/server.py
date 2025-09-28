@@ -3699,7 +3699,12 @@ def generate_expense_receipt_pdf(receipt):
         ]
         
         if receipt.get('paid_at'):
-            receipt_data.append(['Ödeme Tarihi / Payment Date:', receipt.get('paid_at', '').split('T')[0]])
+            paid_date = receipt.get('paid_at', '')
+            if isinstance(paid_date, str):
+                paid_date = paid_date.split('T')[0]
+            elif hasattr(paid_date, 'strftime'):
+                paid_date = paid_date.strftime('%Y-%m-%d')
+            receipt_data.append(['Ödeme Tarihi / Payment Date:', paid_date])
         
         # Create table
         table = Table(receipt_data, colWidths=[200, 300])
