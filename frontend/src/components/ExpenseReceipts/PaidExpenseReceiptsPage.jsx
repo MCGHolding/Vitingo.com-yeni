@@ -193,7 +193,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
       
       if (result.success) {
         setShowEmailModal(false);
-        setEmailForm({ to: '', subject: '', message: '' });
+        setEmailForm({ to: '', subject: '', message: '', recipient_name: '', recipient_company: '' });
         setSelectedReceipt(null);
         setSuccessMessage('E-posta başarıyla gönderildi');
         setShowSuccessModal(true);
