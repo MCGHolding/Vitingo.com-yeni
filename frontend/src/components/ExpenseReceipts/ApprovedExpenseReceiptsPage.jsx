@@ -65,11 +65,45 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
       filtered = filtered.filter(receipt => receipt.status === statusFilter);
     }
     
+    // Date filter
+    if (dateFilter !== 'all') {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (dateFilter) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          filtered = filtered.filter(receipt => 
+            new Date(receipt.signed_at || receipt.date) >= filterDate
+          );
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          filtered = filtered.filter(receipt => 
+            new Date(receipt.signed_at || receipt.date) >= filterDate
+          );
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          filtered = filtered.filter(receipt => 
+            new Date(receipt.signed_at || receipt.date) >= filterDate
+          );
+          break;
+        case 'year':
+          filterDate.setFullYear(now.getFullYear() - 1);
+          filtered = filtered.filter(receipt => 
+            new Date(receipt.signed_at || receipt.date) >= filterDate
+          );
+          break;
+      }
+    }
+    
     // Currency filter
     if (currencyFilter !== 'all') {
       filtered = filtered.filter(receipt => receipt.currency === currencyFilter);
     }
     
+    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(receipt => 
         receipt.receipt_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,8 +111,19 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
       );
     }
     
+    // Date range filter
+    if (startDate && endDate) {
+      filtered = filtered.filter(receipt => {
+        const receiptDate = new Date(receipt.signed_at || receipt.date);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Include end date
+        return receiptDate >= start && receiptDate <= end;
+      });
+    }
+    
     setFilteredReceipts(filtered);
-  }, [receipts, searchTerm, statusFilter, currencyFilter]);
+  }, [receipts, searchTerm, statusFilter, dateFilter, currencyFilter, startDate, endDate]);
 
   // Format currency
   const formatCurrency = (amount, currency) => {
