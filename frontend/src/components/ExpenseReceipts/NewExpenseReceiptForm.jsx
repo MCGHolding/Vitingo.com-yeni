@@ -253,6 +253,19 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
     setIsUSABank(false);
   };
 
+  // Format currency for display
+  const formatCurrency = (amount, currency) => {
+    const symbols = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'TRY': '₺',
+      'AED': 'د.إ'
+    };
+    
+    return `${symbols[currency] || currency} ${amount?.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}`;
+  };
+
   const handleSendEmail = () => {
     setShowEmailModal(true);
   };
