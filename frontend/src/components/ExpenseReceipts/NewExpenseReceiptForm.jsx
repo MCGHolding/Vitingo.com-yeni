@@ -664,11 +664,15 @@ Vitingo CRM Sistemi`;
                       <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         value={supplierData.iban}
-                        onChange={(e) => handleSupplierDataChange('iban', e.target.value)}
-                        placeholder="Tedarikçi IBAN'ı"
-                        className="pl-10"
+                        onChange={(e) => handleIbanInput(e.target.value)}
+                        placeholder="TR00 0000 0000 0000 0000 00 00"
+                        className={`pl-10 ${ibanError ? 'border-red-500' : ''}`}
                         required
                       />
+                    </div>
+                    {ibanError && (
+                      <p className="text-red-500 text-sm mt-1">{ibanError}</p>
+                    )}
                     </div>
                   </div>
 
