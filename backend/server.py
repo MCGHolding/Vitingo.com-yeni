@@ -3267,6 +3267,9 @@ class ExpenseReceipt(BaseModel):
     status: str = "pending"  # pending, approved, paid
     approval_link: Optional[str] = ""  # Unique link for supplier approval
     signature_data: Optional[str] = ""  # Base64 signature when approved
+    signer_name: Optional[str] = ""  # Name of the person who signed
+    signer_title: Optional[str] = ""  # Title/position of signer
+    signer_company: Optional[str] = ""  # Company of signer
     signed_at: Optional[datetime] = None
     paid_at: Optional[datetime] = None
     created_by: str  # User who created the receipt
