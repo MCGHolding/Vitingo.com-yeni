@@ -23,6 +23,8 @@ import {
 
 import AddCategoryModal from './AddCategoryModal';
 import AddSpecialtyModal from './AddSpecialtyModal';
+import CountrySelect from '../geo/CountrySelect';
+import CitySelect from '../geo/CitySelect';
 
 const NewSupplierForm = ({ onClose }) => {
   const { toast } = useToast();
