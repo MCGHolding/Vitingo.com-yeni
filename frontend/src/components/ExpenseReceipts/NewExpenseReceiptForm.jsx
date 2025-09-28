@@ -327,6 +327,35 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
         {/* Email Modal */}
         {showEmailModal && createdReceipt && (() => {
           const supplier = suppliers.find(s => s.id === createdReceipt.supplier_id);
+          const approvalUrl = `${window.location.origin}/expense-receipt-approval/${createdReceipt.approval_link}`;
+          
+          const defaultMessage = `Sayın ${supplier?.company_short_name || 'Yetkili'},
+
+Firmamız tarafından oluşturulan gider makbuzu ektedir. Ödemenizin gerçekleşebilmesi için makbuzu incelemeniz, onaylamanız ve imzalamanız gerekmektedir.
+
+MAKBUZ DETAYLARI:
+• Makbuz No: ${createdReceipt.receipt_number}
+• Tarih: ${new Date(createdReceipt.date).toLocaleDateString('tr-TR')}
+• Tutar: ${formatCurrency(createdReceipt.amount, createdReceipt.currency)}
+• Açıklama: ${createdReceipt.description}
+
+ONAY İŞLEMLERİ:
+1. Aşağıdaki linke tıklayın
+2. Makbuz detaylarını inceleyin
+3. Bilgilerinizi girin ve "Onaylıyorum" kutucuğunu işaretleyin
+4. Dijital imzanızı atın
+5. "Makbuzu Onayla" butonuna basın
+
+ONAY LİNKİ:
+${approvalUrl}
+
+⚠️ Bu link 30 gün süreyle geçerlidir.
+⚠️ Onayınız alındıktan sonra ödemeniz 3 iş günü içerisinde yapılacaktır.
+
+İyi çalışmalar dileriz.
+
+Vitingo CRM Sistemi`;
+
           return (
             <EmailModal 
               user={{
@@ -334,6 +363,8 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
                 firstName: supplier?.company_short_name?.split(' ')[0] || 'Tedarikçi',
                 lastName: supplier?.company_short_name?.split(' ').slice(1).join(' ') || ''
               }}
+              defaultSubject={`Gider Makbuzu Onayı - ${createdReceipt.receipt_number}`}
+              defaultBody={defaultMessage}
               onClose={() => setShowEmailModal(false)}
             />
           );
