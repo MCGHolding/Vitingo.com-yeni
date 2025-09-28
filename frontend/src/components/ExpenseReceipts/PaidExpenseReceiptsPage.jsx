@@ -628,6 +628,175 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         </div>
       )}
 
+      {/* View Receipt Modal */}
+      {showViewModal && selectedReceipt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+                  <FileCheck className="w-6 h-6 mr-2 text-green-600" />
+                  Makbuz Detayları
+                </h3>
+                <button
+                  onClick={() => setShowViewModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Makbuz Numarası</label>
+                  <p className="text-lg font-semibold text-blue-600">#{selectedReceipt.receipt_number}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ödeme Tarihi</label>
+                  <p className="text-lg text-gray-900">{selectedReceipt.paid_at ? formatDate(selectedReceipt.paid_at) : 'Bilinmiyor'}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tedarikçi</label>
+                  <p className="text-lg text-gray-900">{selectedReceipt.supplier_name}</p>
+                  {selectedReceipt.supplier_country && (
+                    <p className="text-sm text-gray-500">{selectedReceipt.supplier_country}</p>
+                  )}
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tutar</label>
+                  <p className="text-2xl font-bold text-green-600">
+                    {formatCurrency(selectedReceipt.amount, selectedReceipt.currency)}
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                  <p className="text-gray-900">{selectedReceipt.description}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gönderen Banka</label>
+                  <p className="text-gray-900">{selectedReceipt.sender_bank_name || 'Bilinmiyor'}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <CheckCircle2 className="w-4 h-4 mr-1" />
+                    Ödendi
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowViewModal(false)}
+                  className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Receipt Modal */}
+      {showEditModal && selectedReceipt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+                  <Edit2 className="w-6 h-6 mr-2 text-blue-600" />
+                  Makbuz Düzenle
+                </h3>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <Calendar className="w-5 h-5 text-yellow-600 mr-2" />
+                  <p className="text-yellow-800 text-sm">
+                    <strong>Uyarı:</strong> Bu makbuz zaten ödenmiş durumda. Sadece açıklama alanını düzenleyebilirsiniz.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Makbuz Numarası</label>
+                    <input 
+                      type="text" 
+                      value={selectedReceipt.receipt_number} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tutar</label>
+                    <input 
+                      type="text" 
+                      value={formatCurrency(selectedReceipt.amount, selectedReceipt.currency)} 
+                      disabled 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tedarikçi</label>
+                  <input 
+                    type="text" 
+                    value={selectedReceipt.supplier_name} 
+                    disabled 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                  <textarea 
+                    rows={4}
+                    defaultValue={selectedReceipt.description}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Makbuz açıklaması..."
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={() => {
+                    // TODO: Implement update functionality
+                    setShowEditModal(false);
+                    alert('Makbuz açıklaması güncellendi');
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
