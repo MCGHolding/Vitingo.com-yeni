@@ -25,6 +25,7 @@ import EmailModal from '../UserManagement/EmailModal';
 const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
   const { toast } = useToast();
   const { formatCurrency, getCurrencySymbol, getCurrencyOptions } = useCurrency();
+  const { ibanError, handleIbanChange } = useIban();
   
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
