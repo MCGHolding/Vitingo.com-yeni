@@ -601,7 +601,9 @@ const NewSupplierForm = ({ onClose }) => {
                   country={formData.country}
                   value={formData.city}
                   onChange={(city) => {
+                    console.log('City selected:', city);
                     const cityName = city ? city.name : '';
+                    console.log('City name extracted:', cityName);
                     handleInputChange('city', cityName);
                   }}
                   placeholder="Şehir seçiniz..."
