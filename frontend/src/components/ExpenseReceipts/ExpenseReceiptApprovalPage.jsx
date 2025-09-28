@@ -37,6 +37,18 @@ const ExpenseReceiptApprovalPage = () => {
         }
         
         setReceiptData(data);
+        
+        // Pre-fill signer information from supplier data
+        if (data.supplier_contact_name) {
+          setSignerName(data.supplier_contact_name);
+        }
+        if (data.supplier_contact_specialty) {
+          setSignerTitle(data.supplier_contact_specialty);
+        }
+        if (data.supplier_company_name) {
+          setSignerCompany(data.supplier_company_name);
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching receipt data:', error);
