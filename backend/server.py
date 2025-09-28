@@ -4160,8 +4160,14 @@ async def get_cities(country_code: str, query: str = ""):
         result = []
         for city in cities:
             result.append({
-                "name": city.get("tr_name", city.get("name", "")),
-                "country_code": country_code.upper()
+                "id": city.get("id", ""),
+                "name": city.get("name", ""),
+                "country_iso2": city.get("country_iso2", country_code.upper()),
+                "admin1": city.get("admin1", ""),
+                "is_capital": city.get("is_capital", False),
+                "population": city.get("population"),
+                "lat": city.get("lat"),
+                "lng": city.get("lng")
             })
         
         return result
