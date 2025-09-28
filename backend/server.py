@@ -4147,19 +4147,29 @@ async def get_countries(query: str = ""):
 
 @api_router.get("/geo/countries/{country_code}/cities")
 async def get_cities(country_code: str, query: str = "", limit: int = 50, page: int = 1):
-    """Get cities for a specific country"""
+    """Get cities for a specific country with pagination"""
     try:
         filter_query = {"country_iso2": country_code.upper()}
         if query:
             query_regex = {"$regex": query, "$options": "i"}
             filter_query["name"] = query_regex
         
-        cities = await db.cities.find(filter_query).sort("name", 1).to_list(length=None)
+        # Count total documents
+        total_count = await db.cities.count_documents(filter_query)
+        
+        # Calculate pagination
+        skip = (page - 1) * limit
+        total_pages = (total_count + limit - 1) // limit
+        has_next = page < total_pages
+        has_prev = page > 1
+        
+        # Get cities with pagination
+        cities = await db.cities.find(filter_query).sort("name", 1).skip(skip).limit(limit).to_list(length=limit)
         
         # Convert to API format
-        result = []
+        cities_result = []
         for city in cities:
-            result.append({
+            cities_result.append({
                 "id": city.get("id", ""),
                 "name": city.get("name", ""),
                 "country_iso2": city.get("country_iso2", country_code.upper()),
@@ -4170,7 +4180,17 @@ async def get_cities(country_code: str, query: str = "", limit: int = 50, page: 
                 "lng": city.get("lng")
             })
         
-        return result
+        return {
+            "cities": cities_result,
+            "pagination": {
+                "page": page,
+                "limit": limit,
+                "total_count": total_count,
+                "total_pages": total_pages,
+                "has_next": has_next,
+                "has_prev": has_prev
+            }
+        }
     except Exception as e:
         logger.error(f"Error fetching cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
