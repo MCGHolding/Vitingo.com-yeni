@@ -196,7 +196,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
         recipientEmail = primaryContact.email || '';
         recipientName = primaryContact.name || '';
         recipientCompany = supplier.name || '';
-        console.log('Using primary contact:', primaryContact);
+        // console.log('Using primary contact:', primaryContact);
       } else {
         // Fallback to supplier info
         recipientEmail = supplier.email || '';
