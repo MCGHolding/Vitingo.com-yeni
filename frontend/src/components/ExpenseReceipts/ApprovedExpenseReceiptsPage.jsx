@@ -153,7 +153,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     return amount * exchangeRates[currency];
   };
 
-  // Calculate totals based on currency filter
+  // Calculate totals - ALWAYS show in TRY for summary cards
   const calculateTotals = () => {
     let receiptsToCalculate = filteredReceipts;
     
@@ -162,28 +162,17 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
       receiptsToCalculate = filteredReceipts.filter(r => r.currency === currencyFilter);
     }
     
-    if (currencyFilter === 'all') {
-      // For "all currencies", show total in TRY
-      const totalInTRY = receiptsToCalculate.reduce((sum, receipt) => {
-        return sum + convertToTRY(receipt.amount, receipt.currency);
-      }, 0);
-      return {
-        total: totalInTRY,
-        average: receiptsToCalculate.length > 0 ? totalInTRY / receiptsToCalculate.length : 0,
-        currency: 'TRY',
-        displayCurrency: '₺'
-      };
-    } else {
-      // For specific currency, show in that currency
-      const total = receiptsToCalculate.reduce((sum, receipt) => sum + receipt.amount, 0);
-      const symbols = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'TRY': '₺', 'AED': 'د.إ' };
-      return {
-        total: total,
-        average: receiptsToCalculate.length > 0 ? total / receiptsToCalculate.length : 0,
-        currency: currencyFilter,
-        displayCurrency: symbols[currencyFilter] || currencyFilter
-      };
-    }
+    // Always calculate totals in TRY using current exchange rates
+    const totalInTRY = receiptsToCalculate.reduce((sum, receipt) => {
+      return sum + convertToTRY(receipt.amount, receipt.currency);
+    }, 0);
+    
+    return {
+      total: totalInTRY,
+      average: receiptsToCalculate.length > 0 ? totalInTRY / receiptsToCalculate.length : 0,
+      currency: 'TRY',
+      displayCurrency: '₺'
+    };
   };
 
   const totals = calculateTotals();
