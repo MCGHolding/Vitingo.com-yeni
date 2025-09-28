@@ -319,8 +319,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     }
   };
 
-  // Calculate total amount
-  const totalAmount = receipts.reduce((sum, receipt) => sum + receipt.amount, 0);
+  // Total calculation handled in calculateTotals function
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
