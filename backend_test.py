@@ -8556,8 +8556,8 @@ def test_expense_receipt_payment_endpoint():
         print(f"❌ FAIL: Error testing non-existent receipt: {str(e)}")
         return False
     
-    # Step 7: Test double payment (should return error)
-    print(f"\n--- Step 7: Testing double payment prevention ---")
+    # Step 8: Test double payment (should return error)
+    print(f"\n--- Step 8: Testing double payment prevention ---")
     
     try:
         # Try to mark the already paid receipt as paid again
