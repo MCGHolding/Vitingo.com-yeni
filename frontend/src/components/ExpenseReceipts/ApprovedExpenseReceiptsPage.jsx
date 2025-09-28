@@ -606,11 +606,20 @@ Swift: ${info.swift_code}`;
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {receipt.supplier_iban && (
-                          <div>IBAN: {receipt.supplier_iban.slice(-4)}</div>
-                        )}
-                        {receipt.supplier_bank_name && (
-                          <div className="text-gray-500">{receipt.supplier_bank_name}</div>
+                        {suppliers[receipt.supplier_id] ? (
+                          <button
+                            onClick={() => handleBankInfoClick(receipt)}
+                            className="text-left hover:bg-gray-100 p-2 rounded transition-colors cursor-pointer w-full"
+                          >
+                            <div className="font-medium text-blue-600">
+                              {suppliers[receipt.supplier_id].bank_name || 'Banka Bilgisi Yok'}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Detaylar için tıklayın
+                            </div>
+                          </button>
+                        ) : (
+                          <div className="text-gray-500">Yükleniyor...</div>
                         )}
                       </div>
                     </td>
