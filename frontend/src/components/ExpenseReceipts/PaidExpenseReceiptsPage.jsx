@@ -16,6 +16,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [suppliers, setSuppliers] = useState({});
 
   // Modal states
   const [showEmailModal, setShowEmailModal] = useState(false);
