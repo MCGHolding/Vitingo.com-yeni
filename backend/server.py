@@ -3291,6 +3291,11 @@ class ExpenseReceiptUpdate(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
     signature_data: Optional[str] = None
+    # USA bank fields
+    is_usa_bank: Optional[bool] = None
+    supplier_routing_number: Optional[str] = None
+    supplier_us_account_number: Optional[str] = None
+    supplier_bank_address: Optional[str] = None
 
 # ===================== CONTACT REGISTRATION ENDPOINTS =====================
 
