@@ -130,6 +130,13 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   // Get unique currencies for filter
   const availableCurrencies = [...new Set(receipts.map(r => r.currency))];
 
+  // Convert amount to TRY using exchange rates
+  const convertToTRY = (amount, currency) => {
+    if (currency === 'TRY') return amount;
+    if (!exchangeRates || !exchangeRates[currency]) return amount;
+    return amount * exchangeRates[currency];
+  };
+
   // Handle view receipt
   const handleViewReceipt = (receipt) => {
     alert(`Makbuz görüntüleme: ${receipt.receipt_number}`);
