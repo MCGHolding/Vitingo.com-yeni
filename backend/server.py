@@ -3664,6 +3664,88 @@ Vitingo CRM Sistemi
         logger.error(f"Error sending expense receipt email: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== EXPENSE RECEIPT APPROVAL ENDPOINTS =====================
+
+@api_router.get("/expense-receipt-approval/{approval_key}")
+async def get_expense_receipt_for_approval(approval_key: str):
+    """Get expense receipt details for approval"""
+    try:
+        receipt = await db.expense_receipts.find_one({"approval_link": approval_key})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Makbuz bulunamadı veya onay linki geçersiz")
+        
+        # Check if already approved
+        if receipt.get("status") != "pending":
+            return {
+                "error": True,
+                "message": "Bu makbuz zaten onaylanmış veya işlem görmüş",
+                "status": receipt.get("status")
+            }
+        
+        # Parse date string back to date object for response
+        if isinstance(receipt.get('date'), str):
+            receipt['date'] = datetime.fromisoformat(receipt['date']).date()
+        
+        return ExpenseReceipt(**receipt)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting expense receipt for approval: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class ExpenseReceiptApprovalRequest(BaseModel):
+    signature_data: str
+    signer_name: str
+    signer_title: Optional[str] = ""
+    signer_company: Optional[str] = ""
+
+@api_router.post("/expense-receipt-approval/{approval_key}")
+async def approve_expense_receipt(approval_key: str, approval_data: ExpenseReceiptApprovalRequest):
+    """Approve expense receipt with signature"""
+    try:
+        receipt = await db.expense_receipts.find_one({"approval_link": approval_key})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Makbuz bulunamadı veya onay linki geçersiz")
+        
+        # Check if already approved
+        if receipt.get("status") != "pending":
+            raise HTTPException(status_code=400, detail="Bu makbuz zaten onaylanmış veya işlem görmüş")
+        
+        # Update receipt with approval data
+        update_data = {
+            "status": "approved",
+            "signature_data": approval_data.signature_data,
+            "signer_name": approval_data.signer_name,
+            "signer_title": approval_data.signer_title,
+            "signer_company": approval_data.signer_company,
+            "signed_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        result = await db.expense_receipts.update_one(
+            {"approval_link": approval_key},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Makbuz güncellenemedi")
+        
+        return {
+            "success": True,
+            "message": "Gider makbuzu başarıyla onaylandı",
+            "receipt_number": receipt.get("receipt_number"),
+            "status": "approved"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving expense receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== CONTACT EMAIL ENDPOINTS =====================
 
 class ContactEmailRequest(BaseModel):
