@@ -2819,6 +2819,9 @@ class SupplierContactCreate(BaseModel):
     position: Optional[str] = ""
     tags: List[str] = []
     notes: Optional[str] = ""
+    address: Optional[str] = ""
+    country: Optional[str] = ""
+    city: Optional[str] = ""
 
 class SupplierUpdate(BaseModel):
     company_short_name: Optional[str] = None
