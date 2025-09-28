@@ -95,12 +95,28 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   const availableCurrencies = [...new Set(receipts.map(r => r.currency))];
 
   // Handle payment action
-  const handlePayment = (receipt) => {
-    // TODO: Implement payment functionality
+  const handlePayment = async (receipt) => {
     if (window.confirm(`${receipt.supplier_name} için ${formatCurrency(receipt.amount, receipt.currency)} tutarındaki makbuzu ödenmiş olarak işaretle?`)) {
-      // Update status to paid
-      // This would typically call an API to update the receipt status
-      alert('Ödeme işlemi tamamlandı');
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+        const response = await fetch(`${backendUrl}/api/expense-receipts/${receipt.id}/payment`, {
+          method: 'POST'
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          // Remove from approved receipts list (it's now paid)
+          setReceipts(receipts.filter(r => r.id !== receipt.id));
+          setSuccessMessage('Ödeme işlemi başarıyla tamamlandı');
+          setShowSuccessModal(true);
+        } else {
+          throw new Error(result.message || 'Ödeme işlemi başarısız');
+        }
+      } catch (error) {
+        console.error('Error marking as paid:', error);
+        alert('Ödeme işlemi sırasında hata oluştu: ' + error.message);
+      }
     }
   };
 
