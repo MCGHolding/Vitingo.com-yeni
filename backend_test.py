@@ -8363,9 +8363,9 @@ def test_expense_receipt_payment_endpoint():
         print("❌ FAIL: Cannot continue tests without receipt_id")
         return False
     
-    # Step 2: Update receipt status to "approved" (simulate approval process)
+    # Step 3: Update receipt status to "approved" (simulate approval process)
     update_endpoint = f"{BACKEND_URL}/api/expense-receipts/{receipt_id}"
-    print(f"\n--- Step 2: Updating receipt status to 'approved' ---")
+    print(f"\n--- Step 3: Updating receipt status to 'approved' ---")
     
     try:
         update_data = {"status": "approved"}
