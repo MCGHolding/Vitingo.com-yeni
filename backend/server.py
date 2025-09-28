@@ -4370,10 +4370,7 @@ async def seed_comprehensive_geo_data():
             
             logger.info(f"Seeded cities for major countries")
 
-# Call seed function on startup
-@api_router.on_event("startup")
-async def startup_event():
-    await seed_comprehensive_geo_data()
+# Seed will be called manually or via script
 
 @api_router.get("/geo/countries")
 async def get_countries(query: str = ""):
