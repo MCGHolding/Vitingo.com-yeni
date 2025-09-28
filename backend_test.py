@@ -8480,8 +8480,8 @@ def test_expense_receipt_payment_endpoint():
         print(f"❌ FAIL: Error verifying receipt status: {str(e)}")
         return False
     
-    # Step 5: Test with non-approved receipt (should return 400 error)
-    print(f"\n--- Step 5: Testing payment with non-approved receipt ---")
+    # Step 6: Test with non-approved receipt (should return 400 error)
+    print(f"\n--- Step 6: Testing payment with non-approved receipt ---")
     
     # Create another receipt with pending status
     try:
