@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle, Eye, Edit2, MoreHorizontal, CreditCard, User, Building, Trash2, Mail, DollarSign } from 'lucide-react';
+import { Search, CheckCircle, Eye, Edit2, MoreHorizontal, CreditCard, User, Building, Trash2, Mail, DollarSign, Calendar, FileCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCurrency } from '../../hooks/useCurrency';
 
 const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const { user } = useAuth();
