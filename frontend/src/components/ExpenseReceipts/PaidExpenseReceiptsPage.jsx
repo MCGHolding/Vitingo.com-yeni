@@ -32,30 +32,43 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     recipient_company: ''
   });
 
-  // Load paid expense receipts from backend
+  // Load paid expense receipts and suppliers from backend
   useEffect(() => {
-    const loadPaidReceipts = async () => {
+    const loadData = async () => {
       setLoading(true);
       try {
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://vitingo-crm-3.preview.emergentagent.com';
-        const response = await fetch(`${backendUrl}/api/expense-receipts?status=paid`);
         
-        if (!response.ok) {
+        // Load receipts
+        const receiptsResponse = await fetch(`${backendUrl}/api/expense-receipts?status=paid`);
+        if (!receiptsResponse.ok) {
           throw new Error('Failed to fetch paid expense receipts');
         }
+        const receiptsData = await receiptsResponse.json();
+        setReceipts(receiptsData);
+        setFilteredReceipts(receiptsData);
         
-        const data = await response.json();
-        setReceipts(data);
-        setFilteredReceipts(data);
+        // Load suppliers
+        const suppliersResponse = await fetch(`${backendUrl}/api/suppliers`);
+        if (suppliersResponse.ok) {
+          const suppliersData = await suppliersResponse.json();
+          // Create suppliers map for easy lookup
+          const suppliersMap = {};
+          suppliersData.forEach(supplier => {
+            suppliersMap[supplier.id] = supplier;
+          });
+          setSuppliers(suppliersMap);
+        }
+        
       } catch (error) {
-        console.error('Error loading paid expense receipts:', error);
-        setError('Ödenmiş makbuzlar yüklenirken hata oluştu');
+        console.error('Error loading data:', error);
+        setError('Makbuzlar yüklenirken hata oluştu');
       } finally {
         setLoading(false);
       }
     };
 
-    loadPaidReceipts();
+    loadData();
   }, []);
 
   // Filter receipts based on search, status, date and currency
