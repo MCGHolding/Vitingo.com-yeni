@@ -231,8 +231,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              <DollarSign className="w-8 h-8 mr-3 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900">
               Ödenmiş Makbuzlar
             </h1>
             <p className="text-gray-600 mt-2">Tamamlanmış ve ödenmiş gider makbuzları</p>
