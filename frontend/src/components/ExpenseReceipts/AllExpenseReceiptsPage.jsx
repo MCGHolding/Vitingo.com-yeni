@@ -125,6 +125,92 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
     return new Date(dateString).toLocaleDateString('tr-TR');
   };
 
+  // Get unique currencies for filter
+  const availableCurrencies = [...new Set(receipts.map(r => r.currency))];
+
+  // Handle view receipt
+  const handleViewReceipt = (receipt) => {
+    // TODO: Implement view modal or navigate to view page
+    alert(`Makbuz görüntüleme: ${receipt.receipt_number}`);
+  };
+
+  // Handle edit receipt
+  const handleEditReceipt = (receipt) => {
+    // TODO: Implement edit modal or navigate to edit page
+    alert(`Makbuz düzenleme: ${receipt.receipt_number}`);
+  };
+
+  // Handle delete receipt
+  const handleDeleteReceipt = (receipt) => {
+    setSelectedReceipt(receipt);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm delete
+  const confirmDelete = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Remove from local state
+        setReceipts(receipts.filter(r => r.id !== selectedReceipt.id));
+        setShowDeleteModal(false);
+        setSelectedReceipt(null);
+        setSuccessMessage('Gider makbuzu başarıyla silindi');
+        setShowSuccessModal(true);
+      } else {
+        throw new Error('Silme işlemi başarısız');
+      }
+    } catch (error) {
+      console.error('Error deleting receipt:', error);
+      alert('Makbuz silinirken hata oluştu');
+    }
+  };
+
+  // Handle send email
+  const handleSendEmail = (receipt) => {
+    setSelectedReceipt(receipt);
+    setEmailForm({
+      to: '',
+      subject: `Gider Makbuzu: ${receipt.receipt_number}`,
+      message: `${receipt.receipt_number} numaralı gider makbuzu hakkında...`
+    });
+    setShowEmailModal(true);
+  };
+
+  // Send email
+  const sendEmail = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const response = await fetch(`${backendUrl}/api/send-expense-receipt-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...emailForm,
+          receipt_id: selectedReceipt.id
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowEmailModal(false);
+        setEmailForm({ to: '', subject: '', message: '' });
+        setSelectedReceipt(null);
+        setSuccessMessage('E-posta başarıyla gönderildi');
+        setShowSuccessModal(true);
+      } else {
+        throw new Error(result.message || 'E-posta gönderilemedi');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('E-posta gönderilirken hata oluştu');
+    }
+  };
+
   // Summary statistics
   const totalReceipts = receipts.length;
   const pendingReceipts = receipts.filter(r => r.status === 'pending').length;
