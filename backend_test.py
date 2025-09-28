@@ -7917,6 +7917,9 @@ def main():
     test_results.append(("Expense Receipt Delete Endpoint", test_expense_receipt_delete_endpoint()))
     test_results.append(("Expense Receipt Email Endpoint", test_expense_receipt_email_endpoint()))
     
+    # NEW EXPENSE RECEIPT APPROVAL WORKFLOW TESTS
+    test_results.append(("Expense Receipt Approval Workflow", test_expense_receipt_approval_workflow()))
+    
     # Print final summary
     print("\n" + "=" * 80)
     print("🎯 FINAL TEST SUMMARY")
