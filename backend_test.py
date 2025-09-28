@@ -8578,8 +8578,8 @@ def test_expense_receipt_payment_endpoint():
     except Exception as e:
         print(f"⚠️  WARNING: Error testing double payment: {str(e)}")
     
-    # Step 8: Verify receipt appears in paid category
-    print(f"\n--- Step 8: Verifying receipt appears in paid category ---")
+    # Step 9: Verify receipt appears in paid category
+    print(f"\n--- Step 9: Verifying receipt appears in paid category ---")
     
     try:
         paid_receipts_endpoint = f"{BACKEND_URL}/api/expense-receipts?status=paid"
