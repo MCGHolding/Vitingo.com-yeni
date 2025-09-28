@@ -9158,21 +9158,85 @@ def test_expense_receipt_approval_system():
     print("=" * 80)
     
     try:
-        # Step 1: Create a test supplier with contact information
-        print("\n1. Creating test supplier with contact information...")
+        # Step 1: Get or create supplier type and specialty
+        print("\n1. Getting supplier types and specialties...")
         
-        # Create supplier
+        # Get supplier types
+        types_response = requests.get(f"{BACKEND_URL}/api/supplier-types", timeout=30)
+        if types_response.status_code == 200:
+            types = types_response.json()
+            if types:
+                supplier_type_id = types[0].get("id")
+                print(f"   ✅ Using existing supplier type: {types[0].get('name')} (ID: {supplier_type_id})")
+            else:
+                print("   ⚠️  No supplier types found, creating one...")
+                type_data = {"name": "Test Type"}
+                type_response = requests.post(f"{BACKEND_URL}/api/supplier-types", json=type_data, timeout=30)
+                if type_response.status_code == 200:
+                    supplier_type_id = type_response.json().get("id")
+                    print(f"   ✅ Created supplier type with ID: {supplier_type_id}")
+                else:
+                    print(f"   ❌ FAIL: Could not create supplier type. Status: {type_response.status_code}")
+                    return False
+        else:
+            print(f"   ❌ FAIL: Could not get supplier types. Status: {types_response.status_code}")
+            return False
+        
+        # Get supplier specialties
+        specialties_response = requests.get(f"{BACKEND_URL}/api/supplier-specialties", timeout=30)
+        if specialties_response.status_code == 200:
+            specialties = specialties_response.json()
+            if specialties:
+                specialty_id = specialties[0].get("id")
+                print(f"   ✅ Using existing specialty: {specialties[0].get('name')} (ID: {specialty_id})")
+            else:
+                print("   ⚠️  No specialties found, creating one...")
+                # First get categories
+                categories_response = requests.get(f"{BACKEND_URL}/api/supplier-categories", timeout=30)
+                if categories_response.status_code == 200:
+                    categories = categories_response.json()
+                    if categories:
+                        category_id = categories[0].get("id")
+                    else:
+                        # Create category first
+                        cat_data = {"name": "Test Category"}
+                        cat_response = requests.post(f"{BACKEND_URL}/api/supplier-categories", json=cat_data, timeout=30)
+                        if cat_response.status_code == 200:
+                            category_id = cat_response.json().get("id")
+                        else:
+                            print(f"   ❌ FAIL: Could not create category. Status: {cat_response.status_code}")
+                            return False
+                    
+                    # Create specialty
+                    spec_data = {"name": "Test Specialty", "category_id": category_id}
+                    spec_response = requests.post(f"{BACKEND_URL}/api/supplier-specialties", json=spec_data, timeout=30)
+                    if spec_response.status_code == 200:
+                        specialty_id = spec_response.json().get("id")
+                        print(f"   ✅ Created specialty with ID: {specialty_id}")
+                    else:
+                        print(f"   ❌ FAIL: Could not create specialty. Status: {spec_response.status_code}")
+                        return False
+                else:
+                    print(f"   ❌ FAIL: Could not get categories. Status: {categories_response.status_code}")
+                    return False
+        else:
+            print(f"   ❌ FAIL: Could not get specialties. Status: {specialties_response.status_code}")
+            return False
+        
+        # Step 2: Create a test supplier with contact information
+        print("\n2. Creating test supplier with contact information...")
+        
+        # Create supplier with required fields
         supplier_data = {
             "company_short_name": "Test Approval Şirketi A.Ş.",
-            "company_full_name": "Test Approval Şirketi Anonim Şirketi",
-            "contact_person": "Test Contact Person",
-            "email": "test@approval.com",
-            "phone": "+90 212 555 0123",
+            "company_title": "Test Approval Şirketi Anonim Şirketi",
             "address": "Test Address, Istanbul",
+            "phone": "+90 212 555 0123",
+            "email": "test@approval.com",
+            "supplier_type_id": supplier_type_id,
+            "specialty_id": specialty_id,
             "country": "TR",
-            "city": "Istanbul",
-            "sector": "Test Sector",
-            "is_active": True
+            "city": "Istanbul"
         }
         
         supplier_response = requests.post(f"{BACKEND_URL}/api/suppliers", json=supplier_data, timeout=30)
