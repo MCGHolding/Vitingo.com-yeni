@@ -4176,7 +4176,14 @@ async def get_cities(country_code: str, query: str = ""):
 
 # Include the router in the main app
 app.include_router(api_router)
-    try:
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
         # Check if we have sufficient countries
         country_count = await db.countries.count_documents({})
         if country_count < 100:  # If less than 100 countries, seed more
