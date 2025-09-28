@@ -323,6 +323,17 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
               <option value="approved">Onaylandı</option>
               <option value="paid">Ödendi</option>
             </select>
+
+            <select
+              value={currencyFilter}
+              onChange={(e) => setCurrencyFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">Tüm Para Birimleri</option>
+              {availableCurrencies.map(currency => (
+                <option key={currency} value={currency}>{currency}</option>
+              ))}
+            </select>
           </div>
           
           <div className="text-sm text-gray-600">
