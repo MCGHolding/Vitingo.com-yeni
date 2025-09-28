@@ -97,6 +97,14 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   const availableCurrencies = [...new Set(receipts.map(r => r.currency))];
 
   // Handle payment action - show modal first
+  // Check if user can make payments (Admin, Super Admin, or Muhasebe department)
+  const canMakePayments = () => {
+    if (!user) return false;
+    return user.role === 'super-admin' || 
+           user.role === 'admin' || 
+           user.department === 'Muhasebe';
+  };
+
   const handlePayment = (receipt) => {
     setSelectedReceipt(receipt);
     setShowPaymentModal(true);
