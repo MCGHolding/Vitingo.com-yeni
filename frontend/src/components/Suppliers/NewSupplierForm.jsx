@@ -554,6 +554,40 @@ const NewSupplierForm = ({ onClose }) => {
               />
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Ülke
+                </label>
+                <CountrySelect
+                  value={formData.country}
+                  onChange={(country) => {
+                    handleInputChange('country', country);
+                    // Reset city when country changes
+                    if (formData.city) {
+                      handleInputChange('city', '');
+                    }
+                  }}
+                  placeholder="Ülke seçiniz..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Şehir
+                </label>
+                <CitySelect
+                  country={formData.country}
+                  value={formData.city}
+                  onChange={(city) => handleInputChange('city', city)}
+                  placeholder="Şehir seçiniz..."
+                  disabled={!formData.country}
+                />
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
