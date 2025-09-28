@@ -3731,7 +3731,7 @@ def generate_expense_receipt_pdf(receipt):
             İmzalayan / Signed by: {receipt.get('signer_name', 'N/A')}<br/>
             Pozisyon / Position: {receipt.get('signer_position', 'N/A')}<br/>
             Şirket / Company: {receipt.get('signer_company', 'N/A')}<br/>
-            İmza Tarihi / Signed Date: {receipt.get('signed_at', '').split('T')[0] if receipt.get('signed_at') else 'N/A'}
+            İmza Tarihi / Signed Date: {receipt.get('signed_at', '').split('T')[0] if isinstance(receipt.get('signed_at'), str) and receipt.get('signed_at') else (receipt.get('signed_at').strftime('%Y-%m-%d') if hasattr(receipt.get('signed_at'), 'strftime') else 'N/A')}
             """, normal_style)
             story.append(signature_para)
         
