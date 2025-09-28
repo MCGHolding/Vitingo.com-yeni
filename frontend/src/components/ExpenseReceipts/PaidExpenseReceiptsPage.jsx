@@ -559,7 +559,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
               <button
                 onClick={() => {
                   setShowEmailModal(false);
-                  setEmailForm({ to: '', subject: '', message: '' });
+                  setEmailForm({ to: '', subject: '', message: '', recipient_name: '', recipient_company: '' });
                   setSelectedReceipt(null);
                 }}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
