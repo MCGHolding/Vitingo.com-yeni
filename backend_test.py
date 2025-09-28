@@ -1529,10 +1529,10 @@ def test_expense_receipt_approval_with_supplier_prefill():
     """
     
     print("=" * 80)
-    print("TESTING EXPENSE RECEIPT APPROVAL WORKFLOW")
+    print("TESTING EXPENSE RECEIPT APPROVAL WITH SUPPLIER PRE-FILL")
     print("=" * 80)
     
-    # First, get or create a test supplier
+    # First, get or create a test supplier with contacts
     suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
     print(f"Getting suppliers from: {suppliers_endpoint}")
     
