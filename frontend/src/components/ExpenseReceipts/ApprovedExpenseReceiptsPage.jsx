@@ -149,8 +149,14 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   // Convert amount to TRY using exchange rates
   const convertToTRY = (amount, currency) => {
     if (currency === 'TRY') return amount;
-    if (!exchangeRates || !exchangeRates[currency]) return amount;
-    return amount * exchangeRates[currency];
+    if (!exchangeRates || !exchangeRates[currency]) {
+      console.log(`No exchange rate found for ${currency}`, exchangeRates);
+      return amount; // Fallback - return original amount
+    }
+    // Use selling rate to convert foreign currency to TRY
+    const rate = exchangeRates[currency].selling;
+    console.log(`Converting ${amount} ${currency} to TRY using rate ${rate}`);
+    return amount * rate;
   };
 
   // Calculate totals - ALWAYS show in TRY for summary cards
