@@ -986,6 +986,54 @@ const NewSupplierForm = ({ onClose }) => {
                   </div>
                 </div>
 
+                {/* Address and Location Information */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="inline w-4 h-4 mr-1" />
+                    Adres
+                  </label>
+                  <textarea
+                    value={contact.address}
+                    onChange={(e) => handleContactChange(contactIndex, 'address', e.target.value)}
+                    placeholder="Bireysel tedarikçi adresi..."
+                    className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Ülke
+                    </label>
+                    <CountrySelect
+                      value={contact.country}
+                      onChange={(country) => {
+                        handleContactChange(contactIndex, 'country', country);
+                        // Reset city when country changes
+                        if (contact.city) {
+                          handleContactChange(contactIndex, 'city', '');
+                        }
+                      }}
+                      placeholder="Ülke seçiniz..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Şehir
+                    </label>
+                    <CitySelect
+                      country={contact.country}
+                      value={contact.city}
+                      onChange={(city) => handleContactChange(contactIndex, 'city', city)}
+                      placeholder="Şehir seçiniz..."
+                      disabled={!contact.country}
+                    />
+                  </div>
+                </div>
+
                 {/* Kişi Etiketleri */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
