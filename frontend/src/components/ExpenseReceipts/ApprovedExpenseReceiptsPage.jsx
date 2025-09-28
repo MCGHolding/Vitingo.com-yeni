@@ -145,10 +145,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     }
   };
 
-  // Check if user can make payments
-  const canMakePayments = () => {
-    return ['admin', 'super_admin', 'accounting'].includes(userRole);
-  };
+  // Removed duplicate canMakePayments function
 
   // Handle view receipt
   const handleViewReceipt = (receipt) => {
