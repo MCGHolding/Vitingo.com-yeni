@@ -501,6 +501,28 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
           <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">E-posta Gönder</h3>
             <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Alıcı Adı</label>
+                  <input
+                    type="text"
+                    value={emailForm.recipient_name}
+                    onChange={(e) => setEmailForm({ ...emailForm, recipient_name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Alıcının tam adı"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Şirket</label>
+                  <input
+                    type="text"
+                    value={emailForm.recipient_company}
+                    onChange={(e) => setEmailForm({ ...emailForm, recipient_company: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Şirket adı"
+                  />
+                </div>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Alıcı E-posta</label>
                 <input
@@ -521,13 +543,16 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mesaj</label>
-                <textarea
-                  value={emailForm.message}
-                  onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <span className="text-gray-500">Mesaj (Otomatik Template Kullanılacak)</span>
+                </label>
+                <div className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-600 text-sm">
+                  Sayın [Alıcı Adı]<br/>
+                  [Şirket Adı]<br/><br/>
+                  İmzalamış olduğunuz gider makbuzunun imzalı kopyası ekte sunulmuştur.<br/><br/>
+                  İyi çalışmalar dileriz<br/><br/>
+                  Vitingo CRM Sistemi
+                </div>
               </div>
             </div>
             <div className="flex space-x-3 mt-6">
