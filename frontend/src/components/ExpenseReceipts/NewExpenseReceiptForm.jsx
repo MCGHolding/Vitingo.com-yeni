@@ -325,16 +325,19 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
         </Card>
 
         {/* Email Modal */}
-        {showEmailModal && createdReceipt && (
-          <EmailModal 
-            user={{
-              email: suppliers.find(s => s.id === createdReceipt.supplier_id)?.contacts?.[0]?.email || '',
-              firstName: createdReceipt.supplier_name.split(' ')[0] || '',
-              lastName: createdReceipt.supplier_name.split(' ').slice(1).join(' ') || ''
-            }}
-            onClose={() => setShowEmailModal(false)}
-          />
-        )}
+        {showEmailModal && createdReceipt && (() => {
+          const supplier = suppliers.find(s => s.id === createdReceipt.supplier_id);
+          return (
+            <EmailModal 
+              user={{
+                email: supplier?.email || '',
+                firstName: supplier?.company_short_name?.split(' ')[0] || 'Tedarikçi',
+                lastName: supplier?.company_short_name?.split(' ').slice(1).join(' ') || ''
+              }}
+              onClose={() => setShowEmailModal(false)}
+            />
+          );
+        })()}
       </div>
     );
   }
