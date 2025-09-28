@@ -95,29 +95,44 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   // Get unique currencies for filter
   const availableCurrencies = [...new Set(receipts.map(r => r.currency))];
 
-  // Handle payment action
-  const handlePayment = async (receipt) => {
-    if (window.confirm(`${receipt.supplier_name} için ${formatCurrency(receipt.amount, receipt.currency)} tutarındaki makbuzu ödenmiş olarak işaretle?`)) {
-      try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
-        const response = await fetch(`${backendUrl}/api/expense-receipts/${receipt.id}/payment`, {
-          method: 'POST'
-        });
+  // Handle payment action - show modal first
+  const handlePayment = (receipt) => {
+    setSelectedReceipt(receipt);
+    setShowPaymentModal(true);
+  };
 
-        const result = await response.json();
+  // Confirm payment
+  const confirmPayment = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://supplier-hub-14.preview.emergentagent.com';
+      const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}/payment`, {
+        method: 'POST'
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // Remove from approved receipts list (it's now paid)
+        setReceipts(receipts.filter(r => r.id !== selectedReceipt.id));
+        setShowPaymentModal(false);
         
-        if (response.ok && result.success) {
-          // Remove from approved receipts list (it's now paid)
-          setReceipts(receipts.filter(r => r.id !== receipt.id));
-          setSuccessMessage('Ödeme işlemi başarıyla tamamlandı');
-          setShowSuccessModal(true);
-        } else {
-          throw new Error(result.message || 'Ödeme işlemi başarısız');
-        }
-      } catch (error) {
-        console.error('Error marking as paid:', error);
-        alert('Ödeme işlemi sırasında hata oluştu: ' + error.message);
+        // Show standard success format
+        setSuccessData({
+          title: 'Tebrikler, Ödeme İşlemi Başarıyla Tamamlandı!',
+          subtitle: `${selectedReceipt.receipt_number} numaralı gider makbuzu ödendi olarak işaretlendi ve "Ödenmiş Makbuzlar" bölümüne taşındı.`,
+          receiptNumber: selectedReceipt.receipt_number,
+          supplier: selectedReceipt.supplier_name,
+          amount: formatCurrency(selectedReceipt.amount, selectedReceipt.currency),
+          status: 'Ödendi'
+        });
+        setShowStandardSuccess(true);
+        setSelectedReceipt(null);
+      } else {
+        throw new Error(result.message || 'Ödeme işlemi başarısız');
       }
+    } catch (error) {
+      console.error('Error marking as paid:', error);
+      alert('Ödeme işlemi sırasında hata oluştu: ' + error.message);
     }
   };
 
