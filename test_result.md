@@ -391,15 +391,18 @@ frontend:
 
   - task: "App.js Integration for Expense Receipt Pages"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/App.js"
     stuck_count: 0 
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "✅ APP.JS INTEGRATION COMPLETED - Replaced placeholder divs with actual components: 1) Added imports for all 4 expense receipt pages ✅ 2) Updated switch cases for all-expense-receipts, pending-expense-receipts, approved-expense-receipts, paid-expense-receipts ✅ 3) Passed proper props (onBackToDashboard, onNewExpenseReceipt) to all components ✅ 4) Maintained existing handler functions ✅ 5) Complete integration ready for testing ✅"
+      - working: true
+        agent: "testing"
+        comment: "✅ APP.JS INTEGRATION TESTED AND WORKING - All expense receipt page routing working correctly: 1) Navigation from sidebar to all expense receipt pages working ✅ 2) Component imports and switch cases functioning properly ✅ 3) Props passed correctly to all components ✅ 4) Handler functions working as expected ✅ 5) Complete integration verified through comprehensive testing ✅"
 
 frontend:
   - task: "Navigation to Müşteriler submenu"
