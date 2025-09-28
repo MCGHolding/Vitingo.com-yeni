@@ -4171,7 +4171,11 @@ async def get_cities(country_code: str, query: str = ""):
     except Exception as e:
         logger.error(f"Error fetching cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    """Seed comprehensive country and city data if not exists"""
+
+# ===================== MAIN APP SETUP =====================
+
+# Include the router in the main app
+app.include_router(api_router)
     try:
         # Check if we have sufficient countries
         country_count = await db.countries.count_documents({})
