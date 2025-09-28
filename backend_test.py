@@ -979,14 +979,14 @@ def test_geo_countries_endpoint():
     Test the geo countries endpoint for NewSupplierForm country selection.
     
     Requirements to verify:
-    1. GET /api/geo/countries - should return all countries
+    1. GET /api/geo/countries - should return all countries including Turkey (TR)
     2. Should support search functionality - "Turkey" search should find Turkey
     3. Should return proper JSON structure with country data
     4. Should include Turkish character tolerance in search
     """
     
     print("=" * 80)
-    print("TESTING GEO COUNTRIES ENDPOINT")
+    print("TESTING GEO COUNTRIES ENDPOINT FOR NEWSUPPLIERFORM")
     print("=" * 80)
     
     endpoint = f"{BACKEND_URL}/api/geo/countries"
@@ -1044,8 +1044,23 @@ def test_geo_countries_endpoint():
             print("   ✅ PASS: Country structure is valid")
             print(f"   Sample country: {first_country.get('name')} ({first_country.get('iso2')})")
         
-        # Test 2: Search for Turkey
-        print("\n4. Testing Turkey search...")
+        # Test 2: Verify Turkey (TR) is in the list
+        print("\n4. Verifying Turkey (TR) is in the countries list...")
+        turkey_found = False
+        turkey_country = None
+        for country in countries:
+            if country.get('iso2') == 'TR' or 'turkey' in country.get('name', '').lower():
+                turkey_found = True
+                turkey_country = country
+                print(f"   ✅ PASS: Turkey found: {country.get('name')} ({country.get('iso2')})")
+                break
+        
+        if not turkey_found:
+            print("   ❌ FAIL: Turkey (TR) not found in countries list")
+            return False
+        
+        # Test 3: Search for Turkey
+        print("\n5. Testing Turkey search...")
         search_endpoint = f"{endpoint}?query=Turkey"
         search_response = requests.get(search_endpoint, timeout=30)
         
@@ -1056,22 +1071,22 @@ def test_geo_countries_endpoint():
             search_results = search_response.json()
             
             # Check if Turkey is found
-            turkey_found = False
+            turkey_found_search = False
             for country in search_results:
                 if 'turkey' in country.get('name', '').lower() or country.get('iso2') == 'TR':
-                    turkey_found = True
-                    print(f"   ✅ PASS: Turkey found: {country.get('name')} ({country.get('iso2')})")
+                    turkey_found_search = True
+                    print(f"   ✅ PASS: Turkey found in search: {country.get('name')} ({country.get('iso2')})")
                     break
             
-            if not turkey_found:
+            if not turkey_found_search:
                 print("   ❌ FAIL: Turkey not found in search results")
                 return False
         else:
             print(f"   ❌ FAIL: Search request failed with status {search_response.status_code}")
             return False
         
-        # Test 3: Search with Turkish characters
-        print("\n5. Testing Turkish character search...")
+        # Test 4: Search with Turkish characters
+        print("\n6. Testing Turkish character search...")
         turkish_search_endpoint = f"{endpoint}?query=türk"
         turkish_response = requests.get(turkish_search_endpoint, timeout=30)
         
@@ -1091,7 +1106,7 @@ def test_geo_countries_endpoint():
                     break
             
             if not turkey_found_turkish:
-                print("   ⚠️  WARNING: Turkey not found with Turkish character search (may be expected)")
+                print("   ⚠️  INFO: Turkey not found with Turkish character search (database may contain English names)")
         else:
             print(f"   ❌ FAIL: Turkish search request failed with status {turkish_response.status_code}")
         
@@ -1100,7 +1115,8 @@ def test_geo_countries_endpoint():
         print("=" * 80)
         print("✅ Endpoint responds with status 200")
         print("✅ Returns proper JSON list of countries")
-        print("✅ Country structure includes required fields")
+        print("✅ Country structure includes required fields (code, name, iso2, iso3)")
+        print("✅ Turkey (TR) is present in countries list")
         print("✅ Search functionality works for 'Turkey'")
         print("✅ Turkish character search tested")
         print("\n🎉 GEO COUNTRIES ENDPOINT TEST PASSED!")
