@@ -8526,8 +8526,8 @@ def test_expense_receipt_payment_endpoint():
     except Exception as e:
         print(f"⚠️  WARNING: Error testing non-approved receipt: {str(e)}")
     
-    # Step 6: Test with non-existent receipt (should return 404 error)
-    print(f"\n--- Step 6: Testing payment with non-existent receipt ---")
+    # Step 7: Test with non-existent receipt (should return 404 error)
+    print(f"\n--- Step 7: Testing payment with non-existent receipt ---")
     
     try:
         nonexistent_id = "nonexistent-receipt-id-123"
