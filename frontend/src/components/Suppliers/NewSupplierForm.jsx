@@ -732,77 +732,90 @@ const NewSupplierForm = ({ onClose }) => {
             <CardContent className="space-y-4">
               {!isUSABankFormat ? (
                 /* IBAN Format (International) */
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* IBAN */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      IBAN <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                      value={formData.iban}
-                      onChange={(e) => handleInputChange('iban', e.target.value)}
-                      placeholder="TR00 0000 0000 0000 0000 0000 00"
-                    />
+                <div className="space-y-4">
+                  {/* Üst satır: Hesap Sahibi Adı (sol) ve IBAN (sağ) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Hesap Sahibi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hesap Sahibi Adı
+                      </label>
+                      <Input
+                        value={formData.account_holder_name}
+                        onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
+                        placeholder="Hesap sahibinin adı"
+                      />
+                    </div>
+
+                    {/* IBAN */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        IBAN <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.iban}
+                        onChange={(e) => handleIbanChange(e.target.value)}
+                        placeholder="TR00 0000 0000 0000 0000 00 00"
+                        className={ibanError ? 'border-red-500' : ''}
+                      />
+                      {ibanError && (
+                        <p className="text-red-500 text-sm mt-1">{ibanError}</p>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Banka Adı */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Banka Adı
-                    </label>
-                    <Input
-                      value={formData.bank_name}
-                      onChange={(e) => handleInputChange('bank_name', e.target.value)}
-                      placeholder="Örn: Türkiye İş Bankası"
-                    />
-                  </div>
+                  {/* Diğer alanlar */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Banka Adı */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adı
+                      </label>
+                      <Input
+                        value={formData.bank_name}
+                        onChange={(e) => handleInputChange('bank_name', e.target.value)}
+                        placeholder="Örn: Türkiye İş Bankası"
+                      />
+                    </div>
 
-                  {/* Şube */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Şube
-                    </label>
-                    <Input
-                      value={formData.bank_branch}
-                      onChange={(e) => handleInputChange('bank_branch', e.target.value)}
-                      placeholder="Şube adı"
-                    />
-                  </div>
+                    {/* Şube */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şube
+                      </label>
+                      <Input
+                        value={formData.bank_branch}
+                        onChange={(e) => handleInputChange('bank_branch', e.target.value)}
+                        placeholder="Şube adı"
+                      />
+                    </div>
 
-                  {/* Hesap Sahibi */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Hesap Sahibi Adı
-                    </label>
-                    <Input
-                      value={formData.account_holder_name}
-                      onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
-                      placeholder="Hesap sahibinin adı"
-                    />
-                  </div>
+                    {/* SWIFT Kodu */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        SWIFT Kodu
+                      </label>
+                      <Input
+                        value={formData.swift_code}
+                        onChange={(e) => handleInputChange('swift_code', e.target.value)}
+                        placeholder="SWIFT/BIC kodu"
+                      />
+                    </div>
 
-                  {/* SWIFT Kodu */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SWIFT Kodu
-                    </label>
-                    <Input
-                      value={formData.swift_code}
-                      onChange={(e) => handleInputChange('swift_code', e.target.value)}
-                      placeholder="SWIFT/BIC kodu"
-                    />
-                  </div>
-
-                  {/* Ülke */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ülke
-                    </label>
-                    <Input
-                      value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
-                      placeholder="Türkiye"
-                    />
+                    {/* Ülke */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke
+                      </label>
+                      <CountrySelect
+                        value={formData.country}
+                        onChange={(country) => {
+                          const countryCode = country ? country.iso2 : '';
+                          handleInputChange('country', countryCode);
+                        }}
+                        placeholder="Ülke seçiniz..."
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
