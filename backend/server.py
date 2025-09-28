@@ -4124,7 +4124,6 @@ async def get_countries(query: str = ""):
             filter_query = {
                 "$or": [
                     {"name": query_regex},
-                    {"tr_name": query_regex},
                     {"iso2": query_regex}
                 ]
             }
