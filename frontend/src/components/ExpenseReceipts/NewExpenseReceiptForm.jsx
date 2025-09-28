@@ -48,6 +48,8 @@ const NewExpenseReceiptForm = ({ onBackToDashboard }) => {
   const [isUSABank, setIsUSABank] = useState(false);
   
   const [suppliers, setSuppliers] = useState([]);
+  const [supplierContacts, setSupplierContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
   const [banks, setBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [receiptCreated, setReceiptCreated] = useState(false);
