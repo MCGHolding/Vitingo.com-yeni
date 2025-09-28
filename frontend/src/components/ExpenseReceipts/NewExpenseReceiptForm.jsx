@@ -404,10 +404,25 @@ Tarih: ${new Date(createdReceipt.date).toLocaleDateString('tr-TR')}`}
         {/* Alıcı Bilgileri */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <User className="h-5 w-5" />
-              <span>Alıcı Bilgileri</span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <User className="h-5 w-5" />
+                <span>Alıcı Bilgileri</span>
+              </CardTitle>
+              {/* USA Bank Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="usaBank"
+                  checked={isUSABank}
+                  onChange={(e) => setIsUSABank(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                <label htmlFor="usaBank" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  🇺🇸 ABD Bankası
+                </label>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Tedarikçi Seçimi */}
