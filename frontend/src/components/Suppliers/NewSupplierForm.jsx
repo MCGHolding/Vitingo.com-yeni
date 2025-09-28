@@ -166,28 +166,57 @@ const NewSupplierForm = ({ onClose }) => {
     setContacts(updatedContacts);
   };
 
-  // IBAN validasyonu
+  // IBAN validasyonu - Gelişmiş version
   const validateIban = (iban) => {
-    const cleanIban = iban.replace(/\s/g, '').toUpperCase();
+    // Boşlukları sil ve büyük harfe çevir
+    const rawIban = iban.replace(/\s/g, '').toUpperCase();
     
-    if (!cleanIban) {
+    if (!rawIban) {
       return '';
     }
-    
-    if (cleanIban.length !== 26) {
-      return `IBAN 26 karakter olmalıdır (girilen: ${cleanIban.length} karakter)`;
+
+    // 1. Uzunluk kontrolü
+    if (rawIban.length < 15 || rawIban.length > 34) {
+      return "IBAN uzunluğu 15 ile 34 karakter arasında olmalıdır.";
     }
-    
-    // İlk iki karakter harf olmalı (ülke kodu)
-    if (!/^[A-Z]{2}/.test(cleanIban)) {
-      return 'IBAN ülke kodu ile başlamalıdır (örn: TR)';
+
+    // 2. İlk 2 karakter harf değilse
+    if (!/^[A-Z]{2}/.test(rawIban)) {
+      return "İlk 2 karakter harf olmalıdır.";
     }
-    
-    // 3. ve 4. karakter rakam olmalı (kontrol numarası)
-    if (!/^[A-Z]{2}[0-9]{2}/.test(cleanIban)) {
-      return 'IBAN formatı hatalı (3. ve 4. karakter rakam olmalı)';
+
+    // 3. İlk 2 karakterden sonrasında harf varsa
+    if (!/^[A-Z]{2}[0-9]+$/.test(rawIban)) {
+      return "İlk 2 karakterden sonrası sadece rakam olmalıdır.";
     }
+
+    // 4. Genel format (sadece alfanümerik)
+    if (!/^[A-Z0-9]+$/.test(rawIban)) {
+      return "IBAN sadece harf ve rakam içerebilir.";
+    }
+
+    // 5. Checksum (mod 97 algoritması)
+    const rearranged = rawIban.slice(4) + rawIban.slice(0, 4);
+    let expanded = "";
     
+    for (let char of rearranged) {
+      if (/[A-Z]/.test(char)) {
+        expanded += (char.charCodeAt(0) - 55).toString();
+      } else {
+        expanded += char;
+      }
+    }
+
+    let remainder = parseInt(expanded[0]);
+    for (let i = 1; i < expanded.length; i++) {
+      remainder = (remainder * 10 + parseInt(expanded[i])) % 97;
+    }
+
+    if (remainder !== 1) {
+      return "Geçersiz IBAN (checksum hatası).";
+    }
+
+    // ✅ Geçerli IBAN
     return '';
   };
 
