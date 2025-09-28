@@ -3723,16 +3723,41 @@ def generate_expense_receipt_pdf(receipt):
         story.append(table)
         story.append(Spacer(1, 30))
         
-        # Add signature section if receipt is signed
-        if receipt.get('is_signed') and receipt.get('signer_name'):
+        # Add signature section if receipt has signer information
+        if receipt.get('signer_name'):
+            # Format signed date
+            signed_date = 'N/A'
+            if receipt.get('signed_at'):
+                signed_at = receipt.get('signed_at')
+                if isinstance(signed_at, str):
+                    signed_date = signed_at.split('T')[0]
+                elif hasattr(signed_at, 'strftime'):
+                    signed_date = signed_at.strftime('%Y-%m-%d')
+            
+            # Create signature section with prominent styling
+            signature_style = ParagraphStyle(
+                'SignatureStyle',
+                parent=normal_style,
+                fontSize=12,
+                spaceAfter=12,
+                leftIndent=20,
+                borderWidth=1,
+                borderColor=colors.darkblue,
+                borderPadding=10,
+                backColor=colors.lightblue
+            )
+            
             signature_para = Paragraph(f"""
-            <br/><br/>
-            <b>İmza Bilgileri / Signature Information:</b><br/>
-            İmzalayan / Signed by: {receipt.get('signer_name', 'N/A')}<br/>
-            Pozisyon / Position: {receipt.get('signer_position', 'N/A')}<br/>
-            Şirket / Company: {receipt.get('signer_company', 'N/A')}<br/>
-            İmza Tarihi / Signed Date: {receipt.get('signed_at', '').split('T')[0] if isinstance(receipt.get('signed_at'), str) and receipt.get('signed_at') else (receipt.get('signed_at').strftime('%Y-%m-%d') if hasattr(receipt.get('signed_at'), 'strftime') else 'N/A')}
-            """, normal_style)
+            <b>DİJİTAL İMZA BİLGİLERİ / DIGITAL SIGNATURE INFORMATION</b><br/><br/>
+            <b>İmzalayan / Signed by:</b> {receipt.get('signer_name', 'N/A')}<br/>
+            <b>Pozisyon / Position:</b> {receipt.get('signer_position', 'Belirtilmemiş')}<br/>
+            <b>Şirket / Company:</b> {receipt.get('signer_company', 'N/A')}<br/>
+            <b>İmza Tarihi / Signed Date:</b> {signed_date}<br/>
+            <br/>
+            <i>Bu makbuz yukarıda belirtilen kişi tarafından dijital olarak imzalanmıştır.<br/>
+            This receipt has been digitally signed by the person mentioned above.</i>
+            """, signature_style)
+            story.append(Spacer(1, 20))
             story.append(signature_para)
         
         # Add footer
