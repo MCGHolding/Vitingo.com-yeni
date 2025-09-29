@@ -658,15 +658,17 @@ const NewSupplierForm = ({ onClose }) => {
                   country={"tr"}
                   value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
-                  enableSearch={true}
+                  enableSearch={false}
+                  disableCountryCode={false}
+                  disableDropdown={false}
                   inputClass="w-full py-2 px-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   containerClass="phone-input-container"
-                  buttonClass="phone-input-button"
+                  buttonClass="phone-input-button hidden"
                   dropdownClass="phone-input-dropdown"
                   searchClass="phone-input-search"
                   placeholder="Cep telefonu"
                   specialLabel=""
-                  countryCodeEditable={false}
+                  countryCodeEditable={true}
                   enableAreaCodes={false}
                   enableLongNumbers={true}
                 />
