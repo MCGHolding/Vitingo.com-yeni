@@ -21,7 +21,8 @@ import {
   Home
 } from 'lucide-react';
 import PhoneInput from '../ui/PhoneInput';
-import VitingoPhoneInput from '../ui/SupplierPhone';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { useIban } from '../../hooks/useIban';
 
 import AddCategoryModal from './AddCategoryModal';
