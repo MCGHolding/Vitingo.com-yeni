@@ -504,9 +504,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               <div>
                                 <div className="flex items-center space-x-2 mb-1">
                                   <User className="h-4 w-4 text-green-500" />
-                                  <span className="font-medium">{person.fullName}</span>
+                                  <span className="font-medium">{person.first_name} {person.last_name}</span>
                                 </div>
-                                <div className="text-xs text-gray-500">{person.jobTitle} • {person.relationshipText}</div>
+                                <div className="text-xs text-gray-500">{person.job_title} • {person.relationship_type}</div>
                               </div>
                             ) : null;
                           })()
