@@ -145,6 +145,7 @@ class Person(BaseModel):
     phone: str = ""
     job_title: str = ""
     company: str = ""
+    company_id: str = ""  # Link to customer ID
     relationship_type: str = ""
     notes: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
