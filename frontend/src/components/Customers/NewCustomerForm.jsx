@@ -868,7 +868,6 @@ export default function NewCustomerForm() {
             </form>
           </CardContent>
         </Card>
-      </div>
       
       {/* New Person Form Modal */}
       {showPersonForm && (
