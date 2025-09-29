@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Badge } from '../ui/badge';
 import VitingoPhoneInput from '../ui/SupplierPhone';
-import { VitingoPhoneInput } from '../ui/vitingo-phone-input';
+import VitingoPhoneInput from '../ui/SupplierPhone';
 import { useToast } from '../../hooks/use-toast';
 import { generateUsername, generatePassword, departments, sendWelcomeEmail } from '../../utils/userUtils';
 import { 
