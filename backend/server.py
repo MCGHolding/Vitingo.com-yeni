@@ -4205,6 +4205,154 @@ async def get_cities(country_code: str, query: str = "", limit: int = 50, page: 
         logger.error(f"Error fetching cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== PEOPLE CRUD ENDPOINTS =====================
+
+class PersonCreate(BaseModel):
+    first_name: str
+    last_name: str
+    email: str = ""
+    phone: str = ""
+    job_title: str = ""
+    company: str = ""
+    company_id: str = ""  # Link to customer ID
+    relationship_type: str = ""
+    notes: str = ""
+
+class PersonUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    job_title: Optional[str] = None
+    company: Optional[str] = None
+    company_id: Optional[str] = None
+    relationship_type: Optional[str] = None
+    notes: Optional[str] = None
+
+@api_router.post("/people", response_model=Person)
+async def create_person(person_data: PersonCreate):
+    """Create a new person"""
+    try:
+        # Convert to Person model
+        person = Person(**person_data.dict())
+        person_dict = person.dict()
+        
+        # Insert to MongoDB
+        await db.people.insert_one(person_dict)
+        
+        logger.info(f"Person created: {person.id}")
+        return person
+        
+    except Exception as e:
+        logger.error(f"Error creating person: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/people", response_model=List[Person])
+async def get_people():
+    """Get all people"""
+    try:
+        people = await db.people.find().to_list(length=None)
+        return [Person(**person) for person in people]
+        
+    except Exception as e:
+        logger.error(f"Error getting people: {str(e)}")
+        return []
+
+@api_router.get("/people/{person_id}", response_model=Person)
+async def get_person(person_id: str):
+    """Get a specific person"""
+    try:
+        person = await db.people.find_one({"id": person_id})
+        
+        if not person:
+            raise HTTPException(status_code=404, detail="Person not found")
+            
+        return Person(**person)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting person {person_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/people/{person_id}", response_model=Person)
+async def update_person(person_id: str, person_data: PersonUpdate):
+    """Update a person"""
+    try:
+        # Only update non-None fields
+        update_data = {k: v for k, v in person_data.dict().items() if v is not None}
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No data provided for update")
+        
+        # Update in MongoDB
+        result = await db.people.update_one(
+            {"id": person_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Person not found")
+            
+        # Get updated person
+        updated_person = await db.people.find_one({"id": person_id})
+        return Person(**updated_person)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating person {person_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/people/{person_id}")
+async def delete_person(person_id: str):
+    """Delete a person"""
+    try:
+        person = await db.people.find_one({"id": person_id})
+        if not person:
+            raise HTTPException(status_code=404, detail="Person not found")
+        
+        result = await db.people.delete_one({"id": person_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Person not found")
+            
+        return {
+            "success": True, 
+            "message": f"Kişi '{person.get('first_name', '')} {person.get('last_name', '')}' başarıyla silindi"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting person {person_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/customers/{customer_id}/people", response_model=List[Person])
+async def get_customer_people(customer_id: str):
+    """Get all people related to a specific customer"""
+    try:
+        # First verify customer exists
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        
+        # Find people linked to this customer by company_id or company name
+        people = await db.people.find({
+            "$or": [
+                {"company_id": customer_id},
+                {"company": customer.get("companyName", "")}
+            ]
+        }).to_list(length=None)
+        
+        return [Person(**person) for person in people]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting people for customer {customer_id}: {str(e)}")
+        return []
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
