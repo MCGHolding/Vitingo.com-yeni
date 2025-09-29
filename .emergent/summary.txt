@@ -1,48 +1,81 @@
 <analysis>
-The AI engineer's work, after inheriting the project, focused extensively on refining the Vitingo CRM's geo-location features within the New Supplier form, primarily driven by user feedback. Initially, the goal was to enable comprehensive country and city selection. This involved significant backend debugging to resolve Pydantic validation errors, incorrect sorting logic, and duplicate API endpoints related to geo data. On the frontend, the AI addressed issues where  and  components were integrated but not correctly handling selected data due to type mismatches in  callbacks. A routing problem for direct URL access to the supplier form was also identified and partially addressed by adding an explicit React Router path. At the trajectory's end, country selection was confirmed working, but city selection remained broken, with the AI actively debugging its  handler and associated state management.
+The AI engineer's work, after inheriting the Vitingo CRM project, initially focused on rectifying the geo-location features within the New Supplier form, specifically resolving city selection issues, which was crucial for form submission. Following this, the engineer addressed several UI/UX and functional enhancements across the application. Key areas included refactoring the New Expense Receipt Form to accurately display supplier and contact information in a two-column layout, correctly fetching and displaying supplier specialties, and updating email templates. Significant effort was also dedicated to standardizing phone number inputs across various forms, leading to multiple iterations of custom components and hooks, and resolving compilation errors caused by conflicting imports. Finally, the AI implemented advanced IBAN validation and formatting, centralizing this logic for reuse. The trajectory concludes with the AI adapting the All Suppliers Page to include statistics cards and a filter module, an implementation that remains to be tested and verified.
 </analysis>
 
 <product_requirements>
-The Vitingo CRM aims for an intuitive, graphic-rich interface.
-**Implemented Features & Current State:**
-1.  **UI/UX for Paid Expense Receipts:** Edit icon and ... menu removed, replaced with an active Mail icon.
-2.  **Email System Enhancements:** Email sending errors fixed. Expense receipt PDF generation with digital signatures attached to emails, customized HTML templates, and dynamic sender/recipient details auto-filled from the database are implemented.
-3.  **Role-Based Access for Payment:** The ÖDE (PAY) button on Approved Expense Receipts is visible only to 'Super Admin', 'Admin', and 'Muhasebe' (Accounting) users.
-4.  **UI/UX for Approved Expense Receipts:** Summary cards and refined filter layout, mirroring the Paid Expense Receipts page, are implemented. The summary card label displays Ödeme Bekleyen Tutar with TL equivalent using real-time exchange rates.
-5.  **Bank Information Display:** A Banka Bilgileri column in Approved Expense Receipts shows a supplier's bank name, with a modal for detailed bank info and copy functionality.
-6.  **Comprehensive Geo System:** Ülke (Country) and Şehir (City) fields are integrated into the New Supplier Form (main and contact sections), dynamically populated from a seeded database of 195+ countries and major cities. The current state is that country selection functions, but city selection is currently broken.
+The Vitingo CRM aims to provide an intuitive, feature-rich interface for managing various business processes. The implemented features include:
+1.  **UI/UX for Paid Expense Receipts**: Enhanced UI with specific icon replacements.
+2.  **Email System Enhancements**: Fixed email sending, enabled PDF generation with digital signatures, customized HTML templates, and dynamic sender/recipient details.
+3.  **Role-Based Access for Payment**: ÖDE (PAY) button restricted to 'Super Admin', 'Admin', and 'Muhasebe' users.
+4.  **UI/UX for Approved Expense Receipts**: Summary cards and filter layout implemented, showing Ödeme Bekleyen Tutar with real-time exchange rates.
+5.  **Bank Information Display**: Banka Bilgileri column in Approved Expense Receipts with detailed modal and copy functionality.
+6.  **Comprehensive Geo System**: Ülke (Country) and Şehir (City) fields integrated into New Supplier Form (main and contact sections) with dynamic population. Country selection works, city selection was initially broken but has been addressed.
+7.  **Supplier & Contact Info Display**: Enhanced layout for supplier and contact details in New Expense Receipt Form including correct specialty display.
+8.  **Standardized Phone Inputs**: Centralized system for international phone number input across various forms.
+9.  **IBAN Validation & Formatting**: Implemented robust backend validation and frontend formatting for IBAN fields.
+10. **All Suppliers Page Enhancements**: Addition of statistics cards and filter module.
 </product_requirements>
 
 <key_technical_concepts>
--   **React/Context API/React Router DOM**: Frontend framework, global state, routing (used for specific views).
--   **FastAPI/MongoDB/Pydantic**: Backend API, data persistence (UUIDs), data validation.
+-   **React/Context API/React Router DOM**: Frontend development, state management, routing.
+-   **FastAPI/MongoDB/Pydantic**: Backend API, database, data validation.
 -   **Shadcn UI/Tailwind CSS**: UI components, styling.
--   **reportlab**: Python library for PDF generation.
--   **Kubernetes Ingress**: API routing ( prefix).
--   **useCurrency hook**: Custom hook for currency exchange rates.
+-   **react-phone-input-2**: Third-party library for international phone inputs.
+-   **Python  module**: Regular expressions for IBAN validation.
+-   ** hook**: Custom hook for real-time currency conversion.
+-   ** hook**: Custom hook for IBAN validation and formatting.
 </key_technical_concepts>
 
 <code_architecture>
 
 -   ****:
-    -   **Importance**: Core backend API for the Vitingo CRM.
-    -   **Changes**: During this trajectory, significant debugging and fixes were applied to the geo endpoints:
-        -   Resolved Pydantic  model validation errors (for , ) by removing a duplicate  endpoint (originally at line 2143).
-        -   Corrected sorting in  and  endpoints, which previously referenced a non-existent  field. Sorting now uses available fields.
-        -   Added accent tolerance to the  for country searches.
-        -   Ensured geo endpoints return data in a format suitable for the frontend, including pagination details.
+    -   **Importance**: Centralizes all backend API endpoints and data models.
+    -   **Changes**:
+        -   Geo-endpoints (, ) were debugged for Pydantic validation, sorting, and duplicate definitions.
+        -    Pydantic model updated to include .  endpoint modified to retrieve .
+        -    endpoint modified to return  instead of .
+        -    and  functions were added for backend IBAN processing.
+        -   A  endpoint and  Pydantic model were temporarily added as per user request (though its frontend usage evolved).
 -   ****:
-    -   **Importance**: Main application component, handles top-level routing and view management.
-    -   **Changes**: Added a new  definition for  to explicitly enable direct URL access to the , as the application primarily uses state-based navigation within the dashboard.
+    -   **Importance**: Main application router.
+    -   **Changes**: Added route for  to allow direct access.
 -   ****:
-    -   **Importance**: Form for creating new supplier entries, integrating geo-selection.
-    -   **Changes**: Modified the  handlers for  and  components to correctly pass only the  code for countries (e.g., ) and the  for cities (e.g., ) to the form's  function. This addressed a type mismatch where the components were passing full objects while the form state expected strings. Similar fixes were applied to the geo-selection fields within the contacts section of the form. Debugging s were also added.
+    -   **Importance**: Form for creating new suppliers. Heavily modified for geo-location, bank details, and phone inputs.
+    -   **Changes**:
+        -   Fixed  handlers for  and  components.
+        -   Integrated bank information fields (, , , , ).
+        -   Iteratively modified phone inputs: initially integrated a custom , then  hook, then removed both in favor of direct  usage for separate 'Telefon' and 'Cep Telefonu' fields.
+        -   Integrated  hook for IBAN fields.
 -   ****:
-    -   **Importance**: UI component for country selection, fetching data from the backend.
-    -   **Changes**: Debugging s were added to trace component behavior. A key warning issue was also noted for a future fix.
+    -   **Importance**: Form for creating new expense receipts.
+    -   **Changes**:
+        -   Adjusted layout for supplier and contact details to a two-column display, fetching and showing supplier specialties.
+        -   Integrated  hook for currency selection and conversion display.
+        -   Integrated  hook for IBAN fields.
 -   ****:
-    -   **Importance**: UI component for city selection, dependent on country selection.
-    -   **Changes**: Debugging s were added to diagnose issues with city selection.
+    -   **Importance**: Page for approving expense receipts, accessed via email link.
+    -   **Changes**: Backend changes in  impact the data displayed here (showing  instead of ).
+-   ****:
+    -   **Importance**: UI component for city selection.
+    -   **Changes**: Debugged  handler,  logic, and prop types (e.g.,  to ).
+-   ****:
+    -   **Importance**: (Initially) reusable international phone input component.
+    -   **Changes**: Created, then modified for styling, then largely deprecated in favor of direct  imports in specific forms due to compilation errors.
+-   ****:
+    -   **Importance**: Custom hook for centralizing IBAN validation and formatting.
+    -   **Changes**: Created to abstract IBAN logic.
+-   ****:
+    -   **Importance**: Reusable UI component for IBAN input using .
+    -   **Changes**: Created to provide a consistent IBAN input field.
+-   ****:
+    -   **Importance**: (Initially) custom hook for centralizing phone input logic.
+    -   **Changes**: Created to abstract phone logic and integrated into multiple forms. Later, its usage was removed from many components due to  import conflicts, returning to direct  usage in key forms.
+-   ****:
+    -   **Importance**: Displays all suppliers.
+    -   **Changes**: Modified to include statistics cards and a filter module at the top of the page.
+-   **Other Frontend Components (e.g., , , , , , , , , , , , )**:
+    -   **Importance**: Various forms and modals throughout the application.
+    -   **Changes**: Temporarily imported  or , but these imports were subsequently removed to resolve compilation errors () and ensure application accessibility. The  was specifically refactored to directly use  as per user instruction.
 </code_architecture>
 
 <pending_tasks>
@@ -54,16 +87,13 @@ The Vitingo CRM aims for an intuitive, graphic-rich interface.
 -   Connecting the customer status calculation with actual backend invoice data.
 -   Implementing Delete, Passive, Score, Blacklist functionality for suppliers.
 -   Implementing unique URL pages and the Messaging module for supplier contacts.
+-   Testing and verification of the newly added statistics cards and filter module on the .
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was actively debugging the geo-location system within the New Supplier Form. After successfully resolving backend issues related to comprehensive country and city data retrieval, Pydantic validation errors, and endpoint configuration in , the focus shifted to frontend functionality.
-
-The AI identified and fixed a critical issue in  where  and  components were passing full object values to the form's state handler, which expected string values (e.g., country ISO2 code, city name). This was corrected to extract the specific string values.
-
-Additionally, a routing problem was addressed by adding an explicit route for  in  to enable direct URL access, as the application primarily uses state-based navigation. However, despite these fixes, a frontend testing agent confirmed that while country selection is now working correctly, city selection is still broken and its  handler is not functioning as expected. The AI has added s to  and  to further diagnose the issue, and has expanded the Tedarikçi menu in the sidebar for continued testing.
+Immediately before this summary request, the AI engineer was implementing the user's request to enhance the Tüm Tedarikçiler (All Suppliers) page. This involved adding kutu kutu istatistik ve filte modülü (box-by-box statistics and filter module) to the top of the . The AI has just completed a code edit in this file, specifically a  action spanning lines 49-250, to integrate the new UI elements as per the user's provided screenshot. This work aims to provide quick insights and filtering capabilities for the list of suppliers. The previous tasks involved a complex back-and-forth on phone input standardization, IBAN validation and formatting, and fixing multiple application compilation errors caused by conflicting  imports.
 </current_work>
 
 <optional_next_step>
-Continue debugging the  component's  handler and state updates in  to resolve the city selection issue.
+Test the newly implemented statistics cards and filter module on the .
 </optional_next_step>
