@@ -306,7 +306,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     
     // Basic validation
     if (!formData.projectName || !formData.customerId || !formData.contactPerson) {
-      alert('Lütfen zorunlu alanları doldurun: Proje Adı, Müşteri, İletişim Kişisi');
+      alert('Lütfen zorunlu alanları doldurun: Proje Adı, Müşteri, Yetkili Kişi');
       return;
     }
 
