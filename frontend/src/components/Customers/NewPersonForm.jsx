@@ -508,11 +508,12 @@ export default function NewPersonForm({ onClose, onSave }) {
                   <label className="text-sm font-medium text-gray-700">
                     &nbsp;
                   </label>
-                  <Input
+                  <VitingoPhoneInput
                     value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="Ülke kodunu giriniz (+90)..."
-                    className="w-full"
+                    onChange={(value) => handleInputChange('phone', value)}
+                    placeholder="Telefon numarası giriniz"
+                    label=""
+                    className="my-0"
                   />
                 </div>
                 <div className="space-y-2">
