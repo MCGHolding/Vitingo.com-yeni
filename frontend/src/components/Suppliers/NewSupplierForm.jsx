@@ -1013,11 +1013,24 @@ const NewSupplierForm = ({ onClose }) => {
                     />
                   </div>
                   <div>
-                    <VitingoPhoneInput
-                      label="Cep Telefonu"
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cep Telefonu
+                    </label>
+                    <PhoneInput
+                      country={"tr"}
                       value={contact.mobile}
                       onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
-                      placeholder="Cep telefonu numarası giriniz"
+                      enableSearch={true}
+                      inputClass="w-full py-2 px-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      containerClass="phone-input-container"
+                      buttonClass="phone-input-button"
+                      dropdownClass="phone-input-dropdown"
+                      searchClass="phone-input-search"
+                      placeholder="Cep telefonu"
+                      specialLabel=""
+                      countryCodeEditable={false}
+                      enableAreaCodes={false}
+                      enableLongNumbers={true}
                     />
                   </div>
                   <div>
