@@ -106,6 +106,13 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [showScoreModal, setShowScoreModal] = useState(null);
   const [showBlacklistModal, setShowBlacklistModal] = useState(null);
   const [showContactEmailModal, setShowContactEmailModal] = useState(null);
+  
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     loadData();
