@@ -14,7 +14,6 @@ import CitySelect from '../geo/CitySelect';
 import SearchableSelect from '../ui/SearchableSelect';
 import CompanyAvatar from '../ui/CompanyAvatar';
 import VitingoPhoneInput from '../ui/SupplierPhone';
-import VitingoPhoneInput from '../ui/VitingoPhoneInput';
 import { 
   X,
   Building,
