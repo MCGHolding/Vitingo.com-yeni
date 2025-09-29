@@ -116,7 +116,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Yeni tedarikçi formu (NewSupplierForm) için ülke ve şehir seçimi özelliğinin test edilmesi gerekiyor. Backend geo endpoint'lerini test et ve sonrasında frontend entegrasyonunu kontrol et."
+user_problem_statement: "Yeni Brief sayfası için geliştirilen People CRUD endpoints'lerini test et: POST /api/people (yeni kişi oluşturma), GET /api/people (tüm kişileri getirme), GET /api/people/{person_id} (belirli kişi getirme), PUT /api/people/{person_id} (kişi güncelleme), DELETE /api/people/{person_id} (kişi silme), GET /api/customers/{customer_id}/people (müşteriye bağlı kişileri getirme). Test senaryoları: müşteri ile ilişkili kişi oluşturma (company_id alanını kullanarak), oluşturulan kişinin müşteriye bağlı kişiler listesinde görünüp görünmediğini kontrol etme, Türkçe karakter desteği (ğüşıöç), field validation (first_name, last_name zorunlu alanlar), error handling (404, 500 durumları)."
 
 backend:
   - task: "Geo Countries API Endpoint"
