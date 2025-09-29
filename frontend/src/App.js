@@ -91,7 +91,7 @@ const Dashboard = () => {
   const [opportunities, setOpportunities] = useState(openOpportunities);
   const [users, setUsers] = useState(mockUsers);
   const [customers, setCustomers] = useState([]);
-  const [showNewCustomerForm, setShowNewCustomerForm] = useState(false);
+  // const [showNewCustomerForm, setShowNewCustomerForm] = useState(false); // Removed for page-based approach
   const [showNewPersonForm, setShowNewPersonForm] = useState(false);
   const [people, setPeople] = useState(allPeople);
   const [fairs, setFairs] = useState(mockFairs);
