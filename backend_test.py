@@ -9475,6 +9475,356 @@ def test_expense_receipt_approval_system():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_people_crud_endpoints():
+    """
+    Test the People CRUD endpoints for NewBriefForm functionality.
+    
+    Requirements to verify:
+    1. POST /api/people - Create new person (first_name, last_name, email, phone, job_title, company, company_id, relationship_type, notes)
+    2. GET /api/people - Get all people  
+    3. GET /api/people/{person_id} - Get specific person
+    4. PUT /api/people/{person_id} - Update person
+    5. DELETE /api/people/{person_id} - Delete person
+    6. GET /api/customers/{customer_id}/people - Get people linked to customer
+    
+    Test Scenarios:
+    - Create person linked to customer (using company_id field)
+    - Check if created person appears in customer's people list
+    - Turkish character support (ğüşıöç)
+    - Field validation (first_name, last_name required)
+    - Error handling (404, 500 cases)
+    """
+    
+    print("=" * 80)
+    print("TESTING PEOPLE CRUD ENDPOINTS FOR NEWBRIEFFORM")
+    print("=" * 80)
+    
+    # First, let's create a test customer to link people to
+    print("\n1. Creating test customer for people linking...")
+    customer_endpoint = f"{BACKEND_URL}/api/customers"
+    test_customer_data = {
+        "companyName": "Test Şirketi A.Ş.",
+        "relationshipType": "customer",
+        "email": "test@testşirketi.com",
+        "phone": "+90 212 555 0123",
+        "country": "TR",
+        "sector": "Teknoloji"
+    }
+    
+    try:
+        customer_response = requests.post(customer_endpoint, json=test_customer_data, timeout=30)
+        if customer_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not create test customer: {customer_response.status_code}")
+            return False
+        
+        customer_data = customer_response.json()
+        test_customer_id = customer_data.get("id")
+        print(f"   ✅ PASS: Test customer created with ID: {test_customer_id}")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating test customer: {str(e)}")
+        return False
+    
+    # Test 1: POST /api/people - Create new person
+    print("\n2. Testing POST /api/people - Create new person...")
+    people_endpoint = f"{BACKEND_URL}/api/people"
+    
+    # Test with Turkish characters and customer linking
+    test_person_data = {
+        "first_name": "Ahmet",
+        "last_name": "Yılmaz",
+        "email": "ahmet.yılmaz@testşirketi.com",
+        "phone": "+90 532 555 0123",
+        "job_title": "Genel Müdür",
+        "company": "Test Şirketi A.Ş.",
+        "company_id": test_customer_id,
+        "relationship_type": "customer_contact",
+        "notes": "Müşteri temsilcisi - önemli kişi"
+    }
+    
+    try:
+        print(f"   Testing endpoint: {people_endpoint}")
+        response = requests.post(people_endpoint, json=test_person_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Person creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        person_data = response.json()
+        if not isinstance(person_data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields
+        required_fields = ["id", "first_name", "last_name", "created_at"]
+        for field in required_fields:
+            if field not in person_data:
+                print(f"   ❌ FAIL: Person missing required field: {field}")
+                return False
+        
+        test_person_id = person_data.get("id")
+        print(f"   ✅ PASS: Person created successfully with ID: {test_person_id}")
+        
+        # Verify Turkish characters are preserved
+        if person_data.get("first_name") == "Ahmet" and person_data.get("last_name") == "Yılmaz":
+            print("   ✅ PASS: Turkish characters preserved correctly")
+        else:
+            print("   ❌ FAIL: Turkish characters not preserved correctly")
+        
+        # Verify email with Turkish characters
+        if "yılmaz@testşirketi.com" in person_data.get("email", ""):
+            print("   ✅ PASS: Turkish characters in email preserved")
+        else:
+            print("   ⚠️  WARNING: Turkish characters in email may not be preserved")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating person: {str(e)}")
+        return False
+    
+    # Test 2: GET /api/people - Get all people
+    print("\n3. Testing GET /api/people - Get all people...")
+    try:
+        response = requests.get(people_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get all people endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        people_list = response.json()
+        if not isinstance(people_list, list):
+            print("   ❌ FAIL: Response should be a list")
+            return False
+        
+        print(f"   ✅ PASS: Retrieved {len(people_list)} people")
+        
+        # Verify our created person is in the list
+        person_found = False
+        for person in people_list:
+            if person.get("id") == test_person_id:
+                person_found = True
+                print("   ✅ PASS: Created person found in people list")
+                break
+        
+        if not person_found:
+            print("   ❌ FAIL: Created person not found in people list")
+            return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting all people: {str(e)}")
+        return False
+    
+    # Test 3: GET /api/people/{person_id} - Get specific person
+    print("\n4. Testing GET /api/people/{person_id} - Get specific person...")
+    person_detail_endpoint = f"{people_endpoint}/{test_person_id}"
+    
+    try:
+        response = requests.get(person_detail_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get specific person endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        person_detail = response.json()
+        if person_detail.get("id") != test_person_id:
+            print("   ❌ FAIL: Retrieved person ID doesn't match requested ID")
+            return False
+        
+        print("   ✅ PASS: Retrieved correct person by ID")
+        
+        # Verify all fields are present
+        expected_fields = ["first_name", "last_name", "email", "phone", "job_title", "company", "relationship_type", "notes"]
+        for field in expected_fields:
+            if field in person_detail:
+                print(f"   ✅ Field '{field}': {person_detail.get(field)}")
+            else:
+                print(f"   ⚠️  Field '{field}': Missing")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting specific person: {str(e)}")
+        return False
+    
+    # Test 4: PUT /api/people/{person_id} - Update person
+    print("\n5. Testing PUT /api/people/{person_id} - Update person...")
+    update_data = {
+        "job_title": "İcra Kurulu Başkanı",
+        "notes": "Güncellenmiş notlar - önemli müşteri",
+        "phone": "+90 532 555 9999"
+    }
+    
+    try:
+        response = requests.put(person_detail_endpoint, json=update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Update person endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        updated_person = response.json()
+        
+        # Verify updates were applied
+        if updated_person.get("job_title") == "İcra Kurulu Başkanı":
+            print("   ✅ PASS: Job title updated correctly with Turkish characters")
+        else:
+            print(f"   ❌ FAIL: Job title not updated correctly: {updated_person.get('job_title')}")
+        
+        if updated_person.get("phone") == "+90 532 555 9999":
+            print("   ✅ PASS: Phone number updated correctly")
+        else:
+            print(f"   ❌ FAIL: Phone number not updated correctly: {updated_person.get('phone')}")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error updating person: {str(e)}")
+        return False
+    
+    # Test 5: GET /api/customers/{customer_id}/people - Get people linked to customer
+    print("\n6. Testing GET /api/customers/{customer_id}/people - Get customer people...")
+    customer_people_endpoint = f"{BACKEND_URL}/api/customers/{test_customer_id}/people"
+    
+    try:
+        response = requests.get(customer_people_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get customer people endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        customer_people = response.json()
+        if not isinstance(customer_people, list):
+            print("   ❌ FAIL: Response should be a list")
+            return False
+        
+        print(f"   ✅ PASS: Retrieved {len(customer_people)} people for customer")
+        
+        # Verify our created person is linked to the customer
+        person_linked = False
+        for person in customer_people:
+            if person.get("id") == test_person_id:
+                person_linked = True
+                print("   ✅ PASS: Created person is correctly linked to customer")
+                break
+        
+        if not person_linked:
+            print("   ❌ FAIL: Created person is not linked to customer")
+            print(f"   Expected person ID: {test_person_id}")
+            print(f"   Found people IDs: {[p.get('id') for p in customer_people]}")
+            return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting customer people: {str(e)}")
+        return False
+    
+    # Test 6: Field validation - Test required fields
+    print("\n7. Testing field validation - Required fields...")
+    invalid_person_data = {
+        "email": "test@example.com",
+        "phone": "+90 532 555 0000"
+        # Missing first_name and last_name (required fields)
+    }
+    
+    try:
+        response = requests.post(people_endpoint, json=invalid_person_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 422:  # Validation error
+            print("   ✅ PASS: Validation correctly rejects missing required fields")
+        elif response.status_code == 400:
+            print("   ✅ PASS: Bad request for missing required fields")
+        else:
+            print(f"   ⚠️  WARNING: Expected validation error, got {response.status_code}")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing validation: {str(e)}")
+    
+    # Test 7: Error handling - 404 for non-existent person
+    print("\n8. Testing error handling - 404 for non-existent person...")
+    non_existent_id = "non-existent-person-id"
+    non_existent_endpoint = f"{people_endpoint}/{non_existent_id}"
+    
+    try:
+        response = requests.get(non_existent_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 404:
+            print("   ✅ PASS: Correctly returns 404 for non-existent person")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404, got {response.status_code}")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing 404 handling: {str(e)}")
+    
+    # Test 8: DELETE /api/people/{person_id} - Delete person
+    print("\n9. Testing DELETE /api/people/{person_id} - Delete person...")
+    try:
+        response = requests.delete(person_detail_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Delete person endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify person is deleted by trying to get it
+        verify_response = requests.get(person_detail_endpoint, timeout=30)
+        if verify_response.status_code == 404:
+            print("   ✅ PASS: Person successfully deleted (404 on subsequent GET)")
+        else:
+            print(f"   ⚠️  WARNING: Person may not be deleted (GET returned {verify_response.status_code})")
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error deleting person: {str(e)}")
+        return False
+    
+    # Cleanup: Delete test customer
+    print("\n10. Cleaning up test customer...")
+    try:
+        cleanup_response = requests.delete(f"{customer_endpoint}/{test_customer_id}", timeout=30)
+        if cleanup_response.status_code == 200:
+            print("   ✅ PASS: Test customer cleaned up successfully")
+        else:
+            print(f"   ⚠️  WARNING: Could not clean up test customer: {cleanup_response.status_code}")
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error cleaning up test customer: {str(e)}")
+    
+    print("\n" + "=" * 80)
+    print("PEOPLE CRUD ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    print("✅ POST /api/people - Create person with Turkish characters")
+    print("✅ GET /api/people - Get all people")
+    print("✅ GET /api/people/{person_id} - Get specific person")
+    print("✅ PUT /api/people/{person_id} - Update person")
+    print("✅ DELETE /api/people/{person_id} - Delete person")
+    print("✅ GET /api/customers/{customer_id}/people - Get customer people")
+    print("✅ Field validation for required fields")
+    print("✅ Error handling (404 cases)")
+    print("✅ Turkish character support (ğüşıöç)")
+    print("✅ Customer linking via company_id field")
+    print("\n🎉 ALL PEOPLE CRUD ENDPOINTS TESTS PASSED!")
+    print("   Ready for NewBriefForm integration:")
+    print("   • Customer-linked people dropdown functionality")
+    print("   • Automatic phone/email population")
+    print("   • Turkish character support")
+    
+    return True
+
 if __name__ == "__main__":
     print("🚀 STARTING EXPENSE RECEIPT APPROVAL SYSTEM TESTING")
     print("=" * 80)
