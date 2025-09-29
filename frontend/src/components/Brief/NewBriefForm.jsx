@@ -516,12 +516,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Telefon
                 </label>
-                <Input
+                <VitingoPhoneInput
                   value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="0532 000 00 00"
+                  onChange={(value) => handleInputChange('phone', value)}
+                  placeholder="Telefon numarası giriniz"
+                  label=""
+                  className="my-0"
                   disabled={!!selectedPersonId}
-                  className={selectedPersonId ? 'bg-gray-50' : ''}
                 />
                 {selectedPersonId && (
                   <p className="text-xs text-gray-500 mt-1">
