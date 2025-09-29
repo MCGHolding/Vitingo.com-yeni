@@ -84,8 +84,26 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    // Load customers from mock data
-    setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+    // Load customers from backend API
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/customers`);
+        if (response.ok) {
+          const customersData = await response.json();
+          setCustomers(customersData.filter(customer => customer.status === 'active'));
+        } else {
+          console.error('Failed to fetch customers');
+          // Fallback to mock data
+          setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+        }
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        // Fallback to mock data
+        setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+      }
+    };
+
+    fetchCustomers();
   }, []);
 
   // Update contact person and email when customer is selected
