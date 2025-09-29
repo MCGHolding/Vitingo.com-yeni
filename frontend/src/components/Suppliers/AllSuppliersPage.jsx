@@ -641,6 +641,12 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
                 İlk Tedarikçiyi Ekle
               </Button>
             </div>
+          ) : filteredSuppliers.length === 0 ? (
+            <div className="text-center py-8">
+              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">Arama kriterlerinize uygun tedarikçi bulunamadı.</p>
+              <p className="text-sm text-gray-400 mt-2">Filtreleri temizleyerek tekrar deneyin.</p>
+            </div>
           ) : (
             <div className="space-y-4">
               {filteredSuppliers.map((supplier) => (
