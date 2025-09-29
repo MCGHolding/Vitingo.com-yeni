@@ -1246,6 +1246,14 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/customers/new" 
+              element={
+                <ProtectedRoute>
+                  <NewCustomerPage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </BrowserRouter>
       </div>
