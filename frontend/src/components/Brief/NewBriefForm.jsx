@@ -113,22 +113,51 @@ export default function NewBriefForm({ onBackToDashboard }) {
       if (customer) {
         setSelectedCustomer(customer);
         
-        // Find related people for this customer company
-        const customerPeople = allPeople.filter(person => 
-          person.company === customer.companyName && 
-          person.status === 'active'
-        );
-        
-        setRelatedPeople(customerPeople);
-        
-        // Reset person selection when customer changes
-        setSelectedPersonId('');
-        
-        // If there are related people, don't auto-fill, let user choose
-        // If no related people, auto-select customer default and fill data
-        if (customerPeople.length === 0) {
-          setSelectedPersonId('customer-default');
-        }
+        // Fetch related people from backend API
+        const fetchCustomerPeople = async () => {
+          try {
+            const response = await fetch(`${BACKEND_URL}/api/customers/${customer.id}/people`);
+            if (response.ok) {
+              const customerPeople = await response.json();
+              setRelatedPeople(customerPeople);
+              
+              // Reset person selection when customer changes
+              setSelectedPersonId('');
+              
+              // If there are related people, don't auto-fill, let user choose
+              // If no related people, auto-select customer default and fill data
+              if (customerPeople.length === 0) {
+                setSelectedPersonId('customer-default');
+              }
+            } else {
+              console.error('Failed to fetch customer people');
+              // Fallback to mock data
+              const customerPeople = allPeople.filter(person => 
+                person.company === customer.companyName && 
+                person.status === 'active'
+              );
+              setRelatedPeople(customerPeople);
+              setSelectedPersonId('');
+              if (customerPeople.length === 0) {
+                setSelectedPersonId('customer-default');
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching customer people:', error);
+            // Fallback to mock data
+            const customerPeople = allPeople.filter(person => 
+              person.company === customer.companyName && 
+              person.status === 'active'
+            );
+            setRelatedPeople(customerPeople);
+            setSelectedPersonId('');
+            if (customerPeople.length === 0) {
+              setSelectedPersonId('customer-default');
+            }
+          }
+        };
+
+        fetchCustomerPeople();
       }
     } else {
       setSelectedCustomer(null);
