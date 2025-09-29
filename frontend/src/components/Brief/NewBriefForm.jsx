@@ -183,7 +183,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
         if (person) {
           setFormData(prev => ({
             ...prev,
-            contactPerson: person.fullName,
+            contactPerson: `${person.first_name} ${person.last_name}`,
             email: person.email,
             phone: person.phone || ''
           }));
