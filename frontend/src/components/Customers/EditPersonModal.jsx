@@ -6,7 +6,6 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import VitingoPhoneInput from '../ui/SupplierPhone';
-import { VitingoPhoneInput } from '../ui/vitingo-phone-input';
 import { useToast } from '../../hooks/use-toast';
 import { 
   X,
