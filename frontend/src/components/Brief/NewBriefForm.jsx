@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import VitingoPhoneInput from '../ui/SupplierPhone';
 import { allCustomers } from '../../mock/customersData';
 import { allPeople } from '../../mock/peopleData';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 import { 
   Upload,
   X,
