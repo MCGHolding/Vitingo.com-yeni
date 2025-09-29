@@ -389,28 +389,16 @@ export default function NewCustomerForm() {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <Card className="border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl flex items-center space-x-2">
-                <Building className="h-6 w-6" />
-                <span>Yeni Müşteri Ekle</span>
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="text-white hover:bg-white/20"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full max-w-4xl mx-auto">
+      <Card>
+        <CardHeader className="border-b border-gray-200">
+          <CardTitle className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
+            <Building className="h-6 w-6 text-blue-600" />
+            <span>Yeni Müşteri Ekle</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
               {/* Company Avatar */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
