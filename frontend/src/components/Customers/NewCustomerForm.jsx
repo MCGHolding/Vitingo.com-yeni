@@ -854,13 +854,15 @@ export default function NewCustomerForm({ onSave, onClose }) {
                   Temizle
                 </Button>
                 <div className="space-x-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={onClose}
-                  >
-                    Kapat
-                  </Button>
+                  {onClose && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={onClose}
+                    >
+                      Kapat
+                    </Button>
+                  )}
                   <Button
                     type="submit"
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
