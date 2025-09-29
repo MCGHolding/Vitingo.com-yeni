@@ -70,6 +70,7 @@ import PaidExpenseReceiptsPage from './components/ExpenseReceipts/PaidExpenseRec
 import ExpenseReceiptApprovalPage from './components/ExpenseReceipts/ExpenseReceiptApprovalPage';
 import NewBriefForm from './components/Brief/NewBriefForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
+import NewCustomerPage from './pages/NewCustomerPage';
 import Header from './components/Dashboard/Header';
 import { 
   Users, 
