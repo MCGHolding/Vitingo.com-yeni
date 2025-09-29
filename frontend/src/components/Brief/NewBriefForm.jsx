@@ -478,8 +478,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         {relatedPeople.map(person => (
                           <SelectItem key={person.id} value={person.id.toString()}>
                             <div className="flex flex-col">
-                              <span className="font-medium">{person.fullName}</span>
-                              <span className="text-xs text-gray-500">{person.jobTitle}</span>
+                              <span className="font-medium">{person.first_name} {person.last_name}</span>
+                              <span className="text-xs text-gray-500">{person.job_title}</span>
                             </div>
                           </SelectItem>
                         ))}
