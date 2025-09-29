@@ -282,13 +282,13 @@ export default function UserManagementModal({ onClose, onSave }) {
                     <Phone className="h-4 w-4" />
                     <span>Telefon Numarası</span>
                   </Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+90 5XX XXX XX XX"
+                  <VitingoPhoneInput
                     value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    disabled={isSubmitting}
+                    onChange={(value) => handleInputChange('phone', value)}
+                    placeholder="Telefon numarası giriniz"
+                    label=""
+                    className="my-0"
+                    required
                   />
                 </div>
 
