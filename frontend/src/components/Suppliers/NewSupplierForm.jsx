@@ -624,30 +624,62 @@ const NewSupplierForm = ({ onClose }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Telefon */}
               <div>
-                <VitingoPhoneInput
-                  label="Telefon"
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefon
+                </label>
+                <PhoneInput
+                  country={"tr"}
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
-                  placeholder="Telefon numarası giriniz"
+                  enableSearch={true}
+                  inputClass="w-full py-2 px-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  containerClass="phone-input-container"
+                  buttonClass="phone-input-button"
+                  dropdownClass="phone-input-dropdown"
+                  searchClass="phone-input-search"
+                  placeholder="Telefon numarası"
+                  specialLabel=""
+                  countryCodeEditable={false}
+                  enableAreaCodes={false}
+                  enableLongNumbers={true}
                 />
               </div>
+
+              {/* Cep Telefonu */}
               <div>
-                <VitingoPhoneInput
-                  label="Cep Telefonu"
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cep Telefonu
+                </label>
+                <PhoneInput
+                  country={"tr"}
                   value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
-                  placeholder="Cep telefonu numarası giriniz"
+                  enableSearch={true}
+                  inputClass="w-full py-2 px-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  containerClass="phone-input-container"
+                  buttonClass="phone-input-button"
+                  dropdownClass="phone-input-dropdown"
+                  searchClass="phone-input-search"
+                  placeholder="Cep telefonu"
+                  specialLabel=""
+                  countryCodeEditable={false}
+                  enableAreaCodes={false}
+                  enableLongNumbers={true}
                 />
               </div>
+
+              {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
                 </label>
-                <Input
+                <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="ornek@sirket.com"
                 />
               </div>
