@@ -980,7 +980,7 @@ const NewSupplierForm = ({ onClose }) => {
                     />
                   </div>
                   <div>
-                    <SupplierPhone
+                    <VitingoPhoneInput
                       label="Cep Telefonu"
                       value={contact.mobile}
                       onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
