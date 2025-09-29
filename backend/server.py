@@ -3140,6 +3140,17 @@ async def create_supplier_contact(contact_data: SupplierContactCreate):
         logger.error(f"Error creating supplier contact: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/suppliers/phone")
+async def save_supplier_phone(data: SupplierPhone):
+    """Save supplier phone number"""
+    try:
+        phone = data.phone
+        # MongoDB'ye kaydetme işlemi buraya gelecek
+        return {"status": "success", "phone": phone}
+    except Exception as e:
+        logger.error(f"Error saving supplier phone: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/supplier-contacts/{supplier_id}", response_model=List[SupplierContact])
 async def get_supplier_contacts(supplier_id: str):
     """Get all contacts for a specific supplier"""
