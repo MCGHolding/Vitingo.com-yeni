@@ -506,10 +506,12 @@ const EditSupplierModal = ({ supplier, onClose, onSave }) => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Cep Telefonu</label>
-                        <Input
+                        <VitingoPhoneInput
                           value={formData.mobile}
-                          onChange={(e) => handleInputChange('mobile', e.target.value)}
-                          placeholder="0535 555 0000"
+                          onChange={(value) => handleInputChange('mobile', value)}
+                          placeholder="Cep telefonu numarası giriniz"
+                          label=""
+                          className="my-0"
                         />
                       </div>
                       <div>
