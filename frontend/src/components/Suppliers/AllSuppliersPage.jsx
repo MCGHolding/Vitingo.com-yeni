@@ -401,29 +401,178 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Building2 className="h-6 w-6 text-blue-600" />
-          </div>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={onBackToDashboard}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Geri dön"
+          >
+            <ArrowLeft className="h-5 w-5 text-gray-600" />
+          </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Tüm Tedarikçiler</h1>
-            <p className="text-gray-600">{suppliers.length} tedarikçi bulundu</p>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+              <Building2 className="h-6 w-6 mr-2 text-blue-600" />
+              Tüm Tedarikçiler
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Sistemdeki tüm tedarikçiler ve detayları
+            </p>
           </div>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={onBackToDashboard} className="flex items-center space-x-2">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Geri Dön</span>
+          <Button 
+            onClick={onBackToDashboard}
+            variant="outline"
+            className="bg-gray-600 hover:bg-gray-700 text-white border-gray-600"
+          >
+            Dashboard
           </Button>
-          <Button onClick={onNewSupplier} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span>Yeni Tedarikçi</span>
+          <Button 
+            onClick={onNewSupplier}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Yeni Tedarikçi
           </Button>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-600 text-sm font-medium">Aktif Tedarikçiler</p>
+                <p className="text-2xl font-bold text-green-900">
+                  {suppliers.filter(s => s.status === 'active').length}
+                </p>
+              </div>
+              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                <UserCheck className="h-4 w-4 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-orange-50 border-orange-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-orange-600 text-sm font-medium">Toplam Tedarikçi</p>
+                <p className="text-2xl font-bold text-orange-900">
+                  {suppliers.length}
+                </p>
+              </div>
+              <div className="h-8 w-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <Building2 className="h-4 w-4 text-orange-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-purple-50 border-purple-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-600 text-sm font-medium">Pasif Tedarikçiler</p>
+                <p className="text-2xl font-bold text-purple-900">
+                  {suppliers.filter(s => s.status === 'passive').length}
+                </p>
+              </div>
+              <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <UserX className="h-4 w-4 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-600 text-sm font-medium">Kategori Sayısı</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {new Set(suppliers.map(s => s.supplier_type_id)).size}
+                </p>
+              </div>
+              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Tag className="h-4 w-4 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filter Module */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+            {/* Search Input */}
+            <div className="lg:col-span-2">
+              <input
+                type="text"
+                placeholder="Tedarikçi adı, telefon ara..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <select 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">Tüm Durumlar</option>
+                <option value="active">Aktif</option>
+                <option value="passive">Pasif</option>
+                <option value="blacklist">Kara Liste</option>
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div>
+              <select 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="">Tüm Kategoriler</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date Range */}
+            <div>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Suppliers Table */}
       <Card>
