@@ -412,7 +412,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     {/* Person Selection Dropdown */}
                     <Select value={selectedPersonId} onValueChange={setSelectedPersonId}>
                       <SelectTrigger>
-                        <SelectValue placeholder="İletişim kişisi seçin" />
+                        <SelectValue placeholder="Yetkili kişi seçin" />
                       </SelectTrigger>
                       <SelectContent>
                         {/* Default customer contact */}
