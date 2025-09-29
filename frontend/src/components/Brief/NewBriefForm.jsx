@@ -404,7 +404,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  İletişim Kişisi *
+                  Yetkili Kişi *
                 </label>
                 
                 {selectedCustomer && (relatedPeople.length > 0 || selectedCustomer.contactPerson) ? (
