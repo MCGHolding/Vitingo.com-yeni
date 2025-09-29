@@ -348,14 +348,18 @@ export default function NewCustomerForm({ onSave, onClose }) {
                 formData.country === 'US' || formData.country === 'CA' ? 'USD' : 'EUR'
     };
 
-    onSave(customerData);
+    if (onSave) {
+      onSave(customerData);
+    }
     
     toast({
       title: "Başarılı",
       description: "Yeni müşteri başarıyla eklendi.",
     });
     
-    onClose();
+    if (onClose) {
+      onClose();
+    }
   };
 
   const clearForm = () => {
