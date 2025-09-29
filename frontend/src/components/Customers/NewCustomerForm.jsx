@@ -364,6 +364,7 @@ export default function NewCustomerForm({ onClose, onSave }) {
       relationshipType: '',
       contactPersonId: '',
       phone: '',
+      mobile: '',
       email: '',
       website: '',
       address: '',
