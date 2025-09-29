@@ -235,9 +235,9 @@ const Dashboard = () => {
     setCurrentView('favorite-customers');
   };
 
-  const closeCustomerForm = () => {
-    setShowNewCustomerForm(false);
-  };
+  // const closeCustomerForm = () => {
+  //   setShowNewCustomerForm(false);
+  // }; // Removed for page-based approach
 
   const saveCustomer = async (customerData) => {
     try {
