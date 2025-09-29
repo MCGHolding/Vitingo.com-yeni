@@ -28,7 +28,7 @@ import {
   Tag
 } from 'lucide-react';
 
-export default function NewCustomerForm() {
+export default function NewCustomerForm({ onSave, onClose }) {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
