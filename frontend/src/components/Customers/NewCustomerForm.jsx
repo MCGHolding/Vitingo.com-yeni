@@ -13,7 +13,8 @@ import CountrySelect from '../geo/CountrySelect';
 import CitySelect from '../geo/CitySelect';
 import SearchableSelect from '../ui/SearchableSelect';
 import CompanyAvatar from '../ui/CompanyAvatar';
-import VitingoPhoneInput from '../ui/SupplierPhone';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { 
   X,
   Building,
