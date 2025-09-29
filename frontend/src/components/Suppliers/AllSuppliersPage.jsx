@@ -643,7 +643,7 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
             </div>
           ) : (
             <div className="space-y-4">
-              {suppliers.map((supplier) => (
+              {filteredSuppliers.map((supplier) => (
                 <div key={supplier.id} className="border rounded-lg overflow-hidden">
                   {/* Main Supplier Row */}
                   <div className="p-4 bg-white hover:bg-gray-50 transition-colors">
