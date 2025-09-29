@@ -220,7 +220,7 @@ const Dashboard = () => {
 
   // Customer Management Handlers
   const handleNewCustomer = () => {
-    setShowNewCustomerForm(true);
+    window.location.href = '/customers/new';
   };
 
   const handleAllCustomers = () => {
