@@ -1154,13 +1154,7 @@ const Dashboard = () => {
           onSave={saveOpportunity}
         />
       )}
-      {/* New Customer Form Modal */}
-      {showNewCustomerForm && (
-        <NewCustomerForm
-          onClose={closeCustomerForm}
-          onSave={saveCustomer}
-        />
-      )}
+      {/* New Customer Form Modal - Removed for page-based approach */}
 
       {/* New Person Form Modal */}
       {showNewPersonForm && (
