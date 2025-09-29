@@ -396,6 +396,52 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
     }
   };
 
+  // Filter suppliers based on search criteria
+  const filteredSuppliers = suppliers.filter(supplier => {
+    // Search term filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesName = supplier.company_short_name?.toLowerCase().includes(searchLower) ||
+                         supplier.company_title?.toLowerCase().includes(searchLower);
+      const matchesPhone = supplier.phone?.includes(searchTerm);
+      const matchesEmail = supplier.email?.toLowerCase().includes(searchLower);
+      
+      if (!matchesName && !matchesPhone && !matchesEmail) {
+        return false;
+      }
+    }
+
+    // Status filter
+    if (statusFilter && supplier.status !== statusFilter) {
+      return false;
+    }
+
+    // Category filter
+    if (categoryFilter && supplier.supplier_type_id !== parseInt(categoryFilter)) {
+      return false;
+    }
+
+    // Date range filter (assuming created_at field exists)
+    if (startDate && supplier.created_at) {
+      const supplierDate = new Date(supplier.created_at);
+      const filterStartDate = new Date(startDate);
+      if (supplierDate < filterStartDate) {
+        return false;
+      }
+    }
+
+    if (endDate && supplier.created_at) {
+      const supplierDate = new Date(supplier.created_at);
+      const filterEndDate = new Date(endDate);
+      filterEndDate.setHours(23, 59, 59, 999); // End of day
+      if (supplierDate > filterEndDate) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
