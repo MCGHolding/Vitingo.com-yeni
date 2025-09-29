@@ -543,88 +543,32 @@ export default function NewCustomerForm({ onClose, onSave }) {
                 />
               </div>
 
-              {/* Phone */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+              {/* Telefon */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Telefon
                 </label>
-                <div className="flex space-x-2">
-                  <div className="w-40">  {/* Ülke kodları genişletildi */}
-                    <Select 
-                      value={phoneCountryCode} 
-                      onValueChange={setPhoneCountryCode}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Ülke" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="TR">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇹🇷</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+90</span>
-                              <span className="text-xs text-gray-500">Turkey</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="US">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇺🇸</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+1</span>
-                              <span className="text-xs text-gray-500">United States</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="GB">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇬🇧</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+44</span>
-                              <span className="text-xs text-gray-500">United Kingdom</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="DE">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇩🇪</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+49</span>
-                              <span className="text-xs text-gray-500">Germany</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="FR">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇫🇷</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+33</span>
-                              <span className="text-xs text-gray-500">France</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="AE">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg">🇦🇪</span>
-                            <div className="flex flex-col">
-                              <span className="text-xs">+971</span>
-                              <span className="text-xs text-gray-500">UAE</span>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex-1">  {/* Telefon alanı daraltıldı */}
-                    <VitingoPhoneInput
-                      value={formData.phone}
-                      onChange={(value) => handleInputChange('phone', value)}
-                      placeholder="Telefon numarası giriniz"
-                      label=""
-                      className="my-0"
-                    />
-                  </div>
-                </div>
+                <PhoneInput
+                  country={"tr"}
+                  value={formData.phone}
+                  onChange={(value) => handleInputChange('phone', value)}
+                  enableSearch={true}
+                  inputClass="w-full"
+                />
+              </div>
+
+              {/* Cep Telefonu */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cep Telefonu
+                </label>
+                <PhoneInput
+                  country={"tr"}
+                  value={formData.mobile || ''}
+                  onChange={(value) => handleInputChange('mobile', value)}
+                  enableSearch={true}
+                  inputClass="w-full"
+                />
               </div>
 
               {/* Email */}
