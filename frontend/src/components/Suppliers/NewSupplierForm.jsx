@@ -625,7 +625,7 @@ const NewSupplierForm = ({ onClose }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <SupplierPhone
+                <VitingoPhoneInput
                   label="Telefon"
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
@@ -633,7 +633,7 @@ const NewSupplierForm = ({ onClose }) => {
                 />
               </div>
               <div>
-                <SupplierPhone
+                <VitingoPhoneInput
                   label="Cep Telefonu"
                   value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
