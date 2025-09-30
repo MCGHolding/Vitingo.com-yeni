@@ -528,66 +528,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                 <div className="flex space-x-2">
                   <div className="flex-1">
                     <SearchableSelect
-                      options={[
-                        { value: 'tarim', label: 'Tarım' },
-                        { value: 'hayvancilik', label: 'Hayvancılık' },
-                        { value: 'gida_uretimi', label: 'Gıda Üretimi' },
-                        { value: 'icecek_uretimi', label: 'İçecek Üretimi' },
-                        { value: 'tekstil', label: 'Tekstil' },
-                        { value: 'hazir_giyim', label: 'Hazır Giyim' },
-                        { value: 'deri_ayakkabi', label: 'Deri ve Ayakkabı' },
-                        { value: 'mobilya', label: 'Mobilya' },
-                        { value: 'orman_urunleri', label: 'Orman Ürünleri' },
-                        { value: 'kagit_ambalaj', label: 'Kağıt ve Ambalaj' },
-                        { value: 'plastik_kaucuk', label: 'Plastik ve Kauçuk' },
-                        { value: 'cam_seramik', label: 'Cam ve Seramik' },
-                        { value: 'metal_isleme', label: 'Metal İşleme' },
-                        { value: 'demir_celik', label: 'Demir-Çelik' },
-                        { value: 'otomotiv', label: 'Otomotiv' },
-                        { value: 'yedek_parca', label: 'Yedek Parça' },
-                        { value: 'elektrik_elektronik', label: 'Elektrik ve Elektronik' },
-                        { value: 'beyaz_esya', label: 'Beyaz Eşya' },
-                        { value: 'makine_ekipman', label: 'Makine ve Ekipman' },
-                        { value: 'insaat', label: 'İnşaat' },
-                        { value: 'yapi_malzemeleri', label: 'Yapı Malzemeleri' },
-                        { value: 'enerji', label: 'Enerji' },
-                        { value: 'yenilenebilir_enerji', label: 'Yenilenebilir Enerji' },
-                        { value: 'dogalgaz_petrol', label: 'Doğalgaz ve Petrol' },
-                        { value: 'kimya', label: 'Kimya' },
-                        { value: 'ilac_saglik', label: 'İlaç ve Sağlık' },
-                        { value: 'tibbi_cihazlar', label: 'Tıbbi Cihazlar' },
-                        { value: 'kozmetik_kisisel_bakim', label: 'Kozmetik ve Kişisel Bakım' },
-                        { value: 'temizlik_urunleri', label: 'Temizlik Ürünleri' },
-                        { value: 'bilgi_teknolojileri', label: 'Bilgi Teknolojileri (IT)' },
-                        { value: 'yazilim', label: 'Yazılım' },
-                        { value: 'donanim', label: 'Donanım' },
-                        { value: 'telekomunikasyon', label: 'Telekomünikasyon' },
-                        { value: 'e_ticaret', label: 'E-Ticaret' },
-                        { value: 'lojistik', label: 'Lojistik' },
-                        { value: 'tasimacilik', label: 'Taşımacılık' },
-                        { value: 'depolama', label: 'Depolama' },
-                        { value: 'denizcilik', label: 'Denizcilik' },
-                        { value: 'havacilik', label: 'Havacılık' },
-                        { value: 'turizm', label: 'Turizm' },
-                        { value: 'otelcilik', label: 'Otelcilik' },
-                        { value: 'restoran_yiyecek', label: 'Restoran ve Yiyecek Hizmetleri' },
-                        { value: 'eglence_medya', label: 'Eğlence ve Medya' },
-                        { value: 'reklam_pazarlama', label: 'Reklam ve Pazarlama' },
-                        { value: 'yayincilik', label: 'Yayıncılık' },
-                        { value: 'egitim', label: 'Eğitim' },
-                        { value: 'danismanlik', label: 'Danışmanlık' },
-                        { value: 'finans', label: 'Finans' },
-                        { value: 'bankacilik', label: 'Bankacılık' },
-                        { value: 'sigortacilik', label: 'Sigortacılık' },
-                        { value: 'yatirim_portfoy', label: 'Yatırım ve Portföy Yönetimi' },
-                        { value: 'gayrimenkul', label: 'Gayrimenkul' },
-                        { value: 'mimarlik', label: 'Mimarlık' },
-                        { value: 'muhendislik', label: 'Mühendislik' },
-                        { value: 'guvenlik', label: 'Güvenlik' },
-                        { value: 'savunma_sanayi', label: 'Savunma Sanayi' },
-                        { value: 'kamu_hizmetleri', label: 'Kamu Hizmetleri' },
-                        { value: 'stk_dernekler', label: 'STK ve Dernekler' }
-                      ]}
+                      options={sectors.map(sector => ({ value: sector.value, label: sector.name }))}
                       value={formData.specialty_id}
                       onValueChange={(value) => handleInputChange('specialty_id', value)}
                       placeholder="Sektör seçin..."
@@ -597,12 +538,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      const newSector = prompt('Yeni sektör adını girin:');
-                      if (newSector && newSector.trim()) {
-                        alert('Yeni sektör: ' + newSector.trim());
-                      }
-                    }}
+                    onClick={() => setShowAddSectorModal(true)}
                     className="px-3"
                   >
                     <Plus className="h-4 w-4" />
