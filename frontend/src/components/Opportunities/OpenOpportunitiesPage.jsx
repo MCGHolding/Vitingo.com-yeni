@@ -20,7 +20,12 @@ import {
   User,
   DollarSign,
   FileText,
-  X
+  X,
+  Zap,
+  TrendingUp,
+  BarChart,
+  List,
+  Clock
 } from 'lucide-react';
 import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
