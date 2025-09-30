@@ -29,7 +29,7 @@
 ##         -comment: "Detailed comment about status"
 ##
 ## frontend:
-##   - task: "Task name"
+##   - task: "Fix OpenOpportunitiesPage ReferenceError"
 ##     implemented: true
 ##     working: true  # or false or "NA"
 ##     file: "file_path.js"
