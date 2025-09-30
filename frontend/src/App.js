@@ -1202,13 +1202,7 @@ const Dashboard = () => {
         />
       )}
 
-      {/* New Fair Form Modal */}
-      {showNewFairForm && (
-        <NewFairForm
-          onClose={closeNewFairForm}
-          onSave={saveFair}
-        />
-      )}
+      {/* New Fair Form Modal - Removed, now using page-based approach */}
     </div>
   );
 };
