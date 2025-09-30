@@ -333,11 +333,10 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     e.preventDefault();
     
     console.log('SUBMIT TRIGGERED - Form Data:', formData);
-    console.log('Customer name validation:', {
-      customerName: formData.customerName,
-      length: formData.customerName ? formData.customerName.length : 0,
-      trimmed: formData.customerName ? formData.customerName.trim() : '',
-      isEmpty: !formData.customerName || formData.customerName.trim() === ''
+    console.log('Customer selection validation:', {
+      customerId: formData.customerId,
+      selectedCustomer: selectedCustomer,
+      customerName: selectedCustomer?.companyName || 'No customer selected'
     });
     console.log('Current totals:', totals);
     
