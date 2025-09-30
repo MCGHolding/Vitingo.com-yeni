@@ -1389,9 +1389,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "NewCustomerForm Comprehensive Testing - All Scenarios"
+    - "Invoice Creation Bug - Backend Testing COMPLETED"
   stuck_tasks: 
-    - "NewCustomerForm Comprehensive Testing - All Scenarios"
+    - "Customer Selection Bug Fix in NewInvoiceForm"
   test_all: false
   test_priority: "high_first"
 
