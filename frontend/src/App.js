@@ -97,7 +97,7 @@ const Dashboard = () => {
   const [showNewPersonForm, setShowNewPersonForm] = useState(false);
   const [people, setPeople] = useState(allPeople);
   const [fairs, setFairs] = useState(mockFairs);
-  const [showNewFairForm, setShowNewFairForm] = useState(false);
+  // const [showNewFairForm, setShowNewFairForm] = useState(false); // Removed for page-based approach
   const [surveyInitialTab, setSurveyInitialTab] = useState('send');
   // Supplier states
   const [showNewSupplierForm, setShowNewSupplierForm] = useState(false);
