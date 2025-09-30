@@ -433,6 +433,18 @@ frontend:
         agent: "testing"
         comment: "🚨 CRITICAL ISSUE IDENTIFIED - PHONE COUNTRY SYNCHRONIZATION NOT WORKING! Comprehensive testing revealed that while the country selection dropdown works correctly, the phone fields are NOT synchronizing with country changes. ❌ DETAILED TEST RESULTS: 1) Initial State: ✅ Turkey flags correctly displayed by default (+90) in 3 phone fields 2) Country Selection: ✅ Country dropdown works, successfully changes to United States, Germany, Turkey 3) Visual Country Updates: ✅ Country field correctly shows 'United States (US)', 'Germany (DE)' 4) CRITICAL FAILURE - Phone Synchronization: ❌ After selecting United States: 0 US flags found (should be 2-3), ❌ After selecting Germany: 0 German flags found (should be 2-3), ❌ Phone fields continue showing Turkey flags despite country changes 🔍 ROOT CAUSE: The PhoneInput components are not receiving updated country prop when formData.country changes. The country selection updates the form state but doesn't trigger phone field re-renders with new country codes. 📸 EVIDENCE: Screenshots clearly show country field displaying 'United States' and 'Germany' while phone fields still show Turkey flags (+90). 🎯 IMPACT: Users cannot properly set phone numbers for international customers as phone fields don't match selected country. This breaks the core functionality requested by the user for phone country synchronization."
 
+  - task: "Updated NewCustomerForm with Required Field Changes and Notes Section"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Customers/NewCustomerForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing UPDATED NewCustomerForm with all required field changes and notes section. Need to verify: 1) Visual verification of required (*) indicators on correct fields 2) Notes section replaces Etiketler section 3) Enhanced validation for contact fields 4) Complete form submission workflow. Testing in progress..."
+
   - task: "NewInvoiceForm AddProductModal Frontend Integration Testing"
     implemented: true
     working: true
