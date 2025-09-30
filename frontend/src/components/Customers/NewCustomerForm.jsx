@@ -1124,7 +1124,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <MapPin className="inline w-4 h-4 mr-1" />
-                    Adres
+                    Adres <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={contact.address}
