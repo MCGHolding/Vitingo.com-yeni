@@ -342,20 +342,7 @@ export default function Sidebar({
       return;
     }
     
-    // Handle Prospect menu actions
-    if (subItem && subItem.name === 'Yeni Müşteri Adayı') {
-      if (onNewProspect) {
-        onNewProspect();
-      }
-      return;
-    }
-    
-    if (subItem && subItem.name === 'Müşteri Adayları') {
-      if (onAllProspects) {
-        onAllProspects();
-      }
-      return;
-    }
+    // Prospect menu handlers removed - integrated into customer menu
     
     if (subItem && subItem.name === 'Yeni Satış Fırsatı') {
       if (onNewOpportunity) {
