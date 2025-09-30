@@ -689,7 +689,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   Cep Telefonu
                 </label>
                 <PhoneInput
-                  country={"tr"}
+                  country={formData.country || "tr"}
                   value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
                   enableSearch={true}
