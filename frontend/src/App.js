@@ -272,6 +272,38 @@ const Dashboard = () => {
     }
   };
 
+  const savePerson = async (personData) => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://customer-portal-13.preview.emergentagent.com';
+      console.log('Saving person to:', backendUrl);
+      const response = await fetch(`${backendUrl}/api/people`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(personData)
+      });
+
+      if (response.ok) {
+        const newPerson = await response.json();
+        setPeople(prev => [newPerson, ...prev]);
+        console.log('New person created:', newPerson);
+        
+        // Navigate back to dashboard (success modal handled by form)
+        setCurrentView('dashboard');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save person:', errorData);
+        alert('Kişi kaydedilirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Error saving person:', error);
+      alert('Kişi kaydedilirken hata oluştu.');
+    }
+  };
+
   // People Management Handlers
   const handleNewPerson = () => {
     setShowNewPersonForm(true);
