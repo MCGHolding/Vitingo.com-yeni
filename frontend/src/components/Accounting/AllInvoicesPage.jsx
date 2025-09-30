@@ -16,10 +16,13 @@ import {
 } from 'lucide-react';
 import InvoicePreviewModal from './InvoicePreviewModal';
 
-const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
+const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     currency: 'all',
