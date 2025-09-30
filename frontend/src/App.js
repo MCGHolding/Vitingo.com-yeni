@@ -667,6 +667,8 @@ const Dashboard = () => {
             onBackToDashboard={handleBackToDashboard}
           />
         );
+      case 'new-fair':
+        return <NewFairFormPage onClose={handleBackToDashboard} />;
       case 'import-data':
         return (
           <ImportDataPage 
