@@ -1344,6 +1344,291 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_new_opportunity_form_backend_integration():
+    """
+    Test the NewOpportunityFormPage backend integration and API endpoints.
+    
+    This test follows the review request requirements:
+    1. Test that customers are loaded from /api/customers endpoint
+    2. Test that fairs are loaded from /api/fairs endpoint  
+    3. Test that /api/opportunities endpoint exists and works for form submission
+    4. Test form validation and data structure
+    5. Test currency selection and other form fields
+    6. Verify backend API integration works correctly
+    """
+    
+    print("=" * 80)
+    print("TESTING NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION")
+    print("=" * 80)
+    print("This test will verify the backend APIs needed for NewOpportunityFormPage functionality.")
+    
+    try:
+        # STEP 1: Test GET /api/customers endpoint (needed for customer dropdown)
+        print("\n" + "=" * 60)
+        print("STEP 1: TEST GET /api/customers ENDPOINT FOR CUSTOMER DROPDOWN")
+        print("=" * 60)
+        
+        customers_endpoint = f"{BACKEND_URL}/api/customers"
+        print(f"Testing endpoint: {customers_endpoint}")
+        
+        print("Making GET request to customers endpoint...")
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        
+        print(f"Status Code: {customers_response.status_code}")
+        if customers_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {customers_response.status_code}")
+            print(f"Response: {customers_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/customers endpoint responds correctly")
+        
+        # Parse customers data
+        customers_data = customers_response.json()
+        print(f"Number of customers available: {len(customers_data)}")
+        
+        if len(customers_data) > 0:
+            print("\nSample customers for dropdown:")
+            for i, customer in enumerate(customers_data[:3]):  # Show first 3
+                company_name = customer.get('companyName', customer.get('companyTitle', 'N/A'))
+                print(f"  {i+1}. {company_name}")
+            
+            if len(customers_data) > 3:
+                print(f"  ... and {len(customers_data) - 3} more customers")
+        else:
+            print("⚠️  WARNING: No customers found - customer dropdown will be empty")
+        
+        # STEP 2: Test GET /api/fairs endpoint (needed for fairs dropdown)
+        print("\n" + "=" * 60)
+        print("STEP 2: TEST GET /api/fairs ENDPOINT FOR FAIRS DROPDOWN")
+        print("=" * 60)
+        
+        fairs_endpoint = f"{BACKEND_URL}/api/fairs"
+        print(f"Testing endpoint: {fairs_endpoint}")
+        
+        print("Making GET request to fairs endpoint...")
+        fairs_response = requests.get(fairs_endpoint, timeout=30)
+        
+        print(f"Status Code: {fairs_response.status_code}")
+        if fairs_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {fairs_response.status_code}")
+            print(f"Response: {fairs_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/fairs endpoint responds correctly")
+        
+        # Parse fairs data
+        fairs_data = fairs_response.json()
+        print(f"Number of fairs available: {len(fairs_data)}")
+        
+        if len(fairs_data) > 0:
+            print("\nSample fairs for dropdown:")
+            for i, fair in enumerate(fairs_data[:3]):  # Show first 3
+                fair_name = fair.get('name', 'N/A')
+                fair_city = fair.get('city', 'N/A')
+                fair_country = fair.get('country', 'N/A')
+                print(f"  {i+1}. {fair_name} - {fair_city}, {fair_country}")
+            
+            if len(fairs_data) > 3:
+                print(f"  ... and {len(fairs_data) - 3} more fairs")
+        else:
+            print("⚠️  WARNING: No fairs found - fairs dropdown will be empty")
+        
+        # STEP 3: Test POST /api/opportunities endpoint (critical for form submission)
+        print("\n" + "=" * 60)
+        print("STEP 3: TEST POST /api/opportunities ENDPOINT FOR FORM SUBMISSION")
+        print("=" * 60)
+        
+        opportunities_endpoint = f"{BACKEND_URL}/api/opportunities"
+        print(f"Testing endpoint: {opportunities_endpoint}")
+        
+        # Test opportunity data matching NewOpportunityFormPage structure
+        test_opportunity_data = {
+            "title": "Test Satış Fırsatı",
+            "customer": "Test Müşteri A.Ş.",
+            "contact_person": "Ahmet Yılmaz",
+            "amount": 50000.0,
+            "currency": "TRY",
+            "status": "open",
+            "stage": "lead",
+            "priority": "medium",
+            "close_date": "2025-12-31",
+            "source": "website",
+            "description": "Test satış fırsatı açıklaması",
+            "business_type": "Teknoloji",
+            "country": "Türkiye",
+            "city": "İstanbul",
+            "trade_show": "İstanbul Teknoloji Fuarı",
+            "trade_show_dates": "15-18 Mart 2025",
+            "expected_revenue": 50000.0,
+            "probability": 75,
+            "tags": ["TEKNOLOJI", "SATIŞ"]
+        }
+        
+        print(f"Test opportunity data: {test_opportunity_data}")
+        
+        print("Making POST request to create opportunity...")
+        opportunities_response = requests.post(opportunities_endpoint, json=test_opportunity_data, timeout=30)
+        
+        print(f"Status Code: {opportunities_response.status_code}")
+        
+        # Check if endpoint exists
+        if opportunities_response.status_code == 404:
+            print("❌ CRITICAL ISSUE: /api/opportunities endpoint does not exist!")
+            print("   This is the main issue - the backend is missing the opportunities endpoint")
+            print("   that NewOpportunityFormPage is trying to call.")
+            print("   The form will fail when users try to submit opportunities.")
+            return False
+        elif opportunities_response.status_code == 405:
+            print("❌ CRITICAL ISSUE: /api/opportunities endpoint exists but doesn't support POST method!")
+            print("   The endpoint needs to support POST method for form submission.")
+            return False
+        elif opportunities_response.status_code in [200, 201]:
+            print("✅ PASS: POST /api/opportunities endpoint responds correctly")
+            
+            # Parse created opportunity data
+            created_opportunity = opportunities_response.json()
+            print(f"Created opportunity response type: {type(created_opportunity)}")
+            
+            if isinstance(created_opportunity, dict):
+                opportunity_id = created_opportunity.get("id")
+                if opportunity_id:
+                    print(f"✅ PASS: Opportunity created with ID: {opportunity_id}")
+                else:
+                    print("⚠️  WARNING: Created opportunity doesn't have ID field")
+            else:
+                print("⚠️  WARNING: Response should be a dictionary representing the created opportunity")
+        else:
+            print(f"❌ FAIL: Unexpected status code {opportunities_response.status_code}")
+            print(f"Response: {opportunities_response.text}")
+            return False
+        
+        # STEP 4: Test GET /api/opportunities endpoint (for listing opportunities)
+        print("\n" + "=" * 60)
+        print("STEP 4: TEST GET /api/opportunities ENDPOINT FOR LISTING")
+        print("=" * 60)
+        
+        print("Making GET request to list opportunities...")
+        list_opportunities_response = requests.get(opportunities_endpoint, timeout=30)
+        
+        print(f"Status Code: {list_opportunities_response.status_code}")
+        
+        if list_opportunities_response.status_code == 404:
+            print("❌ CRITICAL ISSUE: GET /api/opportunities endpoint does not exist!")
+            print("   This endpoint is needed to list opportunities after creation.")
+            return False
+        elif list_opportunities_response.status_code == 200:
+            print("✅ PASS: GET /api/opportunities endpoint responds correctly")
+            
+            opportunities_list = list_opportunities_response.json()
+            print(f"Number of opportunities in database: {len(opportunities_list) if isinstance(opportunities_list, list) else 'N/A'}")
+            
+            if isinstance(opportunities_list, list) and len(opportunities_list) > 0:
+                print("\nSample opportunities:")
+                for i, opp in enumerate(opportunities_list[:3]):  # Show first 3
+                    title = opp.get('title', 'N/A')
+                    customer = opp.get('customer', 'N/A')
+                    amount = opp.get('amount', 'N/A')
+                    currency = opp.get('currency', 'N/A')
+                    print(f"  {i+1}. {title} - {customer} ({amount} {currency})")
+        else:
+            print(f"❌ FAIL: Unexpected status code {list_opportunities_response.status_code}")
+            print(f"Response: {list_opportunities_response.text}")
+            return False
+        
+        # STEP 5: Test form validation requirements
+        print("\n" + "=" * 60)
+        print("STEP 5: TEST FORM VALIDATION REQUIREMENTS")
+        print("=" * 60)
+        
+        print("Testing form validation with missing required fields...")
+        
+        # Test with missing required fields (title, customer, amount, closeDate, stage)
+        invalid_opportunity_data = {
+            "title": "",  # Missing required field
+            "customer": "",  # Missing required field
+            "amount": "",  # Missing required field
+            "close_date": "",  # Missing required field
+            "stage": "",  # Missing required field
+            "currency": "TRY"
+        }
+        
+        validation_response = requests.post(opportunities_endpoint, json=invalid_opportunity_data, timeout=30)
+        print(f"Validation test status code: {validation_response.status_code}")
+        
+        if validation_response.status_code in [400, 422]:
+            print("✅ PASS: Backend properly validates required fields")
+        elif validation_response.status_code == 404:
+            print("❌ SKIP: Cannot test validation - endpoint doesn't exist")
+        else:
+            print("⚠️  WARNING: Backend might not be validating required fields properly")
+        
+        # STEP 6: Test currency options
+        print("\n" + "=" * 60)
+        print("STEP 6: TEST CURRENCY SELECTION FUNCTIONALITY")
+        print("=" * 60)
+        
+        currencies_to_test = ['TRY', 'USD', 'EUR', 'GBP']
+        print(f"Testing currency options: {currencies_to_test}")
+        
+        for currency in currencies_to_test:
+            currency_test_data = {
+                "title": f"Test {currency} Opportunity",
+                "customer": "Test Customer",
+                "amount": 10000.0,
+                "currency": currency,
+                "stage": "lead",
+                "close_date": "2025-12-31"
+            }
+            
+            if opportunities_response.status_code not in [404, 405]:  # Only test if endpoint exists
+                currency_response = requests.post(opportunities_endpoint, json=currency_test_data, timeout=30)
+                if currency_response.status_code in [200, 201]:
+                    print(f"✅ PASS: {currency} currency accepted")
+                else:
+                    print(f"⚠️  WARNING: {currency} currency might have issues")
+            else:
+                print(f"❌ SKIP: Cannot test {currency} - endpoint doesn't exist")
+        
+        print("\n" + "=" * 80)
+        print("NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TEST RESULTS:")
+        print("=" * 80)
+        
+        # Determine overall result
+        customers_ok = customers_response.status_code == 200
+        fairs_ok = fairs_response.status_code == 200
+        opportunities_exists = opportunities_response.status_code not in [404, 405]
+        
+        if customers_ok:
+            print("✅ Customers endpoint working - dropdown will be populated")
+        else:
+            print("❌ Customers endpoint not working - dropdown will be empty")
+        
+        if fairs_ok:
+            print("✅ Fairs endpoint working - dropdown will be populated")
+        else:
+            print("❌ Fairs endpoint not working - dropdown will be empty")
+        
+        if opportunities_exists:
+            print("✅ Opportunities endpoint exists - form submission will work")
+        else:
+            print("❌ CRITICAL: Opportunities endpoint missing - form submission will fail")
+        
+        if customers_ok and fairs_ok and opportunities_exists:
+            print("\n🎉 NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TEST PASSED!")
+            print("   All required backend endpoints are working correctly.")
+            return True
+        else:
+            print("\n❌ NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TEST FAILED!")
+            print("   Some critical backend endpoints are missing or not working.")
+            return False
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_people_endpoint():
     """
     Test the /api/people endpoint to see if it works as requested.
