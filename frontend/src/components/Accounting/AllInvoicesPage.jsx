@@ -444,8 +444,13 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((invoice) => (
+                filteredInvoices.map((invoice, index) => (
                   <tr key={invoice.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 whitespace-nowrap text-center">
+                      <div className="text-sm font-medium text-gray-700">
+                        {index + 1}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-mono font-medium text-blue-600">
                         {invoice.invoice_number}
@@ -463,12 +468,6 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                       {new Date(invoice.date).toLocaleDateString('tr-TR')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span className="text-lg mr-1">{getCurrencySymbol(invoice.currency)}</span>
-                        <span className="text-sm font-medium text-gray-900">{invoice.currency}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {getCurrencySymbol(invoice.currency)}{formatNumber(invoice.total.toFixed(2))}
                       </div>
@@ -482,36 +481,36 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleAction('view', invoice)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Görüntüle"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleAction('edit', invoice)}
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        title="Düzenle"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleAction('download', invoice)}
-                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                        title="İndir"
-                      >
-                        <Download className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleAction('delete', invoice)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Sil"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Görüntüle"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleAction('edit', invoice)}
+                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="Düzenle"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleAction('download', invoice)}
+                          className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                          title="İndir"
+                        >
+                          <Download className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleAction('delete', invoice)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Sil"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
