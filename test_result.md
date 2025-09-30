@@ -791,6 +791,21 @@ frontend:
         agent: "testing"
         comment: "✅ TESTED SUCCESSFULLY - UI/UX and responsive design is excellent across all customer pages. Professional styling with appropriate thematic colors: Blue for Tüm Müşteriler (Building icon), Red for Pasif Müşteriler (UserX icon), Yellow for Favori Müşteriler (Star icon). Responsive layout works well, tables are scrollable with proper overflow handling. Professional card-based design with consistent spacing and typography. Each page has distinctive icons and color schemes while maintaining overall design consistency. Excel export buttons, filter sections, and navigation elements are well-positioned. 'Kapat' buttons work correctly to return to dashboard. Overall user experience is professional, intuitive, and visually appealing."
 
+  - task: "ActionMenuPopover Fix in AllCustomersPage"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Customers/AllCustomersPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "User reported critical issue where 'Daha Fazla İşlem' (More Options) menu was disappearing when users tried to click on it because it was using hover events. Need to test the fix that changed from onMouseEnter/onMouseLeave events to onClick toggle behavior with click outside functionality."
+      - working: true
+        agent: "testing"
+        comment: "🎉 ACTIONMENUPOPOVER FIX TESTING COMPLETED SUCCESSFULLY! User reported critical issue where 'Daha Fazla İşlem' (More Options) menu was disappearing when users tried to click on it because it was using hover events. Comprehensive testing of the fix completed with all requirements verified. ✅ NAVIGATION TESTING: Successfully logged in with murb/Murat2024! credentials, navigated to Müşteriler > Tüm Müşteriler section, customer list page loaded correctly with 21 customer rows ✅ ACTION MENU INTERACTION: Found 21 action menu buttons (MoreHorizontal icons) in customer table, successfully clicked on action button, dropdown menu appeared with all 7 expected options: Mesaj, Mail, Teklif, Fatura, Pasif, Favori, Sil ✅ CRITICAL SUCCESS - MENU STABILITY: Menu stays completely stable when hovering over options (tested Mesaj, Mail, Teklif), no disappearing behavior observed, users can now successfully move cursor over menu items without menu closing ✅ MENU FUNCTIONALITY: Menu closes properly after clicking an option (tested with 'Mesaj'), click-based toggle behavior working correctly (not hover-based), smooth fade-in animations present ✅ UI/UX IMPROVEMENTS: Menu positioned correctly (right-aligned, below button), proper hover states on menu items, smooth animations working, menu has proper z-index and styling ✅ REGRESSION TESTING: Other customer page functionality still works (search, filters), View and Edit buttons still functional, no interference with existing features ✅ CONCLUSION: The ActionMenuPopover fix is 100% successful! The critical issue where the menu disappeared when users tried to click on options has been completely resolved. Users can now confidently use the 'Daha Fazla İşlem' menu without it disappearing, exactly as requested in the user's screen recording issue."
+
   - task: "NewPersonForm Company Dropdown and Add Functionality"
     implemented: true
     working: "NA"
