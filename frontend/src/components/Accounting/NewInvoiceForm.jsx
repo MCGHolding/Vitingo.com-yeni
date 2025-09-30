@@ -495,15 +495,23 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       }
       
     } catch (error) {
-      console.error('Error saving invoice:', error);
+      console.error('Complete error object:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       
-      // Better error display
+      // More comprehensive error handling
       let displayMessage = 'Bilinmeyen bir hata oluştu';
       
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         displayMessage = 'Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.';
-      } else if (error.message) {
+      } else if (error.message && error.message !== '[object Object]') {
         displayMessage = error.message;
+      } else if (typeof error === 'string') {
+        displayMessage = error;
+      } else {
+        // If we still get [object Object], let's try to extract meaningful info
+        displayMessage = `Sistem hatası. Detaylar: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`;
       }
       
       alert(`Fatura kaydedilemedi: ${displayMessage}`);
