@@ -586,6 +586,8 @@ const Dashboard = () => {
             <NewCustomerForm onSave={saveCustomer} onClose={handleBackToDashboard} />
           </div>
         );
+      case 'new-person':
+        return <NewPersonFormPage onSave={savePerson} onClose={handleBackToDashboard} />;
       case 'all-customers':
         return <AllCustomersPage onBackToDashboard={handleBackToDashboard} customers={customers} />;
       case 'inactive-customers':
