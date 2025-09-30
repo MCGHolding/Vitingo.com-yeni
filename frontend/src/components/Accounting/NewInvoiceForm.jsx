@@ -341,9 +341,9 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     });
     console.log('Current totals:', totals);
     
-    // Validate that we have customer name
-    if (!formData.customerName || formData.customerName.trim() === '') {
-      alert('Müşteri adı girilmelidir');
+    // Validate that we have selected a customer
+    if (!formData.customerId || !selectedCustomer) {
+      alert('Lütfen bir müşteri seçiniz');
       return;
     }
 
