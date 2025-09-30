@@ -319,7 +319,7 @@ const Dashboard = () => {
 
   // Fair Management Handlers
   const handleNewFair = () => {
-    setShowNewFairForm(true);
+    setCurrentView('new-fair');
   };
 
   const handleAllFairs = () => {
