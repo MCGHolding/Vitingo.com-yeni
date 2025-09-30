@@ -450,6 +450,34 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     return filtered;
   }, [opportunitiesData, searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
+  // Statistics functions that depend on filteredOpportunities
+  const getTotalOpenValue = () => {
+    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
+  };
+
+  const getAverageOpenValue = () => {
+    const total = getTotalOpenValue();
+    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
+  };
+
+  const getStageStats = () => {
+    const stageStats = {};
+    filteredOpportunities.forEach(opp => {
+      const stage = opp.stage || 'Belirtilmemiş';
+      stageStats[stage] = (stageStats[stage] || 0) + 1;
+    });
+    return stageStats;
+  };
+
+  const formatAmount = (amount) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(0)}K`;
+    }
+    return amount.toFixed(0);
+  };
+
   const formatCurrency = (amount, currency) => {
     if (amount === 0) return '-';
     
