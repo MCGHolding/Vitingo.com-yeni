@@ -442,36 +442,31 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
         </div>
 
         {/* Filters */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white">
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Filtreler ve Arama</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Şirket, kişi, e-posta, sektör ara..."
+                  placeholder="Müşteri ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
 
-              <div className="relative">
-                <Input
-                  placeholder="Tag ara (örn: TEKNOLOJI)..."
-                  value={tagSearch}
-                  onChange={(e) => setTagSearch(e.target.value)}
-                />
-              </div>
+              {/* Tag Search */}
+              <Input
+                placeholder="Tag ara (örn: TEKNOLOJI)..."
+                value={tagSearch}
+                onChange={(e) => setTagSearch(e.target.value)}
+              />
 
+              {/* Sector Filter */}
               <Select value={sectorFilter} onValueChange={setSectorFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sektör filtrele" />
+                  <SelectValue placeholder="Sektör" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tüm Sektörler</SelectItem>
@@ -483,9 +478,10 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 </SelectContent>
               </Select>
 
+              {/* Country Filter */}
               <Select value={countryFilter} onValueChange={setCountryFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Ülke filtrele" />
+                  <SelectValue placeholder="Ülke" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tüm Ülkeler</SelectItem>
@@ -498,7 +494,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
               </Select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              {/* Relationship Filter */}
               <Select value={relationshipFilter} onValueChange={setRelationshipFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder="İlişki türü" />
@@ -511,23 +508,25 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
                 </SelectContent>
               </Select>
 
+              {/* Sort */}
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sırala" />
+                  <SelectValue placeholder="Sıralama" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="companyName">Şirket Adına Göre</SelectItem>
-                  <SelectItem value="revenue">Gelire Göre</SelectItem>
-                  <SelectItem value="customerSince">Müşteri Olma Tarihine Göre</SelectItem>
-                  <SelectItem value="lastActivity">Son Aktiviteye Göre</SelectItem>
+                  <SelectItem value="companyName">Şirket Adı</SelectItem>
+                  <SelectItem value="revenue">Toplam Ciro</SelectItem>
+                  <SelectItem value="customerSince">Müşteri Olma Tarihi</SelectItem>
+                  <SelectItem value="lastActivity">Son Aktivite</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
-                <span className="text-blue-600 font-bold">{filteredCustomers.length}</span> müşteri bulundu
-              </span>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Filter className="h-4 w-4" />
+                <span>{filteredCustomers.length} müşteri bulundu</span>
+              </div>
               {(searchTerm || tagSearch || sectorFilter !== 'all' || countryFilter !== 'all' || relationshipFilter !== 'all' || sortBy !== 'companyName') && (
                 <Button
                   variant="outline"
