@@ -44,7 +44,6 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   const [showAddCityModal, setShowAddCityModal] = useState(false);
   const [customerTypes, setCustomerTypes] = useState([]);
   const [sectors, setSectors] = useState([]);
-  const [sectors, setSectors] = useState([]);
   const [geoRefreshTrigger, setGeoRefreshTrigger] = useState(0);
   const [contacts, setContacts] = useState([{ 
     full_name: '', 
