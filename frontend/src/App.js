@@ -596,6 +596,8 @@ const Dashboard = () => {
         return <FavoriteOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-opportunities':
         return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+      case 'new-opportunity':
+        return <NewOpportunityFormPage onSave={saveOpportunity} onClose={handleBackToDashboard} />;
       case 'new-customer':
         return (
           <div className="p-6">
