@@ -308,7 +308,7 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600">Ortalama Değer</p>
-                  <p className="text-2xl font-bold text-gray-900">₺{formatCurrency(averageValue)}</p>
+                  <p className="text-2xl font-bold text-gray-900">₺{formatAmount(averageValue)}</p>
                 </div>
               </div>
             </CardContent>
