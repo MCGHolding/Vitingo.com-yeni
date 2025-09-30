@@ -2586,6 +2586,188 @@ async def get_customer_prospects():
 
 # ===================== END CUSTOMER PROSPECTS ENDPOINTS =====================
 
+# ===================== CUSTOMER TYPES ENDPOINTS =====================
+
+class CustomerType(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    value: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CustomerTypeCreate(BaseModel):
+    name: str
+    value: str
+
+@api_router.post("/customer-types", response_model=CustomerType)
+async def create_customer_type(customer_type_data: CustomerTypeCreate):
+    """Create a new customer type"""
+    try:
+        # Check if already exists
+        existing = await db.customer_types.find_one({"value": customer_type_data.value})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu müşteri türü zaten mevcut")
+        
+        customer_type = CustomerType(**customer_type_data.dict())
+        customer_type_dict = customer_type.dict()
+        
+        # Insert to MongoDB
+        await db.customer_types.insert_one(customer_type_dict)
+        
+        logger.info(f"Customer type created: {customer_type.name}")
+        return customer_type
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating customer type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/customer-types", response_model=List[CustomerType])
+async def get_customer_types():
+    """Get all customer types"""
+    try:
+        customer_types = await db.customer_types.find().sort("name", 1).to_list(length=None)
+        
+        # If no data, insert default types
+        if not customer_types:
+            default_types = [
+                {"name": "Firma", "value": "firma"},
+                {"name": "Ajans", "value": "ajans"},
+                {"name": "Devlet Kurumu", "value": "devlet_kurumu"},
+                {"name": "Dernek veya Vakıf", "value": "dernek_vakif"}
+            ]
+            
+            for type_data in default_types:
+                customer_type = CustomerType(**type_data)
+                await db.customer_types.insert_one(customer_type.dict())
+            
+            # Fetch again after inserting defaults
+            customer_types = await db.customer_types.find().sort("name", 1).to_list(length=None)
+            
+        return [CustomerType(**ct) for ct in customer_types]
+        
+    except Exception as e:
+        logger.error(f"Error getting customer types: {str(e)}")
+        return []
+
+# ===================== SECTORS ENDPOINTS =====================
+
+class Sector(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    value: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SectorCreate(BaseModel):
+    name: str
+    value: str
+
+@api_router.post("/sectors", response_model=Sector)
+async def create_sector(sector_data: SectorCreate):
+    """Create a new sector"""
+    try:
+        # Check if already exists
+        existing = await db.sectors.find_one({"value": sector_data.value})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu sektör zaten mevcut")
+        
+        sector = Sector(**sector_data.dict())
+        sector_dict = sector.dict()
+        
+        # Insert to MongoDB
+        await db.sectors.insert_one(sector_dict)
+        
+        logger.info(f"Sector created: {sector.name}")
+        return sector
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating sector: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/sectors", response_model=List[Sector])
+async def get_sectors():
+    """Get all sectors"""
+    try:
+        sectors = await db.sectors.find().sort("name", 1).to_list(length=None)
+        
+        # If no data, insert default sectors
+        if not sectors:
+            default_sectors = [
+                {"name": "Tarım", "value": "tarim"},
+                {"name": "Hayvancılık", "value": "hayvancilik"},
+                {"name": "Gıda Üretimi", "value": "gida_uretimi"},
+                {"name": "İçecek Üretimi", "value": "icecek_uretimi"},
+                {"name": "Tekstil", "value": "tekstil"},
+                {"name": "Hazır Giyim", "value": "hazir_giyim"},
+                {"name": "Deri ve Ayakkabı", "value": "deri_ayakkabi"},
+                {"name": "Mobilya", "value": "mobilya"},
+                {"name": "Orman Ürünleri", "value": "orman_urunleri"},
+                {"name": "Kağıt ve Ambalaj", "value": "kagit_ambalaj"},
+                {"name": "Plastik ve Kauçuk", "value": "plastik_kaucuk"},
+                {"name": "Cam ve Seramik", "value": "cam_seramik"},
+                {"name": "Metal İşleme", "value": "metal_isleme"},
+                {"name": "Demir-Çelik", "value": "demir_celik"},
+                {"name": "Otomotiv", "value": "otomotiv"},
+                {"name": "Yedek Parça", "value": "yedek_parca"},
+                {"name": "Elektrik ve Elektronik", "value": "elektrik_elektronik"},
+                {"name": "Beyaz Eşya", "value": "beyaz_esya"},
+                {"name": "Makine ve Ekipman", "value": "makine_ekipman"},
+                {"name": "İnşaat", "value": "insaat"},
+                {"name": "Yapı Malzemeleri", "value": "yapi_malzemeleri"},
+                {"name": "Enerji", "value": "enerji"},
+                {"name": "Yenilenebilir Enerji", "value": "yenilenebilir_enerji"},
+                {"name": "Doğalgaz ve Petrol", "value": "dogalgaz_petrol"},
+                {"name": "Kimya", "value": "kimya"},
+                {"name": "İlaç ve Sağlık", "value": "ilac_saglik"},
+                {"name": "Tıbbi Cihazlar", "value": "tibbi_cihazlar"},
+                {"name": "Kozmetik ve Kişisel Bakım", "value": "kozmetik_kisisel_bakim"},
+                {"name": "Temizlik Ürünleri", "value": "temizlik_urunleri"},
+                {"name": "Bilgi Teknolojileri (IT)", "value": "bilgi_teknolojileri"},
+                {"name": "Yazılım", "value": "yazilim"},
+                {"name": "Donanım", "value": "donanim"},
+                {"name": "Telekomünikasyon", "value": "telekomunikasyon"},
+                {"name": "E-Ticaret", "value": "e_ticaret"},
+                {"name": "Lojistik", "value": "lojistik"},
+                {"name": "Taşımacılık", "value": "tasimacilik"},
+                {"name": "Depolama", "value": "depolama"},
+                {"name": "Denizcilik", "value": "denizcilik"},
+                {"name": "Havacılık", "value": "havacilik"},
+                {"name": "Turizm", "value": "turizm"},
+                {"name": "Otelcilik", "value": "otelcilik"},
+                {"name": "Restoran ve Yiyecek Hizmetleri", "value": "restoran_yiyecek"},
+                {"name": "Eğlence ve Medya", "value": "eglence_medya"},
+                {"name": "Reklam ve Pazarlama", "value": "reklam_pazarlama"},
+                {"name": "Yayıncılık", "value": "yayincilik"},
+                {"name": "Eğitim", "value": "egitim"},
+                {"name": "Danışmanlık", "value": "danismanlik"},
+                {"name": "Finans", "value": "finans"},
+                {"name": "Bankacılık", "value": "bankacilik"},
+                {"name": "Sigortacılık", "value": "sigortacilik"},
+                {"name": "Yatırım ve Portföy Yönetimi", "value": "yatirim_portfoy"},
+                {"name": "Gayrimenkul", "value": "gayrimenkul"},
+                {"name": "Mimarlık", "value": "mimarlik"},
+                {"name": "Mühendislik", "value": "muhendislik"},
+                {"name": "Güvenlik", "value": "guvenlik"},
+                {"name": "Savunma Sanayi", "value": "savunma_sanayi"},
+                {"name": "Kamu Hizmetleri", "value": "kamu_hizmetleri"},
+                {"name": "STK ve Dernekler", "value": "stk_dernekler"}
+            ]
+            
+            for sector_data in default_sectors:
+                sector = Sector(**sector_data)
+                await db.sectors.insert_one(sector.dict())
+            
+            # Fetch again after inserting defaults
+            sectors = await db.sectors.find().sort("name", 1).to_list(length=None)
+            
+        return [Sector(**sector) for sector in sectors]
+        
+    except Exception as e:
+        logger.error(f"Error getting sectors: {str(e)}")
+        return []
+
 # ===================== END CUSTOMER ENDPOINTS =====================
 
 # ===================== BANK ENDPOINTS =====================
