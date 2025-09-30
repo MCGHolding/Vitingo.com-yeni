@@ -25,10 +25,7 @@ const NewCustomerPage = () => {
         const newCustomer = await response.json();
         console.log('New customer created:', newCustomer);
         
-        // Show success message
-        alert('Müşteri başarıyla kaydedildi!');
-        
-        // Navigate back to customers page or dashboard
+        // Navigate back to customers page or dashboard (success modal handled by form)
         navigate('/');
       } else {
         const errorData = await response.json();
