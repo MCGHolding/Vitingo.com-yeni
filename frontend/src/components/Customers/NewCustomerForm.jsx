@@ -643,103 +643,126 @@ export default function NewCustomerForm({ onSave, onClose }) {
                   </p>
                 )}
               </div>
+          </CardContent>
+        </Card>
 
-              {/* Address */}
+        {/* Adres ve Konum Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <MapPin className="h-5 w-5" />
+              <span>Adres ve Konum Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Address */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Adres
+              </label>
+              <Textarea
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                placeholder="Şirket adresini giriniz"
+                rows={3}
+                className="w-full"
+              />
+            </div>
+
+            {/* Country and Region */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Adres
+                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                  <Globe className="h-4 w-4" />
+                  <span>Ülke *</span>
                 </label>
-                <Textarea
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Şirket adresini giriniz"
-                  rows={3}
+                <CountrySelect
+                  value={formData.country}
+                  onChange={handleCountryChange}
+                  placeholder="Ülke seçiniz"
+                  required={true}
                   className="w-full"
                 />
               </div>
 
-              {/* Country and Region */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>Şehir *</span>
+                </label>
+                <CitySelect
+                  country={formData.country}
+                  value={formData.city}
+                  onChange={handleCityChange}
+                  placeholder="Şehir seçiniz"
+                  required={true}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Türkiye Özel Bilgileri ve Vergi */}
+        {formData.country === 'TR' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <FileText className="h-5 w-5" />
+                <span>Vergi ve Resmi Bilgiler</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Company Title */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Firma Unvanı
+                </label>
+                <Input
+                  value={formData.companyTitle}
+                  onChange={(e) => handleInputChange('companyTitle', e.target.value)}
+                  placeholder="Şirket unvanını giriniz (örn: Ltd. Şti., A.Ş.)"
+                  className="w-full"
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tax Office */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                    <Globe className="h-4 w-4" />
-                    <span>Ülke *</span>
+                  <label className="text-sm font-medium text-gray-700">
+                    Vergi Dairesi
                   </label>
-                  <CountrySelect
-                    value={formData.country}
-                    onChange={handleCountryChange}
-                    placeholder="Ülke seçiniz"
-                    required={true}
-                    className="w-full"
-                  />
+                  <Select value={formData.taxOffice} onValueChange={(value) => handleInputChange('taxOffice', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Vergi dairesi seçiniz" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {turkishTaxOffices.map((office) => (
+                        <SelectItem key={office} value={office}>
+                          {office}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
+                {/* Tax Number */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>Şehir *</span>
+                  <label className="text-sm font-medium text-gray-700">
+                    Vergi Numarası
                   </label>
-                  <CitySelect
-                    country={formData.country}
-                    value={formData.city}
-                    onChange={handleCityChange}
-                    placeholder="Şehir seçiniz"
-                    required={true}
+                  <Input
+                    value={formData.taxNumber}
+                    onChange={(e) => handleInputChange('taxNumber', e.target.value)}
+                    placeholder="Vergi numarasını giriniz (10 haneli)"
                     className="w-full"
+                    maxLength="11"
                   />
                 </div>
               </div>
-
-              {/* Turkish-specific fields - only show when Turkey is selected */}
-              {formData.country === 'TR' && (
-                <>
-                  {/* Company Title */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Firma Unvanı
-                    </label>
-                    <Input
-                      value={formData.companyTitle}
-                      onChange={(e) => handleInputChange('companyTitle', e.target.value)}
-                      placeholder="Şirket unvanını giriniz (örn: Ltd. Şti., A.Ş.)"
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* Tax Office */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Vergi Dairesi
-                    </label>
-                    <Select value={formData.taxOffice} onValueChange={(value) => handleInputChange('taxOffice', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Vergi dairesi seçiniz" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {turkishTaxOffices.map((office) => (
-                          <SelectItem key={office} value={office}>
-                            {office}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Tax Number */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Vergi Numarası
-                    </label>
-                    <Input
-                      value={formData.taxNumber}
-                      onChange={(e) => handleInputChange('taxNumber', e.target.value)}
-                      placeholder="Vergi numarasını giriniz (10 haneli)"
-                      className="w-full"
-                      maxLength="11"
-                    />
-                  </div>
-                </>
-              )}
+            </CardContent>
+          </Card>
+        )}
 
               {/* Sector */}
               <div className="space-y-2">
