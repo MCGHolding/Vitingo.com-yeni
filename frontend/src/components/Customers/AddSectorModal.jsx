@@ -49,10 +49,7 @@ const AddSectorModal = ({ onClose, onSave }) => {
           onSave(newSector);
         }
 
-        // Auto close after 2 seconds
-        setTimeout(() => {
-          onClose();
-        }, 2000);
+        // Don't auto-close, let user manually close with X or button
       } else {
         const errorData = await response.json();
         alert('Hata: ' + (errorData.detail || 'Sektör kaydedilemedi'));
