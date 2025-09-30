@@ -359,17 +359,21 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Basic validation
+    // Enhanced validation - more required fields
     const requiredFieldsValid = isIndividualCustomer 
-      ? formData.customer_type_id && formData.specialty_id && formData.sector_id  // For individual: category, specialty, and sector required
-      : formData.company_short_name && formData.company_title && formData.customer_type_id && formData.specialty_id && formData.sector_id; // For company: all fields required
+      ? formData.customer_type_id && formData.specialty_id && formData.sector_id && 
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile  // Contact info required
+      : formData.company_short_name && formData.company_title && formData.customer_type_id && 
+        formData.specialty_id && formData.sector_id && formData.email && formData.phone && 
+        formData.mobile && formData.country && formData.city &&  // Company basic info required
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile; // Contact person required
     
     if (!requiredFieldsValid) {
       toast({
         title: "Hata",
         description: isIndividualCustomer 
-          ? "Müşteri türü, uzmanlık alanı ve sektör seçimi zorunludur"
-          : "Zorunlu alanları doldurunuz (Firma adı, ünvan, kategori, uzmanlık, sektör)",
+          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, sektör, yetkili kişi bilgileri"
+          : "Zorunlu alanları doldurunuz: Firma bilgileri, iletişim bilgileri ve yetkili kişi bilgileri",
         variant: "destructive"
       });
       return;
