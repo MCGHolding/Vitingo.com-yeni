@@ -74,7 +74,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     sector: '',
     tags: [],
     notes: '',
-    is_reference: false
+    is_candidate: false
   });
 
   const [currentService, setCurrentService] = useState('');
