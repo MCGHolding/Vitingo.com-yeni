@@ -1054,8 +1054,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Countries API Endpoints"
-    - "Cities API Endpoints"
+    - "Updated NewCustomerForm with Required Field Changes and Notes Section"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
