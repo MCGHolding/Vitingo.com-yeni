@@ -1364,6 +1364,39 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           }}
         />
       )}
+
+      {/* Add Country Modal */}
+      {showAddCountryModal && (
+        <AddCountryModal
+          onClose={() => setShowAddCountryModal(false)}
+          onSave={(newCountry) => {
+            // Country added successfully - no auto-selection needed
+            setShowAddCountryModal(false);
+            toast({
+              title: "Başarılı",
+              description: `${newCountry.name} ülkesi eklendi`,
+              variant: "default"
+            });
+          }}
+        />
+      )}
+
+      {/* Add City Modal */}
+      {showAddCityModal && (
+        <AddCityModal
+          onClose={() => setShowAddCityModal(false)}
+          selectedCountry={formData.country}
+          onSave={(newCity) => {
+            // City added successfully - no auto-selection needed
+            setShowAddCityModal(false);
+            toast({
+              title: "Başarılı",
+              description: `${newCity.name} şehri eklendi`,
+              variant: "default"
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
