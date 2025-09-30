@@ -1878,7 +1878,7 @@ def test_cities_endpoints():
     # Test 4: Test duplicate control
     print("\n4. Testing duplicate city control...")
     duplicate_data = {
-        "name": "Test Şehri Öğrenci",  # Same name
+        "name": test_city_data["name"],  # Same name as created
         "country_code": "TR"  # Same country
     }
     
