@@ -1953,7 +1953,7 @@ def test_cities_endpoints():
     # Test 6: Test different country code
     print("\n6. Testing city creation with different country code...")
     different_country_data = {
-        "name": "Test Şehri Öğrenci",  # Same name but different country should work
+        "name": test_city_data["name"],  # Same name but different country should work
         "country_code": "US"
     }
     
