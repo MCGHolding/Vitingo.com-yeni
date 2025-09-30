@@ -156,9 +156,9 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     e.preventDefault();
     
     // Enhanced validation - required fields for person
-    const requiredFieldsValid = formData.firstName && formData.lastName && 
-        formData.relationshipType && formData.email && formData.phone && 
-        formData.mobile && formData.country && formData.city && formData.address &&
+    const requiredFieldsValid = formData.firstName.trim() && formData.lastName.trim() && 
+        formData.relationshipType && formData.email.trim() && formData.phone.trim() && 
+        formData.mobile.trim() && formData.country && formData.city.trim() && formData.address.trim() &&
         (formData.companyId || formData.supplierId); // Either customer company or supplier company required
     
     if (!requiredFieldsValid) {
