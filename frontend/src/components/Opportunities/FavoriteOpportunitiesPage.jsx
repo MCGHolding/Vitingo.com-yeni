@@ -23,7 +23,11 @@ import {
   X,
   Heart,
   Star,
-  Crown
+  Crown,
+  Zap,
+  BarChart,
+  List,
+  TrendingUp
 } from 'lucide-react';
 import { favoriteOpportunities, tagColors } from '../../mock/opportunitiesData';
 
