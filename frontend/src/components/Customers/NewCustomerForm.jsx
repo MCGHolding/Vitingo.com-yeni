@@ -1061,19 +1061,168 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           </CardContent>
         </Card>
 
-        {/* SCREENSHOT EKİ - En alt kısım */}
+        {/* Sektör ve Diğer Bilgiler */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5" />
-              <span>Ek Bilgiler</span>
+              <Tag className="h-5 w-5" />
+              <span>Sektör ve Diğer Bilgiler</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Bu kısım screenshot'tan eklenecek içerik için hazırlandı */}
-            <p className="text-gray-600 text-sm">
-              Bu bölüm screenshot'taki ek içerik için hazırlanmıştır.
-            </p>
+            {/* Sektör */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">
+                  Sektör
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Yeni Sektör Ekle
+                </Button>
+              </div>
+              
+              <SearchableSelect
+                options={[
+                  { value: 'teknoloji', label: 'Teknoloji' },
+                  { value: 'sanayi', label: 'Sanayi' },
+                  { value: 'ticaret', label: 'Ticaret' },
+                  { value: 'hizmet', label: 'Hizmet' },
+                  { value: 'uretim', label: 'Üretim' },
+                  { value: 'ihracat', label: 'İhracat' },
+                  { value: 'ithalat', label: 'İthalat' },
+                  { value: 'perakende', label: 'Perakende' }
+                ]}
+                value={formData.sector || ''}
+                onValueChange={(value) => handleInputChange('sector', value)}
+                placeholder="Sektör seçiniz"
+              />
+            </div>
+
+            {/* Etiketler */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                <Tag className="h-4 w-4" />
+                <span>Etiketler</span>
+              </label>
+              
+              {/* Current Tags */}
+              {formData.tags && formData.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {formData.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newTags = formData.tags.filter((_, i) => i !== index);
+                          handleInputChange('tags', newTags);
+                        }}
+                        className="ml-2 text-blue-600 hover:text-blue-800"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Tag Input */}
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={currentService}
+                  onChange={(e) => setCurrentService(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (currentService.trim()) {
+                        const currentTags = formData.tags || [];
+                        handleInputChange('tags', [...currentTags, currentService.trim()]);
+                        setCurrentService('');
+                      }
+                    }
+                  }}
+                  placeholder="Etiket yazın ve Enter'a basın..."
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (currentService.trim()) {
+                      const currentTags = formData.tags || [];
+                      handleInputChange('tags', [...currentTags, currentService.trim()]);
+                      setCurrentService('');
+                    }
+                  }}
+                  disabled={!currentService.trim()}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Önerilen Etiketler */}
+              <div className="space-y-2">
+                <span className="text-xs text-gray-600">Önerilen etiketler:</span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'TEKNOLOJI', color: 'bg-cyan-400 text-white' },
+                    { label: 'SANAYİ', color: 'bg-gray-500 text-white' },
+                    { label: 'TİCARET', color: 'bg-blue-400 text-white' },
+                    { label: 'HİZMET', color: 'bg-green-400 text-white' },
+                    { label: 'ÜRETİM', color: 'bg-orange-400 text-white' },
+                    { label: 'İHRACAT', color: 'bg-teal-500 text-white' },
+                    { label: 'İTHALAT', color: 'bg-red-400 text-white' },
+                    { label: 'PERAKENDE', color: 'bg-pink-400 text-white' }
+                  ].map((suggestedTag) => {
+                    const currentTags = formData.tags || [];
+                    const isAdded = currentTags.includes(suggestedTag.label);
+                    return (
+                      <button
+                        key={suggestedTag.label}
+                        type="button"
+                        onClick={() => {
+                          if (!isAdded) {
+                            handleInputChange('tags', [...currentTags, suggestedTag.label]);
+                          }
+                        }}
+                        disabled={isAdded}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-opacity ${
+                          isAdded 
+                            ? 'opacity-50 cursor-not-allowed bg-gray-300 text-gray-500' 
+                            : `${suggestedTag.color} hover:opacity-80 cursor-pointer`
+                        }`}
+                      >
+                        {suggestedTag.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Notlar */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Notlar
+              </label>
+              <textarea
+                value={formData.notes || ''}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                placeholder="Müşteri hakkında notlar..."
+                rows={4}
+                className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
           </CardContent>
         </Card>
 
