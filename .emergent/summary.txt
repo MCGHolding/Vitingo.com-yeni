@@ -1,99 +1,88 @@
 <analysis>
-The AI engineer's work, after inheriting the Vitingo CRM project, initially focused on rectifying the geo-location features within the New Supplier form, specifically resolving city selection issues, which was crucial for form submission. Following this, the engineer addressed several UI/UX and functional enhancements across the application. Key areas included refactoring the New Expense Receipt Form to accurately display supplier and contact information in a two-column layout, correctly fetching and displaying supplier specialties, and updating email templates. Significant effort was also dedicated to standardizing phone number inputs across various forms, leading to multiple iterations of custom components and hooks, and resolving compilation errors caused by conflicting imports. Finally, the AI implemented advanced IBAN validation and formatting, centralizing this logic for reuse. The trajectory concludes with the AI adapting the All Suppliers Page to include statistics cards and a filter module, an implementation that remains to be tested and verified.
+The trajectory outlines a series of feature developments and bug fixes for the Vitingo CRM application, primarily focused on the New Brief and New Customer forms. The initial phase involved enhancing the  by dynamically fetching and displaying customer-specific contact information, which required creating new backend endpoints. A significant portion of the work was dedicated to a major refactoring of the . This started with converting it from a modal dialog into a full-page component, which introduced and subsequently resolved complex navigation and authentication state issues by moving from URL-based navigation () to an internal state-based view management system within .
+
+Following the structural refactoring, the  underwent extensive UI/UX enhancements. It was first redesigned to match the layout of the  for consistency. Then, it was entirely replaced by a copy of the supplier form's code and further customized with new sections (sectors, tags, notes) based on user-provided screenshots. This involved adding numerous form fields, dropdowns with static and dynamic data, and checkboxes. A key functional change was implementing a Müşteri Aday (Customer Prospect) feature, which included modifying the sidebar navigation and adding backend logic to save prospects to a separate database collection. The final set of tasks involved adding dynamic data entry capabilities through modals for Customer Types, Sectors, Countries, and Cities, requiring the creation of multiple new backend endpoints and corresponding frontend modal components. The trajectory concludes with the AI fixing a bug where the city dropdown failed to populate, by correcting the API endpoint in the  component. The fix is implemented but awaits frontend testing.
 </analysis>
-
 <product_requirements>
-The Vitingo CRM aims to provide an intuitive, feature-rich interface for managing various business processes. The implemented features include:
-1.  **UI/UX for Paid Expense Receipts**: Enhanced UI with specific icon replacements.
-2.  **Email System Enhancements**: Fixed email sending, enabled PDF generation with digital signatures, customized HTML templates, and dynamic sender/recipient details.
-3.  **Role-Based Access for Payment**: ÖDE (PAY) button restricted to 'Super Admin', 'Admin', and 'Muhasebe' users.
-4.  **UI/UX for Approved Expense Receipts**: Summary cards and filter layout implemented, showing Ödeme Bekleyen Tutar with real-time exchange rates.
-5.  **Bank Information Display**: Banka Bilgileri column in Approved Expense Receipts with detailed modal and copy functionality.
-6.  **Comprehensive Geo System**: Ülke (Country) and Şehir (City) fields integrated into New Supplier Form (main and contact sections) with dynamic population. Country selection works, city selection was initially broken but has been addressed.
-7.  **Supplier & Contact Info Display**: Enhanced layout for supplier and contact details in New Expense Receipt Form including correct specialty display.
-8.  **Standardized Phone Inputs**: Centralized system for international phone number input across various forms.
-9.  **IBAN Validation & Formatting**: Implemented robust backend validation and frontend formatting for IBAN fields.
-10. **All Suppliers Page Enhancements**: Addition of statistics cards and filter module.
+The Vitingo CRM application is being enhanced to improve data entry workflows and user interface consistency.
+
+**1. New Brief Form Enhancement:**
+- In the New Brief form, when a customer is selected, a dropdown should be populated exclusively with contacts associated with that specific customer.
+- The label İletişim Kişisi (Contact Person) must be renamed to Yetkili Kişi (Authorized Person).
+- Upon selecting a contact from the dropdown, their phone number and email address should be automatically filled into the respective form fields.
+
+**2. New Customer Form Refactoring and Redesign:**
+- The process of adding a new customer, currently handled in a modal, must be converted into a dedicated, full-page form accessible via the  route.
+- The new customer form's design must be an exact replica of the New Supplier form to ensure UI consistency across the application.
+- The form must be extended with a new section at the bottom for Sektör (Sector), Etiketler (Tags), and Notlar (Notes), as specified in user-provided screenshots.
+- The dropdown menus for Müşteri Türü (Customer Type) and Sektör must be updated with specific, provided lists of options.
+- A checkbox labeled Müşteri Aday (Customer Prospect) must be added. If checked, the new entry should be saved as a prospect rather than a standard customer.
+
+**3. Dynamic Data Management:**
+- Users must be able to add new Customer Types, Sectors, Countries, and Cities directly from the form without leaving the page. This will be achieved by adding + buttons next to the corresponding dropdown fields, which will open modals for data entry.
+- The data entered in these modals must be saved to the database and become available in the dropdowns.
+- After a successful entry, the modal should display a success confirmation message with an X icon to close it.
 </product_requirements>
-
 <key_technical_concepts>
--   **React/Context API/React Router DOM**: Frontend development, state management, routing.
--   **FastAPI/MongoDB/Pydantic**: Backend API, database, data validation.
--   **Shadcn UI/Tailwind CSS**: UI components, styling.
--   **react-phone-input-2**: Third-party library for international phone inputs.
--   **Python  module**: Regular expressions for IBAN validation.
--   ** hook**: Custom hook for real-time currency conversion.
--   ** hook**: Custom hook for IBAN validation and formatting.
+- **Frontend:** React, React Router, / hooks for state management, Fetch API for backend communication.
+- **UI:** Tailwind CSS, Shadcn UI components (Card, Button, Input, Dialog).
+- **Backend:** FastAPI (Python web framework), Pydantic for data validation and modeling.
+- **Database:** MongoDB, with distinct collections for customers, prospects, sectors, etc.
+- **Architecture:** Full-stack application with a RESTful API separating the React frontend from the FastAPI backend.
 </key_technical_concepts>
-
 <code_architecture>
+The application follows a standard monorepo structure with distinct  and  directories. The backend is a FastAPI server that serves a REST API, while the frontend is a React application built with Create React App (customized with Craco).
 
--   ****:
-    -   **Importance**: Centralizes all backend API endpoints and data models.
-    -   **Changes**:
-        -   Geo-endpoints (, ) were debugged for Pydantic validation, sorting, and duplicate definitions.
-        -    Pydantic model updated to include .  endpoint modified to retrieve .
-        -    endpoint modified to return  instead of .
-        -    and  functions were added for backend IBAN processing.
-        -   A  endpoint and  Pydantic model were temporarily added as per user request (though its frontend usage evolved).
--   ****:
-    -   **Importance**: Main application router.
-    -   **Changes**: Added route for  to allow direct access.
--   ****:
-    -   **Importance**: Form for creating new suppliers. Heavily modified for geo-location, bank details, and phone inputs.
-    -   **Changes**:
-        -   Fixed  handlers for  and  components.
-        -   Integrated bank information fields (, , , , ).
-        -   Iteratively modified phone inputs: initially integrated a custom , then  hook, then removed both in favor of direct  usage for separate 'Telefon' and 'Cep Telefonu' fields.
-        -   Integrated  hook for IBAN fields.
--   ****:
-    -   **Importance**: Form for creating new expense receipts.
-    -   **Changes**:
-        -   Adjusted layout for supplier and contact details to a two-column display, fetching and showing supplier specialties.
-        -   Integrated  hook for currency selection and conversion display.
-        -   Integrated  hook for IBAN fields.
--   ****:
-    -   **Importance**: Page for approving expense receipts, accessed via email link.
-    -   **Changes**: Backend changes in  impact the data displayed here (showing  instead of ).
--   ****:
-    -   **Importance**: UI component for city selection.
-    -   **Changes**: Debugged  handler,  logic, and prop types (e.g.,  to ).
--   ****:
-    -   **Importance**: (Initially) reusable international phone input component.
-    -   **Changes**: Created, then modified for styling, then largely deprecated in favor of direct  imports in specific forms due to compilation errors.
--   ****:
-    -   **Importance**: Custom hook for centralizing IBAN validation and formatting.
-    -   **Changes**: Created to abstract IBAN logic.
--   ****:
-    -   **Importance**: Reusable UI component for IBAN input using .
-    -   **Changes**: Created to provide a consistent IBAN input field.
--   ****:
-    -   **Importance**: (Initially) custom hook for centralizing phone input logic.
-    -   **Changes**: Created to abstract phone logic and integrated into multiple forms. Later, its usage was removed from many components due to  import conflicts, returning to direct  usage in key forms.
--   ****:
-    -   **Importance**: Displays all suppliers.
-    -   **Changes**: Modified to include statistics cards and a filter module at the top of the page.
--   **Other Frontend Components (e.g., , , , , , , , , , , , )**:
-    -   **Importance**: Various forms and modals throughout the application.
-    -   **Changes**: Temporarily imported  or , but these imports were subsequently removed to resolve compilation errors () and ensure application accessibility. The  was specifically refactored to directly use  as per user instruction.
+
+
+-   ****
+    -   **Importance**: This is the core of the backend, defining all API endpoints, Pydantic data models, and database interactions with MongoDB.
+    -   **Changes**: It was heavily modified to support new features. New endpoints were added for:
+        -   Fetching people (contacts) by customer ID ().
+        -   CRUD operations for customer prospects ( collection).
+        -   CRUD operations for customer types, sectors, countries, and cities to support the new modal-based data entry system.
+
+-   ****
+    -   **Importance**: The main component that handles routing and global state management for view rendering.
+    -   **Changes**: Refactored to manage navigation between different views (like all customers vs. new customer) using a  state variable. This was a critical fix to prevent authentication loss that occurred when using . New routes and view handlers were added accordingly.
+
+-   ****
+    -   **Importance**: The central component for all recent user requests. It handles the creation of new customers and prospects.
+    -   **Changes**: This file underwent a complete overhaul.
+        -   It was converted from a modal to a standalone page component.
+        -   Its entire layout and styling were replaced by copying the code from .
+        -   New state variables and input fields were added for customer types, sectors, tags, notes, and the Müşteri Aday checkbox.
+        -   Conditional logic was added to the  function to post data to either the  or  endpoint based on the checkbox state.
+        -   Integration of new modal components for adding countries, cities, sectors, and customer types.
+
+-   ****
+    -   **Importance**: Provides navigation for the entire application.
+    -   **Changes**: The menu structure was updated to move Müşteri Adayları (Customer Prospects) into a sub-menu under Müşteriler (Customers) and remove the old top-level menu item for better organization.
+
+-   ****
+    -   **Importance**: A reusable component for selecting a city based on a selected country.
+    -   **Changes**: The API endpoint URL within the component was updated from an old, non-functional path to the newly created  endpoint to fix a bug where cities were not being loaded.
+
+-   **New Modal Components ()**
+    -   **Importance**: These new, reusable components (, , , ) were created to allow users to add new reference data dynamically.
+    -   **Changes**: Each modal contains a form to submit new data to its respective backend endpoint and displays a success message upon completion.
 </code_architecture>
-
 <pending_tasks>
--   Frontend testing for the  company dropdown and Add Company modal feature.
--   Further refining the UI of the date picker in .
--   Implementing the email notification system for new user creation.
--   Implementing the Handover System Enhancements (testing, backend endpoints, email, survey triggering).
--   Implementing detailed functionality for Tüm Briefler, Kapanmış, Pasif, Brief Talep Et pages.
--   Connecting the customer status calculation with actual backend invoice data.
--   Implementing Delete, Passive, Score, Blacklist functionality for suppliers.
--   Implementing unique URL pages and the Messaging module for supplier contacts.
--   Testing and verification of the newly added statistics cards and filter module on the .
+-   Frontend testing of the  component to verify that cities are now correctly fetched and displayed after a country is selected.
+-   Making the + buttons next to the Müşteri Türü and Sektör dropdowns fully functional (they open modals, but the new data needs to be reflected in the dropdown without a page refresh).
+-   Implementing the functionality for the Yeni Sektör Ekle and Yeni Müşteri Türü Ekle buttons, which currently open modals but do not dynamically update the parent form's dropdown list upon successful creation.
 </pending_tasks>
-
 <current_work>
-Immediately before this summary request, the AI engineer was implementing the user's request to enhance the Tüm Tedarikçiler (All Suppliers) page. This involved adding kutu kutu istatistik ve filte modülü (box-by-box statistics and filter module) to the top of the . The AI has just completed a code edit in this file, specifically a  action spanning lines 49-250, to integrate the new UI elements as per the user's provided screenshot. This work aims to provide quick insights and filtering capabilities for the list of suppliers. The previous tasks involved a complex back-and-forth on phone input standardization, IBAN validation and formatting, and fixing multiple application compilation errors caused by conflicting  imports.
-</current_work>
+The most recent task was to fix a critical bug where the city selection dropdown in the  was not populating after a country was chosen. The AI engineer correctly diagnosed that the  component was calling an outdated and incorrect API endpoint.
 
+To resolve this, the following actions were taken:
+1.  **File Edit**: The  hook inside  was modified. The  call's URL was changed from the old  to the correct, newly implemented endpoint: .
+
+    /api/cities/
+2.  **Backend Seeding**: To ensure the fix could be tested, the AI engineer used the testing agent to add sample city data to the backend database associated with a specific country code (TR).
+
+The implementation of this fix is complete. The immediate next step is to perform a frontend test to confirm that the city dropdown now works as expected.
+</current_work>
 <optional_next_step>
-Test the newly implemented statistics cards and filter module on the .
+Test the  component on the frontend to verify that the city dropdown now populates correctly after selecting a country.
 </optional_next_step>
