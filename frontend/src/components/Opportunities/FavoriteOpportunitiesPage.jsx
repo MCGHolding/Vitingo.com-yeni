@@ -88,7 +88,7 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
     return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
   };
 
-  const formatCurrency = (amount) => {
+  const formatAmount = (amount) => {
     if (amount >= 1000000) {
       return `${(amount / 1000000).toFixed(1)}M`;
     } else if (amount >= 1000) {
