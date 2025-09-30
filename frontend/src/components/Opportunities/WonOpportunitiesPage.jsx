@@ -227,6 +227,64 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
         </div>
       </div>
 
+      {/* Summary Cards */}
+      <div className="px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Trophy className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Toplam Kazanılan</p>
+                  <p className="text-2xl font-bold text-gray-900">{filteredOpportunities.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Toplam Değer</p>
+                  <p className="text-2xl font-bold text-gray-900">₺{formatAmount(totalWonValue)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <BarChart className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Ortalama Değer</p>
+                  <p className="text-2xl font-bold text-gray-900">₺{formatAmount(averageWonValue)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">En Yüksek Değer</p>
+                  <p className="text-2xl font-bold text-gray-900">₺{formatAmount(highestWonValue)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="px-6 py-6">
         <Card>
