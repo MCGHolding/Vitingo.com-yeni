@@ -289,7 +289,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
       // Prepare customer data based on type
-      const customerData = isIndividualCustomer 
+      const baseCustomerData = isIndividualCustomer 
         ? {
             ...formData,
             company_short_name: contacts[0]?.full_name || 'Bireysel Müşteri',
@@ -306,6 +306,28 @@ const NewCustomerForm = ({ onClose, onSave }) => {
 
       // Determine which endpoint to use based on is_candidate checkbox
       const endpoint = formData.is_candidate ? '/api/customer-prospects' : '/api/customers';
+      
+      // Format data according to endpoint requirements
+      const customerData = formData.is_candidate 
+        ? baseCustomerData // Customer prospects use snake_case
+        : {
+            // Convert to Customer model format (camelCase)
+            companyName: baseCustomerData.company_short_name,
+            companyTitle: baseCustomerData.company_title,
+            relationshipType: "customer",
+            contactPerson: contacts[0]?.full_name || '',
+            phone: baseCustomerData.phone,
+            email: baseCustomerData.email,
+            website: "",
+            address: baseCustomerData.address,
+            country: baseCustomerData.country,
+            city: baseCustomerData.city,
+            sector: baseCustomerData.sector,
+            notes: baseCustomerData.notes,
+            taxOffice: baseCustomerData.tax_office,
+            taxNumber: baseCustomerData.tax_number,
+            tags: baseCustomerData.tags || []
+          };
       
       // Save directly to backend or use onSave prop
       if (onSave) {
