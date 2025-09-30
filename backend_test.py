@@ -1634,9 +1634,13 @@ def test_countries_endpoints():
     post_endpoint = f"{BACKEND_URL}/api/countries"
     print(f"Testing endpoint: {post_endpoint}")
     
+    # Use timestamp to make unique test data
+    import time
+    timestamp = str(int(time.time()))[-4:]  # Last 4 digits of timestamp
+    
     test_country_data = {
-        "name": "Test Ülkesi Öğrenci",
-        "iso2": "tü"  # lowercase to test uppercase conversion
+        "name": f"Test Ülkesi Öğrenci {timestamp}",
+        "iso2": f"t{timestamp[-1]}"  # Use last digit to make unique 2-char code
     }
     
     try:
