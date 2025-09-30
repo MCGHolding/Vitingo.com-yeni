@@ -239,14 +239,14 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     }
   };
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : 'Bilinmiyor';
+  const getCustomerTypeName = (customerTypeValue) => {
+    const customerType = customerTypes.find(type => type.value === customerTypeValue);
+    return customerType ? customerType.name : 'Bilinmiyor';
   };
 
-  const getSpecialtyName = (specialtyId) => {
-    const specialty = specialties.find(spec => spec.id === specialtyId);
-    return specialty ? specialty.name : 'Bilinmiyor';
+  const getSectorName = (sectorValue) => {
+    const sector = sectors.find(s => s.value === sectorValue);
+    return sector ? sector.name : 'Bilinmiyor';
   };
 
   const handleGoBack = () => {
