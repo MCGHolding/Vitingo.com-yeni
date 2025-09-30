@@ -460,6 +460,9 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         body: JSON.stringify(invoice)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
       if (response.ok) {
         const savedInvoice = await response.json();
         console.log('Invoice saved successfully:', savedInvoice);
@@ -467,30 +470,44 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         // Show success modal
         setShowSuccessModal(true);
       } else {
-        // Handle different error types
-        let errorMessage = 'Fatura kaydedilirken hata oluştu';
+        console.log('Response not OK, status:', response.status);
         
+        // Try to get response text first
+        let responseText;
         try {
-          const errorData = await response.json();
-          console.error('Backend error:', errorData);
-          
-          // Handle different error response formats
-          if (errorData.detail) {
-            errorMessage = errorData.detail;
-          } else if (errorData.message) {
-            errorMessage = errorData.message;
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
-          } else if (typeof errorData === 'string') {
-            errorMessage = errorData;
-          } else {
-            errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-          }
-        } catch (parseError) {
-          console.error('Error parsing response:', parseError);
-          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          responseText = await response.text();
+          console.log('Raw response text:', responseText);
+        } catch (textError) {
+          console.error('Could not read response as text:', textError);
+          throw new Error(`HTTP ${response.status}: Yanıt okunamıyor`);
         }
         
+        // Try to parse as JSON
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+          console.log('Parsed error data:', errorData);
+        } catch (jsonError) {
+          console.log('Response is not JSON, using as text');
+          throw new Error(`HTTP ${response.status}: ${responseText || response.statusText}`);
+        }
+        
+        // Handle different error response formats
+        let errorMessage = 'Fatura kaydedilirken hata oluştu';
+        
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
+        } else {
+          errorMessage = `HTTP ${response.status}: ${JSON.stringify(errorData)}`;
+        }
+        
+        console.log('Final error message:', errorMessage);
         throw new Error(errorMessage);
       }
       
