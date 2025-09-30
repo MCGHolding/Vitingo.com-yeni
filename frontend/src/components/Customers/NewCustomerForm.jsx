@@ -401,7 +401,11 @@ const NewCustomerForm = ({ onClose, onSave }) => {
       
       // Format data according to endpoint requirements
       const customerData = formData.is_candidate 
-        ? baseCustomerData // Customer prospects use snake_case
+        ? {
+            // Customer prospects use snake_case and different field structure
+            ...baseCustomerData,
+            sector: getSectorName(baseCustomerData.sector_id), // Convert sector_id to sector name
+          }
         : {
             // Convert to Customer model format (camelCase)
             companyName: baseCustomerData.company_short_name,
