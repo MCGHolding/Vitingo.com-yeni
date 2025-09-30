@@ -432,7 +432,12 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                 <div className="flex space-x-2">
                   <div className="flex-1">
                     <SearchableSelect
-                      options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+                      options={[
+                        { value: 'firma', label: 'Firma' },
+                        { value: 'ajans', label: 'Ajans' },
+                        { value: 'devlet_kurumu', label: 'Devlet Kurumu' },
+                        { value: 'dernek_vakif', label: 'Dernek veya Vakıf' }
+                      ]}
                       value={formData.customer_type_id}
                       onValueChange={(value) => handleInputChange('customer_type_id', value)}
                       placeholder="Müşteri türü seçin..."
@@ -442,6 +447,13 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                     type="button"
                     variant="outline"
                     size="sm"
+                    onClick={() => {
+                      const newType = prompt('Yeni müşteri türü adını girin:');
+                      if (newType && newType.trim()) {
+                        // Bu kısım daha sonra modal ile değiştirilebilir
+                        alert('Yeni müşteri türü: ' + newType.trim());
+                      }
+                    }}
                     className="px-3"
                   >
                     <Plus className="h-4 w-4" />
