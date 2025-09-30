@@ -104,7 +104,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   // Load specialties when category changes
   useEffect(() => {
     if (formData.customer_type_id) {
-      loadSpecialties(formData.customer_type_id);
+      // Temporarily disable to prevent infinite loop
+      // loadSpecialties(formData.customer_type_id);
     } else {
       setSpecialties([]);
     }
