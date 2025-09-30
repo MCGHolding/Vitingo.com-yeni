@@ -1348,6 +1348,49 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           }}
         />
       )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            {/* X Close Button */}
+            <div className="absolute top-3 right-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSuccessModal(false)}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="text-center">
+              <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              
+              <h2 className="text-lg font-bold text-gray-900 mb-2">
+                Başarılı!
+              </h2>
+              
+              <p className="text-gray-600 mb-4">
+                <strong>{createdCustomerInfo?.company_name}</strong> şirketi başarı ile {createdCustomerInfo?.is_candidate ? 'Müşteri Adayları' : 'Müşteriler'} bölümüne eklenmiştir.
+              </p>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <p className="text-green-800 text-sm">
+                  ✅ Şirket artık {createdCustomerInfo?.is_candidate ? 'Müşteri Adayları' : 'Tüm Müşteriler'} listesinde görünecektir.
+                </p>
+              </div>
+              
+              <Button onClick={() => setShowSuccessModal(false)} className="bg-green-600 hover:bg-green-700">
+                Tamam
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
