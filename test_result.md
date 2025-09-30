@@ -1264,9 +1264,12 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Customer Selection Bug Fix in NewInvoiceForm"
-  stuck_tasks:
-    - "Customer Selection Bug Fix in NewInvoiceForm"
+    - "All Invoices Page Table Structure Improvements"
+    - "Invoice Preview Modal Functionality"
+    - "Invoice Edit Page Integration"
+    - "Invoice PDF Download Functionality"
+    - "Invoice Delete Confirmation Modal"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
