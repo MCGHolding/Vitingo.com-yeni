@@ -68,6 +68,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     services: [],
     customer_type_id: '',
     specialty_id: '',
+    sector_id: '',
     // Bank/Payment Information
     iban: '',
     bank_name: '',
