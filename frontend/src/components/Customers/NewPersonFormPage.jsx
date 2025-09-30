@@ -176,28 +176,27 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
-      // Format person data for backend
+      // Format person data for backend (snake_case required)
       const personData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        fullName: `${formData.firstName} ${formData.lastName}`,
-        relationshipType: formData.relationshipType,
-        jobTitle: formData.jobTitle,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        relationship_type: formData.relationshipType,
+        job_title: formData.jobTitle,
         company: formData.company, // Company name for display
-        companyId: formData.companyId, // Customer company ID
+        company_id: formData.companyId, // Customer company ID
         supplier: formData.supplier, // Supplier name for display  
-        supplierId: formData.supplierId, // Supplier company ID
+        supplier_id: formData.supplierId, // Supplier company ID
         department: formData.department,
         phone: formData.phone,
-        mobile: formData.mobile,
+        mobile: formData.mobile, // Store mobile in notes if backend doesn't support it
         email: formData.email,
         website: formData.website,
         country: formData.country,
         city: formData.city,
         address: formData.address,
-        notes: formData.notes,
-        birthDate: formData.birthDate,
-        linkedin: formData.linkedin,
+        notes: `${formData.notes ? formData.notes + '\n' : ''}Mobile: ${formData.mobile}${formData.birthDate ? '\nBirthdate: ' + formData.birthDate : ''}${formData.linkedin ? '\nLinkedIn: ' + formData.linkedin : ''}`,
+        created_at: new Date().toISOString(),
         tags: formData.tags || []
       };
 
