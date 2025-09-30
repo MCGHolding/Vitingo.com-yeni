@@ -881,6 +881,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                           handleInputChange('country', countryCode);
                         }}
                         placeholder="Ülke seçiniz..."
+                        refreshTrigger={geoRefreshTrigger}
                       />
                     </div>
                   </div>
