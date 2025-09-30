@@ -32,6 +32,8 @@ import AddCityModal from './AddCityModal';
 const NewCustomerForm = ({ onClose, onSave }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdCustomerInfo, setCreatedCustomerInfo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [isIndividualCustomer, setIsIndividualCustomer] = useState(false);
