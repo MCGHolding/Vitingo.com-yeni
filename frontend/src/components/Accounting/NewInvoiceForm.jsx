@@ -341,8 +341,15 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     console.log('Current totals:', totals);
     
     // Validate that we have selected a customer
-    if (!formData.customerId || !selectedCustomer) {
+    if (!formData.customerId) {
       alert('Lütfen bir müşteri seçiniz');
+      return;
+    }
+
+    // Ensure selectedCustomer is properly derived from customerId
+    const currentSelectedCustomer = customers.find(c => c.id === formData.customerId);
+    if (!currentSelectedCustomer) {
+      alert('Seçili müşteri bulunamadı. Lütfen tekrar müşteri seçiniz');
       return;
     }
 
