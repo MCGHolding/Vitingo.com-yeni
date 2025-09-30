@@ -916,37 +916,42 @@ export default function NewCustomerForm({ onSave, onClose }) {
                   className="w-full"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          {/* Form Buttons */}
+          <div className="flex items-center justify-between pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={clearForm}
+              className="flex items-center space-x-2"
+            >
+              <X className="h-4 w-4" />
+              <span>Temizle</span>
+            </Button>
+            <div className="space-x-3">
+              {onClose && (
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={clearForm}
+                  onClick={onClose}
+                  className="flex items-center space-x-2"
                 >
-                  Temizle
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Geri Dön</span>
                 </Button>
-                <div className="space-x-3">
-                  {onClose && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onClose}
-                    >
-                      Geri Dön
-                    </Button>
-                  )}
-                  <Button
-                    type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
-                    Kaydet
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+              )}
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 flex items-center space-x-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>Kaydet</span>
+              </Button>
+            </div>
+          </div>
+        </form>
       
       {/* New Person Form Modal */}
       {showPersonForm && (
