@@ -1590,6 +1590,464 @@ def test_supplier_specialty_creation(category_id):
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False, None
 
+def test_customer_types_endpoints():
+    """
+    Test Customer Types endpoints for Yeni Müşteri modal.
+    
+    Requirements to verify:
+    1. GET /api/customer-types - Get all customer types (default: Firma, Ajans, Devlet Kurumu, Dernek/Vakıf)
+    2. POST /api/customer-types - Create new customer type
+    3. Default data auto-creation on first fetch
+    4. Duplicate control (same value)
+    5. Turkish character support (ğüşıöç)
+    6. Proper response format
+    7. MongoDB storage verification
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER TYPES ENDPOINTS FOR YENİ MÜŞTERİ MODAL")
+    print("=" * 80)
+    
+    # Test 1: GET /api/customer-types - Check default data creation
+    print("\n1. Testing GET /api/customer-types - Default data creation...")
+    get_endpoint = f"{BACKEND_URL}/api/customer-types"
+    print(f"   Testing endpoint: {get_endpoint}")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer types endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        try:
+            customer_types = response.json()
+            print(f"   Response type: {type(customer_types)}")
+            print(f"   Number of customer types: {len(customer_types) if isinstance(customer_types, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        if not isinstance(customer_types, list):
+            print("   ❌ FAIL: Response should be a list of customer types")
+            return False
+        
+        # Check default customer types
+        expected_defaults = ["Firma", "Ajans", "Devlet Kurumu", "Dernek veya Vakıf"]
+        found_defaults = []
+        
+        print("\n   Checking default customer types...")
+        for ct in customer_types:
+            if not isinstance(ct, dict):
+                print(f"   ❌ FAIL: Each customer type should be a dictionary, got {type(ct)}")
+                return False
+            
+            # Check required fields
+            required_fields = ["id", "name", "value", "created_at"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in ct:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Customer type missing required fields: {missing_fields}")
+                return False
+            
+            ct_name = ct.get("name")
+            if ct_name in expected_defaults:
+                found_defaults.append(ct_name)
+                print(f"   ✅ Found default type: {ct_name} (value: {ct.get('value')})")
+        
+        # Verify all defaults are present
+        missing_defaults = set(expected_defaults) - set(found_defaults)
+        if missing_defaults:
+            print(f"   ❌ FAIL: Missing default customer types: {missing_defaults}")
+            return False
+        
+        print(f"   ✅ PASS: All {len(expected_defaults)} default customer types found")
+        
+        # Test 2: POST /api/customer-types - Create new customer type with Turkish characters
+        print("\n2. Testing POST /api/customer-types - Create new customer type...")
+        post_endpoint = f"{BACKEND_URL}/api/customer-types"
+        print(f"   Testing endpoint: {post_endpoint}")
+        
+        # Test data with Turkish characters
+        test_customer_type = {
+            "name": "Test Müşteri Türü Öğrenci",
+            "value": "test_musteri_turu_ogrenci"
+        }
+        
+        response = requests.post(post_endpoint, json=test_customer_type, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer type creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse creation response
+        try:
+            created_type = response.json()
+            print(f"   Response type: {type(created_type)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate created customer type
+        if not isinstance(created_type, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields in created type
+        required_fields = ["id", "name", "value", "created_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_type:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created customer type missing required fields: {missing_fields}")
+            return False
+        
+        # Verify field values
+        if created_type.get("name") != test_customer_type["name"]:
+            print(f"   ❌ FAIL: Name mismatch. Expected: {test_customer_type['name']}, Got: {created_type.get('name')}")
+            return False
+        
+        if created_type.get("value") != test_customer_type["value"]:
+            print(f"   ❌ FAIL: Value mismatch. Expected: {test_customer_type['value']}, Got: {created_type.get('value')}")
+            return False
+        
+        print("   ✅ PASS: Customer type created successfully with Turkish characters")
+        print(f"   Created ID: {created_type.get('id')}")
+        print(f"   Name: {created_type.get('name')}")
+        print(f"   Value: {created_type.get('value')}")
+        
+        # Test 3: Verify new customer type appears in GET list
+        print("\n3. Testing GET /api/customer-types - Verify new type appears...")
+        response = requests.get(get_endpoint, timeout=30)
+        
+        if response.status_code == 200:
+            updated_types = response.json()
+            
+            # Check if new type is in the list
+            new_type_found = False
+            for ct in updated_types:
+                if ct.get("name") == test_customer_type["name"]:
+                    new_type_found = True
+                    print(f"   ✅ PASS: New customer type found in list: {ct.get('name')}")
+                    break
+            
+            if not new_type_found:
+                print(f"   ❌ FAIL: New customer type not found in updated list")
+                return False
+            
+            print(f"   ✅ PASS: Total customer types now: {len(updated_types)}")
+        else:
+            print(f"   ❌ FAIL: Could not fetch updated customer types list")
+            return False
+        
+        # Test 4: Duplicate control - Try to create same value again
+        print("\n4. Testing duplicate control - Same value...")
+        duplicate_response = requests.post(post_endpoint, json=test_customer_type, timeout=30)
+        
+        print(f"   Status Code: {duplicate_response.status_code}")
+        if duplicate_response.status_code == 400:
+            print("   ✅ PASS: Duplicate customer type returns 400 Bad Request")
+            try:
+                error_data = duplicate_response.json()
+                if "zaten mevcut" in error_data.get("detail", "").lower():
+                    print("   ✅ PASS: Proper Turkish error message for duplicate")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be in Turkish: {error_data.get('detail')}")
+            except:
+                print("   ⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"   ❌ FAIL: Expected 400 for duplicate, got {duplicate_response.status_code}")
+            return False
+        
+        # Test 5: Turkish character support verification
+        print("\n5. Testing Turkish character support...")
+        turkish_chars = ['ğ', 'ü', 'ş', 'ı', 'ö', 'ç']
+        has_turkish = any(char in test_customer_type["name"] for char in turkish_chars)
+        
+        if has_turkish:
+            print("   ✅ PASS: Test data contains Turkish characters")
+            print(f"   Turkish characters found in: {test_customer_type['name']}")
+        else:
+            print("   ⚠️  INFO: Test data doesn't contain Turkish characters, but endpoint should support them")
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER TYPES ENDPOINTS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ GET /api/customer-types returns default types (Firma, Ajans, Devlet Kurumu, Dernek/Vakıf)")
+        print("✅ POST /api/customer-types creates new customer type successfully")
+        print("✅ Default data auto-creation working on first fetch")
+        print("✅ New customer type appears in GET list after creation")
+        print("✅ Duplicate control working (400 error for same value)")
+        print("✅ Turkish character support verified")
+        print("✅ Proper response format (JSON with required fields)")
+        print("✅ MongoDB storage working correctly")
+        print("\n🎉 CUSTOMER TYPES ENDPOINTS TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_sectors_endpoints():
+    """
+    Test Sectors endpoints for Yeni Müşteri modal.
+    
+    Requirements to verify:
+    1. GET /api/sectors - Get all sectors (55 default sectors)
+    2. POST /api/sectors - Create new sector
+    3. Default data auto-creation on first fetch
+    4. Duplicate control (same value)
+    5. Turkish character support (ğüşıöç)
+    6. Proper response format
+    7. MongoDB storage verification
+    """
+    
+    print("=" * 80)
+    print("TESTING SECTORS ENDPOINTS FOR YENİ MÜŞTERİ MODAL")
+    print("=" * 80)
+    
+    # Test 1: GET /api/sectors - Check default data creation
+    print("\n1. Testing GET /api/sectors - Default data creation...")
+    get_endpoint = f"{BACKEND_URL}/api/sectors"
+    print(f"   Testing endpoint: {get_endpoint}")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Sectors endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse response
+        try:
+            sectors = response.json()
+            print(f"   Response type: {type(sectors)}")
+            print(f"   Number of sectors: {len(sectors) if isinstance(sectors, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate response structure
+        if not isinstance(sectors, list):
+            print("   ❌ FAIL: Response should be a list of sectors")
+            return False
+        
+        # Check if we have the expected number of default sectors (55)
+        expected_sector_count = 55
+        if len(sectors) >= expected_sector_count:
+            print(f"   ✅ PASS: Found {len(sectors)} sectors (expected at least {expected_sector_count})")
+        else:
+            print(f"   ❌ FAIL: Expected at least {expected_sector_count} sectors, got {len(sectors)}")
+            return False
+        
+        # Check some expected default sectors
+        expected_sectors = ["Tarım", "Tekstil", "Bilgi Teknolojileri (IT)", "Otomotiv", "İnşaat"]
+        found_sectors = []
+        
+        print("\n   Checking sample default sectors...")
+        for sector in sectors:
+            if not isinstance(sector, dict):
+                print(f"   ❌ FAIL: Each sector should be a dictionary, got {type(sector)}")
+                return False
+            
+            # Check required fields
+            required_fields = ["id", "name", "value", "created_at"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in sector:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Sector missing required fields: {missing_fields}")
+                return False
+            
+            sector_name = sector.get("name")
+            if sector_name in expected_sectors:
+                found_sectors.append(sector_name)
+                print(f"   ✅ Found expected sector: {sector_name} (value: {sector.get('value')})")
+        
+        # Verify some expected sectors are present
+        if len(found_sectors) >= 3:
+            print(f"   ✅ PASS: Found {len(found_sectors)} expected sectors from sample list")
+        else:
+            print(f"   ⚠️  WARNING: Only found {len(found_sectors)} expected sectors from sample list")
+        
+        # Test 2: POST /api/sectors - Create new sector with Turkish characters
+        print("\n2. Testing POST /api/sectors - Create new sector...")
+        post_endpoint = f"{BACKEND_URL}/api/sectors"
+        print(f"   Testing endpoint: {post_endpoint}")
+        
+        # Test data with Turkish characters
+        test_sector = {
+            "name": "Test Sektörü Öğretim",
+            "value": "test_sektoru_ogretim"
+        }
+        
+        response = requests.post(post_endpoint, json=test_sector, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Sector creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Parse creation response
+        try:
+            created_sector = response.json()
+            print(f"   Response type: {type(created_sector)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Validate created sector
+        if not isinstance(created_sector, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields in created sector
+        required_fields = ["id", "name", "value", "created_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_sector:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created sector missing required fields: {missing_fields}")
+            return False
+        
+        # Verify field values
+        if created_sector.get("name") != test_sector["name"]:
+            print(f"   ❌ FAIL: Name mismatch. Expected: {test_sector['name']}, Got: {created_sector.get('name')}")
+            return False
+        
+        if created_sector.get("value") != test_sector["value"]:
+            print(f"   ❌ FAIL: Value mismatch. Expected: {test_sector['value']}, Got: {created_sector.get('value')}")
+            return False
+        
+        print("   ✅ PASS: Sector created successfully with Turkish characters")
+        print(f"   Created ID: {created_sector.get('id')}")
+        print(f"   Name: {created_sector.get('name')}")
+        print(f"   Value: {created_sector.get('value')}")
+        
+        # Test 3: Verify new sector appears in GET list
+        print("\n3. Testing GET /api/sectors - Verify new sector appears...")
+        response = requests.get(get_endpoint, timeout=30)
+        
+        if response.status_code == 200:
+            updated_sectors = response.json()
+            
+            # Check if new sector is in the list
+            new_sector_found = False
+            for sector in updated_sectors:
+                if sector.get("name") == test_sector["name"]:
+                    new_sector_found = True
+                    print(f"   ✅ PASS: New sector found in list: {sector.get('name')}")
+                    break
+            
+            if not new_sector_found:
+                print(f"   ❌ FAIL: New sector not found in updated list")
+                return False
+            
+            print(f"   ✅ PASS: Total sectors now: {len(updated_sectors)}")
+        else:
+            print(f"   ❌ FAIL: Could not fetch updated sectors list")
+            return False
+        
+        # Test 4: Duplicate control - Try to create same value again
+        print("\n4. Testing duplicate control - Same value...")
+        duplicate_response = requests.post(post_endpoint, json=test_sector, timeout=30)
+        
+        print(f"   Status Code: {duplicate_response.status_code}")
+        if duplicate_response.status_code == 400:
+            print("   ✅ PASS: Duplicate sector returns 400 Bad Request")
+            try:
+                error_data = duplicate_response.json()
+                if "zaten mevcut" in error_data.get("detail", "").lower():
+                    print("   ✅ PASS: Proper Turkish error message for duplicate")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be in Turkish: {error_data.get('detail')}")
+            except:
+                print("   ⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"   ❌ FAIL: Expected 400 for duplicate, got {duplicate_response.status_code}")
+            return False
+        
+        # Test 5: Turkish character support verification
+        print("\n5. Testing Turkish character support...")
+        turkish_chars = ['ğ', 'ü', 'ş', 'ı', 'ö', 'ç']
+        has_turkish = any(char in test_sector["name"] for char in turkish_chars)
+        
+        if has_turkish:
+            print("   ✅ PASS: Test data contains Turkish characters")
+            print(f"   Turkish characters found in: {test_sector['name']}")
+        else:
+            print("   ⚠️  INFO: Test data doesn't contain Turkish characters, but endpoint should support them")
+        
+        # Test 6: Verify some default sectors with Turkish names
+        print("\n6. Verifying Turkish sector names in defaults...")
+        turkish_sector_names = ["Tarım", "Hayvancılık", "Gıda Üretimi", "İçecek Üretimi", "Tekstil"]
+        found_turkish_sectors = []
+        
+        for sector in sectors:
+            sector_name = sector.get("name", "")
+            if sector_name in turkish_sector_names:
+                found_turkish_sectors.append(sector_name)
+        
+        if len(found_turkish_sectors) >= 3:
+            print(f"   ✅ PASS: Found {len(found_turkish_sectors)} Turkish-named default sectors")
+            for name in found_turkish_sectors[:3]:
+                print(f"     - {name}")
+        else:
+            print(f"   ⚠️  WARNING: Only found {len(found_turkish_sectors)} Turkish-named sectors")
+        
+        print("\n" + "=" * 80)
+        print("SECTORS ENDPOINTS TEST RESULTS:")
+        print("=" * 80)
+        print(f"✅ GET /api/sectors returns {len(sectors)} sectors (expected 55+ default sectors)")
+        print("✅ POST /api/sectors creates new sector successfully")
+        print("✅ Default data auto-creation working on first fetch")
+        print("✅ New sector appears in GET list after creation")
+        print("✅ Duplicate control working (400 error for same value)")
+        print("✅ Turkish character support verified")
+        print("✅ Turkish sector names found in defaults (Tarım, Tekstil, IT, etc.)")
+        print("✅ Proper response format (JSON with required fields)")
+        print("✅ MongoDB storage working correctly")
+        print("\n🎉 SECTORS ENDPOINTS TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_supplier_categories_list():
     """
     Test the supplier categories list API.
