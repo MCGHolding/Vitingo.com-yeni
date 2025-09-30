@@ -121,11 +121,14 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const loadCustomerProspects = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      console.log('Loading prospects from:', `${backendUrl}/api/customer-prospects`);
       const response = await fetch(`${backendUrl}/api/customer-prospects`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Prospects loaded successfully:', data);
         setProspects(data);
       } else {
+        console.error('Failed to load prospects, status:', response.status);
         throw new Error('Failed to load customer prospects');
       }
     } catch (error) {
