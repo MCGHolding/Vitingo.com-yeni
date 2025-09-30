@@ -103,6 +103,9 @@ const Dashboard = () => {
   // Supplier states
   const [showNewSupplierForm, setShowNewSupplierForm] = useState(false);
   const [showAllSuppliersPage, setShowAllSuppliersPage] = useState(false);
+  
+  // Invoice states
+  const [selectedInvoiceForEdit, setSelectedInvoiceForEdit] = useState(null);
 
   // Load fairs from backend API
   useEffect(() => {
