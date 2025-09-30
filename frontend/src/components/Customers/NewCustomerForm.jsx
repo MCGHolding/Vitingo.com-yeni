@@ -426,16 +426,16 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    id="customer-reference"
-                    checked={formData.is_reference || false}
-                    onChange={(e) => handleInputChange('is_reference', e.target.checked)}
+                    id="customer-candidate"
+                    checked={formData.is_candidate || false}
+                    onChange={(e) => handleInputChange('is_candidate', e.target.checked)}
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                   />
                   <label 
-                    htmlFor="customer-reference" 
+                    htmlFor="customer-candidate" 
                     className="text-sm font-medium text-gray-700 cursor-pointer"
                   >
-                    Referans Müşteri
+                    Müşteri Aday
                   </label>
                 </div>
               </div>
