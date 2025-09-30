@@ -390,6 +390,11 @@ const Dashboard = () => {
     setCurrentView('all-invoices');
   };
 
+  const handleEditInvoice = (invoice) => {
+    setSelectedInvoiceForEdit(invoice);
+    setCurrentView('edit-invoice');
+  };
+
   const handlePendingApproval = () => {
     setCurrentView('pending-approval');
   };
