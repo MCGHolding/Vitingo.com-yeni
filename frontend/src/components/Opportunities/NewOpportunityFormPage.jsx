@@ -292,11 +292,16 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       <SelectValue placeholder="Müşteri seçin..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {customers.map((customer) => (
-                        <SelectItem key={customer.id} value={customer.companyName || customer.companyTitle}>
-                          {customer.companyName || customer.companyTitle}
-                        </SelectItem>
-                      ))}
+                      {customers
+                        .filter(customer => (customer.companyName || customer.companyTitle || '').trim() !== '')
+                        .map((customer) => {
+                          const displayName = customer.companyName || customer.companyTitle || `Customer ${customer.id}`;
+                          return (
+                            <SelectItem key={customer.id} value={displayName}>
+                              {displayName}
+                            </SelectItem>
+                          );
+                        })}
                     </SelectContent>
                   </Select>
                 </div>
