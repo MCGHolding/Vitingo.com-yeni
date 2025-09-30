@@ -319,6 +319,13 @@ export default function Sidebar({
       }
       return;
     }
+
+    if (subItem && subItem.name === 'Müşteri Adayları') {
+      if (onCustomerProspects) {
+        onCustomerProspects();
+      }
+      return;
+    }
     
     if (subItem && subItem.name === 'Kişi Ekle') {
       if (onNewPerson) {
