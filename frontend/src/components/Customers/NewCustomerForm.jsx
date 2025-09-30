@@ -349,6 +349,13 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
       }
 
+      // Set success state with customer info
+      setCreatedCustomerInfo({
+        company_name: baseCustomerData.company_short_name,
+        is_candidate: formData.is_candidate
+      });
+      setShowSuccessModal(true);
+
       toast({
         title: "Başarılı",
         description: "Müşteri başarıyla oluşturuldu",
