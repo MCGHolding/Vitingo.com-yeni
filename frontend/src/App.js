@@ -23,6 +23,7 @@ import AllPeoplePage from './components/Customers/AllPeoplePage';
 import AllCustomersPage from './components/Customers/AllCustomersPage';
 import InactiveCustomersPage from './components/Customers/InactiveCustomersPage';
 import FavoriteCustomersPage from './components/Customers/FavoriteCustomersPage';
+import CustomerProspectsPage from './components/Customers/CustomerProspectsPage';
 import UserManagementModal from './components/UserManagement/UserManagementModal';
 import AllUsersPage from './components/UserManagement/AllUsersPage';
 import ViewUserModal from './components/UserManagement/ViewUserModal';
