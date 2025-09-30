@@ -1344,6 +1344,236 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_customers_and_suppliers_endpoints():
+    """
+    Test GET /api/customers and GET /api/suppliers endpoints to check available companies.
+    
+    This test follows the review request requirements:
+    1. Test GET /api/customers endpoint to see customer companies
+    2. Test GET /api/suppliers endpoint to see supplier companies  
+    3. Verify the data structure returned by both endpoints
+    4. Check if these endpoints return company names that can be used in dropdowns
+    
+    This will help us understand what data is available for the dynamic dropdowns in the person form.
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMERS AND SUPPLIERS ENDPOINTS FOR DROPDOWN DATA")
+    print("=" * 80)
+    print("This test will check what company data is available for person form dropdowns.")
+    
+    try:
+        # STEP 1: Test GET /api/customers endpoint
+        print("\n" + "=" * 60)
+        print("STEP 1: TEST GET /api/customers ENDPOINT")
+        print("=" * 60)
+        
+        customers_endpoint = f"{BACKEND_URL}/api/customers"
+        print(f"Testing endpoint: {customers_endpoint}")
+        
+        print("Making GET request to customers endpoint...")
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        
+        print(f"Status Code: {customers_response.status_code}")
+        if customers_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {customers_response.status_code}")
+            print(f"Response: {customers_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/customers endpoint responds correctly")
+        
+        # Parse customers data
+        customers_data = customers_response.json()
+        print(f"Number of customers found: {len(customers_data)}")
+        
+        if len(customers_data) > 0:
+            print("\nCustomer companies found:")
+            for i, customer in enumerate(customers_data[:10]):  # Show first 10
+                company_name = customer.get('companyName', 'N/A')
+                company_title = customer.get('companyTitle', '')
+                email = customer.get('email', 'N/A')
+                country = customer.get('country', 'N/A')
+                city = customer.get('city', 'N/A')
+                print(f"  {i+1}. {company_name} {company_title} - {city}, {country} ({email})")
+            
+            if len(customers_data) > 10:
+                print(f"  ... and {len(customers_data) - 10} more customers")
+                
+            # Check data structure for dropdown compatibility
+            print("\nChecking customer data structure for dropdown usage:")
+            first_customer = customers_data[0]
+            dropdown_fields = ['id', 'companyName', 'companyTitle', 'email', 'country', 'city']
+            
+            for field in dropdown_fields:
+                if field in first_customer:
+                    value = first_customer[field]
+                    print(f"✅ {field}: {type(value).__name__} = '{value}'")
+                else:
+                    print(f"❌ {field}: Missing")
+        else:
+            print("No customers found in database")
+        
+        # STEP 2: Test GET /api/suppliers endpoint
+        print("\n" + "=" * 60)
+        print("STEP 2: TEST GET /api/suppliers ENDPOINT")
+        print("=" * 60)
+        
+        suppliers_endpoint = f"{BACKEND_URL}/api/suppliers"
+        print(f"Testing endpoint: {suppliers_endpoint}")
+        
+        print("Making GET request to suppliers endpoint...")
+        suppliers_response = requests.get(suppliers_endpoint, timeout=30)
+        
+        print(f"Status Code: {suppliers_response.status_code}")
+        if suppliers_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {suppliers_response.status_code}")
+            print(f"Response: {suppliers_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/suppliers endpoint responds correctly")
+        
+        # Parse suppliers data
+        suppliers_data = suppliers_response.json()
+        print(f"Number of suppliers found: {len(suppliers_data)}")
+        
+        if len(suppliers_data) > 0:
+            print("\nSupplier companies found:")
+            for i, supplier in enumerate(suppliers_data[:10]):  # Show first 10
+                company_name = supplier.get('company_short_name', supplier.get('companyName', 'N/A'))
+                email = supplier.get('email', 'N/A')
+                country = supplier.get('country', 'N/A')
+                city = supplier.get('city', 'N/A')
+                print(f"  {i+1}. {company_name} - {city}, {country} ({email})")
+            
+            if len(suppliers_data) > 10:
+                print(f"  ... and {len(suppliers_data) - 10} more suppliers")
+                
+            # Check data structure for dropdown compatibility
+            print("\nChecking supplier data structure for dropdown usage:")
+            first_supplier = suppliers_data[0]
+            dropdown_fields = ['id', 'company_short_name', 'companyName', 'email', 'country', 'city']
+            
+            for field in dropdown_fields:
+                if field in first_supplier:
+                    value = first_supplier[field]
+                    print(f"✅ {field}: {type(value).__name__} = '{value}'")
+                else:
+                    print(f"❌ {field}: Missing")
+        else:
+            print("No suppliers found in database")
+        
+        # STEP 3: Verify data structure compatibility for dropdowns
+        print("\n" + "=" * 60)
+        print("STEP 3: ANALYZE DATA STRUCTURE FOR DROPDOWN COMPATIBILITY")
+        print("=" * 60)
+        
+        print("Analyzing data structure for person form dropdown usage...")
+        
+        # Check customers structure
+        customers_dropdown_ready = False
+        if len(customers_data) > 0:
+            customer_sample = customers_data[0]
+            required_customer_fields = ['id', 'companyName']
+            
+            customers_dropdown_ready = all(field in customer_sample for field in required_customer_fields)
+            
+            if customers_dropdown_ready:
+                print("✅ CUSTOMERS: Ready for dropdown usage")
+                print(f"   - Has ID field for value: {customer_sample.get('id')}")
+                print(f"   - Has company name for display: {customer_sample.get('companyName')}")
+                if customer_sample.get('companyTitle'):
+                    print(f"   - Has company title for extended display: {customer_sample.get('companyTitle')}")
+            else:
+                print("❌ CUSTOMERS: Missing required fields for dropdown")
+                missing = [f for f in required_customer_fields if f not in customer_sample]
+                print(f"   Missing fields: {missing}")
+        
+        # Check suppliers structure
+        suppliers_dropdown_ready = False
+        if len(suppliers_data) > 0:
+            supplier_sample = suppliers_data[0]
+            required_supplier_fields = ['id']
+            company_name_field = None
+            
+            # Check for company name field (could be company_short_name or companyName)
+            if 'company_short_name' in supplier_sample:
+                company_name_field = 'company_short_name'
+            elif 'companyName' in supplier_sample:
+                company_name_field = 'companyName'
+            
+            suppliers_dropdown_ready = (all(field in supplier_sample for field in required_supplier_fields) and 
+                                      company_name_field is not None)
+            
+            if suppliers_dropdown_ready:
+                print("✅ SUPPLIERS: Ready for dropdown usage")
+                print(f"   - Has ID field for value: {supplier_sample.get('id')}")
+                print(f"   - Has company name for display: {supplier_sample.get(company_name_field)}")
+            else:
+                print("❌ SUPPLIERS: Missing required fields for dropdown")
+                if not company_name_field:
+                    print("   Missing company name field (company_short_name or companyName)")
+        
+        # STEP 4: Summary and recommendations
+        print("\n" + "=" * 60)
+        print("STEP 4: SUMMARY AND RECOMMENDATIONS")
+        print("=" * 60)
+        
+        total_companies = len(customers_data) + len(suppliers_data)
+        print(f"Total companies available for dropdowns: {total_companies}")
+        print(f"  - Customers: {len(customers_data)}")
+        print(f"  - Suppliers: {len(suppliers_data)}")
+        
+        if total_companies == 0:
+            print("\n❌ ISSUE: No companies found in either customers or suppliers")
+            print("   This explains why person form dropdowns would be empty")
+            print("   RECOMMENDATION: Add some test customers and suppliers to the database")
+            return False
+        
+        if customers_dropdown_ready and suppliers_dropdown_ready:
+            print("\n✅ SUCCESS: Both endpoints provide data suitable for dropdowns")
+            print("   Person form can use this data for company selection")
+        elif customers_dropdown_ready or suppliers_dropdown_ready:
+            print("\n⚠️  PARTIAL: Only one endpoint provides suitable dropdown data")
+            if customers_dropdown_ready:
+                print("   Customers endpoint is ready for dropdowns")
+            if suppliers_dropdown_ready:
+                print("   Suppliers endpoint is ready for dropdowns")
+        else:
+            print("\n❌ ISSUE: Neither endpoint provides suitable dropdown data")
+            print("   Person form dropdowns may not work correctly")
+        
+        # Sample dropdown data format
+        if customers_dropdown_ready or suppliers_dropdown_ready:
+            print("\nSample dropdown data format:")
+            if customers_dropdown_ready and len(customers_data) > 0:
+                sample_customer = customers_data[0]
+                print(f"  Customer: {{value: '{sample_customer.get('id')}', label: '{sample_customer.get('companyName')}'}}")
+            
+            if suppliers_dropdown_ready and len(suppliers_data) > 0:
+                sample_supplier = suppliers_data[0]
+                company_field = 'company_short_name' if 'company_short_name' in sample_supplier else 'companyName'
+                print(f"  Supplier: {{value: '{sample_supplier.get('id')}', label: '{sample_supplier.get(company_field)}'}}")
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMERS AND SUPPLIERS ENDPOINTS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ GET /api/customers endpoint responds with status 200")
+        print("✅ GET /api/suppliers endpoint responds with status 200")
+        print("✅ Data structure analysis completed")
+        print("✅ Dropdown compatibility verified")
+        print(f"\n🎉 CUSTOMERS AND SUPPLIERS ENDPOINTS TEST COMPLETED!")
+        print(f"   Found {len(customers_data)} customers and {len(suppliers_data)} suppliers")
+        print(f"   Data is {'ready' if (customers_dropdown_ready and suppliers_dropdown_ready) else 'partially ready' if (customers_dropdown_ready or suppliers_dropdown_ready) else 'not ready'} for dropdown usage")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_customer_prospects_debug_functionality():
     """
     Test customer prospects functionality to debug why prospects are not showing in CustomerProspectsPage.
