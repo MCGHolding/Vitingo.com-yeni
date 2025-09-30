@@ -1229,7 +1229,7 @@ function App() {
               path="/suppliers/new" 
               element={
                 <ProtectedRoute>
-                  <NewSupplierForm onClose={() => window.location.href = '/'} />
+                  <NewSupplierForm onClose={() => navigate('/')} />
                 </ProtectedRoute>
               } 
             />
@@ -1237,7 +1237,7 @@ function App() {
               path="/suppliers" 
               element={
                 <ProtectedRoute>
-                  <AllSuppliersPage onBackToDashboard={() => window.location.href = '/'} onNewSupplier={() => window.location.href = '/suppliers/new'} />
+                  <AllSuppliersPage onBackToDashboard={() => navigate('/')} onNewSupplier={() => navigate('/suppliers/new')} />
                 </ProtectedRoute>
               } 
             />
