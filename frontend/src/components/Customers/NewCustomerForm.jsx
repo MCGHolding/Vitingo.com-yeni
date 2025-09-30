@@ -641,7 +641,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Adres
+                Adres <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={formData.address}
