@@ -118,7 +118,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Yeni Ülke ve Şehir modal'ları için backend endpoints'lerini test et: Countries Endpoints: GET /api/countries (tüm ülkeleri getir), POST /api/countries (yeni ülke oluştur - name + iso2 kodu). Cities Endpoints: GET /api/cities (tüm şehirleri getir), GET /api/cities/{country_code} (belirli ülkenin şehirlerini getir), POST /api/cities (yeni şehir oluştur - name + country_code). Test senaryoları: yeni ülke ekleme, yeni şehir ekleme, duplicate kontrol (aynı iso2 ile ülke, aynı name+country_code ile şehir), Türkçe karakter desteği (ğüşıöç), ISO2 kodu uppercase dönüşümü, country code validation, başarılı response modellerinin doğru format dönmesi, MongoDB'ye doğru kaydedilme."
+user_problem_statement: "Test the customer prospects backend functionality: 1. Test GET /api/customer-prospects endpoint to verify it returns proper structure 2. Test POST /api/customer-prospects endpoint by creating a new prospect with data: company_short_name: 'Test Aday Şirketi', email: 'test@testadaysirketi.com', country: 'TR', city: 'Istanbul', sector: 'Teknoloji', tags: ['TEKNOLOJI', 'YAZILIM'], is_candidate: true 3. Test GET /api/customer-prospects again to verify the new prospect was saved 4. Verify the prospect data structure matches what CustomerProspectsPage expects 5. Test that regular customers endpoint (/api/customers) is still working separately"
 
 backend:
   - task: "Countries API Endpoints"
