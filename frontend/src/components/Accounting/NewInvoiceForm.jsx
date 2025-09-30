@@ -819,7 +819,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı (%)</label>
                 <div className="grid grid-cols-5 gap-2">
-                  {/* Preset VAT Rate Buttons */}
+                  {/* Preset VAT Rate Buttons: 5, 10, 15, 20 */}
                   {[5, 10, 15, 20].map(rate => (
                     <button
                       key={rate}
@@ -831,25 +831,18 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                           : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      {rate}%
+                      {rate}
                     </button>
                   ))}
                   
-                  {/* Custom VAT Rate Dropdown */}
+                  {/* Dropdown for %0 to %35 */}
                   <select
-                    value={[5, 10, 15, 20].includes(formData.vatRate) ? '' : formData.vatRate}
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        setFormData(prev => ({ ...prev, vatRate: parseFloat(e.target.value) }));
-                      }
-                    }}
+                    value={formData.vatRate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, vatRate: parseFloat(e.target.value) }))}
                     className="h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   >
-                    <option value="">Diğer</option>
                     {Array.from({ length: 36 }, (_, i) => i).map(rate => (
-                      ![5, 10, 15, 20].includes(rate) && (
-                        <option key={rate} value={rate}>{rate}%</option>
-                      )
+                      <option key={rate} value={rate}>%{rate}</option>
                     ))}
                   </select>
                 </div>
