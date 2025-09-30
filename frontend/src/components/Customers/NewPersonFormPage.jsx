@@ -1,0 +1,561 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
+import VitingoPhoneInput from '../ui/SupplierPhone';
+import { useToast } from '../../hooks/use-toast';
+import CountrySelect from '../geo/CountrySelect';
+import CitySelect from '../geo/CitySelect';
+import { 
+  X,
+  UserRound,
+  Phone,
+  Mail,
+  Globe,
+  MapPin,
+  Building,
+  FileText,
+  CheckCircle,
+  User,
+  Briefcase,
+  Calendar
+} from 'lucide-react';
+
+export default function NewPersonFormPage({ onClose, onSave }) {
+  const { toast } = useToast();
+  
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    relationshipType: 'customer', // customer, supplier, partner, other
+    jobTitle: '',
+    company: '',
+    phone: '+90',
+    mobile: '+90',
+    email: '',
+    website: '',
+    country: 'tr', // Default to Turkey
+    city: '',
+    address: '',
+    notes: '',
+    birthDate: '',
+    department: '',
+    linkedin: '',
+    tags: []
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdPersonInfo, setCreatedPersonInfo] = useState(null);
+  
+  const relationshipTypes = [
+    { value: 'customer', label: 'Müşteri' },
+    { value: 'supplier', label: 'Tedarikçi' },
+    { value: 'partner', label: 'İş Ortağı' },
+    { value: 'consultant', label: 'Danışman' },
+    { value: 'vendor', label: 'Satıcı' },
+    { value: 'employee', label: 'Çalışan' },
+    { value: 'contact', label: 'İletişim' },
+    { value: 'other', label: 'Diğer' }
+  ];
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Handle country change and update phone numbers accordingly
+  const handleCountryChange = (country) => {
+    const countryCode = country ? country.iso2 : '';
+    
+    // Update all fields in single state update to prevent re-render loop
+    setFormData(prev => {
+      const updates = {
+        ...prev,
+        country: countryCode,
+        city: countryCode ? '' : prev.city  // Clear city only if country changed
+      };
+      
+      // Update phone numbers with new country dial code
+      if (countryCode) {
+        // Get dial code for the new country
+        const dialCodes = {
+          'tr': '+90', 'us': '+1', 'gb': '+44', 'de': '+49', 'fr': '+33',
+          'it': '+39', 'es': '+34', 'ca': '+1', 'au': '+61', 'in': '+91',
+          'cn': '+86', 'jp': '+81', 'br': '+55', 'mx': '+52', 'ru': '+7',
+          'kr': '+82', 'sa': '+966', 'ae': '+971', 'eg': '+20', 'za': '+27'
+        };
+        
+        const newDialCode = dialCodes[countryCode.toLowerCase()];
+        if (newDialCode) {
+          updates.phone = newDialCode;
+          updates.mobile = newDialCode;
+        }
+      } else {
+        // Reset to default Turkish numbers if no country selected
+        updates.phone = '+90';
+        updates.mobile = '+90';
+      }
+      
+      return updates;
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Enhanced validation - required fields for person
+    const requiredFieldsValid = formData.firstName && formData.lastName && 
+        formData.relationshipType && formData.email && formData.phone && 
+        formData.mobile && formData.country && formData.city && formData.address;
+    
+    if (!requiredFieldsValid) {
+      toast({
+        title: "Hata",
+        description: "Zorunlu alanları doldurunuz: Ad, Soyad, İlişki türü, Email, Telefon, Cep telefonu, Ülke, Şehir, Adres",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Format person data for backend
+      const personData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        fullName: `${formData.firstName} ${formData.lastName}`,
+        relationshipType: formData.relationshipType,
+        jobTitle: formData.jobTitle,
+        company: formData.company,
+        phone: formData.phone,
+        mobile: formData.mobile,
+        email: formData.email,
+        website: formData.website,
+        country: formData.country,
+        city: formData.city,
+        address: formData.address,
+        notes: formData.notes,
+        birthDate: formData.birthDate,
+        department: formData.department,
+        linkedin: formData.linkedin,
+        tags: formData.tags || []
+      };
+
+      const response = await fetch(`${backendUrl}/api/people`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(personData),
+      });
+
+      if (response.ok) {
+        const savedData = await response.json();
+        console.log('Person saved:', savedData);
+
+        // Set success state with person info
+        setCreatedPersonInfo({
+          fullName: `${formData.firstName} ${formData.lastName}`,
+          relationshipType: relationshipTypes.find(rt => rt.value === formData.relationshipType)?.label || formData.relationshipType,
+          company: formData.company
+        });
+        setShowSuccessModal(true);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save person:', errorData);
+        toast({
+          title: "Hata",
+          description: "Kişi kaydedilirken hata oluştu: " + (errorData.detail || "Bilinmeyen hata"),
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting person form:', error);
+      toast({
+        title: "Hata",
+        description: "Kişi kaydedilirken hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
+              <UserRound className="h-8 w-8 text-blue-600" />
+              <span>Yeni Kişi Ekle</span>
+            </h1>
+            <p className="text-gray-600 mt-1">İletişim bilgileri ve kişi detayları</p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700 px-6"
+            >
+              {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="px-6"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Kapat
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Form */}
+      <div className="px-6 py-6 space-y-6">
+        
+        {/* Kişi Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <User className="h-5 w-5" />
+              <span>Kişi Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Ad */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ad <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  placeholder="Adınızı girin"
+                />
+              </div>
+
+              {/* Soyad */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Soyad <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  placeholder="Soyadınızı girin"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* İlişki Türü */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  İlişki Türü <span className="text-red-500">*</span>
+                </label>
+                <Select 
+                  value={formData.relationshipType}
+                  onValueChange={(value) => handleInputChange('relationshipType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="İlişki türü seçin..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {relationshipTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* İş Ünvanı */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  İş Ünvanı <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  value={formData.jobTitle}
+                  onChange={(e) => handleInputChange('jobTitle', e.target.value)}
+                  placeholder="Genel Müdür, Satış Sorumlusu, vb."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Şirket */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Şirket
+                </label>
+                <Input
+                  value={formData.company}
+                  onChange={(e) => handleInputChange('company', e.target.value)}
+                  placeholder="Çalıştığı şirket adı"
+                />
+              </div>
+
+              {/* Departman */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Departman
+                </label>
+                <Input
+                  value={formData.department}
+                  onChange={(e) => handleInputChange('department', e.target.value)}
+                  placeholder="Satış, Pazarlama, IT, vb."
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* İletişim Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Mail className="h-5 w-5" />
+              <span>İletişim Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="ornek@sirket.com"
+                />
+              </div>
+
+              {/* Website */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Website
+                </label>
+                <Input
+                  value={formData.website}
+                  onChange={(e) => handleInputChange('website', e.target.value)}
+                  placeholder="https://www.sirket.com"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Telefon */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefon <span className="text-red-500">*</span>
+                </label>
+                <VitingoPhoneInput
+                  key={`phone-${formData.country || 'tr'}`}
+                  country={formData.country || "tr"}
+                  value={formData.phone}
+                  onChange={(value) => handleInputChange('phone', value)}
+                  enableSearch={true}
+                  inputClass="w-full"
+                />
+              </div>
+
+              {/* Cep Telefonu */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cep Telefonu <span className="text-red-500">*</span>
+                </label>
+                <VitingoPhoneInput
+                  key={`mobile-${formData.country || 'tr'}`}
+                  country={formData.country || "tr"}
+                  value={formData.mobile}
+                  onChange={(value) => handleInputChange('mobile', value)}
+                  enableSearch={true}
+                  inputClass="w-full"
+                />
+              </div>
+            </div>
+
+            {/* LinkedIn */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                LinkedIn Profili
+              </label>
+              <Input
+                value={formData.linkedin}
+                onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                placeholder="https://www.linkedin.com/in/kullanici-adi"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Konum Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <MapPin className="h-5 w-5" />
+              <span>Konum Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Ülke */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Ülke <span className="text-red-500">*</span>
+                </label>
+                <CountrySelect
+                  value={formData.country}
+                  onChange={handleCountryChange}
+                  placeholder="Ülke seçiniz..."
+                />
+              </div>
+
+              {/* Şehir */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Şehir <span className="text-red-500">*</span>
+                </label>
+                <CitySelect
+                  country={formData.country}
+                  value={formData.city}
+                  onChange={(city) => {
+                    const cityName = city ? city.name : '';
+                    handleInputChange('city', cityName);
+                  }}
+                  placeholder="Şehir seçiniz..."
+                  disabled={!formData.country}
+                />
+              </div>
+            </div>
+
+            {/* Adres */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adres <span className="text-red-500">*</span>
+              </label>
+              <Textarea
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                placeholder="Tam adres bilgisi"
+                rows={3}
+                className="resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ek Bilgiler */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Calendar className="h-5 w-5" />
+              <span>Ek Bilgiler</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Doğum Tarihi */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Doğum Tarihi
+              </label>
+              <Input
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => handleInputChange('birthDate', e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Notlar */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <FileText className="h-5 w-5" />
+              <span>Notlar</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Notlar Alanı */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Notlar ve Yorumlar
+              </label>
+              <textarea
+                value={formData.notes || ''}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                placeholder="Kişi hakkında notlarınız, özel durumlar, yorumlar..."
+                rows={4}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            {/* X Close Button */}
+            <div className="absolute top-3 right-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSuccessModal(false)}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="text-center">
+              <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              
+              <h2 className="text-lg font-bold text-gray-900 mb-2">
+                Başarılı!
+              </h2>
+              
+              <p className="text-gray-600 mb-4">
+                <strong>{createdPersonInfo?.fullName}</strong> kişisi başarı ile sisteme eklenmiştir.
+              </p>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <p className="text-green-800 text-sm">
+                  ✅ Kişi artık "Tüm Kişiler" listesinde görünecektir.
+                </p>
+              </div>
+              
+              <Button onClick={() => setShowSuccessModal(false)} className="bg-green-600 hover:bg-green-700">
+                Tamam
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
