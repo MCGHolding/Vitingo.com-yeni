@@ -335,7 +335,7 @@ const Dashboard = () => {
   };
 
   const closeNewFairForm = () => {
-    setShowNewFairForm(false);
+    setCurrentView('dashboard');
   };
 
   const saveFair = (fairData) => {
