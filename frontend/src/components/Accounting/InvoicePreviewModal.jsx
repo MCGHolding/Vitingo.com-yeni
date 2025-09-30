@@ -279,10 +279,28 @@ const InvoicePreviewModal = ({ invoice, onClose }) => {
             Kapat
           </Button>
           <Button
-            onClick={() => {
-              // PDF indirme işlemi
-              const downloadEvent = new CustomEvent('downloadInvoicePDF', { detail: invoice });
-              window.dispatchEvent(downloadEvent);
+            onClick={async () => {
+              try {
+                const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+                const response = await fetch(`${backendUrl}/api/invoices/${invoice.id}/pdf`);
+                
+                if (response.ok) {
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `Fatura_${invoice.invoice_number}.pdf`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+                } else {
+                  alert('PDF dosyası indirilemedi');
+                }
+              } catch (error) {
+                console.error('PDF indirme hatası:', error);
+                alert('PDF dosyası indirilemedi');
+              }
             }}
             className="bg-blue-600 hover:bg-blue-700"
           >
