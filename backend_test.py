@@ -1724,7 +1724,7 @@ def test_countries_endpoints():
             countries = response.json()
             found_country = False
             for country in countries:
-                if country.get("iso2") == "TÜ":
+                if country.get("iso2") == test_country_data["iso2"].upper():
                     found_country = True
                     print(f"   ✅ PASS: Created country found in list: {country['name']} ({country['iso2']})")
                     break
