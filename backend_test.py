@@ -10674,20 +10674,53 @@ def test_people_crud_endpoints():
     return True
 
 if __name__ == "__main__":
-    print("🚀 STARTING EXPENSE RECEIPT APPROVAL SYSTEM TESTING")
+    print("🚀 STARTING COUNTRIES AND CITIES ENDPOINTS TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing expense receipt approval system to verify position field usage")
+    print("Testing Countries and Cities endpoints for Yeni Ülke and Yeni Şehir modals")
     print("=" * 80)
     
-    # Run the specific expense receipt approval test
-    success = test_expense_receipt_approval_system()
+    # Track test results
+    test_results = []
     
-    if success:
-        print("\n🎉 EXPENSE RECEIPT APPROVAL SYSTEM TESTING COMPLETED SUCCESSFULLY!")
-        print("Backend API correctly uses contact's position instead of tags for supplier_contact_specialty.")
+    # Test 1: Countries endpoints
+    print("\n" + "🔥" * 80)
+    print("TESTING COUNTRIES ENDPOINTS")
+    print("🔥" * 80)
+    countries_success = test_countries_endpoints()
+    test_results.append(("Countries Endpoints", countries_success))
+    
+    # Test 2: Cities endpoints
+    print("\n" + "🔥" * 80)
+    print("TESTING CITIES ENDPOINTS")
+    print("🔥" * 80)
+    cities_success = test_cities_endpoints()
+    test_results.append(("Cities Endpoints", cities_success))
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("FINAL TEST RESULTS SUMMARY")
+    print("=" * 80)
+    
+    all_passed = True
+    for test_name, success in test_results:
+        status = "✅ PASSED" if success else "❌ FAILED"
+        print(f"{test_name}: {status}")
+        if not success:
+            all_passed = False
+    
+    print("=" * 80)
+    
+    if all_passed:
+        print("\n🎉 ALL COUNTRIES AND CITIES ENDPOINTS TESTS PASSED!")
+        print("✅ Countries endpoints working correctly")
+        print("✅ Cities endpoints working correctly")
+        print("✅ Turkish character support verified")
+        print("✅ Duplicate control working")
+        print("✅ MongoDB storage and retrieval working")
+        print("✅ All endpoints ready for NewCustomerForm integration")
         sys.exit(0)
     else:
-        print("\n❌ EXPENSE RECEIPT APPROVAL SYSTEM TESTING FAILED!")
+        print("\n❌ SOME TESTS FAILED!")
         print("Backend API issues found that need to be addressed.")
         sys.exit(1)
