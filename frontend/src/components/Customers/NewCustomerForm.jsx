@@ -25,7 +25,14 @@ import {
   User,
   Phone,
   Globe,
-  Tag
+  Tag,
+  ArrowLeft,
+  CheckCircle,
+  Home,
+  Users,
+  Mail,
+  FileText,
+  Save
 } from 'lucide-react';
 
 export default function NewCustomerForm({ onSave, onClose }) {
