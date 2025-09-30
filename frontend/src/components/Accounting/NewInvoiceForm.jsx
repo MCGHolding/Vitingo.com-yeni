@@ -818,15 +818,41 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı (%)</label>
-                <select
-                  value={formData.vatRate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, vatRate: parseFloat(e.target.value) }))}
-                  className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {Array.from({ length: 25 }, (_, i) => i + 1).map(rate => (
-                    <option key={rate} value={rate}>{rate}%</option>
+                <div className="grid grid-cols-5 gap-2">
+                  {/* Preset VAT Rate Buttons */}
+                  {[5, 10, 15, 20].map(rate => (
+                    <button
+                      key={rate}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, vatRate: rate }))}
+                      className={`h-10 px-3 rounded-md border-2 font-medium text-sm transition-all ${
+                        formData.vatRate === rate
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {rate}%
+                    </button>
                   ))}
-                </select>
+                  
+                  {/* Custom VAT Rate Dropdown */}
+                  <select
+                    value={[5, 10, 15, 20].includes(formData.vatRate) ? '' : formData.vatRate}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setFormData(prev => ({ ...prev, vatRate: parseFloat(e.target.value) }));
+                      }
+                    }}
+                    className="h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  >
+                    <option value="">Diğer</option>
+                    {Array.from({ length: 36 }, (_, i) => i).map(rate => (
+                      ![5, 10, 15, 20].includes(rate) && (
+                        <option key={rate} value={rate}>{rate}%</option>
+                      )
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>
