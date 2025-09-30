@@ -58,6 +58,33 @@ export default function LostOpportunitiesPage({ onBackToDashboard }) {
     return counts;
   };
 
+  const getReasonStats = () => {
+    const reasonStats = {};
+    filteredOpportunities.forEach(opp => {
+      const reason = opp.lostReason || 'Belirtilmemiş';
+      reasonStats[reason] = (reasonStats[reason] || 0) + 1;
+    });
+    return reasonStats;
+  };
+
+  const getTotalLostValue = () => {
+    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
+  };
+
+  const getAverageLostValue = () => {
+    const total = getTotalLostValue();
+    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
+  };
+
+  const formatAmount = (amount) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(0)}K`;
+    }
+    return amount.toFixed(0);
+  };
+
   const getReasonCounts = () => {
     const reasonCounts = {};
     filteredOpportunities.forEach(opp => {
