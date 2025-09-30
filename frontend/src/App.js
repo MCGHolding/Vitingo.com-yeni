@@ -306,7 +306,7 @@ const Dashboard = () => {
 
   // People Management Handlers
   const handleNewPerson = () => {
-    setShowNewPersonForm(true);
+    setCurrentView('new-person');
   };
 
   const handleAllPeople = () => {
