@@ -1001,6 +1001,21 @@ frontend:
         agent: "main"
         comment: "Updated BankEmailModal to send real emails instead of mailto: links. Added success state with 'Tebriker, Mailiniz başarı ile gönderilmiştir' message and 'Geri Dön', 'Dashboard' buttons as requested by user. Implementation includes backend endpoint /api/send-bank-email and frontend success state management."
 
+  - task: "Fix OpenOpportunitiesPage ReferenceError"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/OpenOpportunitiesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "user"
+          comment: "User reported 'Cannot access filteredOpportunities before initialization' ReferenceError when opening OpenOpportunitiesPage"
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed by moving statistics function calls (getTotalOpenValue, getAverageOpenValue, getStageStats) to run AFTER the filteredOpportunities useMemo hook is defined. The functions were being called on lines 279-281 before filteredOpportunities was created on line 360."
+
   - task: "Banks Module Navigation Fix Testing - FINAL VERIFICATION"
     implemented: true
     working: true
