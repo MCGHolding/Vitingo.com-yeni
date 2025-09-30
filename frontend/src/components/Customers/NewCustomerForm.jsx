@@ -90,9 +90,10 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   // IBAN hook'u kullan
   const { ibanError, handleIbanChange } = useIban();
 
-  // Load categories on mount
+  // Load data on mount
   useEffect(() => {
-    loadCategories();
+    loadCustomerTypes();
+    loadSectors();
   }, []);
 
   // Load specialties when category changes
