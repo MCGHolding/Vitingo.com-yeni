@@ -421,12 +421,21 @@ export default function NewCustomerForm({ onSave, onClose }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Company Avatar */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                  <Building className="h-4 w-4" />
-                  <span>Firma Logosu / Avatar</span>
-                </label>
+        {/* Şirket Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Building className="h-5 w-5" />
+              <span>Şirket Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Company Avatar */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
+                <Building className="h-4 w-4" />
+                <span>Firma Logosu / Avatar</span>
+              </label>
                 <div className="flex items-center space-x-4">
                   <CompanyAvatar
                     companyName={formData.companyName}
