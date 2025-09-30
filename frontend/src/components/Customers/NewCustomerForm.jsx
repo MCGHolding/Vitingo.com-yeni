@@ -414,7 +414,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
             address: baseCustomerData.address,
             country: baseCustomerData.country,
             city: baseCustomerData.city,
-            sector: baseCustomerData.sector,
+            sector: getSectorName(baseCustomerData.sector_id), // Convert sector_id to sector name
             notes: baseCustomerData.notes,
             taxOffice: baseCustomerData.tax_office,
             taxNumber: baseCustomerData.tax_number,
