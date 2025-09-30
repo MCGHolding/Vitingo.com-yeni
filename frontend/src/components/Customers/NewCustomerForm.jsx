@@ -606,18 +606,31 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   <MapPin className="inline w-4 h-4 mr-1" />
                   Ülke
                 </label>
-                <CountrySelect
-                  value={formData.country}
-                  onChange={(country) => {
-                    const countryCode = country ? country.iso2 : '';
-                    handleInputChange('country', countryCode);
-                    // Reset city when country changes
-                    if (formData.city) {
-                      handleInputChange('city', '');
-                    }
-                  }}
-                  placeholder="Ülke seçiniz..."
-                />
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <CountrySelect
+                      value={formData.country}
+                      onChange={(country) => {
+                        const countryCode = country ? country.iso2 : '';
+                        handleInputChange('country', countryCode);
+                        // Reset city when country changes
+                        if (formData.city) {
+                          handleInputChange('city', '');
+                        }
+                      }}
+                      placeholder="Ülke seçiniz..."
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddCountryModal(true)}
+                    className="px-3"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
               <div>
@@ -625,16 +638,30 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   <MapPin className="inline w-4 h-4 mr-1" />
                   Şehir
                 </label>
-                <CitySelect
-                  country={formData.country}
-                  value={formData.city}
-                  onChange={(city) => {
-                    const cityName = city ? city.name : '';
-                    handleInputChange('city', cityName);
-                  }}
-                  placeholder="Şehir seçiniz..."
-                  disabled={!formData.country}
-                />
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <CitySelect
+                      country={formData.country}
+                      value={formData.city}
+                      onChange={(city) => {
+                        const cityName = city ? city.name : '';
+                        handleInputChange('city', cityName);
+                      }}
+                      placeholder="Şehir seçiniz..."
+                      disabled={!formData.country}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddCityModal(true)}
+                    disabled={!formData.country}
+                    className="px-3"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
