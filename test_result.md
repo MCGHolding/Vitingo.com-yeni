@@ -133,17 +133,17 @@
 user_problem_statement: "Test the customer selection bug fix in NewInvoiceForm. The user reported that when they select a customer, they still get an error saying 'müşteri ismi seçmelisiniz' (please select customer name) and the invoice is not created. Bug Fix Applied: Changed validation from formData.customerName to formData.customerId and selectedCustomer, Updated error message to 'Lütfen bir müşteri seçiniz', Fixed backend data sending to use selectedCustomer.companyName. Testing Requirements: Navigate to Invoice Form, Test Customer Selection (click dropdown, select customer, verify selection works), Test Form Submission (verify no customer validation error appears), Test Console Log Verification (check proper logging), Test Edge Case (submit without customer should show validation error). Expected Results: Customer selection works properly, When customer is selected validation passes, Error 'müşteri ismi seçmelisiniz' should NOT appear when customer is selected, Form should proceed to next validation steps."
 
 frontend:
-  - task: "KDV (VAT Rate) Section Layout in NewInvoiceForm"
+  - task: "Customer Selection Bug Fix in NewInvoiceForm"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
-      - working: true
+      - working: false
         agent: "testing"
-        comment: "🎉 KDV (VAT RATE) SECTION TESTING COMPLETED SUCCESSFULLY! User requested verification of NewInvoiceForm KDV section changes: Items 2 & 3 implementation confirmed. ✅ COMPREHENSIVE TEST RESULTS: 1) 4 Buttons Side by Side: Found all 4 buttons with values '5', '10', '15', '20' (numbers only, no % symbols) in horizontal flex layout ✅ 2) 5th Dropdown Element: Found dropdown with 36 options ranging from %0 to %35 positioned on the right ✅ 3) Flex Layout Confirmed: Container uses 'flex gap-2' classes for proper side-by-side arrangement ✅ 4) Functionality Verified: Button clicks work with active state styling, dropdown selection works correctly ✅ 5) Visual Confirmation: Screenshots show proper implementation matching user requirements exactly ✅ CONCLUSION: Both items 2 and 3 are FULLY IMPLEMENTED and working correctly. The KDV section layout uses flex (not grid), shows 4 buttons with number values only, and includes the 5th dropdown with complete %0-%35 range as requested."
+        comment: "❌ CRITICAL CUSTOMER SELECTION BUG CONFIRMED - MULTIPLE ISSUES FOUND: Comprehensive testing of customer selection bug fix in NewInvoiceForm revealed several critical problems: 1) CUSTOMER DROPDOWN NOT FUNCTIONAL: Customer dropdown field found with placeholder 'Müşteri seçiniz...' but clicking it does not open dropdown options. No dropdown container appears with z-[9999] styling as expected from SearchableSelect component. 2) NO CUSTOMER OPTIONS LOADING: Despite console logs showing 'Customers loaded from database: 21', the SearchableSelect dropdown does not display any customer options when clicked. 3) VALIDATION NOT WORKING: When submitting form without customer selection, NO validation error appears (should show 'Lütfen bir müşteri seçiniz'). 4) CUSTOMER SELECTION MECHANISM BROKEN: The handleCustomerChange function in NewInvoiceForm.jsx is not being triggered when customer options are clicked, resulting in customerId remaining empty and selectedCustomer staying null. 5) CONSOLE LOG EVIDENCE: Previous test logs show 'Customer selection validation: {customerId: , selectedCustomer: null, customerName: No customer selected}' confirming the selection mechanism is not working. ROOT CAUSE: The SearchableSelect component's dropdown functionality appears to be broken - either the options are not being rendered, the click handlers are not working, or there's a CSS/styling issue preventing the dropdown from appearing. The bug fix mentioned (changing validation from formData.customerName to formData.customerId) cannot work if the customer selection mechanism itself is non-functional. IMPACT: Users cannot select customers in invoice form, making invoice creation impossible. This is a blocking issue for the invoice creation workflow."
 
 backend:
   - task: "Countries API Endpoints"
