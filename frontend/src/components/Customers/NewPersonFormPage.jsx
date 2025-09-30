@@ -34,6 +34,10 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     relationshipType: 'customer', // customer, supplier, partner, other
     jobTitle: '',
     company: '',
+    companyId: '', // For customer companies
+    supplier: '',
+    supplierId: '', // For supplier companies  
+    department: '',
     phone: '+90',
     mobile: '+90',
     email: '',
@@ -43,7 +47,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     address: '',
     notes: '',
     birthDate: '',
-    department: '',
     linkedin: '',
     tags: []
   });
@@ -51,6 +54,10 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdPersonInfo, setCreatedPersonInfo] = useState(null);
+  
+  // Dynamic data states
+  const [companies, setCompanies] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   
   const relationshipTypes = [
     { value: 'customer', label: 'Müşteri' },
