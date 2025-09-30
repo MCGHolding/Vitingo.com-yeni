@@ -1138,7 +1138,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       <MapPin className="inline w-4 h-4 mr-1" />
-                      Ülke
+                      Ülke <span className="text-red-500">*</span>
                     </label>
                     <div className="flex space-x-2">
                       <div className="flex-1">
