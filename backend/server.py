@@ -2768,6 +2768,120 @@ async def get_sectors():
         logger.error(f"Error getting sectors: {str(e)}")
         return []
 
+# ===================== COUNTRIES ENDPOINTS =====================
+
+class Country(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    iso2: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CountryCreate(BaseModel):
+    name: str
+    iso2: str
+
+@api_router.post("/countries", response_model=Country)
+async def create_country(country_data: CountryCreate):
+    """Create a new country"""
+    try:
+        # Check if already exists
+        existing = await db.countries.find_one({"iso2": country_data.iso2.upper()})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu ülke zaten mevcut")
+        
+        country = Country(
+            name=country_data.name,
+            iso2=country_data.iso2.upper()
+        )
+        country_dict = country.dict()
+        
+        # Insert to MongoDB
+        await db.countries.insert_one(country_dict)
+        
+        logger.info(f"Country created: {country.name}")
+        return country
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating country: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/countries", response_model=List[Country])
+async def get_countries():
+    """Get all countries"""
+    try:
+        countries = await db.countries.find().sort("name", 1).to_list(length=None)
+        return [Country(**country) for country in countries]
+        
+    except Exception as e:
+        logger.error(f"Error getting countries: {str(e)}")
+        return []
+
+# ===================== CITIES ENDPOINTS =====================
+
+class City(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    country_code: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CityCreate(BaseModel):
+    name: str
+    country_code: str
+
+@api_router.post("/cities", response_model=City)
+async def create_city(city_data: CityCreate):
+    """Create a new city"""
+    try:
+        # Check if already exists for this country
+        existing = await db.cities.find_one({
+            "name": city_data.name,
+            "country_code": city_data.country_code.upper()
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu şehir zaten mevcut")
+        
+        city = City(
+            name=city_data.name,
+            country_code=city_data.country_code.upper()
+        )
+        city_dict = city.dict()
+        
+        # Insert to MongoDB
+        await db.cities.insert_one(city_dict)
+        
+        logger.info(f"City created: {city.name} ({city.country_code})")
+        return city
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating city: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/cities", response_model=List[City])
+async def get_cities():
+    """Get all cities"""
+    try:
+        cities = await db.cities.find().sort("name", 1).to_list(length=None)
+        return [City(**city) for city in cities]
+        
+    except Exception as e:
+        logger.error(f"Error getting cities: {str(e)}")
+        return []
+
+@api_router.get("/cities/{country_code}", response_model=List[City])
+async def get_cities_by_country(country_code: str):
+    """Get cities by country code"""
+    try:
+        cities = await db.cities.find({"country_code": country_code.upper()}).sort("name", 1).to_list(length=None)
+        return [City(**city) for city in cities]
+        
+    except Exception as e:
+        logger.error(f"Error getting cities for country {country_code}: {str(e)}")
+        return []
+
 # ===================== END CUSTOMER ENDPOINTS =====================
 
 # ===================== BANK ENDPOINTS =====================
