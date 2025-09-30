@@ -714,7 +714,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
               {/* Telefon */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Telefon
+                  Telefon <span className="text-red-500">*</span>
                 </label>
                 <PhoneInput
                   key={`phone-${formData.country || 'tr'}`}
