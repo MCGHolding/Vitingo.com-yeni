@@ -545,13 +545,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
 
       {/* Customers Table */}
       <div className="px-6 pb-6">
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <Building className="h-5 w-5" />
-              <span>Müşteri Listesi</span>
-            </CardTitle>
-          </CardHeader>
+        <Card>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
