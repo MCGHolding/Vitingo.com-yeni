@@ -1212,9 +1212,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "NewSupplierForm International Phone Input Component"
-    - "NewExpenseReceiptForm Supplier Contact Integration"
-  stuck_tasks: []
+    - "NewCustomerForm Comprehensive Testing - All Scenarios"
+  stuck_tasks: 
+    - "NewCustomerForm Comprehensive Testing - All Scenarios"
   test_all: false
   test_priority: "high_first"
 
