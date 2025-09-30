@@ -561,11 +561,16 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       <SelectValue placeholder="Fuar seçin..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {fairs.map((fair) => (
-                        <SelectItem key={fair.id} value={fair.name}>
-                          {fair.name}
-                        </SelectItem>
-                      ))}
+                      {fairs
+                        .filter(fair => (fair.name || '').trim() !== '')
+                        .map((fair) => {
+                          const displayName = fair.name || `Fair ${fair.id}`;
+                          return (
+                            <SelectItem key={fair.id} value={displayName}>
+                              {displayName}
+                            </SelectItem>
+                          );
+                        })}
                     </SelectContent>
                   </Select>
                 </div>
