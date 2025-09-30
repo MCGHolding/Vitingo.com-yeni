@@ -139,7 +139,7 @@ export default function CitySelect({
         clearTimeout(debounceTimer);
       }
     };
-  }, [country]);
+  }, [country, refreshTrigger]); // refreshTrigger değiştiğinde de yeniden çek
 
   // Seçili şehri güncelle
   useEffect(() => {
