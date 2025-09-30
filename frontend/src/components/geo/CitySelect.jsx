@@ -46,22 +46,40 @@ export default function CitySelect({
     
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${backendUrl}/api/geo/countries/${country}/cities?query=${encodeURIComponent(query)}&limit=50&page=${page}`
-      );
+      // Use new cities endpoint
+      const response = await fetch(`${backendUrl}/api/cities/${country}`);
       
       if (response.ok) {
-        const data = await response.json();
-        const newCities = data.cities || [];
+        const citiesData = await response.json();
+        let filteredCities = citiesData;
         
-        if (append && page > 1) {
-          setCities(prev => [...prev, ...newCities]);
-        } else {
-          setCities(newCities);
+        // Apply search filter if query exists
+        if (query) {
+          filteredCities = citiesData.filter(city => 
+            city.name.toLowerCase().includes(query.toLowerCase())
+          );
         }
         
-        setPagination(data.pagination);
-        setHasMore(data.pagination?.has_next || false);
+        // Simple pagination (client-side for now)
+        const limit = 50;
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedCities = filteredCities.slice(startIndex, endIndex);
+        
+        if (append && page > 1) {
+          setCities(prev => [...prev, ...paginatedCities]);
+        } else {
+          setCities(paginatedCities);
+        }
+        
+        // Set pagination info
+        const totalPages = Math.ceil(filteredCities.length / limit);
+        setPagination({
+          page: page,
+          total_count: filteredCities.length,
+          has_next: page < totalPages
+        });
+        setHasMore(page < totalPages);
       } else {
         console.error('Failed to fetch cities:', response.statusText);
         setCities([]);
