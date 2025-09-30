@@ -404,21 +404,39 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                 <span>Kategori Seçimi</span>
               </CardTitle>
               
-              {/* Individual Customer Checkbox */}
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="individual-customer"
-                  checked={isIndividualCustomer}
-                  onChange={(e) => setIsIndividualCustomer(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                />
-                <label 
-                  htmlFor="individual-customer" 
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Bireysel Müşteri
-                </label>
+              {/* Customer Checkboxes */}
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="individual-customer"
+                    checked={isIndividualCustomer}
+                    onChange={(e) => setIsIndividualCustomer(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <label 
+                    htmlFor="individual-customer" 
+                    className="text-sm font-medium text-gray-700 cursor-pointer"
+                  >
+                    Bireysel Müşteri
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="customer-reference"
+                    checked={formData.is_reference || false}
+                    onChange={(e) => handleInputChange('is_reference', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <label 
+                    htmlFor="customer-reference" 
+                    className="text-sm font-medium text-gray-700 cursor-pointer"
+                  >
+                    Referans Müşteri
+                  </label>
+                </div>
               </div>
             </div>
           </CardHeader>
