@@ -656,7 +656,9 @@ export default function NewPersonFormPage({ onClose, onSave }) {
           </CardContent>
         </Card>
         
-        {/* Submit Button */}
+        </div> {/* End of form content container */}
+        
+        {/* Submit Button - Inside form but outside content container */}
         <div className="px-6 pb-6">
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={onClose}>
@@ -669,7 +671,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
           </div>
         </div>
       </form>
-    </div>
 
       {/* Success Modal */}
       {showSuccessModal && (
