@@ -1911,7 +1911,7 @@ def test_cities_endpoints():
             cities = response.json()
             found_in_all = False
             for city in cities:
-                if city.get("name") == "Test Şehri Öğrenci" and city.get("country_code") == "TR":
+                if city.get("name") == test_city_data["name"] and city.get("country_code") == "TR":
                     found_in_all = True
                     print(f"   ✅ PASS: Created city found in all cities list: {city['name']} ({city['country_code']})")
                     break
