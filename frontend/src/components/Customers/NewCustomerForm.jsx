@@ -105,21 +105,41 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     }
   }, [formData.customer_type_id]);
 
-  const loadCategories = async () => {
+  const loadCustomerTypes = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/supplier-categories`);
+      const response = await fetch(`${backendUrl}/api/customer-types`);
       if (response.ok) {
         const data = await response.json();
-        setCategories(data);
+        setCustomerTypes(data);
       } else {
-        throw new Error('Failed to load categories');
+        throw new Error('Failed to load customer types');
       }
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error('Error loading customer types:', error);
       toast({
         title: "Hata",
-        description: "Kategoriler yüklenirken hata oluştu",
+        description: "Müşteri türleri yüklenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const loadSectors = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/sectors`);
+      if (response.ok) {
+        const data = await response.json();
+        setSectors(data);
+      } else {
+        throw new Error('Failed to load sectors');
+      }
+    } catch (error) {
+      console.error('Error loading sectors:', error);
+      toast({
+        title: "Hata",
+        description: "Sektörler yüklenirken hata oluştu",
         variant: "destructive"
       });
     }
