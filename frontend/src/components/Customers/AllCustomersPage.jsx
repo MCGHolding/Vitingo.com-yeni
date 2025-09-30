@@ -37,16 +37,17 @@ import CustomerEmailModal from './CustomerEmailModal';
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ customer, onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
+  const popoverRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const menuItems = [
-    { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800', action: 'message' },
-    { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800', action: 'email' },
-    { label: 'Teklif', icon: FileUser, color: 'text-purple-600 hover:text-purple-800', action: 'quote' },
-    { label: 'Fatura', icon: Receipt, color: 'text-orange-600 hover:text-orange-800', action: 'invoice' },
-    { label: 'Pasif', icon: UserX, color: 'text-red-600 hover:text-red-800', action: 'inactive' },
-    { label: 'Favori', icon: Star, color: 'text-yellow-600 hover:text-yellow-800', action: 'favorite' },
-    { label: 'Sil', icon: Trash2, color: 'text-red-700 hover:text-red-900', action: 'delete' },
+    { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800 hover:bg-blue-50', action: 'message' },
+    { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800 hover:bg-green-50', action: 'email' },
+    { label: 'Teklif', icon: FileUser, color: 'text-purple-600 hover:text-purple-800 hover:bg-purple-50', action: 'quote' },
+    { label: 'Fatura', icon: Receipt, color: 'text-orange-600 hover:text-orange-800 hover:bg-orange-50', action: 'invoice' },
+    { label: 'Pasif', icon: UserX, color: 'text-red-600 hover:text-red-800 hover:bg-red-50', action: 'inactive' },
+    { label: 'Favori', icon: Star, color: 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50', action: 'favorite' },
+    { label: 'Sil', icon: Trash2, color: 'text-red-700 hover:text-red-900 hover:bg-red-50', action: 'delete' },
   ];
 
   const handleMenuAction = (action) => {
@@ -54,25 +55,32 @@ const ActionMenuPopover = ({ customer, onAction }) => {
     setIsOpen(false);
   };
 
-  const handleMouseEnter = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      setTimeoutId(null);
-    }
-    setIsOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    // Add a delay before closing the menu
-    const id = setTimeout(() => {
-      setIsOpen(false);
-    }, 300); // 300ms delay
-    setTimeoutId(id);
-  };
-
-  const handleClick = () => {
+  const togglePopover = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsOpen(!isOpen);
   };
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        popoverRef.current && 
+        !popoverRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div className="relative">
