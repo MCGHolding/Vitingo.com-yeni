@@ -447,6 +447,11 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     return filtered;
   }, [opportunitiesData, searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
+  // Calculate statistics after filteredOpportunities is available
+  const totalOpenValue = getTotalOpenValue();
+  const averageOpenValue = getAverageOpenValue();
+  const stageStats = getStageStats();
+
   // Statistics functions that depend on filteredOpportunities
   const getTotalOpenValue = () => {
     return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
