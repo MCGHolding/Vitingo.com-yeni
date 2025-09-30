@@ -761,7 +761,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                     </td>
                     <td className="py-3 px-2">
                       <div className="relative">
-                        <span className="absolute left-3 top-3 text-gray-500">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
                           {selectedCurrency?.symbol}
                         </span>
                         <Input
