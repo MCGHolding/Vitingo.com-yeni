@@ -458,7 +458,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       };
 
       console.log('=== INVOICE SUBMISSION DEBUG ===');
-      console.log('Selected customer:', selectedCustomer);
+      console.log('Selected customer:', currentSelectedCustomer);
       console.log('Form data customerId:', formData.customerId);
       console.log('Valid items count:', validItems.length);
       console.log('Valid items:', validItems);
