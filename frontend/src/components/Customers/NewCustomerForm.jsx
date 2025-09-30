@@ -16,9 +16,7 @@ import {
   X,
   Save,
   ArrowLeft,
-  User,
-  CheckCircle,
-  Home
+  User
 } from 'lucide-react';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
