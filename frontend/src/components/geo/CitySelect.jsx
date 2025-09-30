@@ -22,7 +22,8 @@ export default function CitySelect({
   placeholder = "Şehir seçin...",
   required = false,
   disabled = false,
-  className = ""
+  className = "",
+  refreshTrigger = 0
 }) {
   // Debug removed for production
   const [isOpen, setIsOpen] = useState(false);
