@@ -579,6 +579,13 @@ const Dashboard = () => {
         return <FavoriteOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-opportunities':
         return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
+      case 'new-customer':
+        return (
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Yeni Müşteri Formu</h2>
+            <NewCustomerForm onSave={saveCustomer} onClose={handleBackToDashboard} />
+          </div>
+        );
       case 'all-customers':
         return <AllCustomersPage onBackToDashboard={handleBackToDashboard} customers={customers} />;
       case 'inactive-customers':
