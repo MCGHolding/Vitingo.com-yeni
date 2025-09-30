@@ -226,8 +226,6 @@ export default function Sidebar({
   onCustomerProspects,
   onNewPerson,
   onAllPeople,
-  onNewProspect,
-  onAllProspects,
   onNewQuote,
   onAllQuotes,
   onNewFair,
