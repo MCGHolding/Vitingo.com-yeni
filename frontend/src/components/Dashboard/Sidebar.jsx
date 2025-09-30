@@ -81,17 +81,6 @@ const navigation = [
   },
   { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
   { 
-    name: 'Müşteri Aday', 
-    href: '/prospects', 
-    icon: UserSearch, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Müşteri Adayı', href: '/prospects/new', icon: UserPlus },
-      { name: 'Müşteri Adayları', href: '/prospects/all', icon: Users }
-    ]
-  },
-  { 
     name: 'Satış Fırsatları', 
     href: '/opportunities', 
     icon: Zap, 
