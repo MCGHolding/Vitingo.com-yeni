@@ -495,10 +495,6 @@ const Dashboard = () => {
     setCurrentView('dashboard');
   };
 
-  const closeOpportunityForm = () => {
-    setShowNewOpportunityForm(false);
-  };
-
   const closeUserManagementModal = () => {
     setShowUserManagementModal(false);
   };
