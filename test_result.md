@@ -1099,6 +1099,7 @@ frontend:
 
 test_plan:
   current_focus:
+    - "NewOpportunityFormPage Backend Integration"
     - "Updated NewCustomerForm with Required Field Changes and Notes Section"
   stuck_tasks: []
   test_all: false
