@@ -192,7 +192,11 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       
       if (customersResponse.ok) {
         const customerData = await customersResponse.json();
+        console.log('Customers loaded from database:', customerData.length);
+        console.log('First customer sample:', customerData[0]);
         setCustomers(customerData);
+      } else {
+        console.error('Failed to load customers, status:', customersResponse.status);
       }
       
       if (productsResponse.ok) {
