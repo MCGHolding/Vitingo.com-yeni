@@ -611,14 +611,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   <div className="flex-1">
                     <CountrySelect
                       value={formData.country}
-                      onChange={(country) => {
-                        const countryCode = country ? country.iso2 : '';
-                        handleInputChange('country', countryCode);
-                        // Reset city when country changes
-                        if (formData.city) {
-                          handleInputChange('city', '');
-                        }
-                      }}
+                      onChange={handleCountryChange}
                       placeholder="Ülke seçiniz..."
                       refreshTrigger={geoRefreshTrigger}
                     />
