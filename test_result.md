@@ -137,11 +137,11 @@ user_problem_statement: "Test the customer selection bug fix in NewInvoiceForm. 
 frontend:
   - task: "Customer Selection Bug Fix in NewInvoiceForm"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
-    stuck_count: 2
+    stuck_count: 3
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
@@ -155,6 +155,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "🎉 CRITICAL CUSTOMER VALIDATION BUG FIXED! Troubleshoot agent identified the exact issue: customer validation logic was checking for both formData.customerId AND selectedCustomer, but selectedCustomer could be null even when customerId was valid. FIXES APPLIED: 1) Changed validation logic from 'if (!formData.customerId || !selectedCustomer)' to 'if (!formData.customerId)' 2) Added proper selectedCustomer derivation using 'customers.find(c => c.id === formData.customerId)' before API call 3) Updated all references to use currentSelectedCustomer for consistent customer data 4) Backend testing confirmed all APIs are 100% functional - issue was purely frontend validation logic ROOT CAUSE: Overly strict validation preventing form submission entirely. No API calls were being made due to frontend validation failure, which explains why backend testing showed everything works perfectly. The '[object Object]' error occurred because validation failed before reaching proper error handling code. IMPACT: Users can now create invoices successfully as the customer validation logic is fixed and no longer blocks valid form submissions."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL CUSTOMER DROPDOWN ISSUE CONFIRMED - SEARCHABLESELECT COMPONENT BROKEN: Comprehensive testing of the invoice creation bug fix revealed that while the backend validation fixes are working, there is a critical issue with the SearchableSelect component that prevents customer selection entirely. 🔍 DETAILED FINDINGS: ✅ LOGIN & NAVIGATION: Successfully logged in with murb/Murat2024! and navigated to Muhasebe > Yeni Fatura ✅ DATA LOADING: Console logs confirm 21 customers loaded successfully from backend API ✅ INVOICE NUMBER GENERATION: Working correctly (USD-092025003011) ✅ FORM RENDERING: Invoice form loads properly with all sections visible ❌ CRITICAL ISSUE - CUSTOMER DROPDOWN: 1) Customer dropdown field is found and clickable 2) Dropdown container appears with correct z-index styling 3) However, NO customer options are rendered inside the dropdown 4) SearchableSelect component shows empty dropdown despite having 21 customers loaded 5) Users cannot select any customers, making invoice creation impossible 🔧 ROOT CAUSE ANALYSIS: The issue is in the SearchableSelect component's option rendering mechanism. Despite customers being loaded and passed to the component, the options array is not being properly mapped to clickable elements in the dropdown. This could be due to: - Data structure mismatch between customer data and SearchableSelect expected format - React rendering issue with the options mapping - CSS/styling preventing option visibility - Event handler issues preventing option clicks 💥 IMPACT: This is a BLOCKING BUG that prevents users from creating invoices entirely. The validation fixes applied by the main agent are correct, but they cannot be tested because the customer selection mechanism itself is broken. Users will see an empty dropdown when trying to select customers. 🎯 RECOMMENDATION: Main agent needs to investigate the SearchableSelect component integration in NewInvoiceForm.jsx, specifically the options prop mapping and ensure customer data is properly formatted for the SearchableSelect component."
 
 backend:
   - task: "Invoice Creation Bug - Backend Testing"
