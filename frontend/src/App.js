@@ -254,10 +254,7 @@ const Dashboard = () => {
         setCustomers(prev => [newCustomer, ...prev]);
         console.log('New customer created:', newCustomer);
         
-        // Show success toast
-        alert('Müşteri başarıyla kaydedildi!');
-        
-        // Navigate back to dashboard
+        // Navigate back to dashboard (success modal handled by form)
         setCurrentView('dashboard');
       } else {
         const errorData = await response.json();
