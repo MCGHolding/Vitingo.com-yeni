@@ -360,11 +360,11 @@ const NewCustomerForm = ({ onClose, onSave }) => {
               </div>
               
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Tebrikler, {createdCustomerInfo?.is_individual ? 'Bireysel ' : ''}Müşteri Başarı ile Oluşturuldu!
+                Tebrikler, {createdCustomerInfo?.is_individual ? 'Bireysel ' : ''}{createdCustomerInfo?.is_candidate ? 'Müşteri Adayı' : 'Müşteri'} Başarı ile Oluşturuldu!
               </h2>
               
               <p className="text-gray-600 mb-6">
-                <strong>{createdCustomerInfo?.company_name}</strong> {createdCustomerInfo?.is_individual ? 'bireysel müşteri' : 'müşteri şirketi'} başarıyla sisteme eklendi.
+                <strong>{createdCustomerInfo?.company_name}</strong> {createdCustomerInfo?.is_individual ? 'bireysel' : ''} {createdCustomerInfo?.is_candidate ? 'müşteri adayı' : 'müşteri şirketi'} başarıyla sisteme eklendi.
               </p>
               
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
