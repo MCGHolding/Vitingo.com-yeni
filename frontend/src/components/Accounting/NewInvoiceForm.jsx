@@ -434,7 +434,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
       const invoice = {
         invoice_number: formData.invoiceNumber,
         customer_id: formData.customerId || null,
-        customer_name: selectedCustomer?.companyName || 'Unknown Customer', // USE SELECTED CUSTOMER NAME
+        customer_name: currentSelectedCustomer?.companyName || 'Unknown Customer', // USE SELECTED CUSTOMER NAME
         date: formData.date,
         currency: formData.currency,
         items: validItems.map(item => ({
