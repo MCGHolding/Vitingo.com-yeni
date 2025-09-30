@@ -1280,6 +1280,32 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         </div>
       </form>
       )}
+
+      {/* Add Customer Type Modal */}
+      {showAddCustomerTypeModal && (
+        <AddCustomerTypeModal
+          onClose={() => setShowAddCustomerTypeModal(false)}
+          onSave={(newType) => {
+            // Refresh customer types and select the new one
+            loadCustomerTypes();
+            handleInputChange('customer_type_id', newType.value);
+            setShowAddCustomerTypeModal(false);
+          }}
+        />
+      )}
+
+      {/* Add Sector Modal */}
+      {showAddSectorModal && (
+        <AddSectorModal
+          onClose={() => setShowAddSectorModal(false)}
+          onSave={(newSector) => {
+            // Refresh sectors and select the new one
+            loadSectors();
+            handleInputChange('specialty_id', newSector.value);
+            setShowAddSectorModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };
