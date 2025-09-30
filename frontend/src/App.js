@@ -83,7 +83,6 @@ import {
 
 const Dashboard = () => {
   useActivityTracker();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNewOpportunityForm, setShowNewOpportunityForm] = useState(false);
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
