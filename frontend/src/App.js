@@ -164,7 +164,7 @@ const Dashboard = () => {
   };
 
   const handleNewOpportunity = () => {
-    setShowNewOpportunityForm(true);
+    setCurrentView('new-opportunity');
   };
 
   const handleOpenOpportunities = () => {
