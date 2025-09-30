@@ -219,6 +219,10 @@ const Dashboard = () => {
     setCurrentView('new-customer');
   };
 
+  const handleNewPerson = () => {
+    setCurrentView('new-person');
+  };
+
   const handleAllCustomers = () => {
     setCurrentView('all-customers');
   };
