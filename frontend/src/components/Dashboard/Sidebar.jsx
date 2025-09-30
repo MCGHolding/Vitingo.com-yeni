@@ -223,6 +223,7 @@ export default function Sidebar({
   onAllCustomers,
   onInactiveCustomers,
   onFavoriteCustomers,
+  onCustomerProspects,
   onNewPerson,
   onAllPeople,
   onNewProspect,
