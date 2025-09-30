@@ -1167,40 +1167,6 @@ const NewCustomerForm = ({ onClose, onSave }) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Sektör */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Sektör
-                </label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="text-xs"
-                >
-                  <Plus className="h-3 w-3 mr-1" />
-                  Yeni Sektör Ekle
-                </Button>
-              </div>
-              
-              <SearchableSelect
-                options={[
-                  { value: 'teknoloji', label: 'Teknoloji' },
-                  { value: 'sanayi', label: 'Sanayi' },
-                  { value: 'ticaret', label: 'Ticaret' },
-                  { value: 'hizmet', label: 'Hizmet' },
-                  { value: 'uretim', label: 'Üretim' },
-                  { value: 'ihracat', label: 'İhracat' },
-                  { value: 'ithalat', label: 'İthalat' },
-                  { value: 'perakende', label: 'Perakende' }
-                ]}
-                value={formData.sector || ''}
-                onValueChange={(value) => handleInputChange('sector', value)}
-                placeholder="Sektör seçiniz"
-              />
-            </div>
-
             {/* Etiketler */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
