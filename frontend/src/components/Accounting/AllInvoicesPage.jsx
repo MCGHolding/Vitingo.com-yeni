@@ -526,6 +526,76 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
           </div>
         )}
       </div>
+
+      {/* Invoice Preview Modal */}
+      {showPreviewModal && selectedInvoice && (
+        <InvoicePreviewModal
+          invoice={selectedInvoice}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setSelectedInvoice(null);
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedInvoice && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Fatura Silme Onayı</h3>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedInvoice(null);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-700 mb-2">
+                Aşağıdaki faturayı silmek istediğinizden emin misiniz?
+              </p>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="text-sm font-medium text-gray-900">
+                  Fatura No: {selectedInvoice.invoice_number}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Müşteri: {selectedInvoice.customer_name}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Tutar: {getCurrencySymbol(selectedInvoice.currency)}{formatNumber(selectedInvoice.total.toFixed(2))}
+                </div>
+              </div>
+              <p className="text-sm text-red-600 mt-2">
+                Bu işlem geri alınamaz!
+              </p>
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedInvoice(null);
+                }}
+                variant="outline"
+                className="flex-1"
+              >
+                İptal
+              </Button>
+              <Button
+                onClick={handleDeleteInvoice}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Sil
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
