@@ -351,7 +351,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
       <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-3">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
               <Building className="h-8 w-8 text-blue-600" />
               <span>Tüm Müşteriler</span>
             </h1>
