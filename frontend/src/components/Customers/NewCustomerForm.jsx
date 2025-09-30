@@ -135,11 +135,14 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   const loadSectors = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      console.log('Loading sectors from:', `${backendUrl}/api/sectors`);
       const response = await fetch(`${backendUrl}/api/sectors`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Sectors loaded:', data);
         setSectors(data);
       } else {
+        console.error('Failed to load sectors, status:', response.status);
         throw new Error('Failed to load sectors');
       }
     } catch (error) {
