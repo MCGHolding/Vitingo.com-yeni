@@ -1171,13 +1171,6 @@ const Dashboard = () => {
         {renderContent()}
       </div>
 
-      {/* New Opportunity Form Modal */}
-      {showNewOpportunityForm && (
-        <NewOpportunityForm
-          onClose={closeOpportunityForm}
-          onSave={saveOpportunity}
-        />
-      )}
       {/* New Customer Form Modal - Removed for page-based approach */}
 
       {/* New Person Form Modal */}
