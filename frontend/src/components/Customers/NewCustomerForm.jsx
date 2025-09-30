@@ -73,7 +73,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     // Customer specific fields
     sector: '',
     tags: [],
-    notes: ''
+    notes: '',
+    is_reference: false
   });
 
   const [currentService, setCurrentService] = useState('');
