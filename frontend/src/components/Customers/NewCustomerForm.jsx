@@ -272,9 +272,32 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           }
         : formData;
 
-      // Save using onSave prop if provided
+      // Determine which endpoint to use based on is_candidate checkbox
+      const endpoint = formData.is_candidate ? '/api/customer-prospects' : '/api/customers';
+      
+      // Save directly to backend or use onSave prop
       if (onSave) {
         await onSave(customerData);
+      } else {
+        // Direct backend save
+        const response = await fetch(`${backendUrl}${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...customerData,
+            contacts: contacts.filter(contact => contact.full_name.trim())
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Kaydetme başarısız');
+        }
+
+        const savedData = await response.json();
+        console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
       }
 
       // Set success state with customer info
