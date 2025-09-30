@@ -22,7 +22,11 @@ import {
   FileText,
   X,
   Trophy,
-  TrendingUp
+  TrendingUp,
+  BarChart,
+  List,
+  Zap,
+  CheckCircle
 } from 'lucide-react';
 import { wonOpportunities, tagColors } from '../../mock/opportunitiesData';
 
