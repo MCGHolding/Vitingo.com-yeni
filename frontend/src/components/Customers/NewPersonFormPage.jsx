@@ -266,7 +266,7 @@ export default function NewPersonFormPage({ onClose, onSave }) {
       </div>
 
       {/* Main Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit}>
         <div className="px-6 py-6 space-y-6">
         
         {/* Kişi Bilgileri */}
