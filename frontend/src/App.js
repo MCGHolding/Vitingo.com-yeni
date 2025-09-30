@@ -312,20 +312,6 @@ const Dashboard = () => {
     setShowNewPersonForm(false);
   };
 
-  const savePerson = (personData) => {
-    const newPerson = {
-      ...personData,
-      id: Date.now()
-    };
-    console.log('Before update - People count:', people.length);
-    setPeople(prev => {
-      const updated = [newPerson, ...prev];
-      console.log('After update - People count:', updated.length);
-      console.log('New person data:', newPerson);
-      return updated;
-    });
-  };
-
   const handleAllQuotes = () => {
     console.log('All Quotes clicked');
     // TODO: Implement all quotes page view
