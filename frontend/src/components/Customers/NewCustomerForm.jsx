@@ -1394,7 +1394,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           onClose={() => setShowAddCityModal(false)}
           selectedCountry={formData.country}
           onSave={(newCity) => {
-            // City added successfully - no auto-selection needed
+            // City added successfully - refresh geo data
+            setGeoRefreshTrigger(prev => prev + 1);
             setShowAddCityModal(false);
             toast({
               title: "Başarılı",
