@@ -137,11 +137,11 @@ user_problem_statement: "Test the customer selection bug fix in NewInvoiceForm. 
 frontend:
   - task: "Customer Selection Bug Fix in NewInvoiceForm"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
     stuck_count: 2
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: false
         agent: "testing"
