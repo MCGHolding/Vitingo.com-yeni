@@ -655,7 +655,20 @@ export default function NewPersonFormPage({ onClose, onSave }) {
             </div>
           </CardContent>
         </Card>
-      </div>
+        
+        {/* Submit Button */}
+        <div className="px-6 pb-6">
+          <div className="flex justify-end space-x-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              İptal
+            </Button>
+            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+              <User className="h-4 w-4 mr-2" />
+              {isLoading ? 'Kaydediliyor...' : 'Kişi Oluştur'}
+            </Button>
+          </div>
+        </div>
+      </form>
 
       {/* Success Modal */}
       {showSuccessModal && (
