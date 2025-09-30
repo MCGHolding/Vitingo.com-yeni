@@ -375,8 +375,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
       toast({
         title: "Hata",
         description: isIndividualCustomer 
-          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, sektör, yetkili kişi bilgileri (ad, email, telefon, görev)"
-          : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres, ülke, şehir), iletişim bilgileri ve yetkili kişi bilgileri",
+          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, sektör, yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)"
+          : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres, ülke, şehir), iletişim bilgileri ve yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)",
         variant: "destructive"
       });
       return;
