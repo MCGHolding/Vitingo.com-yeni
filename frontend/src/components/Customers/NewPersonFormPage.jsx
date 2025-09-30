@@ -344,18 +344,62 @@ export default function NewPersonFormPage({ onClose, onSave }) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Şirket */}
+              {/* Şirket (Müşteri Şirketleri) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Şirket
+                  Şirket (Müşteri)
                 </label>
-                <Input
-                  value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
-                  placeholder="Çalıştığı şirket adı"
-                />
+                <Select 
+                  value={formData.companyId}
+                  onValueChange={(value) => {
+                    const selectedCompany = companies.find(c => c.id === value);
+                    handleInputChange('companyId', value);
+                    handleInputChange('company', selectedCompany ? selectedCompany.companyName || selectedCompany.companyTitle : '');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Müşteri şirketi seçin..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Seçiniz...</SelectItem>
+                    {companies.map((company) => (
+                      <SelectItem key={company.id} value={company.id}>
+                        {company.companyName || company.companyTitle}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
+              {/* Tedarikçi Şirketi */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tedarikçi Şirketi
+                </label>
+                <Select 
+                  value={formData.supplierId}
+                  onValueChange={(value) => {
+                    const selectedSupplier = suppliers.find(s => s.id === value);
+                    handleInputChange('supplierId', value);
+                    handleInputChange('supplier', selectedSupplier ? selectedSupplier.company_short_name : '');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tedarikçi şirketi seçin..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Seçiniz...</SelectItem>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier.id} value={supplier.id}>
+                        {supplier.company_short_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
               {/* Departman */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
