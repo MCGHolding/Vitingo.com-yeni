@@ -12086,30 +12086,86 @@ def test_people_crud_endpoints():
     
     return True
 
+def test_customer_types_comprehensive():
+    """
+    Run comprehensive customer-types endpoint testing as requested.
+    
+    This will test the customer-types backend endpoint that's causing the dropdown issue:
+    1. Test GET /api/customer-types endpoint to verify it returns proper data
+    2. Check if the endpoint exists and responds with correct structure
+    3. Verify customer types data is in the database
+    4. Test if any customer types exist in the database
+    5. If no data exists, test POST /api/customer-types to create some test data
+    6. Then test GET /api/customer-types again to verify dropdown data is available
+    """
+    
+    print("🎯 COMPREHENSIVE CUSTOMER TYPES ENDPOINT TESTING")
+    print("=" * 80)
+    
+    all_tests_passed = True
+    
+    # Test 1: GET /api/customer-types endpoint
+    print("\n📋 TEST 1: GET /api/customer-types endpoint")
+    if not test_customer_types_get_endpoint():
+        all_tests_passed = False
+        print("❌ GET customer-types endpoint test failed")
+    else:
+        print("✅ GET customer-types endpoint test passed")
+    
+    # Test 2: POST /api/customer-types endpoint (create test data)
+    print("\n📋 TEST 2: POST /api/customer-types endpoint (create test data)")
+    if not test_customer_types_post_endpoint():
+        all_tests_passed = False
+        print("❌ POST customer-types endpoint test failed")
+    else:
+        print("✅ POST customer-types endpoint test passed")
+    
+    # Test 3: GET /api/customer-types again (verify dropdown data)
+    print("\n📋 TEST 3: GET /api/customer-types again (verify dropdown data)")
+    if not test_customer_types_get_after_creation():
+        all_tests_passed = False
+        print("❌ GET customer-types after creation test failed")
+    else:
+        print("✅ GET customer-types after creation test passed")
+    
+    return all_tests_passed
+
 if __name__ == "__main__":
-    print("🚀 STARTING CUSTOMER PROSPECTS BACKEND FUNCTIONALITY TESTING")
+    print("🚀 STARTING CUSTOMER TYPES BACKEND ENDPOINT TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing customer prospects backend functionality as requested:")
-    print("1. Test GET /api/customer-prospects endpoint")
-    print("2. Test POST /api/customer-prospects endpoint with test data")
-    print("3. Test GET /api/customer-prospects again to verify persistence")
-    print("4. Verify data structure matches CustomerProspectsPage expectations")
-    print("5. Test regular customers endpoint (/api/customers) separately")
+    print("Testing customer-types backend endpoint that's causing the dropdown issue:")
+    print("1. Test GET /api/customer-types endpoint to verify it returns proper data")
+    print("2. Check if the endpoint exists and responds with correct structure")
+    print("3. Verify customer types data is in the database")
+    print("4. Test if any customer types exist in the database")
+    print("5. If no data exists, test POST /api/customer-types to create some test data:")
+    print("   - Create 'Yeni Müşteri' type")
+    print("   - Create 'Mevcut Müşteri' type")
+    print("   - Create 'VIP Müşteri' type")
+    print("6. Then test GET /api/customer-types again to verify dropdown data is available")
+    print("\nThis will fix the blocking issue preventing NewCustomerForm submission and success modal testing.")
     print("=" * 80)
     
-    # Run comprehensive customer prospects tests
-    success = test_customer_prospects_comprehensive()
+    # Run comprehensive customer types tests
+    success = test_customer_types_comprehensive()
     
     if success:
-        print("\n🎯 CUSTOMER PROSPECTS BACKEND TESTING COMPLETED SUCCESSFULLY!")
-        print("✅ All customer prospects endpoints working correctly")
-        print("✅ Test prospect created and persisted successfully")
-        print("✅ Data structure compatible with frontend")
-        print("✅ Regular customers endpoint working independently")
-        print("✅ Backend is ready for customer prospects frontend functionality")
+        print("\n🎯 CUSTOMER TYPES BACKEND TESTING COMPLETED SUCCESSFULLY!")
+        print("✅ All customer-types endpoints working correctly")
+        print("✅ Customer types data is available in the database")
+        print("✅ Default customer types created successfully")
+        print("✅ Test customer types (Yeni Müşteri, Mevcut Müşteri, VIP Müşteri) created")
+        print("✅ Dropdown data is now available for NewCustomerForm")
+        print("✅ Backend is ready for NewCustomerForm dropdown functionality")
+        print("\n🎉 DROPDOWN ISSUE SHOULD NOW BE RESOLVED!")
+        print("The NewCustomerForm should now be able to:")
+        print("• Load customer types in the dropdown")
+        print("• Allow form submission")
+        print("• Show success modal after submission")
         sys.exit(0)
     else:
-        print("\n❌ CUSTOMER PROSPECTS BACKEND TESTING FAILED!")
+        print("\n❌ CUSTOMER TYPES BACKEND TESTING FAILED!")
         print("Backend API issues found that need to be addressed.")
+        print("The dropdown issue in NewCustomerForm may persist.")
         sys.exit(1)
