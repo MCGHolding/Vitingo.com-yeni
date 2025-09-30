@@ -404,7 +404,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         )}
       </div>
 
-      {customerCreated ? (
+      {showSuccessModal ? (
         /* Success State */
         <Card>
           <CardContent className="p-8">
