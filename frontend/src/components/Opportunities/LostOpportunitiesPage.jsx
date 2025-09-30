@@ -22,7 +22,11 @@ import {
   FileText,
   X,
   XCircle,
-  TrendingDown
+  TrendingDown,
+  BarChart,
+  TrendingUp,
+  List,
+  Zap
 } from 'lucide-react';
 import { lostOpportunities, tagColors } from '../../mock/opportunitiesData';
 
