@@ -260,6 +260,55 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     return sector ? sector.name : 'Bilinmiyor';
   };
 
+  // Handle country change and update phone numbers accordingly
+  const handleCountryChange = (country) => {
+    const countryCode = country ? country.iso2 : '';
+    handleInputChange('country', countryCode);
+    
+    // Reset city when country changes
+    if (formData.city) {
+      handleInputChange('city', '');
+    }
+    
+    // Update phone numbers with new country dial code
+    if (countryCode) {
+      // Get dial code for the new country - common ones
+      const dialCodes = {
+        'tr': '+90',
+        'us': '+1', 
+        'gb': '+44',
+        'de': '+49',
+        'fr': '+33',
+        'it': '+39',
+        'es': '+34',
+        'ca': '+1',
+        'au': '+61',
+        'in': '+91',
+        'cn': '+86',
+        'jp': '+81',
+        'br': '+55',
+        'mx': '+52',
+        'ru': '+7',
+        'kr': '+82',
+        'sa': '+966',
+        'ae': '+971',
+        'eg': '+20',
+        'za': '+27'
+      };
+      
+      const newDialCode = dialCodes[countryCode.toLowerCase()] || '';
+      if (newDialCode) {
+        // Update phone numbers to use new dial code
+        handleInputChange('phone', newDialCode);
+        handleInputChange('mobile', newDialCode);
+      }
+    } else {
+      // Reset to default Turkish numbers if no country selected
+      handleInputChange('phone', '+90');
+      handleInputChange('mobile', '+90');
+    }
+  };
+
   const handleGoToDashboard = () => {
     if (onClose) {
       onClose();
