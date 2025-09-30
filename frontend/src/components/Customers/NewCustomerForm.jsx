@@ -861,7 +861,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                     {/* IBAN */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        IBAN <span className="text-red-500">*</span>
+                        IBAN
                       </label>
                       <Input
                         value={formData.iban}
