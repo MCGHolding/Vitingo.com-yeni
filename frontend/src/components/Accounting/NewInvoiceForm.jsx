@@ -506,18 +506,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         displayMessage = error.message;
       }
       
-      // Show detailed error in modal instead of alert
-      const errorModal = document.createElement('div');
-      errorModal.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;">
-          <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 20px;">
-            <h3 style="color: #dc2626; margin-bottom: 10px;">Fatura Kaydedilemedi</h3>
-            <p style="margin-bottom: 15px;">${displayMessage}</p>
-            <button onclick="this.closest('div').remove()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Tamam</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(errorModal);
+      alert(`Fatura kaydedilemedi: ${displayMessage}`);
     } finally {
       setIsSubmitting(false);
     }
