@@ -450,7 +450,14 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         payment_term: formData.paymentTerm
       };
 
-      console.log('Sending REAL invoice data to backend:', JSON.stringify(invoice, null, 2));
+      console.log('=== INVOICE SUBMISSION DEBUG ===');
+      console.log('Selected customer:', selectedCustomer);
+      console.log('Form data customerId:', formData.customerId);
+      console.log('Valid items count:', validItems.length);
+      console.log('Valid items:', validItems);
+      console.log('Invoice object to send:', JSON.stringify(invoice, null, 2));
+      console.log('Backend URL:', backendUrl);
+      console.log('=== END DEBUG ===');
 
       const response = await fetch(`${backendUrl}/api/invoices`, {
         method: 'POST',
