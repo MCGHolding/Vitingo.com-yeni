@@ -182,7 +182,11 @@ export default function NewPersonFormPage({ onClose, onSave }) {
         fullName: `${formData.firstName} ${formData.lastName}`,
         relationshipType: formData.relationshipType,
         jobTitle: formData.jobTitle,
-        company: formData.company,
+        company: formData.company, // Company name for display
+        companyId: formData.companyId, // Customer company ID
+        supplier: formData.supplier, // Supplier name for display  
+        supplierId: formData.supplierId, // Supplier company ID
+        department: formData.department,
         phone: formData.phone,
         mobile: formData.mobile,
         email: formData.email,
@@ -192,7 +196,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
         address: formData.address,
         notes: formData.notes,
         birthDate: formData.birthDate,
-        department: formData.department,
         linkedin: formData.linkedin,
         tags: formData.tags || []
       };
