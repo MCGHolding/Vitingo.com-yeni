@@ -261,6 +261,9 @@ const Dashboard = () => {
         
         // Show success toast
         alert('Müşteri başarıyla kaydedildi!');
+        
+        // Navigate back to dashboard
+        setCurrentView('dashboard');
       } else {
         const errorData = await response.json();
         console.error('Failed to save customer:', errorData);
