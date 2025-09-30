@@ -37,6 +37,10 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   const [categories, setCategories] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [isIndividualCustomer, setIsIndividualCustomer] = useState(false);
+  const [showAddCustomerTypeModal, setShowAddCustomerTypeModal] = useState(false);
+  const [showAddSectorModal, setShowAddSectorModal] = useState(false);
+  const [customerTypes, setCustomerTypes] = useState([]);
+  const [sectors, setSectors] = useState([]);
   const [contacts, setContacts] = useState([{ 
     full_name: '', 
     mobile: '', 
