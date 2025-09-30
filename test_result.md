@@ -1070,6 +1070,18 @@ frontend:
         agent: "testing"
         comment: "🔍 ENHANCED FORM VALIDATION DEBUG TESTING COMPLETED - CRITICAL ISSUE IDENTIFIED: Conducted comprehensive debug testing as requested to identify exact form validation failure cause. ✅ DEBUG LOGS CAPTURED: Successfully captured 'SUBMIT TRIGGERED - Form Data: {invoiceNumber: USD-092025001007, currency: USD, date: 2025-09-27, customerId: , customerName: }' showing form submission is triggered but data is empty. ❌ ROOT CAUSE IDENTIFIED: 1) Customer name input field accepts data but doesn't persist in React state (customerName shows empty in debug logs despite manual input) 2) Product table inputs not properly connected to React state (only 2 table inputs detected instead of 3+) 3) Form validation correctly prevents submission when required fields are empty 4) No API calls made because validation fails before backend submission ✅ VALIDATION LOGIC WORKING: parseNumber function works correctly (tested: 5→5, 12000→12000), form validation prevents submission with empty fields as expected. 🎯 EXACT ISSUE: Frontend form field state management problem - input fields not updating formData state properly. The issue is NOT 422 backend validation but frontend React state synchronization between input fields and form state. Manual customer input and product table inputs need proper onChange handlers to update component state."
 
+  - task: "NewOpportunityFormPage Backend Integration"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BACKEND INTEGRATION ISSUE IDENTIFIED - NewOpportunityFormPage cannot function due to missing backend endpoints. Comprehensive testing revealed: ✅ CUSTOMERS API WORKING: GET /api/customers returns 21 customers for dropdown population ✅ FAIRS API WORKING: GET /api/fairs returns 29 fairs for dropdown population ❌ CRITICAL MISSING ENDPOINT: POST /api/opportunities returns 404 - endpoint does not exist! ❌ MISSING OPPORTUNITY MODEL: No Opportunity data model defined in backend ❌ MISSING CRUD OPERATIONS: No GET /api/opportunities for listing opportunities ❌ FORM SUBMISSION FAILURE: NewOpportunityFormPage will fail when users try to submit forms 🎯 ROOT CAUSE: The frontend NewOpportunityFormPage is fully implemented and tries to call /api/opportunities endpoint, but this endpoint is completely missing from the backend server.py file. The form loads correctly, populates customer and fairs dropdowns, but fails on submission because there's no backend endpoint to handle opportunity creation. 🔧 REQUIRED FIXES: 1) Add Opportunity data model to backend with fields: title, customer, contact_person, amount, currency, status, stage, priority, close_date, source, description, business_type, country, city, trade_show, trade_show_dates, expected_revenue, probability, tags 2) Add POST /api/opportunities endpoint for creating opportunities 3) Add GET /api/opportunities endpoint for listing opportunities 4) Add proper validation for required fields (title, customer, amount, close_date, stage) 5) Add currency support (TRY, USD, EUR, GBP) 📋 IMPACT: Users cannot create sales opportunities until backend endpoints are implemented. This is a critical missing feature that prevents the sales opportunity management functionality from working."
+
   - task: "IBAN Validation System - useIban Hook Integration"
     implemented: true
     working: "NA"
