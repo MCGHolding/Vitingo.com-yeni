@@ -162,6 +162,9 @@ export default function LostOpportunitiesPage({ onBackToDashboard }) {
   }, [searchTerm, tagSearch, currencyFilter, reasonFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const currencyCounts = getCurrencyCounts();
+  const reasonStats = getReasonStats();
+  const totalLostValue = getTotalLostValue();
+  const averageLostValue = getAverageLostValue();
 
   const clearFilters = () => {
     setSearchTerm('');
