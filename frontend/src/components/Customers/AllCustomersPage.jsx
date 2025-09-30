@@ -88,12 +88,11 @@ const ActionMenuPopover = ({ customer, onAction }) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              ref={buttonRef}
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              onClick={handleClick}
+              onClick={togglePopover}
             >
               <MoreHorizontal className="h-3 w-3" />
             </Button>
@@ -106,14 +105,13 @@ const ActionMenuPopover = ({ customer, onAction }) => {
 
       {isOpen && (
         <div 
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          ref={popoverRef}
+          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] animate-in fade-in-0 zoom-in-95"
         >
           {menuItems.map((item, index) => (
             <button
               key={index}
-              className={`w-full text-left px-3 py-2 text-sm ${item.color} hover:bg-gray-50 flex items-center space-x-2 ${
+              className={`w-full text-left px-3 py-2 text-sm ${item.color} flex items-center space-x-2 transition-colors duration-150 ${
                 index === 0 ? 'rounded-t-lg' : ''
               } ${index === menuItems.length - 1 ? 'rounded-b-lg' : ''}`}
               onClick={() => handleMenuAction(item.action)}
