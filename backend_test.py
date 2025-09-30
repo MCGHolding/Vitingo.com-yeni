@@ -1934,7 +1934,7 @@ def test_cities_endpoints():
             tr_cities = response.json()
             found_in_country = False
             for city in tr_cities:
-                if city.get("name") == "Test Şehri Öğrenci":
+                if city.get("name") == test_city_data["name"]:
                     found_in_country = True
                     print(f"   ✅ PASS: Created city found in TR cities list: {city['name']}")
                     break
