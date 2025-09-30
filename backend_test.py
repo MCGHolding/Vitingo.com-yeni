@@ -11672,60 +11672,29 @@ def test_people_crud_endpoints():
     return True
 
 if __name__ == "__main__":
-    print("🚀 STARTING COUNTRIES AND CITIES ENDPOINTS TESTING")
+    print("🚀 STARTING CUSTOMER PROSPECTS BACKEND FUNCTIONALITY TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing Countries and Cities endpoints for Yeni Ülke and Yeni Şehir modals")
+    print("Testing customer prospects backend functionality as requested:")
+    print("1. Test GET /api/customer-prospects endpoint")
+    print("2. Test POST /api/customer-prospects endpoint with test data")
+    print("3. Test GET /api/customer-prospects again to verify persistence")
+    print("4. Verify data structure matches CustomerProspectsPage expectations")
+    print("5. Test regular customers endpoint (/api/customers) separately")
     print("=" * 80)
     
-    # Track test results
-    test_results = []
+    # Run comprehensive customer prospects tests
+    success = test_customer_prospects_comprehensive()
     
-    # Test 1: Countries endpoints
-    print("\n" + "🔥" * 80)
-    print("TESTING COUNTRIES ENDPOINTS")
-    print("🔥" * 80)
-    countries_success = test_countries_endpoints()
-    test_results.append(("Countries Endpoints", countries_success))
-    
-    # Test 2: Cities endpoints
-    print("\n" + "🔥" * 80)
-    print("TESTING CITIES ENDPOINTS")
-    print("🔥" * 80)
-    cities_success = test_cities_endpoints()
-    test_results.append(("Cities Endpoints", cities_success))
-    
-    # Test 3: Cities Test Data Setup
-    print("\n" + "🔥" * 80)
-    print("TESTING CITIES TEST DATA SETUP FOR CITYSELECT")
-    print("🔥" * 80)
-    cities_test_data_success = test_cities_endpoint_with_test_data()
-    test_results.append(("Cities Test Data Setup", cities_test_data_success))
-    
-    # Final summary
-    print("\n" + "=" * 80)
-    print("FINAL TEST RESULTS SUMMARY")
-    print("=" * 80)
-    
-    all_passed = True
-    for test_name, success in test_results:
-        status = "✅ PASSED" if success else "❌ FAILED"
-        print(f"{test_name}: {status}")
-        if not success:
-            all_passed = False
-    
-    print("=" * 80)
-    
-    if all_passed:
-        print("\n🎉 ALL COUNTRIES AND CITIES ENDPOINTS TESTS PASSED!")
-        print("✅ Countries endpoints working correctly")
-        print("✅ Cities endpoints working correctly")
-        print("✅ Turkish character support verified")
-        print("✅ Duplicate control working")
-        print("✅ MongoDB storage and retrieval working")
-        print("✅ All endpoints ready for NewCustomerForm integration")
+    if success:
+        print("\n🎯 CUSTOMER PROSPECTS BACKEND TESTING COMPLETED SUCCESSFULLY!")
+        print("✅ All customer prospects endpoints working correctly")
+        print("✅ Test prospect created and persisted successfully")
+        print("✅ Data structure compatible with frontend")
+        print("✅ Regular customers endpoint working independently")
+        print("✅ Backend is ready for customer prospects frontend functionality")
         sys.exit(0)
     else:
-        print("\n❌ SOME TESTS FAILED!")
+        print("\n❌ CUSTOMER PROSPECTS BACKEND TESTING FAILED!")
         print("Backend API issues found that need to be addressed.")
         sys.exit(1)
