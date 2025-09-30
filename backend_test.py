@@ -13389,48 +13389,51 @@ def test_customer_types_comprehensive():
     return all_tests_passed
 
 if __name__ == "__main__":
-    print("🚀 STARTING NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TESTING")
+    print("🚀 STARTING CRITICAL INVOICE CREATION BUG TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing NewOpportunityFormPage backend integration as requested:")
-    print("1. Test customers API for customer dropdown")
-    print("2. Test fairs API for fairs dropdown")
-    print("3. Test opportunities API for form submission")
-    print("4. Test form validation and data structure")
-    print("5. Test currency selection functionality")
-    print("6. Verify backend API integration works correctly")
-    print("\nThis will verify if the NewOpportunityFormPage can successfully integrate with backend APIs.")
+    print("Testing backend endpoints to isolate the '[object Object]' error issue")
+    print("User reported: Invoice creation fails with '[object Object]' error even after selecting customers")
     print("=" * 80)
     
-    # Run the NewOpportunityFormPage backend integration test
-    success = test_new_opportunity_form_backend_integration()
+    # Run the critical invoice creation bug test
+    print(f"\n🧪 Running: Critical Invoice Creation Bug Test")
+    print("-" * 60)
     
-    if success:
-        print("\n🎯 NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TESTING COMPLETED SUCCESSFULLY!")
-        print("✅ All required backend endpoints working correctly")
-        print("✅ Customer dropdown data available")
-        print("✅ Fairs dropdown data available")
-        print("✅ Opportunities API working for form submission")
-        print("✅ Form validation working")
-        print("✅ Currency selection working")
-        print("✅ Backend integration is fully functional")
-        print("\n🔍 RESULTS:")
-        print("The NewOpportunityFormPage should work correctly with the backend.")
-        print("Users can successfully:")
-        print("• Load customer data in dropdown")
-        print("• Load fairs data in dropdown")
-        print("• Submit opportunity forms")
-        print("• See validation errors for required fields")
-        print("• Select different currencies (TRY, USD, EUR, GBP)")
+    try:
+        result = test_invoice_creation_bug_comprehensive()
+        
+        if result:
+            print(f"\n✅ INVOICE CREATION BUG TEST PASSED")
+            print("🎯 CONCLUSION: Backend is working correctly")
+            print("   The '[object Object]' error is likely a frontend issue")
+            print("   with error handling or customer selection.")
+        else:
+            print(f"\n❌ INVOICE CREATION BUG TEST FAILED")
+            print("🚨 CRITICAL BACKEND ISSUES FOUND")
+            print("   Backend problems are contributing to the invoice creation bug")
+            
+    except Exception as e:
+        print(f"❌ ERROR in Invoice Creation Bug Test: {str(e)}")
+        result = False
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("🏁 INVOICE CREATION BUG TEST SUMMARY")
+    print("=" * 80)
+    
+    if result:
+        print("✅ Backend endpoints are working correctly")
+        print("✅ Customers can be loaded for selection")
+        print("✅ Invoice numbers can be generated")
+        print("✅ Invoices can be created with proper data")
+        print("✅ Validation errors are handled correctly")
+        print("\n🎯 RECOMMENDATION: Focus on frontend debugging")
+        print("   - Check customer selection mechanism")
+        print("   - Verify error handling in form submission")
+        print("   - Ensure proper data formatting before API calls")
         sys.exit(0)
     else:
-        print("\n❌ NEWOPPORTUNITYFORMPAGE BACKEND INTEGRATION TESTING FAILED!")
-        print("Critical backend API issues found that need to be addressed.")
-        print("The NewOpportunityFormPage will not work correctly until these issues are fixed.")
-        print("\n🔧 LIKELY ISSUES:")
-        print("• Missing /api/opportunities endpoint (most critical)")
-        print("• Missing opportunity data model in backend")
-        print("• Missing POST method support for opportunity creation")
-        print("• Missing GET method support for opportunity listing")
-        print("• Form validation not implemented in backend")
+        print("❌ Backend issues found that could cause invoice creation problems")
+        print("🚨 RECOMMENDATION: Fix backend issues first before frontend debugging")
         sys.exit(1)
