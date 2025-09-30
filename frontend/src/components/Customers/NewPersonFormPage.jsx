@@ -668,8 +668,8 @@ export default function NewPersonFormPage({ onClose, onSave }) {
             </Button>
           </div>
         </div>
-        </div>
       </form>
+    </div>
 
       {/* Success Modal */}
       {showSuccessModal && (
