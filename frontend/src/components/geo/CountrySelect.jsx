@@ -20,7 +20,8 @@ export default function CountrySelect({
   placeholder = "Ülke seçin...",
   required = false,
   disabled = false,
-  className = ""
+  className = "",
+  refreshTrigger = 0
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
