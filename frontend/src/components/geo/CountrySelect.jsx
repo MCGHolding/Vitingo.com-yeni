@@ -83,7 +83,7 @@ export default function CountrySelect({
         clearTimeout(debounceTimer);
       }
     };
-  }, []);
+  }, [refreshTrigger]); // refreshTrigger değiştiğinde yeniden çek
 
   // Seçili ülkeyi güncelle
   useEffect(() => {
