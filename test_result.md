@@ -135,12 +135,72 @@
 user_problem_statement: "Test the new improvements in 'Tüm Faturalar' (All Invoices) page in Vitingo CRM application. Features to test: 1) Table Structure Changes: Left column should have 'No' header starting from 1 with row numbers, Currency column should be removed, Amount column should show currency symbol with amount. 2) Eye Icon (Preview) Functionality: Should open invoice preview modal with real invoice format and all information, Modal should have working 'PDF İndir' button that downloads PDF file. 3) Edit Icon Functionality: Should navigate to invoice edit page, Edit page should have existing invoice data pre-filled, Invoice data should be updatable. 4) Download Icon Functionality: Should directly download PDF file, PDF should be in real invoice format. 5) Delete Icon Functionality: Should open confirmation modal, Modal should ask 'Silmek istediğinizden emin misiniz?', Should show invoice details, Should have 'Bu işlem geri alınamaz!' warning. Test Steps: 1) Login: murb / Murat2024!, 2) Navigate to Muhasebe > Tüm Faturalar menu, 3) Check table structure (No column, currency removed, amount format), 4) Test each icon functionality: Eye icon -> preview modal -> PDF download test, Edit icon -> edit page test, Download icon -> PDF download test, Delete icon -> confirmation modal test. Expected Results: Table layout should match new specification, All icons should be functional, Modals and pages should open correctly, PDF download should work, User experience should be smooth."
 
 frontend:
+  - task: "All Invoices Page Table Structure Improvements"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/AllInvoicesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing new table structure improvements: No column with row numbers, currency column removal, amount column with currency symbols, and all icon functionalities (eye, edit, download, delete)."
+
+  - task: "Invoice Preview Modal Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/InvoicePreviewModal.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing invoice preview modal with real invoice format display and PDF download functionality."
+
+  - task: "Invoice Edit Page Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/EditInvoiceForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing edit icon functionality - navigation to edit page with pre-filled data and update capability."
+
+  - task: "Invoice PDF Download Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/AllInvoicesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing direct PDF download functionality from download icon and preview modal PDF download button."
+
+  - task: "Invoice Delete Confirmation Modal"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/AllInvoicesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing delete icon functionality with confirmation modal, invoice details display, and warning message."
+
   - task: "Customer Selection Bug Fix in NewInvoiceForm"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/Accounting/NewInvoiceForm.jsx"
     stuck_count: 3
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: false
