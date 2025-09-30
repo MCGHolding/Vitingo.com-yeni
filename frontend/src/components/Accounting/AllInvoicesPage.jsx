@@ -11,8 +11,10 @@ import {
   Download,
   Edit,
   Trash2,
-  Plus
+  Plus,
+  X
 } from 'lucide-react';
+import InvoicePreviewModal from './InvoicePreviewModal';
 
 const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice }) => {
   const [invoices, setInvoices] = useState([]);
