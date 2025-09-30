@@ -56,6 +56,43 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
     return counts;
   };
 
+  const getPriorityStats = () => {
+    const priorityStats = {
+      VIP: 0,
+      Strategic: 0,
+      Elite: 0,
+      High: 0,
+      Growth: 0,
+      Total: filteredOpportunities.length
+    };
+    
+    filteredOpportunities.forEach(opp => {
+      if (opp.priority && priorityStats.hasOwnProperty(opp.priority)) {
+        priorityStats[opp.priority]++;
+      }
+    });
+    
+    return priorityStats;
+  };
+
+  const getTotalValue = () => {
+    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
+  };
+
+  const getAverageValue = () => {
+    const total = getTotalValue();
+    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
+  };
+
+  const formatCurrency = (amount) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(0)}K`;
+    }
+    return amount.toFixed(0);
+  };
+
   const getPriorityIcon = (priority) => {
     switch (priority) {
       case 'VIP':
