@@ -532,39 +532,52 @@ export default function NewCustomerForm({ onSave, onClose }) {
                   </SelectContent>
                 </Select>
               </div>
+          </CardContent>
+        </Card>
 
-              {/* Contact Person */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
-                    İletişim Kişisi
-                  </label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowPersonForm(true)}
-                    className="text-xs"
-                  >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Yeni Kişi Ekle
-                  </Button>
-                </div>
-                <SearchableSelect
-                  options={availablePeople.map(person => ({
-                    id: person.id.toString(),
-                    label: person.fullName,
-                    sublabel: person.jobTitle || person.email,
-                    icon: User
-                  }))}
-                  value={formData.contactPersonId}
-                  onChange={(value) => handleInputChange('contactPersonId', value)}
-                  placeholder="İletişim kişisi ara ve seç..."
-                  searchPlaceholder="Kişi ara (isim, unvan)..."
-                  emptyMessage="Kişi bulunamadı"
-                />
+        {/* İletişim Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>İletişim Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Contact Person */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">
+                  İletişim Kişisi
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPersonForm(true)}
+                  className="text-xs"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Yeni Kişi Ekle
+                </Button>
               </div>
+              <SearchableSelect
+                options={availablePeople.map(person => ({
+                  id: person.id.toString(),
+                  label: person.fullName,
+                  sublabel: person.jobTitle || person.email,
+                  icon: User
+                }))}
+                value={formData.contactPersonId}
+                onChange={(value) => handleInputChange('contactPersonId', value)}
+                placeholder="İletişim kişisi ara ve seç..."
+                searchPlaceholder="Kişi ara (isim, unvan)..."
+                emptyMessage="Kişi bulunamadı"
+              />
+            </div>
 
+            {/* İletişim Bilgileri Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Telefon */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -592,32 +605,33 @@ export default function NewCustomerForm({ onSave, onClose }) {
                   inputClass="w-full"
                 />
               </div>
+            </div>
 
-              {/* Email */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  E-posta *
-                </label>
+            {/* Email */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                E-posta *
+              </label>
+              <Input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="E-posta adresini giriniz"
+                className="w-full"
+              />
+            </div>
+
+            {/* Website */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Web Sitesi
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Globe className="h-4 w-4 text-gray-400" />
+                </div>
                 <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="E-posta adresini giriniz"
-                  className="w-full"
-                />
-              </div>
-
-              {/* Website */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Web Sitesi
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Globe className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <Input
-                    value={formData.website}
+                  value={formData.website}
                     onChange={(e) => handleWebsiteChange(e.target.value)}
                     placeholder="ornek.com (http:// olmadan)"
                     className="pl-10 w-full"
