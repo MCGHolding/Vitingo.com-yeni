@@ -316,8 +316,7 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
         </div>
 
       {/* Filters */}
-      <div className="px-6 py-6">
-        <Card>
+      <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center space-x-2">
               <Filter className="h-5 w-5" />
