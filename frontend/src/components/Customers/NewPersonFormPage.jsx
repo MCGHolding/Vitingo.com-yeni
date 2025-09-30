@@ -22,7 +22,8 @@ import {
   CheckCircle,
   User,
   Briefcase,
-  Calendar
+  Calendar,
+  Save
 } from 'lucide-react';
 
 export default function NewPersonFormPage({ onClose, onSave }) {
