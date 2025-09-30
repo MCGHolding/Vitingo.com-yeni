@@ -550,7 +550,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+                  <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">No.</th>
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Şirket</th>
                     <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Ciro</th>
