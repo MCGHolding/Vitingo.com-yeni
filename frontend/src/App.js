@@ -220,7 +220,7 @@ const Dashboard = () => {
 
   // Customer Management Handlers
   const handleNewCustomer = () => {
-    navigate('/customers/new');
+    setCurrentView('new-customer');
   };
 
   const handleAllCustomers = () => {
