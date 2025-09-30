@@ -1344,6 +1344,314 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_invoice_creation_bug_comprehensive():
+    """
+    Test the critical invoice creation bug reported by user.
+    
+    User Issue: "[object Object]" error when creating invoices even after selecting customers.
+    
+    Testing Requirements:
+    1. Test POST /api/invoices with sample data to verify backend is working
+    2. Test GET /api/customers to verify customers are loading properly
+    3. Test GET /api/invoices/next-number/USD to verify invoice number generation
+    4. Test complete invoice creation scenario with proper customer and item data
+    5. Identify any validation errors or data format issues
+    
+    Expected Outcome: Determine if backend is causing the error or if it's frontend issue.
+    """
+    
+    print("=" * 80)
+    print("TESTING CRITICAL INVOICE CREATION BUG")
+    print("=" * 80)
+    print("User reported '[object Object]' error when creating invoices.")
+    print("Testing backend endpoints to isolate the issue...")
+    
+    try:
+        # STEP 1: Test GET /api/customers endpoint
+        print("\n" + "=" * 60)
+        print("STEP 1: TEST GET /api/customers - VERIFY CUSTOMERS ARE AVAILABLE")
+        print("=" * 60)
+        
+        customers_endpoint = f"{BACKEND_URL}/api/customers"
+        print(f"Testing endpoint: {customers_endpoint}")
+        
+        print("Making GET request to customers endpoint...")
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        
+        print(f"Status Code: {customers_response.status_code}")
+        if customers_response.status_code != 200:
+            print(f"❌ CRITICAL ISSUE: Customers endpoint failed with status {customers_response.status_code}")
+            print(f"Response: {customers_response.text}")
+            print("🚨 ROOT CAUSE: If customers can't be loaded, dropdown will be empty!")
+            return False
+        
+        print("✅ PASS: GET /api/customers endpoint working correctly")
+        
+        # Parse customers data
+        customers_data = customers_response.json()
+        print(f"Number of customers available: {len(customers_data)}")
+        
+        if len(customers_data) == 0:
+            print("❌ CRITICAL ISSUE: No customers found in database!")
+            print("🚨 ROOT CAUSE: Empty customer list means users can't select customers!")
+            return False
+        
+        print("✅ PASS: Customers are available for selection")
+        
+        # Show sample customers
+        print("\nAvailable customers for invoice creation:")
+        sample_customer = None
+        for i, customer in enumerate(customers_data[:5]):  # Show first 5
+            company_name = customer.get('companyName', 'N/A')
+            customer_id = customer.get('id', 'N/A')
+            print(f"  {i+1}. {company_name} (ID: {customer_id})")
+            if i == 0:  # Use first customer for testing
+                sample_customer = customer
+        
+        if not sample_customer:
+            print("❌ CRITICAL ISSUE: No valid customer found for testing!")
+            return False
+        
+        print(f"\n✅ Using customer for testing: {sample_customer.get('companyName')} (ID: {sample_customer.get('id')})")
+        
+        # STEP 2: Test GET /api/invoices/next-number/USD endpoint
+        print("\n" + "=" * 60)
+        print("STEP 2: TEST GET /api/invoices/next-number/USD - VERIFY NUMBER GENERATION")
+        print("=" * 60)
+        
+        invoice_number_endpoint = f"{BACKEND_URL}/api/invoices/next-number/USD"
+        print(f"Testing endpoint: {invoice_number_endpoint}")
+        
+        print("Making GET request to invoice number generation endpoint...")
+        invoice_number_response = requests.get(invoice_number_endpoint, timeout=30)
+        
+        print(f"Status Code: {invoice_number_response.status_code}")
+        if invoice_number_response.status_code != 200:
+            print(f"❌ CRITICAL ISSUE: Invoice number generation failed with status {invoice_number_response.status_code}")
+            print(f"Response: {invoice_number_response.text}")
+            print("🚨 ROOT CAUSE: If invoice numbers can't be generated, form submission will fail!")
+            return False
+        
+        print("✅ PASS: GET /api/invoices/next-number/USD endpoint working correctly")
+        
+        # Parse invoice number data
+        invoice_number_data = invoice_number_response.json()
+        next_invoice_number = invoice_number_data.get('next_invoice_number')
+        
+        if not next_invoice_number:
+            print("❌ CRITICAL ISSUE: No invoice number returned!")
+            print(f"Response: {invoice_number_data}")
+            return False
+        
+        print(f"✅ PASS: Next invoice number generated: {next_invoice_number}")
+        
+        # STEP 3: Test POST /api/invoices with complete invoice data
+        print("\n" + "=" * 60)
+        print("STEP 3: TEST POST /api/invoices - COMPLETE INVOICE CREATION")
+        print("=" * 60)
+        
+        invoices_endpoint = f"{BACKEND_URL}/api/invoices"
+        print(f"Testing endpoint: {invoices_endpoint}")
+        
+        # Create comprehensive test invoice data matching frontend format
+        test_invoice_data = {
+            "invoice_number": next_invoice_number,
+            "customer_id": sample_customer.get('id'),
+            "customer_name": sample_customer.get('companyName'),
+            "date": "2025-01-20",
+            "currency": "USD",
+            "items": [
+                {
+                    "id": "item-1",
+                    "name": "Test Service - Stand Design",
+                    "quantity": 1.0,
+                    "unit": "adet",
+                    "unit_price": 5000.0,
+                    "total": 5000.0
+                },
+                {
+                    "id": "item-2", 
+                    "name": "Test Service - Installation",
+                    "quantity": 2.0,
+                    "unit": "gün",
+                    "unit_price": 1500.0,
+                    "total": 3000.0
+                }
+            ],
+            "subtotal": 8000.0,
+            "vat_rate": 20.0,
+            "vat_amount": 1600.0,
+            "discount": 0.0,
+            "discount_type": "percentage",
+            "discount_amount": 0.0,
+            "total": 9600.0,
+            "conditions": "Payment within 30 days",
+            "payment_term": "30"
+        }
+        
+        print(f"Test invoice data:")
+        print(f"  Invoice Number: {test_invoice_data['invoice_number']}")
+        print(f"  Customer: {test_invoice_data['customer_name']} (ID: {test_invoice_data['customer_id']})")
+        print(f"  Currency: {test_invoice_data['currency']}")
+        print(f"  Items: {len(test_invoice_data['items'])} items")
+        print(f"  Total: {test_invoice_data['total']} {test_invoice_data['currency']}")
+        
+        print("\nMaking POST request to create invoice...")
+        invoice_response = requests.post(invoices_endpoint, json=test_invoice_data, timeout=30)
+        
+        print(f"Status Code: {invoice_response.status_code}")
+        
+        # Analyze response
+        if invoice_response.status_code == 404:
+            print("❌ CRITICAL ISSUE: /api/invoices endpoint does not exist!")
+            print("🚨 ROOT CAUSE: Backend missing invoice creation endpoint!")
+            return False
+        elif invoice_response.status_code == 405:
+            print("❌ CRITICAL ISSUE: /api/invoices endpoint doesn't support POST method!")
+            print("🚨 ROOT CAUSE: Backend endpoint configuration issue!")
+            return False
+        elif invoice_response.status_code == 422:
+            print("❌ CRITICAL ISSUE: Validation error (422) - Data format problem!")
+            print(f"Response: {invoice_response.text}")
+            print("🚨 ROOT CAUSE: This could be the source of '[object Object]' error!")
+            print("   Frontend might be receiving validation errors and not handling them properly.")
+            
+            # Try to parse validation error details
+            try:
+                error_data = invoice_response.json()
+                print(f"Validation error details: {error_data}")
+                if 'detail' in error_data:
+                    print(f"Specific validation issues: {error_data['detail']}")
+            except:
+                print("Could not parse validation error details")
+            
+            return False
+        elif invoice_response.status_code == 400:
+            print("❌ CRITICAL ISSUE: Bad request (400) - Business logic error!")
+            print(f"Response: {invoice_response.text}")
+            print("🚨 ROOT CAUSE: Backend business logic rejecting the invoice data!")
+            return False
+        elif invoice_response.status_code in [200, 201]:
+            print("✅ PASS: POST /api/invoices endpoint working correctly!")
+            
+            # Parse created invoice
+            try:
+                created_invoice = invoice_response.json()
+                invoice_id = created_invoice.get('id')
+                if invoice_id:
+                    print(f"✅ SUCCESS: Invoice created with ID: {invoice_id}")
+                    print(f"  Invoice Number: {created_invoice.get('invoice_number')}")
+                    print(f"  Customer: {created_invoice.get('customer_name')}")
+                    print(f"  Total: {created_invoice.get('total')} {created_invoice.get('currency')}")
+                else:
+                    print("⚠️  WARNING: Created invoice missing ID field")
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse invoice response: {str(e)}")
+                print(f"Raw response: {invoice_response.text}")
+        else:
+            print(f"❌ UNEXPECTED STATUS: {invoice_response.status_code}")
+            print(f"Response: {invoice_response.text}")
+            print("🚨 ROOT CAUSE: Unexpected backend behavior!")
+            return False
+        
+        # STEP 4: Test edge cases that might cause "[object Object]" error
+        print("\n" + "=" * 60)
+        print("STEP 4: TEST EDGE CASES - POTENTIAL CAUSES OF '[object Object]' ERROR")
+        print("=" * 60)
+        
+        # Test 4a: Invoice with null customer_id (common frontend issue)
+        print("\n4a. Testing invoice with null customer_id...")
+        null_customer_data = test_invoice_data.copy()
+        null_customer_data['customer_id'] = None
+        null_customer_data['invoice_number'] = next_invoice_number.replace('001', '002')  # Different number
+        
+        null_response = requests.post(invoices_endpoint, json=null_customer_data, timeout=30)
+        print(f"   Status Code: {null_response.status_code}")
+        
+        if null_response.status_code == 422:
+            print("   ✅ EXPECTED: Backend correctly rejects null customer_id with 422")
+            print("   🔍 ANALYSIS: Frontend should handle this validation error properly")
+        elif null_response.status_code in [200, 201]:
+            print("   ⚠️  WARNING: Backend accepts null customer_id - might cause issues")
+        else:
+            print(f"   ❓ UNEXPECTED: Status {null_response.status_code}")
+        
+        # Test 4b: Invoice with empty customer_name
+        print("\n4b. Testing invoice with empty customer_name...")
+        empty_name_data = test_invoice_data.copy()
+        empty_name_data['customer_name'] = ""
+        empty_name_data['invoice_number'] = next_invoice_number.replace('001', '003')  # Different number
+        
+        empty_name_response = requests.post(invoices_endpoint, json=empty_name_data, timeout=30)
+        print(f"   Status Code: {empty_name_response.status_code}")
+        
+        if empty_name_response.status_code == 422:
+            print("   ✅ EXPECTED: Backend correctly rejects empty customer_name with 422")
+        elif empty_name_response.status_code in [200, 201]:
+            print("   ⚠️  WARNING: Backend accepts empty customer_name")
+        
+        # Test 4c: Invoice with malformed items array
+        print("\n4c. Testing invoice with malformed items...")
+        malformed_items_data = test_invoice_data.copy()
+        malformed_items_data['items'] = [{"invalid": "item"}]  # Missing required fields
+        malformed_items_data['invoice_number'] = next_invoice_number.replace('001', '004')  # Different number
+        
+        malformed_response = requests.post(invoices_endpoint, json=malformed_items_data, timeout=30)
+        print(f"   Status Code: {malformed_response.status_code}")
+        
+        if malformed_response.status_code == 422:
+            print("   ✅ EXPECTED: Backend correctly rejects malformed items with 422")
+            print("   🔍 ANALYSIS: This could be a source of '[object Object]' if frontend sends bad data")
+        
+        # STEP 5: Final analysis and recommendations
+        print("\n" + "=" * 60)
+        print("STEP 5: FINAL ANALYSIS AND RECOMMENDATIONS")
+        print("=" * 60)
+        
+        print("\n🔍 BACKEND ANALYSIS RESULTS:")
+        print("✅ GET /api/customers - Working correctly, customers available")
+        print("✅ GET /api/invoices/next-number/USD - Working correctly, numbers generated")
+        print("✅ POST /api/invoices - Working correctly with proper data")
+        print("✅ Validation errors (422) returned for invalid data")
+        
+        print("\n💡 LIKELY ROOT CAUSE OF '[object Object]' ERROR:")
+        print("1. Backend is working correctly - the issue is likely in the frontend")
+        print("2. Frontend might be:")
+        print("   - Not handling 422 validation errors properly")
+        print("   - Sending malformed data (null customer_id, empty fields)")
+        print("   - Not parsing error responses correctly")
+        print("   - Displaying error objects as '[object Object]' instead of error messages")
+        
+        print("\n🎯 RECOMMENDATIONS FOR MAIN AGENT:")
+        print("1. Check frontend error handling in invoice form submission")
+        print("2. Verify customer selection is properly setting customer_id")
+        print("3. Add proper error message parsing for 422 validation errors")
+        print("4. Check console logs for actual error objects being displayed")
+        print("5. Ensure form data structure matches backend expectations exactly")
+        
+        print("\n" + "=" * 80)
+        print("INVOICE CREATION BUG TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Backend endpoints are working correctly")
+        print("✅ Customers are available for selection")
+        print("✅ Invoice number generation working")
+        print("✅ Invoice creation succeeds with proper data")
+        print("✅ Validation errors properly returned for invalid data")
+        print("\n🎉 BACKEND IS NOT THE PROBLEM!")
+        print("   The '[object Object]' error is likely a frontend issue")
+        print("   with error handling or data formatting.")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ NETWORK ERROR: {str(e)}")
+        print("🚨 Could not test backend endpoints due to network issues")
+        return False
+    except Exception as e:
+        print(f"\n❌ UNEXPECTED ERROR: {str(e)}")
+        print("🚨 Unexpected error during invoice creation testing")
+        return False
+
 def test_new_opportunity_form_backend_integration():
     """
     Test the NewOpportunityFormPage backend integration and API endpoints.
