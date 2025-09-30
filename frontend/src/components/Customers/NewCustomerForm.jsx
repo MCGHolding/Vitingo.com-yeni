@@ -1,158 +1,137 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Textarea } from '../ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useToast } from '../../hooks/use-toast';
-import { allPeople } from '../../mock/peopleData';
-import { customerTagColors } from '../../mock/customersData';
-import NewPersonForm from './NewPersonForm';
-import CountrySelect from '../geo/CountrySelect';
-import CitySelect from '../geo/CitySelect';
 import SearchableSelect from '../ui/SearchableSelect';
-import CompanyAvatar from '../ui/CompanyAvatar';
+import { 
+  Building2, 
+  Users, 
+  Phone, 
+  Mail, 
+  MapPin, 
+  FileText, 
+  Tag,
+  Plus,
+  X,
+  Save,
+  ArrowLeft,
+  User,
+  CheckCircle,
+  Home
+} from 'lucide-react';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { 
-  X,
-  Building,
-  Upload,
-  Search,
-  MapPin,
-  Plus,
-  User,
-  Phone,
-  Globe,
-  Tag,
-  ArrowLeft,
-  CheckCircle,
-  Home,
-  Users,
-  Mail,
-  FileText,
-  Save
-} from 'lucide-react';
+import { useIban } from '../../hooks/useIban';
 
-export default function NewCustomerForm({ onSave, onClose }) {
+import CountrySelect from '../geo/CountrySelect';
+import CitySelect from '../geo/CitySelect';
+
+const NewCustomerForm = ({ onClose, onSave }) => {
   const { toast } = useToast();
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [customerCreated, setCustomerCreated] = useState(false);
+  const [createdCustomerInfo, setCreatedCustomerInfo] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [specialties, setSpecialties] = useState([]);
+  const [isIndividualCustomer, setIsIndividualCustomer] = useState(false);
+  const [contacts, setContacts] = useState([{ 
+    full_name: '', 
+    mobile: '', 
+    email: '', 
+    position: '', 
+    tags: [],
+    address: '',
+    country: '',
+    city: ''
+  }]);
+
   const [formData, setFormData] = useState({
-    companyName: '',
-    relationshipType: '',
-    contactPersonId: '',
+    company_short_name: '',
+    company_title: '',
+    address: '',
     phone: '',
     mobile: '',
     email: '',
-    website: '',
-    address: '',
-    country: 'TR',
+    tax_office: '',
+    tax_number: '',
+    services: [],
+    customer_type_id: '',
+    specialty_id: '',
+    // Bank/Payment Information
+    iban: '',
+    bank_name: '',
+    bank_branch: '',
+    account_holder_name: '',
+    swift_code: '',
+    country: '',
     city: '',
-    sector: '',
-    notes: '',
-    // Turkey-specific fields
-    companyTitle: '', // Firma Unvanı
-    taxOffice: '', // Vergi Dairesi
-    taxNumber: '', // Vergi Numarası
-    // Tags field
-    tags: [] // Etiketler
+    // USA Bank Information
+    routing_number: '',
+    us_account_number: '',
+    bank_address: ''
   });
 
-  // Tag management state
-  const [tagInput, setTagInput] = useState('');
-  const [availableTags] = useState([
-    'TEKNOLOJI', 'SANAYI', 'TICARET', 'HIZMET', 'ÜRETIM', 
-    'İHRACAT', 'İTHALAT', 'PERAKENDE', 'TOPTAN', 'LOJISTIK',
-    'INŞAAT', 'GIDA', 'TEKSTIL', 'OTOMOTIV', 'ENERJI'
-  ]);
-
-  // Geographic data state
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedCity, setSelectedCity] = useState(null);
-
-  // Separate state for phone country code to avoid conflicts
-  const [phoneCountryCode, setPhoneCountryCode] = useState('TR');
-
-  // Logo management state  
-  const [logoUrl, setLogoUrl] = useState('');
-  const [logoFile, setLogoFile] = useState(null);
+  const [currentService, setCurrentService] = useState('');
+  const [currentContactTag, setCurrentContactTag] = useState('');
+  const [isUSABankFormat, setIsUSABankFormat] = useState(false);
   
-  const [showPersonForm, setShowPersonForm] = useState(false);
-  const [relationshipTypes, setRelationshipTypes] = useState([
-    { value: 'potential_customer', label: 'Potansiyel Müşteri' },
-    { value: 'customer', label: 'Müşteri' },
-    { value: 'supplier', label: 'Tedarikçi' }
-  ]);
-  const [sectors, setSectors] = useState([
-    { value: 'Teknoloji', label: 'Teknoloji' },
-    { value: 'İmalat', label: 'İmalat' },
-    { value: 'Sağlık', label: 'Sağlık' },
-    { value: 'Finans', label: 'Finans' },
-    { value: 'Eğitim', label: 'Eğitim' },
-    { value: 'Turizm', label: 'Turizm' },
-    { value: 'Gıda', label: 'Gıda ve İçecek' },
-    { value: 'Otomotiv', label: 'Otomotiv' },
-    { value: 'İnşaat', label: 'İnşaat' },
-    { value: 'Tekstil', label: 'Tekstil' },
-    { value: 'Enerji', label: 'Enerji' },
-    { value: 'Lojistik', label: 'Lojistik' },
-    { value: 'Perakende', label: 'Perakende' },
-    { value: 'Diğer', label: 'Diğer' }
-  ]);
-  
-  const [newRelationshipType, setNewRelationshipType] = useState('');
-  const [newSector, setNewSector] = useState('');
-  const [showNewRelationshipInput, setShowNewRelationshipInput] = useState(false);
-  const [showNewSectorInput, setShowNewSectorInput] = useState(false);
-  const [availablePeople, setAvailablePeople] = useState([]);
+  // IBAN hook'u kullan
+  const { ibanError, handleIbanChange } = useIban();
 
-  // Turkish Tax Offices List
-  const turkishTaxOffices = [
-    'İstanbul Vergi Dairesi Başkanlığı',
-    'Ankara Vergi Dairesi Başkanlığı',
-    'İzmir Vergi Dairesi Başkanlığı',
-    'Bursa Vergi Dairesi Başkanlığı',
-    'Antalya Vergi Dairesi Başkanlığı',
-    'Adana Vergi Dairesi Başkanlığı',
-    'Konya Vergi Dairesi Başkanlığı',
-    'Gaziantep Vergi Dairesi Başkanlığı',
-    'Kayseri Vergi Dairesi Başkanlığı',
-    'Mersin Vergi Dairesi Başkanlığı',
-    'Eskişehir Vergi Dairesi Başkanlığı',
-    'Diyarbakır Vergi Dairesi Başkanlığı',
-    'Samsun Vergi Dairesi Başkanlığı',
-    'Denizli Vergi Dairesi Başkanlığı',
-    'Şanlıurfa Vergi Dairesi Başkanlığı',
-    'Adapazarı Vergi Dairesi Başkanlığı',
-    'Malatya Vergi Dairesi Başkanlığı',
-    'Kahramanmaraş Vergi Dairesi Başkanlığı',
-    'Erzurum Vergi Dairesi Başkanlığı',
-    'Van Vergi Dairesi Başkanlığı',
-    'Batman Vergi Dairesi Başkanlığı',
-    'Elazığ Vergi Dairesi Başkanlığı',
-    'İzmit Vergi Dairesi Başkanlığı',
-    'Manisa Vergi Dairesi Başkanlığı',
-    'Tarsus Vergi Dairesi Başkanlığı',
-    'Çorum Vergi Dairesi Başkanlığı',
-    'Balıkesir Vergi Dairesi Başkanlığı',
-    'Aydın Vergi Dairesi Başkanlığı',
-    'Hatay Vergi Dairesi Başkanlığı',
-    'Tekirdağ Vergi Dairesi Başkanlığı'
-  ].sort();
-
+  // Load categories on mount
   useEffect(() => {
-    // Load people data
-    const sortedPeople = allPeople
-      .filter(person => person.status === 'active')
-      .sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'));
-    setAvailablePeople(sortedPeople);
+    loadCategories();
+  }, []);
 
-    // Set default country to Turkey
-    if (!selectedCountry) {
-      // Turkey will be set by CountrySelect component's default behavior
+  // Load specialties when category changes
+  useEffect(() => {
+    if (formData.customer_type_id) {
+      loadSpecialties(formData.customer_type_id);
+    } else {
+      setSpecialties([]);
     }
-  }, []); // EMPTY dependency array - runs only once
+  }, [formData.customer_type_id]);
+
+  const loadCategories = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/supplier-categories`);
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      } else {
+        throw new Error('Failed to load categories');
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      toast({
+        title: "Hata",
+        description: "Kategoriler yüklenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const loadSpecialties = async (categoryId) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/supplier-specialties/${categoryId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSpecialties(data);
+      } else {
+        throw new Error('Failed to load specialties');
+      }
+    } catch (error) {
+      console.error('Error loading specialties:', error);
+      toast({
+        title: "Hata", 
+        description: "Uzmanlık alanları yüklenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -161,242 +140,164 @@ export default function NewCustomerForm({ onSave, onClose }) {
     }));
   };
 
-  const handleCountryChange = (countryData) => {
-    setSelectedCountry(countryData);
-    setSelectedCity(null); // Clear city when country changes
-    
-    if (countryData) {
+  const handleAddService = () => {
+    if (currentService.trim()) {
       setFormData(prev => ({
         ...prev,
-        country: countryData.iso2,
-        city: '' // Clear city
+        services: [...prev.services, currentService.trim()]
       }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        country: '',
-        city: ''
-      }));
+      setCurrentService('');
     }
   };
 
-  const handleCityChange = (cityData) => {
-    setSelectedCity(cityData);
-    
-    if (cityData) {
-      setFormData(prev => ({
-        ...prev,
-        city: cityData.name
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        city: ''
-      }));
-    }
-  };
-
-  const handleWebsiteChange = (value) => {
-    // Remove http:// or https:// if user enters it
-    let cleanValue = value.replace(/^https?:\/\//, '');
+  const handleRemoveService = (index) => {
     setFormData(prev => ({
       ...prev,
-      website: cleanValue
+      services: prev.services.filter((_, i) => i !== index)
     }));
   };
 
-  // Tag management functions
-  const addTag = (tag) => {
-    const upperTag = tag.toUpperCase();
-    if (upperTag && !formData.tags.includes(upperTag)) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, upperTag]
-      }));
-      setTagInput('');
-    }
-  };
-
-  const removeTag = (tagToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
-  };
-
-  const handleTagInputKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag(tagInput);
-    }
-  };
-
-  const getTagColor = (tag) => {
-    return customerTagColors[tag] || 'bg-gray-500 text-white';
-  };
-
-  const handleAddNewRelationshipType = () => {
-    if (newRelationshipType.trim()) {
-      const newType = {
-        value: newRelationshipType.toLowerCase().replace(/\s+/g, '_'),
-        label: newRelationshipType.trim()
-      };
-      
-      setRelationshipTypes(prev => [...prev, newType]);
-      setFormData(prev => ({ ...prev, relationshipType: newType.value }));
-      setNewRelationshipType('');
-      setShowNewRelationshipInput(false);
-      
-      toast({
-        title: "Başarılı",
-        description: "Yeni ilişki tipi eklendi.",
-      });
-    }
-  };
-
-  const handleAddNewSector = () => {
-    if (newSector.trim()) {
-      const newSectorObj = {
-        value: newSector.trim(),
-        label: newSector.trim()
-      };
-      
-      setSectors(prev => [...prev, newSectorObj]);
-      setFormData(prev => ({ ...prev, sector: newSector.trim() }));
-      setNewSector('');
-      setShowNewSectorInput(false);
-      
-      toast({
-        title: "Başarılı",
-        description: "Yeni sektör eklendi.",
-      });
-    }
-  };
-
-  const handlePersonAdded = (newPerson) => {
-    // Add new person to available people list
-    setAvailablePeople(prev => 
-      [...prev, newPerson].sort((a, b) => a.fullName.localeCompare(b.fullName, 'tr'))
-    );
-    
-    // Auto-select the new person
-    setFormData(prev => ({ ...prev, contactPersonId: newPerson.id.toString() }));
-    setShowPersonForm(false);
-    
-    toast({
-      title: "Başarılı",
-      description: "Yeni kişi eklendi ve seçildi.",
-    });
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setLogoFile(file);
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLogoUrl(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Logo handlers
-  const handleLogoChange = (file, preview) => {
-    setLogoFile(file);
-    setLogoUrl(preview);
-  };
-
-  const handleLogoRemove = () => {
-    setLogoFile(null);
-    setLogoUrl('');
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!formData.companyName || !formData.relationshipType || !formData.email) {
-      toast({
-        title: "Eksik Bilgiler",
-        description: "Lütfen zorunlu alanları doldurunuz.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        title: "Geçersiz E-posta",
-        description: "Lütfen geçerli bir e-posta adresi giriniz.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Get selected person data
-    const selectedPerson = availablePeople.find(p => p.id.toString() === formData.contactPersonId);
-    
-    const customerData = {
-      ...formData,
-      countryCode: phoneCountryCode, // Add phone country code
-      contactPerson: selectedPerson ? selectedPerson.fullName : '',
-      logo: logoUrl || '', // Ensure logo is always a string
-      status: 'active',
-      customerSince: new Date().toISOString().split('T')[0],
-      lastActivity: new Date().toISOString().split('T')[0],
-      totalOrders: 0,
-      totalRevenue: 0,
-      currency: formData.country === 'TR' ? 'TRY' : 
-                formData.country === 'US' || formData.country === 'CA' ? 'USD' : 'EUR'
+  const handleContactChange = (index, field, value) => {
+    const updatedContacts = [...contacts];
+    updatedContacts[index] = {
+      ...updatedContacts[index],
+      [field]: value
     };
+    setContacts(updatedContacts);
+  };
 
-    if (onSave) {
-      onSave(customerData);
-    }
-    
-    toast({
-      title: "Başarılı",
-      description: "Yeni müşteri başarıyla eklendi.",
+  // IBAN handler - hook'tan gelen fonksiyonu kullan
+  const handleIbanInput = (value) => {
+    handleIbanChange(value, (formattedValue) => {
+      handleInputChange('iban', formattedValue);
     });
-    
+  };
+
+  const handleAddContactTag = (contactIndex) => {
+    if (currentContactTag.trim()) {
+      const updatedContacts = [...contacts];
+      updatedContacts[contactIndex].tags = [...updatedContacts[contactIndex].tags, currentContactTag.trim()];
+      setContacts(updatedContacts);
+      setCurrentContactTag('');
+    }
+  };
+
+  const handleRemoveContactTag = (contactIndex, tagIndex) => {
+    const updatedContacts = [...contacts];
+    updatedContacts[contactIndex].tags = updatedContacts[contactIndex].tags.filter((_, i) => i !== tagIndex);
+    setContacts(updatedContacts);
+  };
+
+  const handleAddContact = () => {
+    setContacts([...contacts, { 
+      full_name: '', 
+      mobile: '', 
+      email: '', 
+      position: '', 
+      tags: [],
+      address: '',
+      country: '',
+      city: ''
+    }]);
+  };
+
+  const handleRemoveContact = (index) => {
+    if (contacts.length > 1) {
+      setContacts(contacts.filter((_, i) => i !== index));
+    }
+  };
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : 'Bilinmiyor';
+  };
+
+  const getSpecialtyName = (specialtyId) => {
+    const specialty = specialties.find(spec => spec.id === specialtyId);
+    return specialty ? specialty.name : 'Bilinmiyor';
+  };
+
+  const handleGoBack = () => {
+    setCustomerCreated(false);
+  };
+
+  const handleGoToDashboard = () => {
     if (onClose) {
       onClose();
     }
   };
 
-  const clearForm = () => {
-    setFormData({
-      companyName: '',
-      relationshipType: '',
-      contactPersonId: '',
-      phone: '',
-      mobile: '',
-      email: '',
-      website: '',
-      address: '',
-      country: 'TR',
-      city: '',
-      sector: '',
-      notes: '',
-      // Turkey-specific fields
-      companyTitle: '',
-      taxOffice: '',
-      taxNumber: '',
-      // Tags field
-      tags: []
-    });
-    setPhoneCountryCode('TR');
-    setLogoFile(null);
-    setLogoUrl('');
-    setTagInput('');
-    // Clear geographic selections
-    setSelectedCountry(null);
-    setSelectedCity(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Basic validation
+    const requiredFieldsValid = isIndividualCustomer 
+      ? formData.customer_type_id && formData.specialty_id  // For individual: only category and specialty required
+      : formData.company_short_name && formData.company_title && formData.customer_type_id && formData.specialty_id; // For company: all fields required
+    
+    if (!requiredFieldsValid) {
+      toast({
+        title: "Hata",
+        description: isIndividualCustomer 
+          ? "Müşteri türü ve uzmanlık alanı seçimi zorunludur"
+          : "Zorunlu alanları doldurunuz (Firma adı, ünvan, kategori, uzmanlık)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Prepare customer data based on type
+      const customerData = isIndividualCustomer 
+        ? {
+            ...formData,
+            company_short_name: contacts[0]?.full_name || 'Bireysel Müşteri',
+            company_title: contacts[0]?.full_name || 'Bireysel Müşteri',
+            address: '',
+            phone: contacts[0]?.mobile || '',
+            mobile: contacts[0]?.mobile || '',
+            email: contacts[0]?.email || '',
+            tax_office: '',
+            tax_number: '',
+            services: []
+          }
+        : formData;
+
+      // Save using onSave prop if provided
+      if (onSave) {
+        await onSave(customerData);
+      }
+
+      // Set success state with customer info
+      setCreatedCustomerInfo({
+        company_name: customerData.company_short_name,
+        customer_type: getCategoryName(customerData.customer_type_id),
+        specialty: getSpecialtyName(customerData.specialty_id),
+        contacts_count: contacts.filter(c => c.full_name.trim()).length,
+        is_individual: isIndividualCustomer
+      });
+      setCustomerCreated(true);
+
+      toast({
+        title: "Başarılı",
+        description: "Müşteri başarıyla oluşturuldu",
+        variant: "default"
+      });
+
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Müşteri oluşturulurken hata oluştu", 
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -405,7 +306,7 @@ export default function NewCustomerForm({ onSave, onClose }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-blue-100 rounded-lg">
-            <Building className="h-6 w-6 text-blue-600" />
+            <Building2 className="h-6 w-6 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Yeni Müşteri</h1>
@@ -420,164 +321,246 @@ export default function NewCustomerForm({ onSave, onClose }) {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Şirket Bilgileri */}
+      {customerCreated ? (
+        /* Success State */
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Building className="h-5 w-5" />
-              <span>Şirket Bilgileri</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Company Avatar */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                <Building className="h-4 w-4" />
-                <span>Firma Logosu / Avatar</span>
-              </label>
-                <div className="flex items-center space-x-4">
-                  <CompanyAvatar
-                    companyName={formData.companyName}
-                    logoUrl={logoUrl}
-                    onLogoChange={handleLogoChange}
-                    onLogoRemove={handleLogoRemove}
-                    size="lg"
-                    editable={true}
-                  />
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600">
-                      Logo yüklemek için avatar'a tıklayın veya sürükleyip bırakın.
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Logo yoksa firma adından otomatik avatar oluşturulur.
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Desteklenen formatlar: JPG, PNG, GIF (Max 2MB)
-                    </p>
+          <CardContent className="p-8">
+            <div className="text-center">
+              <div className="mx-auto mb-6 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Tebrikler, {createdCustomerInfo?.is_individual ? 'Bireysel ' : ''}Müşteri Başarı ile Oluşturuldu!
+              </h2>
+              
+              <p className="text-gray-600 mb-6">
+                <strong>{createdCustomerInfo?.company_name}</strong> {createdCustomerInfo?.is_individual ? 'bireysel müşteri' : 'müşteri şirketi'} başarıyla sisteme eklendi.
+              </p>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="text-left space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      {createdCustomerInfo?.is_individual ? 'Kişi Adı:' : 'Firma Adı:'}
+                    </span>
+                    <span className="text-sm text-gray-900">{createdCustomerInfo?.company_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Tür:</span>
+                    <span className="text-sm text-gray-900">
+                      {createdCustomerInfo?.is_individual ? 'Bireysel' : 'Şirket'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Kategori:</span>
+                    <span className="text-sm text-gray-900">{createdCustomerInfo?.customer_type}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">Uzmanlık:</span>
+                    <span className="text-sm text-gray-900">{createdCustomerInfo?.specialty}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      {createdCustomerInfo?.is_individual ? 'İletişim Bilgileri:' : 'Yetkili Kişiler:'}
+                    </span>
+                    <span className="text-sm text-gray-900">{createdCustomerInfo?.contacts_count} kişi</span>
                   </div>
                 </div>
               </div>
-
-              {/* Company Name */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Şirket İsmi *
-                </label>
-                <Input
-                  value={formData.companyName}
-                  onChange={(e) => handleInputChange('companyName', e.target.value)}
-                  placeholder="Şirket adını giriniz"
-                  className="w-full"
-                />
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-sm">
+                  🎉 Müşteri başarıyla kaydedildi ve artık "Tüm Müşteriler" listesinde görüntülenebilir.
+                </p>
               </div>
-
-              {/* Relationship Type */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
-                    İlişki Tipi *
-                  </label>
+              
+              <div className="flex justify-center space-x-4">
+                <Button variant="outline" onClick={handleGoBack} className="flex items-center space-x-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Yeni Müşteri Ekle</span>
+                </Button>
+                
+                <Button onClick={handleGoToDashboard} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
+                  <Home className="h-4 w-4" />
+                  <span>Dashboard'a Dön</span>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Kategori Seçimi */}
+          <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <Tag className="h-5 w-5" />
+                <span>Kategori Seçimi</span>
+              </CardTitle>
+              
+              {/* Individual Customer Checkbox */}
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="individual-customer"
+                  checked={isIndividualCustomer}
+                  onChange={(e) => setIsIndividualCustomer(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                />
+                <label 
+                  htmlFor="individual-customer" 
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Bireysel Müşteri
+                </label>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Müşteri Türü */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Müşteri Türü *
+                </label>
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <SearchableSelect
+                      options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+                      value={formData.customer_type_id}
+                      onValueChange={(value) => handleInputChange('customer_type_id', value)}
+                      placeholder="Müşteri türü seçin..."
+                    />
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setShowNewRelationshipInput(true)}
-                    className="text-xs"
+                    className="px-3"
                   >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Yeni İlişki Tipi
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </div>
-                
-                {showNewRelationshipInput && (
-                  <div className="flex space-x-2 mb-2">
-                    <Input
-                      value={newRelationshipType}
-                      onChange={(e) => setNewRelationshipType(e.target.value)}
-                      placeholder="Yeni ilişki tipi adı"
-                      className="flex-1"
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={handleAddNewRelationshipType}
-                    >
-                      Ekle
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setShowNewRelationshipInput(false);
-                        setNewRelationshipType('');
-                      }}
-                    >
-                      İptal
-                    </Button>
-                  </div>
-                )}
-                
-                <Select value={formData.relationshipType} onValueChange={(value) => handleInputChange('relationshipType', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="İlişki tipi seçiniz" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {relationshipTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
+
+              {/* Uzmanlık Alanı */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Uzmanlık Alanı *
+                </label>
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <SearchableSelect
+                      options={specialties.map(spec => ({ value: spec.id, label: spec.name }))}
+                      value={formData.specialty_id}
+                      onValueChange={(value) => handleInputChange('specialty_id', value)}
+                      placeholder="Uzmanlık alanı seçin..."
+                      disabled={!formData.customer_type_id}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={!formData.customer_type_id}
+                    className="px-3"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* İletişim Bilgileri */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>İletişim Bilgileri</span>
-            </CardTitle>
-          </CardHeader>
+        {/* Müşteri Bilgileri - Only show if not individual customer */}
+        {!isIndividualCustomer && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Building2 className="h-5 w-5" />
+                <span>Müşteri Form Bilgileri</span>
+              </CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
-            {/* Contact Person */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  İletişim Kişisi
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Firma Kısa Adı *
                 </label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowPersonForm(true)}
-                  className="text-xs"
-                >
-                  <Plus className="h-3 w-3 mr-1" />
-                  Yeni Kişi Ekle
-                </Button>
+                <Input
+                  value={formData.company_short_name}
+                  onChange={(e) => handleInputChange('company_short_name', e.target.value)}
+                  placeholder="Örn: ABC Ltd"
+                  required
+                />
               </div>
-              <SearchableSelect
-                options={availablePeople.map(person => ({
-                  id: person.id.toString(),
-                  label: person.fullName,
-                  sublabel: person.jobTitle || person.email,
-                  icon: User
-                }))}
-                value={formData.contactPersonId}
-                onChange={(value) => handleInputChange('contactPersonId', value)}
-                placeholder="İletişim kişisi ara ve seç..."
-                searchPlaceholder="Kişi ara (isim, unvan)..."
-                emptyMessage="Kişi bulunamadı"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Firma Ünvanı *
+                </label>
+                <Input
+                  value={formData.company_title}
+                  onChange={(e) => handleInputChange('company_title', e.target.value)}
+                  placeholder="Örn: ABC Lojistik Limited Şirketi"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adres
+              </label>
+              <textarea
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                placeholder="Firma adresi..."
+                className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
-            {/* İletişim Bilgileri Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Ülke
+                </label>
+                <CountrySelect
+                  value={formData.country}
+                  onChange={(country) => {
+                    const countryCode = country ? country.iso2 : '';
+                    handleInputChange('country', countryCode);
+                    // Reset city when country changes
+                    if (formData.city) {
+                      handleInputChange('city', '');
+                    }
+                  }}
+                  placeholder="Ülke seçiniz..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" />
+                  Şehir
+                </label>
+                <CitySelect
+                  country={formData.country}
+                  value={formData.city}
+                  onChange={(city) => {
+                    const cityName = city ? city.name : '';
+                    handleInputChange('city', cityName);
+                  }}
+                  placeholder="Şehir seçiniz..."
+                  disabled={!formData.country}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Telefon */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -599,367 +582,517 @@ export default function NewCustomerForm({ onSave, onClose }) {
                 </label>
                 <PhoneInput
                   country={"tr"}
-                  value={formData.mobile || ''}
+                  value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
                   enableSearch={true}
                   inputClass="w-full"
                 />
               </div>
-            </div>
 
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                E-posta *
-              </label>
-              <Input
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="E-posta adresini giriniz"
-                className="w-full"
-              />
-            </div>
-
-            {/* Website */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Web Sitesi
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Globe className="h-4 w-4 text-gray-400" />
-                </div>
-                <Input
-                  value={formData.website}
-                    onChange={(e) => handleWebsiteChange(e.target.value)}
-                    placeholder="ornek.com (http:// olmadan)"
-                    className="pl-10 w-full"
-                  />
-                </div>
-                {formData.website && (
-                  <p className="text-xs text-gray-500">
-                    Önizleme: https://{formData.website}
-                  </p>
-                )}
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="ornek@sirket.com"
+                />
               </div>
-          </CardContent>
-        </Card>
-
-        {/* Adres ve Konum Bilgileri */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <MapPin className="h-5 w-5" />
-              <span>Adres ve Konum Bilgileri</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Address */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Adres
-              </label>
-              <Textarea
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
-                placeholder="Şirket adresini giriniz"
-                rows={3}
-                className="w-full"
-              />
             </div>
 
-            {/* Country and Region */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                  <Globe className="h-4 w-4" />
-                  <span>Ülke *</span>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vergi Dairesi
                 </label>
-                <CountrySelect
-                  value={formData.country}
-                  onChange={handleCountryChange}
-                  placeholder="Ülke seçiniz"
-                  required={true}
-                  className="w-full"
+                <Input
+                  value={formData.tax_office}
+                  onChange={(e) => handleInputChange('tax_office', e.target.value)}
+                  placeholder="Örn: Beşiktaş Vergi Dairesi"
                 />
               </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>Şehir *</span>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  VKN
                 </label>
-                <CitySelect
-                  country={formData.country}
-                  value={formData.city}
-                  onChange={handleCityChange}
-                  placeholder="Şehir seçiniz"
-                  required={true}
-                  className="w-full"
+                <Input
+                  value={formData.tax_number}
+                  onChange={(e) => handleInputChange('tax_number', e.target.value)}
+                  placeholder="1234567890"
                 />
+              </div>
+            </div>
+
+            {/* Hizmetler (Etiket Sistemi) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hizmetler
+              </label>
+              <div className="flex space-x-2 mb-2">
+                <Input
+                  value={currentService}
+                  onChange={(e) => setCurrentService(e.target.value)}
+                  placeholder="Hizmet adı girin..."
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddService())}
+                />
+                <Button type="button" onClick={handleAddService} size="sm" variant="outline">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.services.map((service, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                  >
+                    {service}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveService(index)}
+                      className="ml-2 text-blue-600 hover:text-blue-800"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
+        )}
 
-        {/* Türkiye Özel Bilgileri ve Vergi */}
-        {formData.country === 'TR' && (
+        {!isIndividualCustomer && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5" />
-                <span>Vergi ve Resmi Bilgiler</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="h-5 w-5" />
+                  <span>Banka / Ödeme Bilgileri</span>
+                </div>
+                {/* USA Format Checkbox */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="usa-format"
+                    checked={isUSABankFormat}
+                    onChange={(e) => setIsUSABankFormat(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  />
+                  <label htmlFor="usa-format" className="text-sm font-medium text-gray-700">
+                    ABD Bankası
+                  </label>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Company Title */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Firma Unvanı
-                </label>
-                <Input
-                  value={formData.companyTitle}
-                  onChange={(e) => handleInputChange('companyTitle', e.target.value)}
-                  placeholder="Şirket unvanını giriniz (örn: Ltd. Şti., A.Ş.)"
-                  className="w-full"
-                />
-              </div>
+              {!isUSABankFormat ? (
+                /* IBAN Format (International) */
+                <div className="space-y-4">
+                  {/* Üst satır: Hesap Sahibi Adı (sol) ve IBAN (sağ) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Hesap Sahibi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hesap Sahibi Adı
+                      </label>
+                      <Input
+                        value={formData.account_holder_name}
+                        onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
+                        placeholder="Hesap sahibinin adı"
+                      />
+                    </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Tax Office */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Vergi Dairesi
-                  </label>
-                  <Select value={formData.taxOffice} onValueChange={(value) => handleInputChange('taxOffice', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Vergi dairesi seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {turkishTaxOffices.map((office) => (
-                        <SelectItem key={office} value={office}>
-                          {office}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    {/* IBAN */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        IBAN <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.iban}
+                        onChange={(e) => handleIbanInput(e.target.value)}
+                        placeholder="TR00 0000 0000 0000 0000 00 00"
+                        className={ibanError ? 'border-red-500' : ''}
+                      />
+                      {ibanError && (
+                        <p className="text-red-500 text-sm mt-1">{ibanError}</p>
+                      )}
+                    </div>
+                  </div>
 
-                {/* Tax Number */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Vergi Numarası
-                  </label>
-                  <Input
-                    value={formData.taxNumber}
-                    onChange={(e) => handleInputChange('taxNumber', e.target.value)}
-                    placeholder="Vergi numarasını giriniz (10 haneli)"
-                    className="w-full"
-                    maxLength="11"
-                  />
+                  {/* Diğer alanlar */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Banka Adı */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adı
+                      </label>
+                      <Input
+                        value={formData.bank_name}
+                        onChange={(e) => handleInputChange('bank_name', e.target.value)}
+                        placeholder="Örn: Türkiye İş Bankası"
+                      />
+                    </div>
+
+                    {/* Şube */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şube
+                      </label>
+                      <Input
+                        value={formData.bank_branch}
+                        onChange={(e) => handleInputChange('bank_branch', e.target.value)}
+                        placeholder="Şube adı"
+                      />
+                    </div>
+
+                    {/* SWIFT Kodu */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        SWIFT Kodu
+                      </label>
+                      <Input
+                        value={formData.swift_code}
+                        onChange={(e) => handleInputChange('swift_code', e.target.value)}
+                        placeholder="SWIFT/BIC kodu"
+                      />
+                    </div>
+
+                    {/* Ülke */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke
+                      </label>
+                      <CountrySelect
+                        value={formData.country}
+                        onChange={(country) => {
+                          const countryCode = country ? country.iso2 : '';
+                          handleInputChange('country', countryCode);
+                        }}
+                        placeholder="Ülke seçiniz..."
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* USA Format */
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="h-4 w-4 text-blue-600" />
+                      <span className="text-blue-800 font-medium text-sm">ABD Banka Formatı</span>
+                    </div>
+                    <p className="text-blue-700 text-sm mt-1">
+                      Amerika'da IBAN kullanılmaz. Routing Number ve Account Number kullanılır.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Routing Number */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Routing Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.routing_number}
+                        onChange={(e) => handleInputChange('routing_number', e.target.value)}
+                        placeholder="Örn: 021000021 (Chase Bank)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">9 haneli banka routing numarası</p>
+                    </div>
+
+                    {/* Account Number */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        value={formData.us_account_number}
+                        onChange={(e) => handleInputChange('us_account_number', e.target.value)}
+                        placeholder="Örn: 1234567890123456"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Hesap numarası</p>
+                    </div>
+
+                    {/* Banka Adı */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adı
+                      </label>
+                      <Input
+                        value={formData.bank_name}
+                        onChange={(e) => handleInputChange('bank_name', e.target.value)}
+                        placeholder="Örn: Chase Bank, Bank of America"
+                      />
+                    </div>
+
+                    {/* Hesap Sahibi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hesap Sahibi Adı
+                      </label>
+                      <Input
+                        value={formData.account_holder_name}
+                        onChange={(e) => handleInputChange('account_holder_name', e.target.value)}
+                        placeholder="Örn: John Doe LLC"
+                      />
+                    </div>
+
+                    {/* Banka Adresi */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Banka Adresi
+                      </label>
+                      <Input
+                        value={formData.bank_address}
+                        onChange={(e) => handleInputChange('bank_address', e.target.value)}
+                        placeholder="Örn: 383 Madison Ave, New York, NY 10179"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Banka şubesi adresi</p>
+                    </div>
+
+                    {/* SWIFT (Opsiyonel) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        SWIFT Code
+                      </label>
+                      <Input
+                        value={formData.swift_code}
+                        onChange={(e) => handleInputChange('swift_code', e.target.value)}
+                        placeholder="Örn: CHASUS33 (Chase)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Uluslararası transferler için</p>
+                    </div>
+
+                    {/* Ülke (ABD olarak sabitlendi) */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke
+                      </label>
+                      <Input
+                        value={isUSABankFormat ? 'USA' : formData.country}
+                        onChange={(e) => !isUSABankFormat && handleInputChange('country', e.target.value)}
+                        placeholder="USA"
+                        disabled={isUSABankFormat}
+                        className={isUSABankFormat ? 'bg-gray-100' : ''}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
 
-        {/* Sektör ve Diğer Bilgiler */}
+        {/* Yetkili Kişi Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Users className="h-5 w-5" />
+                <span>Yetkili Kişi Bilgileri</span>
+              </div>
+              <Button type="button" onClick={handleAddContact} size="sm" variant="outline">
+                <Plus className="h-4 w-4 mr-2" />
+                Yeni Kişi Ekle
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {contacts.map((contact, contactIndex) => (
+              <div key={contactIndex} className="border rounded-lg p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">Yetkili Kişi {contactIndex + 1}</h4>
+                  {contacts.length > 1 && (
+                    <Button
+                      type="button"
+                      onClick={() => handleRemoveContact(contactIndex)}
+                      size="sm"
+                      variant="outline"
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ad Soyadı
+                    </label>
+                    <Input
+                      value={contact.full_name}
+                      onChange={(e) => handleContactChange(contactIndex, 'full_name', e.target.value)}
+                      placeholder="Ad Soyadı"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cep Telefonu
+                    </label>
+                    <PhoneInput
+                      country={"tr"}
+                      value={contact.mobile}
+                      onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
+                      enableSearch={true}
+                      inputClass="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <Input
+                      type="email"
+                      value={contact.email}
+                      onChange={(e) => handleContactChange(contactIndex, 'email', e.target.value)}
+                      placeholder="ornek@email.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Görevi
+                    </label>
+                    <Input
+                      value={contact.position}
+                      onChange={(e) => handleContactChange(contactIndex, 'position', e.target.value)}
+                      placeholder="Örn: İş Geliştirme Müdürü"
+                    />
+                  </div>
+                </div>
+
+                {/* Address and Location Information */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="inline w-4 h-4 mr-1" />
+                    Adres
+                  </label>
+                  <textarea
+                    value={contact.address}
+                    onChange={(e) => handleContactChange(contactIndex, 'address', e.target.value)}
+                    placeholder="Bireysel müşteri adresi..."
+                    className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Ülke
+                    </label>
+                    <CountrySelect
+                      value={contact.country}
+                      onChange={(country) => {
+                        const countryCode = country ? country.iso2 : '';
+                        handleContactChange(contactIndex, 'country', countryCode);
+                        // Reset city when country changes
+                        if (contact.city) {
+                          handleContactChange(contactIndex, 'city', '');
+                        }
+                      }}
+                      placeholder="Ülke seçiniz..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Şehir
+                    </label>
+                    <CitySelect
+                      country={contact.country}
+                      value={contact.city}
+                      onChange={(city) => {
+                        const cityName = city ? city.name : '';
+                        handleContactChange(contactIndex, 'city', cityName);
+                      }}
+                      placeholder="Şehir seçiniz..."
+                      disabled={!contact.country}
+                    />
+                  </div>
+                </div>
+
+                {/* Kişi Etiketleri */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Etiketler
+                  </label>
+                  <div className="flex space-x-2 mb-2">
+                    <Input
+                      value={currentContactTag}
+                      onChange={(e) => setCurrentContactTag(e.target.value)}
+                      placeholder="Etiket girin..."
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddContactTag(contactIndex))}
+                    />
+                    <Button 
+                      type="button" 
+                      onClick={() => handleAddContactTag(contactIndex)} 
+                      size="sm" 
+                      variant="outline"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {contact.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveContactTag(contactIndex, tagIndex)}
+                          className="ml-2 text-green-600 hover:text-green-800"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* SCREENSHOT EKİ - En alt kısım */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Tag className="h-5 w-5" />
-              <span>Sektör ve Diğer Bilgiler</span>
+              <FileText className="h-5 w-5" />
+              <span>Ek Bilgiler</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Sector */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Sektör
-                </label>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowNewSectorInput(true)}
-                    className="text-xs"
-                  >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Yeni Sektör Ekle
-                  </Button>
-                </div>
-                
-                {showNewSectorInput && (
-                  <div className="flex space-x-2 mb-2">
-                    <Input
-                      value={newSector}
-                      onChange={(e) => setNewSector(e.target.value)}
-                      placeholder="Yeni sektör adı"
-                      className="flex-1"
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={handleAddNewSector}
-                    >
-                      Ekle
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setShowNewSectorInput(false);
-                        setNewSector('');
-                      }}
-                    >
-                      İptal
-                    </Button>
-                  </div>
-                )}
-                
-                <Select value={formData.sector} onValueChange={(value) => handleInputChange('sector', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sektör seçiniz" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sectors.map((sector) => (
-                      <SelectItem key={sector.value} value={sector.value}>
-                        {sector.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Bu kısım screenshot'tan eklenecek içerik için hazırlandı */}
+            <p className="text-gray-600 text-sm">
+              Bu bölüm screenshot'taki ek içerik için hazırlanmıştır.
+            </p>
+          </CardContent>
+        </Card>
 
-              {/* Tags */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
-                  <Tag className="h-4 w-4" />
-                  <span>Etiketler</span>
-                </label>
-                
-                {/* Current Tags */}
-                {formData.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.tags.map((tag, index) => (
-                      <Badge
-                        key={index}
-                        className={`text-xs px-2 py-1 ${getTagColor(tag)} border-0 flex items-center space-x-1`}
-                      >
-                        <span>{tag}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeTag(tag)}
-                          className="ml-1 hover:bg-black hover:bg-opacity-20 rounded-full w-4 h-4 flex items-center justify-center"
-                        >
-                          <X className="h-2 w-2" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-
-                {/* Tag Input */}
-                <div className="flex items-center space-x-2">
-                  <Input
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyPress={handleTagInputKeyPress}
-                    placeholder="Etiket yazın ve Enter'a basın..."
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addTag(tagInput)}
-                    disabled={!tagInput.trim()}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Suggested Tags */}
-                <div className="space-y-2">
-                  <span className="text-xs text-gray-600">Önerilen etiketler:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {availableTags
-                      .filter(tag => !formData.tags.includes(tag))
-                      .slice(0, 8)
-                      .map((tag) => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => addTag(tag)}
-                          className={`text-xs px-2 py-1 rounded-full border hover:shadow-sm transition-colors ${getTagColor(tag)} opacity-70 hover:opacity-100`}
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Notlar
-                </label>
-                <Textarea
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Müşteri hakkında notlar..."
-                  rows={3}
-                  className="w-full"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Form Buttons */}
-          <div className="flex items-center justify-between pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={clearForm}
-              className="flex items-center space-x-2"
-            >
-              <X className="h-4 w-4" />
-              <span>Temizle</span>
+        {/* Submit Button */}
+        <div className="flex justify-end space-x-4">
+          {onClose && (
+            <Button type="button" variant="outline" onClick={onClose}>
+              İptal
             </Button>
-            <div className="space-x-3">
-              {onClose && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                  className="flex items-center space-x-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Geri Dön</span>
-                </Button>
-              )}
-              <Button
-                type="submit"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 flex items-center space-x-2"
-              >
-                <Save className="h-4 w-4" />
-                <span>Kaydet</span>
-              </Button>
-            </div>
-          </div>
-        </form>
-      
-      {/* New Person Form Modal */}
-      {showPersonForm && (
-        <NewPersonForm
-          onClose={() => setShowPersonForm(false)}
-          onSave={handlePersonAdded}
-        />
+          )}
+          <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+            <Save className="h-4 w-4 mr-2" />
+            {isLoading ? 'Kaydediliyor...' : 'Müşteri Kaydet'}
+          </Button>
+        </div>
+      </form>
       )}
     </div>
   );
-}
+};
+
+export default NewCustomerForm;
