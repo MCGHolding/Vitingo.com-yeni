@@ -158,12 +158,13 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     // Enhanced validation - required fields for person
     const requiredFieldsValid = formData.firstName && formData.lastName && 
         formData.relationshipType && formData.email && formData.phone && 
-        formData.mobile && formData.country && formData.city && formData.address;
+        formData.mobile && formData.country && formData.city && formData.address &&
+        (formData.companyId || formData.supplierId); // Either customer company or supplier company required
     
     if (!requiredFieldsValid) {
       toast({
         title: "Hata",
-        description: "Zorunlu alanları doldurunuz: Ad, Soyad, İlişki türü, Email, Telefon, Cep telefonu, Ülke, Şehir, Adres",
+        description: "Zorunlu alanları doldurunuz: Ad, Soyad, İlişki türü, Email, Telefon, Cep telefonu, Ülke, Şehir, Adres ve Şirket (Müşteri veya Tedarikçi)",
         variant: "destructive"
       });
       return;
