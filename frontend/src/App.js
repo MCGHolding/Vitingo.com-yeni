@@ -19,6 +19,7 @@ import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpport
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
 import NewCustomerForm from './components/Customers/NewCustomerForm';
 import NewPersonFormPage from './components/Customers/NewPersonFormPage';
+import NewOpportunityFormPage from './components/Opportunities/NewOpportunityFormPage';
 import NewPersonForm from './components/Customers/NewPersonForm';
 import AllPeoplePage from './components/Customers/AllPeoplePage';
 import AllCustomersPage from './components/Customers/AllCustomersPage';
