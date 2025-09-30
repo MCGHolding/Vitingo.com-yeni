@@ -216,7 +216,7 @@ export default function NewPersonFormPage({ onClose, onSave }) {
         setCreatedPersonInfo({
           fullName: `${formData.firstName} ${formData.lastName}`,
           relationshipType: relationshipTypes.find(rt => rt.value === formData.relationshipType)?.label || formData.relationshipType,
-          company: formData.company
+          company: formData.company || formData.supplier || 'Belirtilmemiş'
         });
         setShowSuccessModal(true);
       } else {
