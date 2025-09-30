@@ -58,6 +58,30 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
     return counts;
   };
 
+  const getTotalWonValue = () => {
+    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
+  };
+
+  const getAverageWonValue = () => {
+    const total = getTotalWonValue();
+    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
+  };
+
+  const getHighestWonValue = () => {
+    return filteredOpportunities.length > 0 
+      ? Math.max(...filteredOpportunities.map(opp => opp.amount || 0)) 
+      : 0;
+  };
+
+  const formatAmount = (amount) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(0)}K`;
+    }
+    return amount.toFixed(0);
+  };
+
   const filteredOpportunities = useMemo(() => {
     let filtered = wonOpportunities;
 
