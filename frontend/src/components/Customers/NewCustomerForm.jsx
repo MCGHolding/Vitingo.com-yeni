@@ -764,13 +764,22 @@ export default function NewCustomerForm({ onSave, onClose }) {
           </Card>
         )}
 
-              {/* Sector */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
-                    Sektör
-                  </label>
-                  <Button
+        {/* Sektör ve Diğer Bilgiler */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Tag className="h-5 w-5" />
+              <span>Sektör ve Diğer Bilgiler</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Sector */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">
+                  Sektör
+                </label>
+                <Button
                     type="button"
                     variant="outline"
                     size="sm"
