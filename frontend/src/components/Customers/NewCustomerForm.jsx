@@ -1109,7 +1109,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Görevi
+                      Görevi <span className="text-red-500">*</span>
                     </label>
                     <Input
                       value={contact.position}
