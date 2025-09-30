@@ -1,0 +1,644 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useToast } from '../../hooks/use-toast';
+import { 
+  Search, 
+  Filter, 
+  Eye, 
+  Edit, 
+  MoreHorizontal,
+  Calendar,
+  User,
+  DollarSign,
+  FileText,
+  X,
+  Building,
+  Users,
+  TrendingUp,
+  MessageSquare,
+  Mail,
+  FileUser,
+  Receipt,
+  UserX,
+  Star,
+  Trash2,
+  UserSearch
+} from 'lucide-react';
+import { customerTagColors } from '../../mock/customersData';
+import ViewPersonModal from './ViewPersonModal';
+import EditPersonModal from './EditPersonModal';
+import CustomerEmailModal from './CustomerEmailModal';
+
+// ActionMenuPopover Component
+const ActionMenuPopover = ({ prospect, onAction }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const menuItems = [
+    { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800', action: 'message' },
+    { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800', action: 'email' },
+    { label: 'Müşteriye Çevir', icon: User, color: 'text-purple-600 hover:text-purple-800', action: 'convert' },
+    { label: 'Favori', icon: Star, color: 'text-yellow-600 hover:text-yellow-800', action: 'favorite' },
+    { label: 'Sil', icon: Trash2, color: 'text-red-700 hover:text-red-900', action: 'delete' },
+  ];
+
+  const handleMenuAction = (action) => {
+    onAction(action, prospect);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              onMouseEnter={() => setIsOpen(true)}
+              onMouseLeave={() => setIsOpen(false)}
+            >
+              <MoreHorizontal className="h-3 w-3" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Daha Fazla İşlem</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      {isOpen && (
+        <div 
+          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]"
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+        >
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              className={`w-full text-left px-3 py-2 text-sm ${item.color} hover:bg-gray-50 flex items-center space-x-2 ${
+                index === 0 ? 'rounded-t-lg' : ''
+              } ${index === menuItems.length - 1 ? 'rounded-b-lg' : ''}`}
+              onClick={() => handleMenuAction(item.action)}
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function CustomerProspectsPage({ onBackToDashboard }) {
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [tagSearch, setTagSearch] = useState('');
+  const [sectorFilter, setSectorFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
+  const [relationshipFilter, setRelationshipFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('companyName');
+  const [prospects, setProspects] = useState([]);
+
+  // Modal states - placeholder for future implementation
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [selectedProspect, setSelectedProspect] = useState(null);
+
+  // Load customer prospects from backend
+  useEffect(() => {
+    loadCustomerProspects();
+  }, []);
+
+  const loadCustomerProspects = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/customer-prospects`);
+      if (response.ok) {
+        const data = await response.json();
+        setProspects(data);
+      } else {
+        throw new Error('Failed to load customer prospects');
+      }
+    } catch (error) {
+      console.error('Error loading customer prospects:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteri adayları yüklenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getSectorCounts = () => {
+    const counts = {};
+    filteredProspects.forEach(prospect => {
+      const sector = prospect.sector || 'Diğer';
+      counts[sector] = (counts[sector] || 0) + 1;
+    });
+    return counts;
+  };
+
+  const getCountryCounts = () => {
+    const counts = {};
+    filteredProspects.forEach(prospect => {
+      const country = prospect.country || 'Bilinmiyor';
+      counts[country] = (counts[country] || 0) + 1;
+    });
+    return counts;
+  };
+
+  const filteredProspects = useMemo(() => {
+    let filtered = prospects;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(prospect =>
+        prospect.company_short_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        prospect.company_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        prospect.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (prospect.sector && prospect.sector.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Tag search filter
+    if (tagSearch) {
+      filtered = filtered.filter(prospect =>
+        prospect.tags && prospect.tags.some(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()))
+      );
+    }
+
+    // Sector filter
+    if (sectorFilter !== 'all') {
+      filtered = filtered.filter(prospect => prospect.sector === sectorFilter);
+    }
+
+    // Country filter
+    if (countryFilter !== 'all') {
+      filtered = filtered.filter(prospect => prospect.country === countryFilter);
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'companyName':
+          return (a.company_short_name || '').localeCompare(b.company_short_name || '');
+        case 'createdAt':
+          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+        default:
+          return (a.company_short_name || '').localeCompare(b.company_short_name || '');
+      }
+    });
+
+    return filtered;
+  }, [prospects, searchTerm, tagSearch, sectorFilter, countryFilter, relationshipFilter, sortBy]);
+
+  const sectorCounts = getSectorCounts();
+  const countryCounts = getCountryCounts();
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setTagSearch('');
+    setSectorFilter('all');
+    setCountryFilter('all');
+    setRelationshipFilter('all');
+    setSortBy('companyName');
+  };
+
+  const handleAction = (action, prospect) => {
+    switch (action) {
+      case 'convert':
+        toast({
+          title: "Müşteriye Çevir",
+          description: `${prospect.company_short_name} müşteriye çevrilecek...`,
+        });
+        // TODO: Implement convert to customer functionality
+        break;
+      case 'message':
+        toast({
+          title: "Mesaj Gönder",
+          description: `${prospect.company_short_name} ile mesaj başlatılacak...`,
+        });
+        break;
+      case 'email':
+        setSelectedProspect(prospect);
+        setEmailModalOpen(true);
+        break;
+      case 'favorite':
+        toast({
+          title: "Favorilere Ekle",
+          description: `${prospect.company_short_name} favorilere eklendi`,
+        });
+        break;
+      case 'delete':
+        if (window.confirm(`${prospect.company_short_name} silinsin mi?`)) {
+          toast({
+            title: "Silindi",
+            description: `${prospect.company_short_name} başarıyla silindi`,
+          });
+          // TODO: Implement delete functionality
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const exportToExcel = () => {
+    toast({
+      title: "Excel Aktarımı",
+      description: `${filteredProspects.length} müşteri adayı Excel dosyasına aktarılıyor...`,
+    });
+  };
+
+  const getInitials = (name) => {
+    return name?.split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'MA';
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
+              <UserSearch className="h-8 w-8 text-blue-600" />
+              <span>Müşteri Adayları</span>
+            </h1>
+            <p className="text-gray-600 mt-1">Potansiyel müşterilerin listesi ve yönetimi</p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={exportToExcel}
+              className="bg-green-600 hover:bg-green-700 px-6"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Excel Aktarım
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onBackToDashboard}
+              className="px-6"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Kapat
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <UserSearch className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Toplam Aday</p>
+                  <p className="text-2xl font-bold text-gray-900">{prospects.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Calendar className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Bu Ay</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {prospects.filter(p => {
+                      const created = new Date(p.created_at || 0);
+                      const now = new Date();
+                      return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                    }).length}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Potansiyel Değer</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {prospects.length > 0 ? (prospects.length * 50).toFixed(0) : '0'}K ₺
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Users className="h-6 w-6 text-orange-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Dönüşüm Oranı</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {prospects.length > 0 ? '25' : '0'}%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Aday ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Tag Search */}
+              <Input
+                placeholder="Tag ara (örn: TEKNOLOJI)..."
+                value={tagSearch}
+                onChange={(e) => setTagSearch(e.target.value)}
+              />
+
+              {/* Sector Filter */}
+              <Select value={sectorFilter} onValueChange={setSectorFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sektör" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tüm Sektörler</SelectItem>
+                  {Object.keys(sectorCounts).map((sector) => (
+                    <SelectItem key={sector} value={sector}>
+                      {sector} ({sectorCounts[sector]})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Country Filter */}
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Ülke" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tüm Ülkeler</SelectItem>
+                  {Object.keys(countryCounts).map((country) => (
+                    <SelectItem key={country} value={country}>
+                      {country} ({countryCounts[country]})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              {/* Sort */}
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sıralama" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="companyName">Şirket Adı</SelectItem>
+                  <SelectItem value="createdAt">Kayıt Tarihi</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Filter className="h-4 w-4" />
+                <span>{filteredProspects.length} müşteri adayı bulundu</span>
+              </div>
+              {(searchTerm || tagSearch || sectorFilter !== 'all' || countryFilter !== 'all' || sortBy !== 'companyName') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Filtreleri Temizle
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Prospects Table */}
+      <div className="px-6 pb-6">
+        <Card>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">No.</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Şirket</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Sektör</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Ülke</th>
+                    <th className="text-left py-3 px-3 font-semibold text-gray-700 text-xs">Etiketler</th>
+                    <th className="text-center py-3 px-3 font-semibold text-gray-700 text-xs">İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredProspects.map((prospect, index) => (
+                    <tr 
+                      key={prospect.id}
+                      className={`border-b border-gray-100 hover:bg-blue-50 transition-all duration-200 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      } hover:shadow-md`}
+                    >
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-medium">
+                            {String(index + 1).padStart(3, '0')}
+                          </div>
+                        </div>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="space-y-1">
+                                <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[160px] truncate flex items-center space-x-2">
+                                  <Building className="h-3 w-3 text-gray-400" />
+                                  <span>{prospect.company_short_name || prospect.company_title}</span>
+                                </div>
+                                <div className="text-xs text-gray-500 max-w-[160px] truncate flex items-center space-x-1">
+                                  <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                                  <span>Aday</span>
+                                </div>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <div className="max-w-xs">
+                                <p className="font-medium">{prospect.company_title || prospect.company_short_name}</p>
+                                <p className="text-xs text-gray-300 mt-1">Email: {prospect.email || 'N/A'}</p>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <span className="text-xs text-gray-600">
+                          {prospect.sector || '-'}
+                        </span>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <span className="text-xs text-gray-600">
+                          {prospect.country || '-'}
+                        </span>
+                      </td>
+                      
+                      <td className="py-3 px-3">
+                        <div className="flex flex-wrap gap-1 max-w-[120px]">
+                          {prospect.tags && prospect.tags.length > 0 ? (
+                            prospect.tags.slice(0, 2).map((tag, tagIndex) => (
+                              <Badge
+                                key={tagIndex}
+                                className={`text-xs px-1 py-0 ${customerTagColors[tag] || 'bg-gray-100 text-gray-800'}`}
+                              >
+                                {tag}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
+                          {prospect.tags && prospect.tags.length > 2 && (
+                            <Badge className="text-xs px-1 py-0 bg-gray-100 text-gray-600">
+                              +{prospect.tags.length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <div className="flex items-center justify-center space-x-1">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                                  onClick={() => {
+                                    setSelectedProspect(prospect);
+                                    setViewModalOpen(true);
+                                  }}
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Görüntüle</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-gray-600 hover:text-green-600 hover:bg-green-50"
+                                  onClick={() => {
+                                    setSelectedProspect(prospect);
+                                    setEditModalOpen(true);
+                                  }}
+                                >
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Düzenle</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <ActionMenuPopover prospect={prospect} onAction={handleAction} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  
+                  {filteredProspects.length === 0 && (
+                    <tr>
+                      <td colSpan="6" className="py-12 text-center text-gray-500">
+                        <UserSearch className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p className="text-lg font-medium">Henüz müşteri adayı bulunmuyor</p>
+                        <p className="text-sm mt-1">İlk müşteri adayınızı eklemek için "Yeni Müşteri" formunda "Müşteri Aday" seçeneğini işaretleyin</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Modals */}
+      {viewModalOpen && selectedProspect && (
+        <ViewPersonModal 
+          person={selectedProspect}
+          onClose={() => setViewModalOpen(false)}
+        />
+      )}
+
+      {editModalOpen && selectedProspect && (
+        <EditPersonModal 
+          person={selectedProspect}
+          onClose={() => setEditModalOpen(false)}
+          onSave={(updatedPerson) => {
+            // Update the prospect in the list
+            setProspects(prev => prev.map(p => p.id === updatedPerson.id ? updatedPerson : p));
+            setEditModalOpen(false);
+          }}
+        />
+      )}
+
+      {emailModalOpen && selectedProspect && (
+        <CustomerEmailModal 
+          customer={selectedProspect}
+          onClose={() => setEmailModalOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
