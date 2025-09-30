@@ -637,14 +637,11 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               </label>
               {/* Debug info removed */}
               <SearchableSelect
-                options={customers.map(customer => {
-                  console.log('Mapping customer for SearchableSelect:', customer);
-                  return {
-                    id: customer.id,
-                    label: customer.companyName,
-                    sublabel: `${customer.city || ''} ${customer.country || ''}`.trim() || customer.email
-                  };
-                })}
+                options={customers.map(customer => ({
+                  id: customer.id,
+                  label: customer.companyName,
+                  sublabel: `${customer.city || ''} ${customer.country || ''}`.trim() || customer.email
+                }))}
                 value={formData.customerId}
                 onChange={handleCustomerChange}
                 placeholder={isLoadingData ? "Müşteriler yükleniyor..." : "Müşteri seçiniz..."}
