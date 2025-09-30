@@ -365,7 +365,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     <SelectValue placeholder="Müşteri şirketi seçin..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Seçiniz...</SelectItem>
                     {companies.map((company) => (
                       <SelectItem key={company.id} value={company.id}>
                         {company.companyName || company.companyTitle}
