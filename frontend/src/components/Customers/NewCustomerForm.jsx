@@ -675,7 +675,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   Telefon
                 </label>
                 <PhoneInput
-                  country={"tr"}
+                  country={formData.country || "tr"}
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
                   enableSearch={true}
