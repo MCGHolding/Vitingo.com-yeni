@@ -69,7 +69,11 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     // USA Bank Information
     routing_number: '',
     us_account_number: '',
-    bank_address: ''
+    bank_address: '',
+    // Customer specific fields
+    sector: '',
+    tags: [],
+    notes: ''
   });
 
   const [currentService, setCurrentService] = useState('');
