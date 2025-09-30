@@ -366,7 +366,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position  // Contact info required
       : formData.company_short_name && formData.company_title && formData.customer_type_id && 
         formData.specialty_id && formData.sector_id && formData.email && formData.phone && 
-        formData.mobile && formData.country && formData.city &&  // Company basic info required
+        formData.mobile && formData.country && formData.city && formData.address &&  // Company basic info required + address
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position; // Contact person required
     
     if (!requiredFieldsValid) {
