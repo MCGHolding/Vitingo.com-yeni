@@ -88,7 +88,6 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     is_candidate: false
   });
 
-  const [currentService, setCurrentService] = useState('');
   const [currentContactTag, setCurrentContactTag] = useState('');
   const [isUSABankFormat, setIsUSABankFormat] = useState(false);
   
