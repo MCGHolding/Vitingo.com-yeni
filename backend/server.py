@@ -2494,6 +2494,98 @@ async def get_invoices_by_status(status: str):
         logger.error(f"Error getting invoices by status {status}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== CUSTOMER PROSPECTS ENDPOINTS =====================
+
+class CustomerProspectCreate(BaseModel):
+    company_short_name: str = ""
+    company_title: str = ""
+    customer_type_id: str = ""
+    specialty_id: str = ""
+    address: str = ""
+    phone: str = ""
+    mobile: str = ""
+    email: str = ""
+    tax_office: str = ""
+    tax_number: str = ""
+    services: List[str] = []
+    iban: str = ""
+    bank_name: str = ""
+    bank_branch: str = ""
+    account_holder_name: str = ""
+    swift_code: str = ""
+    country: str = ""
+    city: str = ""
+    routing_number: str = ""
+    us_account_number: str = ""
+    bank_address: str = ""
+    sector: str = ""
+    tags: List[str] = []
+    notes: str = ""
+    is_candidate: bool = True
+    contacts: List[dict] = []
+
+class CustomerProspect(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_short_name: str = ""
+    company_title: str = ""
+    customer_type_id: str = ""
+    specialty_id: str = ""
+    address: str = ""
+    phone: str = ""
+    mobile: str = ""
+    email: str = ""
+    tax_office: str = ""
+    tax_number: str = ""
+    services: List[str] = []
+    iban: str = ""
+    bank_name: str = ""
+    bank_branch: str = ""
+    account_holder_name: str = ""
+    swift_code: str = ""
+    country: str = ""
+    city: str = ""
+    routing_number: str = ""
+    us_account_number: str = ""
+    bank_address: str = ""
+    sector: str = ""
+    tags: List[str] = []
+    notes: str = ""
+    is_candidate: bool = True
+    contacts: List[dict] = []
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+@api_router.post("/customer-prospects", response_model=CustomerProspect)
+async def create_customer_prospect(prospect_data: CustomerProspectCreate):
+    """Create a new customer prospect"""
+    try:
+        # Convert to CustomerProspect model
+        prospect = CustomerProspect(**prospect_data.dict())
+        prospect_dict = prospect.dict()
+        
+        # Insert to MongoDB
+        await db.customer_prospects.insert_one(prospect_dict)
+        
+        logger.info(f"Customer prospect created: {prospect.id}")
+        return prospect
+        
+    except Exception as e:
+        logger.error(f"Error creating customer prospect: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/customer-prospects", response_model=List[CustomerProspect])
+async def get_customer_prospects():
+    """Get all customer prospects"""
+    try:
+        prospects = await db.customer_prospects.find().to_list(length=None)
+        return [CustomerProspect(**prospect) for prospect in prospects]
+        
+    except Exception as e:
+        logger.error(f"Error getting customer prospects: {str(e)}")
+        return []
+
+# ===================== END CUSTOMER PROSPECTS ENDPOINTS =====================
+
 # ===================== END CUSTOMER ENDPOINTS =====================
 
 # ===================== BANK ENDPOINTS =====================
