@@ -730,7 +730,17 @@ const Dashboard = () => {
         return <NewInvoiceForm onBackToDashboard={handleBackToDashboard} />;
 
       case 'all-invoices':
-        return <AllInvoicesPage onBackToDashboard={handleBackToDashboard} onNewInvoice={handleNewInvoice} />;
+        return <AllInvoicesPage onBackToDashboard={handleBackToDashboard} onNewInvoice={handleNewInvoice} onEditInvoice={handleEditInvoice} />;
+
+      case 'edit-invoice':
+        return <EditInvoiceForm 
+          invoice={selectedInvoiceForEdit} 
+          onBackToAllInvoices={handleAllInvoices}
+          onSaveSuccess={() => {
+            setSelectedInvoiceForEdit(null);
+            setCurrentView('all-invoices');
+          }}
+        />;
 
       case 'new-bank':
         return <NewBankForm onBackToDashboard={handleBackToDashboard} />;
