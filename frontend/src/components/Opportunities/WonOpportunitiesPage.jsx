@@ -154,6 +154,9 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
   }, [searchTerm, tagSearch, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const currencyCounts = getCurrencyCounts();
+  const totalWonValue = getTotalWonValue();
+  const averageWonValue = getAverageWonValue();
+  const highestWonValue = getHighestWonValue();
 
   const clearFilters = () => {
     setSearchTerm('');
