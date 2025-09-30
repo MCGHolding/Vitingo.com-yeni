@@ -400,16 +400,27 @@ export default function NewCustomerForm({ onSave, onClose }) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <Card>
-        <CardHeader className="border-b border-gray-200">
-          <CardTitle className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
             <Building className="h-6 w-6 text-blue-600" />
-            <span>Yeni Müşteri Ekle</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Yeni Müşteri</h1>
+            <p className="text-gray-600">Müşteri bilgilerini girin ve yetkili kişileri ekleyin</p>
+          </div>
+        </div>
+        {onClose && (
+          <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Geri Dön</span>
+          </Button>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
               {/* Company Avatar */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center space-x-2">
