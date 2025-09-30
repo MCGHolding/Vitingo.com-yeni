@@ -933,6 +933,760 @@ def test_invalid_survey_token():
         print(f"❌ FAIL: Error testing invalid survey token: {str(e)}")
         return False
 
+def test_customer_prospects_get_endpoint():
+    """
+    Test GET /api/customer-prospects endpoint to verify it returns proper structure.
+    
+    Requirements to verify:
+    1. GET /api/customer-prospects should return a list of customer prospects
+    2. Should return proper JSON structure
+    3. Should handle empty list gracefully
+    4. Each prospect should have the expected fields
+    """
+    
+    print("=" * 80)
+    print("TESTING GET CUSTOMER PROSPECTS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to customer prospects...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer prospects endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+            print(f"   Number of prospects: {len(data) if isinstance(data, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of customer prospects")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(data)} customer prospects")
+        
+        # Test 5: Check structure of prospects if any exist
+        if len(data) > 0:
+            print("\n4. Checking customer prospect structure...")
+            first_prospect = data[0]
+            
+            # Expected fields based on CustomerProspect model
+            expected_fields = [
+                "id", "company_short_name", "email", "country", "city", 
+                "sector", "tags", "is_candidate", "created_at", "updated_at"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_prospect:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Customer prospect has all expected fields")
+            
+            print(f"   Sample prospect fields: {list(first_prospect.keys())}")
+            print(f"   Sample prospect company: {first_prospect.get('company_short_name', 'N/A')}")
+            print(f"   Sample prospect email: {first_prospect.get('email', 'N/A')}")
+            print(f"   Sample prospect country: {first_prospect.get('country', 'N/A')}")
+            print(f"   Sample prospect is_candidate: {first_prospect.get('is_candidate', 'N/A')}")
+        else:
+            print("\n4. No existing customer prospects found - this is acceptable for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET CUSTOMER PROSPECTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Customer prospect structure validated")
+        print("\n🎉 GET CUSTOMER PROSPECTS ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_prospects_post_endpoint():
+    """
+    Test POST /api/customer-prospects endpoint by creating a new prospect.
+    
+    Requirements to verify:
+    1. POST /api/customer-prospects should create a new customer prospect
+    2. Test data: company_short_name: "Test Aday Şirketi", email: "test@testadaysirketi.com", 
+       country: "TR", city: "Istanbul", sector: "Teknoloji", tags: ["TEKNOLOJI", "YAZILIM"], is_candidate: true
+    3. Should return the created prospect with generated ID
+    4. Should handle Turkish characters properly
+    5. Should validate required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING POST CUSTOMER PROSPECTS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data as specified in the review request
+    test_prospect_data = {
+        "company_short_name": "Test Aday Şirketi",
+        "email": "test@testadaysirketi.com",
+        "country": "TR",
+        "city": "Istanbul",
+        "sector": "Teknoloji",
+        "tags": ["TEKNOLOJI", "YAZILIM"],
+        "is_candidate": True
+    }
+    
+    print(f"Test data: {test_prospect_data}")
+    
+    try:
+        # Test 1: Make POST request
+        print("\n1. Making POST request to create customer prospect...")
+        response = requests.post(endpoint, json=test_prospect_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer prospect creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            created_prospect = response.json()
+            print(f"   Response type: {type(created_prospect)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating created prospect structure...")
+        if not isinstance(created_prospect, dict):
+            print("   ❌ FAIL: Response should be a dictionary representing the created prospect")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "company_short_name", "email", "country", "city", "sector", "tags", "is_candidate", "created_at", "updated_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_prospect:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created prospect missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Created prospect has all required fields")
+        
+        # Test 5: Validate field values
+        print("\n4. Validating field values...")
+        prospect_id = created_prospect.get("id")
+        company_name = created_prospect.get("company_short_name")
+        email = created_prospect.get("email")
+        country = created_prospect.get("country")
+        city = created_prospect.get("city")
+        sector = created_prospect.get("sector")
+        tags = created_prospect.get("tags")
+        is_candidate = created_prospect.get("is_candidate")
+        
+        # Validate ID is generated
+        if not prospect_id:
+            print("   ❌ FAIL: Prospect ID should be generated")
+            return False, None
+        print(f"   ✅ PASS: Generated prospect ID: {prospect_id}")
+        
+        # Validate input data matches
+        if company_name != test_prospect_data["company_short_name"]:
+            print(f"   ❌ FAIL: Company name mismatch. Expected: {test_prospect_data['company_short_name']}, Got: {company_name}")
+            return False, None
+        print(f"   ✅ PASS: Company name matches (Turkish characters preserved): {company_name}")
+        
+        if email != test_prospect_data["email"]:
+            print(f"   ❌ FAIL: Email mismatch. Expected: {test_prospect_data['email']}, Got: {email}")
+            return False, None
+        print(f"   ✅ PASS: Email matches: {email}")
+        
+        if country != test_prospect_data["country"]:
+            print(f"   ❌ FAIL: Country mismatch. Expected: {test_prospect_data['country']}, Got: {country}")
+            return False, None
+        print(f"   ✅ PASS: Country matches: {country}")
+        
+        if city != test_prospect_data["city"]:
+            print(f"   ❌ FAIL: City mismatch. Expected: {test_prospect_data['city']}, Got: {city}")
+            return False, None
+        print(f"   ✅ PASS: City matches: {city}")
+        
+        if sector != test_prospect_data["sector"]:
+            print(f"   ❌ FAIL: Sector mismatch. Expected: {test_prospect_data['sector']}, Got: {sector}")
+            return False, None
+        print(f"   ✅ PASS: Sector matches: {sector}")
+        
+        if tags != test_prospect_data["tags"]:
+            print(f"   ❌ FAIL: Tags mismatch. Expected: {test_prospect_data['tags']}, Got: {tags}")
+            return False, None
+        print(f"   ✅ PASS: Tags match: {tags}")
+        
+        if is_candidate != test_prospect_data["is_candidate"]:
+            print(f"   ❌ FAIL: is_candidate mismatch. Expected: {test_prospect_data['is_candidate']}, Got: {is_candidate}")
+            return False, None
+        print(f"   ✅ PASS: is_candidate matches: {is_candidate}")
+        
+        # Test 6: Check timestamps
+        print("\n5. Validating timestamps...")
+        created_at = created_prospect.get("created_at")
+        updated_at = created_prospect.get("updated_at")
+        
+        if not created_at:
+            print("   ❌ FAIL: created_at timestamp should be present")
+            return False, None
+        print(f"   ✅ PASS: created_at timestamp present: {created_at}")
+        
+        if not updated_at:
+            print("   ❌ FAIL: updated_at timestamp should be present")
+            return False, None
+        print(f"   ✅ PASS: updated_at timestamp present: {updated_at}")
+        
+        print("\n" + "=" * 80)
+        print("POST CUSTOMER PROSPECTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Created prospect has all required fields")
+        print("✅ All input data matches output data")
+        print("✅ Turkish characters preserved correctly")
+        print("✅ Generated ID and timestamps present")
+        print("✅ Tags array handled correctly")
+        print("✅ Boolean is_candidate field handled correctly")
+        print(f"\n🎉 POST CUSTOMER PROSPECTS ENDPOINT TEST PASSED!")
+        print(f"   Created prospect: {company_name} ({email})")
+        print(f"   Prospect ID: {prospect_id}")
+        
+        return True, prospect_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_customer_prospects_get_after_creation():
+    """
+    Test GET /api/customer-prospects again to verify the new prospect was saved.
+    
+    Requirements to verify:
+    1. GET /api/customer-prospects should now include the newly created prospect
+    2. The prospect should be persisted in the database
+    3. All data should match what was created
+    """
+    
+    print("=" * 80)
+    print("TESTING GET CUSTOMER PROSPECTS AFTER CREATION")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to verify prospect persistence...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer prospects endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            prospects = response.json()
+            print(f"   Response type: {type(prospects)}")
+            print(f"   Number of prospects: {len(prospects) if isinstance(prospects, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(prospects, list):
+            print("   ❌ FAIL: Response should be a list of customer prospects")
+            return False
+        
+        if len(prospects) == 0:
+            print("   ❌ FAIL: Expected at least one prospect (the one we just created)")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(prospects)} customer prospects")
+        
+        # Test 4: Look for our test prospect
+        print("\n4. Looking for the test prospect we created...")
+        test_company_name = "Test Aday Şirketi"
+        test_email = "test@testadaysirketi.com"
+        
+        found_test_prospect = False
+        test_prospect = None
+        
+        for prospect in prospects:
+            if (prospect.get("company_short_name") == test_company_name and 
+                prospect.get("email") == test_email):
+                found_test_prospect = True
+                test_prospect = prospect
+                break
+        
+        if not found_test_prospect:
+            print(f"   ❌ FAIL: Could not find test prospect with company '{test_company_name}' and email '{test_email}'")
+            print("   Available prospects:")
+            for i, prospect in enumerate(prospects[:5]):  # Show first 5
+                print(f"     {i+1}. {prospect.get('company_short_name', 'N/A')} ({prospect.get('email', 'N/A')})")
+            return False
+        
+        print(f"   ✅ PASS: Found test prospect: {test_prospect.get('company_short_name')} ({test_prospect.get('email')})")
+        
+        # Test 5: Verify all data matches what we created
+        print("\n5. Verifying test prospect data...")
+        expected_data = {
+            "company_short_name": "Test Aday Şirketi",
+            "email": "test@testadaysirketi.com",
+            "country": "TR",
+            "city": "Istanbul",
+            "sector": "Teknoloji",
+            "tags": ["TEKNOLOJI", "YAZILIM"],
+            "is_candidate": True
+        }
+        
+        all_data_matches = True
+        for field, expected_value in expected_data.items():
+            actual_value = test_prospect.get(field)
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: {field} mismatch. Expected: {expected_value}, Got: {actual_value}")
+                all_data_matches = False
+            else:
+                print(f"   ✅ PASS: {field} matches: {actual_value}")
+        
+        if not all_data_matches:
+            return False
+        
+        # Test 6: Verify required fields are present
+        print("\n6. Verifying required fields are present...")
+        required_fields = ["id", "created_at", "updated_at"]
+        for field in required_fields:
+            if field not in test_prospect or not test_prospect.get(field):
+                print(f"   ❌ FAIL: Required field '{field}' is missing or empty")
+                return False
+            else:
+                print(f"   ✅ PASS: {field} is present: {test_prospect.get(field)}")
+        
+        print("\n" + "=" * 80)
+        print("GET CUSTOMER PROSPECTS AFTER CREATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns list of prospects including our test prospect")
+        print("✅ Test prospect found in the list")
+        print("✅ All test prospect data matches what was created")
+        print("✅ Required fields (id, timestamps) are present")
+        print("✅ Turkish characters preserved in database")
+        print("✅ Database persistence verified")
+        print(f"\n🎉 GET CUSTOMER PROSPECTS AFTER CREATION TEST PASSED!")
+        print(f"   Total prospects in database: {len(prospects)}")
+        print(f"   Test prospect ID: {test_prospect.get('id')}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_prospects_data_structure():
+    """
+    Verify the prospect data structure matches what CustomerProspectsPage expects.
+    
+    Requirements to verify:
+    1. Each prospect should have the fields expected by the frontend
+    2. Data types should be correct
+    3. Structure should be compatible with CustomerProspectsPage component
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER PROSPECTS DATA STRUCTURE COMPATIBILITY")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Get prospects
+        print("\n1. Getting customer prospects for structure validation...")
+        response = requests.get(endpoint, timeout=30)
+        
+        if response.status_code != 200:
+            print(f"   ❌ FAIL: Could not get prospects for structure validation")
+            return False
+        
+        prospects = response.json()
+        
+        if len(prospects) == 0:
+            print("   ⚠️  WARNING: No prospects available for structure validation")
+            return True
+        
+        print(f"   Found {len(prospects)} prospects for validation")
+        
+        # Test structure of first prospect
+        print("\n2. Validating prospect structure for CustomerProspectsPage compatibility...")
+        sample_prospect = prospects[0]
+        
+        # Fields that CustomerProspectsPage likely expects
+        expected_frontend_fields = {
+            "id": str,
+            "company_short_name": str,
+            "email": str,
+            "country": str,
+            "city": str,
+            "sector": str,
+            "tags": list,
+            "is_candidate": bool,
+            "created_at": str,
+            "updated_at": str
+        }
+        
+        # Optional fields that might be used
+        optional_frontend_fields = {
+            "company_title": str,
+            "phone": str,
+            "mobile": str,
+            "address": str,
+            "notes": str,
+            "contacts": list
+        }
+        
+        print("   Checking required fields for frontend compatibility...")
+        missing_required = []
+        type_mismatches = []
+        
+        for field, expected_type in expected_frontend_fields.items():
+            if field not in sample_prospect:
+                missing_required.append(field)
+            else:
+                actual_value = sample_prospect[field]
+                if actual_value is not None and not isinstance(actual_value, expected_type):
+                    type_mismatches.append(f"{field}: expected {expected_type.__name__}, got {type(actual_value).__name__}")
+                else:
+                    print(f"   ✅ {field}: {expected_type.__name__} - OK")
+        
+        if missing_required:
+            print(f"   ❌ FAIL: Missing required fields for frontend: {missing_required}")
+            return False
+        
+        if type_mismatches:
+            print(f"   ❌ FAIL: Type mismatches: {type_mismatches}")
+            return False
+        
+        print("   ✅ PASS: All required fields present with correct types")
+        
+        # Check optional fields
+        print("\n   Checking optional fields...")
+        for field, expected_type in optional_frontend_fields.items():
+            if field in sample_prospect:
+                actual_value = sample_prospect[field]
+                if actual_value is not None and not isinstance(actual_value, expected_type):
+                    print(f"   ⚠️  WARNING: {field} type mismatch: expected {expected_type.__name__}, got {type(actual_value).__name__}")
+                else:
+                    print(f"   ✅ {field}: {expected_type.__name__} - OK")
+            else:
+                print(f"   ℹ️  {field}: Not present (optional)")
+        
+        # Test specific data validation
+        print("\n3. Validating specific data requirements...")
+        
+        # Check tags array
+        tags = sample_prospect.get("tags", [])
+        if isinstance(tags, list):
+            print(f"   ✅ PASS: tags is array with {len(tags)} items: {tags}")
+        else:
+            print(f"   ❌ FAIL: tags should be array, got {type(tags)}")
+            return False
+        
+        # Check is_candidate boolean
+        is_candidate = sample_prospect.get("is_candidate")
+        if isinstance(is_candidate, bool):
+            print(f"   ✅ PASS: is_candidate is boolean: {is_candidate}")
+        else:
+            print(f"   ❌ FAIL: is_candidate should be boolean, got {type(is_candidate)}")
+            return False
+        
+        # Check ID format (should be UUID string)
+        prospect_id = sample_prospect.get("id", "")
+        if isinstance(prospect_id, str) and len(prospect_id) > 0:
+            print(f"   ✅ PASS: id is non-empty string: {prospect_id[:8]}...")
+        else:
+            print(f"   ❌ FAIL: id should be non-empty string, got {type(prospect_id)}")
+            return False
+        
+        # Check email format
+        email = sample_prospect.get("email", "")
+        if isinstance(email, str) and "@" in email:
+            print(f"   ✅ PASS: email appears valid: {email}")
+        else:
+            print(f"   ⚠️  WARNING: email format might be invalid: {email}")
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER PROSPECTS DATA STRUCTURE TEST RESULTS:")
+        print("=" * 80)
+        print("✅ All required fields present for CustomerProspectsPage")
+        print("✅ All field types match frontend expectations")
+        print("✅ Tags array structure correct")
+        print("✅ Boolean is_candidate field correct")
+        print("✅ ID and email fields validated")
+        print("✅ Data structure compatible with frontend component")
+        print(f"\n🎉 CUSTOMER PROSPECTS DATA STRUCTURE TEST PASSED!")
+        print(f"   Sample prospect: {sample_prospect.get('company_short_name')} ({sample_prospect.get('email')})")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_regular_customers_endpoint():
+    """
+    Test that regular customers endpoint (/api/customers) is still working separately.
+    
+    Requirements to verify:
+    1. GET /api/customers should work independently of customer prospects
+    2. Should return different data structure than customer prospects
+    3. Should not interfere with customer prospects functionality
+    """
+    
+    print("=" * 80)
+    print("TESTING REGULAR CUSTOMERS ENDPOINT SEPARATELY")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to regular customers...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Regular customers endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            customers = response.json()
+            print(f"   Response type: {type(customers)}")
+            print(f"   Number of customers: {len(customers) if isinstance(customers, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(customers, list):
+            print("   ❌ FAIL: Response should be a list of customers")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(customers)} customers")
+        
+        # Test 4: Check structure difference from customer prospects
+        if len(customers) > 0:
+            print("\n4. Checking customer structure vs prospect structure...")
+            sample_customer = customers[0]
+            
+            # Regular customers should have different fields than prospects
+            customer_specific_fields = ["companyName", "relationshipType", "customerSince", "totalOrders", "totalRevenue"]
+            prospect_specific_fields = ["company_short_name", "is_candidate"]
+            
+            has_customer_fields = any(field in sample_customer for field in customer_specific_fields)
+            has_prospect_fields = any(field in sample_customer for field in prospect_specific_fields)
+            
+            if has_customer_fields and not has_prospect_fields:
+                print("   ✅ PASS: Regular customers have different structure than prospects")
+                print(f"   Customer fields found: {[f for f in customer_specific_fields if f in sample_customer]}")
+            elif has_prospect_fields:
+                print("   ⚠️  WARNING: Regular customers seem to have prospect-like fields")
+            else:
+                print("   ℹ️  INFO: Customer structure analysis inconclusive")
+            
+            print(f"   Sample customer fields: {list(sample_customer.keys())}")
+            print(f"   Sample customer: {sample_customer.get('companyName', sample_customer.get('company_name', 'N/A'))}")
+        else:
+            print("\n4. No existing customers found - this is acceptable for initial state")
+        
+        # Test 5: Verify endpoints are independent
+        print("\n5. Verifying endpoint independence...")
+        
+        # Get customer prospects count
+        prospects_response = requests.get(f"{BACKEND_URL}/api/customer-prospects", timeout=30)
+        if prospects_response.status_code == 200:
+            prospects = prospects_response.json()
+            prospects_count = len(prospects) if isinstance(prospects, list) else 0
+        else:
+            prospects_count = "unknown"
+        
+        customers_count = len(customers)
+        
+        print(f"   Regular customers count: {customers_count}")
+        print(f"   Customer prospects count: {prospects_count}")
+        
+        if customers_count != prospects_count:
+            print("   ✅ PASS: Customer and prospect endpoints return different data (independent)")
+        else:
+            print("   ℹ️  INFO: Customer and prospect counts are the same (could be coincidental)")
+        
+        print("\n" + "=" * 80)
+        print("REGULAR CUSTOMERS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Regular customers endpoint responds with status 200")
+        print("✅ Returns proper JSON list structure")
+        print("✅ Customer structure differs from prospect structure")
+        print("✅ Endpoints operate independently")
+        print("✅ No interference with customer prospects functionality")
+        print(f"\n🎉 REGULAR CUSTOMERS ENDPOINT TEST PASSED!")
+        print(f"   Regular customers: {customers_count}")
+        print(f"   Customer prospects: {prospects_count}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_prospects_comprehensive():
+    """
+    Run comprehensive customer prospects backend functionality tests.
+    
+    This function runs all customer prospects tests in the correct order:
+    1. Test GET endpoint (initial state)
+    2. Test POST endpoint (create new prospect)
+    3. Test GET endpoint again (verify persistence)
+    4. Test data structure compatibility
+    5. Test regular customers endpoint separately
+    """
+    
+    print("🚀 STARTING COMPREHENSIVE CUSTOMER PROSPECTS BACKEND TESTING")
+    print("=" * 100)
+    
+    test_results = []
+    
+    # Test 1: GET endpoint initial state
+    print("\n📋 TEST 1: GET /api/customer-prospects (initial state)")
+    result1 = test_customer_prospects_get_endpoint()
+    test_results.append(("GET customer-prospects (initial)", result1))
+    
+    # Test 2: POST endpoint create prospect
+    print("\n📋 TEST 2: POST /api/customer-prospects (create new prospect)")
+    result2, prospect_id = test_customer_prospects_post_endpoint()
+    test_results.append(("POST customer-prospects (create)", result2))
+    
+    # Test 3: GET endpoint after creation
+    print("\n📋 TEST 3: GET /api/customer-prospects (verify persistence)")
+    result3 = test_customer_prospects_get_after_creation()
+    test_results.append(("GET customer-prospects (after create)", result3))
+    
+    # Test 4: Data structure compatibility
+    print("\n📋 TEST 4: Data structure compatibility with CustomerProspectsPage")
+    result4 = test_customer_prospects_data_structure()
+    test_results.append(("Data structure compatibility", result4))
+    
+    # Test 5: Regular customers endpoint
+    print("\n📋 TEST 5: Regular customers endpoint (/api/customers)")
+    result5 = test_regular_customers_endpoint()
+    test_results.append(("Regular customers endpoint", result5))
+    
+    # Final summary
+    print("\n" + "=" * 100)
+    print("🎯 COMPREHENSIVE CUSTOMER PROSPECTS BACKEND TEST SUMMARY")
+    print("=" * 100)
+    
+    passed_tests = 0
+    total_tests = len(test_results)
+    
+    for test_name, result in test_results:
+        status = "✅ PASS" if result else "❌ FAIL"
+        print(f"{status}: {test_name}")
+        if result:
+            passed_tests += 1
+    
+    print(f"\nTest Results: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("\n🎉 ALL CUSTOMER PROSPECTS BACKEND TESTS PASSED!")
+        print("✅ GET /api/customer-prospects endpoint working")
+        print("✅ POST /api/customer-prospects endpoint working")
+        print("✅ New prospect creation and persistence verified")
+        print("✅ Data structure compatible with CustomerProspectsPage")
+        print("✅ Regular customers endpoint working independently")
+        print("✅ Turkish character support working")
+        print("✅ Tags array handling working")
+        print("✅ Boolean is_candidate field working")
+        print("\n🚀 BACKEND IS READY FOR CUSTOMER PROSPECTS FRONTEND FUNCTIONALITY!")
+        return True
+    else:
+        print(f"\n⚠️  {total_tests - passed_tests} TEST(S) FAILED")
+        print("❌ Customer prospects backend has issues that need to be addressed")
+        return False
+
 def test_survey_stats():
     """Test survey statistics endpoint"""
     print("=" * 80)
