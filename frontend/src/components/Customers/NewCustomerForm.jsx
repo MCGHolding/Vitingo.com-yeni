@@ -1158,12 +1158,12 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           </CardContent>
         </Card>
 
-        {/* Sektör ve Diğer Bilgiler */}
+        {/* Etiketler */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Tag className="h-5 w-5" />
-              <span>Sektör ve Diğer Bilgiler</span>
+              <span>Etiketler</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
