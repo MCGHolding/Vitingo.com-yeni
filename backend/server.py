@@ -4742,6 +4742,193 @@ async def get_customer_people(customer_id: str):
         logger.error(f"Error getting people for customer {customer_id}: {str(e)}")
         return []
 
+# ===================== OPPORTUNITIES MODELS & ENDPOINTS =====================
+
+# Opportunity Models
+class Opportunity(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    customer: str
+    contact_person: Optional[str] = ""
+    amount: float = 0.0
+    currency: str = "TRY"
+    status: str = "open"
+    stage: str = "lead"
+    priority: str = "medium"
+    close_date: str  # YYYY-MM-DD format
+    source: Optional[str] = ""
+    description: Optional[str] = ""
+    business_type: Optional[str] = ""
+    country: Optional[str] = ""
+    city: Optional[str] = ""
+    trade_show: Optional[str] = ""
+    trade_show_dates: Optional[str] = ""
+    expected_revenue: float = 0.0
+    probability: int = 50
+    tags: List[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OpportunityCreate(BaseModel):
+    title: str
+    customer: str
+    contact_person: Optional[str] = ""
+    amount: float = 0.0
+    currency: str = "TRY"
+    status: str = "open"
+    stage: str = "lead"
+    priority: str = "medium"
+    close_date: str
+    source: Optional[str] = ""
+    description: Optional[str] = ""
+    business_type: Optional[str] = ""
+    country: Optional[str] = ""
+    city: Optional[str] = ""
+    trade_show: Optional[str] = ""
+    trade_show_dates: Optional[str] = ""
+    expected_revenue: Optional[float] = None
+    probability: int = 50
+    tags: List[str] = Field(default_factory=list)
+
+class OpportunityUpdate(BaseModel):
+    title: Optional[str] = None
+    customer: Optional[str] = None
+    contact_person: Optional[str] = None
+    amount: Optional[float] = None
+    currency: Optional[str] = None
+    status: Optional[str] = None
+    stage: Optional[str] = None
+    priority: Optional[str] = None
+    close_date: Optional[str] = None
+    source: Optional[str] = None
+    description: Optional[str] = None
+    business_type: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
+    trade_show: Optional[str] = None
+    trade_show_dates: Optional[str] = None
+    expected_revenue: Optional[float] = None
+    probability: Optional[int] = None
+    tags: Optional[List[str]] = None
+
+# Opportunity API Endpoints
+@api_router.post("/opportunities", response_model=Opportunity)
+async def create_opportunity(opportunity_input: OpportunityCreate):
+    """Create a new sales opportunity"""
+    try:
+        # Convert to dict and prepare for MongoDB
+        opportunity_data = opportunity_input.dict()
+        opportunity_data["id"] = str(uuid.uuid4())
+        opportunity_data["created_at"] = datetime.now(timezone.utc)
+        opportunity_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Set expected_revenue to amount if not provided
+        if opportunity_data.get("expected_revenue") is None or opportunity_data.get("expected_revenue") == 0:
+            opportunity_data["expected_revenue"] = opportunity_data.get("amount", 0.0)
+        
+        # Insert into database
+        result = await db.opportunities.insert_one(opportunity_data)
+        
+        # Return created opportunity
+        created_opportunity = await db.opportunities.find_one({"_id": result.inserted_id})
+        return Opportunity(**created_opportunity)
+        
+    except Exception as e:
+        logger.error(f"Error creating opportunity: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating opportunity: {str(e)}")
+
+@api_router.get("/opportunities", response_model=List[Opportunity])
+async def get_opportunities(
+    status: Optional[str] = None,
+    stage: Optional[str] = None,
+    customer: Optional[str] = None
+):
+    """Get all opportunities with optional filtering"""
+    try:
+        # Build query filters
+        query = {}
+        if status:
+            query["status"] = status
+        if stage:
+            query["stage"] = stage
+        if customer:
+            query["customer"] = {"$regex": customer, "$options": "i"}  # Case-insensitive search
+        
+        opportunities = await db.opportunities.find(query).sort("created_at", -1).to_list(length=None)
+        return [Opportunity(**opportunity) for opportunity in opportunities]
+        
+    except Exception as e:
+        logger.error(f"Error fetching opportunities: {str(e)}")
+        return []
+
+@api_router.get("/opportunities/{opportunity_id}", response_model=Opportunity)
+async def get_opportunity(opportunity_id: str):
+    """Get a specific opportunity by ID"""
+    try:
+        opportunity = await db.opportunities.find_one({"id": opportunity_id})
+        if not opportunity:
+            raise HTTPException(status_code=404, detail="Opportunity not found")
+        return Opportunity(**opportunity)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching opportunity {opportunity_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/opportunities/{opportunity_id}", response_model=Opportunity)
+async def update_opportunity(opportunity_id: str, opportunity_input: OpportunityUpdate):
+    """Update an existing opportunity"""
+    try:
+        # Check if opportunity exists
+        existing = await db.opportunities.find_one({"id": opportunity_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Opportunity not found")
+        
+        # Prepare update data
+        update_data = {k: v for k, v in opportunity_input.dict().items() if v is not None}
+        if update_data:
+            update_data["updated_at"] = datetime.now(timezone.utc)
+            
+            # Update in database
+            await db.opportunities.update_one(
+                {"id": opportunity_id},
+                {"$set": update_data}
+            )
+        
+        # Return updated opportunity
+        updated_opportunity = await db.opportunities.find_one({"id": opportunity_id})
+        return Opportunity(**updated_opportunity)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating opportunity {opportunity_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/opportunities/{opportunity_id}")
+async def delete_opportunity(opportunity_id: str):
+    """Delete an opportunity"""
+    try:
+        # Check if opportunity exists
+        existing = await db.opportunities.find_one({"id": opportunity_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Opportunity not found")
+        
+        # Delete the opportunity
+        result = await db.opportunities.delete_one({"id": opportunity_id})
+        
+        if result.deleted_count == 1:
+            return {"message": "Opportunity deleted successfully", "id": opportunity_id}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete opportunity")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting opportunity {opportunity_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
