@@ -330,8 +330,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
       // Set success state with customer info
       setCreatedCustomerInfo({
         company_name: customerData.company_short_name,
-        customer_type: getCategoryName(customerData.customer_type_id),
-        specialty: getSpecialtyName(customerData.specialty_id),
+        customer_type: getCustomerTypeName(customerData.customer_type_id),
+        specialty: getSectorName(customerData.specialty_id),
         contacts_count: contacts.filter(c => c.full_name.trim()).length,
         is_individual: isIndividualCustomer,
         is_candidate: formData.is_candidate
