@@ -626,6 +626,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                   Telefon
                 </label>
                 <PhoneInput
+                  key={`phone-${formData.country || 'tr'}`}
                   country={formData.country || "tr"}
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
