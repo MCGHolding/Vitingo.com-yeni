@@ -391,7 +391,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     <SelectValue placeholder="Tedarikçi şirketi seçin..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Seçiniz...</SelectItem>
                     {suppliers.map((supplier) => (
                       <SelectItem key={supplier.id} value={supplier.id}>
                         {supplier.company_short_name}
