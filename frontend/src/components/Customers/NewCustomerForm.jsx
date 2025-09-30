@@ -362,11 +362,11 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     // Enhanced validation - more required fields
     const requiredFieldsValid = isIndividualCustomer 
       ? formData.customer_type_id && formData.specialty_id && formData.sector_id && 
-        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile  // Contact info required
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position  // Contact info required
       : formData.company_short_name && formData.company_title && formData.customer_type_id && 
         formData.specialty_id && formData.sector_id && formData.email && formData.phone && 
         formData.mobile && formData.country && formData.city &&  // Company basic info required
-        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile; // Contact person required
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position; // Contact person required
     
     if (!requiredFieldsValid) {
       toast({
