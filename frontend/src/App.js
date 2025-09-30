@@ -304,11 +304,6 @@ const Dashboard = () => {
     }
   };
 
-  // People Management Handlers
-  const handleNewPerson = () => {
-    setCurrentView('new-person');
-  };
-
   const handleAllPeople = () => {
     setCurrentView('all-people');
   };
