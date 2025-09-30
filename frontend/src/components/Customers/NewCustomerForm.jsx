@@ -374,7 +374,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         title: "Hata",
         description: isIndividualCustomer 
           ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, sektör, yetkili kişi bilgileri (ad, email, telefon, görev)"
-          : "Zorunlu alanları doldurunuz: Firma bilgileri, iletişim bilgileri ve yetkili kişi bilgileri (ad, email, telefon, görev)",
+          : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres, ülke, şehir), iletişim bilgileri ve yetkili kişi bilgileri",
         variant: "destructive"
       });
       return;
