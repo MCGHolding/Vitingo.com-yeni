@@ -28,6 +28,8 @@ import CountrySelect from '../geo/CountrySelect';
 import CitySelect from '../geo/CitySelect';
 import AddCustomerTypeModal from './AddCustomerTypeModal';
 import AddSectorModal from './AddSectorModal';
+import AddCountryModal from './AddCountryModal';
+import AddCityModal from './AddCityModal';
 
 const NewCustomerForm = ({ onClose, onSave }) => {
   const { toast } = useToast();
