@@ -1819,8 +1819,12 @@ def test_cities_endpoints():
     post_endpoint = f"{BACKEND_URL}/api/cities"
     print(f"Testing endpoint: {post_endpoint}")
     
+    # Use timestamp to make unique test data
+    import time
+    timestamp = str(int(time.time()))[-4:]  # Last 4 digits of timestamp
+    
     test_city_data = {
-        "name": "Test Şehri Öğrenci",
+        "name": f"Test Şehri Öğrenci {timestamp}",
         "country_code": "tr"  # lowercase to test uppercase conversion
     }
     
