@@ -112,11 +112,14 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   const loadCustomerTypes = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      console.log('Loading customer types from:', `${backendUrl}/api/customer-types`);
       const response = await fetch(`${backendUrl}/api/customer-types`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Customer types loaded:', data);
         setCustomerTypes(data);
       } else {
+        console.error('Failed to load customer types, status:', response.status);
         throw new Error('Failed to load customer types');
       }
     } catch (error) {
