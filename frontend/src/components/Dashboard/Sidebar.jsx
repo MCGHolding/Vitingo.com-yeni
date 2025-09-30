@@ -62,6 +62,7 @@ const navigation = [
     hasSubmenu: true,
     submenu: [
       { name: 'Yeni Müşteri', href: '/customers/new', icon: Plus },
+      { name: 'Müşteri Adayları', href: '/customers/prospects', icon: UserSearch },
       { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
       { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
       { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star }
