@@ -353,32 +353,51 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Şirket (Müşteri)
                 </label>
-                <Select 
-                  value={formData.companyId}
-                  onValueChange={(value) => {
-                    const selectedCompany = companies.find(c => c.id === value);
-                    handleInputChange('companyId', value);
-                    handleInputChange('company', selectedCompany ? selectedCompany.companyName || selectedCompany.companyTitle : '');
-                    
-                    // Clear supplier selection when company is selected
-                    if (value) {
-                      handleInputChange('supplierId', '');
-                      handleInputChange('supplier', '');
-                    }
-                  }}
-                  disabled={!!formData.supplierId} // Disable if supplier is selected
-                >
-                  <SelectTrigger className={formData.supplierId ? "opacity-50 cursor-not-allowed" : ""}>
-                    <SelectValue placeholder="Müşteri şirketi seçin..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id}>
-                        {company.companyName || company.companyTitle}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1">
+                    <Select 
+                      value={formData.companyId}
+                      onValueChange={(value) => {
+                        const selectedCompany = companies.find(c => c.id === value);
+                        handleInputChange('companyId', value);
+                        handleInputChange('company', selectedCompany ? selectedCompany.companyName || selectedCompany.companyTitle : '');
+                        
+                        // Clear supplier selection when company is selected
+                        if (value) {
+                          handleInputChange('supplierId', '');
+                          handleInputChange('supplier', '');
+                        }
+                      }}
+                      disabled={!!formData.supplierId} // Disable if supplier is selected
+                    >
+                      <SelectTrigger className={formData.supplierId ? "opacity-50 cursor-not-allowed" : ""}>
+                        <SelectValue placeholder="Müşteri şirketi seçin..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.companyName || company.companyTitle}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {/* Clear button for company */}
+                  {formData.companyId && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        handleInputChange('companyId', '');
+                        handleInputChange('company', '');
+                      }}
+                      className="px-2 py-2 text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
                 {formData.supplierId && (
                   <p className="text-xs text-gray-500 mt-1">Tedarikçi seçili olduğu için devre dışı</p>
                 )}
@@ -389,32 +408,51 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tedarikçi Şirketi
                 </label>
-                <Select 
-                  value={formData.supplierId}
-                  onValueChange={(value) => {
-                    const selectedSupplier = suppliers.find(s => s.id === value);
-                    handleInputChange('supplierId', value);
-                    handleInputChange('supplier', selectedSupplier ? selectedSupplier.company_short_name : '');
-                    
-                    // Clear company selection when supplier is selected
-                    if (value) {
-                      handleInputChange('companyId', '');
-                      handleInputChange('company', '');
-                    }
-                  }}
-                  disabled={!!formData.companyId} // Disable if company is selected
-                >
-                  <SelectTrigger className={formData.companyId ? "opacity-50 cursor-not-allowed" : ""}>
-                    <SelectValue placeholder="Tedarikçi şirketi seçin..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {suppliers.map((supplier) => (
-                      <SelectItem key={supplier.id} value={supplier.id}>
-                        {supplier.company_short_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1">
+                    <Select 
+                      value={formData.supplierId}
+                      onValueChange={(value) => {
+                        const selectedSupplier = suppliers.find(s => s.id === value);
+                        handleInputChange('supplierId', value);
+                        handleInputChange('supplier', selectedSupplier ? selectedSupplier.company_short_name : '');
+                        
+                        // Clear company selection when supplier is selected
+                        if (value) {
+                          handleInputChange('companyId', '');
+                          handleInputChange('company', '');
+                        }
+                      }}
+                      disabled={!!formData.companyId} // Disable if company is selected
+                    >
+                      <SelectTrigger className={formData.companyId ? "opacity-50 cursor-not-allowed" : ""}>
+                        <SelectValue placeholder="Tedarikçi şirketi seçin..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {suppliers.map((supplier) => (
+                          <SelectItem key={supplier.id} value={supplier.id}>
+                            {supplier.company_short_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {/* Clear button for supplier */}
+                  {formData.supplierId && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        handleInputChange('supplierId', '');
+                        handleInputChange('supplier', '');
+                      }}
+                      className="px-2 py-2 text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
                 {formData.companyId && (
                   <p className="text-xs text-gray-500 mt-1">Müşteri şirketi seçili olduğu için devre dışı</p>
                 )}
