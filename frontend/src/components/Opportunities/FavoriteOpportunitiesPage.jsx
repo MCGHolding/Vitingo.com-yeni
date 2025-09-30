@@ -184,6 +184,9 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
   }, [searchTerm, tagSearch, currencyFilter, priorityFilter, statusFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const currencyCounts = getCurrencyCounts();
+  const priorityStats = getPriorityStats();
+  const totalValue = getTotalValue();
+  const averageValue = getAverageValue();
 
   const clearFilters = () => {
     setSearchTerm('');
