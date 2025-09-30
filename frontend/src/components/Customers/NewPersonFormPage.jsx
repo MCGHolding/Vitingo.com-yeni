@@ -59,6 +59,44 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   
+  // Load companies and suppliers on component mount
+  useEffect(() => {
+    loadCompanies();
+    loadSuppliers();
+  }, []);
+
+  const loadCompanies = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/customers`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Companies loaded:', data);
+        setCompanies(data);
+      } else {
+        console.error('Failed to load companies');
+      }
+    } catch (error) {
+      console.error('Error loading companies:', error);
+    }
+  };
+
+  const loadSuppliers = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/suppliers`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Suppliers loaded:', data);
+        setSuppliers(data);
+      } else {
+        console.error('Failed to load suppliers');
+      }
+    } catch (error) {
+      console.error('Error loading suppliers:', error);
+    }
+  };
+  
   const relationshipTypes = [
     { value: 'customer', label: 'Müşteri' },
     { value: 'supplier', label: 'Tedarikçi' },
