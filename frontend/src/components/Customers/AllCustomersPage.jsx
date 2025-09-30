@@ -37,6 +37,7 @@ import CustomerEmailModal from './CustomerEmailModal';
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ customer, onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   const menuItems = [
     { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800', action: 'message' },
@@ -51,6 +52,26 @@ const ActionMenuPopover = ({ customer, onAction }) => {
   const handleMenuAction = (action) => {
     onAction(action, customer);
     setIsOpen(false);
+  };
+
+  const handleMouseEnter = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    // Add a delay before closing the menu
+    const id = setTimeout(() => {
+      setIsOpen(false);
+    }, 300); // 300ms delay
+    setTimeoutId(id);
+  };
+
+  const handleClick = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
