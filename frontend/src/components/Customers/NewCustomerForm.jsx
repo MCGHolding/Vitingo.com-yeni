@@ -309,9 +309,50 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     }
   };
 
-  const handleGoToDashboard = () => {
-    if (onClose) {
-      onClose();
+  // Handle contact country change and update contact phone numbers
+  const handleContactCountryChange = (contactIndex, country) => {
+    const countryCode = country ? country.iso2 : '';
+    handleContactChange(contactIndex, 'country', countryCode);
+    
+    // Reset contact city when country changes
+    const contact = contacts[contactIndex];
+    if (contact.city) {
+      handleContactChange(contactIndex, 'city', '');
+    }
+    
+    // Update contact phone number with new country dial code
+    if (countryCode) {
+      const dialCodes = {
+        'tr': '+90',
+        'us': '+1', 
+        'gb': '+44',
+        'de': '+49',
+        'fr': '+33',
+        'it': '+39',
+        'es': '+34',
+        'ca': '+1',
+        'au': '+61',
+        'in': '+91',
+        'cn': '+86',
+        'jp': '+81',
+        'br': '+55',
+        'mx': '+52',
+        'ru': '+7',
+        'kr': '+82',
+        'sa': '+966',
+        'ae': '+971',
+        'eg': '+20',
+        'za': '+27'
+      };
+      
+      const newDialCode = dialCodes[countryCode.toLowerCase()] || '';
+      if (newDialCode) {
+        // Update contact phone number to use new dial code
+        handleContactChange(contactIndex, 'mobile', newDialCode);
+      }
+    } else {
+      // Reset to default Turkish number if no country selected
+      handleContactChange(contactIndex, 'mobile', '+90');
     }
   };
 
