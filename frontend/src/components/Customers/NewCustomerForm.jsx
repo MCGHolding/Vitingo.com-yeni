@@ -404,76 +404,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         )}
       </div>
 
-      {showSuccessModal ? (
-        /* Success State */
-        <Card>
-          <CardContent className="p-8">
-            <div className="text-center">
-              <div className="mx-auto mb-6 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-              </div>
-              
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Tebrikler, {createdCustomerInfo?.is_individual ? 'Bireysel ' : ''}{createdCustomerInfo?.is_candidate ? 'Müşteri Adayı' : 'Müşteri'} Başarı ile Oluşturuldu!
-              </h2>
-              
-              <p className="text-gray-600 mb-6">
-                <strong>{createdCustomerInfo?.company_name}</strong> {createdCustomerInfo?.is_individual ? 'bireysel' : ''} {createdCustomerInfo?.is_candidate ? 'müşteri adayı' : 'müşteri şirketi'} başarıyla sisteme eklendi.
-              </p>
-              
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <div className="text-left space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">
-                      {createdCustomerInfo?.is_individual ? 'Kişi Adı:' : 'Firma Adı:'}
-                    </span>
-                    <span className="text-sm text-gray-900">{createdCustomerInfo?.company_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">Tür:</span>
-                    <span className="text-sm text-gray-900">
-                      {createdCustomerInfo?.is_individual ? 'Bireysel' : 'Şirket'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">Kategori:</span>
-                    <span className="text-sm text-gray-900">{createdCustomerInfo?.customer_type}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">Uzmanlık:</span>
-                    <span className="text-sm text-gray-900">{createdCustomerInfo?.specialty}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium text-gray-700">
-                      {createdCustomerInfo?.is_individual ? 'İletişim Bilgileri:' : 'Yetkili Kişiler:'}
-                    </span>
-                    <span className="text-sm text-gray-900">{createdCustomerInfo?.contacts_count} kişi</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <p className="text-blue-800 text-sm">
-                  🎉 Müşteri başarıyla kaydedildi ve artık "Tüm Müşteriler" listesinde görüntülenebilir.
-                </p>
-              </div>
-              
-              <div className="flex justify-center space-x-4">
-                <Button variant="outline" onClick={handleGoBack} className="flex items-center space-x-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Yeni Müşteri Ekle</span>
-                </Button>
-                
-                <Button onClick={handleGoToDashboard} className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
-                  <Home className="h-4 w-4" />
-                  <span>Dashboard'a Dön</span>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
           {/* Kategori Seçimi */}
           <Card>
           <CardHeader>
