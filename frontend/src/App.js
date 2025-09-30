@@ -221,7 +221,7 @@ const Dashboard = () => {
 
   // Customer Management Handlers
   const handleNewCustomer = () => {
-    window.location.href = '/customers/new';
+    navigate('/customers/new');
   };
 
   const handleAllCustomers = () => {
