@@ -1590,6 +1590,396 @@ def test_supplier_specialty_creation(category_id):
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False, None
 
+def test_countries_endpoints():
+    """
+    Test Countries endpoints for Yeni Ülke modal.
+    
+    Requirements to verify:
+    1. GET /api/countries - Get all countries
+    2. POST /api/countries - Create new country with name and iso2 code
+    3. Duplicate control (same iso2 code)
+    4. Turkish character support (ğüşıöç)
+    5. ISO2 code uppercase conversion
+    6. Proper response format
+    7. MongoDB storage verification
+    """
+    
+    print("=" * 80)
+    print("TESTING COUNTRIES ENDPOINTS FOR YENI ÜLKE MODAL")
+    print("=" * 80)
+    
+    # Test 1: GET all countries
+    print("\n1. Testing GET /api/countries...")
+    get_endpoint = f"{BACKEND_URL}/api/countries"
+    print(f"Testing endpoint: {get_endpoint}")
+    
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: GET countries endpoint responds with status 200")
+            countries = response.json()
+            print(f"   Found {len(countries)} existing countries")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting countries: {str(e)}")
+        return False
+    
+    # Test 2: POST new country with Turkish characters
+    print("\n2. Testing POST /api/countries with Turkish characters...")
+    post_endpoint = f"{BACKEND_URL}/api/countries"
+    print(f"Testing endpoint: {post_endpoint}")
+    
+    test_country_data = {
+        "name": "Test Ülkesi Öğrenci",
+        "iso2": "tü"  # lowercase to test uppercase conversion
+    }
+    
+    try:
+        response = requests.post(post_endpoint, json=test_country_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: POST countries endpoint responds with status 200")
+            created_country = response.json()
+            
+            # Verify response structure
+            required_fields = ["id", "name", "iso2", "created_at"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in created_country:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                return False
+            
+            print("   ✅ PASS: Response has all required fields")
+            
+            # Verify Turkish character support
+            if created_country["name"] == test_country_data["name"]:
+                print("   ✅ PASS: Turkish characters preserved correctly")
+            else:
+                print(f"   ❌ FAIL: Turkish characters not preserved. Expected: {test_country_data['name']}, Got: {created_country['name']}")
+                return False
+            
+            # Verify ISO2 uppercase conversion
+            if created_country["iso2"] == test_country_data["iso2"].upper():
+                print("   ✅ PASS: ISO2 code converted to uppercase")
+            else:
+                print(f"   ❌ FAIL: ISO2 code not converted to uppercase. Expected: {test_country_data['iso2'].upper()}, Got: {created_country['iso2']}")
+                return False
+            
+            print(f"   Created Country: {created_country['name']} ({created_country['iso2']})")
+            created_country_id = created_country["id"]
+            
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating country: {str(e)}")
+        return False
+    
+    # Test 3: Test duplicate control
+    print("\n3. Testing duplicate country control...")
+    duplicate_data = {
+        "name": "Another Test Country",
+        "iso2": "TÜ"  # Same ISO2 as previous test
+    }
+    
+    try:
+        response = requests.post(post_endpoint, json=duplicate_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("   ✅ PASS: Duplicate ISO2 code properly rejected with 400 status")
+            error_response = response.json()
+            if "detail" in error_response and "zaten mevcut" in error_response["detail"]:
+                print("   ✅ PASS: Turkish error message returned")
+            else:
+                print("   ⚠️  WARNING: Error message might not be in Turkish")
+        else:
+            print(f"   ❌ FAIL: Expected status 400 for duplicate, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing duplicate: {str(e)}")
+        return False
+    
+    # Test 4: Verify country appears in GET list
+    print("\n4. Verifying created country appears in GET list...")
+    try:
+        response = requests.get(get_endpoint, timeout=30)
+        if response.status_code == 200:
+            countries = response.json()
+            found_country = False
+            for country in countries:
+                if country.get("iso2") == "TÜ":
+                    found_country = True
+                    print(f"   ✅ PASS: Created country found in list: {country['name']} ({country['iso2']})")
+                    break
+            
+            if not found_country:
+                print("   ❌ FAIL: Created country not found in GET list")
+                return False
+        else:
+            print(f"   ❌ FAIL: Could not verify country in list, status: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error verifying country in list: {str(e)}")
+        return False
+    
+    print("\n" + "=" * 80)
+    print("COUNTRIES ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    print("✅ GET /api/countries endpoint working")
+    print("✅ POST /api/countries endpoint working")
+    print("✅ Turkish character support working")
+    print("✅ ISO2 code uppercase conversion working")
+    print("✅ Duplicate control working (400 error)")
+    print("✅ MongoDB storage and retrieval working")
+    print("\n🎉 COUNTRIES ENDPOINTS TEST PASSED!")
+    
+    return True
+
+def test_cities_endpoints():
+    """
+    Test Cities endpoints for Yeni Şehir modal.
+    
+    Requirements to verify:
+    1. GET /api/cities - Get all cities
+    2. GET /api/cities/{country_code} - Get cities for specific country
+    3. POST /api/cities - Create new city with name and country_code
+    4. Duplicate control (same name+country_code)
+    5. Turkish character support (ğüşıöç)
+    6. Country code validation
+    7. Proper response format
+    8. MongoDB storage verification
+    """
+    
+    print("=" * 80)
+    print("TESTING CITIES ENDPOINTS FOR YENI ŞEHİR MODAL")
+    print("=" * 80)
+    
+    # Test 1: GET all cities
+    print("\n1. Testing GET /api/cities...")
+    get_all_endpoint = f"{BACKEND_URL}/api/cities"
+    print(f"Testing endpoint: {get_all_endpoint}")
+    
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: GET cities endpoint responds with status 200")
+            cities = response.json()
+            print(f"   Found {len(cities)} existing cities")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting cities: {str(e)}")
+        return False
+    
+    # Test 2: GET cities by country code (TR)
+    print("\n2. Testing GET /api/cities/TR...")
+    get_by_country_endpoint = f"{BACKEND_URL}/api/cities/TR"
+    print(f"Testing endpoint: {get_by_country_endpoint}")
+    
+    try:
+        response = requests.get(get_by_country_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: GET cities by country endpoint responds with status 200")
+            tr_cities = response.json()
+            print(f"   Found {len(tr_cities)} cities for Turkey (TR)")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error getting cities by country: {str(e)}")
+        return False
+    
+    # Test 3: POST new city with Turkish characters
+    print("\n3. Testing POST /api/cities with Turkish characters...")
+    post_endpoint = f"{BACKEND_URL}/api/cities"
+    print(f"Testing endpoint: {post_endpoint}")
+    
+    test_city_data = {
+        "name": "Test Şehri Öğrenci",
+        "country_code": "tr"  # lowercase to test uppercase conversion
+    }
+    
+    try:
+        response = requests.post(post_endpoint, json=test_city_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: POST cities endpoint responds with status 200")
+            created_city = response.json()
+            
+            # Verify response structure
+            required_fields = ["id", "name", "country_code", "created_at"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in created_city:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+                return False
+            
+            print("   ✅ PASS: Response has all required fields")
+            
+            # Verify Turkish character support
+            if created_city["name"] == test_city_data["name"]:
+                print("   ✅ PASS: Turkish characters preserved correctly")
+            else:
+                print(f"   ❌ FAIL: Turkish characters not preserved. Expected: {test_city_data['name']}, Got: {created_city['name']}")
+                return False
+            
+            # Verify country code uppercase conversion
+            if created_city["country_code"] == test_city_data["country_code"].upper():
+                print("   ✅ PASS: Country code converted to uppercase")
+            else:
+                print(f"   ❌ FAIL: Country code not converted to uppercase. Expected: {test_city_data['country_code'].upper()}, Got: {created_city['country_code']}")
+                return False
+            
+            print(f"   Created City: {created_city['name']} ({created_city['country_code']})")
+            created_city_id = created_city["id"]
+            
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating city: {str(e)}")
+        return False
+    
+    # Test 4: Test duplicate control
+    print("\n4. Testing duplicate city control...")
+    duplicate_data = {
+        "name": "Test Şehri Öğrenci",  # Same name
+        "country_code": "TR"  # Same country
+    }
+    
+    try:
+        response = requests.post(post_endpoint, json=duplicate_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("   ✅ PASS: Duplicate name+country_code properly rejected with 400 status")
+            error_response = response.json()
+            if "detail" in error_response and "zaten mevcut" in error_response["detail"]:
+                print("   ✅ PASS: Turkish error message returned")
+            else:
+                print("   ⚠️  WARNING: Error message might not be in Turkish")
+        else:
+            print(f"   ❌ FAIL: Expected status 400 for duplicate, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing duplicate: {str(e)}")
+        return False
+    
+    # Test 5: Verify city appears in GET lists
+    print("\n5. Verifying created city appears in GET lists...")
+    
+    # Check in all cities list
+    try:
+        response = requests.get(get_all_endpoint, timeout=30)
+        if response.status_code == 200:
+            cities = response.json()
+            found_in_all = False
+            for city in cities:
+                if city.get("name") == "Test Şehri Öğrenci" and city.get("country_code") == "TR":
+                    found_in_all = True
+                    print(f"   ✅ PASS: Created city found in all cities list: {city['name']} ({city['country_code']})")
+                    break
+            
+            if not found_in_all:
+                print("   ❌ FAIL: Created city not found in all cities list")
+                return False
+        else:
+            print(f"   ❌ FAIL: Could not verify city in all cities list, status: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error verifying city in all cities list: {str(e)}")
+        return False
+    
+    # Check in country-specific cities list
+    try:
+        response = requests.get(get_by_country_endpoint, timeout=30)
+        if response.status_code == 200:
+            tr_cities = response.json()
+            found_in_country = False
+            for city in tr_cities:
+                if city.get("name") == "Test Şehri Öğrenci":
+                    found_in_country = True
+                    print(f"   ✅ PASS: Created city found in TR cities list: {city['name']}")
+                    break
+            
+            if not found_in_country:
+                print("   ❌ FAIL: Created city not found in TR cities list")
+                return False
+        else:
+            print(f"   ❌ FAIL: Could not verify city in TR cities list, status: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error verifying city in TR cities list: {str(e)}")
+        return False
+    
+    # Test 6: Test different country code
+    print("\n6. Testing city creation with different country code...")
+    different_country_data = {
+        "name": "Test Şehri Öğrenci",  # Same name but different country should work
+        "country_code": "US"
+    }
+    
+    try:
+        response = requests.post(post_endpoint, json=different_country_data, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Same city name with different country code allowed")
+            created_city = response.json()
+            print(f"   Created City: {created_city['name']} ({created_city['country_code']})")
+        else:
+            print(f"   ❌ FAIL: Same city name with different country should be allowed, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error creating city with different country: {str(e)}")
+        return False
+    
+    print("\n" + "=" * 80)
+    print("CITIES ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    print("✅ GET /api/cities endpoint working")
+    print("✅ GET /api/cities/{country_code} endpoint working")
+    print("✅ POST /api/cities endpoint working")
+    print("✅ Turkish character support working")
+    print("✅ Country code uppercase conversion working")
+    print("✅ Duplicate control working (same name+country_code)")
+    print("✅ Different country allows same city name")
+    print("✅ MongoDB storage and retrieval working")
+    print("\n🎉 CITIES ENDPOINTS TEST PASSED!")
+    
+    return True
+
 def test_customer_types_endpoints():
     """
     Test Customer Types endpoints for Yeni Müşteri modal.
