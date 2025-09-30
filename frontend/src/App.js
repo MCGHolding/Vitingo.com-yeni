@@ -11,7 +11,6 @@ import CustomerSegmentChart from './components/Dashboard/CustomerSegmentChart';
 import ActivityFeed from './components/Dashboard/ActivityFeed';
 import SalesFunnelChart from './components/Dashboard/SalesFunnelChart';
 import TopPerformersTable from './components/Dashboard/TopPerformersTable';
-import NewOpportunityForm from './components/Opportunities/NewOpportunityForm';
 import OpenOpportunitiesPage from './components/Opportunities/OpenOpportunitiesPage';
 import WonOpportunitiesPage from './components/Opportunities/WonOpportunitiesPage';
 import LostOpportunitiesPage from './components/Opportunities/LostOpportunitiesPage';
