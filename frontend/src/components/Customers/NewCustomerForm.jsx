@@ -1296,7 +1296,6 @@ const NewCustomerForm = ({ onClose, onSave }) => {
           </Button>
         </div>
       </form>
-      )}
 
       {/* Add Customer Type Modal */}
       {showAddCustomerTypeModal && (
