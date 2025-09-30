@@ -167,26 +167,70 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
   const handleAction = (action, invoice) => {
     switch (action) {
       case 'view':
-        console.log('View invoice:', invoice);
-        alert(`Fatura görüntüleme: ${invoice.invoiceNumber}`);
+        setSelectedInvoice(invoice);
+        setShowPreviewModal(true);
         break;
       case 'edit':
-        console.log('Edit invoice:', invoice);
-        alert(`Fatura düzenleme: ${invoice.invoiceNumber}`);
+        if (onEditInvoice) {
+          onEditInvoice(invoice);
+        }
         break;
       case 'download':
-        console.log('Download invoice:', invoice);
-        alert(`Fatura indirme: ${invoice.invoiceNumber}`);
+        downloadInvoicePDF(invoice);
         break;
       case 'delete':
-        if (window.confirm(`${invoice.invoiceNumber} numaralı faturayı silmek istediğinizden emin misiniz?`)) {
-          console.log('Delete invoice:', invoice);
-          // In real app, call delete API
-          alert(`Fatura silindi: ${invoice.invoiceNumber}`);
-        }
+        setSelectedInvoice(invoice);
+        setShowDeleteModal(true);
         break;
       default:
         console.log('Unknown action:', action);
+    }
+  };
+
+  const downloadInvoicePDF = async (invoice) => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices/${invoice.id}/pdf`);
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Fatura_${invoice.invoice_number}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('PDF dosyası indirilemedi');
+      }
+    } catch (error) {
+      console.error('PDF indirme hatası:', error);
+      alert('PDF dosyası indirilemedi');
+    }
+  };
+
+  const handleDeleteInvoice = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices/${selectedInvoice.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        // Faturayı listeden kaldır
+        setInvoices(prev => prev.filter(inv => inv.id !== selectedInvoice.id));
+        alert('Fatura başarıyla silindi');
+      } else {
+        alert('Fatura silinemedi');
+      }
+    } catch (error) {
+      console.error('Silme hatası:', error);
+      alert('Fatura silinemedi');
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedInvoice(null);
     }
   };
 
