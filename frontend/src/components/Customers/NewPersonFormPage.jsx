@@ -254,14 +254,6 @@ export default function NewPersonFormPage({ onClose, onSave }) {
           </div>
           <div className="flex items-center space-x-3">
             <Button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 px-6"
-            >
-              {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
-            </Button>
-            <Button
               variant="outline"
               onClick={onClose}
               className="px-6"
