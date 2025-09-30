@@ -363,7 +363,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         is_individual: isIndividualCustomer,
         is_candidate: formData.is_candidate
       });
-      setCustomerCreated(true);
+      setShowSuccessModal(true);
 
       toast({
         title: "Başarılı",
