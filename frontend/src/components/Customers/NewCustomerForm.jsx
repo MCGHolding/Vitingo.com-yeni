@@ -89,6 +89,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   });
 
   const [currentContactTag, setCurrentContactTag] = useState('');
+  const [currentService, setCurrentService] = useState('');
   const [isUSABankFormat, setIsUSABankFormat] = useState(false);
   
   // IBAN hook'u kullan
