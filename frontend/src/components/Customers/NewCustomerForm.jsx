@@ -1138,6 +1138,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
                           }}
                           placeholder="Şehir seçiniz..."
                           disabled={!contact.country}
+                          refreshTrigger={geoRefreshTrigger}
                         />
                       </div>
                       <Button
