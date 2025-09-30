@@ -818,28 +818,58 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı (%)</label>
-                <div className="grid grid-cols-5 gap-2">
-                  {/* Preset VAT Rate Buttons: 5, 10, 15, 20 */}
-                  {[5, 10, 15, 20].map(rate => (
-                    <button
-                      key={rate}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, vatRate: rate }))}
-                      className={`h-10 px-3 rounded-md border-2 font-medium text-sm transition-all ${
-                        formData.vatRate === rate
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      {rate}
-                    </button>
-                  ))}
+                <div className="flex gap-2">
+                  {/* Yan yana 4 kutu: 5, 10, 15, 20 */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 5 }))}
+                    className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
+                      formData.vatRate === 5
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    5
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 10 }))}
+                    className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
+                      formData.vatRate === 10
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    10
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 15 }))}
+                    className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
+                      formData.vatRate === 15
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    15
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 20 }))}
+                    className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
+                      formData.vatRate === 20
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    20
+                  </button>
                   
-                  {/* Dropdown for %0 to %35 */}
+                  {/* En sağa 5. kutu - dropdown %0'dan %35'e kadar */}
                   <select
                     value={formData.vatRate}
                     onChange={(e) => setFormData(prev => ({ ...prev, vatRate: parseFloat(e.target.value) }))}
-                    className="h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-[80px]"
                   >
                     {Array.from({ length: 36 }, (_, i) => i).map(rate => (
                       <option key={rate} value={rate}>%{rate}</option>
