@@ -1178,8 +1178,9 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Fix OpenOpportunitiesPage ReferenceError"
-  stuck_tasks: []
+    - "Customer Selection Bug Fix in NewInvoiceForm"
+  stuck_tasks:
+    - "Customer Selection Bug Fix in NewInvoiceForm"
   test_all: false
   test_priority: "high_first"
 
