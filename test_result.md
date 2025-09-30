@@ -1122,8 +1122,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "NewOpportunityFormPage Backend Integration"
-    - "Updated NewCustomerForm with Required Field Changes and Notes Section"
+    - "Fix OpenOpportunitiesPage ReferenceError"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
