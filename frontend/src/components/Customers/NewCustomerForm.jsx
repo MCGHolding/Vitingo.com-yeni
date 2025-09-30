@@ -250,10 +250,6 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     return sector ? sector.name : 'Bilinmiyor';
   };
 
-  const handleGoBack = () => {
-    setShowSuccessModal(false);
-  };
-
   const handleGoToDashboard = () => {
     if (onClose) {
       onClose();
