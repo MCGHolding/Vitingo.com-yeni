@@ -272,15 +272,15 @@ const NewCustomerForm = ({ onClose, onSave }) => {
     
     // Basic validation
     const requiredFieldsValid = isIndividualCustomer 
-      ? formData.customer_type_id && formData.specialty_id  // For individual: only category and specialty required
-      : formData.company_short_name && formData.company_title && formData.customer_type_id && formData.specialty_id; // For company: all fields required
+      ? formData.customer_type_id && formData.specialty_id && formData.sector_id  // For individual: category, specialty, and sector required
+      : formData.company_short_name && formData.company_title && formData.customer_type_id && formData.specialty_id && formData.sector_id; // For company: all fields required
     
     if (!requiredFieldsValid) {
       toast({
         title: "Hata",
         description: isIndividualCustomer 
-          ? "Müşteri türü ve uzmanlık alanı seçimi zorunludur"
-          : "Zorunlu alanları doldurunuz (Firma adı, ünvan, kategori, uzmanlık)",
+          ? "Müşteri türü, uzmanlık alanı ve sektör seçimi zorunludur"
+          : "Zorunlu alanları doldurunuz (Firma adı, ünvan, kategori, uzmanlık, sektör)",
         variant: "destructive"
       });
       return;
