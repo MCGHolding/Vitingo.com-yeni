@@ -589,6 +589,19 @@ const Dashboard = () => {
         return <InactiveCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} />;
       case 'favorite-customers':
         return <FavoriteCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} />;
+      case 'customer-prospects':
+        return (
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Müşteri Adayları</h2>
+            <p className="text-gray-600">Müşteri adayları sayfası henüz geliştiriliyor...</p>
+            <button 
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
       case 'all-people':
         return (
           <AllPeoplePage 
