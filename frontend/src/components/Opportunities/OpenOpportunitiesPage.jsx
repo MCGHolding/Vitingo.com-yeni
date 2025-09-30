@@ -354,6 +354,25 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     setSortBy('id');
   };
 
+  // Statistics functions that depend on filteredOpportunities
+  const getTotalOpenValue = () => {
+    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
+  };
+
+  const getAverageOpenValue = () => {
+    const total = getTotalOpenValue();
+    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
+  };
+
+  const getStageStats = () => {
+    const stageStats = {};
+    filteredOpportunities.forEach(opp => {
+      const stage = opp.stage || 'Belirtilmemiş';
+      stageStats[stage] = (stageStats[stage] || 0) + 1;
+    });
+    return stageStats;
+  };
+
   const filteredOpportunities = useMemo(() => {
     let filtered = opportunitiesData;
 
@@ -451,25 +470,6 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const totalOpenValue = getTotalOpenValue();
   const averageOpenValue = getAverageOpenValue();
   const stageStats = getStageStats();
-
-  // Statistics functions that depend on filteredOpportunities
-  const getTotalOpenValue = () => {
-    return filteredOpportunities.reduce((total, opp) => total + (opp.amount || 0), 0);
-  };
-
-  const getAverageOpenValue = () => {
-    const total = getTotalOpenValue();
-    return filteredOpportunities.length > 0 ? total / filteredOpportunities.length : 0;
-  };
-
-  const getStageStats = () => {
-    const stageStats = {};
-    filteredOpportunities.forEach(opp => {
-      const stage = opp.stage || 'Belirtilmemiş';
-      stageStats[stage] = (stageStats[stage] || 0) + 1;
-    });
-    return stageStats;
-  };
 
   const formatAmount = (amount) => {
     if (amount >= 1000000) {
