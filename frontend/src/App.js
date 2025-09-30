@@ -579,6 +579,9 @@ const Dashboard = () => {
     setOpportunities(prev => [newOpportunity, ...prev]);
     
     console.log('New opportunity saved:', newOpportunity);
+    
+    // Navigate back to dashboard (success modal handled by form)
+    setCurrentView('dashboard');
   };
 
   const renderContent = () => {
