@@ -635,6 +635,9 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                 <Building className="inline h-4 w-4 mr-1" />
                 Müşteri Seç *
               </label>
+              <div className="text-xs text-gray-500 mb-1">
+                Debug: {customers.length} müşteri yüklendi, Loading: {isLoadingData.toString()}
+              </div>
               <SearchableSelect
                 options={customers.map(customer => {
                   console.log('Mapping customer for SearchableSelect:', customer);
