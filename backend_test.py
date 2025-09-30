@@ -10941,6 +10941,13 @@ if __name__ == "__main__":
     cities_success = test_cities_endpoints()
     test_results.append(("Cities Endpoints", cities_success))
     
+    # Test 3: Cities Test Data Setup
+    print("\n" + "🔥" * 80)
+    print("TESTING CITIES TEST DATA SETUP FOR CITYSELECT")
+    print("🔥" * 80)
+    cities_test_data_success = test_cities_endpoint_with_test_data()
+    test_results.append(("Cities Test Data Setup", cities_test_data_success))
+    
     # Final summary
     print("\n" + "=" * 80)
     print("FINAL TEST RESULTS SUMMARY")
