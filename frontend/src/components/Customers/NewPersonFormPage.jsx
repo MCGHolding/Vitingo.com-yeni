@@ -359,9 +359,16 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     const selectedCompany = companies.find(c => c.id === value);
                     handleInputChange('companyId', value);
                     handleInputChange('company', selectedCompany ? selectedCompany.companyName || selectedCompany.companyTitle : '');
+                    
+                    // Clear supplier selection when company is selected
+                    if (value) {
+                      handleInputChange('supplierId', '');
+                      handleInputChange('supplier', '');
+                    }
                   }}
+                  disabled={!!formData.supplierId} // Disable if supplier is selected
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={formData.supplierId ? "opacity-50 cursor-not-allowed" : ""}>
                     <SelectValue placeholder="Müşteri şirketi seçin..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -372,6 +379,9 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     ))}
                   </SelectContent>
                 </Select>
+                {formData.supplierId && (
+                  <p className="text-xs text-gray-500 mt-1">Tedarikçi seçili olduğu için devre dışı</p>
+                )}
               </div>
 
               {/* Tedarikçi Şirketi */}
@@ -385,9 +395,16 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     const selectedSupplier = suppliers.find(s => s.id === value);
                     handleInputChange('supplierId', value);
                     handleInputChange('supplier', selectedSupplier ? selectedSupplier.company_short_name : '');
+                    
+                    // Clear company selection when supplier is selected
+                    if (value) {
+                      handleInputChange('companyId', '');
+                      handleInputChange('company', '');
+                    }
                   }}
+                  disabled={!!formData.companyId} // Disable if company is selected
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={formData.companyId ? "opacity-50 cursor-not-allowed" : ""}>
                     <SelectValue placeholder="Tedarikçi şirketi seçin..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -398,6 +415,9 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                     ))}
                   </SelectContent>
                 </Select>
+                {formData.companyId && (
+                  <p className="text-xs text-gray-500 mt-1">Müşteri şirketi seçili olduğu için devre dışı</p>
+                )}
               </div>
             </div>
 
