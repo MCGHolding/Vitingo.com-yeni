@@ -255,7 +255,7 @@ const NewCustomerForm = ({ onClose, onSave }) => {
   };
 
   const handleGoBack = () => {
-    setCustomerCreated(false);
+    setShowSuccessModal(false);
   };
 
   const handleGoToDashboard = () => {
