@@ -1344,149 +1344,276 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
-def test_customer_prospects_data_structure():
+def test_customer_prospects_debug_functionality():
     """
-    Verify the prospect data structure matches what CustomerProspectsPage expects.
+    Test customer prospects functionality to debug why prospects are not showing in CustomerProspectsPage.
     
-    Requirements to verify:
-    1. Each prospect should have the fields expected by the frontend
-    2. Data types should be correct
-    3. Structure should be compatible with CustomerProspectsPage component
+    This comprehensive test follows the exact requirements from the review request:
+    1. Test GET /api/customer-prospects endpoint to see current prospects in database
+    2. Create a new prospect via POST /api/customer-prospects with test data:
+       - company_short_name: "Test Aday Debug"
+       - email: "debug@testaday.com"
+       - country: "TR"
+       - city: "Istanbul" 
+       - sector: "Teknoloji"
+       - is_candidate: true
+    3. Test GET /api/customer-prospects again to verify the new prospect was saved
+    4. Check the data structure returned to ensure it matches what CustomerProspectsPage expects
+    5. Check if there are any existing prospects in the database that should be showing
     """
     
     print("=" * 80)
-    print("TESTING CUSTOMER PROSPECTS DATA STRUCTURE COMPATIBILITY")
+    print("TESTING CUSTOMER PROSPECTS DEBUG FUNCTIONALITY")
     print("=" * 80)
+    print("This test will help identify if the issue is in backend storage or frontend display.")
     
     endpoint = f"{BACKEND_URL}/api/customer-prospects"
     print(f"Testing endpoint: {endpoint}")
     
     try:
-        # Get prospects
-        print("\n1. Getting customer prospects for structure validation...")
+        # STEP 1: Test GET /api/customer-prospects endpoint to see current prospects in database
+        print("\n" + "=" * 60)
+        print("STEP 1: GET CURRENT PROSPECTS IN DATABASE")
+        print("=" * 60)
+        
+        print("Making GET request to see existing prospects...")
         response = requests.get(endpoint, timeout=30)
         
+        print(f"Status Code: {response.status_code}")
         if response.status_code != 200:
-            print(f"   ❌ FAIL: Could not get prospects for structure validation")
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
             return False
         
-        prospects = response.json()
+        print("✅ PASS: GET endpoint responds correctly")
         
-        if len(prospects) == 0:
-            print("   ⚠️  WARNING: No prospects available for structure validation")
-            return True
+        # Parse existing prospects
+        existing_prospects = response.json()
+        print(f"Current prospects in database: {len(existing_prospects)}")
         
-        print(f"   Found {len(prospects)} prospects for validation")
+        if len(existing_prospects) > 0:
+            print("\nExisting prospects found:")
+            for i, prospect in enumerate(existing_prospects[:5]):  # Show first 5
+                company = prospect.get('company_short_name', 'N/A')
+                email = prospect.get('email', 'N/A')
+                country = prospect.get('country', 'N/A')
+                city = prospect.get('city', 'N/A')
+                is_candidate = prospect.get('is_candidate', 'N/A')
+                print(f"  {i+1}. {company} ({email}) - {city}, {country} - Candidate: {is_candidate}")
+        else:
+            print("No existing prospects found in database")
         
-        # Test structure of first prospect
-        print("\n2. Validating prospect structure for CustomerProspectsPage compatibility...")
-        sample_prospect = prospects[0]
+        # STEP 2: Create a new prospect via POST with specific test data
+        print("\n" + "=" * 60)
+        print("STEP 2: CREATE NEW PROSPECT WITH DEBUG DATA")
+        print("=" * 60)
         
-        # Fields that CustomerProspectsPage likely expects
-        expected_frontend_fields = {
-            "id": str,
-            "company_short_name": str,
-            "email": str,
-            "country": str,
-            "city": str,
-            "sector": str,
-            "tags": list,
-            "is_candidate": bool,
-            "created_at": str,
-            "updated_at": str
+        # Test data as specified in the review request
+        debug_prospect_data = {
+            "company_short_name": "Test Aday Debug",
+            "email": "debug@testaday.com",
+            "country": "TR",
+            "city": "Istanbul",
+            "sector": "Teknoloji",
+            "is_candidate": True
         }
         
-        # Optional fields that might be used
-        optional_frontend_fields = {
-            "company_title": str,
-            "phone": str,
-            "mobile": str,
-            "address": str,
-            "notes": str,
-            "contacts": list
-        }
+        print(f"Creating prospect with data: {debug_prospect_data}")
         
-        print("   Checking required fields for frontend compatibility...")
-        missing_required = []
-        type_mismatches = []
+        create_response = requests.post(endpoint, json=debug_prospect_data, timeout=30)
         
-        for field, expected_type in expected_frontend_fields.items():
-            if field not in sample_prospect:
-                missing_required.append(field)
+        print(f"Create Status Code: {create_response.status_code}")
+        if create_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200 for creation, got {create_response.status_code}")
+            print(f"Create Response: {create_response.text}")
+            return False
+        
+        print("✅ PASS: POST endpoint responds correctly")
+        
+        # Parse created prospect
+        created_prospect = create_response.json()
+        created_id = created_prospect.get('id')
+        print(f"Created prospect ID: {created_id}")
+        print(f"Created prospect company: {created_prospect.get('company_short_name')}")
+        print(f"Created prospect email: {created_prospect.get('email')}")
+        
+        # Verify all fields match
+        for field, expected_value in debug_prospect_data.items():
+            actual_value = created_prospect.get(field)
+            if actual_value == expected_value:
+                print(f"✅ {field}: {actual_value} (matches)")
             else:
-                actual_value = sample_prospect[field]
-                if actual_value is not None and not isinstance(actual_value, expected_type):
-                    type_mismatches.append(f"{field}: expected {expected_type.__name__}, got {type(actual_value).__name__}")
-                else:
-                    print(f"   ✅ {field}: {expected_type.__name__} - OK")
+                print(f"❌ {field}: expected {expected_value}, got {actual_value}")
+                return False
         
-        if missing_required:
-            print(f"   ❌ FAIL: Missing required fields for frontend: {missing_required}")
+        # STEP 3: Test GET /api/customer-prospects again to verify the new prospect was saved
+        print("\n" + "=" * 60)
+        print("STEP 3: VERIFY PROSPECT PERSISTENCE")
+        print("=" * 60)
+        
+        print("Making GET request to verify prospect was saved...")
+        verify_response = requests.get(endpoint, timeout=30)
+        
+        print(f"Verify Status Code: {verify_response.status_code}")
+        if verify_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200 for verification, got {verify_response.status_code}")
             return False
         
-        if type_mismatches:
-            print(f"   ❌ FAIL: Type mismatches: {type_mismatches}")
+        # Parse updated prospects list
+        updated_prospects = verify_response.json()
+        print(f"Total prospects after creation: {len(updated_prospects)}")
+        
+        # Look for our debug prospect
+        debug_prospect_found = False
+        debug_prospect = None
+        
+        for prospect in updated_prospects:
+            if (prospect.get('company_short_name') == 'Test Aday Debug' and 
+                prospect.get('email') == 'debug@testaday.com'):
+                debug_prospect_found = True
+                debug_prospect = prospect
+                break
+        
+        if debug_prospect_found:
+            print("✅ PASS: Debug prospect found in database after creation")
+            print(f"   ID: {debug_prospect.get('id')}")
+            print(f"   Company: {debug_prospect.get('company_short_name')}")
+            print(f"   Email: {debug_prospect.get('email')}")
+            print(f"   Country: {debug_prospect.get('country')}")
+            print(f"   City: {debug_prospect.get('city')}")
+            print(f"   Sector: {debug_prospect.get('sector')}")
+            print(f"   Is Candidate: {debug_prospect.get('is_candidate')}")
+        else:
+            print("❌ FAIL: Debug prospect not found in database after creation")
             return False
         
-        print("   ✅ PASS: All required fields present with correct types")
+        # STEP 4: Check the data structure returned to ensure it matches what CustomerProspectsPage expects
+        print("\n" + "=" * 60)
+        print("STEP 4: VALIDATE DATA STRUCTURE FOR FRONTEND")
+        print("=" * 60)
         
-        # Check optional fields
-        print("\n   Checking optional fields...")
-        for field, expected_type in optional_frontend_fields.items():
-            if field in sample_prospect:
-                actual_value = sample_prospect[field]
-                if actual_value is not None and not isinstance(actual_value, expected_type):
-                    print(f"   ⚠️  WARNING: {field} type mismatch: expected {expected_type.__name__}, got {type(actual_value).__name__}")
-                else:
-                    print(f"   ✅ {field}: {expected_type.__name__} - OK")
+        print("Checking data structure compatibility with CustomerProspectsPage...")
+        
+        # Fields that CustomerProspectsPage expects
+        expected_fields = [
+            "id", "company_short_name", "email", "country", "city", 
+            "sector", "tags", "is_candidate", "created_at", "updated_at"
+        ]
+        
+        missing_fields = []
+        for field in expected_fields:
+            if field not in debug_prospect:
+                missing_fields.append(field)
             else:
-                print(f"   ℹ️  {field}: Not present (optional)")
+                value = debug_prospect[field]
+                print(f"✅ {field}: {type(value).__name__} = {value}")
         
-        # Test specific data validation
-        print("\n3. Validating specific data requirements...")
-        
-        # Check tags array
-        tags = sample_prospect.get("tags", [])
-        if isinstance(tags, list):
-            print(f"   ✅ PASS: tags is array with {len(tags)} items: {tags}")
-        else:
-            print(f"   ❌ FAIL: tags should be array, got {type(tags)}")
+        if missing_fields:
+            print(f"❌ FAIL: Missing fields for frontend: {missing_fields}")
             return False
         
-        # Check is_candidate boolean
-        is_candidate = sample_prospect.get("is_candidate")
-        if isinstance(is_candidate, bool):
-            print(f"   ✅ PASS: is_candidate is boolean: {is_candidate}")
-        else:
-            print(f"   ❌ FAIL: is_candidate should be boolean, got {type(is_candidate)}")
+        print("✅ PASS: All required fields present for CustomerProspectsPage")
+        
+        # Check data types
+        type_checks = [
+            ("id", str),
+            ("company_short_name", str),
+            ("email", str),
+            ("country", str),
+            ("city", str),
+            ("sector", str),
+            ("tags", list),
+            ("is_candidate", bool)
+        ]
+        
+        for field, expected_type in type_checks:
+            actual_value = debug_prospect.get(field)
+            if isinstance(actual_value, expected_type):
+                print(f"✅ {field} type check: {expected_type.__name__} ✓")
+            else:
+                print(f"❌ {field} type check: expected {expected_type.__name__}, got {type(actual_value).__name__}")
+                return False
+        
+        # STEP 5: Check if there are any existing prospects that should be showing
+        print("\n" + "=" * 60)
+        print("STEP 5: ANALYZE ALL PROSPECTS FOR FRONTEND DISPLAY")
+        print("=" * 60)
+        
+        print(f"Total prospects in database: {len(updated_prospects)}")
+        
+        if len(updated_prospects) == 0:
+            print("❌ ISSUE: No prospects in database - this explains why CustomerProspectsPage is empty")
             return False
         
-        # Check ID format (should be UUID string)
-        prospect_id = sample_prospect.get("id", "")
-        if isinstance(prospect_id, str) and len(prospect_id) > 0:
-            print(f"   ✅ PASS: id is non-empty string: {prospect_id[:8]}...")
-        else:
-            print(f"   ❌ FAIL: id should be non-empty string, got {type(prospect_id)}")
-            return False
+        # Analyze each prospect for potential display issues
+        candidates_count = 0
+        non_candidates_count = 0
+        prospects_with_issues = []
         
-        # Check email format
-        email = sample_prospect.get("email", "")
-        if isinstance(email, str) and "@" in email:
-            print(f"   ✅ PASS: email appears valid: {email}")
-        else:
-            print(f"   ⚠️  WARNING: email format might be invalid: {email}")
+        for i, prospect in enumerate(updated_prospects):
+            company = prospect.get('company_short_name', '')
+            email = prospect.get('email', '')
+            is_candidate = prospect.get('is_candidate', False)
+            
+            # Check for potential issues
+            issues = []
+            if not company.strip():
+                issues.append("empty company name")
+            if not email.strip():
+                issues.append("empty email")
+            if '@' not in email:
+                issues.append("invalid email format")
+            
+            if is_candidate:
+                candidates_count += 1
+            else:
+                non_candidates_count += 1
+            
+            if issues:
+                prospects_with_issues.append({
+                    'index': i + 1,
+                    'company': company,
+                    'email': email,
+                    'issues': issues
+                })
+            
+            print(f"  {i+1}. {company} ({email}) - Candidate: {is_candidate}")
         
+        print(f"\nSummary:")
+        print(f"  Total prospects: {len(updated_prospects)}")
+        print(f"  Candidates: {candidates_count}")
+        print(f"  Non-candidates: {non_candidates_count}")
+        print(f"  Prospects with issues: {len(prospects_with_issues)}")
+        
+        if prospects_with_issues:
+            print(f"\nProspects with potential display issues:")
+            for issue_prospect in prospects_with_issues:
+                print(f"  {issue_prospect['index']}. {issue_prospect['company']} - Issues: {', '.join(issue_prospect['issues'])}")
+        
+        # Final assessment
         print("\n" + "=" * 80)
-        print("CUSTOMER PROSPECTS DATA STRUCTURE TEST RESULTS:")
+        print("CUSTOMER PROSPECTS DEBUG TEST RESULTS")
         print("=" * 80)
-        print("✅ All required fields present for CustomerProspectsPage")
-        print("✅ All field types match frontend expectations")
-        print("✅ Tags array structure correct")
-        print("✅ Boolean is_candidate field correct")
-        print("✅ ID and email fields validated")
-        print("✅ Data structure compatible with frontend component")
-        print(f"\n🎉 CUSTOMER PROSPECTS DATA STRUCTURE TEST PASSED!")
-        print(f"   Sample prospect: {sample_prospect.get('company_short_name')} ({sample_prospect.get('email')})")
+        
+        print("✅ GET /api/customer-prospects endpoint working correctly")
+        print("✅ POST /api/customer-prospects endpoint working correctly")
+        print("✅ Database persistence working correctly")
+        print("✅ Data structure matches CustomerProspectsPage expectations")
+        print(f"✅ Found {len(updated_prospects)} prospects in database")
+        
+        if len(updated_prospects) > 0:
+            print("\n🔍 DIAGNOSIS:")
+            print("   Backend is working correctly - prospects are being stored and retrieved properly.")
+            print("   If CustomerProspectsPage is not showing prospects, the issue is likely in:")
+            print("   1. Frontend API call configuration (check REACT_APP_BACKEND_URL)")
+            print("   2. Frontend component state management")
+            print("   3. Frontend data rendering logic")
+            print("   4. Frontend filtering or search functionality")
+            print(f"   5. Check browser network tab to see if API calls are being made to {endpoint}")
+        
+        print(f"\n🎉 CUSTOMER PROSPECTS DEBUG TEST COMPLETED SUCCESSFULLY!")
+        print(f"   Debug prospect created and verified: Test Aday Debug (debug@testaday.com)")
+        print(f"   Backend functionality is working correctly")
         
         return True
         
