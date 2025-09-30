@@ -303,6 +303,9 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const amountCounts = getAmountCounts();
 
   const currencyCounts = getCurrencyCounts();
+  const totalOpenValue = getTotalOpenValue();
+  const averageOpenValue = getAverageOpenValue();
+  const stageStats = getStageStats();
 
   // Action handlers
   const handleViewOpportunity = (opportunity) => {
