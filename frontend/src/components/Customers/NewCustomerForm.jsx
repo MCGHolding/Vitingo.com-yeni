@@ -306,7 +306,8 @@ const NewCustomerForm = ({ onClose, onSave }) => {
         customer_type: getCategoryName(customerData.customer_type_id),
         specialty: getSpecialtyName(customerData.specialty_id),
         contacts_count: contacts.filter(c => c.full_name.trim()).length,
-        is_individual: isIndividualCustomer
+        is_individual: isIndividualCustomer,
+        is_candidate: formData.is_candidate
       });
       setCustomerCreated(true);
 
