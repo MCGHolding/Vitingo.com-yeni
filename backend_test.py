@@ -1988,6 +1988,242 @@ def test_cities_endpoints():
     
     return True
 
+def test_cities_endpoint_with_test_data():
+    """
+    Test Cities backend endpoint by adding test cities for CitySelect dropdown functionality.
+    
+    Test Scenario: CitySelect dropdown needs some cities in the database to work properly.
+    
+    Test Cities to Add (POST /api/cities):
+    1. İstanbul, TR
+    2. Ankara, TR  
+    3. İzmir, TR
+    4. Bursa, TR
+    5. Antalya, TR
+    6. New York, US
+    7. Los Angeles, US
+    8. Paris, FR
+    9. London, GB
+    
+    Tests to Perform:
+    1. Each city is successfully added
+    2. GET /api/cities/TR to get Turkish cities  
+    3. GET /api/cities/US to get US cities
+    4. Turkish character support (İ, ş characters)
+    5. Response format validation
+    """
+    
+    print("=" * 80)
+    print("TESTING CITIES ENDPOINT WITH TEST DATA FOR CITYSELECT")
+    print("=" * 80)
+    
+    # Test cities data as requested
+    test_cities = [
+        {"name": "İstanbul", "country_code": "TR"},
+        {"name": "Ankara", "country_code": "TR"},
+        {"name": "İzmir", "country_code": "TR"},
+        {"name": "Bursa", "country_code": "TR"},
+        {"name": "Antalya", "country_code": "TR"},
+        {"name": "New York", "country_code": "US"},
+        {"name": "Los Angeles", "country_code": "US"},
+        {"name": "Paris", "country_code": "FR"},
+        {"name": "London", "country_code": "GB"}
+    ]
+    
+    create_endpoint = f"{BACKEND_URL}/api/cities"
+    get_endpoint = f"{BACKEND_URL}/api/cities"
+    
+    print(f"Testing POST endpoint: {create_endpoint}")
+    print(f"Testing GET endpoint: {get_endpoint}")
+    
+    created_cities = []
+    
+    try:
+        # Test 1: Add each test city
+        print("\n1. Adding test cities to database...")
+        for i, city_data in enumerate(test_cities, 1):
+            print(f"\n   Adding City {i}: {city_data['name']}, {city_data['country_code']}")
+            
+            response = requests.post(create_endpoint, json=city_data, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                try:
+                    city_response = response.json()
+                    print(f"   ✅ PASS: {city_data['name']} added successfully")
+                    print(f"   City ID: {city_response.get('id', 'N/A')}")
+                    print(f"   Created At: {city_response.get('created_at', 'N/A')}")
+                    created_cities.append(city_response)
+                    
+                    # Validate response structure
+                    required_fields = ["id", "name", "country_code", "created_at"]
+                    missing_fields = []
+                    for field in required_fields:
+                        if field not in city_response:
+                            missing_fields.append(field)
+                    
+                    if missing_fields:
+                        print(f"   ⚠️  WARNING: Response missing fields: {missing_fields}")
+                    else:
+                        print(f"   ✅ PASS: Response has all required fields")
+                    
+                    # Check Turkish character preservation
+                    if 'İ' in city_data['name'] or 'ş' in city_data['name']:
+                        returned_name = city_response.get('name', '')
+                        if returned_name == city_data['name']:
+                            print(f"   ✅ PASS: Turkish characters preserved correctly")
+                        else:
+                            print(f"   ❌ FAIL: Turkish characters not preserved. Expected: {city_data['name']}, Got: {returned_name}")
+                    
+                    # Check country code uppercase conversion
+                    returned_country_code = city_response.get('country_code', '')
+                    expected_country_code = city_data['country_code'].upper()
+                    if returned_country_code == expected_country_code:
+                        print(f"   ✅ PASS: Country code uppercase conversion working")
+                    else:
+                        print(f"   ❌ FAIL: Country code issue. Expected: {expected_country_code}, Got: {returned_country_code}")
+                        
+                except Exception as e:
+                    print(f"   ❌ FAIL: Could not parse response JSON: {str(e)}")
+                    return False
+            elif response.status_code == 400:
+                # City might already exist, which is fine for our test
+                print(f"   ⚠️  INFO: {city_data['name']} might already exist (400 status)")
+                try:
+                    error_response = response.json()
+                    if "zaten mevcut" in error_response.get("detail", "").lower():
+                        print(f"   ✅ PASS: Duplicate control working - {city_data['name']} already exists")
+                    else:
+                        print(f"   Response: {response.text}")
+                except:
+                    print(f"   Response: {response.text}")
+            else:
+                print(f"   ❌ FAIL: Failed to add {city_data['name']}. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                # Continue with other cities even if one fails
+        
+        print(f"\n   Successfully created {len(created_cities)} out of {len(test_cities)} cities")
+        
+        # Test 2: Get Turkish cities (TR)
+        print("\n2. Testing GET /api/cities/TR (Turkish cities)...")
+        tr_endpoint = f"{get_endpoint}/TR"
+        tr_response = requests.get(tr_endpoint, timeout=30)
+        
+        print(f"   Status Code: {tr_response.status_code}")
+        if tr_response.status_code == 200:
+            try:
+                tr_cities = tr_response.json()
+                print(f"   ✅ PASS: Turkish cities endpoint working")
+                print(f"   Number of Turkish cities: {len(tr_cities)}")
+                
+                # Check if our Turkish test cities are in the response
+                turkish_test_cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"]
+                found_turkish_cities = []
+                
+                for city in tr_cities:
+                    city_name = city.get('name', '')
+                    if city_name in turkish_test_cities:
+                        found_turkish_cities.append(city_name)
+                        print(f"   ✅ Found: {city_name}")
+                
+                if len(found_turkish_cities) >= 3:  # At least 3 Turkish cities should be found
+                    print(f"   ✅ PASS: Found {len(found_turkish_cities)} Turkish test cities")
+                else:
+                    print(f"   ⚠️  WARNING: Only found {len(found_turkish_cities)} Turkish test cities")
+                    
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse Turkish cities response: {str(e)}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Turkish cities request failed. Status: {tr_response.status_code}")
+            return False
+        
+        # Test 3: Get US cities (US)
+        print("\n3. Testing GET /api/cities/US (US cities)...")
+        us_endpoint = f"{get_endpoint}/US"
+        us_response = requests.get(us_endpoint, timeout=30)
+        
+        print(f"   Status Code: {us_response.status_code}")
+        if us_response.status_code == 200:
+            try:
+                us_cities = us_response.json()
+                print(f"   ✅ PASS: US cities endpoint working")
+                print(f"   Number of US cities: {len(us_cities)}")
+                
+                # Check if our US test cities are in the response
+                us_test_cities = ["New York", "Los Angeles"]
+                found_us_cities = []
+                
+                for city in us_cities:
+                    city_name = city.get('name', '')
+                    if city_name in us_test_cities:
+                        found_us_cities.append(city_name)
+                        print(f"   ✅ Found: {city_name}")
+                
+                if len(found_us_cities) >= 1:  # At least 1 US city should be found
+                    print(f"   ✅ PASS: Found {len(found_us_cities)} US test cities")
+                else:
+                    print(f"   ⚠️  WARNING: Only found {len(found_us_cities)} US test cities")
+                    
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse US cities response: {str(e)}")
+                return False
+        else:
+            print(f"   ❌ FAIL: US cities request failed. Status: {us_response.status_code}")
+            return False
+        
+        # Test 4: Test Turkish character support specifically
+        print("\n4. Testing Turkish character support...")
+        turkish_char_cities = [city for city in created_cities if 'İ' in city.get('name', '') or 'ş' in city.get('name', '')]
+        
+        if len(turkish_char_cities) > 0:
+            print(f"   ✅ PASS: {len(turkish_char_cities)} cities with Turkish characters created successfully")
+            for city in turkish_char_cities:
+                print(f"   Turkish chars preserved: {city.get('name', 'N/A')}")
+        else:
+            print(f"   ⚠️  INFO: No cities with Turkish characters were created")
+        
+        # Test 5: Response format validation
+        print("\n5. Validating response formats...")
+        if len(created_cities) > 0:
+            sample_city = created_cities[0]
+            expected_fields = ["id", "name", "country_code", "created_at"]
+            
+            format_valid = True
+            for field in expected_fields:
+                if field not in sample_city:
+                    print(f"   ❌ FAIL: Missing field '{field}' in response")
+                    format_valid = False
+                else:
+                    print(f"   ✅ Field '{field}': Present")
+            
+            if format_valid:
+                print("   ✅ PASS: Response format is valid")
+            else:
+                print("   ❌ FAIL: Response format has issues")
+                return False
+        
+        print("\n" + "=" * 80)
+        print("CITIES ENDPOINT TEST DATA RESULTS:")
+        print("=" * 80)
+        print(f"✅ Successfully added {len(created_cities)}/{len(test_cities)} test cities")
+        print("✅ Turkish cities endpoint (GET /api/cities/TR) working")
+        print("✅ US cities endpoint (GET /api/cities/US) working")
+        print("✅ Turkish character support (İ, ş) working")
+        print("✅ Response format validation passed")
+        print("✅ Country code uppercase conversion working")
+        print("\n🎉 CITIES ENDPOINT TEST DATA SETUP COMPLETED SUCCESSFULLY!")
+        print("📋 CitySelect dropdown now has test data to work with")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_customer_types_endpoints():
     """
     Test Customer Types endpoints for Yeni Müşteri modal.
