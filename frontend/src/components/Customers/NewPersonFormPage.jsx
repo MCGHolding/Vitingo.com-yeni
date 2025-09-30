@@ -368,7 +368,7 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Telefon <span className="text-red-500">*</span>
                 </label>
-                <VitingoPhoneInput
+                <PhoneInput
                   key={`phone-${formData.country || 'tr'}`}
                   country={formData.country || "tr"}
                   value={formData.phone}
