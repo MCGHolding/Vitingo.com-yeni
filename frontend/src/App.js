@@ -1124,6 +1124,14 @@ const Dashboard = () => {
           </div>
         );
 
+      case 'collection-receipt-approval':
+        // Extract signature key from URL or state
+        const urlParams = new URLSearchParams(window.location.search);
+        const signatureKey = urlParams.get('key') || currentView.signatureKey;
+        return <CollectionReceiptApprovalPage 
+          signatureKey={signatureKey}
+        />;
+
       default:
         return (
           <>
