@@ -783,7 +783,7 @@ export default function Sidebar({
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {navigation.map((item) => {
+          {filteredNavigation.map((item) => {
             const Icon = item.icon;
             const isSubmenuOpen = openSubmenu === item.name;
             
