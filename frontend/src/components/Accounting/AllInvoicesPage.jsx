@@ -574,57 +574,104 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
       {showDeleteModal && selectedInvoice && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Fatura Silme Onayı</h3>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setSelectedInvoice(null);
-                }}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-gray-700 mb-2">
-                Aşağıdaki faturayı silmek istediğinizden emin misiniz?
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-900">
-                  Fatura No: {selectedInvoice.invoice_number}
+            {!deleteSuccess ? (
+              // Silme Onayı İçeriği
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Fatura Silme Onayı</h3>
+                  <button
+                    onClick={handleCloseDeleteModal}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-                <div className="text-sm text-gray-600">
-                  Müşteri: {selectedInvoice.customer_name}
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 mb-2">
+                    Aşağıdaki faturayı silmek istediğinizden emin misiniz?
+                  </p>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      Fatura No: {selectedInvoice.invoice_number}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Müşteri: {selectedInvoice.customer_name}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Tutar: {getCurrencySymbol(selectedInvoice.currency)}{formatNumber(selectedInvoice.total.toFixed(2))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-red-600 mt-2">
+                    Bu işlem geri alınamaz!
+                  </p>
                 </div>
-                <div className="text-sm text-gray-600">
-                  Tutar: {getCurrencySymbol(selectedInvoice.currency)}{formatNumber(selectedInvoice.total.toFixed(2))}
+                
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={handleCloseDeleteModal}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    İptal
+                  </Button>
+                  <Button
+                    onClick={handleDeleteInvoice}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    Sil
+                  </Button>
                 </div>
-              </div>
-              <p className="text-sm text-red-600 mt-2">
-                Bu işlem geri alınamaz!
-              </p>
-            </div>
-            
-            <div className="flex space-x-3">
-              <Button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setSelectedInvoice(null);
-                }}
-                variant="outline"
-                className="flex-1"
-              >
-                İptal
-              </Button>
-              <Button
-                onClick={handleDeleteInvoice}
-                className="flex-1 bg-red-600 hover:bg-red-700"
-              >
-                Sil
-              </Button>
-            </div>
+              </>
+            ) : (
+              // Başarı Mesajı İçeriği
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-green-600">Fatura Silindi!</h3>
+                  <button
+                    onClick={handleCloseDeleteModal}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="text-center mb-6">
+                  {/* Başarı İkonu */}
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  
+                  <p className="text-lg font-medium text-gray-900 mb-2">
+                    Fatura Başarıyla Silindi
+                  </p>
+                  
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div className="text-sm font-medium text-green-800">
+                      {selectedInvoice.invoice_number}
+                    </div>
+                    <div className="text-sm text-green-700">
+                      numaralı fatura sistemden kaldırıldı.
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-gray-600">
+                    Fatura listesi otomatik olarak güncellendi.
+                  </p>
+                </div>
+                
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleCloseDeleteModal}
+                    className="bg-green-600 hover:bg-green-700 px-8"
+                  >
+                    Tamam
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
