@@ -583,13 +583,66 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                         >
                           <Download className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleAction('delete', invoice)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Sil"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        
+                        {/* More Options Dropdown */}
+                        <div className="relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDropdown(invoice.id);
+                            }}
+                            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                            title="Daha Fazla Seçenek"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </button>
+                          
+                          {openDropdownId === invoice.id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                              <div className="py-1">
+                                <button
+                                  onClick={() => handleDropdownAction('cancel', invoice)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  <XCircle className="h-4 w-4 mr-3 text-red-500" />
+                                  İptal
+                                </button>
+                                <button
+                                  onClick={() => handleDropdownAction('mail', invoice)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  <Mail className="h-4 w-4 mr-3 text-blue-500" />
+                                  Mail
+                                </button>
+                                <button
+                                  onClick={() => handleDropdownAction('message', invoice)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  <MessageSquare className="h-4 w-4 mr-3 text-green-500" />
+                                  Mesaj
+                                </button>
+                                <button
+                                  onClick={() => handleDropdownAction('payment-request', invoice)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  <CreditCard className="h-4 w-4 mr-3 text-purple-500" />
+                                  Ödeme Talebi
+                                </button>
+                                
+                                {/* Separator */}
+                                <div className="border-t border-gray-100 my-1"></div>
+                                
+                                <button
+                                  onClick={() => handleDropdownAction('delete', invoice)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-3" />
+                                  Sil
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
