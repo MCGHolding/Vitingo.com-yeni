@@ -18,7 +18,9 @@ import {
   ArrowLeft,
   CreditCard,
   Banknote,
-  FileCheck
+  FileCheck,
+  User,
+  Building
 } from 'lucide-react';
 
 const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
