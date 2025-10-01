@@ -2777,7 +2777,8 @@ async def generate_invoice_pdf(invoice_id: str):
         p.setFont("Helvetica", 8)
         p.setFillColor(gray)
         footer_text = f"Bu fatura {invoice.get('date', '')} tarihinde elektronik ortamda oluşturulmuştur."
-        p.drawCentredText(width/2, 50, footer_text)
+        text_width = p.stringWidth(footer_text, "Helvetica", 8)
+        p.drawString((width - text_width) / 2, 50, footer_text)
         
         # Save PDF
         p.save()
