@@ -1153,6 +1153,7 @@ const Dashboard = () => {
         onNewInvoice={handleNewInvoice}
         onAllInvoices={handleAllInvoices}
         onPendingApproval={handlePendingApproval}
+        onDraftInvoices={handleDraftInvoices}
         onPendingCollection={handlePendingCollection}
         onPaidInvoices={handlePaidInvoices}
         onOverdueInvoices={handleOverdueInvoices}
