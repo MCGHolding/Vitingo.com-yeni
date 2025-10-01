@@ -466,6 +466,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
 
       console.log('=== STARTING INVOICE SUBMISSION ===');
       console.log('Backend URL:', backendUrl);
+      console.log('isDraft state:', formData.isDraft);
+      console.log('Status to be sent:', formData.isDraft ? 'draft' : 'active');
       console.log('Invoice object to send:', JSON.stringify(invoice, null, 2));
 
       const response = await axios.post(`${backendUrl}/api/invoices`, invoice);
