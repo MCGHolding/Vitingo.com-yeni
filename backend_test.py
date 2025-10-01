@@ -14250,24 +14250,71 @@ def test_health_check():
         return False
 
 def main():
-    """Run health check test as requested"""
-    print("🚀 STARTING HEALTH CHECK - QUICK CONNECTIVITY TEST")
+    """Run invoice status filtering tests as requested in the review"""
+    print("🚀 STARTING VITINGO CRM BACKEND API TESTING SUITE")
     print("=" * 80)
-    print("This is a quick test to verify system connectivity before frontend testing.")
+    print("FOCUS: Invoice Status Filtering Functionality for Accounting Pages")
+    print("=" * 80)
     
-    success = test_health_check()
+    # List of test functions - focusing on invoice status filtering as requested
+    test_functions = [
+        test_authentication_with_credentials,
+        test_invoice_status_filtering_comprehensive,  # Main test for the review request
+        test_draft_invoice_creation,
+        test_draft_invoice_retrieval,
+        test_vitingo_invoice_endpoints,
+        # Additional supporting tests
+        test_currency_rates_endpoint,
+        test_currency_conversion_endpoint
+    ]
     
+    # Run all tests
+    passed_tests = 0
+    failed_tests = 0
+    
+    for test_func in test_functions:
+        try:
+            print(f"\n🧪 Running {test_func.__name__}...")
+            result = test_func()
+            
+            if isinstance(result, tuple):
+                # Handle functions that return (success, data)
+                success = result[0]
+            else:
+                success = result
+            
+            if success:
+                passed_tests += 1
+                print(f"✅ {test_func.__name__} PASSED")
+            else:
+                failed_tests += 1
+                print(f"❌ {test_func.__name__} FAILED")
+                
+        except Exception as e:
+            failed_tests += 1
+            print(f"❌ {test_func.__name__} FAILED with exception: {str(e)}")
+    
+    # Final summary
+    total_tests = passed_tests + failed_tests
     print("\n" + "=" * 80)
-    print("🏁 HEALTH CHECK COMPLETE")
+    print("🏁 FINAL TEST RESULTS SUMMARY")
     print("=" * 80)
+    print(f"Total Tests Run: {total_tests}")
+    print(f"✅ Passed: {passed_tests}")
+    print(f"❌ Failed: {failed_tests}")
+    print(f"Success Rate: {(passed_tests/total_tests*100):.1f}%" if total_tests > 0 else "No tests run")
     
-    if success:
-        print("✅ HEALTH CHECK PASSED")
-        print("The system is ready for frontend testing.")
+    if failed_tests == 0:
+        print("\n🎉 ALL TESTS PASSED! The Vitingo CRM Backend API is working correctly.")
+        print("\n📋 INVOICE STATUS FILTERING SUMMARY:")
+        print("   • All invoice status endpoints are functional")
+        print("   • Pending Collection: /api/invoices/status/pending + /api/invoices/status/active")
+        print("   • Paid Invoices: /api/invoices/status/paid") 
+        print("   • Overdue Invoices: Calculate client-side from active invoices using date + payment_term")
+        print("   • Draft Invoices: /api/invoices/status/draft")
         return True
     else:
-        print("❌ HEALTH CHECK FAILED")
-        print("Please check the backend system before proceeding with frontend testing.")
+        print(f"\n⚠️  {failed_tests} test(s) failed. Please review the failed tests above.")
         return False
 
 def test_geo_endpoints_for_cityselect():
