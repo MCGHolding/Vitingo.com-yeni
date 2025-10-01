@@ -2447,6 +2447,286 @@ async def get_invoices():
         logger.error(f"Error getting invoices: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting invoices: {str(e)}")
 
+@api_router.get("/invoices/{invoice_id}/pdf")
+async def generate_invoice_pdf(invoice_id: str):
+    """Generate PDF for a specific invoice"""
+    try:
+        # Get invoice from database
+        invoice = await db.invoices.find_one({"id": invoice_id})
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Invoice not found")
+        
+        # Import necessary reportlab components
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.units import inch
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.colors import black, blue, gray
+        from reportlab.platypus import Table, TableStyle
+        from reportlab.lib import colors
+        
+        # Create PDF in memory
+        buffer = io.BytesIO()
+        
+        # Create PDF canvas
+        p = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        
+        # Define margins
+        margin = 50
+        
+        # Helper function to format numbers
+        def format_number(value):
+            if isinstance(value, (int, float)):
+                return f"{value:,.2f}".replace(',', '.')
+            return str(value)
+        
+        # Get currency symbol
+        currency_symbols = {
+            'USD': '$', 'EUR': '€', 'GBP': '£', 'TL': '₺', 'AED': 'د.إ'
+        }
+        currency_symbol = currency_symbols.get(invoice.get('currency', 'USD'), '')
+        
+        # Company Header (Blue background)
+        p.setFillColor(blue)
+        p.rect(margin, height - 120, width - 2*margin, 80, fill=1)
+        
+        # Company name and details in white
+        p.setFillColor(colors.white)
+        p.setFont("Helvetica-Bold", 20)
+        company_text = "Başarı Uluslararası Fuarcılık A.Ş."
+        text_width = p.stringWidth(company_text, "Helvetica-Bold", 20)
+        p.drawString((width - text_width) / 2, height - 50, company_text)
+        
+        p.setFont("Helvetica", 10)
+        address1 = "Küçükyalı Merkez Mh. Şevki Çavuş Sok."
+        text_width = p.stringWidth(address1, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 65, address1)
+        
+        address2 = "Merve Apt. No:9/7 - 34840 Maltepe / İstanbul"
+        text_width = p.stringWidth(address2, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 78, address2)
+        
+        address3 = "Tel: +90 216 123 45 67 - Küçükyalı Vergi Dairesi - 7210421828"
+        text_width = p.stringWidth(address3, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 91, address3)
+        
+        # Reset color to black
+        p.setFillColor(black)
+        
+        # Invoice title and details
+        y_position = height - 160
+        
+        # Left side - Invoice info
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(margin, y_position, "FATURA")
+        
+        y_position -= 20
+        p.setFont("Helvetica", 10)
+        
+        invoice_details = [
+            f"Fatura No: {invoice.get('invoice_number', '')}",
+            f"Tarih: {invoice.get('date', '')}",
+            f"Para Birimi: {invoice.get('currency', '')}",
+            f"Durum: {invoice.get('status', '').title()}"
+        ]
+        
+        for detail in invoice_details:
+            p.drawString(margin, y_position, detail)
+            y_position -= 15
+        
+        # Right side - Customer info
+        customer_y = height - 160
+        customer_x = width - margin - 250
+        
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(customer_x, customer_y, "Müşteri Bilgileri")
+        customer_y -= 20
+        
+        # Draw customer info box
+        p.setStrokeColor(gray)
+        p.rect(customer_x - 10, customer_y - 60, 240, 80, fill=0)
+        
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(customer_x, customer_y - 10, invoice.get('customer_name', ''))
+        
+        # Items table
+        y_position = height - 300
+        
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(margin, y_position, "Ürün ve Hizmetler")
+        y_position -= 30
+        
+        # Table headers
+        headers = ["Sıra", "Ürün/Hizmet", "Miktar", "Birim", "Birim Fiyat", "Toplam"]
+        col_widths = [40, 200, 60, 60, 80, 80]
+        
+        # Draw table header
+        x = margin
+        p.setFillColor(colors.lightgrey)
+        p.rect(x, y_position - 15, sum(col_widths), 20, fill=1)
+        
+        p.setFillColor(black)
+        p.setFont("Helvetica-Bold", 9)
+        
+        for i, header in enumerate(headers):
+            p.drawString(x + 5, y_position - 10, header)
+            x += col_widths[i]
+        
+        y_position -= 25
+        
+        # Table rows
+        items = invoice.get('items', [])
+        p.setFont("Helvetica", 9)
+        
+        for idx, item in enumerate(items, 1):
+            x = margin
+            row_data = [
+                str(idx),
+                str(item.get('name', ''))[:30] + ('...' if len(str(item.get('name', ''))) > 30 else ''),
+                format_number(item.get('quantity', 0)),
+                str(item.get('unit', '')),
+                f"{currency_symbol}{format_number(item.get('unit_price', 0))}",
+                f"{currency_symbol}{format_number(item.get('total', 0))}"
+            ]
+            
+            # Alternate row colors
+            if idx % 2 == 0:
+                p.setFillColor(colors.Color(0.95, 0.95, 0.95))
+                p.rect(margin, y_position - 15, sum(col_widths), 20, fill=1)
+            
+            p.setFillColor(black)
+            
+            for i, data in enumerate(row_data):
+                if i == 0:  # Center align row number
+                    text_width = p.stringWidth(data, "Helvetica", 9)
+                    p.drawString(x + (col_widths[i] - text_width) / 2, y_position - 10, data)
+                elif i in [2, 3]:  # Center align quantity and unit
+                    text_width = p.stringWidth(data, "Helvetica", 9)
+                    p.drawString(x + (col_widths[i] - text_width) / 2, y_position - 10, data)
+                elif i in [4, 5]:  # Right align prices
+                    text_width = p.stringWidth(data, "Helvetica", 9)
+                    p.drawString(x + col_widths[i] - text_width - 5, y_position - 10, data)
+                else:  # Left align name
+                    p.drawString(x + 5, y_position - 10, data)
+                x += col_widths[i]
+            
+            y_position -= 20
+        
+        # Totals section
+        y_position -= 30
+        totals_x = width - margin - 250
+        
+        # Draw totals box
+        p.setStrokeColor(gray)
+        p.rect(totals_x - 10, y_position - 100, 240, 120, fill=0)
+        
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(totals_x, y_position, "Tutar Özeti")
+        y_position -= 25
+        
+        p.setFont("Helvetica", 10)
+        
+        subtotal = invoice.get('subtotal', 0)
+        discount_amount = invoice.get('discount_amount', 0)
+        vat_rate = invoice.get('vat_rate', 0)
+        vat_amount = invoice.get('vat_amount', 0)
+        total = invoice.get('total', 0)
+        
+        totals_data = [
+            ("Ara Toplam:", f"{currency_symbol}{format_number(subtotal)}"),
+        ]
+        
+        if discount_amount > 0:
+            discount_type = invoice.get('discount_type', 'percentage')
+            discount_value = invoice.get('discount', 0)
+            discount_text = f"İndirim ({discount_value}% " if discount_type == 'percentage' else "İndirim (Sabit"
+            totals_data.append((discount_text + "):", f"-{currency_symbol}{format_number(discount_amount)}"))
+        
+        totals_data.extend([
+            (f"KDV (%{vat_rate}):", f"{currency_symbol}{format_number(vat_amount)}"),
+            ("", ""),  # Empty line
+            ("GENEL TOPLAM:", f"{currency_symbol}{format_number(total)}")
+        ])
+        
+        for label, value in totals_data:
+            if label == "GENEL TOPLAM:":
+                p.setFont("Helvetica-Bold", 12)
+                p.setFillColor(blue)
+            elif label == "":
+                y_position -= 5
+                continue
+            else:
+                p.setFont("Helvetica", 10)
+                p.setFillColor(black)
+            
+            p.drawString(totals_x, y_position, label)
+            if value:
+                text_width = p.stringWidth(value, p._fontname, p._fontsize)
+                p.drawString(totals_x + 200 - text_width, y_position, value)
+            y_position -= 15
+        
+        # Payment terms and conditions
+        if invoice.get('payment_term') or invoice.get('conditions'):
+            y_position -= 30
+            p.setFillColor(black)
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(margin, y_position, "Ödeme Koşulları ve Genel Şartlar")
+            y_position -= 15
+            
+            if invoice.get('payment_term'):
+                p.setFont("Helvetica", 9)
+                p.drawString(margin, y_position, f"Ödeme Vadesi: {invoice.get('payment_term')} gün")
+                y_position -= 15
+            
+            if invoice.get('conditions'):
+                p.setFont("Helvetica", 8)
+                conditions = invoice.get('conditions', '')
+                # Word wrap conditions text
+                words = conditions.split(' ')
+                line = ""
+                max_width = width - 2 * margin - 50
+                
+                for word in words:
+                    test_line = line + (" " if line else "") + word
+                    if p.stringWidth(test_line, "Helvetica", 8) < max_width:
+                        line = test_line
+                    else:
+                        if line:
+                            p.drawString(margin, y_position, line)
+                            y_position -= 12
+                        line = word
+                
+                if line:
+                    p.drawString(margin, y_position, line)
+        
+        # Footer
+        p.setFont("Helvetica", 8)
+        p.setFillColor(gray)
+        footer_text = f"Bu fatura {invoice.get('date', '')} tarihinde elektronik ortamda oluşturulmuştur."
+        text_width = p.stringWidth(footer_text, "Helvetica", 8)
+        p.drawString((width - text_width) / 2, 50, footer_text)
+        
+        # Save PDF
+        p.save()
+        
+        # Get PDF data
+        buffer.seek(0)
+        pdf_data = buffer.getvalue()
+        buffer.close()
+        
+        # Return PDF as response
+        return StreamingResponse(
+            io.BytesIO(pdf_data),
+            media_type='application/pdf',
+            headers={
+                'Content-Disposition': f'attachment; filename="Fatura_{invoice.get("invoice_number", invoice_id)}.pdf"'
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Error generating PDF for invoice {invoice_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF generation error: {str(e)}")
+
 @api_router.get("/invoices/{invoice_id}", response_model=Invoice)
 async def get_invoice(invoice_id: str):
     """Get a specific invoice"""
