@@ -518,6 +518,18 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
                         </div>
                       </td>
 
+                      {/* Vade Gün */}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {(() => {
+                          const overdueDaysInfo = getOverdueDaysDisplay(account.due_date);
+                          return (
+                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded ${overdueDaysInfo.bgColor} ${overdueDaysInfo.textColor}`}>
+                              {overdueDaysInfo.text}
+                            </span>
+                          );
+                        })()}
+                      </td>
+
                       {/* Durum */}
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${statusInfo.bgColor} ${statusInfo.textColor}`}>
