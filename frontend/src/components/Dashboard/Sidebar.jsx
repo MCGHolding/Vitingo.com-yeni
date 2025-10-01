@@ -303,6 +303,23 @@ export default function Sidebar({
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
   };
 
+  // Filter navigation items based on search term
+  const filteredNavigation = navigation.filter(item => {
+    const matchesMain = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSubmenu = item.submenu?.some(subItem => 
+      subItem.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return matchesMain || matchesSubmenu;
+  });
+
+  // Filter submenu items for each navigation item
+  const getFilteredSubmenu = (item) => {
+    if (!item.submenu || !searchTerm) return item.submenu;
+    return item.submenu.filter(subItem =>
+      subItem.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   const handleMenuClick = (item, subItem = null) => {
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
