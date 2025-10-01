@@ -304,13 +304,31 @@ export default function Sidebar({
   };
 
   // Filter navigation items based on search term
-  const filteredNavigation = navigation.filter(item => {
-    const matchesMain = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSubmenu = item.submenu?.some(subItem => 
-      subItem.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    return matchesMain || matchesSubmenu;
-  });
+  const filteredNavigation = React.useMemo(() => {
+    console.log('Sidebar search term:', searchTerm);
+    
+    if (!searchTerm || searchTerm.trim() === '') {
+      console.log('No search term, showing all navigation items');
+      return navigation;
+    }
+    
+    const filtered = navigation.filter(item => {
+      const matchesMain = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSubmenu = item.submenu?.some(subItem => 
+        subItem.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      const matches = matchesMain || matchesSubmenu;
+      
+      if (matches) {
+        console.log(`Item "${item.name}" matches search "${searchTerm}"`);
+      }
+      
+      return matches;
+    });
+    
+    console.log('Filtered navigation items:', filtered.length);
+    return filtered;
+  }, [searchTerm]);
 
   // Filter submenu items for each navigation item
   const getFilteredSubmenu = (item) => {
