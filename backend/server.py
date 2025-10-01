@@ -247,6 +247,7 @@ class InvoiceCreate(BaseModel):
     customer_name: str = ""
     date: str
     currency: str
+    status: str = "active"  # Taslak fatura durumu için status field'ı
     items: List[InvoiceItem]
     subtotal: float
     vat_rate: float
