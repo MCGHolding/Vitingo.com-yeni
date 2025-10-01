@@ -22,6 +22,7 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
   const [isLoading, setIsLoading] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
