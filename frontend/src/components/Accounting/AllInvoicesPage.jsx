@@ -825,6 +825,110 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
           </div>
         </div>
       )}
+
+      {/* Cancel Confirmation Modal */}
+      {showCancelModal && selectedInvoice && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            {!cancelSuccess ? (
+              // İptal Onayı İçeriği
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Fatura İptal Onayı</h3>
+                  <button
+                    onClick={handleCloseCancelModal}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-gray-700 mb-2">
+                    Aşağıdaki faturayı iptal etmek istediğinizden emin misiniz?
+                  </p>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      Fatura No: {selectedInvoice.invoice_number}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Müşteri: {selectedInvoice.customer_name}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Tutar: {getCurrencySymbol(selectedInvoice.currency)}{formatNumber(selectedInvoice.total.toFixed(2))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-orange-600 mt-2">
+                    İptal edilen fatura "İptal Faturalar" bölümüne taşınacaktır!
+                  </p>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={handleCloseCancelModal}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Vazgeç
+                  </Button>
+                  <Button
+                    onClick={handleCancelInvoice}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700"
+                  >
+                    İptal Et
+                  </Button>
+                </div>
+              </>
+            ) : (
+              // Başarı Mesajı İçeriği
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-orange-600">Fatura İptal Edildi!</h3>
+                  <button
+                    onClick={handleCloseCancelModal}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="text-center mb-6">
+                  {/* İptal İkonu */}
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <XCircle className="w-8 h-8 text-orange-600" />
+                  </div>
+                  
+                  <p className="text-lg font-medium text-gray-900 mb-2">
+                    Fatura Başarıyla İptal Edildi
+                  </p>
+                  
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                    <div className="text-sm font-medium text-orange-800">
+                      {selectedInvoice.invoice_number}
+                    </div>
+                    <div className="text-sm text-orange-700">
+                      numaralı fatura iptal edildi ve "İptal Faturalar" bölümüne taşındı.
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-gray-600">
+                    İptal edilen faturayı "Muhasebe > İptal Faturalar" menüsünden görüntüleyebilirsiniz.
+                  </p>
+                </div>
+                
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleCloseCancelModal}
+                    className="bg-orange-600 hover:bg-orange-700 px-8"
+                  >
+                    Tamam
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
