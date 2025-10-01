@@ -698,6 +698,19 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
                 disabled={isLoadingData}
                 className="w-full"
               />
+              
+              {/* Taslak Fatura Checkbox */}
+              <div className="mt-3 flex justify-end">
+                <label className="flex items-center text-sm text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isDraft}
+                    onChange={(e) => setFormData(prev => ({ ...prev, isDraft: e.target.checked }))}
+                    className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  Taslak Fatura
+                </label>
+              </div>
             </div>
           </div>
 
