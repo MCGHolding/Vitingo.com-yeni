@@ -220,8 +220,33 @@ const Dashboard = () => {
 
   // Quote Management Handlers
   const handleNewQuote = () => {
+    setCurrentView('new-quote');
     console.log('New Quote clicked');
-    // TODO: Implement new quote modal/form
+  };
+
+  const handleDraftQuotes = () => {
+    setCurrentView('draft-quotes');
+    console.log('Draft Quotes clicked');
+  };
+
+  const handlePendingApprovalQuotes = () => {
+    setCurrentView('pending-approval-quotes');
+    console.log('Pending Approval Quotes clicked');
+  };
+
+  const handleSentQuotes = () => {
+    setCurrentView('sent-quotes');
+    console.log('Sent Quotes clicked');
+  };
+
+  const handleWonQuotes = () => {
+    setCurrentView('won-quotes');
+    console.log('Won Quotes clicked');
+  };
+
+  const handleLostQuotes = () => {
+    setCurrentView('lost-quotes');
+    console.log('Lost Quotes clicked');
   };
 
   // Customer Management Handlers
