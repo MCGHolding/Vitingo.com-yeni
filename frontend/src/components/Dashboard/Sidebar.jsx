@@ -243,6 +243,8 @@ export default function Sidebar({
   onNewInvoice,
   onAllInvoices,
   onPendingApproval,
+  onDraftInvoices,
+  onCancelledInvoices,
   onPendingCollection,
   onPaidInvoices,
   onOverdueInvoices,
