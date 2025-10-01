@@ -286,6 +286,10 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
   const totalCredit = currentAccounts.reduce((sum, acc) => sum + acc.credit, 0);
   const totalDebit = currentAccounts.reduce((sum, acc) => sum + acc.debit, 0);
   const netBalance = totalCredit - totalDebit;
+  
+  // Calculate overdue accounts
+  const overdueAccounts = currentAccounts.filter(acc => calculateOverdueDays(acc.due_date) > 0);
+  const totalOverdue = overdueAccounts.length;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
