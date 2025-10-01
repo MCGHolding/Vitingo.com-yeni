@@ -825,10 +825,10 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                 <Button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700"
-                  disabled={!formData.payer_name || !formData.payer_email || !formData.payment_reason || formData.total_amount <= 0}
+                  disabled={formData.total_amount <= 0}
                 >
                   <Receipt className="mr-2 h-4 w-4" />
-                  Makbuzu Oluştur ve Gönder
+                  Tahsilat Makbuzunu Oluştur ve Gönder
                 </Button>
               </div>
             </form>
