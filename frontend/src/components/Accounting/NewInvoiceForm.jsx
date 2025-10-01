@@ -645,15 +645,21 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
               
               {/* Taslak Fatura Checkbox */}
               <div className="mt-3 flex justify-end">
-                <label className="flex items-center text-sm text-gray-600 cursor-pointer">
+                <div className="flex items-center">
                   <input
+                    id="isDraftCheckbox"
                     type="checkbox"
                     checked={formData.isDraft}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isDraft: e.target.checked }))}
+                    onChange={(e) => {
+                      console.log('Checkbox clicked:', e.target.checked);
+                      setFormData(prev => ({ ...prev, isDraft: e.target.checked }));
+                    }}
                     className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  Taslak Fatura
-                </label>
+                  <label htmlFor="isDraftCheckbox" className="text-sm text-gray-600 cursor-pointer">
+                    Taslak Fatura
+                  </label>
+                </div>
               </div>
             </div>
           </div>
