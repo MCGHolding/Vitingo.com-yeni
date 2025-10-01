@@ -54,7 +54,8 @@ import {
   PenTool,
   FolderOpen,
   Truck,
-  UserCheck
+  UserCheck,
+  Search
 } from 'lucide-react';
 
 const navigation = [
