@@ -445,6 +445,42 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Project Management menu actions
+    if (subItem && subItem.name === 'Yeni Proje') {
+      if (onNewProject) {
+        onNewProject();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tüm Projeler') {
+      if (onAllProjects) {
+        onAllProjects();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Devam Edenler') {
+      if (onOngoingProjects) {
+        onOngoingProjects();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tamamlananlar') {
+      if (onCompletedProjects) {
+        onCompletedProjects();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'İptal Edilenler') {
+      if (onCancelledProjects) {
+        onCancelledProjects();
+      }
+      return;
+    }
     
     // Handle Settings menu actions
     if (subItem && subItem.name === 'Import Data') {
