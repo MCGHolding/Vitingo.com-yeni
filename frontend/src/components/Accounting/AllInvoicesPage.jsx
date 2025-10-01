@@ -242,19 +242,28 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
         
         // Faturayı listeden kaldır
         setInvoices(prev => prev.filter(inv => inv.id !== selectedInvoice.id));
-        alert('Fatura başarıyla silindi');
+        
+        // Modal içeriğini başarı mesajına çevir
+        setDeleteSuccess(true);
       } else {
         const errorText = await response.text();
         console.error('Fatura silme hatası:', response.status, errorText);
         alert(`Fatura silinemedi: ${response.status} - ${errorText}`);
+        setShowDeleteModal(false);
+        setSelectedInvoice(null);
       }
     } catch (error) {
       console.error('Silme hatası:', error);
       alert(`Fatura silinemedi: ${error.message}`);
-    } finally {
       setShowDeleteModal(false);
       setSelectedInvoice(null);
     }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeleteSuccess(false);
+    setSelectedInvoice(null);
   };
 
   // Calculate totals
