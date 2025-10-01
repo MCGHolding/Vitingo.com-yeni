@@ -272,6 +272,39 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     setSelectedInvoice(null);
   };
 
+  const handleDropdownAction = (action, invoice) => {
+    setOpenDropdownId(null); // Close dropdown
+    
+    switch (action) {
+      case 'cancel':
+        console.log('İptal action:', invoice);
+        alert(`${invoice.invoice_number} numaralı fatura iptal edilecek`);
+        break;
+      case 'mail':
+        console.log('Mail action:', invoice);
+        alert(`${invoice.invoice_number} numaralı fatura mail ile gönderilecek`);
+        break;
+      case 'message':
+        console.log('Mesaj action:', invoice);
+        alert(`${invoice.invoice_number} numaralı fatura için mesaj gönderilecek`);
+        break;
+      case 'payment-request':
+        console.log('Ödeme talebi action:', invoice);
+        alert(`${invoice.invoice_number} numaralı fatura için ödeme talebi gönderilecek`);
+        break;
+      case 'delete':
+        setSelectedInvoice(invoice);
+        setShowDeleteModal(true);
+        break;
+      default:
+        console.log('Unknown dropdown action:', action);
+    }
+  };
+
+  const toggleDropdown = (invoiceId) => {
+    setOpenDropdownId(openDropdownId === invoiceId ? null : invoiceId);
+  };
+
   // Calculate totals
   const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + invoice.amount, 0);
   const paidAmount = filteredInvoices
