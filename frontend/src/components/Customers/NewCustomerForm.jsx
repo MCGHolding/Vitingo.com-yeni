@@ -1404,8 +1404,20 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
                 </p>
               </div>
               
-              <Button onClick={() => setShowSuccessModal(false)} className="bg-green-600 hover:bg-green-700">
-                Tamam
+              <Button 
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  // Eğer faturadan geliyorsak ve müşteri eklendiyse, fatura sayfasına dön
+                  if (returnToInvoice && onCustomerAdded && createdCustomerInfo?.customer_id) {
+                    onCustomerAdded(createdCustomerInfo.customer_id, createdCustomerInfo.company_name);
+                  } else {
+                    // Normal durumda dashboard'a dön
+                    onClose();
+                  }
+                }} 
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {returnToInvoice ? 'Fatura Sayfasına Dön' : 'Tamam'}
               </Button>
             </div>
           </div>
