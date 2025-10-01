@@ -469,6 +469,21 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
             </div>
           </div>
         </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Vadesi Geçenler</p>
+              <div className="flex items-baseline space-x-2">
+                <p className="text-2xl font-bold text-red-600">₺{formatNumber(overdueAmount.toFixed(2))}</p>
+                <span className="text-sm text-gray-500">({overdueCount} fatura)</span>
+              </div>
+            </div>
+            <div className="p-3 bg-red-100 rounded-lg">
+              <Calendar className="h-6 w-6 text-red-600" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Filters */}
