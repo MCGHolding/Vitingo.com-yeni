@@ -279,8 +279,8 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     
     switch (action) {
       case 'cancel':
-        console.log('İptal action:', invoice);
-        alert(`${invoice.invoice_number} numaralı fatura iptal edilecek`);
+        setSelectedInvoice(invoice);
+        setShowCancelModal(true);
         break;
       case 'mail':
         console.log('Mail action:', invoice);
