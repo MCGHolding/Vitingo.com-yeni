@@ -335,6 +335,22 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
+  const handleAddNewCustomer = () => {
+    console.log('Yeni müşteri ekleme sayfasına yönlendiriliyor...');
+    // Form verilerini localStorage'da sakla (kullanıcı geri döndüğünde kaldığı yerden devam etsin)
+    const currentFormState = {
+      ...formData,
+      items: formData.items,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('invoiceFormState', JSON.stringify(currentFormState));
+    
+    // Yeni müşteri sayfasına git
+    if (onNewCustomer) {
+      onNewCustomer();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
