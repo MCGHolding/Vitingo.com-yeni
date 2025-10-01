@@ -1234,6 +1234,11 @@ const Dashboard = () => {
         onAllPeople={handleAllPeople}
         onNewQuote={handleNewQuote}
         onAllQuotes={handleAllQuotes}
+        onDraftQuotes={handleDraftQuotes}
+        onPendingApprovalQuotes={handlePendingApprovalQuotes}
+        onSentQuotes={handleSentQuotes}
+        onWonQuotes={handleWonQuotes}
+        onLostQuotes={handleLostQuotes}
         onNewFair={handleNewFair}
         onAllFairs={handleAllFairs}
         onActiveFairs={handleActiveFairs}
