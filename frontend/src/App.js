@@ -732,7 +732,7 @@ const Dashboard = () => {
 
       // Accounting cases
       case 'new-invoice':
-        return <NewInvoiceForm onBackToDashboard={handleBackToDashboard} />;
+        return <NewInvoiceForm onBackToDashboard={handleBackToDashboard} onNewCustomer={handleNewCustomer} />;
 
       case 'all-invoices':
         return <AllInvoicesPage onBackToDashboard={handleBackToDashboard} onNewInvoice={handleNewInvoice} onEditInvoice={handleEditInvoice} />;
