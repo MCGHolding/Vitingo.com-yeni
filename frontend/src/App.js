@@ -220,8 +220,12 @@ const Dashboard = () => {
   };
 
   // Customer Management Handlers
-  const handleNewCustomer = () => {
+  const handleNewCustomer = (returnToInvoice = false) => {
     setCurrentView('new-customer');
+    // Fatura sayfasından gelme durumunu işaretlemek için
+    if (returnToInvoice) {
+      sessionStorage.setItem('returnToInvoiceAfterCustomer', 'true');
+    }
   };
 
   const handleNewPerson = () => {
