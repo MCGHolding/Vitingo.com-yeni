@@ -2484,6 +2484,33 @@ async def update_invoice_status(invoice_id: str, status: str):
         logger.error(f"Error updating invoice {invoice_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.delete("/invoices/{invoice_id}")
+async def delete_invoice(invoice_id: str):
+    """Delete a specific invoice"""
+    try:
+        # Check if invoice exists
+        invoice = await db.invoices.find_one({"id": invoice_id})
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Fatura bulunamadı")
+        
+        # Delete the invoice
+        result = await db.invoices.delete_one({"id": invoice_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=400, detail="Fatura silinemedi")
+        
+        return {
+            "success": True, 
+            "message": "Fatura başarıyla silindi",
+            "deleted_invoice_id": invoice_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting invoice {invoice_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Fatura silme hatası: {str(e)}")
+
 @api_router.get("/invoices/status/{status}")
 async def get_invoices_by_status(status: str):
     """Get invoices by status"""
