@@ -1192,6 +1192,12 @@ const Dashboard = () => {
         onAllFairs={handleAllFairs}
         onActiveFairs={handleActiveFairs}
         onPastFairs={handlePastFairs}
+        // Project handlers
+        onNewProject={handleNewProject}
+        onAllProjects={handleAllProjects}
+        onOngoingProjects={handleOngoingProjects}
+        onCompletedProjects={handleCompletedProjects}
+        onCancelledProjects={handleCancelledProjects}
         onImportData={handleImportData}
         onExportData={handleExportData}
         onSalesReports={handleSalesReports}
