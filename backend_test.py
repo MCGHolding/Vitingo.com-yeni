@@ -13494,51 +13494,54 @@ def test_customer_types_comprehensive():
     return all_tests_passed
 
 if __name__ == "__main__":
-    print("🚀 STARTING CRITICAL INVOICE CREATION BUG TESTING")
+    print("🚀 STARTING VITINGO CRM INVOICE BACKEND ENDPOINT TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing backend endpoints to isolate the '[object Object]' error issue")
-    print("User reported: Invoice creation fails with '[object Object]' error even after selecting customers")
+    print("Testing 3 specific invoice endpoints as requested:")
+    print("1. DELETE /api/invoices/{invoice_id} - Invoice deletion endpoint")
+    print("2. GET /api/invoices/{invoice_id}/pdf - PDF generation endpoint")  
+    print("3. GET /api/invoices - Invoice list endpoint")
     print("=" * 80)
     
-    # Run the critical invoice creation bug test
-    print(f"\n🧪 Running: Critical Invoice Creation Bug Test")
+    # Run the Vitingo invoice endpoints test
+    print(f"\n🧪 Running: Vitingo Invoice Endpoints Test")
     print("-" * 60)
     
     try:
-        result = test_invoice_creation_bug_comprehensive()
+        result = test_vitingo_invoice_endpoints()
         
         if result:
-            print(f"\n✅ INVOICE CREATION BUG TEST PASSED")
-            print("🎯 CONCLUSION: Backend is working correctly")
-            print("   The '[object Object]' error is likely a frontend issue")
-            print("   with error handling or customer selection.")
+            print(f"\n✅ VITINGO INVOICE ENDPOINTS TEST PASSED")
+            print("🎯 CONCLUSION: All 3 invoice endpoints are working correctly")
+            print("   - Invoice list endpoint functional")
+            print("   - PDF generation endpoint working and creates valid PDFs")
+            print("   - Invoice deletion endpoint working with proper validation")
         else:
-            print(f"\n❌ INVOICE CREATION BUG TEST FAILED")
-            print("🚨 CRITICAL BACKEND ISSUES FOUND")
-            print("   Backend problems are contributing to the invoice creation bug")
+            print(f"\n❌ VITINGO INVOICE ENDPOINTS TEST FAILED")
+            print("🚨 CRITICAL ISSUES FOUND IN INVOICE ENDPOINTS")
+            print("   One or more invoice endpoints have problems")
             
     except Exception as e:
-        print(f"❌ ERROR in Invoice Creation Bug Test: {str(e)}")
+        print(f"❌ ERROR in Vitingo Invoice Endpoints Test: {str(e)}")
         result = False
     
     # Final summary
     print("\n" + "=" * 80)
-    print("🏁 INVOICE CREATION BUG TEST SUMMARY")
+    print("🏁 VITINGO INVOICE ENDPOINTS TEST SUMMARY")
     print("=" * 80)
     
     if result:
-        print("✅ Backend endpoints are working correctly")
-        print("✅ Customers can be loaded for selection")
-        print("✅ Invoice numbers can be generated")
-        print("✅ Invoices can be created with proper data")
-        print("✅ Validation errors are handled correctly")
-        print("\n🎯 RECOMMENDATION: Focus on frontend debugging")
-        print("   - Check customer selection mechanism")
-        print("   - Verify error handling in form submission")
-        print("   - Ensure proper data formatting before API calls")
+        print("✅ GET /api/invoices - Invoice list endpoint working correctly")
+        print("✅ GET /api/invoices/{id}/pdf - PDF generation working with valid PDFs")
+        print("✅ DELETE /api/invoices/{id} - Invoice deletion working correctly")
+        print("✅ All endpoints return proper HTTP status codes")
+        print("✅ Response formats validated successfully")
+        print("✅ Error handling working (404 for invalid IDs)")
+        print("✅ Turkish localization present in messages")
+        print("\n🎯 RECOMMENDATION: Invoice backend endpoints are ready for production use")
+        print("   All 3 requested endpoints are fully functional")
         sys.exit(0)
     else:
-        print("❌ Backend issues found that could cause invoice creation problems")
-        print("🚨 RECOMMENDATION: Fix backend issues first before frontend debugging")
+        print("❌ Issues found in one or more invoice endpoints")
+        print("🚨 RECOMMENDATION: Review and fix the failing endpoints")
         sys.exit(1)
