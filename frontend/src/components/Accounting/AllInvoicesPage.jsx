@@ -363,14 +363,44 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     }
   }, [openDropdownId]);
 
-  // Calculate totals
-  const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + invoice.amount, 0);
+  // Calculate totals and statistics
+  const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + (invoice.total || invoice.amount || 0), 0);
+  
   const paidAmount = filteredInvoices
     .filter(invoice => invoice.status === 'paid')
-    .reduce((sum, invoice) => sum + invoice.amount, 0);
+    .reduce((sum, invoice) => sum + (invoice.total || invoice.amount || 0), 0);
+  
   const pendingAmount = filteredInvoices
-    .filter(invoice => invoice.status === 'pending' || invoice.status === 'overdue')
-    .reduce((sum, invoice) => sum + invoice.amount, 0);
+    .filter(invoice => invoice.status === 'pending' || invoice.status === 'active')
+    .reduce((sum, invoice) => sum + (invoice.total || invoice.amount || 0), 0);
+
+  // Calculate overdue invoices (vadesi geçenler)
+  const currentDate = new Date();
+  const overdueAmount = filteredInvoices
+    .filter(invoice => {
+      if (invoice.status === 'paid' || invoice.status === 'cancelled') return false;
+      
+      // Invoice date + payment term = due date
+      const invoiceDate = new Date(invoice.date);
+      const paymentTermDays = parseInt(invoice.payment_term || '30');
+      const dueDate = new Date(invoiceDate);
+      dueDate.setDate(dueDate.getDate() + paymentTermDays);
+      
+      return currentDate > dueDate;
+    })
+    .reduce((sum, invoice) => sum + (invoice.total || invoice.amount || 0), 0);
+
+  const overdueCount = filteredInvoices
+    .filter(invoice => {
+      if (invoice.status === 'paid' || invoice.status === 'cancelled') return false;
+      
+      const invoiceDate = new Date(invoice.date);
+      const paymentTermDays = parseInt(invoice.payment_term || '30');
+      const dueDate = new Date(invoiceDate);
+      dueDate.setDate(dueDate.getDate() + paymentTermDays);
+      
+      return currentDate > dueDate;
+    }).length;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
