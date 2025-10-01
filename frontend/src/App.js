@@ -413,14 +413,6 @@ const Dashboard = () => {
     setCurrentView('overdue-invoices');
   };
 
-  const handleCancelledInvoices = () => {
-    setCurrentView('cancelled-invoices');
-  };
-
-  const handleDraftInvoices = () => {
-    setCurrentView('draft-invoices');
-  };
-
   const handleCurrentAccounts = () => {
     setCurrentView('current-accounts');
   };
