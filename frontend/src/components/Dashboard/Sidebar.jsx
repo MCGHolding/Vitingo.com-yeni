@@ -792,7 +792,10 @@ export default function Sidebar({
               type="text"
               placeholder="Menüde ara..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                console.log('Search input changed:', e.target.value);
+                setSearchTerm(e.target.value);
+              }}
               className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             />
             {searchTerm && (
