@@ -363,8 +363,8 @@ const Dashboard = () => {
   };
 
   const handleAllQuotes = () => {
+    setCurrentView('all-quotes');
     console.log('All Quotes clicked');
-    // TODO: Implement all quotes page view
   };
 
   // Project Management Handlers
