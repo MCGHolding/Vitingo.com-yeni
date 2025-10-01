@@ -145,6 +145,68 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
     }
   };
 
+  // Calculate overdue days
+  const calculateOverdueDays = (dueDate) => {
+    if (!dueDate) return 0;
+    
+    const today = new Date();
+    const due = new Date(dueDate);
+    
+    // Set time to start of day to avoid time zone issues
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+    
+    const timeDiff = today.getTime() - due.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    return daysDiff > 0 ? daysDiff : 0; // Only return positive overdue days
+  };
+
+  // Get overdue days display
+  const getOverdueDaysDisplay = (dueDate) => {
+    const overdueDays = calculateOverdueDays(dueDate);
+    
+    if (overdueDays > 0) {
+      return {
+        text: `-${overdueDays}`,
+        isOverdue: true,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-800'
+      };
+    } else {
+      const today = new Date();
+      const due = new Date(dueDate);
+      today.setHours(0, 0, 0, 0);
+      due.setHours(0, 0, 0, 0);
+      
+      const timeDiff = due.getTime() - today.getTime();
+      const daysUntilDue = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      
+      if (daysUntilDue === 0) {
+        return {
+          text: 'Bugün',
+          isOverdue: false,
+          bgColor: 'bg-yellow-100',
+          textColor: 'text-yellow-800'
+        };
+      } else if (daysUntilDue > 0) {
+        return {
+          text: `${daysUntilDue} gün`,
+          isOverdue: false,
+          bgColor: 'bg-green-100',
+          textColor: 'text-green-800'
+        };
+      } else {
+        return {
+          text: '-',
+          isOverdue: false,
+          bgColor: 'bg-gray-100',
+          textColor: 'text-gray-800'
+        };
+      }
+    }
+  };
+
   // Get status info
   const getStatusInfo = (credit, debit) => {
     if (debit > credit) {
