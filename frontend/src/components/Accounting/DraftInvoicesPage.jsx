@@ -337,30 +337,16 @@ const DraftInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) =
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Toplam Taslak</p>
-              <p className="text-2xl font-bold text-gray-900">{filteredInvoices.length}</p>
-            </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <FileText className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
+      {/* Summary Cards - 4 Card Layout like AllInvoicesPage */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Toplam Tutar</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {getCurrencySymbol('USD')}{formatNumber(totalAmount.toFixed(2))}
-              </p>
+              <p className="text-2xl font-bold text-gray-900">₺{formatNumber(totalAmount.toFixed(2))}</p>
             </div>
-            <div className="p-3 bg-gray-100 rounded-lg">
-              <DollarSign className="h-6 w-6 text-gray-600" />
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <DollarSign className="h-6 w-6 text-blue-600" />
             </div>
           </div>
         </div>
@@ -368,16 +354,38 @@ const DraftInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) =
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Bu Ay Oluşturulan</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredInvoices.filter(inv => 
-                  new Date(inv.date).getMonth() === new Date().getMonth() &&
-                  new Date(inv.date).getFullYear() === new Date().getFullYear()
-                ).length}
-              </p>
+              <p className="text-sm font-medium text-gray-600">Tahsil Edilen</p>
+              <p className="text-2xl font-bold text-green-600">₺{formatNumber(collectedAmount.toFixed(2))}</p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Calendar className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-green-100 rounded-lg">
+              <DollarSign className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Bekleyen Ödemeler</p>
+              <p className="text-2xl font-bold text-orange-600">₺{formatNumber(pendingAmount.toFixed(2))}</p>
+            </div>
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <DollarSign className="h-6 w-6 text-orange-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Eski Taslaklar</p>
+              <div className="flex items-baseline space-x-2">
+                <p className="text-2xl font-bold text-red-600">₺{formatNumber(oldDraftsAmount.toFixed(2))}</p>
+                <span className="text-sm text-gray-500">({oldDraftsCount} taslak)</span>
+              </div>
+            </div>
+            <div className="p-3 bg-red-100 rounded-lg">
+              <Calendar className="h-6 w-6 text-red-600" />
             </div>
           </div>
         </div>
