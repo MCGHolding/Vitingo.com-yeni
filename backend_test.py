@@ -1603,7 +1603,7 @@ def test_vitingo_invoice_endpoints():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
-async def create_test_invoice_for_testing():
+def create_test_invoice_for_testing():
     """Helper function to create a test invoice if none exist"""
     try:
         # First get a customer
