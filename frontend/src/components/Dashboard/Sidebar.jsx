@@ -485,6 +485,13 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Taslak Faturalar') {
+      if (onDraftInvoices) {
+        onDraftInvoices();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Tahsilat Bekleyenler') {
       if (onPendingCollection) {
         onPendingCollection();
