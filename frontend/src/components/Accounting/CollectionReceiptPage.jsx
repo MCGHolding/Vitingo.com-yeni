@@ -646,28 +646,38 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               {/* Düzenleyen Bilgileri */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">Makbuz Düzenleyen Bilgileri</h4>
+              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+                <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                  <User className="h-5 w-5 mr-2 text-blue-600" />
+                  Makbuz Düzenleyen Bilgileri
+                </h4>
+                <p className="text-sm text-blue-600 mb-4">Bu bilgiler giriş yapan kullanıcıya göre otomatik doldurulmuştur</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ad Soyad *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ad Soyad</label>
                     <Input
                       type="text"
-                      required
                       value={formData.issuer_name}
-                      onChange={(e) => handleFormChange('issuer_name', e.target.value)}
-                      placeholder="Makbuz düzenleyen kişinin adı soyadı"
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ünvan *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ünvan</label>
                     <Input
                       type="text"
-                      required
                       value={formData.issuer_title}
-                      onChange={(e) => handleFormChange('issuer_title', e.target.value)}
-                      placeholder="Muhasebe Uzmanı, Mali Müşavir, vb."
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Şirket Bilgileri</label>
+                  <div className="text-sm text-gray-600 bg-white p-3 rounded border">
+                    <div><strong>Şirket:</strong> {formData.company_name}</div>
+                    <div><strong>Adres:</strong> {formData.company_address}</div>
+                    <div><strong>Tel:</strong> {formData.company_phone} | <strong>E-posta:</strong> {formData.company_email}</div>
                   </div>
                 </div>
               </div>
