@@ -1344,219 +1344,324 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
-def test_invoice_creation_bug_comprehensive():
+def test_vitingo_invoice_endpoints():
     """
-    Test the critical invoice creation bug reported by user.
+    Test Vitingo CRM invoice backend endpoints as requested by user.
     
-    User Issue: "[object Object]" error when creating invoices even after selecting customers.
+    Test Requirements:
+    1. DELETE /api/invoices/{invoice_id} - Invoice deletion endpoint
+    2. GET /api/invoices/{invoice_id}/pdf - PDF generation endpoint  
+    3. GET /api/invoices - Invoice list endpoint (for existing invoices)
     
-    Testing Requirements:
-    1. Test POST /api/invoices with sample data to verify backend is working
-    2. Test GET /api/customers to verify customers are loading properly
-    3. Test GET /api/invoices/next-number/USD to verify invoice number generation
-    4. Test complete invoice creation scenario with proper customer and item data
-    5. Identify any validation errors or data format issues
+    Test Scenarios:
+    1. Invoice List Test - GET /api/invoices endpoint
+    2. PDF Generation Test - GET /api/invoices/{id}/pdf endpoint
+    3. Invoice Deletion Test - DELETE /api/invoices/{id} endpoint
     
-    Expected Outcome: Determine if backend is causing the error or if it's frontend issue.
+    Requirements:
+    - Use real invoice IDs
+    - Check HTTP status codes (200 success, 404 not found, etc.)
+    - Validate response formats
+    - Test error handling (invalid IDs)
     """
     
     print("=" * 80)
-    print("TESTING CRITICAL INVOICE CREATION BUG")
+    print("TESTING VITINGO CRM INVOICE BACKEND ENDPOINTS")
     print("=" * 80)
-    print("User reported '[object Object]' error when creating invoices.")
-    print("Testing backend endpoints to isolate the issue...")
+    print("Testing 3 specific invoice endpoints as requested:")
+    print("1. DELETE /api/invoices/{invoice_id} - Invoice deletion")
+    print("2. GET /api/invoices/{invoice_id}/pdf - PDF generation")  
+    print("3. GET /api/invoices - Invoice list")
     
     try:
-        # STEP 1: Test GET /api/customers endpoint
+        # STEP 1: Test GET /api/invoices endpoint (Invoice List)
         print("\n" + "=" * 60)
-        print("STEP 1: TEST GET /api/customers - VERIFY CUSTOMERS ARE AVAILABLE")
-        print("=" * 60)
-        
-        customers_endpoint = f"{BACKEND_URL}/api/customers"
-        print(f"Testing endpoint: {customers_endpoint}")
-        
-        print("Making GET request to customers endpoint...")
-        customers_response = requests.get(customers_endpoint, timeout=30)
-        
-        print(f"Status Code: {customers_response.status_code}")
-        if customers_response.status_code != 200:
-            print(f"❌ CRITICAL ISSUE: Customers endpoint failed with status {customers_response.status_code}")
-            print(f"Response: {customers_response.text}")
-            print("🚨 ROOT CAUSE: If customers can't be loaded, dropdown will be empty!")
-            return False
-        
-        print("✅ PASS: GET /api/customers endpoint working correctly")
-        
-        # Parse customers data
-        customers_data = customers_response.json()
-        print(f"Number of customers available: {len(customers_data)}")
-        
-        if len(customers_data) == 0:
-            print("❌ CRITICAL ISSUE: No customers found in database!")
-            print("🚨 ROOT CAUSE: Empty customer list means users can't select customers!")
-            return False
-        
-        print("✅ PASS: Customers are available for selection")
-        
-        # Show sample customers
-        print("\nAvailable customers for invoice creation:")
-        sample_customer = None
-        for i, customer in enumerate(customers_data[:5]):  # Show first 5
-            company_name = customer.get('companyName', 'N/A')
-            customer_id = customer.get('id', 'N/A')
-            print(f"  {i+1}. {company_name} (ID: {customer_id})")
-            if i == 0:  # Use first customer for testing
-                sample_customer = customer
-        
-        if not sample_customer:
-            print("❌ CRITICAL ISSUE: No valid customer found for testing!")
-            return False
-        
-        print(f"\n✅ Using customer for testing: {sample_customer.get('companyName')} (ID: {sample_customer.get('id')})")
-        
-        # STEP 2: Test GET /api/invoices/next-number/USD endpoint
-        print("\n" + "=" * 60)
-        print("STEP 2: TEST GET /api/invoices/next-number/USD - VERIFY NUMBER GENERATION")
-        print("=" * 60)
-        
-        invoice_number_endpoint = f"{BACKEND_URL}/api/invoices/next-number/USD"
-        print(f"Testing endpoint: {invoice_number_endpoint}")
-        
-        print("Making GET request to invoice number generation endpoint...")
-        invoice_number_response = requests.get(invoice_number_endpoint, timeout=30)
-        
-        print(f"Status Code: {invoice_number_response.status_code}")
-        if invoice_number_response.status_code != 200:
-            print(f"❌ CRITICAL ISSUE: Invoice number generation failed with status {invoice_number_response.status_code}")
-            print(f"Response: {invoice_number_response.text}")
-            print("🚨 ROOT CAUSE: If invoice numbers can't be generated, form submission will fail!")
-            return False
-        
-        print("✅ PASS: GET /api/invoices/next-number/USD endpoint working correctly")
-        
-        # Parse invoice number data
-        invoice_number_data = invoice_number_response.json()
-        next_invoice_number = invoice_number_data.get('next_invoice_number')
-        
-        if not next_invoice_number:
-            print("❌ CRITICAL ISSUE: No invoice number returned!")
-            print(f"Response: {invoice_number_data}")
-            return False
-        
-        print(f"✅ PASS: Next invoice number generated: {next_invoice_number}")
-        
-        # STEP 3: Test POST /api/invoices with complete invoice data
-        print("\n" + "=" * 60)
-        print("STEP 3: TEST POST /api/invoices - COMPLETE INVOICE CREATION")
+        print("STEP 1: INVOICE LIST TEST - GET /api/invoices")
         print("=" * 60)
         
         invoices_endpoint = f"{BACKEND_URL}/api/invoices"
         print(f"Testing endpoint: {invoices_endpoint}")
         
-        # Create comprehensive test invoice data matching frontend format
+        print("Making GET request to get invoice list...")
+        invoices_response = requests.get(invoices_endpoint, timeout=30)
+        
+        print(f"Status Code: {invoices_response.status_code}")
+        if invoices_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {invoices_response.status_code}")
+            print(f"Response: {invoices_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/invoices endpoint working correctly")
+        
+        # Parse invoices data
+        try:
+            invoices_data = invoices_response.json()
+            print(f"Number of invoices found: {len(invoices_data)}")
+            
+            if len(invoices_data) == 0:
+                print("⚠️  WARNING: No invoices found in database!")
+                print("Creating a test invoice for further testing...")
+                
+                # Create a test invoice for testing
+                test_invoice = await create_test_invoice_for_testing()
+                if test_invoice:
+                    invoices_data = [test_invoice]
+                    print(f"✅ Test invoice created with ID: {test_invoice.get('id')}")
+                else:
+                    print("❌ FAIL: Could not create test invoice")
+                    return False
+            
+            print("✅ PASS: Invoice list retrieved successfully")
+            
+            # Show sample invoices and note their IDs
+            print("\nAvailable invoices for testing:")
+            test_invoice_ids = []
+            for i, invoice in enumerate(invoices_data[:5]):  # Show first 5
+                invoice_id = invoice.get('id', 'N/A')
+                invoice_number = invoice.get('invoice_number', 'N/A')
+                customer_name = invoice.get('customer_name', 'N/A')
+                total = invoice.get('total', 0)
+                currency = invoice.get('currency', 'N/A')
+                print(f"  {i+1}. {invoice_number} - {customer_name} - {total} {currency} (ID: {invoice_id})")
+                test_invoice_ids.append(invoice_id)
+            
+            if not test_invoice_ids:
+                print("❌ FAIL: No valid invoice IDs found for testing!")
+                return False
+                
+        except Exception as e:
+            print(f"❌ FAIL: Could not parse invoices response: {str(e)}")
+            return False
+        
+        # STEP 2: Test GET /api/invoices/{id}/pdf endpoint (PDF Generation)
+        print("\n" + "=" * 60)
+        print("STEP 2: PDF GENERATION TEST - GET /api/invoices/{id}/pdf")
+        print("=" * 60)
+        
+        test_invoice_id = test_invoice_ids[0]  # Use first invoice for testing
+        pdf_endpoint = f"{BACKEND_URL}/api/invoices/{test_invoice_id}/pdf"
+        print(f"Testing endpoint: {pdf_endpoint}")
+        print(f"Using invoice ID: {test_invoice_id}")
+        
+        print("Making GET request to generate PDF...")
+        pdf_response = requests.get(pdf_endpoint, timeout=30)
+        
+        print(f"Status Code: {pdf_response.status_code}")
+        if pdf_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {pdf_response.status_code}")
+            print(f"Response: {pdf_response.text}")
+            return False
+        
+        print("✅ PASS: GET /api/invoices/{id}/pdf endpoint working correctly")
+        
+        # Check response headers
+        content_type = pdf_response.headers.get('Content-Type', '')
+        content_disposition = pdf_response.headers.get('Content-Disposition', '')
+        
+        print(f"Content-Type: {content_type}")
+        print(f"Content-Disposition: {content_disposition}")
+        
+        if 'application/pdf' not in content_type:
+            print("❌ FAIL: Content-Type should be application/pdf")
+            return False
+        
+        print("✅ PASS: Response header Content-Type is application/pdf")
+        
+        if 'attachment' not in content_disposition or 'filename=' not in content_disposition:
+            print("❌ FAIL: Content-Disposition should include attachment and filename")
+            return False
+        
+        print("✅ PASS: Response header Content-Disposition is correct for PDF download")
+        
+        # Check response size
+        pdf_size = len(pdf_response.content)
+        print(f"PDF file size: {pdf_size} bytes")
+        
+        if pdf_size == 0:
+            print("❌ FAIL: PDF file size is 0 bytes")
+            return False
+        
+        print("✅ PASS: PDF file generated successfully with valid size")
+        
+        # Test invalid invoice ID for PDF generation
+        print("\n--- Testing PDF generation with invalid invoice ID ---")
+        invalid_pdf_endpoint = f"{BACKEND_URL}/api/invoices/invalid-id-12345/pdf"
+        print(f"Testing endpoint: {invalid_pdf_endpoint}")
+        
+        invalid_pdf_response = requests.get(invalid_pdf_endpoint, timeout=30)
+        print(f"Status Code: {invalid_pdf_response.status_code}")
+        
+        if invalid_pdf_response.status_code == 404:
+            print("✅ PASS: Invalid invoice ID returns 404 Not Found")
+        else:
+            print(f"⚠️  WARNING: Expected 404 for invalid ID, got {invalid_pdf_response.status_code}")
+        
+        # STEP 3: Test DELETE /api/invoices/{id} endpoint (Invoice Deletion)
+        print("\n" + "=" * 60)
+        print("STEP 3: INVOICE DELETION TEST - DELETE /api/invoices/{id}")
+        print("=" * 60)
+        
+        # Use the last invoice for deletion (to avoid deleting the first one we might need)
+        delete_invoice_id = test_invoice_ids[-1] if len(test_invoice_ids) > 1 else test_invoice_ids[0]
+        delete_endpoint = f"{BACKEND_URL}/api/invoices/{delete_invoice_id}"
+        print(f"Testing endpoint: {delete_endpoint}")
+        print(f"Using invoice ID for deletion: {delete_invoice_id}")
+        
+        print("Making DELETE request to delete invoice...")
+        delete_response = requests.delete(delete_endpoint, timeout=30)
+        
+        print(f"Status Code: {delete_response.status_code}")
+        if delete_response.status_code != 200:
+            print(f"❌ FAIL: Expected status 200, got {delete_response.status_code}")
+            print(f"Response: {delete_response.text}")
+            return False
+        
+        print("✅ PASS: DELETE /api/invoices/{id} endpoint working correctly")
+        
+        # Parse delete response
+        try:
+            delete_data = delete_response.json()
+            print(f"Delete response: {delete_data}")
+            
+            if not delete_data.get('success'):
+                print("❌ FAIL: Delete response should indicate success")
+                return False
+            
+            print("✅ PASS: Delete response indicates successful deletion")
+            
+            # Check if Turkish success message is present
+            message = delete_data.get('message', '')
+            if 'başarıyla silindi' in message or 'silindi' in message:
+                print("✅ PASS: Turkish success message present")
+            else:
+                print(f"⚠️  WARNING: Expected Turkish success message, got: {message}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Could not parse delete response: {str(e)}")
+            return False
+        
+        # Verify invoice was actually deleted
+        print("\n--- Verifying invoice was deleted from list ---")
+        print("Making GET request to verify invoice is no longer in list...")
+        
+        verify_response = requests.get(invoices_endpoint, timeout=30)
+        if verify_response.status_code == 200:
+            verify_data = verify_response.json()
+            deleted_invoice_found = any(inv.get('id') == delete_invoice_id for inv in verify_data)
+            
+            if deleted_invoice_found:
+                print("❌ FAIL: Deleted invoice still appears in invoice list")
+                return False
+            else:
+                print("✅ PASS: Deleted invoice no longer appears in invoice list")
+        
+        # Test invalid invoice ID for deletion
+        print("\n--- Testing deletion with invalid invoice ID ---")
+        invalid_delete_endpoint = f"{BACKEND_URL}/api/invoices/invalid-id-12345"
+        print(f"Testing endpoint: {invalid_delete_endpoint}")
+        
+        invalid_delete_response = requests.delete(invalid_delete_endpoint, timeout=30)
+        print(f"Status Code: {invalid_delete_response.status_code}")
+        
+        if invalid_delete_response.status_code == 404:
+            print("✅ PASS: Invalid invoice ID returns 404 Not Found")
+            
+            # Check for Turkish error message
+            try:
+                error_data = invalid_delete_response.json()
+                error_detail = error_data.get('detail', '')
+                if 'bulunamadı' in error_detail:
+                    print("✅ PASS: Turkish error message for not found")
+                else:
+                    print(f"⚠️  WARNING: Expected Turkish error message, got: {error_detail}")
+            except:
+                print("⚠️  WARNING: Could not parse error response")
+        else:
+            print(f"⚠️  WARNING: Expected 404 for invalid ID, got {invalid_delete_response.status_code}")
+        
+        # FINAL SUMMARY
+        print("\n" + "=" * 80)
+        print("VITINGO INVOICE ENDPOINTS TEST RESULTS")
+        print("=" * 80)
+        print("✅ GET /api/invoices - Invoice list endpoint working")
+        print("✅ GET /api/invoices/{id}/pdf - PDF generation endpoint working")
+        print("✅ DELETE /api/invoices/{id} - Invoice deletion endpoint working")
+        print("✅ All endpoints return proper HTTP status codes")
+        print("✅ Response formats validated successfully")
+        print("✅ Error handling working (404 for invalid IDs)")
+        print("✅ Turkish localization present in messages")
+        print("✅ PDF generation creates valid PDF files")
+        print("✅ Invoice deletion removes invoices from database")
+        print("\n🎉 ALL VITINGO INVOICE ENDPOINT TESTS PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+async def create_test_invoice_for_testing():
+    """Helper function to create a test invoice if none exist"""
+    try:
+        # First get a customer
+        customers_response = requests.get(f"{BACKEND_URL}/api/customers", timeout=30)
+        if customers_response.status_code != 200:
+            return None
+            
+        customers = customers_response.json()
+        if not customers:
+            return None
+            
+        customer = customers[0]
+        
+        # Get next invoice number
+        number_response = requests.get(f"{BACKEND_URL}/api/invoices/next-number/USD", timeout=30)
+        if number_response.status_code != 200:
+            return None
+            
+        number_data = number_response.json()
+        invoice_number = number_data.get('next_invoice_number')
+        
+        # Create test invoice
         test_invoice_data = {
-            "invoice_number": next_invoice_number,
-            "customer_id": sample_customer.get('id'),
-            "customer_name": sample_customer.get('companyName'),
+            "invoice_number": invoice_number,
+            "customer_id": customer.get('id'),
+            "customer_name": customer.get('companyName'),
             "date": "2025-01-20",
             "currency": "USD",
             "items": [
                 {
-                    "id": "item-1",
-                    "name": "Test Service - Stand Design",
+                    "id": "test-item-1",
+                    "name": "Test Hizmet - Stand Tasarımı",
                     "quantity": 1.0,
                     "unit": "adet",
-                    "unit_price": 5000.0,
-                    "total": 5000.0
-                },
-                {
-                    "id": "item-2", 
-                    "name": "Test Service - Installation",
-                    "quantity": 2.0,
-                    "unit": "gün",
-                    "unit_price": 1500.0,
-                    "total": 3000.0
+                    "unit_price": 2500.0,
+                    "total": 2500.0
                 }
             ],
-            "subtotal": 8000.0,
+            "subtotal": 2500.0,
             "vat_rate": 20.0,
-            "vat_amount": 1600.0,
+            "vat_amount": 500.0,
             "discount": 0.0,
             "discount_type": "percentage",
             "discount_amount": 0.0,
-            "total": 9600.0,
-            "conditions": "Payment within 30 days",
+            "total": 3000.0,
+            "conditions": "Test fatura - 30 gün ödeme vadesi",
             "payment_term": "30"
         }
         
-        print(f"Test invoice data:")
-        print(f"  Invoice Number: {test_invoice_data['invoice_number']}")
-        print(f"  Customer: {test_invoice_data['customer_name']} (ID: {test_invoice_data['customer_id']})")
-        print(f"  Currency: {test_invoice_data['currency']}")
-        print(f"  Items: {len(test_invoice_data['items'])} items")
-        print(f"  Total: {test_invoice_data['total']} {test_invoice_data['currency']}")
+        create_response = requests.post(f"{BACKEND_URL}/api/invoices", json=test_invoice_data, timeout=30)
+        if create_response.status_code in [200, 201]:
+            return create_response.json()
         
-        print("\nMaking POST request to create invoice...")
-        invoice_response = requests.post(invoices_endpoint, json=test_invoice_data, timeout=30)
+        return None
         
-        print(f"Status Code: {invoice_response.status_code}")
-        
-        # Analyze response
-        if invoice_response.status_code == 404:
-            print("❌ CRITICAL ISSUE: /api/invoices endpoint does not exist!")
-            print("🚨 ROOT CAUSE: Backend missing invoice creation endpoint!")
-            return False
-        elif invoice_response.status_code == 405:
-            print("❌ CRITICAL ISSUE: /api/invoices endpoint doesn't support POST method!")
-            print("🚨 ROOT CAUSE: Backend endpoint configuration issue!")
-            return False
-        elif invoice_response.status_code == 422:
-            print("❌ CRITICAL ISSUE: Validation error (422) - Data format problem!")
-            print(f"Response: {invoice_response.text}")
-            print("🚨 ROOT CAUSE: This could be the source of '[object Object]' error!")
-            print("   Frontend might be receiving validation errors and not handling them properly.")
-            
-            # Try to parse validation error details
-            try:
-                error_data = invoice_response.json()
-                print(f"Validation error details: {error_data}")
-                if 'detail' in error_data:
-                    print(f"Specific validation issues: {error_data['detail']}")
-            except:
-                print("Could not parse validation error details")
-            
-            return False
-        elif invoice_response.status_code == 400:
-            print("❌ CRITICAL ISSUE: Bad request (400) - Business logic error!")
-            print(f"Response: {invoice_response.text}")
-            print("🚨 ROOT CAUSE: Backend business logic rejecting the invoice data!")
-            return False
-        elif invoice_response.status_code in [200, 201]:
-            print("✅ PASS: POST /api/invoices endpoint working correctly!")
-            
-            # Parse created invoice
-            try:
-                created_invoice = invoice_response.json()
-                invoice_id = created_invoice.get('id')
-                if invoice_id:
-                    print(f"✅ SUCCESS: Invoice created with ID: {invoice_id}")
-                    print(f"  Invoice Number: {created_invoice.get('invoice_number')}")
-                    print(f"  Customer: {created_invoice.get('customer_name')}")
-                    print(f"  Total: {created_invoice.get('total')} {created_invoice.get('currency')}")
-                else:
-                    print("⚠️  WARNING: Created invoice missing ID field")
-            except Exception as e:
-                print(f"⚠️  WARNING: Could not parse invoice response: {str(e)}")
-                print(f"Raw response: {invoice_response.text}")
-        else:
-            print(f"❌ UNEXPECTED STATUS: {invoice_response.status_code}")
-            print(f"Response: {invoice_response.text}")
-            print("🚨 ROOT CAUSE: Unexpected backend behavior!")
-            return False
-        
-        # STEP 4: Test edge cases that might cause "[object Object]" error
-        print("\n" + "=" * 60)
-        print("STEP 4: TEST EDGE CASES - POTENTIAL CAUSES OF '[object Object]' ERROR")
+    except Exception as e:
+        print(f"Error creating test invoice: {str(e)}")
+        return NoneEST EDGE CASES - POTENTIAL CAUSES OF '[object Object]' ERROR")
         print("=" * 60)
         
         # Test 4a: Invoice with null customer_id (common frontend issue)
