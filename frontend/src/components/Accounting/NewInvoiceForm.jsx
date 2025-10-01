@@ -464,95 +464,35 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         payment_term: formData.paymentTerm
       };
 
-      console.log('=== INVOICE SUBMISSION DEBUG ===');
-      console.log('Selected customer:', currentSelectedCustomer);
-      console.log('Form data customerId:', formData.customerId);
-      console.log('Valid items count:', validItems.length);
-      console.log('Valid items:', validItems);
-      console.log('Invoice object to send:', JSON.stringify(invoice, null, 2));
+      console.log('=== STARTING INVOICE SUBMISSION ===');
       console.log('Backend URL:', backendUrl);
-      console.log('=== END DEBUG ===');
+      console.log('Invoice object to send:', JSON.stringify(invoice, null, 2));
 
-      const response = await fetch(`${backendUrl}/api/invoices`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invoice)
-      });
-
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
+      const response = await axios.post(`${backendUrl}/api/invoices`, invoice);
+      console.log('Invoice saved successfully:', response.data);
       
-      if (response.ok) {
-        const savedInvoice = await response.json();
-        console.log('Invoice saved successfully:', savedInvoice);
-        
-        // Show success modal
-        setShowSuccessModal(true);
-      } else {
-        console.log('Response not OK, status:', response.status);
-        
-        // Try to get response text first
-        let responseText;
-        try {
-          responseText = await response.text();
-          console.log('Raw response text:', responseText);
-        } catch (textError) {
-          console.error('Could not read response as text:', textError);
-          throw new Error(`HTTP ${response.status}: Yanıt okunamıyor`);
-        }
-        
-        // Try to parse as JSON
-        let errorData;
-        try {
-          errorData = JSON.parse(responseText);
-          console.log('Parsed error data:', errorData);
-        } catch (jsonError) {
-          console.log('Response is not JSON, using as text');
-          throw new Error(`HTTP ${response.status}: ${responseText || response.statusText}`);
-        }
-        
-        // Handle different error response formats
-        let errorMessage = 'Fatura kaydedilirken hata oluştu';
-        
-        if (errorData.detail) {
-          errorMessage = errorData.detail;
-        } else if (errorData.message) {
-          errorMessage = errorData.message;
-        } else if (errorData.error) {
-          errorMessage = errorData.error;
-        } else if (typeof errorData === 'string') {
-          errorMessage = errorData;
-        } else {
-          errorMessage = `HTTP ${response.status}: ${JSON.stringify(errorData)}`;
-        }
-        
-        console.log('Final error message:', errorMessage);
-        throw new Error(errorMessage);
-      }
+      // Show success modal
+      setShowSuccessModal(true);
       
     } catch (error) {
-      console.error('Complete error object:', error);
-      console.error('Error name:', error.name);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
+      console.error('Invoice submission error:', error);
       
-      // More comprehensive error handling
-      let displayMessage = 'Bilinmeyen bir hata oluştu';
+      // Simple and effective error handling
+      let errorMessage = 'Bilinmeyen bir hata oluştu';
       
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        displayMessage = 'Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.';
-      } else if (error.message && error.message !== '[object Object]') {
-        displayMessage = error.message;
-      } else if (typeof error === 'string') {
-        displayMessage = error;
+      if (error.response) {
+        // Server responded with error status
+        const errorData = error.response.data;
+        errorMessage = errorData.detail || errorData.message || errorData.error || `HTTP ${error.response.status}: ${error.response.statusText}`;
+      } else if (error.request) {
+        // Network error
+        errorMessage = 'Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.';
       } else {
-        // If we still get [object Object], let's try to extract meaningful info
-        displayMessage = `Sistem hatası. Detaylar: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`;
+        // Other error
+        errorMessage = error.message || 'Beklenmeyen bir hata oluştu';
       }
       
-      alert(`Fatura kaydedilemedi: ${displayMessage}`);
+      alert(`Fatura kaydedilemedi: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
