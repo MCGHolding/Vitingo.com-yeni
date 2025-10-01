@@ -297,6 +297,7 @@ export default function Sidebar({
   onRequestBrief
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleSubmenu = (itemName) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
