@@ -260,19 +260,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     }
   };
 
-  // Calculate total amount automatically
-  useEffect(() => {
-    const total = 
-      (formData.payment_details.cash_amount || 0) +
-      (formData.payment_details.credit_card_amount || 0) +
-      (formData.payment_details.check_amount || 0) +
-      (formData.payment_details.promissory_note_amount || 0);
-    
-    setFormData(prev => ({
-      ...prev,
-      total_amount: total
-    }));
-  }, [formData.payment_details]);
+  // Total amount is now calculated from loaded payment data, not user input
 
   const handleSubmit = async (e) => {
     e.preventDefault();
