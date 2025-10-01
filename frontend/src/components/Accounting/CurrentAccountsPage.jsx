@@ -493,11 +493,17 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
 
                       {/* Müşteri Kısa Adı */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div 
+                          className="text-sm font-medium text-gray-900 cursor-help relative group"
+                          title={account.customer_name}
+                        >
                           {account.customer_short_name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {account.customer_name}
+                          
+                          {/* Custom Tooltip */}
+                          <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 whitespace-nowrap">
+                            {account.customer_name}
+                            <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                          </div>
                         </div>
                       </td>
 
