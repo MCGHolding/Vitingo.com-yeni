@@ -132,6 +132,7 @@ const navigation = [
       { name: 'Tahsilat Bekleyenler', href: '/accounting/pending-collection', icon: AlertTriangle },
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
+      { name: 'İptal Faturalar', href: '/accounting/cancelled', icon: XCircle },
       { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
       { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
