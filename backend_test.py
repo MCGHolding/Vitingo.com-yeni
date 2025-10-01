@@ -14066,54 +14066,58 @@ def test_draft_invoice_comprehensive():
         return False
 
 if __name__ == "__main__":
-    print("🚀 STARTING VITINGO CRM INVOICE BACKEND ENDPOINT TESTING")
+    print("🚀 STARTING DRAFT INVOICE FUNCTIONALITY TESTING")
     print("=" * 80)
     print(f"Backend URL: {BACKEND_URL}")
-    print("Testing 3 specific invoice endpoints as requested:")
-    print("1. DELETE /api/invoices/{invoice_id} - Invoice deletion endpoint")
-    print("2. GET /api/invoices/{invoice_id}/pdf - PDF generation endpoint")  
-    print("3. GET /api/invoices - Invoice list endpoint")
+    print("Testing draft invoice functionality as requested in review:")
+    print("1. POST /api/invoices with status: 'draft'")
+    print("2. POST /api/invoices with status: 'active'")
+    print("3. GET /api/invoices/status/draft (draft filtering)")
+    print("4. GET /api/invoices (all invoices verification)")
     print("=" * 80)
     
-    # Run the Vitingo invoice endpoints test
-    print(f"\n🧪 Running: Vitingo Invoice Endpoints Test")
+    # Run comprehensive draft invoice test as requested
+    print(f"\n🎯 Running: COMPREHENSIVE DRAFT INVOICE FUNCTIONALITY TEST")
     print("-" * 60)
     
     try:
-        result = test_vitingo_invoice_endpoints()
+        result = test_draft_invoice_comprehensive()
         
         if result:
-            print(f"\n✅ VITINGO INVOICE ENDPOINTS TEST PASSED")
-            print("🎯 CONCLUSION: All 3 invoice endpoints are working correctly")
-            print("   - Invoice list endpoint functional")
-            print("   - PDF generation endpoint working and creates valid PDFs")
-            print("   - Invoice deletion endpoint working with proper validation")
+            print(f"\n✅ DRAFT INVOICE FUNCTIONALITY TEST PASSED")
+            print("🎯 CONCLUSION: Draft invoice functionality is working correctly")
+            print("   - Both draft and active invoices can be created successfully")
+            print("   - Draft invoices appear in /api/invoices/status/draft endpoint")
+            print("   - Active invoices do NOT appear in draft endpoint")
+            print("   - All invoices appear in main /api/invoices endpoint")
+            print("   - Status field is properly saved and returned")
+            print("   - All required fields are present in responses")
         else:
-            print(f"\n❌ VITINGO INVOICE ENDPOINTS TEST FAILED")
-            print("🚨 CRITICAL ISSUES FOUND IN INVOICE ENDPOINTS")
-            print("   One or more invoice endpoints have problems")
+            print(f"\n❌ DRAFT INVOICE FUNCTIONALITY TEST FAILED")
+            print("🚨 CRITICAL ISSUES FOUND IN DRAFT INVOICE FUNCTIONALITY")
+            print("   One or more draft invoice features have problems")
             
     except Exception as e:
-        print(f"❌ ERROR in Vitingo Invoice Endpoints Test: {str(e)}")
+        print(f"❌ ERROR in Draft Invoice Functionality Test: {str(e)}")
         result = False
     
     # Final summary
     print("\n" + "=" * 80)
-    print("🏁 VITINGO INVOICE ENDPOINTS TEST SUMMARY")
+    print("🏁 DRAFT INVOICE FUNCTIONALITY TEST SUMMARY")
     print("=" * 80)
     
     if result:
-        print("✅ GET /api/invoices - Invoice list endpoint working correctly")
-        print("✅ GET /api/invoices/{id}/pdf - PDF generation working with valid PDFs")
-        print("✅ DELETE /api/invoices/{id} - Invoice deletion working correctly")
-        print("✅ All endpoints return proper HTTP status codes")
+        print("✅ POST /api/invoices (draft) - Draft invoice creation working correctly")
+        print("✅ POST /api/invoices (active) - Active invoice creation working correctly")
+        print("✅ GET /api/invoices/status/draft - Draft filtering working correctly")
+        print("✅ GET /api/invoices - All invoices endpoint working correctly")
+        print("✅ Status field properly saved and returned")
         print("✅ Response formats validated successfully")
-        print("✅ Error handling working (404 for invalid IDs)")
-        print("✅ Turkish localization present in messages")
-        print("\n🎯 RECOMMENDATION: Invoice backend endpoints are ready for production use")
-        print("   All 3 requested endpoints are fully functional")
+        print("✅ All required fields present in responses")
+        print("\n🎯 RECOMMENDATION: Draft invoice functionality is ready for production use")
+        print("   All requested draft invoice features are fully functional")
         sys.exit(0)
     else:
-        print("❌ Issues found in one or more invoice endpoints")
-        print("🚨 RECOMMENDATION: Review and fix the failing endpoints")
+        print("❌ Issues found in draft invoice functionality")
+        print("🚨 RECOMMENDATION: Review and fix the failing features")
         sys.exit(1)
