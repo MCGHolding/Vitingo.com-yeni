@@ -1,0 +1,179 @@
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign } from 'lucide-react';
+
+const AllProjectsPage = ({ onBackToDashboard }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Mock data - gerçek projeler backend'den gelecek
+  const mockProjects = [
+    {
+      id: 1,
+      name: 'Web Sitesi Yenileme',
+      description: 'Kurumsal web sitesi yenileme projesi',
+      status: 'ongoing',
+      startDate: '2024-09-01',
+      endDate: '2024-12-15',
+      budget: 50000,
+      clientName: 'ABC Şirketi',
+      projectManager: 'Ahmet Yılmaz'
+    },
+    {
+      id: 2,
+      name: 'Mobil Uygulama',
+      description: 'iOS ve Android mobil uygulama geliştirme',
+      status: 'completed',
+      startDate: '2024-06-01',
+      endDate: '2024-09-30',
+      budget: 75000,
+      clientName: 'XYZ Tech',
+      projectManager: 'Mehmet Demir'
+    },
+    {
+      id: 3,
+      name: 'ERP Entegrasyonu',
+      description: 'Mevcut sistemle ERP entegrasyonu',
+      status: 'cancelled',
+      startDate: '2024-08-01',
+      endDate: '2024-11-30',
+      budget: 30000,
+      clientName: '123 Ltd.',
+      projectManager: 'Ayşe Kaya'
+    }
+  ];
+
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      'ongoing': { label: 'Devam Ediyor', className: 'bg-blue-100 text-blue-800' },
+      'completed': { label: 'Tamamlandı', className: 'bg-green-100 text-green-800' },
+      'cancelled': { label: 'İptal Edildi', className: 'bg-red-100 text-red-800' },
+      'on-hold': { label: 'Beklemede', className: 'bg-yellow-100 text-yellow-800' }
+    };
+    
+    const config = statusConfig[status] || statusConfig['ongoing'];
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.className}`}>
+        {config.label}
+      </span>
+    );
+  };
+
+  const filteredProjects = mockProjects.filter(project =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={onBackToDashboard}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Geri</span>
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Tüm Projeler</h1>
+              <p className="text-gray-600">{filteredProjects.length} proje bulundu</p>
+            </div>
+          </div>
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Yeni Proje
+          </Button>
+        </div>
+      </div>
+
+      <div className="p-6">
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow mb-6 p-4">
+          <div className="flex items-center space-x-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Proje adı veya müşteri ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            <Button variant="outline">
+              <Filter className="h-4 w-4 mr-2" />
+              Filtreler
+            </Button>
+          </div>
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProjects.map((project) => (
+            <div key={project.id} className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-2">
+                  <Folder className="h-5 w-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
+                </div>
+                {getStatusBadge(project.status)}
+              </div>
+              
+              <p className="text-gray-600 mb-4">{project.description}</p>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center space-x-2">
+                  <User className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600">Müşteri:</span>
+                  <span className="font-medium">{project.clientName}</span>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <User className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600">Proje Yöneticisi:</span>
+                  <span className="font-medium">{project.projectManager}</span>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600">Tarih:</span>
+                  <span className="font-medium">{project.startDate} - {project.endDate}</span>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600">Bütçe:</span>
+                  <span className="font-medium">₺{project.budget.toLocaleString()}</span>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-2">
+                <Button variant="outline" size="sm">
+                  Düzenle
+                </Button>
+                <Button variant="outline" size="sm">
+                  Görüntüle
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <Folder className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Proje bulunamadı</h3>
+            <p className="text-gray-600">Arama kriterlerinize uygun proje bulunamadı.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AllProjectsPage;
