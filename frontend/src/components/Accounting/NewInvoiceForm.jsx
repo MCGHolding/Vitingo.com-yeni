@@ -998,31 +998,12 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         {/* Submit Buttons */}
         <div className="flex justify-center space-x-4">
           <Button
-            type="button"
-            disabled={isSubmitting}
-            onClick={() => {
-              console.log('Taslak olarak kaydet clicked');
-              setFormData(prev => ({ ...prev, isDraft: true }));
-              // Trigger form submission
-              document.getElementById('invoice-form').requestSubmit();
-            }}
-            className="px-8 py-4 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FileText className="mr-2 h-5 w-5" />
-            {isSubmitting ? 'Kaydediliyor...' : 'Taslak Olarak Kaydet'}
-          </Button>
-          
-          <Button
             type="submit"
             disabled={isSubmitting}
-            onClick={() => {
-              console.log('Normal kaydet clicked');
-              setFormData(prev => ({ ...prev, isDraft: false }));
-            }}
             className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="mr-2 h-5 w-5" />
-            {isSubmitting ? 'Fatura Oluşturuluyor...' : 'Fatura Oluştur'}
+            {isSubmitting ? 'Kaydediliyor...' : (formData.isDraft ? '📝 Taslak Olarak Kaydet' : '✅ Fatura Oluştur')}
           </Button>
         </div>
       </form>
