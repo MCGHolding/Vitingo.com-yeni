@@ -212,7 +212,7 @@ class Product(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class InvoiceItem(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: Union[str, int] = Field(default_factory=lambda: str(uuid.uuid4()))
     product_id: Optional[str] = Field(None, description="Product ID if selected from database")
     name: str = Field(..., description="Product/Service name")
     quantity: float = Field(..., description="Quantity")
