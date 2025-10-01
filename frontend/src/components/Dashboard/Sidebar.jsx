@@ -55,8 +55,7 @@ import {
   FolderOpen,
   Truck,
   UserCheck,
-  Search,
-  X
+  Search
 } from 'lucide-react';
 
 const navigation = [
