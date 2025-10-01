@@ -28,6 +28,8 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [filters, setFilters] = useState({
