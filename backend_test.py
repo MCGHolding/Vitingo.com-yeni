@@ -1661,7 +1661,7 @@ def create_test_invoice_for_testing():
         
     except Exception as e:
         print(f"Error creating test invoice: {str(e)}")
-        return NoneEST EDGE CASES - POTENTIAL CAUSES OF '[object Object]' ERROR")
+        return None
         print("=" * 60)
         
         # Test 4a: Invoice with null customer_id (common frontend issue)
