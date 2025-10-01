@@ -440,10 +440,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       }
 
       // Set success state with customer info
-      setCreatedCustomerInfo({
+      const customerInfo = {
         company_name: baseCustomerData.company_short_name,
-        is_candidate: formData.is_candidate
-      });
+        is_candidate: formData.is_candidate,
+        customer_id: savedData?.id // Backend'den gelen müşteri ID'si
+      };
+      
+      setCreatedCustomerInfo(customerInfo);
       setShowSuccessModal(true);
 
       toast({
@@ -451,6 +454,14 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         description: "Müşteri başarıyla oluşturuldu",
         variant: "default"
       });
+
+      // Eğer fatura sayfasından geliyorsak, yeni müşteriyi seçili yapmak için callback çağır
+      if (returnToInvoice && onCustomerAdded && savedData?.id) {
+        // 2 saniye bekleyip otomatik olarak fatura sayfasına dön
+        setTimeout(() => {
+          onCustomerAdded(savedData.id, baseCustomerData.company_short_name);
+        }, 2000);
+      }
 
     } catch (error) {
       console.error('Error creating customer:', error);
