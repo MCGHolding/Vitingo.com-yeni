@@ -128,11 +128,9 @@ const navigation = [
     submenu: [
       { name: 'Yeni Fatura', href: '/accounting/new-invoice', icon: Plus },
       { name: 'Tüm Faturalar', href: '/accounting/all-invoices', icon: Receipt },
-      { name: 'Taslak Faturalar', href: '/accounting/draft', icon: FileText },
       { name: 'Tahsilat Bekleyenler', href: '/accounting/pending-collection', icon: AlertTriangle },
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
-      { name: 'İptal Faturalar', href: '/accounting/cancelled', icon: XCircle },
       { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
       { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
