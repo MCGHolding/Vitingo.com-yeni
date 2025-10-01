@@ -486,9 +486,9 @@ export default function Sidebar({
       return;
     }
 
-    if (subItem && subItem.name === 'Onay Bekleyenler') {
-      if (onPendingApproval) {
-        onPendingApproval();
+    if (subItem && subItem.name === 'Taslak Faturalar') {
+      if (onDraftInvoices) {
+        onDraftInvoices();
       }
       return;
     }
