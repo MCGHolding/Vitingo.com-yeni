@@ -831,6 +831,12 @@ const Dashboard = () => {
           </div>
         );
 
+      case 'cancelled-invoices':
+        return <CancelledInvoicesPage 
+          onBackToDashboard={handleBackToDashboard} 
+          onNewInvoice={handleNewInvoice} 
+        />;
+
       case 'current-accounts':
         return (
           <div className="p-6">
