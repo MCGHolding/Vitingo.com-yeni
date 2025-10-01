@@ -442,6 +442,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         customer_name: currentSelectedCustomer?.companyName || 'Unknown Customer', // USE SELECTED CUSTOMER NAME
         date: formData.date,
         currency: formData.currency,
+        status: formData.isDraft ? 'draft' : 'active', // Taslak durumuna göre status belirleme
         items: validItems.map(item => ({
           id: item.id || `item-${Date.now()}-${Math.random()}`,
           product_id: item.productId || null,
