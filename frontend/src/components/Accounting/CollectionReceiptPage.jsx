@@ -721,8 +721,12 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
               </div>
 
               {/* Ödeme Detayları */}
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">Ödeme Detayları</h4>
+              <div className="bg-green-50 p-4 rounded-lg border-l-4 border-purple-500">
+                <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                  <DollarSign className="h-5 w-5 mr-2 text-purple-600" />
+                  Ödeme Detayları
+                </h4>
+                <p className="text-sm text-purple-600 mb-4">Bu bilgiler alınan ödemeye göre otomatik doldurulmuştur</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -731,10 +735,9 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                     </label>
                     <Input
                       type="number"
-                      min="0"
-                      step="0.01"
                       value={formData.payment_details.cash_amount}
-                      onChange={(e) => handleFormChange('payment_details.cash_amount', e.target.value)}
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -744,10 +747,9 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                     </label>
                     <Input
                       type="number"
-                      min="0"
-                      step="0.01"
                       value={formData.payment_details.credit_card_amount}
-                      onChange={(e) => handleFormChange('payment_details.credit_card_amount', e.target.value)}
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -757,10 +759,9 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                     </label>
                     <Input
                       type="number"
-                      min="0"
-                      step="0.01"
                       value={formData.payment_details.check_amount}
-                      onChange={(e) => handleFormChange('payment_details.check_amount', e.target.value)}
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -770,18 +771,44 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                     </label>
                     <Input
                       type="number"
-                      min="0"
-                      step="0.01"
                       value={formData.payment_details.promissory_note_amount}
-                      onChange={(e) => handleFormChange('payment_details.promissory_note_amount', e.target.value)}
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                 </div>
+
+                {/* Çek Detayları */}
+                {formData.payment_details.check_details && formData.payment_details.check_details.length > 0 && (
+                  <div className="mt-6">
+                    <h5 className="text-md font-medium text-gray-900 mb-3">Çek Detayları</h5>
+                    <div className="bg-white p-4 rounded border">
+                      {formData.payment_details.check_details.map((check, index) => (
+                        <div key={index} className="mb-3 p-3 bg-gray-50 rounded">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                            <div><strong>Banka:</strong> {check.bank}</div>
+                            <div><strong>Şube:</strong> {check.branch}</div>
+                            <div><strong>Çek No:</strong> {check.check_number}</div>
+                            <div><strong>Hesap/IBAN:</strong> {check.account_iban}</div>
+                            <div><strong>Tarih:</strong> {check.check_date}</div>
+                            <div><strong>Tutar:</strong> ₺{formatNumber(check.amount)}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-4 p-4 bg-white rounded border">
                   <div className="text-lg font-semibold text-gray-900">
                     Toplam Tutar: <span className="text-blue-600">₺{formatNumber(formData.total_amount)}</span>
                   </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Nakit: ₺{formatNumber(formData.payment_details.cash_amount)} + 
+                    Kredi Kartı: ₺{formatNumber(formData.payment_details.credit_card_amount)} + 
+                    Çek: ₺{formatNumber(formData.payment_details.check_amount)} + 
+                    Senet: ₺{formatNumber(formData.payment_details.promissory_note_amount)}
+                  </p>
                 </div>
               </div>
 
