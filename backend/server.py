@@ -318,6 +318,89 @@ class BankUpdate(BaseModel):
     recipient_name: Optional[str] = None
     recipient_zip_code: Optional[str] = None
 
+# ===================== COLLECTION RECEIPT MODELS =====================
+
+class CollectionReceiptCheckDetail(BaseModel):
+    """Çek detayları için model"""
+    bank: str = Field(..., description="Banka adı")
+    branch: str = Field(..., description="Şube adı")
+    account_iban: str = Field(..., description="Hesap/IBAN numarası")
+    check_number: str = Field(..., description="Çek numarası")
+    check_date: str = Field(..., description="Çek tarihi")
+    amount: float = Field(..., description="Çek tutarı")
+
+class CollectionReceiptPaymentDetails(BaseModel):
+    """Ödeme detayları modeli"""
+    cash_amount: float = Field(0.0, description="Nakit tutar")
+    credit_card_amount: float = Field(0.0, description="Kredi kartı tutar")
+    check_amount: float = Field(0.0, description="Çek tutar")
+    promissory_note_amount: float = Field(0.0, description="Senet tutar")
+    check_details: List[CollectionReceiptCheckDetail] = Field([], description="Çek detayları listesi")
+
+class CollectionReceipt(BaseModel):
+    """Tahsilat Makbuzu modeli"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    receipt_number: str = Field(..., description="Makbuz numarası")
+    
+    # Makbuz düzenleyen bilgileri
+    issuer_name: str = Field(..., description="Makbuz düzenleyen adı soyadı")
+    issuer_title: str = Field(..., description="Makbuz düzenleyen ünvanı")
+    
+    # Şirket bilgileri
+    company_name: str = Field(..., description="Şirket ünvanı")
+    company_address: str = Field(..., description="Şirket adresi")
+    company_phone: str = Field(..., description="Şirket telefonu")
+    company_email: str = Field(..., description="Şirket e-posta")
+    
+    # Makbuz bilgileri
+    issue_date: str = Field(..., description="Makbuz düzenlenme tarihi")
+    
+    # Ödeme yapan bilgileri
+    payer_name: str = Field(..., description="Ödemeyi yapan kişi/şirket adı")
+    payer_email: str = Field("", description="Ödemeyi yapan e-posta")
+    
+    # Ödeme detayları
+    payment_reason: str = Field(..., description="Ödemenin yapılma sebebi")
+    total_amount: float = Field(..., description="Toplam ödeme tutarı")
+    total_amount_words: str = Field(..., description="Toplam tutar yazıyla")
+    payment_details: CollectionReceiptPaymentDetails = Field(..., description="Detaylı ödeme bilgileri")
+    
+    # İmza durumu
+    signature_status: str = Field("pending", description="İmza durumu: pending, signed, rejected")
+    signature_link: Optional[str] = Field(None, description="İmzalama linki")
+    signature_date: Optional[str] = Field(None, description="İmzalama tarihi")
+    signed_receipt_url: Optional[str] = Field(None, description="İmzalanmış makbuz URL'i")
+    
+    # İlişkili fatura
+    related_invoice_id: Optional[str] = Field(None, description="İlişkili fatura ID'si")
+    
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CollectionReceiptCreate(BaseModel):
+    """Tahsilat makbuzu oluşturma modeli"""
+    issuer_name: str
+    issuer_title: str
+    company_name: str
+    company_address: str
+    company_phone: str
+    company_email: str
+    payer_name: str
+    payer_email: str
+    payment_reason: str
+    total_amount: float
+    payment_details: CollectionReceiptPaymentDetails
+    related_invoice_id: Optional[str] = None
+
+class CollectionReceiptApproval(BaseModel):
+    """Tahsilat makbuzu onay/imza modeli"""
+    signature_key: str = Field(..., description="İmzalama anahtarı")
+    status: str = Field(..., description="Onay durumu: approved, rejected")
+    signer_name: str = Field(..., description="İmzalayan kişinin adı")
+    signer_title: str = Field("", description="İmzalayan kişinin ünvanı")
+    signature_date: str = Field(..., description="İmzalama tarihi")
+    comments: str = Field("", description="Ek yorumlar")
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
