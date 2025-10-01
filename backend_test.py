@@ -15161,10 +15161,11 @@ def main():
     print("FOCUS: Invoice Status Filtering Functionality for Accounting Pages")
     print("=" * 80)
     
-    # List of test functions - focusing on invoice status filtering as requested
+    # List of test functions - focusing on collection receipt system as requested
     test_functions = [
         test_authentication_with_credentials,
-        test_invoice_status_filtering_comprehensive,  # Main test for the review request
+        test_collection_receipt_integration_workflow,  # Main test for the review request
+        test_invoice_status_filtering_comprehensive,
         test_draft_invoice_creation,
         test_draft_invoice_retrieval,
         test_vitingo_invoice_endpoints,
