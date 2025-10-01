@@ -918,6 +918,105 @@ const Dashboard = () => {
           </div>
         );
 
+      // Quote cases
+      case 'new-quote':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Yeni Teklif</h1>
+            <p className="text-gray-600">Yeni teklif oluşturma sayfası yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'all-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Tüm Teklifler</h1>
+            <p className="text-gray-600">Tüm teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'draft-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Taslak Teklifler</h1>
+            <p className="text-gray-600">Taslak teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'pending-approval-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Yönetici Onayında</h1>
+            <p className="text-gray-600">Yönetici onayında teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'sent-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Gönderilen Teklifler</h1>
+            <p className="text-gray-600">Gönderilen teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'won-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Kazanılan Teklifler</h1>
+            <p className="text-gray-600">Kazanılan teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
+      case 'lost-quotes':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Kaybedilen Teklifler</h1>
+            <p className="text-gray-600">Kaybedilen teklifler listesi yakında eklenecek...</p>
+            <button
+              onClick={handleBackToDashboard}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Dashboard'a Dön
+            </button>
+          </div>
+        );
+
       case 'draft-invoices':
         return <DraftInvoicesPage 
           onBackToDashboard={handleBackToDashboard} 
