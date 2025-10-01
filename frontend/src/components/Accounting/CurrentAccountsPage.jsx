@@ -456,13 +456,13 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <div className="text-gray-500">Cari hesaplar yükleniyor...</div>
                   </td>
                 </tr>
               ) : filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <div className="text-center">
                       <Users className="mx-auto h-12 w-12 text-gray-400" />
                       <h3 className="mt-2 text-sm font-medium text-gray-900">Cari hesap bulunamadı</h3>
