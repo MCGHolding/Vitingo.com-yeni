@@ -63,7 +63,8 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
     discount: '',
     discountType: 'percentage', // 'percentage' or 'fixed'
     conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
-    paymentTerm: '30'
+    paymentTerm: '30',
+    isDraft: false // Taslak fatura checkbox durumu
   });
 
   // Customer and Products state
