@@ -321,6 +321,14 @@ export default function Sidebar({
     );
   };
 
+  // Auto-expand submenus when searching
+  const shouldAutoExpand = (item) => {
+    if (!searchTerm || !item.hasSubmenu) return false;
+    return item.submenu?.some(subItem => 
+      subItem.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   const handleMenuClick = (item, subItem = null) => {
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
