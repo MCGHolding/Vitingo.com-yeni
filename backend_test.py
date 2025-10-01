@@ -4,7 +4,7 @@ import requests
 import csv
 import io
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Backend URL from environment
 BACKEND_URL = "https://vitingo-crm-5.preview.emergentagent.com"
