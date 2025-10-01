@@ -125,6 +125,20 @@ const navigation = [
     ]
   },
   { 
+    name: 'Projeler', 
+    href: '/projects', 
+    icon: Folder, 
+    current: false,
+    hasSubmenu: true,
+    submenu: [
+      { name: 'Yeni Proje', href: '/projects/new', icon: FolderPlus },
+      { name: 'Tüm Projeler', href: '/projects/all', icon: List },
+      { name: 'Devam Edenler', href: '/projects/ongoing', icon: Play },
+      { name: 'Tamamlananlar', href: '/projects/completed', icon: CheckSquare },
+      { name: 'İptal Edilenler', href: '/projects/cancelled', icon: X }
+    ]
+  },
+  { 
     name: 'Muhasebe', 
     href: '/accounting', 
     icon: Calculator, 
