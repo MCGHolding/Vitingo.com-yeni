@@ -1662,64 +1662,6 @@ def create_test_invoice_for_testing():
     except Exception as e:
         print(f"Error creating test invoice: {str(e)}")
         return None
-        malformed_items_data['items'] = [{"invalid": "item"}]  # Missing required fields
-        malformed_items_data['invoice_number'] = next_invoice_number.replace('001', '004')  # Different number
-        
-        malformed_response = requests.post(invoices_endpoint, json=malformed_items_data, timeout=30)
-        print(f"   Status Code: {malformed_response.status_code}")
-        
-        if malformed_response.status_code == 422:
-            print("   ✅ EXPECTED: Backend correctly rejects malformed items with 422")
-            print("   🔍 ANALYSIS: This could be a source of '[object Object]' if frontend sends bad data")
-        
-        # STEP 5: Final analysis and recommendations
-        print("\n" + "=" * 60)
-        print("STEP 5: FINAL ANALYSIS AND RECOMMENDATIONS")
-        print("=" * 60)
-        
-        print("\n🔍 BACKEND ANALYSIS RESULTS:")
-        print("✅ GET /api/customers - Working correctly, customers available")
-        print("✅ GET /api/invoices/next-number/USD - Working correctly, numbers generated")
-        print("✅ POST /api/invoices - Working correctly with proper data")
-        print("✅ Validation errors (422) returned for invalid data")
-        
-        print("\n💡 LIKELY ROOT CAUSE OF '[object Object]' ERROR:")
-        print("1. Backend is working correctly - the issue is likely in the frontend")
-        print("2. Frontend might be:")
-        print("   - Not handling 422 validation errors properly")
-        print("   - Sending malformed data (null customer_id, empty fields)")
-        print("   - Not parsing error responses correctly")
-        print("   - Displaying error objects as '[object Object]' instead of error messages")
-        
-        print("\n🎯 RECOMMENDATIONS FOR MAIN AGENT:")
-        print("1. Check frontend error handling in invoice form submission")
-        print("2. Verify customer selection is properly setting customer_id")
-        print("3. Add proper error message parsing for 422 validation errors")
-        print("4. Check console logs for actual error objects being displayed")
-        print("5. Ensure form data structure matches backend expectations exactly")
-        
-        print("\n" + "=" * 80)
-        print("INVOICE CREATION BUG TEST RESULTS:")
-        print("=" * 80)
-        print("✅ Backend endpoints are working correctly")
-        print("✅ Customers are available for selection")
-        print("✅ Invoice number generation working")
-        print("✅ Invoice creation succeeds with proper data")
-        print("✅ Validation errors properly returned for invalid data")
-        print("\n🎉 BACKEND IS NOT THE PROBLEM!")
-        print("   The '[object Object]' error is likely a frontend issue")
-        print("   with error handling or data formatting.")
-        
-        return True
-        
-    except requests.exceptions.RequestException as e:
-        print(f"\n❌ NETWORK ERROR: {str(e)}")
-        print("🚨 Could not test backend endpoints due to network issues")
-        return False
-    except Exception as e:
-        print(f"\n❌ UNEXPECTED ERROR: {str(e)}")
-        print("🚨 Unexpected error during invoice creation testing")
-        return False
 
 def test_new_opportunity_form_backend_integration():
     """
