@@ -811,7 +811,7 @@ export default function Sidebar({
                 {/* Submenu */}
                 {item.hasSubmenu && isSubmenuOpen && (
                   <div className="ml-6 mt-2 space-y-1">
-                    {item.submenu.map((subItem) => {
+                    {getFilteredSubmenu(item)?.map((subItem) => {
                       const SubIcon = subItem.icon;
                       return (
                         <a
