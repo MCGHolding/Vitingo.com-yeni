@@ -683,38 +683,39 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
               </div>
 
               {/* Ödeyen Bilgileri */}
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="text-lg font-medium text-gray-900 mb-4">Ödeme Yapan Bilgileri</h4>
+              <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-green-500">
+                <h4 className="text-lg font-medium text-gray-900 mb-2 flex items-center">
+                  <Building className="h-5 w-5 mr-2 text-green-600" />
+                  Ödeme Yapan Bilgileri
+                </h4>
+                <p className="text-sm text-green-600 mb-4">Bu bilgiler ödemeyi yapan müşteri/tedarikçiye göre otomatik doldurulmuştur</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ödeyen Ad/Şirket *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ödeyen Ad/Şirket</label>
                     <Input
                       type="text"
-                      required
                       value={formData.payer_name}
-                      onChange={(e) => handleFormChange('payer_name', e.target.value)}
-                      placeholder="Ödeme yapan kişi veya şirket adı"
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">E-posta *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">E-posta</label>
                     <Input
                       type="email"
-                      required
                       value={formData.payer_email}
-                      onChange={(e) => handleFormChange('payer_email', e.target.value)}
-                      placeholder="Makbuz gönderilecek e-posta adresi"
+                      disabled={true}
+                      className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                 </div>
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Sebebi *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Sebebi</label>
                   <Input
                     type="text"
-                    required
                     value={formData.payment_reason}
-                    onChange={(e) => handleFormChange('payment_reason', e.target.value)}
-                    placeholder="Fatura ödemesi, hizmet bedeli, vb."
+                    disabled={true}
+                    className="bg-gray-100 cursor-not-allowed"
                   />
                 </div>
               </div>
