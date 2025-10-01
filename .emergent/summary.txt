@@ -1,100 +1,86 @@
 <analysis>
-The trajectory chronicles an extensive development cycle on the Vitingo CRM application, moving from critical bug fixing to significant feature implementation. The work began with debugging a persistent  error on the . After extensive investigation using testing and troubleshooting agents, the root cause was identified as a client-side validation failure related to customer selection. While a fix was implemented, it inadvertently caused the customer dropdown to stop displaying options.
+The trajectory documents a comprehensive development cycle for the Vitingo CRM, starting with critical bug fixes and evolving into significant feature implementation and UI enhancements. The initial focus was on resolving a runtime error () caused by a React build cache issue, which proved to be a recurring problem throughout the development process.
 
-The focus then pivoted to a major overhaul of the  based on a series of user requests. This involved restructuring the invoices table, adding view, edit, and delete functionalities with corresponding modals and new pages (, ). A key part of this was implementing a PDF download feature, which required adding a new FastAPI endpoint in . Debugging this endpoint revealed a route ordering issue in FastAPI, which was resolved by moving the more specific PDF route before the general invoice route.
+Following the initial fix, the work involved a series of user-driven changes: deleting all draft/cancelled invoices, removing the corresponding sidebar menus, and then immediately re-implementing the Draft Invoices feature. A major feature was added to the : a Taslak Fatura (Draft Invoice) checkbox that conditionally saves an invoice with a 'draft' status. This required frontend state management, backend API additions (), and debugging a Pydantic validation error (), which was resolved by updating the Pydantic model to accept  for item IDs—a key pattern the user requested to be reused.
 
-Further UX improvements were made by replacing individual action icons with a More Options dropdown menu. This led to implementing a Cancel Invoice feature, complete with a confirmation modal, a new backend endpoint, and a dedicated . The final task involved refactoring the Pending Approval section into a Draft Invoices () page, which included creating a new component and updating the sidebar navigation and central routing in . The work concluded just after these changes were made, poised for testing.
+Further enhancements included adding a + button for a seamless add new customer workflow from the invoice form, expanding the statistics on the  to include Overdue invoices, creating a new Projects menu with placeholder pages, and implementing a filterable search bar in the sidebar. The development frequently battled persistent frontend caching issues, which often required clearing the build cache or attempting to serve a production build to reflect changes. The work concluded just as the engineer began to replicate the enhanced statistics UI on the .
 </analysis>
 
 <product_requirements>
-The primary objective is to enhance the Vitingo CRM's accounting module by fixing critical bugs and implementing a suite of features to improve invoice management.
+The primary goal is to enhance the Vitingo CRM's accounting and navigation modules by fixing bugs and adding user-requested features for improved workflow and data visibility.
 
-1.  **Bug Fixes**:
-    *   Resolve the critical  error preventing new invoice creation. The initial bug was a validation failure, but the fix led to the customer dropdown not populating, which still needs resolution.
-    *   Fix the three main issues on the All Invoices page: invoice deletion failure, and non-functional PDF download buttons (both in the table and the preview modal).
+1.  **Invoice Management:**
+    *   Implement a system to create Draft invoices. This was achieved by adding a checkbox to the . If checked, the invoice is saved with a  status and appears on the Draft Invoices page.
+    *   Fix a Pydantic validation error () that occurred when saving invoices with numeric item IDs, ensuring the system is robust.
 
-2.  **All Invoices Page Enhancements**:
-    *   **UI Redesign**: Add a sequential No column, merge the currency symbol into the Amount column, and replace the delete icon with a More Options (...) dropdown menu.
-    *   **Action Menu**: The dropdown should contain options for Delete, Cancel, Mail, Message, and Payment Request.
-    *   **Functionality**: Implement handlers for viewing (modal), editing (new page), downloading (PDF), deleting (with confirmation modal), and cancelling (with confirmation modal).
+2.  **UI/UX Enhancements:**
+    *   **Statistics:** Expand the statistics display on the  from three to four cards, adding a card for Vadesi Geçenler (Overdue Invoices) populated with real data. This feature should also be replicated on the .
+    *   **Add Customer Workflow:** Add a + button next to the Select Customer field on the  to allow users to quickly add a new customer without leaving the workflow. After creation, the user must be returned to the invoice form with the new customer pre-selected.
+    *   **Sidebar Search:** Implement a search bar at the top of the main navigation sidebar to allow users to filter menu items in real-time.
 
-3.  **New Features & Pages**:
-    *   **PDF Generation**: Create a backend endpoint to generate and serve invoice PDFs.
-    *   **Cancelled Invoices**: Create a new page accessible from the sidebar to list all cancelled invoices. The Cancel action should move an invoice to this page.
-    *   **Draft Invoices**: Rename the Pending Approval menu item to Draft Invoices and create a new page to display invoices with a 'draft' status.
-    *   **UX Improvement**: For delete and cancel actions, display the success message within the existing confirmation modal instead of a separate system alert.
+3.  **Navigation Structure:**
+    *   Create a new top-level menu item named Projeler (Projects) with the following sub-menus: Yeni Proje, Tüm Projeler, Devam Edenler, Tamamlananlar, and İptal edilenler.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: React (Hooks: , , ), custom state-based routing in .
-- **Backend**: FastAPI, including routing order precedence for parameterized URLs.
-- **UI/UX**: Custom modal and dropdown components, outside-click detection for closing menus.
-- **API Development**: Creating new RESTful endpoints (GET, POST, PUT, DELETE) for invoice actions (cancel, delete, PDF generation).
-- **PDF Generation**: Using the  library in Python to dynamically create PDF documents from database content.
+- **Frontend:** React (Hooks: , ), client-side routing managed centrally in .
+- **Backend:** FastAPI, Pydantic for data validation.
+- **API Development:** Creating and modifying RESTful endpoints (e.g., ) to support new features.
+- **Data Modeling:** Using Python's  type () in Pydantic models to handle multiple data types from the frontend, ensuring API robustness.
+- **Debugging:** Repeatedly diagnosing and resolving persistent React build cache issues, which caused UI updates to lag behind code changes.
 </key_technical_concepts>
 
 <code_architecture>
-The application is a monorepo with a React frontend and a FastAPI backend. Routing is managed by a central state machine in .
+The application is a monorepo with a React frontend and a FastAPI backend. A central component, , manages application state and routing, rendering different page components based on the  state.
 
 
 
 -   ****
-    -   **Importance**: The single file containing all backend API logic.
-    -   **Changes**:
-        -   A  endpoint was added to handle invoice deletion.
-        -   A  endpoint was added to update an invoice's status to 'cancelled'.
-        -   A  endpoint was added for PDF generation. This required significant debugging, with the final fix being to move this route definition before the more generic  route to resolve a  error.
+    -   **Importance:** Contains all backend API logic, including routes and data models.
+    -   **Changes:**
+        -   A new endpoint  was added to fetch invoices by their status.
+        -   The  Pydantic model was updated to accept both string and integer types for the uid=0(root) gid=0(root) groups=0(root) field () to fix a critical validation error.
 
 -   ****
-    -   **Importance**: Manages the application's view state and routing.
-    -   **Changes**:
-        -   New view states (, , ) and corresponding state variables/handlers were added.
-        -   Imports for new page components (, , ) were added.
-        -   The main  statement for rendering views was updated to include cases for the new pages.
-        -   New handler functions were passed as props to .
+    -   **Importance:** Central hub for state management and view routing.
+    -   **Changes:**
+        -   Added state and handler functions for the new Projects menu (, , etc.).
+        -   The main render  statement was updated with  blocks for all new project pages.
+        -   Modified the  function to manage returning to the invoice form after customer creation, passing necessary props (, ) to .
 
 -   ****
-    -   **Importance**: Displays the list of all invoices and is the hub for invoice management.
-    -   **Changes**: This file underwent a major refactoring.
-        -   The table structure was modified to add a row number and combine currency with the amount.
-        -   Action icons were replaced with a More Options dropdown menu, requiring new state management (, ) and an outside-click handler.
-        -   State was added for delete (, ) and cancel (, ) modals.
-        -   API call handlers (, , ) were created and refined with better error handling.
-        -   The modals were updated to show success messages internally instead of using .
+    -   **Importance:** Form for creating new invoices.
+    -   **Changes:**
+        -   Added an  state and a corresponding UI element (initially a checkbox, later a toggle/button) to mark an invoice as a draft.
+        -   The  function was updated to set the  field to 'draft' or 'active' based on the  state before sending it to the backend.
+        -   Error handling was refactored to use  for clearer error messages, resolving an  bug.
+        -   A + button was added next to the customer selection, with a handler () to navigate to the new customer form.
 
 -   ****
-    -   **Importance**: The main navigation component for the application.
-    -   **Changes**:
-        -   A new menu item İptal Faturalar (Cancelled Invoices) was added under the Muhasebe (Accounting) section.
-        -   The existing Onay Bekleyenler (Pending Approval) menu item was renamed to Taslak Faturalar (Draft Invoices).
-        -   Click handlers were updated to call the new functions passed down from  (, ).
+    -   **Importance:** The main application navigation component.
+    -   **Changes:**
+        -   A new Projeler (Projects) menu section with five sub-items was added to the navigation structure.
+        -   A search input field was added at the top.
+        -   State () and filtering logic were implemented to dynamically filter the displayed menu items based on user input.
 
--   **Newly Created Files**:
-    -   : Displays a list of invoices with 'cancelled' status.
-    -   : Displays a list of invoices with 'draft' status.
-    -   : A form to edit an existing invoice (stub created).
-    -   : A modal to display a detailed preview of an invoice.
+-   ****
+    -   **Importance:** Displays a list of all invoices with key statistics.
+    -   **Changes:**
+        -   The statistics section was updated from a 3-column to a 4-column grid.
+        -   A new card for Vadesi Geçenler (Overdue Invoices) was added.
+        -   Logic was implemented to calculate the overdue amount based on invoice Wed Oct  1 20:12:01 UTC 2025 and .
 </code_architecture>
 
 <pending_tasks>
--   **Resolve Customer Dropdown Bug**: The  component in  is not showing customer options, blocking new invoice creation.
--   **Complete PDF Generation**: The PDF endpoint in  was simplified for testing. The full  implementation needs to be restored and tested.
--   **Implement Edit Invoice Page**: The  component has been created but is an empty stub; it needs to be fully implemented.
--   **Implement Dropdown Actions**: The Mail, Mesaj (Message), and Ödeme Talebi (Payment Request) menu items in the All Invoices dropdown are UI-only and require backend implementation.
+- **Verify Sidebar Search:** The sidebar search functionality has been implemented but was not visually confirmed due to persistent caching issues. It needs to be tested to ensure it correctly filters menu items.
+- **Implement Project Pages:** The five new components for the Projects feature (, , etc.) are currently placeholder stubs and need to be fully implemented.
+- **Implement Remaining Invoice Actions:** The Mail, Message, and Payment Request actions in the invoice table's dropdown menu are still UI-only and require backend and frontend implementation.
 </pending_tasks>
 
 <current_work>
-The immediate past work involved addressing the user's request to change the Ödenmemiş (Unpaid) or Onay Bekleyenler (Pending Approval) menu to Taslak Faturalar (Draft Invoices) and create a corresponding page.
-
-This was accomplished through a series of coordinated changes:
-1.  **Sidebar Update**: In , the menu item text was changed to Taslak Faturalar, and its click handler was updated.
-2.  **New Component**: A new file, , was created to display draft invoices, likely by fetching invoices with a  of 'draft'.
-3.  **Routing Logic**: In , the new component was imported, a new view state () was added, and a handler function () was created to set this state. This handler was then passed as a prop to the  component, and a new  was added to the main render switch to display the .
-4.  **Service Restart**: Both the backend and frontend services were restarted to apply all the recent changes, including the new 'cancel' endpoint on the backend and all the frontend routing and component updates.
-
-The process concluded right after restarting the services, with the next logical action being to test the newly created Taslak Faturalar navigation and page functionality.
+The immediate past work focused on fulfilling the user's request to replicate the statistical summary cards from the  onto the . The  was recently updated to feature a four-card layout displaying Total Amount, Collected, Pending Payments, and Overdue. The current task is to implement this same four-card statistical view on the . The development process was halted just as the engineer began inspecting the  file to understand its current structure and determine how to best integrate the new statistics component and its associated calculation logic. The next step is to copy the relevant JSX and data processing logic from  and adapt it for the context of draft invoices.
 </current_work>
 
 <optional_next_step>
-I will now test the latest feature implementation by navigating to the Taslak Faturalar (Draft Invoices) page to ensure the sidebar link works correctly and the new page renders as expected.
+Copy the statistics calculation logic and the 4-card JSX structure from  to , adapting the calculations and labels to be relevant for draft invoices.
 </optional_next_step>
