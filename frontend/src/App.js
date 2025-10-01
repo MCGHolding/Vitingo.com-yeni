@@ -724,6 +724,22 @@ const Dashboard = () => {
         );
       case 'new-fair':
         return <NewFairFormPage onClose={handleBackToDashboard} />;
+      
+      case 'new-project':
+        return <NewProjectForm onBackToDashboard={handleBackToDashboard} />;
+      
+      case 'all-projects':
+        return <AllProjectsPage onBackToDashboard={handleBackToDashboard} />;
+      
+      case 'ongoing-projects':
+        return <OngoingProjectsPage onBackToDashboard={handleBackToDashboard} />;
+      
+      case 'completed-projects':
+        return <CompletedProjectsPage onBackToDashboard={handleBackToDashboard} />;
+      
+      case 'cancelled-projects':
+        return <CancelledProjectsPage onBackToDashboard={handleBackToDashboard} />;
+      
       case 'import-data':
         return (
           <ImportDataPage 
