@@ -228,6 +228,17 @@ const Dashboard = () => {
     }
   };
 
+  const handleCustomerAdded = (customerId, customerName) => {
+    console.log('Yeni müşteri eklendi:', customerId, customerName);
+    // Yeni müşteri bilgilerini session storage'da sakla
+    sessionStorage.setItem('newlyAddedCustomer', JSON.stringify({
+      id: customerId,
+      name: customerName
+    }));
+    // Fatura sayfasına dön
+    setCurrentView('new-invoice');
+  };
+
   const handleNewPerson = () => {
     setCurrentView('new-person');
   };
