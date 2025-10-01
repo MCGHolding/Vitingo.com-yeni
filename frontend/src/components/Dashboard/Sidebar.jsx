@@ -251,6 +251,12 @@ export default function Sidebar({
   onAllFairs,
   onActiveFairs,
   onPastFairs,
+  // Project handlers
+  onNewProject,
+  onAllProjects,
+  onOngoingProjects,
+  onCompletedProjects,
+  onCancelledProjects,
   onImportData,
   onExportData,
   onSalesReports,
