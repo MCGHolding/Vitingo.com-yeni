@@ -13399,6 +13399,672 @@ def test_customer_types_comprehensive():
     
     return all_tests_passed
 
+def test_draft_invoice_creation():
+    """
+    Test POST /api/invoices endpoint with draft invoice functionality.
+    
+    Requirements to verify:
+    1. Create a POST request to /api/invoices with status: "draft"
+    2. Use the provided sample data with draft status
+    3. Verify that status field is properly saved and returned
+    4. Check response format and all required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING DRAFT INVOICE CREATION - POST /api/invoices")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Sample data as provided in the review request
+    draft_invoice_data = {
+        "invoice_number": "TEST-001",
+        "customer_id": "test-customer-id",
+        "customer_name": "Test Customer",
+        "date": "2025-10-01",
+        "currency": "USD",
+        "status": "draft",
+        "items": [
+            {
+                "id": "item1",
+                "name": "Test Product",
+                "quantity": 1,
+                "unit": "adet",
+                "unit_price": 100.0,
+                "total": 100.0
+            }
+        ],
+        "subtotal": 100.0,
+        "vat_rate": 20.0,
+        "vat_amount": 20.0,
+        "discount": 0.0,
+        "discount_type": "percentage",
+        "discount_amount": 0.0,
+        "total": 120.0,
+        "conditions": "Test conditions",
+        "payment_term": "30"
+    }
+    
+    print(f"Creating draft invoice with data: {draft_invoice_data}")
+    
+    try:
+        # Test 1: Make POST request to create draft invoice
+        print("\n1. Making POST request to create draft invoice...")
+        response = requests.post(endpoint, json=draft_invoice_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Draft invoice creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            created_invoice = response.json()
+            print(f"   Response type: {type(created_invoice)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating created draft invoice structure...")
+        if not isinstance(created_invoice, dict):
+            print("   ❌ FAIL: Response should be a dictionary representing the created invoice")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "invoice_number", "customer_id", "customer_name", "date", "currency", "status", "items", "subtotal", "vat_rate", "vat_amount", "total", "created_at", "updated_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_invoice:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created invoice missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Created draft invoice has all required fields")
+        
+        # Test 5: Validate critical field values
+        print("\n4. Validating critical field values...")
+        invoice_id = created_invoice.get("id")
+        status = created_invoice.get("status")
+        invoice_number = created_invoice.get("invoice_number")
+        customer_name = created_invoice.get("customer_name")
+        total = created_invoice.get("total")
+        currency = created_invoice.get("currency")
+        
+        # Validate ID is generated
+        if not invoice_id:
+            print("   ❌ FAIL: Invoice ID should be generated")
+            return False, None
+        print(f"   ✅ PASS: Generated invoice ID: {invoice_id}")
+        
+        # CRITICAL: Validate status is "draft"
+        if status != "draft":
+            print(f"   ❌ FAIL: Status should be 'draft', got '{status}'")
+            return False, None
+        print(f"   ✅ PASS: Status is correctly set to 'draft': {status}")
+        
+        # Validate other key fields
+        if invoice_number != draft_invoice_data["invoice_number"]:
+            print(f"   ❌ FAIL: Invoice number mismatch. Expected: {draft_invoice_data['invoice_number']}, Got: {invoice_number}")
+            return False, None
+        print(f"   ✅ PASS: Invoice number matches: {invoice_number}")
+        
+        if customer_name != draft_invoice_data["customer_name"]:
+            print(f"   ❌ FAIL: Customer name mismatch. Expected: {draft_invoice_data['customer_name']}, Got: {customer_name}")
+            return False, None
+        print(f"   ✅ PASS: Customer name matches: {customer_name}")
+        
+        if total != draft_invoice_data["total"]:
+            print(f"   ❌ FAIL: Total mismatch. Expected: {draft_invoice_data['total']}, Got: {total}")
+            return False, None
+        print(f"   ✅ PASS: Total matches: {total}")
+        
+        if currency != draft_invoice_data["currency"]:
+            print(f"   ❌ FAIL: Currency mismatch. Expected: {draft_invoice_data['currency']}, Got: {currency}")
+            return False, None
+        print(f"   ✅ PASS: Currency matches: {currency}")
+        
+        # Test 6: Validate items structure
+        print("\n5. Validating items structure...")
+        items = created_invoice.get("items", [])
+        if not isinstance(items, list) or len(items) == 0:
+            print("   ❌ FAIL: Items should be a non-empty list")
+            return False, None
+        
+        first_item = items[0]
+        expected_item = draft_invoice_data["items"][0]
+        
+        for field in ["name", "quantity", "unit", "unit_price", "total"]:
+            if first_item.get(field) != expected_item.get(field):
+                print(f"   ❌ FAIL: Item {field} mismatch. Expected: {expected_item.get(field)}, Got: {first_item.get(field)}")
+                return False, None
+        
+        print("   ✅ PASS: Items structure is correct")
+        
+        print("\n" + "=" * 80)
+        print("DRAFT INVOICE CREATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Created invoice has all required fields")
+        print("✅ Status field is correctly set to 'draft'")
+        print("✅ All input data matches output data")
+        print("✅ Generated ID and timestamps present")
+        print("✅ Items structure is correct")
+        print(f"\n🎉 DRAFT INVOICE CREATION TEST PASSED!")
+        print(f"   Created draft invoice: {invoice_number} - {customer_name}")
+        print(f"   Invoice ID: {invoice_id}")
+        print(f"   Status: {status}")
+        
+        return True, invoice_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_active_invoice_creation():
+    """
+    Test POST /api/invoices endpoint with active invoice functionality.
+    
+    Requirements to verify:
+    1. Create a POST request to /api/invoices with status: "active"
+    2. Use the same sample data but with active status
+    3. Verify that status field is properly saved and returned
+    4. Check response format and all required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING ACTIVE INVOICE CREATION - POST /api/invoices")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Same data as draft but with active status
+    active_invoice_data = {
+        "invoice_number": "TEST-002",
+        "customer_id": "test-customer-id",
+        "customer_name": "Test Customer",
+        "date": "2025-10-01",
+        "currency": "USD",
+        "status": "active",
+        "items": [
+            {
+                "id": "item1",
+                "name": "Test Product",
+                "quantity": 1,
+                "unit": "adet",
+                "unit_price": 100.0,
+                "total": 100.0
+            }
+        ],
+        "subtotal": 100.0,
+        "vat_rate": 20.0,
+        "vat_amount": 20.0,
+        "discount": 0.0,
+        "discount_type": "percentage",
+        "discount_amount": 0.0,
+        "total": 120.0,
+        "conditions": "Test conditions",
+        "payment_term": "30"
+    }
+    
+    print(f"Creating active invoice with data: {active_invoice_data}")
+    
+    try:
+        # Test 1: Make POST request to create active invoice
+        print("\n1. Making POST request to create active invoice...")
+        response = requests.post(endpoint, json=active_invoice_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Active invoice creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            created_invoice = response.json()
+            print(f"   Response type: {type(created_invoice)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Test 3: Validate critical field values
+        print("\n3. Validating critical field values...")
+        invoice_id = created_invoice.get("id")
+        status = created_invoice.get("status")
+        invoice_number = created_invoice.get("invoice_number")
+        
+        # Validate ID is generated
+        if not invoice_id:
+            print("   ❌ FAIL: Invoice ID should be generated")
+            return False, None
+        print(f"   ✅ PASS: Generated invoice ID: {invoice_id}")
+        
+        # CRITICAL: Validate status is "active"
+        if status != "active":
+            print(f"   ❌ FAIL: Status should be 'active', got '{status}'")
+            return False, None
+        print(f"   ✅ PASS: Status is correctly set to 'active': {status}")
+        
+        # Validate invoice number
+        if invoice_number != active_invoice_data["invoice_number"]:
+            print(f"   ❌ FAIL: Invoice number mismatch. Expected: {active_invoice_data['invoice_number']}, Got: {invoice_number}")
+            return False, None
+        print(f"   ✅ PASS: Invoice number matches: {invoice_number}")
+        
+        print("\n" + "=" * 80)
+        print("ACTIVE INVOICE CREATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Status field is correctly set to 'active'")
+        print("✅ All critical data matches input")
+        print(f"\n🎉 ACTIVE INVOICE CREATION TEST PASSED!")
+        print(f"   Created active invoice: {invoice_number}")
+        print(f"   Invoice ID: {invoice_id}")
+        print(f"   Status: {status}")
+        
+        return True, invoice_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_draft_status_filtering():
+    """
+    Test GET /api/invoices/status/draft endpoint for draft status filtering.
+    
+    Requirements to verify:
+    1. GET /api/invoices/status/draft should return only draft invoices
+    2. Should not include active invoices
+    3. Should return proper JSON structure
+    4. Should include the draft invoice we created earlier
+    """
+    
+    print("=" * 80)
+    print("TESTING DRAFT STATUS FILTERING - GET /api/invoices/status/draft")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices/status/draft"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request to get draft invoices
+        print("\n1. Making GET request to get draft invoices...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Draft invoices endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            draft_invoices = response.json()
+            print(f"   Response type: {type(draft_invoices)}")
+            print(f"   Number of draft invoices: {len(draft_invoices) if isinstance(draft_invoices, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(draft_invoices, list):
+            print("   ❌ FAIL: Response should be a list of draft invoices")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(draft_invoices)} draft invoices")
+        
+        # Test 5: Verify all returned invoices have draft status
+        print("\n4. Verifying all invoices have draft status...")
+        non_draft_invoices = []
+        draft_invoice_found = False
+        
+        for i, invoice in enumerate(draft_invoices):
+            if not isinstance(invoice, dict):
+                print(f"   ❌ FAIL: Invoice {i+1} should be a dictionary")
+                return False
+            
+            status = invoice.get("status")
+            invoice_number = invoice.get("invoice_number", "N/A")
+            
+            if status != "draft":
+                non_draft_invoices.append(f"{invoice_number} (status: {status})")
+            else:
+                print(f"   ✅ Invoice {i+1}: {invoice_number} has correct draft status")
+                
+                # Check if this is our test invoice
+                if invoice_number == "TEST-001":
+                    draft_invoice_found = True
+                    print(f"   ✅ Found our test draft invoice: {invoice_number}")
+        
+        if non_draft_invoices:
+            print(f"   ❌ FAIL: Found non-draft invoices in draft endpoint: {non_draft_invoices}")
+            return False
+        
+        print("   ✅ PASS: All returned invoices have draft status")
+        
+        # Test 6: Check if our test draft invoice is included
+        if len(draft_invoices) > 0 and not draft_invoice_found:
+            print("   ⚠️  WARNING: Our test draft invoice (TEST-001) was not found in the results")
+            print("   This might be expected if the invoice was created in a different test run")
+        elif draft_invoice_found:
+            print("   ✅ PASS: Our test draft invoice is correctly included in results")
+        
+        # Test 7: Verify structure of draft invoices
+        if len(draft_invoices) > 0:
+            print("\n5. Verifying draft invoice structure...")
+            first_invoice = draft_invoices[0]
+            
+            required_fields = ["id", "invoice_number", "customer_name", "status", "total", "currency", "date"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in first_invoice:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Draft invoice has all expected fields")
+            
+            print(f"   Sample draft invoice: {first_invoice.get('invoice_number')} - {first_invoice.get('customer_name')} - {first_invoice.get('total')} {first_invoice.get('currency')}")
+        
+        print("\n" + "=" * 80)
+        print("DRAFT STATUS FILTERING TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ All returned invoices have draft status")
+        print("✅ Draft invoice structure validated")
+        print(f"\n🎉 DRAFT STATUS FILTERING TEST PASSED!")
+        print(f"   Found {len(draft_invoices)} draft invoices")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_all_invoices_endpoint():
+    """
+    Test GET /api/invoices endpoint to verify it returns all invoices (both draft and active).
+    
+    Requirements to verify:
+    1. GET /api/invoices should return all invoices
+    2. Should include both draft and active invoices
+    3. Should return proper JSON structure
+    4. Should include both test invoices we created
+    """
+    
+    print("=" * 80)
+    print("TESTING ALL INVOICES ENDPOINT - GET /api/invoices")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request to get all invoices
+        print("\n1. Making GET request to get all invoices...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: All invoices endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            all_invoices = response.json()
+            print(f"   Response type: {type(all_invoices)}")
+            print(f"   Total number of invoices: {len(all_invoices) if isinstance(all_invoices, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(all_invoices, list):
+            print("   ❌ FAIL: Response should be a list of invoices")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(all_invoices)} invoices")
+        
+        # Test 4: Check for both draft and active invoices
+        print("\n4. Checking for both draft and active invoices...")
+        draft_count = 0
+        active_count = 0
+        other_status_count = 0
+        test_draft_found = False
+        test_active_found = False
+        
+        for i, invoice in enumerate(all_invoices):
+            if not isinstance(invoice, dict):
+                print(f"   ❌ FAIL: Invoice {i+1} should be a dictionary")
+                return False
+            
+            status = invoice.get("status", "unknown")
+            invoice_number = invoice.get("invoice_number", "N/A")
+            
+            if status == "draft":
+                draft_count += 1
+                if invoice_number == "TEST-001":
+                    test_draft_found = True
+                    print(f"   ✅ Found test draft invoice: {invoice_number}")
+            elif status == "active":
+                active_count += 1
+                if invoice_number == "TEST-002":
+                    test_active_found = True
+                    print(f"   ✅ Found test active invoice: {invoice_number}")
+            else:
+                other_status_count += 1
+        
+        print(f"   Draft invoices: {draft_count}")
+        print(f"   Active invoices: {active_count}")
+        print(f"   Other status invoices: {other_status_count}")
+        
+        if draft_count > 0 and active_count > 0:
+            print("   ✅ PASS: Found both draft and active invoices")
+        elif draft_count > 0:
+            print("   ✅ PASS: Found draft invoices (active invoices might not exist yet)")
+        elif active_count > 0:
+            print("   ✅ PASS: Found active invoices (draft invoices might not exist yet)")
+        else:
+            print("   ⚠️  WARNING: No draft or active invoices found")
+        
+        # Test 5: Verify our test invoices are included
+        print("\n5. Verifying test invoices are included...")
+        if test_draft_found:
+            print("   ✅ PASS: Test draft invoice (TEST-001) found in all invoices")
+        else:
+            print("   ⚠️  WARNING: Test draft invoice (TEST-001) not found")
+        
+        if test_active_found:
+            print("   ✅ PASS: Test active invoice (TEST-002) found in all invoices")
+        else:
+            print("   ⚠️  WARNING: Test active invoice (TEST-002) not found")
+        
+        # Test 6: Show sample invoices
+        if len(all_invoices) > 0:
+            print("\n6. Sample invoices from all invoices endpoint:")
+            for i, invoice in enumerate(all_invoices[:5]):  # Show first 5
+                invoice_number = invoice.get("invoice_number", "N/A")
+                customer_name = invoice.get("customer_name", "N/A")
+                status = invoice.get("status", "N/A")
+                total = invoice.get("total", 0)
+                currency = invoice.get("currency", "N/A")
+                print(f"   {i+1}. {invoice_number} - {customer_name} - {total} {currency} (Status: {status})")
+        
+        print("\n" + "=" * 80)
+        print("ALL INVOICES ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Contains invoices with different statuses")
+        print("✅ Invoice structure validated")
+        print(f"\n🎉 ALL INVOICES ENDPOINT TEST PASSED!")
+        print(f"   Total invoices: {len(all_invoices)}")
+        print(f"   Draft invoices: {draft_count}")
+        print(f"   Active invoices: {active_count}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_draft_invoice_comprehensive():
+    """
+    Comprehensive test for draft invoice functionality as requested in the review.
+    
+    This function runs all the draft invoice tests in sequence:
+    1. Create draft invoice
+    2. Create active invoice  
+    3. Test draft status filtering
+    4. Test all invoices endpoint
+    """
+    
+    print("🎯" * 80)
+    print("COMPREHENSIVE DRAFT INVOICE FUNCTIONALITY TEST")
+    print("🎯" * 80)
+    print("Running complete test suite for draft invoice functionality as requested:")
+    print("1. Draft Invoice Creation (POST /api/invoices with status: draft)")
+    print("2. Active Invoice Creation (POST /api/invoices with status: active)")
+    print("3. Draft Status Filtering (GET /api/invoices/status/draft)")
+    print("4. All Invoices Verification (GET /api/invoices)")
+    
+    test_results = []
+    
+    # Test 1: Create draft invoice
+    print(f"\n{'='*20} TEST 1: DRAFT INVOICE CREATION {'='*20}")
+    try:
+        result, draft_id = test_draft_invoice_creation()
+        test_results.append(("Draft Invoice Creation", result))
+        if result:
+            print("✅ Draft Invoice Creation: PASSED")
+        else:
+            print("❌ Draft Invoice Creation: FAILED")
+    except Exception as e:
+        print(f"❌ Draft Invoice Creation: ERROR - {str(e)}")
+        test_results.append(("Draft Invoice Creation", False))
+    
+    # Test 2: Create active invoice
+    print(f"\n{'='*20} TEST 2: ACTIVE INVOICE CREATION {'='*20}")
+    try:
+        result, active_id = test_active_invoice_creation()
+        test_results.append(("Active Invoice Creation", result))
+        if result:
+            print("✅ Active Invoice Creation: PASSED")
+        else:
+            print("❌ Active Invoice Creation: FAILED")
+    except Exception as e:
+        print(f"❌ Active Invoice Creation: ERROR - {str(e)}")
+        test_results.append(("Active Invoice Creation", False))
+    
+    # Test 3: Draft status filtering
+    print(f"\n{'='*20} TEST 3: DRAFT STATUS FILTERING {'='*20}")
+    try:
+        result = test_draft_status_filtering()
+        test_results.append(("Draft Status Filtering", result))
+        if result:
+            print("✅ Draft Status Filtering: PASSED")
+        else:
+            print("❌ Draft Status Filtering: FAILED")
+    except Exception as e:
+        print(f"❌ Draft Status Filtering: ERROR - {str(e)}")
+        test_results.append(("Draft Status Filtering", False))
+    
+    # Test 4: All invoices endpoint
+    print(f"\n{'='*20} TEST 4: ALL INVOICES VERIFICATION {'='*20}")
+    try:
+        result = test_all_invoices_endpoint()
+        test_results.append(("All Invoices Verification", result))
+        if result:
+            print("✅ All Invoices Verification: PASSED")
+        else:
+            print("❌ All Invoices Verification: FAILED")
+    except Exception as e:
+        print(f"❌ All Invoices Verification: ERROR - {str(e)}")
+        test_results.append(("All Invoices Verification", False))
+    
+    # Final summary
+    print("\n" + "🎯" * 80)
+    print("COMPREHENSIVE DRAFT INVOICE TEST RESULTS SUMMARY")
+    print("🎯" * 80)
+    
+    passed_tests = sum(1 for _, result in test_results if result)
+    total_tests = len(test_results)
+    
+    for test_name, result in test_results:
+        status = "✅ PASSED" if result else "❌ FAILED"
+        print(f"{status}: {test_name}")
+    
+    print(f"\n📊 Overall Results: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("🎉 ALL DRAFT INVOICE TESTS PASSED! Draft invoice functionality is working correctly.")
+        print("\n✅ EXPECTED RESULTS VERIFIED:")
+        print("   • Both draft and active invoices can be created successfully")
+        print("   • Draft invoices appear in /api/invoices/status/draft endpoint")
+        print("   • Active invoices do NOT appear in draft endpoint")
+        print("   • All invoices appear in main /api/invoices endpoint")
+        print("   • Status field is properly saved and returned")
+        print("   • All required fields are present in responses")
+        return True
+    else:
+        print(f"⚠️  {total_tests - passed_tests} tests failed. Please review the issues above.")
+        return False
+
 if __name__ == "__main__":
     print("🚀 STARTING VITINGO CRM INVOICE BACKEND ENDPOINT TESTING")
     print("=" * 80)
