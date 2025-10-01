@@ -2567,12 +2567,22 @@ async def generate_invoice_pdf(invoice_id: str):
         # Company name and details in white
         p.setFillColor(colors.white)
         p.setFont("Helvetica-Bold", 20)
-        p.drawCentredText(width/2, height - 50, "Başarı Uluslararası Fuarcılık A.Ş.")
+        company_text = "Başarı Uluslararası Fuarcılık A.Ş."
+        text_width = p.stringWidth(company_text, "Helvetica-Bold", 20)
+        p.drawString((width - text_width) / 2, height - 50, company_text)
         
         p.setFont("Helvetica", 10)
-        p.drawCentredText(width/2, height - 65, "Küçükyalı Merkez Mh. Şevki Çavuş Sok.")
-        p.drawCentredText(width/2, height - 78, "Merve Apt. No:9/7 - 34840 Maltepe / İstanbul")
-        p.drawCentredText(width/2, height - 91, "Tel: +90 216 123 45 67 - Küçükyalı Vergi Dairesi - 7210421828")
+        address1 = "Küçükyalı Merkez Mh. Şevki Çavuş Sok."
+        text_width = p.stringWidth(address1, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 65, address1)
+        
+        address2 = "Merve Apt. No:9/7 - 34840 Maltepe / İstanbul"
+        text_width = p.stringWidth(address2, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 78, address2)
+        
+        address3 = "Tel: +90 216 123 45 67 - Küçükyalı Vergi Dairesi - 7210421828"
+        text_width = p.stringWidth(address3, "Helvetica", 10)
+        p.drawString((width - text_width) / 2, height - 91, address3)
         
         # Reset color to black
         p.setFillColor(black)
