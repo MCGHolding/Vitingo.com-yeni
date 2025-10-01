@@ -5091,6 +5091,382 @@ async def delete_opportunity(opportunity_id: str):
         logger.error(f"Error deleting opportunity {opportunity_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== COLLECTION RECEIPT ENDPOINTS =====================
+
+def generate_receipt_number():
+    """Benzersiz makbuz numarası üret"""
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"TAH-{timestamp}"
+
+def amount_to_words(amount):
+    """Tutarı yazıya çevir (Basit versiyon - Türkçe)"""
+    # Bu fonksiyon genişletilebilir
+    ones = ["", "BİR", "İKİ", "ÜÇ", "DÖRT", "BEŞ", "ALTI", "YEDİ", "SEKİZ", "DOKUZ"]
+    tens = ["", "", "YİRMİ", "OTUZ", "KIRK", "ELLİ", "ALTMIŞ", "YETMİŞ", "SEKSEN", "DOKSAN"]
+    
+    if amount == 0:
+        return "SIFIR TÜRK LİRASI"
+    
+    if amount < 10:
+        return f"{ones[int(amount)]} TÜRK LİRASI"
+    elif amount < 100:
+        tens_digit = int(amount // 10)
+        ones_digit = int(amount % 10)
+        return f"{tens[tens_digit]} {ones[ones_digit]} TÜRK LİRASI".strip()
+    else:
+        # Daha karmaşık sayılar için basit çözüm
+        return f"{int(amount)} TÜRK LİRASI"
+
+@api_router.post("/collection-receipts", response_model=CollectionReceipt)
+async def create_collection_receipt(receipt_input: CollectionReceiptCreate):
+    """Tahsilat makbuzu oluştur ve imzalama için gönder"""
+    try:
+        # Makbuz numarası oluştur
+        receipt_number = generate_receipt_number()
+        
+        # Tutarı yazıya çevir
+        amount_words = amount_to_words(receipt_input.total_amount)
+        
+        # Makbuz verisini hazırla
+        receipt_data = receipt_input.dict()
+        receipt_data.update({
+            "id": str(uuid.uuid4()),
+            "receipt_number": receipt_number,
+            "issue_date": datetime.now().strftime("%Y-%m-%d"),
+            "total_amount_words": amount_words,
+            "signature_status": "pending",
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        })
+        
+        # MongoDB'ye kaydet
+        result = await db.collection_receipts.insert_one(receipt_data)
+        
+        # İmzalama linki oluştur
+        signature_key = str(uuid.uuid4())
+        await db.collection_receipt_signatures.insert_one({
+            "id": str(uuid.uuid4()),
+            "receipt_id": receipt_data["id"],
+            "signature_key": signature_key,
+            "created_at": datetime.utcnow(),
+            "expires_at": datetime.utcnow() + timedelta(days=30)  # 30 gün geçerli
+        })
+        
+        # İmzalama linkini makbuzda güncelle
+        signature_link = f"/api/collection-receipt-approval/{signature_key}"
+        await db.collection_receipts.update_one(
+            {"id": receipt_data["id"]},
+            {"$set": {"signature_link": signature_link}}
+        )
+        receipt_data["signature_link"] = signature_link
+        
+        # E-posta gönder
+        if receipt_input.payer_email:
+            try:
+                # E-posta için HTML içerik oluştur
+                email_content = f"""
+                <h2>Tahsilat Makbuzu - İmza Talebi</h2>
+                <p>Sayın {receipt_input.payer_name},</p>
+                <p>Aşağıdaki tahsilat makbuzunun imzalanması gerekmektedir:</p>
+                
+                <div style="background-color: #f5f5f5; padding: 15px; margin: 20px 0; border-radius: 5px;">
+                    <strong>Makbuz Numarası:</strong> {receipt_number}<br>
+                    <strong>Tarih:</strong> {receipt_data['issue_date']}<br>
+                    <strong>Tutar:</strong> {receipt_input.total_amount:,.2f} TL<br>
+                    <strong>Ödeme Sebebi:</strong> {receipt_input.payment_reason}
+                </div>
+                
+                <p>Makbuzu görüntülemek ve imzalamak için aşağıdaki linke tıklayınız:</p>
+                <p><a href="https://vitingo-crm-5.preview.emergentagent.com{signature_link}" 
+                      style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                   Makbuzu Görüntüle ve İmzala</a></p>
+                
+                <p>Bu link 30 gün süreyle geçerlidir.</p>
+                <p>Saygılarımızla,<br>{receipt_input.company_name}</p>
+                """
+                
+                await email_service.send_email(
+                    to_email=receipt_input.payer_email,
+                    subject=f"Tahsilat Makbuzu İmza Talebi - {receipt_number}",
+                    html_content=email_content
+                )
+                
+                logger.info(f"Collection receipt email sent to: {receipt_input.payer_email}")
+                
+            except Exception as email_error:
+                logger.error(f"Failed to send collection receipt email: {str(email_error)}")
+                # E-posta gönderilmese de makbuz oluşturuldu
+        
+        return CollectionReceipt(**receipt_data)
+        
+    except Exception as e:
+        logger.error(f"Error creating collection receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tahsilat makbuzu oluşturma hatası: {str(e)}")
+
+@api_router.get("/collection-receipts", response_model=List[CollectionReceipt])
+async def get_collection_receipts():
+    """Tüm tahsilat makbuzlarını getir"""
+    try:
+        receipts = await db.collection_receipts.find().sort([("created_at", -1)]).to_list(1000)
+        return [CollectionReceipt(**receipt) for receipt in receipts]
+    except Exception as e:
+        logger.error(f"Error getting collection receipts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collection-receipts/{receipt_id}", response_model=CollectionReceipt)
+async def get_collection_receipt(receipt_id: str):
+    """Belirli bir tahsilat makbuzunu getir"""
+    try:
+        receipt = await db.collection_receipts.find_one({"id": receipt_id})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        return CollectionReceipt(**receipt)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting collection receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collection-receipt-approval/{signature_key}")
+async def get_collection_receipt_approval(signature_key: str):
+    """İmzalama sayfası için tahsilat makbuzu bilgilerini getir"""
+    try:
+        # İmzalama anahtarını kontrol et
+        signature_record = await db.collection_receipt_signatures.find_one({"signature_key": signature_key})
+        if not signature_record:
+            raise HTTPException(status_code=404, detail="Geçersiz imzalama linki")
+        
+        # Link süresini kontrol et
+        if signature_record["expires_at"] < datetime.utcnow():
+            raise HTTPException(status_code=400, detail="İmzalama linki süresi dolmuş")
+        
+        # İlgili makbuzu getir
+        receipt = await db.collection_receipts.find_one({"id": signature_record["receipt_id"]})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        return {
+            "receipt": CollectionReceipt(**receipt),
+            "signature_key": signature_key,
+            "expires_at": signature_record["expires_at"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting receipt for approval: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/collection-receipt-approval/{signature_key}")
+async def approve_collection_receipt(signature_key: str, approval_data: CollectionReceiptApproval):
+    """Tahsilat makbuzunu onayla/imzala"""
+    try:
+        # İmzalama anahtarını kontrol et
+        signature_record = await db.collection_receipt_signatures.find_one({"signature_key": signature_key})
+        if not signature_record:
+            raise HTTPException(status_code=404, detail="Geçersiz imzalama linki")
+        
+        # Link süresini kontrol et
+        if signature_record["expires_at"] < datetime.utcnow():
+            raise HTTPException(status_code=400, detail="İmzalama linki süresi dolmuş")
+        
+        # Makbuzu güncelle
+        update_data = {
+            "signature_status": approval_data.status,
+            "signature_date": approval_data.signature_date,
+            "updated_at": datetime.utcnow()
+        }
+        
+        # Onaylandıysa imzalanan makbuz URL'i oluştur
+        if approval_data.status == "approved":
+            update_data["signed_receipt_url"] = f"/api/collection-receipts/{signature_record['receipt_id']}/pdf"
+        
+        result = await db.collection_receipts.update_one(
+            {"id": signature_record["receipt_id"]},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        # İmzalama kaydını güncelle
+        await db.collection_receipt_signatures.update_one(
+            {"signature_key": signature_key},
+            {"$set": {
+                "status": approval_data.status,
+                "signer_name": approval_data.signer_name,
+                "signer_title": approval_data.signer_title,
+                "signed_at": datetime.utcnow(),
+                "comments": approval_data.comments
+            }}
+        )
+        
+        return {
+            "success": True,
+            "message": "Tahsilat makbuzu başarıyla imzalandı" if approval_data.status == "approved" else "Tahsilat makbuzu reddedildi",
+            "receipt_id": signature_record["receipt_id"],
+            "status": approval_data.status
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving collection receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collection-receipts/{receipt_id}/pdf")
+async def generate_collection_receipt_pdf(receipt_id: str):
+    """Tahsilat makbuzu PDF'ini oluştur"""
+    try:
+        # Makbuzu getir
+        receipt = await db.collection_receipts.find_one({"id": receipt_id})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        # PDF oluştur
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
+        
+        # Styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle('CustomTitle', parent=styles['Heading1'], fontSize=18, spaceAfter=30, alignment=1)
+        normal_style = styles["Normal"]
+        
+        # Story elements
+        story = []
+        
+        # Başlık
+        story.append(Paragraph("TAHSİLAT MAKBUZU", title_style))
+        story.append(Spacer(1, 20))
+        
+        # Şirket bilgileri
+        company_info = f"""
+        <b>{receipt['company_name']}</b><br/>
+        {receipt['company_address']}<br/>
+        Tel: {receipt['company_phone']}<br/>
+        E-posta: {receipt['company_email']}
+        """
+        story.append(Paragraph(company_info, normal_style))
+        story.append(Spacer(1, 20))
+        
+        # Makbuz bilgileri tablosu
+        receipt_info_data = [
+            ["Makbuz No:", receipt['receipt_number']],
+            ["Tarih:", receipt['issue_date']],
+            ["Düzenleyen:", f"{receipt['issuer_name']} - {receipt['issuer_title']}"]
+        ]
+        
+        receipt_info_table = Table(receipt_info_data, colWidths=[2*inch, 4*inch])
+        receipt_info_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ('BACKGROUND', (1, 0), (1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        
+        story.append(receipt_info_table)
+        story.append(Spacer(1, 20))
+        
+        # Ödeme bilgileri
+        story.append(Paragraph(f"<b>Ödeyen:</b> {receipt['payer_name']}", normal_style))
+        story.append(Paragraph(f"<b>Ödeme Sebebi:</b> {receipt['payment_reason']}", normal_style))
+        story.append(Spacer(1, 20))
+        
+        # Ödeme detayları tablosu
+        payment_details = receipt['payment_details']
+        payment_data = [
+            ["ÖDEME TİPİ", "TUTAR"],
+            ["Nakit", f"{payment_details.get('cash_amount', 0):,.2f} TL"],
+            ["Kredi Kartı", f"{payment_details.get('credit_card_amount', 0):,.2f} TL"],
+            ["Çek", f"{payment_details.get('check_amount', 0):,.2f} TL"],
+            ["Senet", f"{payment_details.get('promissory_note_amount', 0):,.2f} TL"],
+            ["TOPLAM", f"{receipt['total_amount']:,.2f} TL"]
+        ]
+        
+        payment_table = Table(payment_data, colWidths=[3*inch, 2*inch])
+        payment_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -2), colors.beige),
+            ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),
+            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        
+        story.append(payment_table)
+        story.append(Spacer(1, 20))
+        
+        # Çek detayları (varsa)
+        if payment_details.get('check_details'):
+            story.append(Paragraph("<b>ÇEK DETAYLARI:</b>", normal_style))
+            story.append(Spacer(1, 10))
+            
+            check_data = [["BANKA", "ŞUBE", "HESAP/IBAN", "ÇEK NO", "TARİH", "TUTAR"]]
+            for check in payment_details['check_details']:
+                check_data.append([
+                    check.get('bank', ''),
+                    check.get('branch', ''),
+                    check.get('account_iban', ''),
+                    check.get('check_number', ''),
+                    check.get('check_date', ''),
+                    f"{check.get('amount', 0):,.2f} TL"
+                ])
+            
+            check_table = Table(check_data, colWidths=[1.2*inch, 1*inch, 1.5*inch, 1*inch, 1*inch, 1*inch])
+            check_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 8),
+                ('FONTSIZE', (0, 1), (-1, -1), 8),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            
+            story.append(check_table)
+            story.append(Spacer(1, 20))
+        
+        # Yazılı tutar
+        story.append(Paragraph(f"<b>Yalnız:</b> {receipt['total_amount_words']}", normal_style))
+        story.append(Spacer(1, 30))
+        
+        # İmza alanı
+        signature_info = f"""
+        <b>Tahsil Eden:</b><br/>
+        <br/>
+        <br/>
+        İmza: ________________<br/>
+        <br/>
+        Tarih: {receipt.get('signature_date', receipt['issue_date'])}
+        """
+        story.append(Paragraph(signature_info, normal_style))
+        
+        # PDF oluştur
+        doc.build(story)
+        buffer.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(buffer.read()),
+            media_type='application/pdf',
+            headers={"Content-Disposition": f"attachment; filename=Tahsilat_Makbuzu_{receipt['receipt_number']}.pdf"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating collection receipt PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
