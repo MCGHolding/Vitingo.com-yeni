@@ -455,13 +455,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         variant: "default"
       });
 
-      // Eğer fatura sayfasından geliyorsak, yeni müşteriyi seçili yapmak için callback çağır
-      if (returnToInvoice && onCustomerAdded && savedData?.id) {
-        // 2 saniye bekleyip otomatik olarak fatura sayfasına dön
-        setTimeout(() => {
-          onCustomerAdded(savedData.id, baseCustomerData.company_short_name);
-        }, 2000);
-      }
+      // Faturadan geliyorsak kullanıcının "Tamam" butonuna tıklamasını bekle
 
     } catch (error) {
       console.error('Error creating customer:', error);
