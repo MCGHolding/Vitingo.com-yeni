@@ -2489,6 +2489,42 @@ async def update_invoice_status(invoice_id: str, status: str):
         logger.error(f"Error updating invoice {invoice_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/invoices/{invoice_id}/cancel")
+async def cancel_invoice(invoice_id: str):
+    """Cancel a specific invoice"""
+    try:
+        # Check if invoice exists
+        invoice = await db.invoices.find_one({"id": invoice_id})
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Fatura bulunamadı")
+        
+        # Update the invoice status to cancelled
+        result = await db.invoices.update_one(
+            {"id": invoice_id},
+            {
+                "$set": {
+                    "status": "cancelled",
+                    "cancelled_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=400, detail="Fatura iptal edilemedi")
+        
+        return {
+            "success": True, 
+            "message": "Fatura başarıyla iptal edildi",
+            "cancelled_invoice_id": invoice_id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling invoice {invoice_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Fatura iptal hatası: {str(e)}")
+
 @api_router.delete("/invoices/{invoice_id}")
 async def delete_invoice(invoice_id: str):
     """Delete a specific invoice"""
