@@ -37,6 +37,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "ABC İnşaat",
       debit: 0,        // Borç - bizim müşteriye borçlu olduğumuz
       credit: 15000,   // Alacak - bizim müşteriden alacaklı olduğumuz
+      due_date: "2024-12-15", // Vade tarihi
     },
     {
       id: 2,
@@ -45,6 +46,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "XYZ Tech",
       debit: 8000,
       credit: 3000,
+      due_date: "2024-09-15", // Vadesi geçmiş (13+ gün)
     },
     {
       id: 3,
@@ -53,6 +55,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "DEF Pazarlama", 
       debit: 5000,
       credit: 5000,
+      due_date: "2024-10-10", // Vadesi yakın geçmiş
     },
     {
       id: 4,
@@ -61,6 +64,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "GHI Danışmanlık",
       debit: 2000,
       credit: 12000,
+      due_date: "2024-09-20", // Vadesi geçmiş
     },
     {
       id: 5,
@@ -69,6 +73,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "JKL Turizm",
       debit: 0,
       credit: 0,
+      due_date: "2024-11-30", // Vadesi henüz gelmemiş
     },
     {
       id: 6,
@@ -77,6 +82,7 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
       customer_short_name: "MNO Lojistik",
       debit: 15000,
       credit: 8000,
+      due_date: "2024-08-25", // Çok vadesi geçmiş
     }
   ];
 
