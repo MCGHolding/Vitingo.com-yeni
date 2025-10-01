@@ -61,8 +61,6 @@ import HandoverFormPage from './components/Handovers/HandoverFormPage';
 import NewInvoiceForm from './components/Accounting/NewInvoiceForm';
 import AllInvoicesPage from './components/Accounting/AllInvoicesPage';
 import EditInvoiceForm from './components/Accounting/EditInvoiceForm';
-import CancelledInvoicesPage from './components/Accounting/CancelledInvoicesPage';
-import DraftInvoicesPage from './components/Accounting/DraftInvoicesPage';
 import NewBankForm from './components/Accounting/NewBankForm';
 import AllBanksPage from './components/Accounting/AllBanksPage';
 import NewSupplierForm from './components/Suppliers/NewSupplierForm';
