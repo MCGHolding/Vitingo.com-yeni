@@ -507,13 +507,6 @@ export default function Sidebar({
       return;
     }
 
-    if (subItem && subItem.name === 'İptal Faturalar') {
-      if (onCancelledInvoices) {
-        onCancelledInvoices();
-      }
-      return;
-    }
-
     if (subItem && subItem.name === 'Cari Hesaplar') {
       if (onCurrentAccounts) {
         onCurrentAccounts();
