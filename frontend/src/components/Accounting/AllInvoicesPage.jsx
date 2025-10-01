@@ -305,6 +305,18 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     setOpenDropdownId(openDropdownId === invoiceId ? null : invoiceId);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenDropdownId(null);
+    };
+    
+    if (openDropdownId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdownId]);
+
   // Calculate totals
   const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + invoice.amount, 0);
   const paidAmount = filteredInvoices
