@@ -2447,6 +2447,16 @@ async def get_invoices():
         logger.error(f"Error getting invoices: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting invoices: {str(e)}")
 
+@api_router.get("/invoices/status/{status}", response_model=List[Invoice])
+async def get_invoices_by_status(status: str):
+    """Get invoices by status (draft, active, cancelled, etc.)"""
+    try:
+        invoices = await db.invoices.find({"status": status}).to_list(1000)
+        return [Invoice(**invoice) for invoice in invoices]
+    except Exception as e:
+        logger.error(f"Error getting invoices by status {status}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting invoices by status: {str(e)}")
+
 @api_router.get("/invoices/{invoice_id}/pdf")
 async def generate_invoice_pdf(invoice_id: str):
     """Generate PDF for a specific invoice"""
