@@ -126,6 +126,45 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     generateInvoiceNumber(formData.currency);
   }, []);
 
+  // Yeni eklenen müşteriyi otomatik seç ve form state'ini geri yükle
+  useEffect(() => {
+    // Yeni eklenen müşteri var mı kontrol et
+    const newlyAddedCustomer = sessionStorage.getItem('newlyAddedCustomer');
+    if (newlyAddedCustomer) {
+      const customerData = JSON.parse(newlyAddedCustomer);
+      console.log('Yeni eklenen müşteri bulundu:', customerData);
+      
+      // Müşteri listesi yüklendikten sonra otomatik seç
+      if (customers.length > 0) {
+        const customer = customers.find(c => c.id === customerData.id);
+        if (customer) {
+          setFormData(prev => ({ ...prev, customerId: customer.id }));
+          console.log('Yeni müşteri otomatik seçildi:', customer.companyName);
+        }
+      }
+      
+      // Session storage'ı temizle
+      sessionStorage.removeItem('newlyAddedCustomer');
+    }
+
+    // Kaydedilmiş form state'ini geri yükle
+    const savedFormState = localStorage.getItem('invoiceFormState');
+    if (savedFormState) {
+      const savedData = JSON.parse(savedFormState);
+      // Eğer 10 dakikadan eski değilse geri yükle
+      if (Date.now() - savedData.timestamp < 600000) {
+        setFormData(prev => ({
+          ...prev,
+          items: savedData.items,
+          currency: savedData.currency,
+          // customerId hariç diğer alanları geri yükle (müşteri seçimi öncelikli)
+        }));
+        console.log('Form state geri yüklendi');
+      }
+      localStorage.removeItem('invoiceFormState');
+    }
+  }, [customers]); // customers değiştiğinde çalış
+
   // Regenerate invoice number when currency changes
   const handleCurrencyChange = (newCurrency) => {
     setFormData(prev => ({ ...prev, currency: newCurrency }));
