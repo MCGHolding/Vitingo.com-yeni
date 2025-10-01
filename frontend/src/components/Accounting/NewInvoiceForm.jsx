@@ -619,10 +619,23 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
 
             {/* Customer Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Building className="inline h-4 w-4 mr-1" />
-                Müşteri Seç *
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">
+                  <Building className="inline h-4 w-4 mr-1" />
+                  Müşteri Seç *
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddNewCustomer}
+                  className="flex items-center space-x-1 text-blue-600 border-blue-300 hover:bg-blue-50 px-2 py-1 h-7"
+                  title="Yeni müşteri ekle"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span className="text-xs">Yeni Müşteri</span>
+                </Button>
+              </div>
               {/* Debug info removed */}
               <SearchableSelect
                 options={(() => {
