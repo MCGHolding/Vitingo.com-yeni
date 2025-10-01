@@ -274,6 +274,50 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     setSelectedInvoice(null);
   };
 
+  const handleCancelInvoice = async () => {
+    try {
+      console.log('Fatura iptal başlatılıyor:', selectedInvoice.id);
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      const response = await fetch(`${backendUrl}/api/invoices/${selectedInvoice.id}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('Cancel response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Cancel result:', result);
+        
+        // Faturayı listeden kaldır (çünkü iptal edilmiş)
+        setInvoices(prev => prev.filter(inv => inv.id !== selectedInvoice.id));
+        
+        // Modal içeriğini başarı mesajına çevir
+        setCancelSuccess(true);
+      } else {
+        const errorText = await response.text();
+        console.error('Fatura iptal hatası:', response.status, errorText);
+        alert(`Fatura iptal edilemedi: ${response.status} - ${errorText}`);
+        setShowCancelModal(false);
+        setSelectedInvoice(null);
+      }
+    } catch (error) {
+      console.error('İptal hatası:', error);
+      alert(`Fatura iptal edilemedi: ${error.message}`);
+      setShowCancelModal(false);
+      setSelectedInvoice(null);
+    }
+  };
+
+  const handleCloseCancelModal = () => {
+    setShowCancelModal(false);
+    setCancelSuccess(false);
+    setSelectedInvoice(null);
+  };
+
   const handleDropdownAction = (action, invoice) => {
     setOpenDropdownId(null); // Close dropdown
     
