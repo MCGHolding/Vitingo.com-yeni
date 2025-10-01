@@ -626,7 +626,12 @@ const Dashboard = () => {
         return (
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">Yeni Müşteri Formu</h2>
-            <NewCustomerForm onSave={saveCustomer} onClose={handleBackToDashboard} />
+            <NewCustomerForm 
+              onSave={saveCustomer} 
+              onClose={handleBackToDashboard}
+              returnToInvoice={sessionStorage.getItem('returnToInvoiceAfterCustomer') === 'true'}
+              onCustomerAdded={handleCustomerAdded}
+            />
           </div>
         );
       case 'new-person':
