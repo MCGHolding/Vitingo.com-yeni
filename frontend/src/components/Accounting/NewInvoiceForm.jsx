@@ -524,7 +524,7 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form id="invoice-form" onSubmit={handleSubmit} className="space-y-8">
         {/* Invoice Header */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex justify-between items-start mb-8">
