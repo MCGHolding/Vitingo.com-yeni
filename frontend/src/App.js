@@ -337,6 +337,27 @@ const Dashboard = () => {
     // TODO: Implement all quotes page view
   };
 
+  // Project Management Handlers
+  const handleNewProject = () => {
+    setCurrentView('new-project');
+  };
+
+  const handleAllProjects = () => {
+    setCurrentView('all-projects');
+  };
+
+  const handleOngoingProjects = () => {
+    setCurrentView('ongoing-projects');
+  };
+
+  const handleCompletedProjects = () => {
+    setCurrentView('completed-projects');
+  };
+
+  const handleCancelledProjects = () => {
+    setCurrentView('cancelled-projects');
+  };
+
   // Fair Management Handlers
   const handleNewFair = () => {
     setCurrentView('new-fair');
