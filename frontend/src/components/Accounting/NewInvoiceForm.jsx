@@ -18,7 +18,7 @@ import {
   Building
 } from 'lucide-react';
 
-const NewInvoiceForm = ({ onBackToDashboard }) => {
+const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Number formatting functions
   const formatNumber = (value) => {
     if (!value && value !== 0) return '';
