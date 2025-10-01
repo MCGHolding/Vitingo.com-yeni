@@ -189,11 +189,21 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
 
   const downloadInvoicePDF = async (invoice) => {
     try {
+      console.log('PDF indirme başlatılıyor:', invoice.id);
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/invoices/${invoice.id}/pdf`);
+      console.log('Backend URL:', backendUrl);
+      
+      const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
+      console.log('PDF URL:', pdfUrl);
+      
+      const response = await fetch(pdfUrl);
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
       if (response.ok) {
         const blob = await response.blob();
+        console.log('Blob size:', blob.size);
+        
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -202,12 +212,15 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        console.log('PDF indirme tamamlandı');
       } else {
-        alert('PDF dosyası indirilemedi');
+        const errorText = await response.text();
+        console.error('PDF indirme hatası:', response.status, errorText);
+        alert(`PDF dosyası indirilemedi: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error('PDF indirme hatası:', error);
-      alert('PDF dosyası indirilemedi');
+      alert(`PDF dosyası indirilemedi: ${error.message}`);
     }
   };
 
