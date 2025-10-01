@@ -358,15 +358,15 @@ const CurrentAccountsPage = ({ onBackToDashboard }) => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Müşteri Durumu</p>
+              <p className="text-sm font-medium text-gray-600">Vade Durumu</p>
               <div className="flex items-baseline space-x-2 mt-1">
+                <span className="text-sm text-red-600">{totalOverdue} Vadesi Geçmiş</span>
                 <span className="text-sm text-green-600">{totalCreditors} Alacaklı</span>
-                <span className="text-sm text-red-600">{totalDebtors} Borçlu</span>
-                <span className="text-sm text-gray-500">{totalClosed} Kapali</span>
+                <span className="text-sm text-gray-500">{totalClosed} Kapalı</span>
               </div>
             </div>
-            <div className="p-3 bg-gray-100 rounded-lg">
-              <Users className="h-6 w-6 text-gray-600" />
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <AlertCircle className="h-6 w-6 text-orange-600" />
             </div>
           </div>
         </div>
