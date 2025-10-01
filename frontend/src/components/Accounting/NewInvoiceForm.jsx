@@ -976,6 +976,25 @@ const NewInvoiceForm = ({ onBackToDashboard }) => {
           />
         </div>
 
+        {/* Draft Mode Toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
+            <input
+              id="draft-toggle"
+              type="checkbox"
+              checked={formData.isDraft}
+              onChange={(e) => {
+                console.log('Draft mode changed:', e.target.checked);
+                setFormData(prev => ({ ...prev, isDraft: e.target.checked }));
+              }}
+              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3"
+            />
+            <label htmlFor="draft-toggle" className="text-lg font-medium text-gray-700 cursor-pointer">
+              📝 Taslak olarak kaydet
+            </label>
+          </div>
+        </div>
+
         {/* Submit Buttons */}
         <div className="flex justify-center space-x-4">
           <Button
