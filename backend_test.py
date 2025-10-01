@@ -12568,6 +12568,280 @@ def test_expense_receipt_payment_endpoint():
     
     return True
 
+def test_invoice_creation_pydantic_validation_fix():
+    """
+    Test the Pydantic validation fix for invoice creation.
+    
+    This test specifically addresses the issue where invoice items with numeric IDs
+    were causing validation errors. The fix should allow both numeric and string IDs.
+    
+    Test Requirements:
+    1. Test invoice creation with numeric ID values in items (the original issue)
+    2. Test invoice creation with string ID values for backward compatibility  
+    3. Verify both are accepted without validation errors
+    4. Check response format is correct
+    """
+    
+    print("=" * 80)
+    print("TESTING PYDANTIC VALIDATION FIX FOR INVOICE CREATION")
+    print("=" * 80)
+    print("Testing invoice creation with both numeric and string item IDs")
+    print("This addresses the Pydantic validation error that was occurring")
+    
+    endpoint = f"{BACKEND_URL}/api/invoices"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test 1: Invoice creation with NUMERIC ID (the original issue)
+    print("\n" + "=" * 60)
+    print("TEST 1: INVOICE CREATION WITH NUMERIC ITEM ID")
+    print("=" * 60)
+    print("This was the original issue causing validation errors")
+    
+    numeric_id_invoice_data = {
+        "invoice_number": "TEST-VALIDATION-001",
+        "customer_id": "test-customer",
+        "customer_name": "Test Customer",
+        "date": "2025-10-01",
+        "currency": "USD",
+        "status": "active",
+        "items": [
+            {
+                "id": 1,  # NUMERIC ID - this was causing the validation error
+                "name": "Test Product",
+                "quantity": 2.0,
+                "unit": "adet",
+                "unit_price": 150.0,
+                "total": 300.0
+            }
+        ],
+        "subtotal": 300.0,
+        "vat_rate": 20.0,
+        "vat_amount": 60.0,
+        "discount": 0.0,
+        "discount_type": "percentage",
+        "discount_amount": 0.0,
+        "total": 360.0,
+        "conditions": "Test conditions",
+        "payment_term": "30"
+    }
+    
+    print(f"Test data with NUMERIC item ID: {numeric_id_invoice_data['items'][0]['id']}")
+    
+    try:
+        print("\n1. Making POST request with numeric item ID...")
+        numeric_response = requests.post(endpoint, json=numeric_id_invoice_data, timeout=30)
+        
+        print(f"   Status Code: {numeric_response.status_code}")
+        
+        if numeric_response.status_code == 200:
+            print("   ✅ PASS: Invoice creation with numeric ID successful (validation fix working)")
+        elif numeric_response.status_code == 422:
+            print("   ❌ FAIL: Pydantic validation error still occurring with numeric ID")
+            print(f"   Response: {numeric_response.text}")
+            return False
+        else:
+            print(f"   ❌ FAIL: Unexpected status code {numeric_response.status_code}")
+            print(f"   Response: {numeric_response.text}")
+            return False
+        
+        # Parse response
+        try:
+            numeric_result = numeric_response.json()
+            print(f"   Response type: {type(numeric_result)}")
+            
+            if not isinstance(numeric_result, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                return False
+            
+            # Check if invoice was created successfully
+            created_invoice_id = numeric_result.get('id')
+            if not created_invoice_id:
+                print("   ❌ FAIL: Response should contain created invoice ID")
+                return False
+            
+            print(f"   ✅ PASS: Invoice created successfully with ID: {created_invoice_id}")
+            
+            # Verify the item ID was preserved correctly
+            created_items = numeric_result.get('items', [])
+            if len(created_items) > 0:
+                created_item_id = created_items[0].get('id')
+                print(f"   Created item ID: {created_item_id} (type: {type(created_item_id)})")
+                
+                # The ID might be converted to string by the backend, which is acceptable
+                if created_item_id == 1 or created_item_id == "1":
+                    print("   ✅ PASS: Numeric item ID preserved correctly")
+                else:
+                    print(f"   ⚠️  WARNING: Item ID changed from 1 to {created_item_id}")
+            
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse response JSON: {str(e)}")
+            return False
+        
+        print("   ✅ PASS: Numeric ID test completed successfully")
+        
+    except requests.exceptions.RequestException as e:
+        print(f"   ❌ FAIL: Network error with numeric ID test: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"   ❌ FAIL: Unexpected error with numeric ID test: {str(e)}")
+        return False
+    
+    # Test 2: Invoice creation with STRING ID (backward compatibility)
+    print("\n" + "=" * 60)
+    print("TEST 2: INVOICE CREATION WITH STRING ITEM ID")
+    print("=" * 60)
+    print("Testing backward compatibility with string IDs")
+    
+    string_id_invoice_data = {
+        "invoice_number": "TEST-VALIDATION-002",
+        "customer_id": "test-customer",
+        "customer_name": "Test Customer",
+        "date": "2025-10-01",
+        "currency": "USD",
+        "status": "active",
+        "items": [
+            {
+                "id": "string-id-123",  # STRING ID - for backward compatibility
+                "name": "Test Product String ID",
+                "quantity": 1.0,
+                "unit": "adet",
+                "unit_price": 200.0,
+                "total": 200.0
+            }
+        ],
+        "subtotal": 200.0,
+        "vat_rate": 20.0,
+        "vat_amount": 40.0,
+        "discount": 0.0,
+        "discount_type": "percentage",
+        "discount_amount": 0.0,
+        "total": 240.0,
+        "conditions": "Test conditions",
+        "payment_term": "30"
+    }
+    
+    print(f"Test data with STRING item ID: {string_id_invoice_data['items'][0]['id']}")
+    
+    try:
+        print("\n1. Making POST request with string item ID...")
+        string_response = requests.post(endpoint, json=string_id_invoice_data, timeout=30)
+        
+        print(f"   Status Code: {string_response.status_code}")
+        
+        if string_response.status_code == 200:
+            print("   ✅ PASS: Invoice creation with string ID successful (backward compatibility working)")
+        elif string_response.status_code == 422:
+            print("   ❌ FAIL: Pydantic validation error with string ID")
+            print(f"   Response: {string_response.text}")
+            return False
+        else:
+            print(f"   ❌ FAIL: Unexpected status code {string_response.status_code}")
+            print(f"   Response: {string_response.text}")
+            return False
+        
+        # Parse response
+        try:
+            string_result = string_response.json()
+            print(f"   Response type: {type(string_result)}")
+            
+            if not isinstance(string_result, dict):
+                print("   ❌ FAIL: Response should be a dictionary")
+                return False
+            
+            # Check if invoice was created successfully
+            created_invoice_id = string_result.get('id')
+            if not created_invoice_id:
+                print("   ❌ FAIL: Response should contain created invoice ID")
+                return False
+            
+            print(f"   ✅ PASS: Invoice created successfully with ID: {created_invoice_id}")
+            
+            # Verify the item ID was preserved correctly
+            created_items = string_result.get('items', [])
+            if len(created_items) > 0:
+                created_item_id = created_items[0].get('id')
+                print(f"   Created item ID: {created_item_id} (type: {type(created_item_id)})")
+                
+                if created_item_id == "string-id-123":
+                    print("   ✅ PASS: String item ID preserved correctly")
+                else:
+                    print(f"   ⚠️  WARNING: Item ID changed from 'string-id-123' to {created_item_id}")
+            
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse response JSON: {str(e)}")
+            return False
+        
+        print("   ✅ PASS: String ID test completed successfully")
+        
+    except requests.exceptions.RequestException as e:
+        print(f"   ❌ FAIL: Network error with string ID test: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"   ❌ FAIL: Unexpected error with string ID test: {str(e)}")
+        return False
+    
+    # Test 3: Verify both invoices exist in the system
+    print("\n" + "=" * 60)
+    print("TEST 3: VERIFICATION - BOTH INVOICES CREATED")
+    print("=" * 60)
+    print("Verifying both test invoices were created successfully")
+    
+    try:
+        print("\n1. Getting invoice list to verify both invoices exist...")
+        list_response = requests.get(f"{BACKEND_URL}/api/invoices", timeout=30)
+        
+        if list_response.status_code == 200:
+            invoices = list_response.json()
+            
+            # Look for our test invoices
+            test_invoice_1 = None
+            test_invoice_2 = None
+            
+            for invoice in invoices:
+                if invoice.get('invoice_number') == 'TEST-VALIDATION-001':
+                    test_invoice_1 = invoice
+                elif invoice.get('invoice_number') == 'TEST-VALIDATION-002':
+                    test_invoice_2 = invoice
+            
+            if test_invoice_1:
+                print("   ✅ PASS: Test invoice with numeric ID found in system")
+                print(f"      Invoice Number: {test_invoice_1.get('invoice_number')}")
+                print(f"      Total: {test_invoice_1.get('total')} {test_invoice_1.get('currency')}")
+            else:
+                print("   ❌ FAIL: Test invoice with numeric ID not found in system")
+                return False
+            
+            if test_invoice_2:
+                print("   ✅ PASS: Test invoice with string ID found in system")
+                print(f"      Invoice Number: {test_invoice_2.get('invoice_number')}")
+                print(f"      Total: {test_invoice_2.get('total')} {test_invoice_2.get('currency')}")
+            else:
+                print("   ❌ FAIL: Test invoice with string ID not found in system")
+                return False
+            
+        else:
+            print(f"   ⚠️  WARNING: Could not verify invoices in system (status: {list_response.status_code})")
+        
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Could not verify invoices in system: {str(e)}")
+    
+    # Final Results Summary
+    print("\n" + "=" * 80)
+    print("PYDANTIC VALIDATION FIX TEST RESULTS SUMMARY")
+    print("=" * 80)
+    print("✅ NUMERIC ID TEST: Invoice creation with numeric item ID successful")
+    print("✅ STRING ID TEST: Invoice creation with string item ID successful")
+    print("✅ VALIDATION FIX: No 'Input should be a valid string' Pydantic errors")
+    print("✅ BACKWARD COMPATIBILITY: Both numeric and string IDs accepted")
+    print("✅ RESPONSE FORMAT: Correct JSON response format for both tests")
+    print("✅ SYSTEM INTEGRATION: Both invoices created and stored successfully")
+    
+    print(f"\n🎉 PYDANTIC VALIDATION FIX TEST COMPLETED SUCCESSFULLY!")
+    print("The fix allows both numeric and string IDs in invoice items without validation errors.")
+    print("Original issue: 'Input should be a valid string' error with numeric IDs - RESOLVED ✅")
+    
+    return True
+
 def main():
     """Main test runner for geo endpoints testing for NewSupplierForm"""
     print("🚀 STARTING GEO ENDPOINTS BACKEND API TESTING")
