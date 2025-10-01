@@ -277,8 +277,32 @@ const DraftInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) =
     { value: 'AED', label: 'AED' }
   ];
 
-  // Calculate totals
-  const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + invoice.total, 0);
+  // Calculate statistics for draft invoices
+  const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+  
+  // For drafts, "Collected" would be 0 since they haven't been finalized yet
+  const collectedAmount = 0;
+  
+  // For drafts, "Pending Payments" could be the total amount since all drafts are pending
+  const pendingAmount = totalAmount;
+  
+  // Calculate "old" drafts (created more than 30 days ago) as "overdue"
+  const currentDate = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  
+  const oldDraftsAmount = filteredInvoices
+    .filter(invoice => {
+      const invoiceDate = new Date(invoice.date);
+      return invoiceDate < thirtyDaysAgo;
+    })
+    .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+  
+  const oldDraftsCount = filteredInvoices
+    .filter(invoice => {
+      const invoiceDate = new Date(invoice.date);
+      return invoiceDate < thirtyDaysAgo;
+    }).length;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
