@@ -281,11 +281,20 @@ const InvoicePreviewModal = ({ invoice, onClose }) => {
           <Button
             onClick={async () => {
               try {
+                console.log('Modal PDF indirme başlatılıyor:', invoice.id);
                 const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-                const response = await fetch(`${backendUrl}/api/invoices/${invoice.id}/pdf`);
+                console.log('Backend URL:', backendUrl);
+                
+                const pdfUrl = `${backendUrl}/api/invoices/${invoice.id}/pdf`;
+                console.log('PDF URL:', pdfUrl);
+                
+                const response = await fetch(pdfUrl);
+                console.log('Response status:', response.status);
                 
                 if (response.ok) {
                   const blob = await response.blob();
+                  console.log('Blob size:', blob.size);
+                  
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
@@ -294,12 +303,15 @@ const InvoicePreviewModal = ({ invoice, onClose }) => {
                   a.click();
                   window.URL.revokeObjectURL(url);
                   document.body.removeChild(a);
+                  console.log('Modal PDF indirme tamamlandı');
                 } else {
-                  alert('PDF dosyası indirilemedi');
+                  const errorText = await response.text();
+                  console.error('Modal PDF indirme hatası:', response.status, errorText);
+                  alert(`PDF dosyası indirilemedi: ${response.status} - ${errorText}`);
                 }
               } catch (error) {
-                console.error('PDF indirme hatası:', error);
-                alert('PDF dosyası indirilemedi');
+                console.error('Modal PDF indirme hatası:', error);
+                alert(`PDF dosyası indirilemedi: ${error.message}`);
               }
             }}
             className="bg-blue-600 hover:bg-blue-700"
