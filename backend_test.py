@@ -15158,7 +15158,7 @@ def main():
     """Run invoice status filtering tests as requested in the review"""
     print("🚀 STARTING VITINGO CRM BACKEND API TESTING SUITE")
     print("=" * 80)
-    print("FOCUS: Invoice Status Filtering Functionality for Accounting Pages")
+    print("FOCUS: Collection Receipt (Tahsilat Makbuzu) System Testing")
     print("=" * 80)
     
     # List of test functions - focusing on collection receipt system as requested
