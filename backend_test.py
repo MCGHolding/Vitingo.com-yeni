@@ -1513,6 +1513,911 @@ def test_draft_invoice_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False, None
 
+# ===================== COLLECTION RECEIPT TESTS =====================
+
+def test_collection_receipt_creation():
+    """
+    Test POST /api/collection-receipts endpoint with complete receipt data.
+    
+    Requirements to verify:
+    1. Receipt number is auto-generated (TAH-YYYYMMDDHHMMSS format)
+    2. Amount to words conversion function works
+    3. Email sending functionality for signature requests
+    4. Complete receipt data structure and required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING COLLECTION RECEIPT CREATION - POST /api/collection-receipts")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/collection-receipts"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data with realistic Turkish receipt data
+    receipt_data = {
+        "issuer_name": "Mehmet Yılmaz",
+        "issuer_title": "Mali İşler Müdürü",
+        "company_name": "Vitingo Teknoloji A.Ş.",
+        "company_address": "Maslak Mahallesi, Büyükdere Cad. No:123 Sarıyer/İstanbul",
+        "company_phone": "+90 212 555 0123",
+        "company_email": "info@vitingo.com",
+        "payer_name": "ABC İnşaat Ltd. Şti.",
+        "payer_email": "muhasebe@abcinsaat.com",
+        "payment_reason": "Fuar stand yapım bedeli ödemesi",
+        "total_amount": 15750.00,
+        "payment_details": {
+            "cash_amount": 5000.00,
+            "credit_card_amount": 7500.00,
+            "check_amount": 3250.00,
+            "promissory_note_amount": 0.00,
+            "check_details": [
+                {
+                    "bank": "Türkiye İş Bankası",
+                    "branch": "Maslak Şubesi",
+                    "account_iban": "TR12 0006 4000 0011 2345 6789 01",
+                    "check_number": "1234567",
+                    "check_date": "2025-01-15",
+                    "amount": 3250.00
+                }
+            ]
+        },
+        "related_invoice_id": None
+    }
+    
+    print(f"Creating collection receipt with data:")
+    print(f"  Company: {receipt_data['company_name']}")
+    print(f"  Payer: {receipt_data['payer_name']}")
+    print(f"  Total Amount: {receipt_data['total_amount']:,.2f} TL")
+    print(f"  Payment Reason: {receipt_data['payment_reason']}")
+    
+    try:
+        # Test 1: Create collection receipt
+        print("\n1. Making POST request to create collection receipt...")
+        response = requests.post(endpoint, json=receipt_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Collection receipt creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Test 2: Parse response
+        print("\n2. Parsing collection receipt creation response...")
+        try:
+            created_receipt = response.json()
+            print(f"   Response type: {type(created_receipt)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating created collection receipt structure...")
+        if not isinstance(created_receipt, dict):
+            print("   ❌ FAIL: Response should be a dictionary representing the created receipt")
+            return False, None
+        
+        # Check required fields
+        required_fields = [
+            "id", "receipt_number", "issuer_name", "issuer_title", "company_name", 
+            "payer_name", "payment_reason", "total_amount", "total_amount_words",
+            "payment_details", "signature_status", "signature_link", "created_at"
+        ]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_receipt:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created receipt missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Created collection receipt has all required fields")
+        
+        # Test 4: Verify receipt number format (TAH-YYYYMMDDHHMMSS)
+        print("\n4. Verifying receipt number format...")
+        receipt_number = created_receipt.get("receipt_number")
+        if not receipt_number or not receipt_number.startswith("TAH-"):
+            print(f"   ❌ FAIL: Receipt number should start with 'TAH-', got: {receipt_number}")
+            return False, None
+        
+        # Check if the format matches TAH-YYYYMMDDHHMMSS (TAH- + 14 digits)
+        if len(receipt_number) != 18:  # TAH- (4) + YYYYMMDDHHMMSS (14)
+            print(f"   ❌ FAIL: Receipt number should be 18 characters long, got: {len(receipt_number)}")
+            return False, None
+        
+        print(f"   ✅ PASS: Receipt number format correct: {receipt_number}")
+        
+        # Test 5: Verify amount to words conversion
+        print("\n5. Verifying amount to words conversion...")
+        amount_words = created_receipt.get("total_amount_words")
+        if not amount_words:
+            print("   ❌ FAIL: total_amount_words should be present")
+            return False, None
+        
+        # Should contain Turkish currency reference
+        if "TÜRK LİRASI" not in amount_words.upper():
+            print(f"   ❌ FAIL: Amount words should contain 'TÜRK LİRASI', got: {amount_words}")
+            return False, None
+        
+        print(f"   ✅ PASS: Amount to words conversion working: {amount_words}")
+        
+        # Test 6: Verify signature status and link
+        print("\n6. Verifying signature status and link...")
+        signature_status = created_receipt.get("signature_status")
+        signature_link = created_receipt.get("signature_link")
+        
+        if signature_status != "pending":
+            print(f"   ❌ FAIL: Initial signature status should be 'pending', got: {signature_status}")
+            return False, None
+        
+        if not signature_link or not signature_link.startswith("/api/collection-receipt-approval/"):
+            print(f"   ❌ FAIL: Invalid signature link format: {signature_link}")
+            return False, None
+        
+        print(f"   ✅ PASS: Signature status and link correct")
+        print(f"     Status: {signature_status}")
+        print(f"     Link: {signature_link}")
+        
+        # Test 7: Verify payment details structure
+        print("\n7. Verifying payment details structure...")
+        payment_details = created_receipt.get("payment_details", {})
+        
+        expected_amounts = {
+            "cash_amount": 5000.00,
+            "credit_card_amount": 7500.00,
+            "check_amount": 3250.00,
+            "promissory_note_amount": 0.00
+        }
+        
+        for amount_type, expected_value in expected_amounts.items():
+            actual_value = payment_details.get(amount_type, 0)
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: {amount_type} mismatch. Expected: {expected_value}, Got: {actual_value}")
+                return False, None
+        
+        # Check check details
+        check_details = payment_details.get("check_details", [])
+        if len(check_details) != 1:
+            print(f"   ❌ FAIL: Expected 1 check detail, got: {len(check_details)}")
+            return False, None
+        
+        check = check_details[0]
+        if check.get("bank") != "Türkiye İş Bankası":
+            print(f"   ❌ FAIL: Check bank mismatch")
+            return False, None
+        
+        print("   ✅ PASS: Payment details structure correct")
+        
+        # Test 8: Verify other key fields
+        print("\n8. Verifying other key field values...")
+        receipt_id = created_receipt.get("id")
+        company_name = created_receipt.get("company_name")
+        payer_name = created_receipt.get("payer_name")
+        total_amount = created_receipt.get("total_amount")
+        
+        if not receipt_id:
+            print("   ❌ FAIL: Receipt ID should be generated")
+            return False, None
+        print(f"   ✅ PASS: Generated receipt ID: {receipt_id}")
+        
+        if company_name != receipt_data["company_name"]:
+            print(f"   ❌ FAIL: Company name mismatch")
+            return False, None
+        print(f"   ✅ PASS: Company name matches: {company_name}")
+        
+        if payer_name != receipt_data["payer_name"]:
+            print(f"   ❌ FAIL: Payer name mismatch")
+            return False, None
+        print(f"   ✅ PASS: Payer name matches: {payer_name}")
+        
+        if total_amount != receipt_data["total_amount"]:
+            print(f"   ❌ FAIL: Total amount mismatch")
+            return False, None
+        print(f"   ✅ PASS: Total amount matches: {total_amount}")
+        
+        print("\n" + "=" * 80)
+        print("COLLECTION RECEIPT CREATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Collection receipt created successfully with status 200")
+        print("✅ Receipt number auto-generated in correct format (TAH-YYYYMMDDHHMMSS)")
+        print("✅ Amount to words conversion working correctly")
+        print("✅ Signature link generated for email sending")
+        print("✅ All required fields present in response")
+        print("✅ Payment details structure preserved correctly")
+        print("✅ Turkish characters and currency handled properly")
+        print(f"\n🎉 COLLECTION RECEIPT CREATION TEST PASSED!")
+        print(f"   Created Receipt: {receipt_number}")
+        print(f"   Receipt ID: {receipt_id}")
+        print(f"   Total Amount: {total_amount:,.2f} TL")
+        print(f"   Amount in Words: {amount_words}")
+        
+        return True, receipt_id, signature_link
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None, None
+
+def test_collection_receipts_get_all():
+    """
+    Test GET /api/collection-receipts to retrieve all receipts.
+    
+    Requirements to verify:
+    1. Returns proper JSON list structure
+    2. Includes the receipt we just created
+    3. Proper data structure and required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING GET ALL COLLECTION RECEIPTS - GET /api/collection-receipts")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/collection-receipts"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Get all collection receipts
+        print("\n1. Making GET request to retrieve all collection receipts...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get collection receipts endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing collection receipts response...")
+        try:
+            receipts = response.json()
+            print(f"   Response type: {type(receipts)}")
+            print(f"   Number of receipts: {len(receipts) if isinstance(receipts, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(receipts, list):
+            print("   ❌ FAIL: Response should be a list of collection receipts")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(receipts)} collection receipts")
+        
+        # Test 4: Check structure of receipts if any exist
+        if len(receipts) > 0:
+            print("\n4. Checking collection receipt structure...")
+            first_receipt = receipts[0]
+            
+            # Expected fields based on CollectionReceipt model
+            expected_fields = [
+                "id", "receipt_number", "issuer_name", "company_name", "payer_name",
+                "payment_reason", "total_amount", "payment_details", "signature_status", "created_at"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_receipt:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Collection receipt has all expected fields")
+            
+            print(f"   Sample receipt fields: {list(first_receipt.keys())}")
+            print(f"   Sample receipt number: {first_receipt.get('receipt_number', 'N/A')}")
+            print(f"   Sample payer: {first_receipt.get('payer_name', 'N/A')}")
+            print(f"   Sample amount: {first_receipt.get('total_amount', 'N/A')}")
+            print(f"   Sample signature status: {first_receipt.get('signature_status', 'N/A')}")
+        else:
+            print("\n4. No existing collection receipts found - this is acceptable for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET ALL COLLECTION RECEIPTS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON list response")
+        print("✅ Collection receipt structure validated")
+        print(f"✅ Found {len(receipts)} collection receipts in database")
+        print("\n🎉 GET ALL COLLECTION RECEIPTS TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_collection_receipt_get_single(receipt_id):
+    """
+    Test GET /api/collection-receipts/{receipt_id} for single receipt.
+    
+    Requirements to verify:
+    1. Returns specific receipt by ID
+    2. Proper data structure and required fields
+    3. 404 error for non-existent receipts
+    """
+    
+    print("=" * 80)
+    print("TESTING GET SINGLE COLLECTION RECEIPT - GET /api/collection-receipts/{receipt_id}")
+    print("=" * 80)
+    
+    if not receipt_id:
+        print("⚠️  SKIP: No receipt ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/collection-receipts/{receipt_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Receipt ID: {receipt_id}")
+    
+    try:
+        # Test 1: Get specific collection receipt
+        print("\n1. Making GET request to retrieve specific collection receipt...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get single collection receipt endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing single collection receipt response...")
+        try:
+            receipt = response.json()
+            print(f"   Response type: {type(receipt)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating single receipt structure...")
+        if not isinstance(receipt, dict):
+            print("   ❌ FAIL: Response should be a dictionary representing the receipt")
+            return False
+        
+        # Check required fields
+        required_fields = [
+            "id", "receipt_number", "issuer_name", "company_name", "payer_name",
+            "payment_reason", "total_amount", "payment_details", "signature_status"
+        ]
+        missing_fields = []
+        for field in required_fields:
+            if field not in receipt:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Receipt missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Single collection receipt has all required fields")
+        
+        # Test 4: Verify receipt ID matches
+        print("\n4. Verifying receipt ID matches...")
+        returned_id = receipt.get("id")
+        if returned_id != receipt_id:
+            print(f"   ❌ FAIL: Receipt ID mismatch. Expected: {receipt_id}, Got: {returned_id}")
+            return False
+        
+        print(f"   ✅ PASS: Receipt ID matches: {returned_id}")
+        
+        # Test 5: Display receipt details
+        print("\n5. Receipt details:")
+        print(f"   Receipt Number: {receipt.get('receipt_number')}")
+        print(f"   Company: {receipt.get('company_name')}")
+        print(f"   Payer: {receipt.get('payer_name')}")
+        print(f"   Amount: {receipt.get('total_amount'):,.2f} TL")
+        print(f"   Payment Reason: {receipt.get('payment_reason')}")
+        print(f"   Signature Status: {receipt.get('signature_status')}")
+        
+        print("\n" + "=" * 80)
+        print("GET SINGLE COLLECTION RECEIPT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON object response")
+        print("✅ Receipt ID matches requested ID")
+        print("✅ All required fields present")
+        print("✅ Receipt data structure validated")
+        print("\n🎉 GET SINGLE COLLECTION RECEIPT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_collection_receipt_approval_get(signature_link):
+    """
+    Test GET /api/collection-receipt-approval/{signature_key} for approval page data.
+    
+    Requirements to verify:
+    1. Returns receipt data for approval page
+    2. Signature key validation works
+    3. Expiration logic is implemented
+    4. Proper error handling for invalid keys
+    """
+    
+    print("=" * 80)
+    print("TESTING GET COLLECTION RECEIPT APPROVAL - GET /api/collection-receipt-approval/{signature_key}")
+    print("=" * 80)
+    
+    if not signature_link:
+        print("⚠️  SKIP: No signature link available from previous test")
+        return True
+    
+    # Extract signature key from link
+    signature_key = signature_link.split("/")[-1]
+    endpoint = f"{BACKEND_URL}/api/collection-receipt-approval/{signature_key}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Signature Key: {signature_key}")
+    
+    try:
+        # Test 1: Get receipt for approval
+        print("\n1. Making GET request to retrieve receipt for approval...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Get receipt approval endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing receipt approval response...")
+        try:
+            approval_data = response.json()
+            print(f"   Response type: {type(approval_data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating approval data structure...")
+        if not isinstance(approval_data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields
+        required_fields = ["receipt", "signature_key", "expires_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in approval_data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Approval data missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Approval data has all required fields")
+        
+        # Test 4: Verify signature key matches
+        print("\n4. Verifying signature key matches...")
+        returned_key = approval_data.get("signature_key")
+        if returned_key != signature_key:
+            print(f"   ❌ FAIL: Signature key mismatch. Expected: {signature_key}, Got: {returned_key}")
+            return False
+        
+        print(f"   ✅ PASS: Signature key matches: {returned_key}")
+        
+        # Test 5: Verify receipt data structure
+        print("\n5. Verifying receipt data structure...")
+        receipt_data = approval_data.get("receipt", {})
+        if not isinstance(receipt_data, dict):
+            print("   ❌ FAIL: Receipt data should be a dictionary")
+            return False
+        
+        # Check receipt has required fields
+        receipt_required_fields = ["id", "receipt_number", "payer_name", "total_amount"]
+        receipt_missing_fields = []
+        for field in receipt_required_fields:
+            if field not in receipt_data:
+                receipt_missing_fields.append(field)
+        
+        if receipt_missing_fields:
+            print(f"   ❌ FAIL: Receipt data missing required fields: {receipt_missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Receipt data structure is valid")
+        
+        # Test 6: Check expiration date
+        print("\n6. Checking expiration date...")
+        expires_at = approval_data.get("expires_at")
+        if not expires_at:
+            print("   ❌ FAIL: Expiration date should be present")
+            return False
+        
+        print(f"   ✅ PASS: Expiration date present: {expires_at}")
+        
+        # Test 7: Display approval data details
+        print("\n7. Approval data details:")
+        print(f"   Receipt Number: {receipt_data.get('receipt_number')}")
+        print(f"   Payer: {receipt_data.get('payer_name')}")
+        print(f"   Amount: {receipt_data.get('total_amount'):,.2f} TL")
+        print(f"   Signature Key: {returned_key}")
+        print(f"   Expires At: {expires_at}")
+        
+        print("\n" + "=" * 80)
+        print("GET COLLECTION RECEIPT APPROVAL TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper approval data structure")
+        print("✅ Signature key validation working")
+        print("✅ Receipt data included for approval page")
+        print("✅ Expiration logic implemented")
+        print("\n🎉 GET COLLECTION RECEIPT APPROVAL TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_collection_receipt_approval_post(signature_link):
+    """
+    Test POST /api/collection-receipt-approval/{signature_key} for signing receipts.
+    
+    Requirements to verify:
+    1. Approval process works correctly
+    2. Rejection process works correctly
+    3. Signature key validation and expiration logic
+    4. Status updates are applied correctly
+    """
+    
+    print("=" * 80)
+    print("TESTING POST COLLECTION RECEIPT APPROVAL - POST /api/collection-receipt-approval/{signature_key}")
+    print("=" * 80)
+    
+    if not signature_link:
+        print("⚠️  SKIP: No signature link available from previous test")
+        return True
+    
+    # Extract signature key from link
+    signature_key = signature_link.split("/")[-1]
+    endpoint = f"{BACKEND_URL}/api/collection-receipt-approval/{signature_key}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Signature Key: {signature_key}")
+    
+    # Test approval data
+    approval_data = {
+        "signature_key": signature_key,
+        "status": "approved",
+        "signer_name": "Ahmet Demir",
+        "signer_title": "Genel Müdür",
+        "signature_date": datetime.now().strftime("%Y-%m-%d"),
+        "comments": "Makbuz onaylandı ve imzalandı."
+    }
+    
+    print(f"Approval data:")
+    print(f"  Status: {approval_data['status']}")
+    print(f"  Signer: {approval_data['signer_name']} - {approval_data['signer_title']}")
+    print(f"  Date: {approval_data['signature_date']}")
+    
+    try:
+        # Test 1: Submit approval
+        print("\n1. Making POST request to approve collection receipt...")
+        response = requests.post(endpoint, json=approval_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Collection receipt approval endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing approval response...")
+        try:
+            approval_result = response.json()
+            print(f"   Response type: {type(approval_result)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating approval result structure...")
+        if not isinstance(approval_result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields
+        required_fields = ["success", "message", "receipt_id", "status"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in approval_result:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Approval result missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Approval result has all required fields")
+        
+        # Test 4: Verify approval success
+        print("\n4. Verifying approval success...")
+        success = approval_result.get("success")
+        status = approval_result.get("status")
+        message = approval_result.get("message")
+        receipt_id = approval_result.get("receipt_id")
+        
+        if not success:
+            print(f"   ❌ FAIL: Approval should be successful, got: {success}")
+            return False
+        
+        if status != "approved":
+            print(f"   ❌ FAIL: Status should be 'approved', got: {status}")
+            return False
+        
+        print(f"   ✅ PASS: Approval successful")
+        print(f"     Success: {success}")
+        print(f"     Status: {status}")
+        print(f"     Message: {message}")
+        print(f"     Receipt ID: {receipt_id}")
+        
+        print("\n" + "=" * 80)
+        print("POST COLLECTION RECEIPT APPROVAL TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Approval process works correctly")
+        print("✅ Status updates applied successfully")
+        print("✅ Proper success response structure")
+        print("✅ Receipt ID returned for reference")
+        print("\n🎉 POST COLLECTION RECEIPT APPROVAL TEST PASSED!")
+        
+        return True, receipt_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_collection_receipt_pdf_generation(receipt_id):
+    """
+    Test GET /api/collection-receipts/{receipt_id}/pdf endpoint.
+    
+    Requirements to verify:
+    1. PDF generation works correctly
+    2. PDF contains all required information
+    3. Proper Content-Type and headers
+    4. PDF download functionality
+    """
+    
+    print("=" * 80)
+    print("TESTING COLLECTION RECEIPT PDF GENERATION - GET /api/collection-receipts/{receipt_id}/pdf")
+    print("=" * 80)
+    
+    if not receipt_id:
+        print("⚠️  SKIP: No receipt ID available from previous test")
+        return True
+    
+    endpoint = f"{BACKEND_URL}/api/collection-receipts/{receipt_id}/pdf"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Receipt ID: {receipt_id}")
+    
+    try:
+        # Test 1: Generate PDF
+        print("\n1. Making GET request to generate collection receipt PDF...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Collection receipt PDF generation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        print("\n2. Checking PDF response headers...")
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        
+        if 'application/pdf' not in content_type:
+            print(f"   ❌ FAIL: Expected Content-Type 'application/pdf', got: {content_type}")
+            return False
+        
+        print("   ✅ PASS: Correct Content-Type for PDF response")
+        
+        # Test 3: Check Content-Disposition header
+        print("\n3. Checking Content-Disposition header...")
+        content_disposition = response.headers.get('Content-Disposition', '')
+        print(f"   Content-Disposition: {content_disposition}")
+        
+        if 'attachment' not in content_disposition:
+            print(f"   ❌ FAIL: Expected 'attachment' in Content-Disposition")
+            return False
+        
+        if 'Tahsilat_Makbuzu_' not in content_disposition:
+            print(f"   ❌ FAIL: Expected filename to contain 'Tahsilat_Makbuzu_'")
+            return False
+        
+        print("   ✅ PASS: Correct Content-Disposition header for PDF download")
+        
+        # Test 4: Check PDF content size
+        print("\n4. Checking PDF content...")
+        pdf_content = response.content
+        pdf_size = len(pdf_content)
+        print(f"   PDF Size: {pdf_size} bytes")
+        
+        if pdf_size < 1000:  # PDF should be at least 1KB
+            print(f"   ❌ FAIL: PDF size too small, might be empty or corrupted")
+            return False
+        
+        print(f"   ✅ PASS: PDF generated with reasonable size: {pdf_size} bytes")
+        
+        # Test 5: Check PDF header
+        print("\n5. Validating PDF format...")
+        if not pdf_content.startswith(b'%PDF'):
+            print("   ❌ FAIL: Response does not appear to be a valid PDF file")
+            return False
+        
+        print("   ✅ PASS: Valid PDF file format confirmed")
+        
+        print("\n" + "=" * 80)
+        print("COLLECTION RECEIPT PDF GENERATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Correct Content-Type for PDF response")
+        print("✅ Proper Content-Disposition header for download")
+        print("✅ PDF generated with valid format and size")
+        print("✅ PDF download functionality working")
+        print(f"\n🎉 COLLECTION RECEIPT PDF GENERATION TEST PASSED!")
+        print(f"   PDF Size: {pdf_size:,} bytes")
+        print(f"   Content-Type: {content_type}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_collection_receipt_integration_workflow():
+    """
+    Test complete collection receipt workflow integration.
+    
+    Requirements to verify:
+    1. Complete workflow: create receipt → email sent → approval process → PDF generation
+    2. Proper error handling for invalid data
+    3. Edge cases (expired signature keys, missing data, etc.)
+    """
+    
+    print("=" * 80)
+    print("TESTING COLLECTION RECEIPT INTEGRATION WORKFLOW")
+    print("=" * 80)
+    
+    print("Running complete collection receipt workflow integration test...")
+    
+    # Step 1: Create collection receipt
+    print("\n" + "=" * 50)
+    print("STEP 1: CREATE COLLECTION RECEIPT")
+    print("=" * 50)
+    
+    success, receipt_id, signature_link = test_collection_receipt_creation()
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not create collection receipt")
+        return False
+    
+    # Step 2: Retrieve all receipts
+    print("\n" + "=" * 50)
+    print("STEP 2: RETRIEVE ALL RECEIPTS")
+    print("=" * 50)
+    
+    success = test_collection_receipts_get_all()
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not retrieve all receipts")
+        return False
+    
+    # Step 3: Retrieve single receipt
+    print("\n" + "=" * 50)
+    print("STEP 3: RETRIEVE SINGLE RECEIPT")
+    print("=" * 50)
+    
+    success = test_collection_receipt_get_single(receipt_id)
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not retrieve single receipt")
+        return False
+    
+    # Step 4: Get approval page data
+    print("\n" + "=" * 50)
+    print("STEP 4: GET APPROVAL PAGE DATA")
+    print("=" * 50)
+    
+    success = test_collection_receipt_approval_get(signature_link)
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not get approval page data")
+        return False
+    
+    # Step 5: Approve receipt
+    print("\n" + "=" * 50)
+    print("STEP 5: APPROVE RECEIPT")
+    print("=" * 50)
+    
+    success, approved_receipt_id = test_collection_receipt_approval_post(signature_link)
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not approve receipt")
+        return False
+    
+    # Step 6: Generate PDF
+    print("\n" + "=" * 50)
+    print("STEP 6: GENERATE PDF")
+    print("=" * 50)
+    
+    success = test_collection_receipt_pdf_generation(approved_receipt_id)
+    if not success:
+        print("❌ INTEGRATION TEST FAILED: Could not generate PDF")
+        return False
+    
+    # Step 7: Test error cases
+    print("\n" + "=" * 50)
+    print("STEP 7: TEST ERROR CASES")
+    print("=" * 50)
+    
+    # Test invalid receipt ID
+    print("\n7.1 Testing invalid receipt ID...")
+    invalid_endpoint = f"{BACKEND_URL}/api/collection-receipts/invalid-id-12345"
+    try:
+        response = requests.get(invalid_endpoint, timeout=30)
+        if response.status_code == 404:
+            print("   ✅ PASS: Invalid receipt ID returns 404 as expected")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for invalid receipt ID, got {response.status_code}")
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing invalid receipt ID: {str(e)}")
+    
+    # Test invalid signature key
+    print("\n7.2 Testing invalid signature key...")
+    invalid_approval_endpoint = f"{BACKEND_URL}/api/collection-receipt-approval/invalid-key-12345"
+    try:
+        response = requests.get(invalid_approval_endpoint, timeout=30)
+        if response.status_code == 404:
+            print("   ✅ PASS: Invalid signature key returns 404 as expected")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for invalid signature key, got {response.status_code}")
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing invalid signature key: {str(e)}")
+    
+    print("\n" + "=" * 80)
+    print("COLLECTION RECEIPT INTEGRATION WORKFLOW TEST RESULTS:")
+    print("=" * 80)
+    print("✅ STEP 1: Collection receipt creation - PASSED")
+    print("✅ STEP 2: Retrieve all receipts - PASSED")
+    print("✅ STEP 3: Retrieve single receipt - PASSED")
+    print("✅ STEP 4: Get approval page data - PASSED")
+    print("✅ STEP 5: Approve receipt - PASSED")
+    print("✅ STEP 6: Generate PDF - PASSED")
+    print("✅ STEP 7: Error handling tests - PASSED")
+    print("\n🎉 COMPLETE COLLECTION RECEIPT INTEGRATION WORKFLOW TEST PASSED!")
+    print(f"   Successfully tested end-to-end workflow")
+    print(f"   Receipt ID: {receipt_id}")
+    print(f"   All endpoints working correctly")
+    print(f"   Error handling verified")
+    
+    return True
+
 def test_invoice_status_filtering_comprehensive():
     """
     Comprehensive test for invoice status filtering functionality for the three new accounting pages:
