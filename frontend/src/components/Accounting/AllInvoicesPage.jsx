@@ -12,7 +12,12 @@ import {
   Edit,
   Trash2,
   Plus,
-  X
+  X,
+  MoreVertical,
+  XCircle,
+  Mail,
+  MessageSquare,
+  CreditCard
 } from 'lucide-react';
 import InvoicePreviewModal from './InvoicePreviewModal';
 
