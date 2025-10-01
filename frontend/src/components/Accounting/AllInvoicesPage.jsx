@@ -29,6 +29,7 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     currency: 'all',
