@@ -68,10 +68,93 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     }
   });
 
-  // Load receipts on component mount
+  // Load receipts and user data on component mount
   useEffect(() => {
     loadReceipts();
+    loadCurrentUser();
+    loadMockPaymentData();
   }, []);
+
+  const loadCurrentUser = async () => {
+    // In real app, this would come from auth context or API
+    try {
+      // Mock current user data
+      const user = {
+        name: 'Murat Başaran',
+        title: 'Mali Müşavir',
+        company_name: 'Vitingo CRM Ltd. Şti.',
+        company_address: 'Maslak Mahallesi, Büyükdere Cad. No:123, 34485 Sarıyer/İstanbul',
+        company_phone: '+90 212 555 0000',
+        company_email: 'info@vitingo.com'
+      };
+      setCurrentUser(user);
+      
+      // Update form data with user info
+      setFormData(prev => ({
+        ...prev,
+        issuer_name: user.name,
+        issuer_title: user.title,
+        company_name: user.company_name,
+        company_address: user.company_address,
+        company_phone: user.company_phone,
+        company_email: user.company_email
+      }));
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  const loadMockPaymentData = async () => {
+    // In real app, this would come from the payment that triggered receipt creation
+    try {
+      const mockCustomer = {
+        id: 'cust_001',
+        name: 'ABC İnşaat A.Ş.',
+        email: 'muhasebe@abcinsaat.com.tr',
+        phone: '+90 212 555 1234',
+        address: 'Levent Mahallesi, İstanbul'
+      };
+      
+      const mockPayment = {
+        id: 'pay_001',
+        customer_id: 'cust_001',
+        invoice_number: 'VIT-2024-001',
+        payment_reason: 'Fatura No: VIT-2024-001 - Yazılım Geliştirme Hizmeti Ödemesi',
+        total_amount: 15750.00,
+        payment_details: {
+          cash_amount: 5000.00,
+          credit_card_amount: 7500.00,
+          check_amount: 3250.00,
+          promissory_note_amount: 0.00,
+          check_details: [
+            {
+              bank: 'Garanti Bankası',
+              branch: 'Maslak Şubesi', 
+              account_iban: 'TR12 0006 2000 2600 0006 2972 75',
+              check_number: '4567890',
+              check_date: '2024-11-15',
+              amount: 3250.00
+            }
+          ]
+        }
+      };
+      
+      setSelectedCustomer(mockCustomer);
+      setSelectedPayment(mockPayment);
+      
+      // Update form data with payment and customer info
+      setFormData(prev => ({
+        ...prev,
+        payer_name: mockCustomer.name,
+        payer_email: mockCustomer.email,
+        payment_reason: mockPayment.payment_reason,
+        total_amount: mockPayment.total_amount,
+        payment_details: mockPayment.payment_details
+      }));
+    } catch (error) {
+      console.error('Error loading payment data:', error);
+    }
+  };
 
   const loadReceipts = async () => {
     setIsLoading(true);
