@@ -478,6 +478,41 @@ export default function Sidebar({
       }
       return;
     }
+    
+    if (subItem && subItem.name === 'Taslak Teklifler') {
+      if (onDraftQuotes) {
+        onDraftQuotes();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Yönetici Onayında') {
+      if (onPendingApprovalQuotes) {
+        onPendingApprovalQuotes();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Gönderilen Teklifler') {
+      if (onSentQuotes) {
+        onSentQuotes();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Kazanılan Teklifler') {
+      if (onWonQuotes) {
+        onWonQuotes();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Kaybedilen Teklifler') {
+      if (onLostQuotes) {
+        onLostQuotes();
+      }
+      return;
+    }
     // Handle Fair Management menu actions
     if (subItem && subItem.name === 'Yeni Fuar') {
       if (onNewFair) {
