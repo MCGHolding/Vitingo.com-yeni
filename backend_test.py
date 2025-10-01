@@ -1403,7 +1403,7 @@ def test_vitingo_invoice_endpoints():
                 print("Creating a test invoice for further testing...")
                 
                 # Create a test invoice for testing
-                test_invoice = await create_test_invoice_for_testing()
+                test_invoice = create_test_invoice_for_testing()
                 if test_invoice:
                     invoices_data = [test_invoice]
                     print(f"✅ Test invoice created with ID: {test_invoice.get('id')}")
