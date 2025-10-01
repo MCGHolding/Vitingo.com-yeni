@@ -226,21 +226,30 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
 
   const handleDeleteInvoice = async () => {
     try {
+      console.log('Fatura silme başlatılıyor:', selectedInvoice.id);
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
       const response = await fetch(`${backendUrl}/api/invoices/${selectedInvoice.id}`, {
         method: 'DELETE',
       });
       
+      console.log('Delete response status:', response.status);
+      
       if (response.ok) {
+        const result = await response.json();
+        console.log('Delete result:', result);
+        
         // Faturayı listeden kaldır
         setInvoices(prev => prev.filter(inv => inv.id !== selectedInvoice.id));
         alert('Fatura başarıyla silindi');
       } else {
-        alert('Fatura silinemedi');
+        const errorText = await response.text();
+        console.error('Fatura silme hatası:', response.status, errorText);
+        alert(`Fatura silinemedi: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error('Silme hatası:', error);
-      alert('Fatura silinemedi');
+      alert(`Fatura silinemedi: ${error.message}`);
     } finally {
       setShowDeleteModal(false);
       setSelectedInvoice(null);
