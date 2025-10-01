@@ -1662,42 +1662,6 @@ def create_test_invoice_for_testing():
     except Exception as e:
         print(f"Error creating test invoice: {str(e)}")
         return None
-        print("=" * 60)
-        
-        # Test 4a: Invoice with null customer_id (common frontend issue)
-        print("\n4a. Testing invoice with null customer_id...")
-        null_customer_data = test_invoice_data.copy()
-        null_customer_data['customer_id'] = None
-        null_customer_data['invoice_number'] = next_invoice_number.replace('001', '002')  # Different number
-        
-        null_response = requests.post(invoices_endpoint, json=null_customer_data, timeout=30)
-        print(f"   Status Code: {null_response.status_code}")
-        
-        if null_response.status_code == 422:
-            print("   ✅ EXPECTED: Backend correctly rejects null customer_id with 422")
-            print("   🔍 ANALYSIS: Frontend should handle this validation error properly")
-        elif null_response.status_code in [200, 201]:
-            print("   ⚠️  WARNING: Backend accepts null customer_id - might cause issues")
-        else:
-            print(f"   ❓ UNEXPECTED: Status {null_response.status_code}")
-        
-        # Test 4b: Invoice with empty customer_name
-        print("\n4b. Testing invoice with empty customer_name...")
-        empty_name_data = test_invoice_data.copy()
-        empty_name_data['customer_name'] = ""
-        empty_name_data['invoice_number'] = next_invoice_number.replace('001', '003')  # Different number
-        
-        empty_name_response = requests.post(invoices_endpoint, json=empty_name_data, timeout=30)
-        print(f"   Status Code: {empty_name_response.status_code}")
-        
-        if empty_name_response.status_code == 422:
-            print("   ✅ EXPECTED: Backend correctly rejects empty customer_name with 422")
-        elif empty_name_response.status_code in [200, 201]:
-            print("   ⚠️  WARNING: Backend accepts empty customer_name")
-        
-        # Test 4c: Invoice with malformed items array
-        print("\n4c. Testing invoice with malformed items...")
-        malformed_items_data = test_invoice_data.copy()
         malformed_items_data['items'] = [{"invalid": "item"}]  # Missing required fields
         malformed_items_data['invoice_number'] = next_invoice_number.replace('001', '004')  # Different number
         
