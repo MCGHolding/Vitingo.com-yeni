@@ -345,9 +345,9 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     };
     localStorage.setItem('invoiceFormState', JSON.stringify(currentFormState));
     
-    // Yeni müşteri sayfasına git
+    // Yeni müşteri sayfasına git, faturadan geldiğini belirt
     if (onNewCustomer) {
-      onNewCustomer();
+      onNewCustomer(true); // returnToInvoice = true
     }
   };
 
