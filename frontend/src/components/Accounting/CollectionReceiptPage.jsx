@@ -638,6 +638,7 @@ const MailModal = ({ receipt, onClose }) => {
     message: `Sayın ${receipt.payer_name},\n\n${receipt.receipt_number} numaralı tahsilat makbuzunuz ektedir.\n\nSaygılarımızla,\nVitingo CRM`
   });
   const [isSending, setIsSending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSendMail = async () => {
     setIsSending(true);
@@ -650,8 +651,7 @@ const MailModal = ({ receipt, onClose }) => {
       });
 
       if (response.ok) {
-        alert('Mail başarıyla gönderildi!');
-        onClose();
+        setIsSuccess(true);
       } else {
         alert('Mail gönderme hatası!');
       }
@@ -661,6 +661,10 @@ const MailModal = ({ receipt, onClose }) => {
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleBackToForm = () => {
+    setIsSuccess(false);
   };
 
   return (
