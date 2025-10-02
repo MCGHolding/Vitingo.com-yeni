@@ -367,7 +367,7 @@ export default function Sidebar({
   const [searchTerm, setSearchTerm] = useState('');
   
   // Clear search term when user changes (to prevent login username from affecting sidebar search)
-  React.useEffect(() => {
+  useEffect(() => {
     setSearchTerm('');
   }, [user?.id]);
   
