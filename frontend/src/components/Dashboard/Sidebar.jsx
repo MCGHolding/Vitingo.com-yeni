@@ -918,8 +918,13 @@ export default function Sidebar({
         console.log('Navigate to:', item.href);
       }
     } else {
-      // Handle submenu navigation
-      console.log('Navigate to:', subItem.href);
+      // Handle submenu navigation - only navigate if it doesn't have its own submenu
+      if (subItem.hasSubmenu) {
+        // SubItems with submenu should toggle their submenu, not navigate
+        toggleSubmenu(subItem.name);
+      } else {
+        console.log('Navigate to:', subItem.href);
+      }
     }
   };
 
