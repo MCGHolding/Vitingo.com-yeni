@@ -213,50 +213,66 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* A) TL Cinsinden Toplam Tahsilat Tutarı */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Toplam Makbuz</p>
-              <p className="text-2xl font-bold text-gray-900">{totalReceipts}</p>
-            </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <FileText className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">İmza Bekleyen</p>
-              <p className="text-2xl font-bold text-yellow-600">{pendingReceipts}</p>
-            </div>
-            <div className="p-3 bg-yellow-100 rounded-lg">
-              <Clock className="h-6 w-6 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">İmzalanan</p>
-              <p className="text-2xl font-bold text-green-600">{signedReceipts}</p>
-            </div>
-            <div className="p-3 bg-green-100 rounded-lg">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Toplam Tutar</p>
-              <p className="text-2xl font-bold text-blue-600">₺{formatNumber(totalAmount)}</p>
+              <p className="text-sm font-medium text-gray-600">TL Toplam Tahsilat</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {isLoadingStats ? '...' : `₺${formatNumber(statistics?.total_amount_tl || totalAmount)}`}
+              </p>
+              <p className="text-xs text-blue-500 mt-1">TCMB Kurlarıyla Çevrildi</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-lg">
               <DollarSign className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* B) En Çok Tahsilat Yapan Müşteri */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">En Çok Tahsilat</p>
+              <p className="text-2xl font-bold text-green-600">
+                {isLoadingStats ? '...' : (statistics?.top_customer || 'Veri Yok')}
+              </p>
+              <p className="text-xs text-green-500 mt-1">Müşteri Kısa Adı</p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-lg">
+              <Users className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* C) Toplam Tahsilat Adedi */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Tahsilat</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {isLoadingStats ? '...' : (statistics?.total_count || totalReceipts)}
+              </p>
+              <p className="text-xs text-purple-500 mt-1">Tahsilat Adedi</p>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-lg">
+              <Receipt className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* D) Ortalama Tahsilat Vadesi */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Ortalama Vade</p>
+              <p className="text-2xl font-bold text-orange-600">
+                {isLoadingStats ? '...' : `${statistics?.average_days || 0} gün`}
+              </p>
+              <p className="text-xs text-orange-500 mt-1">Tahsilat Vadesi</p>
+            </div>
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-orange-600" />
             </div>
           </div>
         </div>
