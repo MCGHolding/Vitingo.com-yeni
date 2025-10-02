@@ -1000,7 +1000,6 @@ export default function Sidebar({
                             <div className="ml-6 mt-2 space-y-1">
                               {subItem.submenu?.map((nestedSubItem) => {
                                 const NestedIcon = nestedSubItem.icon;
-                                const isDeepNestedSubmenuOpen = openSubmenu === nestedSubItem.name;
                                 
                                 return (
                                   <div key={nestedSubItem.name}>
