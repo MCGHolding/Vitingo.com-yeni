@@ -160,6 +160,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Tahsilat Makbuzları</h1>
             <p className="text-gray-600">{filteredReceipts.length} makbuz bulundu</p>
+            <p className="text-sm text-blue-600 mt-1">Tahsilat makbuzları ödeme alındığında otomatik oluşturulur</p>
           </div>
         </div>
         <div className="flex space-x-3">
