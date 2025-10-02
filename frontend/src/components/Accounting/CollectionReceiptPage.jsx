@@ -330,7 +330,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
             </label>
             <Input
               type="text"
-              placeholder="Makbuz no., ödeyen adı..."
+              placeholder="Makbuz no., ödeyen, ödeme şekli..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
             />
