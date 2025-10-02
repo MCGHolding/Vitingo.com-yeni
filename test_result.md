@@ -290,15 +290,18 @@ frontend:
 
   - task: "New Collection Form Implementation"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/components/Collections/NewCollectionForm.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "Testing comprehensive New Collection Form implementation: customer/supplier selection logic, form validation, collection items management, totals calculation, and backend integration with /api/collections endpoint."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL NAVIGATION ISSUE IDENTIFIED - NEW COLLECTION FORM NOT ACCESSIBLE: Comprehensive testing completed with definitive findings. ✅ AUTHENTICATION WORKING: Successfully logged in as Muhasebe user (sukb/Sukran2024!) with correct header display showing 'Şükran Bucak' and 'Muhasebe' department ✅ MENU STRUCTURE PRESENT: Found Muhasebe menu with 'Yeni Tahsilatlar' submenu visible in sidebar, special Muhasebe menu structure is generated correctly ✅ BACKEND INTEGRATION READY: Collections API endpoint /api/collections working correctly (returns empty array as expected), NewCollectionForm component properly implemented with comprehensive functionality ✅ APP.JS ROUTING CONFIGURED: handleNewCollection function defined and connected, 'new-collection' case properly handled in renderContent switch statement, onNewCollection prop passed to Sidebar component correctly ❌ CRITICAL ISSUE - MENU NAVIGATION BROKEN: 'Yeni Tahsilat' menu item is NOT being rendered in the DOM despite being defined in Sidebar.jsx navigation structure. JavaScript search found 0 elements with 'Yeni Tahsilat' text, indicating the nested submenu rendering is failing. The 3-level menu structure (Muhasebe → Yeni Tahsilatlar → Yeni Tahsilat) is not working properly. 🔍 ROOT CAUSE ANALYSIS: The issue is in the Sidebar.jsx nested submenu rendering logic. While the menu structure is defined correctly and the click handler exists (lines 748-754), the nested submenu items are not being rendered in the DOM. This prevents users from accessing the New Collection Form despite all other components being properly implemented. 📋 URGENT RECOMMENDATIONS FOR MAIN AGENT: 1) Debug the nested submenu rendering logic in Sidebar.jsx around lines 998+ where 'Yeni Tahsilatlar' nested items should appear 2) Verify the conditional rendering for 3-level menu structure is working correctly 3) Check if the menu state management for nested submenus is functioning 4) The NewCollectionForm component itself is fully implemented and ready - the issue is purely in menu navigation 🚨 BLOCKING ISSUE: Users cannot access the New Collection Form through the intended navigation path, making the comprehensive form functionality untestable until the menu navigation is fixed."
 
 backend:
   - task: "Collection Receipt System Backend Testing"
