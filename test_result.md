@@ -1564,6 +1564,7 @@ agent_communication:
 
 test_plan:
   current_focus:
+    - "Muhasebe Department Specific Menu Structure"
     - "Invoice Creation Bug - Backend Testing COMPLETED"
   stuck_tasks: 
     - "Customer Selection Bug Fix in NewInvoiceForm"
