@@ -5439,6 +5439,229 @@ async def generate_collection_receipt_pdf(receipt_id: str):
         logger.error(f"Error generating collection receipt PDF: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== EMAIL CONTENT GENERATORS =====================
+
+def generate_collection_email_content(receipt_input, receipt_number, issue_date, pdf_link):
+    """Generate dynamic email content based on payment details and type"""
+    
+    # Parse payment details
+    payment_details = receipt_input.payment_details
+    cash_amount = payment_details.get('cash_amount', 0)
+    credit_card_amount = payment_details.get('credit_card_amount', 0) 
+    check_amount = payment_details.get('check_amount', 0)
+    promissory_note_amount = payment_details.get('promissory_note_amount', 0)
+    
+    # Determine primary payment method
+    payment_methods = []
+    if cash_amount > 0:
+        payment_methods.append(("nakit", cash_amount))
+    if credit_card_amount > 0:
+        payment_methods.append(("kredi kartı", credit_card_amount))
+    if check_amount > 0:
+        payment_methods.append(("çek", check_amount))
+    if promissory_note_amount > 0:
+        payment_methods.append(("senet", promissory_note_amount))
+    
+    # Default to bank transfer if no specific method detected
+    if not payment_methods:
+        payment_methods.append(("banka havalesi", receipt_input.total_amount))
+    
+    # Generate payment method specific text
+    primary_method = payment_methods[0][0]
+    
+    if primary_method == "banka havalesi":
+        payment_text = f"banka kanalıyla yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
+        gratitude_text = "Bankacılık kanalıyla gerçekleştirdiğiniz güvenli ödeme"
+    elif primary_method == "nakit":
+        payment_text = f"nakit olarak yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
+        gratitude_text = "Nakit olarak gerçekleştirdiğiniz ödeme"
+    elif primary_method == "kredi kartı":
+        payment_text = f"kredi kartıyla yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
+        gratitude_text = "Kredi kartıyla gerçekleştirdiğiniz ödeme"
+    elif primary_method == "çek":
+        check_info = payment_details.get('check_details', [])
+        if check_info:
+            check_detail = check_info[0]
+            payment_text = f"çek ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme (Çek No: {check_detail.get('check_number', 'Belirtilmemiş')}, Banka: {check_detail.get('bank', 'Belirtilmemiş')})"
+        else:
+            payment_text = f"çek ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
+        gratitude_text = "Çek ile gerçekleştirdiğiniz ödeme"
+    elif primary_method == "senet":
+        payment_text = f"senet ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
+        gratitude_text = "Senet ile gerçekleştirdiğiniz ödeme"
+    
+    # Format date in Turkish
+    try:
+        date_obj = datetime.strptime(issue_date, "%Y-%m-%d")
+        formatted_date = date_obj.strftime("%d.%m.%Y")
+    except:
+        formatted_date = issue_date
+    
+    # Mock remaining balance and payment history (will be real data later)
+    remaining_balance = 126800  # USD mock data
+    currency_symbol = "USD"
+    
+    # Calculate if payment is late (mock logic for now)
+    is_late = False
+    late_days = 0
+    # TODO: Implement real late payment calculation based on due date
+    # For demo purposes, randomly set some payments as late
+    import random
+    if random.choice([True, False, False, False]):  # 25% chance of being late
+        is_late = True
+        late_days = random.randint(1, 15)
+    
+    # Generate late payment text
+    late_payment_text = ""
+    if is_late:
+        if late_days <= 5:
+            late_payment_text = f"""
+            <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                <p style="color: #856404; margin: 0; font-size: 14px;">
+                    <strong>💡 Bilgilendirme:</strong> Bu ödeme vade tarihinden {late_days} gün sonra gerçekleşmiştir. 
+                    Gelecekte ödemelerinizi vade tarihinde yapmanız durumunda size daha iyi hizmet verebiliriz. 
+                    Anlayışınız için teşekkür ederiz.
+                </p>
+            </div>
+            """
+        else:
+            late_payment_text = f"""
+            <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                <p style="color: #721c24; margin: 0; font-size: 14px;">
+                    <strong>⏰ Gecikme Bildirimi:</strong> Bu ödeme vade tarihinden {late_days} gün sonra gerçekleşmiştir. 
+                    Zamanında ödemelerinizi yapmanız hem sizin hem de bizim için daha verimli bir iş sürecidir. 
+                    Ödemeler konusunda göstereceğiniz ilgiden duyacağımız memnuniyeti şimdiden belirtmek isteriz.
+                </p>
+            </div>
+            """
+    
+    # Mock payment history
+    payment_history = [
+        {"date": "15.11.2024", "amount": "25.500", "currency": "USD", "method": "Banka Havalesi"},
+        {"date": "28.10.2024", "amount": "18.200", "currency": "USD", "method": "Çek"},
+        {"date": formatted_date, "amount": f"{receipt_input.total_amount:,.0f}", "currency": "TL", "method": primary_method.title()},
+    ]
+    
+    payment_history_html = ""
+    for payment in payment_history:
+        payment_history_html += f"""
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px; color: #4a5568;">{payment['date']}</td>
+            <td style="padding: 8px; color: #4a5568;">{payment['amount']} {payment['currency']}</td>
+            <td style="padding: 8px; color: #4a5568;">{payment['method']}</td>
+        </tr>
+        """
+    
+    # Generate full email content
+    email_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ödeme Onayı - {receipt_number}</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f7fafc;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">💰 Ödeme Onayı</h1>
+                <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 14px;">Tahsilat Makbuzu #{receipt_number}</p>
+            </div>
+            
+            <!-- Main Content -->
+            <div style="padding: 30px;">
+                <h2 style="color: #2d3748; margin: 0 0 20px 0; font-size: 18px;">
+                    Sayın {receipt_input.payer_name},
+                </h2>
+                
+                <p style="color: #4a5568; line-height: 1.6; margin: 0 0 20px 0;">
+                    Şirketimize <strong>{formatted_date}</strong> tarihinde {payment_text} hesabınıza yansımıştır. 
+                    Değerli ödemeniz için teşekkür ederiz.
+                </p>
+                
+                {late_payment_text}
+                
+                <!-- Payment Summary -->
+                <div style="background-color: #edf2f7; border: 1px solid #cbd5e0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <h3 style="color: #2d3748; margin: 0 0 15px 0; font-size: 16px;">📋 Ödeme Özeti</h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: #4a5568;"><strong>Ödeme Tutarı:</strong></span>
+                        <span style="color: #38a169; font-weight: bold;">{receipt_input.total_amount:,.2f} TL</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: #4a5568;"><strong>Ödeme Yöntemi:</strong></span>
+                        <span style="color: #4a5568;">{primary_method.title()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #4a5568;"><strong>Kalan Bakiye:</strong></span>
+                        <span style="color: #3182ce; font-weight: bold;">{remaining_balance:,.0f} {currency_symbol}</span>
+                    </div>
+                </div>
+                
+                <!-- Payment History -->
+                <div style="margin: 25px 0;">
+                    <h3 style="color: #2d3748; margin: 0 0 15px 0; font-size: 16px;">📊 Son Ödemeleriniz</h3>
+                    <table style="width: 100%; border-collapse: collapse; background-color: #f7fafc; border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background-color: #e2e8f0;">
+                                <th style="padding: 10px; text-align: left; color: #2d3748; font-size: 14px;">Tarih</th>
+                                <th style="padding: 10px; text-align: left; color: #2d3748; font-size: 14px;">Tutar</th>
+                                <th style="padding: 10px; text-align: left; color: #2d3748; font-size: 14px;">Yöntem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {payment_history_html}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Gratitude Message -->
+                <div style="background-color: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                    <p style="color: #22543d; margin: 0; text-align: center; font-size: 15px;">
+                        ✨ {gratitude_text} için teşekkür ederiz. Zamanında gerçekleştirdiğiniz ödemeler 
+                        iş ortaklığımızın güçlenmesine katkıda bulunmaktadır.
+                    </p>
+                </div>
+                
+                <!-- Receipt Download -->
+                <div style="text-align: center; margin: 30px 0;">
+                    <p style="color: #4a5568; margin: 0 0 15px 0;">
+                        Aşağıdaki butona basarak tahsilat makbuzunu görüntüleyebilir veya PDF formatında indirebilirsiniz:
+                    </p>
+                    <a href="https://invoice-manager-114.preview.emergentagent.com{pdf_link}" 
+                       style="display: inline-block; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); 
+                              color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; 
+                              font-weight: bold; box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);">
+                        📄 Makbuzu Görüntüle/İndir
+                    </a>
+                </div>
+                
+                <!-- Closing -->
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 30px;">
+                    <p style="color: #4a5568; line-height: 1.6; margin: 0; text-align: center;">
+                        Şirketimize gösterdiğiniz ilgi ve güven için teşekkür ederiz. 
+                        Herhangi bir sorunuz olması durumunda bizimle iletişime geçmekten çekinmeyiniz.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background-color: #2d3748; padding: 20px; text-align: center;">
+                <p style="color: #a0aec0; margin: 0; font-size: 14px;">
+                    <strong>{receipt_input.company_name}</strong><br>
+                    {receipt_input.company_address}<br>
+                    Tel: {receipt_input.company_phone} | Email: {receipt_input.company_email}
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return email_content
+
 # ===================== COLLECTION MODELS & ENDPOINTS =====================
 
 class CollectionItem(BaseModel):
