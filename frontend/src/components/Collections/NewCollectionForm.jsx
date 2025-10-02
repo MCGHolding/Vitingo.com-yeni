@@ -778,7 +778,7 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || totals.totalCollected <= 0}
+            disabled={isSubmitting || totals.totalCollected <= 0 || Object.values(validationErrors).some(error => error !== '')}
             className="flex items-center space-x-2"
           >
             {isSubmitting ? (
