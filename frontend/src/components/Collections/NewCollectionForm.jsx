@@ -72,7 +72,6 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
 
   const [formData, setFormData] = useState({
     // Main form fields
-    customerType: '', // 'customer' or 'supplier'
     customerId: '',
     supplierId: '',
     contactPersonId: '',
