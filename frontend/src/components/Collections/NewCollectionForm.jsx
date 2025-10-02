@@ -150,6 +150,9 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     remaining: 0
   });
 
+  // Validation errors
+  const [validationErrors, setValidationErrors] = useState({});
+
   // Mock Projects Data
   const mockProjects = [
     { id: '1', name: 'Dubai Expo 2025 Projesi', customer_id: '', description: 'Dubai fuarı organizasyon projesi' },
