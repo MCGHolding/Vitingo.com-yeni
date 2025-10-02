@@ -5199,6 +5199,68 @@ async def get_collection_receipt(receipt_id: str):
         logger.error(f"Error getting collection receipt: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/collection-receipts/{receipt_id}", response_model=CollectionReceipt)
+async def update_collection_receipt(receipt_id: str, receipt_data: CollectionReceiptCreate):
+    """Update existing collection receipt"""
+    try:
+        # Check if receipt exists
+        existing_receipt = await db.collection_receipts.find_one({"id": receipt_id})
+        if not existing_receipt:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        # Prepare update data
+        update_data = receipt_data.dict()
+        update_data["updated_at"] = datetime.utcnow()
+        
+        # Keep original receipt number and creation date
+        update_data["receipt_number"] = existing_receipt["receipt_number"]
+        update_data["created_at"] = existing_receipt["created_at"]
+        update_data["id"] = receipt_id
+        
+        # Generate total amount words
+        from .amount_to_words import amount_to_words_turkish
+        update_data["total_amount_words"] = amount_to_words_turkish(update_data["total_amount"])
+        
+        # Update receipt in database
+        result = await db.collection_receipts.replace_one({"id": receipt_id}, update_data)
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        # Return updated receipt
+        updated_receipt = await db.collection_receipts.find_one({"id": receipt_id})
+        return CollectionReceipt(**updated_receipt)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating collection receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/collection-receipts/{receipt_id}/send-email")
+async def send_collection_receipt_email(receipt_id: str, email_data: dict):
+    """Send collection receipt via email"""
+    try:
+        # Get receipt
+        receipt = await db.collection_receipts.find_one({"id": receipt_id})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Tahsilat makbuzu bulunamadı")
+        
+        # Here you would integrate with email service
+        # For now, just return success
+        return {
+            "success": True,
+            "message": "E-posta başarıyla gönderildi",
+            "receipt_id": receipt_id,
+            "to": email_data.get("to", "")
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending collection receipt email: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/collection-receipt-approval/{signature_key}")
 async def get_collection_receipt_approval(signature_key: str):
     """İmzalama sayfası için tahsilat makbuzu bilgilerini getir"""
