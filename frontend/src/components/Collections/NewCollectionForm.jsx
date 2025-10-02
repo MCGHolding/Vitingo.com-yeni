@@ -398,8 +398,8 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       // Set success modal data
       setCollectionResult({
         collectionNumber: response.data.collection_number,
-        totalAmount: parseNumber(formData.totalAmount || totalCollected),
-        currency: formData.currency || 'TL',
+        totalAmount: totalCollected,
+        currency: 'TL',
         customerName: formData.customerId ? 
           customers.find(c => c.id === formData.customerId)?.companyName : 
           suppliers.find(s => s.id === formData.supplierId)?.company_short_name,
