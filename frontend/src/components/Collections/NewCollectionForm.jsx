@@ -474,29 +474,38 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {formData.collectionItems.map((item, index) => {
-              const TypeIcon = collectionTypes.find(t => t.id === item.type)?.icon || Package;
-              
-              return (
-                <div key={item.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-4">
-                    {/* Row Number */}
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium mt-2">
-                      {index + 1}
-                    </div>
-                    
-                    {/* Collection Type */}
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Tahsilat Türü
-                        </label>
+          <div className="overflow-visible">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">Sıra No</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-700">Tahsilat Türü</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Tutar</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Para Birimi</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-700 w-48">Ek Bilgiler</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-700 w-20">İşlem</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formData.collectionItems.map((item, index) => {
+                  const TypeIcon = collectionTypes.find(t => t.id === item.type)?.icon || Package;
+                  
+                  return (
+                    <tr key={item.id} className="border-b border-gray-100">
+                      {/* Row Number */}
+                      <td className="py-3 px-2">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                      </td>
+                      
+                      {/* Collection Type */}
+                      <td className="py-3 px-2">
                         <Select 
                           value={item.type} 
                           onValueChange={(value) => updateCollectionItem(item.id, 'type', value)}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="w-full min-w-[200px]">
                             <SelectValue placeholder="Tür seçin..." />
                           </SelectTrigger>
                           <SelectContent>
@@ -510,48 +519,45 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                             ))}
                           </SelectContent>
                         </Select>
-                      </div>
+                      </td>
                       
                       {/* Amount */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Tutar
-                        </label>
-                        <div className="flex space-x-2">
-                          <Input
-                            type="text"
-                            value={item.amount ? formatNumber(item.amount) : ''}
-                            onChange={(e) => {
-                              const value = parseNumber(e.target.value);
-                              updateCollectionItem(item.id, 'amount', value);
-                            }}
-                            placeholder="0,00"
-                            className="flex-1"
-                          />
-                          <Select 
-                            value={item.currency} 
-                            onValueChange={(value) => updateCollectionItem(item.id, 'currency', value)}
-                          >
-                            <SelectTrigger className="w-24">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {currencies.map((currency) => (
-                                <SelectItem key={currency.code} value={currency.code}>
-                                  {currency.code}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
+                      <td className="py-3 px-2">
+                        <Input
+                          type="text"
+                          value={item.amount ? formatNumber(item.amount) : ''}
+                          onChange={(e) => {
+                            const value = parseNumber(e.target.value);
+                            updateCollectionItem(item.id, 'amount', value);
+                          }}
+                          placeholder="0,00"
+                          className="w-full"
+                        />
+                      </td>
                       
-                      {/* Bank Selection for Transfer */}
-                      {item.type === 'transfer' && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Banka Hesabı
-                          </label>
+                      {/* Currency */}
+                      <td className="py-3 px-2">
+                        <Select 
+                          value={item.currency} 
+                          onValueChange={(value) => updateCollectionItem(item.id, 'currency', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((currency) => (
+                              <SelectItem key={currency.code} value={currency.code}>
+                                {currency.code}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      
+                      {/* Additional Info */}
+                      <td className="py-3 px-2">
+                        {/* Bank Selection for Transfer */}
+                        {item.type === 'transfer' && (
                           <SearchableSelect
                             options={banks.map(bank => ({
                               id: bank.id,
@@ -562,120 +568,105 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                             onChange={(value) => updateCollectionItem(item.id, 'bankId', value)}
                             placeholder="Banka seçin..."
                             searchPlaceholder="Banka ara..."
-                            className="w-full"
+                            className="w-full min-w-[200px]"
                           />
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex flex-col space-y-2 mt-7">
-                      {/* Add Button - Always show */}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addCollectionItem}
-                        className="text-green-600 hover:text-green-700 hover:border-green-300"
-                        title="Yeni tahsilat türü ekle"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                        )}
+                        
+                        {/* Check Fields */}
+                        {item.type === 'check' && (
+                          <div className="grid grid-cols-1 gap-2 min-w-[200px]">
+                            <Input
+                              type="date"
+                              value={item.checkDate}
+                              onChange={(e) => updateCollectionItem(item.id, 'checkDate', e.target.value)}
+                              placeholder="Çek Tarihi"
+                              className="text-xs"
+                            />
+                            <Input
+                              type="text"
+                              value={item.checkNumber}
+                              onChange={(e) => updateCollectionItem(item.id, 'checkNumber', e.target.value)}
+                              placeholder="Çek No"
+                              className="text-xs"
+                            />
+                            <Input
+                              type="text"
+                              value={item.checkBank}
+                              onChange={(e) => updateCollectionItem(item.id, 'checkBank', e.target.value)}
+                              placeholder="Çek Bankası"
+                              className="text-xs"
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Promissory Note Fields */}
+                        {item.type === 'promissory' && (
+                          <div className="grid grid-cols-1 gap-2 min-w-[200px]">
+                            <Input
+                              type="date"
+                              value={item.promissoryDate}
+                              onChange={(e) => updateCollectionItem(item.id, 'promissoryDate', e.target.value)}
+                              placeholder="Senet Tarihi"
+                              className="text-xs"
+                            />
+                            <Input
+                              type="text"
+                              value={item.promissoryNumber}
+                              onChange={(e) => updateCollectionItem(item.id, 'promissoryNumber', e.target.value)}
+                              placeholder="Senet No"
+                              className="text-xs"
+                            />
+                            <Input
+                              type="text"
+                              value={item.promissoryBank}
+                              onChange={(e) => updateCollectionItem(item.id, 'promissoryBank', e.target.value)}
+                              placeholder="Senet Bankası"
+                              className="text-xs"
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Cash and Credit Card - No additional fields */}
+                        {(item.type === 'cash' || item.type === 'credit_card' || !item.type) && (
+                          <div className="text-sm text-gray-500 italic">
+                            {item.type === 'cash' && 'Nakit ödeme'}
+                            {item.type === 'credit_card' && 'Kredi kartı ödemesi'}
+                            {!item.type && 'Tür seçiniz'}
+                          </div>
+                        )}
+                      </td>
                       
-                      {/* Remove Button - Only show if more than 1 item */}
-                      {formData.collectionItems.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeCollectionItem(item.id)}
-                          className="text-red-600 hover:text-red-700 hover:border-red-300"
-                          title="Bu satırı sil"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Additional Fields for Check */}
-                  {item.type === 'check' && (
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 ml-12">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Çek Tarihi
-                        </label>
-                        <Input
-                          type="date"
-                          value={item.checkDate}
-                          onChange={(e) => updateCollectionItem(item.id, 'checkDate', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Çek No
-                        </label>
-                        <Input
-                          type="text"
-                          value={item.checkNumber}
-                          onChange={(e) => updateCollectionItem(item.id, 'checkNumber', e.target.value)}
-                          placeholder="Çek numarası"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Çek Bankası
-                        </label>
-                        <Input
-                          type="text"
-                          value={item.checkBank}
-                          onChange={(e) => updateCollectionItem(item.id, 'checkBank', e.target.value)}
-                          placeholder="Banka adı"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Additional Fields for Promissory Note */}
-                  {item.type === 'promissory' && (
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 ml-12">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Senet Tarihi
-                        </label>
-                        <Input
-                          type="date"
-                          value={item.promissoryDate}
-                          onChange={(e) => updateCollectionItem(item.id, 'promissoryDate', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Senet No
-                        </label>
-                        <Input
-                          type="text"
-                          value={item.promissoryNumber}
-                          onChange={(e) => updateCollectionItem(item.id, 'promissoryNumber', e.target.value)}
-                          placeholder="Senet numarası"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Senet Bankası
-                        </label>
-                        <Input
-                          type="text"
-                          value={item.promissoryBank}
-                          onChange={(e) => updateCollectionItem(item.id, 'promissoryBank', e.target.value)}
-                          placeholder="Banka adı"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                      {/* Action Buttons */}
+                      <td className="py-3 px-2">
+                        <div className="flex items-center space-x-1">
+                          {/* Add Button - Always show */}
+                          <button
+                            type="button"
+                            onClick={addCollectionItem}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Yeni satır ekle"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                          
+                          {/* Remove Button - Only show if more than 1 item */}
+                          {formData.collectionItems.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeCollectionItem(item.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Satırı sil"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
 
