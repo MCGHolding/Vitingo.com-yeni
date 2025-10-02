@@ -532,7 +532,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                           <CheckCircle className="w-3 h-3 mr-1" />
-                          Tahsil Edildi
+                          TE
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
