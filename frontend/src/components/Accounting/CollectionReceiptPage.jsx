@@ -172,16 +172,6 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
         </div>
         <div className="flex space-x-3">
           <Button
-            onClick={() => {
-              setShowCreateModal(true);
-              loadMockPaymentData(); // Refresh payment data when opening modal
-            }}
-            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Yeni Tahsilat Makbuzu
-          </Button>
-          <Button
             onClick={onBackToDashboard}
             variant="outline"
           >
