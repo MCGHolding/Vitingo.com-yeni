@@ -199,6 +199,18 @@ frontend:
         agent: "testing"
         comment: "Testing delete icon functionality with confirmation modal, invoice details display, and warning message."
 
+  - task: "Collection Receipt Modal Auto-Fill Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Accounting/CollectionReceiptPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing Collection Receipt (Tahsilat Makbuzu) modal functionality with auto-filled data: Modal opening & auto-fill verification, auto-filled data verification (3 sections with different color borders), form interaction test, and UI/UX verification."
+
   - task: "Customer Selection Bug Fix in NewInvoiceForm"
     implemented: true
     working: true
