@@ -259,11 +259,11 @@ frontend:
 
   - task: "New Collection Form Header Total Display"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/Collections/NewCollectionForm.jsx"
     stuck_count: 2
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
