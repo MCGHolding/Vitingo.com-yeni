@@ -5479,10 +5479,12 @@ def generate_collection_email_content(receipt_input, receipt_number, issue_date,
         payment_text = f"kredi kartıyla yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
         gratitude_text = "Kredi kartıyla gerçekleştirdiğiniz ödeme"
     elif primary_method == "çek":
-        check_info = payment_details.get('check_details', [])
+        check_info = getattr(payment_details, 'check_details', []) or []
         if check_info:
             check_detail = check_info[0]
-            payment_text = f"çek ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme (Çek No: {check_detail.get('check_number', 'Belirtilmemiş')}, Banka: {check_detail.get('bank', 'Belirtilmemiş')})"
+            check_number = getattr(check_detail, 'check_number', 'Belirtilmemiş') or 'Belirtilmemiş'
+            check_bank = getattr(check_detail, 'bank', 'Belirtilmemiş') or 'Belirtilmemiş'
+            payment_text = f"çek ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme (Çek No: {check_number}, Banka: {check_bank})"
         else:
             payment_text = f"çek ile yapmış olduğunuz {receipt_input.total_amount:,.0f} TL tutarındaki ödeme"
         gratitude_text = "Çek ile gerçekleştirdiğiniz ödeme"
