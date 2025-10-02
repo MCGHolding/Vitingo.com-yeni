@@ -747,9 +747,8 @@ export default function Sidebar({
 
     // Handle nested submenu items for "Yeni Tahsilatlar"
     if (nestedSubItem && nestedSubItem.name === 'Yeni Tahsilat') {
-      // For now, redirect to the existing collection receipt page
-      if (onCollectionReceipt) {
-        onCollectionReceipt();
+      if (onNewCollection) {
+        onNewCollection();
       }
       return;
     }
