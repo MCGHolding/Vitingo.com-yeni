@@ -670,64 +670,108 @@ const MailModal = ({ receipt, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Tahsilat Makbuzu Gönder</h3>
-        </div>
-        
-        <div className="px-6 py-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              E-posta Adresi
-            </label>
-            <input
-              type="email"
-              value={emailData.to}
-              onChange={(e) => setEmailData({...emailData, to: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={receipt.payer_email || 'E-posta adresini girin'}
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Konu
-            </label>
-            <input
-              type="text"
-              value={emailData.subject}
-              onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mesaj
-            </label>
-            <textarea
-              value={emailData.message}
-              onChange={(e) => setEmailData({...emailData, message: e.target.value})}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-        
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isSending}
-          >
-            İptal
-          </Button>
-          <Button
-            onClick={handleSendMail}
-            disabled={isSending || !emailData.to}
-          >
-            {isSending ? 'Gönderiliyor...' : 'Gönder'}
-          </Button>
-        </div>
+        {isSuccess ? (
+          // Success Screen
+          <>
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-green-600">Mail Başarıyla Gönderildi</h3>
+            </div>
+            
+            <div className="px-6 py-8 text-center">
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              <h4 className="text-lg font-medium text-gray-900 mb-2">
+                E-posta Başarıyla İletildi!
+              </h4>
+              <p className="text-sm text-gray-600 mb-1">
+                <strong>{receipt.receipt_number}</strong> numaralı
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                tahsilat makbuzu <strong>{emailData.to}</strong> adresine gönderildi.
+              </p>
+              <div className="bg-green-50 rounded-lg p-4">
+                <p className="text-sm text-green-700">
+                  ✅ E-posta başarıyla teslim edildi
+                </p>
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={handleBackToForm}
+              >
+                Tekrar Gönder
+              </Button>
+              <Button onClick={onClose}>
+                Kapat
+              </Button>
+            </div>
+          </>
+        ) : (
+          // Mail Form Screen
+          <>
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Tahsilat Makbuzu Gönder</h3>
+            </div>
+            
+            <div className="px-6 py-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  E-posta Adresi
+                </label>
+                <input
+                  type="email"
+                  value={emailData.to}
+                  onChange={(e) => setEmailData({...emailData, to: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={receipt.payer_email || 'E-posta adresini girin'}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Konu
+                </label>
+                <input
+                  type="text"
+                  value={emailData.subject}
+                  onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mesaj
+                </label>
+                <textarea
+                  value={emailData.message}
+                  onChange={(e) => setEmailData({...emailData, message: e.target.value})}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                disabled={isSending}
+              >
+                İptal
+              </Button>
+              <Button
+                onClick={handleSendMail}
+                disabled={isSending || !emailData.to}
+              >
+                {isSending ? 'Gönderiliyor...' : 'Gönder'}
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
