@@ -335,7 +335,8 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     }
   };
 
-  const selectedCurrency = currencies.find(c => c.code === formData.currency);
+  // Default to TL currency symbol
+  const defaultCurrency = currencies.find(c => c.code === 'TL');
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
