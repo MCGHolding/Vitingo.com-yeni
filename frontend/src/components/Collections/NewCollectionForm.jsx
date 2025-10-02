@@ -52,6 +52,42 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     return isNaN(num) ? '' : num;
   };
 
+  // Validate decimal places for amounts (max 2 decimal places)
+  const validateAmount = (value, itemType = '') => {
+    if (!value && value !== 0) return { isValid: true, value: '', error: '' };
+    
+    // Convert to string for decimal place checking
+    const strValue = value.toString();
+    const cleanValue = strValue.replace(/\./g, '').replace(',', '.');
+    
+    // Check for valid number
+    const num = parseFloat(cleanValue);
+    if (isNaN(num)) {
+      return { isValid: false, value: '', error: 'Geçerli bir sayı giriniz' };
+    }
+    
+    // Check decimal places
+    const parts = cleanValue.split('.');
+    if (parts[1] && parts[1].length > 2) {
+      return { 
+        isValid: false, 
+        value: num, 
+        error: `${itemType === 'check' ? 'Çek t' : 'T'}utarı en fazla 2 ondalık basamağa sahip olabilir` 
+      };
+    }
+    
+    // Check for negative numbers
+    if (num < 0) {
+      return { 
+        isValid: false, 
+        value: num, 
+        error: `${itemType === 'check' ? 'Çek t' : 'T'}utar negatif olamaz` 
+      };
+    }
+    
+    return { isValid: true, value: num, error: '' };
+  };
+
   // Currencies
   const currencies = [
     { code: 'TL', symbol: '₺', name: 'Türk Lirası' },
