@@ -362,8 +362,6 @@ export default function Sidebar({
   const navigation = React.useMemo(() => {
     return getNavigation(user?.department);
   }, [user?.department]);
-  const [openSubmenu, setOpenSubmenu] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleSubmenu = (itemName) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
