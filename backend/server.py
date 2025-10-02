@@ -5149,31 +5149,17 @@ async def create_collection_receipt(receipt_input: CollectionReceiptCreate):
         # E-posta gönder
         if receipt_input.payer_email:
             try:
-                # E-posta için HTML içerik oluştur
-                email_content = f"""
-                <h2>Tahsilat Makbuzu - İmza Talebi</h2>
-                <p>Sayın {receipt_input.payer_name},</p>
-                <p>Aşağıdaki tahsilat makbuzunun imzalanması gerekmektedir:</p>
-                
-                <div style="background-color: #f5f5f5; padding: 15px; margin: 20px 0; border-radius: 5px;">
-                    <strong>Makbuz Numarası:</strong> {receipt_number}<br>
-                    <strong>Tarih:</strong> {receipt_data['issue_date']}<br>
-                    <strong>Tutar:</strong> {receipt_input.total_amount:,.2f} TL<br>
-                    <strong>Ödeme Sebebi:</strong> {receipt_input.payment_reason}
-                </div>
-                
-                <p>Makbuzu görüntülemek ve imzalamak için aşağıdaki linke tıklayınız:</p>
-                <p><a href="https://invoice-manager-114.preview.emergentagent.com{signature_link}" 
-                      style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                   Makbuzu Görüntüle ve İmzala</a></p>
-                
-                <p>Bu link 30 gün süreyle geçerlidir.</p>
-                <p>Saygılarımızla,<br>{receipt_input.company_name}</p>
-                """
+                # E-posta içeriğini dinamik olarak oluştur
+                email_content = generate_collection_email_content(
+                    receipt_input, 
+                    receipt_number, 
+                    receipt_data['issue_date'],
+                    pdf_link
+                )
                 
                 email_service.send_email(
                     to_email=receipt_input.payer_email,
-                    subject=f"Tahsilat Makbuzu İmza Talebi - {receipt_number}",
+                    subject=f"Ödeme Onayı ve Tahsilat Makbuzu - {receipt_number}",
                     html_content=email_content
                 )
                 
