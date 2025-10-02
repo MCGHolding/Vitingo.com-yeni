@@ -16892,6 +16892,27 @@ def test_draft_invoice_comprehensive():
         print(f"⚠️  {total_tests - passed_tests} tests failed. Please review the issues above.")
         return False
 
+def main():
+    """Main function to run the collection statistics endpoint test"""
+    print("🎯" * 80)
+    print("COLLECTION STATISTICS ENDPOINT TESTING")
+    print("🎯" * 80)
+    print("Testing the new collection statistics endpoint for the 4-box dashboard")
+    
+    try:
+        success = test_collection_statistics_endpoint()
+        if success:
+            print("\n🎉 COLLECTION STATISTICS ENDPOINT TEST COMPLETED SUCCESSFULLY!")
+            print("The endpoint is ready for frontend integration.")
+            return True
+        else:
+            print("\n❌ COLLECTION STATISTICS ENDPOINT TEST FAILED!")
+            print("Please review the issues above.")
+            return False
+    except Exception as e:
+        print(f"\n❌ UNEXPECTED ERROR: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
