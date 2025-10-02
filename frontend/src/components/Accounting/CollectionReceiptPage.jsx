@@ -559,24 +559,21 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                           </button>
 
                           {/* More Actions Menu */}
-                          <div 
-                            className="relative"
-                            onMouseEnter={() => setHoveredReceiptId(receipt.id)}
-                            onMouseLeave={() => setHoveredReceiptId(null)}
-                          >
-                            <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                          <div className="relative dropdown-container">
+                            <button 
+                              onClick={() => toggleDropdown(receipt.id)}
+                              className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                              title="Daha Fazla İşlem"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                             </button>
                             
                             {/* Dropdown Menu */}
-                            {hoveredReceiptId === receipt.id && (
+                            {openDropdownId === receipt.id && (
                               <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                                 <button
-                                  onClick={() => {
-                                    handleSendMail(receipt);
-                                    setHoveredReceiptId(null);
-                                  }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                                  onClick={() => handleSendMail(receipt)}
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                                 >
                                   <Mail className="h-4 w-4" />
                                   <span>Mail</span>
