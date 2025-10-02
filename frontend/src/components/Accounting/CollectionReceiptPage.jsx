@@ -27,7 +27,6 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
   const [receipts, setReceipts] = useState([]);
   const [filteredReceipts, setFilteredReceipts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
