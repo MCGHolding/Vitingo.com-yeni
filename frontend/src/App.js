@@ -1348,6 +1348,7 @@ const Dashboard = () => {
         onOverdueInvoices={handleOverdueInvoices}
         onCurrentAccounts={handleCurrentAccounts}
         onCollectionReceipt={handleCollectionReceipt}
+        onNewCollection={handleNewCollection}
         onPaymentRequests={handlePaymentRequests}
         // Expense Receipt handlers
         onNewExpenseReceipt={handleNewExpenseReceipt}
