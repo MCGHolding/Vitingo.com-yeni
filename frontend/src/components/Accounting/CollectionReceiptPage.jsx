@@ -14,7 +14,11 @@ import {
   Clock,
   ArrowLeft,
   Users,
-  TrendingUp
+  TrendingUp,
+  Edit3,
+  MoreHorizontal,
+  Mail,
+  MessageCircle
 } from 'lucide-react';
 
 const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
