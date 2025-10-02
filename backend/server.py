@@ -5940,7 +5940,7 @@ async def get_collection(collection_id: str):
 
 # ===================== MOCK CUSTOMERS ENDPOINT =====================
 
-@api_router.post("/create-mock-customers")
+@api_router.get("/create-mock-customers")
 async def create_mock_customers():
     """Create 30 mock customers with realistic data"""
     try:
