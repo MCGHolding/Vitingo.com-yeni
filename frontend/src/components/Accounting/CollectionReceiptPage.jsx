@@ -7,20 +7,12 @@ import {
   Filter,
   Calendar,
   DollarSign,
-  Eye,
   Download,
-  Plus,
-  X,
   FileText,
   CheckCircle,
   XCircle,
   Clock,
-  ArrowLeft,
-  CreditCard,
-  Banknote,
-  FileCheck,
-  User,
-  Building
+  ArrowLeft
 } from 'lucide-react';
 
 const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
