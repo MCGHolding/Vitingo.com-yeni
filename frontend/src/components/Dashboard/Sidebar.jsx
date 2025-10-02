@@ -59,93 +59,99 @@ import {
   Search
 } from 'lucide-react';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
-  { 
-    name: 'Müşteriler', 
-    href: '/customers', 
-    icon: Building, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Müşteri', href: '/customers/new', icon: Plus },
-      { name: 'Müşteri Adayları', href: '/customers/prospects', icon: UserSearch },
-      { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
-      { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
-      { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star }
-    ]
-  },
-  { 
-    name: 'Kişiler', 
-    href: '/people', 
-    icon: Users, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Kişi Ekle', href: '/people/new', icon: Plus },
-      { name: 'Tüm Kişiler', href: '/people/all', icon: UserRound }
-    ]
-  },
-  { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
-  { 
-    name: 'Satış Fırsatları', 
-    href: '/opportunities', 
-    icon: Zap, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
-      { name: 'Açık Fırsatlar', href: '/opportunities/open', icon: Eye },
-      { name: 'Kazanılan Fırsatlar', href: '/opportunities/won', icon: Trophy },
-      { name: 'Kaybedilen Fırsatlar', href: '/opportunities/lost', icon: XCircle },
-      { name: 'Favori Fırsatlar', href: '/opportunities/favorites', icon: Heart },
-      { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
-    ]
-  },
-  { 
-    name: 'Teklifler', 
-    href: '/quotes', 
-    icon: ClipboardList, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Teklif', href: '/quotes/new', icon: Plus },
-      { name: 'Tüm Teklifler', href: '/quotes/all', icon: Files },
-      { name: 'Taslak Teklifler', href: '/quotes/draft', icon: FileText },
-      { name: 'Yönetici Onayında', href: '/quotes/pending-approval', icon: Clock },
-      { name: 'Gönderilen Teklifler', href: '/quotes/sent', icon: Upload },
-      { name: 'Kazanılan Teklifler', href: '/quotes/won', icon: Trophy },
-      { name: 'Kaybedilen Teklifler', href: '/quotes/lost', icon: XCircle }
-    ]
-  },
-  { 
-    name: 'Fuarlar', 
-    href: '/fairs', 
-    icon: MapPin, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Fuar', href: '/fairs/new', icon: Plus },
-      { name: 'Tüm Fuarlar', href: '/fairs/all', icon: List },
-      { name: 'Aktif Fuarlar', href: '/fairs/active', icon: Eye },
-      { name: 'Geçmiş Fuarlar', href: '/fairs/past', icon: Calendar }
-    ]
-  },
-  { 
-    name: 'Projeler', 
-    href: '/projects', 
-    icon: Folder, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Proje', href: '/projects/new', icon: FolderPlus },
-      { name: 'Tüm Projeler', href: '/projects/all', icon: List },
-      { name: 'Devam Edenler', href: '/projects/ongoing', icon: Play },
-      { name: 'Tamamlananlar', href: '/projects/completed', icon: CheckSquare },
-      { name: 'İptal Edilenler', href: '/projects/cancelled', icon: X }
-    ]
-  },
-  { 
+// Function to get navigation based on user department
+const getNavigation = (userDepartment) => {
+  // Base navigation for all users
+  const baseNavigation = [
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
+    { 
+      name: 'Müşteriler', 
+      href: '/customers', 
+      icon: Building, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Müşteri', href: '/customers/new', icon: Plus },
+        { name: 'Müşteri Adayları', href: '/customers/prospects', icon: UserSearch },
+        { name: 'Tüm Müşteriler', href: '/customers/all', icon: Building },
+        { name: 'Pasif Müşteriler', href: '/customers/inactive', icon: UserX },
+        { name: 'Favori Müşteriler', href: '/customers/favorites', icon: Star }
+      ]
+    },
+    { 
+      name: 'Kişiler', 
+      href: '/people', 
+      icon: Users, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Kişi Ekle', href: '/people/new', icon: Plus },
+        { name: 'Tüm Kişiler', href: '/people/all', icon: UserRound }
+      ]
+    },
+    { name: 'Satışlar', href: '/sales', icon: TrendingUp, current: false },
+    { 
+      name: 'Satış Fırsatları', 
+      href: '/opportunities', 
+      icon: Zap, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
+        { name: 'Açık Fırsatlar', href: '/opportunities/open', icon: Eye },
+        { name: 'Kazanılan Fırsatlar', href: '/opportunities/won', icon: Trophy },
+        { name: 'Kaybedilen Fırsatlar', href: '/opportunities/lost', icon: XCircle },
+        { name: 'Favori Fırsatlar', href: '/opportunities/favorites', icon: Heart },
+        { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
+      ]
+    },
+    { 
+      name: 'Teklifler', 
+      href: '/quotes', 
+      icon: ClipboardList, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Teklif', href: '/quotes/new', icon: Plus },
+        { name: 'Tüm Teklifler', href: '/quotes/all', icon: Files },
+        { name: 'Taslak Teklifler', href: '/quotes/draft', icon: FileText },
+        { name: 'Yönetici Onayında', href: '/quotes/pending-approval', icon: Clock },
+        { name: 'Gönderilen Teklifler', href: '/quotes/sent', icon: Upload },
+        { name: 'Kazanılan Teklifler', href: '/quotes/won', icon: Trophy },
+        { name: 'Kaybedilen Teklifler', href: '/quotes/lost', icon: XCircle }
+      ]
+    },
+    { 
+      name: 'Fuarlar', 
+      href: '/fairs', 
+      icon: MapPin, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Fuar', href: '/fairs/new', icon: Plus },
+        { name: 'Tüm Fuarlar', href: '/fairs/all', icon: List },
+        { name: 'Aktif Fuarlar', href: '/fairs/active', icon: Eye },
+        { name: 'Geçmiş Fuarlar', href: '/fairs/past', icon: Calendar }
+      ]
+    },
+    { 
+      name: 'Projeler', 
+      href: '/projects', 
+      icon: Folder, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Proje', href: '/projects/new', icon: FolderPlus },
+        { name: 'Tüm Projeler', href: '/projects/all', icon: List },
+        { name: 'Devam Edenler', href: '/projects/ongoing', icon: Play },
+        { name: 'Tamamlananlar', href: '/projects/completed', icon: CheckSquare },
+        { name: 'İptal Edilenler', href: '/projects/cancelled', icon: X }
+      ]
+    }
+  ];
+
+  // Standard Muhasebe menu for non-Muhasebe users
+  const standardMuhasebeMenu = { 
     name: 'Muhasebe', 
     href: '/accounting', 
     icon: Calculator, 
@@ -166,74 +172,115 @@ const navigation = [
       { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Building2 },
       { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building }
     ]
-  },
-  { 
-    name: 'Tedarikçi', 
-    href: '/accounting/suppliers', 
-    icon: Truck, 
+  };
+
+  // Special Muhasebe menu for Muhasebe department users
+  const specialMuhasebeMenu = { 
+    name: 'Muhasebe', 
+    href: '/accounting', 
+    icon: Calculator, 
     current: false,
     hasSubmenu: true,
     submenu: [
-      { name: 'Yeni Tedarikçi', href: '/accounting/suppliers/new', icon: Plus },
-      { name: 'Tüm Tedarikçiler', href: '/accounting/suppliers/all', icon: UserCheck }
+      { name: 'Yeni Fatura', href: '/accounting/new-invoice', icon: Plus },
+      { name: 'Tüm Faturalar', href: '/accounting/all-invoices', icon: Receipt },
+      { name: 'Taslak Faturalar', href: '/accounting/draft', icon: FileText },
+      { name: 'Tahsilat Bekleyenler', href: '/accounting/pending-collection', icon: AlertTriangle },
+      { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
+      { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
+      { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
+      { 
+        name: 'Yeni Tahsilatlar', 
+        href: '/accounting/new-collections', 
+        icon: Wallet,
+        hasSubmenu: true,
+        submenu: [
+          { name: 'Yeni Tahsilat', href: '/accounting/new-collection', icon: Plus },
+          { name: 'Tahsilatlar', href: '/accounting/collections', icon: List }
+        ]
+      },
+      { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
+      { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
+      { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
+      { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Building2 },
+      { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building }
     ]
-  },
-  { 
-    name: 'Gider Makbuzu', 
-    href: '/accounting/expense-receipts', 
-    icon: Wallet, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Gider Makbuzu', href: '/accounting/expense-receipts/new', icon: Plus },
-      { name: 'Tüm Makbuzlar', href: '/accounting/expense-receipts/all', icon: Receipt },
-      { name: 'Onay Bekleyen Makbuzlar', href: '/accounting/expense-receipts/pending', icon: Clock },
-      { name: 'Onaylanmış Makbuzlar', href: '/accounting/expense-receipts/approved', icon: CheckCircle },
-      { name: 'Ödenmiş Makbuzlar', href: '/accounting/expense-receipts/paid', icon: CreditCard }
-    ]
-  },
-  { 
-    name: 'Brief', 
-    href: '/brief', 
-    icon: PenTool, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Yeni Brief', href: '/brief/new', icon: Plus },
-      { name: 'Tüm Briefler', href: '/brief/all', icon: FolderOpen },
-      { name: 'Kapanmış', href: '/brief/closed', icon: CheckCircle },
-      { name: 'Pasif', href: '/brief/passive', icon: Pause },
-      { name: 'Brief Talep Et', href: '/brief/request', icon: MessageSquare }
-    ]
-  },
-  { 
-    name: 'Raporlar', 
-    href: '/reports', 
-    icon: BarChart3, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
-      { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
-      { name: 'Teslim Formları', href: '/reports/handovers', icon: FileText },
-      { name: 'Anketler', href: '/reports/surveys', icon: ClipboardList }
-    ]
-  },
-  { name: 'Görevler', href: '/tasks', icon: Target, current: false },
-  { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
-  { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
-  { 
-    name: 'Ayarlar', 
-    href: '/settings', 
-    icon: Settings, 
-    current: false,
-    hasSubmenu: true,
-    submenu: [
-      { name: 'Import Data', href: '/settings/import', icon: Upload },
-      { name: 'Export Data', href: '/settings/export', icon: Download }
-    ]
-  },
-];
+  };
+
+  const remainingMenus = [
+    { 
+      name: 'Tedarikçi', 
+      href: '/accounting/suppliers', 
+      icon: Truck, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Tedarikçi', href: '/accounting/suppliers/new', icon: Plus },
+        { name: 'Tüm Tedarikçiler', href: '/accounting/suppliers/all', icon: UserCheck }
+      ]
+    },
+    { 
+      name: 'Gider Makbuzu', 
+      href: '/accounting/expense-receipts', 
+      icon: Wallet, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Gider Makbuzu', href: '/accounting/expense-receipts/new', icon: Plus },
+        { name: 'Tüm Makbuzlar', href: '/accounting/expense-receipts/all', icon: Receipt },
+        { name: 'Onay Bekleyen Makbuzlar', href: '/accounting/expense-receipts/pending', icon: Clock },
+        { name: 'Onaylanmış Makbuzlar', href: '/accounting/expense-receipts/approved', icon: CheckCircle },
+        { name: 'Ödenmiş Makbuzlar', href: '/accounting/expense-receipts/paid', icon: CreditCard }
+      ]
+    },
+    { 
+      name: 'Brief', 
+      href: '/brief', 
+      icon: PenTool, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Brief', href: '/brief/new', icon: Plus },
+        { name: 'Tüm Briefler', href: '/brief/all', icon: FolderOpen },
+        { name: 'Kapanmış', href: '/brief/closed', icon: CheckCircle },
+        { name: 'Pasif', href: '/brief/passive', icon: Pause },
+        { name: 'Brief Talep Et', href: '/brief/request', icon: MessageSquare }
+      ]
+    },
+    { 
+      name: 'Raporlar', 
+      href: '/reports', 
+      icon: BarChart3, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
+        { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
+        { name: 'Teslim Formları', href: '/reports/handovers', icon: FileText },
+        { name: 'Anketler', href: '/reports/surveys', icon: ClipboardList }
+      ]
+    },
+    { name: 'Görevler', href: '/tasks', icon: Target, current: false },
+    { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
+    { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
+    { 
+      name: 'Ayarlar', 
+      href: '/settings', 
+      icon: Settings, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Import Data', href: '/settings/import', icon: Upload },
+        { name: 'Export Data', href: '/settings/export', icon: Download }
+      ]
+    }
+  ];
+
+  // Choose the appropriate Muhasebe menu based on user department
+  const muhasebeMenu = userDepartment === 'Muhasebe' ? specialMuhasebeMenu : standardMuhasebeMenu;
+  
+  return [...baseNavigation, muhasebeMenu, ...remainingMenus];
+};
 
 export default function Sidebar({ 
   isOpen, 
