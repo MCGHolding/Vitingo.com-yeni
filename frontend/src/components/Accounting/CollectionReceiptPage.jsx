@@ -541,8 +541,13 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {receipt.payer_name}
+                        <div 
+                          className="text-sm font-medium text-gray-900 cursor-help"
+                          title={receipt.payer_name}
+                        >
+                          {receipt.payer_name.length > 15 
+                            ? receipt.payer_name.substring(0, 15) + '...' 
+                            : receipt.payer_name}
                         </div>
                       </td>
                       <td className="px-6 py-4">
