@@ -415,11 +415,7 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null, nestedSubItem = null) => {
-    // Handle nested submenu for "Yeni Tahsilatlar"
-    if (subItem && subItem.name === 'Yeni Tahsilatlar' && !nestedSubItem) {
-      setOpenNestedSubmenu(openNestedSubmenu === subItem.name ? null : subItem.name);
-      return;
-    }
+    // Handle nested submenu for "Yeni Tahsilatlar" - removed for simplification
     
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
