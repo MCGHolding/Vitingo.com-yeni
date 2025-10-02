@@ -60,8 +60,6 @@ import {
 
 // Function to get navigation based on user department
 const getNavigation = (userDepartment) => {
-  console.log('🔍 getNavigation called with userDepartment:', userDepartment);
-  console.log('🔍 Is Muhasebe department check:', userDepartment === 'Muhasebe');
   // Base navigation for all users
   const baseNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
