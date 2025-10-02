@@ -268,19 +268,15 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       return;
     }
     
-    if (!formData.totalAmount) {
-      alert('Lütfen tahsilat tutarı giriniz');
-      return;
-    }
-    
     if (formData.collectionItems.length === 0) {
       alert('Lütfen en az bir tahsilat türü ekleyiniz');
       return;
     }
     
-    // Check if total amounts match
-    if (Math.abs(totals.remaining) > 0.01) {
-      alert('Tahsilat tutarı ile tahsilat türlerinin toplamı eşit olmalıdır');
+    // Check if at least one collection item has amount
+    const totalCollected = formData.collectionItems.reduce((sum, item) => sum + (parseNumber(item.amount) || 0), 0);
+    if (totalCollected <= 0) {
+      alert('Lütfen tahsilat tutarlarını giriniz');
       return;
     }
     
