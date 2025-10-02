@@ -1443,14 +1443,11 @@ frontend:
 
 test_plan:
   current_focus:
-    - "All Invoices Page Table Structure Improvements"
-    - "Invoice Preview Modal Functionality"
-    - "Invoice Edit Page Integration"
-    - "Invoice PDF Download Functionality"
-    - "Invoice Delete Confirmation Modal"
-  stuck_tasks: []
+    - "New Collection Form Header Total Display"
+  stuck_tasks: 
+    - "New Collection Form Header Total Display"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
