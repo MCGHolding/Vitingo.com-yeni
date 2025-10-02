@@ -196,7 +196,15 @@ const getNavigation = (userDepartment) => {
         hasSubmenu: true,
         submenu: [
           { name: 'Yeni Tahsilat', href: '/accounting/new-collection', icon: Plus },
-          { name: 'Tahsilatlar', href: '/accounting/collections', icon: List }
+          { 
+            name: 'Tahsilatlar', 
+            href: '/accounting/collections', 
+            icon: List,
+            hasSubmenu: true,
+            submenu: [
+              { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard }
+            ]
+          }
         ]
       },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
