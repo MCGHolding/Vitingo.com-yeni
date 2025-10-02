@@ -696,7 +696,7 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || Math.abs(totals.remaining) > 0.01}
+            disabled={isSubmitting || totals.totalCollected <= 0}
             className="flex items-center space-x-2"
           >
             {isSubmitting ? (
