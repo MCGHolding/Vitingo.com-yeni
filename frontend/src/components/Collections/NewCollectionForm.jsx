@@ -77,8 +77,6 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     contactPersonId: '',
     date: new Date().toISOString().split('T')[0],
     projectId: '',
-    totalAmount: '',
-    currency: 'TL',
     
     // Collection items (can add multiple payment methods)
     collectionItems: [
