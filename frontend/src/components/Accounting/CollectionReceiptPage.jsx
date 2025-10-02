@@ -537,21 +537,31 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div 
-                          className="text-sm font-mono font-medium text-blue-600 cursor-help"
-                          title={receipt.receipt_number}
-                        >
-                          ...{receipt.receipt_number.slice(-4)}
+                        <div className="relative group">
+                          <div className="text-sm font-mono font-medium text-blue-600 cursor-help">
+                            ...{receipt.receipt_number.slice(-4)}
+                          </div>
+                          {/* Custom Tooltip */}
+                          <div className="invisible group-hover:visible absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg whitespace-nowrap z-50">
+                            {receipt.receipt_number}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div 
-                          className="text-sm font-medium text-gray-900 cursor-help"
-                          title={receipt.payer_name}
-                        >
-                          {receipt.payer_name.length > 15 
-                            ? receipt.payer_name.substring(0, 15) + '...' 
-                            : receipt.payer_name}
+                        <div className="relative group">
+                          <div className="text-sm font-medium text-gray-900 cursor-help">
+                            {receipt.payer_name.length > 15 
+                              ? receipt.payer_name.substring(0, 15) + '...' 
+                              : receipt.payer_name}
+                          </div>
+                          {/* Custom Tooltip - only show if name is truncated */}
+                          {receipt.payer_name.length > 15 && (
+                            <div className="invisible group-hover:visible absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg whitespace-nowrap z-50">
+                              {receipt.payer_name}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
