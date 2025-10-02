@@ -674,23 +674,11 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
 
         {/* Totals */}
         <div className="bg-gray-50 rounded-xl p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-1 gap-4 text-center">
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <p className="text-sm text-gray-600">Toplam Tahsilat Tutarı</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {selectedCurrency.symbol}{formatNumber(formData.totalAmount || 0)}
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-sm text-gray-600">Toplanan Tutar</p>
               <p className="text-2xl font-bold text-green-600">
-                {selectedCurrency.symbol}{formatNumber(totals.totalCollected)}
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-sm text-gray-600">Kalan Tutar</p>
-              <p className={`text-2xl font-bold ${Math.abs(totals.remaining) < 0.01 ? 'text-green-600' : 'text-red-600'}`}>
-                {selectedCurrency.symbol}{formatNumber(totals.remaining)}
+                ₺{formatNumber(totals.totalCollected)}
               </p>
             </div>
           </div>
