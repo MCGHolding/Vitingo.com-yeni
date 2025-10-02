@@ -433,30 +433,30 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center space-x-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-green-100 rounded-lg">
               <CreditCard className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Yeni Tahsilat</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Yeni Tahsilat</h1>
               <p className="text-gray-600">Müşteri ve tedarikçi tahsilatlarını kaydedin</p>
             </div>
           </div>
           
           {/* Real-time Total Display */}
           {totals.totalCollected > 0 && (
-            <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl px-6 py-4 shadow-sm">
+            <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl px-4 py-3 lg:px-6 lg:py-4 shadow-sm">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-green-500 rounded-full">
-                  <Calculator className="h-4 w-4 text-white" />
+                <div className="p-1.5 lg:p-2 bg-green-500 rounded-full">
+                  <Calculator className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
                 </div>
                 <div>
                   <p className="text-xs font-medium text-green-700 uppercase tracking-wide">
                     Toplam Tahsilat
                   </p>
-                  <p className="text-2xl font-bold text-green-800">
+                  <p className="text-xl lg:text-2xl font-bold text-green-800">
                     ₺{formatNumber(totals.totalCollected)}
                   </p>
                 </div>
@@ -465,13 +465,15 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
           )}
         </div>
         
-        <Button
-          onClick={onBackToDashboard}
-          variant="outline"
-          className="flex items-center space-x-2"
-        >
-          <span>Dashboard'a Dön</span>
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            onClick={onBackToDashboard}
+            variant="outline"
+            className="flex items-center space-x-2"
+          >
+            <span>Dashboard'a Dön</span>
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
