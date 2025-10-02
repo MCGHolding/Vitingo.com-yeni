@@ -373,7 +373,12 @@ export default function Sidebar({
   
   // Get navigation based on user department
   const navigation = React.useMemo(() => {
-    return getNavigation(user?.department);
+    console.log('🔍 Sidebar Debug - User:', user);
+    console.log('🔍 Sidebar Debug - User Department:', user?.department);
+    console.log('🔍 Sidebar Debug - Calling getNavigation with:', user?.department);
+    const nav = getNavigation(user?.department);
+    console.log('🔍 Sidebar Debug - Generated navigation:', nav);
+    return nav;
   }, [user?.department]);
 
   const toggleSubmenu = (itemName) => {
