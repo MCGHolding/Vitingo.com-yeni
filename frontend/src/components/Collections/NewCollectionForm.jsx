@@ -467,21 +467,11 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
 
         {/* Collection Items Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center mb-6">
             <div className="flex items-center space-x-2">
               <Package className="h-5 w-5 text-gray-600" />
               <h3 className="text-xl font-semibold text-gray-900">Tahsilat Türleri</h3>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addCollectionItem}
-              className="flex items-center space-x-1"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Tahsilat Türü Ekle</span>
-            </Button>
           </div>
 
           <div className="space-y-4">
