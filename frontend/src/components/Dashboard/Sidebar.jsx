@@ -332,6 +332,7 @@ export default function Sidebar({
   onOverdueInvoices,
   onCurrentAccounts,
   onCollectionReceipt,
+  onNewCollection,
   onPaymentRequests,
   // Expense Receipt handlers
   onNewExpenseReceipt,
