@@ -294,7 +294,8 @@ const getNavigation = (userDepartment) => {
 
 export default function Sidebar({ 
   isOpen, 
-  toggleSidebar, 
+  toggleSidebar,
+  user,
   onDashboard,
   onNewOpportunity, 
   onOpenOpportunities,
