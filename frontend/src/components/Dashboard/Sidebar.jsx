@@ -733,6 +733,23 @@ export default function Sidebar({
       return;
     }
 
+    // Handle new Collection menu items for Muhasebe department users
+    if (subItem && subItem.name === 'Yeni Tahsilat') {
+      // For now, redirect to the existing collection receipt page
+      if (onCollectionReceipt) {
+        onCollectionReceipt();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Tahsilatlar') {
+      // For now, redirect to the existing collection receipt page
+      if (onCollectionReceipt) {
+        onCollectionReceipt();
+      }
+      return;
+    }
+
     // Gider Makbuzu removed from Muhasebe submenu
 
     if (subItem && subItem.name === 'Ödeme Talepleri') {
