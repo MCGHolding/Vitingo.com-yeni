@@ -583,7 +583,386 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
         </div>
       </div>
 
-      {/* Modal removed - Collection receipts are auto-generated when payments are received */}
+      {/* Mail Modal */}
+      {showMailModal && selectedReceiptForMail && (
+        <MailModal 
+          receipt={selectedReceiptForMail}
+          onClose={() => {
+            setShowMailModal(false);
+            setSelectedReceiptForMail(null);
+          }}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editingReceipt && (
+        <EditReceiptModal 
+          receipt={editingReceipt}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingReceipt(null);
+          }}
+          onSave={(updatedReceipt) => {
+            // Update receipt in the list
+            setReceipts(prev => prev.map(r => r.id === updatedReceipt.id ? updatedReceipt : r));
+            setShowEditModal(false);
+            setEditingReceipt(null);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Mail Modal Component
+const MailModal = ({ receipt, onClose }) => {
+  const [emailData, setEmailData] = useState({
+    to: '',
+    subject: `Tahsilat Makbuzu - ${receipt.receipt_number}`,
+    message: `Sayın ${receipt.payer_name},\n\n${receipt.receipt_number} numaralı tahsilat makbuzunuz ektedir.\n\nSaygılarımızla,\nVitingo CRM`
+  });
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSendMail = async () => {
+    setIsSending(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/collection-receipts/${receipt.id}/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(emailData)
+      });
+
+      if (response.ok) {
+        alert('Mail başarıyla gönderildi!');
+        onClose();
+      } else {
+        alert('Mail gönderme hatası!');
+      }
+    } catch (error) {
+      console.error('Error sending mail:', error);
+      alert('Mail gönderme hatası: ' + error.message);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Tahsilat Makbuzu Gönder</h3>
+        </div>
+        
+        <div className="px-6 py-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              E-posta Adresi
+            </label>
+            <input
+              type="email"
+              value={emailData.to}
+              onChange={(e) => setEmailData({...emailData, to: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={receipt.payer_email || 'E-posta adresini girin'}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Konu
+            </label>
+            <input
+              type="text"
+              value={emailData.subject}
+              onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mesaj
+            </label>
+            <textarea
+              value={emailData.message}
+              onChange={(e) => setEmailData({...emailData, message: e.target.value})}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+        
+        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isSending}
+          >
+            İptal
+          </Button>
+          <Button
+            onClick={handleSendMail}
+            disabled={isSending || !emailData.to}
+          >
+            {isSending ? 'Gönderiliyor...' : 'Gönder'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Edit Receipt Modal Component  
+const EditReceiptModal = ({ receipt, onClose, onSave }) => {
+  const [formData, setFormData] = useState({
+    issuer_name: receipt.issuer_name || '',
+    issuer_title: receipt.issuer_title || '',
+    company_name: receipt.company_name || '',
+    company_address: receipt.company_address || '',
+    company_phone: receipt.company_phone || '',
+    company_email: receipt.company_email || '',
+    payer_name: receipt.payer_name || '',
+    payer_email: receipt.payer_email || '',
+    payment_reason: receipt.payment_reason || '',
+    total_amount: receipt.total_amount || 0,
+    payment_details: {
+      cash_amount: receipt.payment_details?.cash_amount || 0,
+      credit_card_amount: receipt.payment_details?.credit_card_amount || 0,
+      check_amount: receipt.payment_details?.check_amount || 0,
+      promissory_note_amount: receipt.payment_details?.promissory_note_amount || 0,
+      check_details: receipt.payment_details?.check_details || []
+    }
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/collection-receipts/${receipt.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        const updatedReceipt = await response.json();
+        onSave(updatedReceipt);
+        alert('Tahsilat makbuzu başarıyla güncellendi!');
+      } else {
+        alert('Güncelleme hatası!');
+      }
+    } catch (error) {
+      console.error('Error updating receipt:', error);
+      alert('Güncelleme hatası: ' + error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Tahsilat Makbuzunu Düzenle - {receipt.receipt_number}
+          </h3>
+        </div>
+        
+        <div className="px-6 py-4 space-y-6">
+          {/* Issuer Information */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 mb-3">Makbuz Düzenleyen Bilgileri</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad</label>
+                <input
+                  type="text"
+                  value={formData.issuer_name}
+                  onChange={(e) => setFormData({...formData, issuer_name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ünvan</label>
+                <input
+                  type="text"
+                  value={formData.issuer_title}
+                  onChange={(e) => setFormData({...formData, issuer_title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Company Information */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 mb-3">Şirket Bilgileri</h4>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Şirket Ünvanı</label>
+                <input
+                  type="text"
+                  value={formData.company_name}
+                  onChange={(e) => setFormData({...formData, company_name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Şirket Adresi</label>
+                <textarea
+                  value={formData.company_address}
+                  onChange={(e) => setFormData({...formData, company_address: e.target.value})}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                  <input
+                    type="text"
+                    value={formData.company_phone}
+                    onChange={(e) => setFormData({...formData, company_phone: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
+                  <input
+                    type="email"
+                    value={formData.company_email}
+                    onChange={(e) => setFormData({...formData, company_email: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Payer Information */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 mb-3">Ödeme Yapan Bilgileri</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ödeyen Adı</label>
+                <input
+                  type="text"
+                  value={formData.payer_name}
+                  onChange={(e) => setFormData({...formData, payer_name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
+                <input
+                  type="email"
+                  value={formData.payer_email}
+                  onChange={(e) => setFormData({...formData, payer_email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Details */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 mb-3">Ödeme Detayları</h4>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ödeme Sebebi</label>
+                <input
+                  type="text"
+                  value={formData.payment_reason}
+                  onChange={(e) => setFormData({...formData, payment_reason: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nakit Tutar</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.payment_details.cash_amount}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      payment_details: {...formData.payment_details, cash_amount: parseFloat(e.target.value) || 0}
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kredi Kartı</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.payment_details.credit_card_amount}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      payment_details: {...formData.payment_details, credit_card_amount: parseFloat(e.target.value) || 0}
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Çek Tutarı</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.payment_details.check_amount}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      payment_details: {...formData.payment_details, check_amount: parseFloat(e.target.value) || 0}
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Senet Tutarı</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.payment_details.promissory_note_amount}
+                    onChange={(e) => setFormData({
+                      ...formData, 
+                      payment_details: {...formData.payment_details, promissory_note_amount: parseFloat(e.target.value) || 0}
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Toplam Tutar</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.total_amount}
+                  onChange={(e) => setFormData({...formData, total_amount: parseFloat(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isSaving}
+          >
+            İptal
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
