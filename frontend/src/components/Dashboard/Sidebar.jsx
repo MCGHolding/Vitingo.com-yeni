@@ -354,6 +354,14 @@ export default function Sidebar({
   onPassiveBriefs,
   onRequestBrief
 }) {
+  const { user } = useAuth();
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Get navigation based on user department
+  const navigation = React.useMemo(() => {
+    return getNavigation(user?.department);
+  }, [user?.department]);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
