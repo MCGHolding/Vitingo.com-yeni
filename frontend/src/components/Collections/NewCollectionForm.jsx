@@ -790,18 +790,6 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
           </div>
         </div>
 
-        {/* Totals */}
-        <div className="bg-gray-50 rounded-xl p-6">
-          <div className="grid grid-cols-1 gap-4 text-center">
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-sm text-gray-600">Toplam Tahsilat Tutarı</p>
-              <p className="text-2xl font-bold text-green-600">
-                ₺{formatNumber(totals.totalCollected)}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Submit Button */}
         <div className="flex justify-end space-x-4">
           <Button
