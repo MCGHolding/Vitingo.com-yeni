@@ -418,10 +418,16 @@ export default function Sidebar({
     );
   };
 
-  const handleMenuClick = (item, subItem = null, nestedSubItem = null) => {
+  const handleMenuClick = (item, subItem = null, nestedSubItem = null, deepNestedItem = null) => {
     // Handle nested submenu for "Yeni Tahsilatlar"
     if (subItem && subItem.name === 'Yeni Tahsilatlar' && !nestedSubItem) {
       toggleSubmenu(subItem.name);
+      return;
+    }
+    
+    // Handle nested submenu for "Tahsilatlar" 
+    if (nestedSubItem && nestedSubItem.name === 'Tahsilatlar' && !deepNestedItem) {
+      toggleSubmenu(nestedSubItem.name);
       return;
     }
     
