@@ -681,5 +681,42 @@ Vitingo CRM Sistemi
         </html>
         """
 
+    def send_email(self, to_email: str, subject: str, html_content: str, plain_content: Optional[str] = None) -> dict:
+        """Generic send email method for any email content"""
+        try:
+            if not self.sg:
+                logger.error("SendGrid client not initialized - missing API key")
+                return {"success": False, "error": "Email service not configured"}
+
+            # Create SendGrid mail object
+            message = Mail(
+                from_email=From(self.sender_email, "Vitingo CRM - Quattro Stand"),
+                to_emails=To(to_email),
+                subject=Subject(subject),
+                html_content=HtmlContent(html_content)
+            )
+            
+            # Add plain text content if provided
+            if plain_content:
+                message.plain_text_content = PlainTextContent(plain_content)
+
+            # Send email
+            response = self.sg.send(message)
+            
+            logger.info(f"Email sent to {to_email} - Status: {response.status_code}")
+            
+            return {
+                "success": True,
+                "status_code": response.status_code,
+                "message": "Email sent successfully"
+            }
+
+        except Exception as e:
+            logger.error(f"Failed to send email: {str(e)}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
 # Global email service instance
 email_service = EmailService()
