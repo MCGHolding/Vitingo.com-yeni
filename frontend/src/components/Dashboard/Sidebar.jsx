@@ -388,7 +388,9 @@ export default function Sidebar({
   }, [user]);
 
   const toggleSubmenu = (itemName) => {
-    setOpenSubmenu(openSubmenu === itemName ? null : itemName);
+    const newState = openSubmenu === itemName ? null : itemName;
+    console.log('🔍 toggleSubmenu called with:', itemName, 'Current state:', openSubmenu, 'New state:', newState);
+    setOpenSubmenu(newState);
   };
 
   // Filter navigation items based on search term
