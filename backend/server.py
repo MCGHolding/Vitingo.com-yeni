@@ -5142,23 +5142,9 @@ async def create_collection_receipt(receipt_input: CollectionReceiptCreate):
         # MongoDB'ye kaydet
         result = await db.collection_receipts.insert_one(receipt_data)
         
-        # İmzalama linki oluştur
-        signature_key = str(uuid.uuid4())
-        await db.collection_receipt_signatures.insert_one({
-            "id": str(uuid.uuid4()),
-            "receipt_id": receipt_data["id"],
-            "signature_key": signature_key,
-            "created_at": datetime.utcnow(),
-            "expires_at": datetime.utcnow() + timedelta(days=30)  # 30 gün geçerli
-        })
-        
-        # İmzalama linkini makbuzda güncelle
-        signature_link = f"/api/collection-receipt-approval/{signature_key}"
-        await db.collection_receipts.update_one(
-            {"id": receipt_data["id"]},
-            {"$set": {"signature_link": signature_link}}
-        )
-        receipt_data["signature_link"] = signature_link
+        # PDF görüntüleme linki oluştur
+        pdf_link = f"/api/collection-receipts/{receipt_data['id']}/pdf"
+        receipt_data["pdf_link"] = pdf_link
         
         # E-posta gönder
         if receipt_input.payer_email:
