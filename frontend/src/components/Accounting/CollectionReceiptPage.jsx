@@ -60,6 +60,38 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     }
   };
 
+  const loadStatistics = async () => {
+    setIsLoadingStats(true);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/collection-statistics`);
+      
+      if (response.ok) {
+        const statsData = await response.json();
+        console.log('Loaded collection statistics:', statsData);
+        setStatistics(statsData);
+      } else {
+        console.error('Failed to load collection statistics:', response.statusText);
+        setStatistics({
+          total_amount_tl: 0.0,
+          top_customer: 'Veri Yok',
+          total_count: 0,
+          average_days: 0.0
+        });
+      }
+    } catch (error) {
+      console.error('Error loading collection statistics:', error);
+      setStatistics({
+        total_amount_tl: 0.0,
+        top_customer: 'Veri Yok',
+        total_count: 0,
+        average_days: 0.0
+      });
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
   // Format number for display
   const formatNumber = (value) => {
     if (!value && value !== 0) return '0,00';
