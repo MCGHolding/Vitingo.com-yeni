@@ -981,6 +981,16 @@ export default function Sidebar({
                       const SubIcon = subItem.icon;
                       const isNestedSubmenuOpen = openNestedSubmenu === subItem.name;
                       
+                      // Debug logging for Yeni Tahsilatlar
+                      if (subItem.name === 'Yeni Tahsilatlar') {
+                        console.log('🔍 Rendering Yeni Tahsilatlar:', {
+                          hasSubmenu: subItem.hasSubmenu,
+                          isNestedSubmenuOpen,
+                          openNestedSubmenu,
+                          submenuLength: subItem.submenu?.length
+                        });
+                      }
+                      
                       return (
                         <div key={subItem.name}>
                           {/* Submenu item */}
