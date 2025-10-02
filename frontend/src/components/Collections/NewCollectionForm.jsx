@@ -430,6 +430,99 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
   // Default to TL currency symbol
   const defaultCurrency = currencies.find(c => c.code === 'TL');
 
+  // Mock exchange rates (in production, fetch from Central Bank API)
+  const exchangeRates = {
+    'USD': 32.50,
+    'EUR': 35.20,
+    'GBP': 40.75,
+    'AED': 8.85,
+    'TL': 1.00
+  };
+
+  // Calculate total amount in TL using exchange rates
+  const calculateTotalInTL = () => {
+    const totalInTL = formData.collectionItems.reduce((sum, item) => {
+      const amount = parseNumber(item.amount) || 0;
+      const rate = exchangeRates[item.currency] || 1;
+      return sum + (amount * rate);
+    }, 0);
+    return totalInTL;
+  };
+
+  // Get top customer (mock logic, in production fetch from backend)
+  const getTopCustomer = () => {
+    // Mock top customer logic
+    if (formData.customerId) {
+      const customer = customers.find(c => c.id === formData.customerId);
+      return customer?.companyName?.split(' ')[0] || 'Seçili Müşteri';
+    } else if (formData.supplierId) {
+      const supplier = suppliers.find(s => s.id === formData.supplierId);
+      return supplier?.company_short_name || 'Seçili Tedarikçi';
+    }
+    
+    // Mock data for demonstration
+    const mockTopCustomers = ['ABC İnşaat', 'XYZ Holding', 'DEF Turizm', 'GHI Tekstil', 'JKL Otomotiv'];
+    return mockTopCustomers[Math.floor(Math.random() * mockTopCustomers.length)];
+  };
+
+  // Get total collection count (current form items)
+  const getTotalCount = () => {
+    return formData.collectionItems.filter(item => parseNumber(item.amount) > 0).length;
+  };
+
+  // Calculate average due days (mock calculation)
+  const getAverageDueDays = () => {
+    // Mock logic: calculate based on payment types
+    let totalDays = 0;
+    let count = 0;
+    
+    formData.collectionItems.forEach(item => {
+      if (parseNumber(item.amount) > 0) {
+        count++;
+        // Mock due days based on payment type
+        switch (item.type) {
+          case 'cash':
+            totalDays += 0; // Immediate
+            break;
+          case 'credit_card':
+            totalDays += 1; // 1 day
+            break;
+          case 'transfer':
+            totalDays += 2; // 2 days
+            break;
+          case 'check':
+            // Calculate days between check date and today
+            if (item.checkDate) {
+              const today = new Date();
+              const checkDate = new Date(item.checkDate);
+              const diffTime = checkDate.getTime() - today.getTime();
+              const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+              totalDays += diffDays;
+            } else {
+              totalDays += 30; // Default 30 days for checks
+            }
+            break;
+          case 'promissory':
+            // Calculate days between promissory date and today
+            if (item.promissoryDate) {
+              const today = new Date();
+              const promissoryDate = new Date(item.promissoryDate);
+              const diffTime = promissoryDate.getTime() - today.getTime();
+              const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+              totalDays += diffDays;
+            } else {
+              totalDays += 60; // Default 60 days for promissory notes
+            }
+            break;
+          default:
+            totalDays += 7; // Default 7 days
+        }
+      }
+    });
+    
+    return count > 0 ? Math.round(totalDays / count) : 0;
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
