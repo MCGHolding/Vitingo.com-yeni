@@ -809,6 +809,113 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
           </Button>
         </div>
       </form>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-8 m-4 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="text-center">
+              {/* Success Icon */}
+              <div className="mx-auto flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Tahsilat Başarıyla Kaydedildi!
+              </h3>
+
+              {/* Collection Details */}
+              {collectionResult && (
+                <div className="bg-gray-50 rounded-lg p-6 mb-6 text-left">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">Tahsilat No:</span>
+                      <span className="text-sm font-bold text-gray-900">{collectionResult.collectionNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">Müşteri/Tedarikçi:</span>
+                      <span className="text-sm text-gray-900">{collectionResult.customerName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">Tarih:</span>
+                      <span className="text-sm text-gray-900">{new Date(collectionResult.date).toLocaleDateString('tr-TR')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-600">Tutar:</span>
+                      <span className="text-sm font-bold text-green-600">
+                        ₺{formatNumber(collectionResult.totalAmount)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Receipt Status */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-center space-x-2">
+                  <Receipt className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    Tahsilat makbuzu otomatik olarak e-posta ile gönderildi
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    setCollectionResult(null);
+                    onBackToDashboard();
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Tamam
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    setCollectionResult(null);
+                    // Reset form for new entry
+                    setFormData({
+                      customerId: '',
+                      supplierId: '',
+                      contactPersonId: '',
+                      date: new Date().toISOString().split('T')[0],
+                      projectId: '',
+                      collectionItems: [
+                        { 
+                          id: Date.now(), 
+                          type: '', 
+                          amount: '', 
+                          currency: 'TL',
+                          bankId: '',
+                          checkDate: '',
+                          checkNumber: '',
+                          checkBank: '',
+                          promissoryDate: '',
+                          promissoryNumber: '',
+                          promissoryBank: ''
+                        }
+                      ]
+                    });
+                    setValidationErrors({});
+                  }}
+                  className="flex-1"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Yeni Tahsilat
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
