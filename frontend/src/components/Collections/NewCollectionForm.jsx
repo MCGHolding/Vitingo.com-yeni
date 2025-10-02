@@ -263,18 +263,13 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     e.preventDefault();
     
     // Validation
-    if (!formData.customerType) {
+    if (!formData.customerId && !formData.supplierId) {
       alert('Lütfen müşteri veya tedarikçi seçiniz');
       return;
     }
     
-    if (formData.customerType === 'customer' && !formData.customerId) {
-      alert('Lütfen müşteri seçiniz');
-      return;
-    }
-    
-    if (formData.customerType === 'supplier' && !formData.supplierId) {
-      alert('Lütfen tedarikçi seçiniz');
+    if (formData.customerId && formData.supplierId) {
+      alert('Müşteri ve tedarikçi aynı anda seçilemez');
       return;
     }
     
