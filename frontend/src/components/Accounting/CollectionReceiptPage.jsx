@@ -180,7 +180,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     }
   };
 
-  // Calculate statistics
+  // Calculate local statistics (for fallback)
   const totalReceipts = receipts.length;
   const pendingReceipts = receipts.filter(r => r.signature_status === 'pending').length;
   const signedReceipts = receipts.filter(r => r.signature_status === 'signed').length;
