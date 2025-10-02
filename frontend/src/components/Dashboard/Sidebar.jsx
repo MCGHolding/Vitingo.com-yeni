@@ -983,32 +983,7 @@ export default function Sidebar({
                             <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
                             <span className="flex-1">{subItem.name}</span>
                           </a>
-                          
-                          {/* Nested submenu for "Yeni Tahsilatlar" */}
-                          {subItem.hasSubmenu && isNestedSubmenuOpen && (
-                            <div className="ml-6 mt-2 space-y-1">
-                              {subItem.submenu?.map((nestedSubItem) => {
-                                const NestedIcon = nestedSubItem.icon;
-                                
-                                return (
-                                  <div key={nestedSubItem.name}>
-                                    {/* Second level submenu item */}
-                                    <a
-                                      href={nestedSubItem.href}
-                                      className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        handleMenuClick(item, subItem, nestedSubItem);
-                                      }}
-                                    >
-                                      <NestedIcon className="mr-3 h-4 w-4 flex-shrink-0" />
-                                      {nestedSubItem.name}
-                                    </a>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                          {/* Nested submenu removed for simplification */}
                         </div>
                       );
                     })}
