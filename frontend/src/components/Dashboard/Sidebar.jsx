@@ -422,12 +422,6 @@ export default function Sidebar({
       return;
     }
     
-    // Handle nested submenu for "Tahsilatlar" 
-    if (nestedSubItem && nestedSubItem.name === 'Tahsilatlar' && !deepNestedItem) {
-      toggleSubmenu(nestedSubItem.name);
-      return;
-    }
-    
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
       toggleSubmenu(item.name);
