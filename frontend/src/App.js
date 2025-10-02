@@ -99,6 +99,7 @@ import {
 
 const Dashboard = () => {
   useActivityTracker();
+  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
