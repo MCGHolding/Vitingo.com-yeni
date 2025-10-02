@@ -1011,17 +1011,7 @@ export default function Sidebar({
                           </a>
                           
                           {/* Nested submenu for "Yeni Tahsilatlar" */}
-                          {(() => {
-                            const shouldShow = subItem.hasSubmenu && isNestedSubmenuOpen;
-                            console.log(`🔍 Nested submenu debug for ${subItem.name}:`, {
-                              hasSubmenu: subItem.hasSubmenu,
-                              isNestedSubmenuOpen,
-                              openSubmenu,
-                              shouldShow,
-                              submenuLength: subItem.submenu?.length
-                            });
-                            return shouldShow;
-                          })() && (
+                          {subItem.hasSubmenu && isNestedSubmenuOpen && (
                             <div className="ml-6 mt-2 space-y-1">
                               {subItem.submenu?.map((nestedSubItem) => {
                                 const NestedIcon = nestedSubItem.icon;
