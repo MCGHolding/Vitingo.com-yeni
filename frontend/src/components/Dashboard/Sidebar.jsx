@@ -435,8 +435,12 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null, nestedSubItem = null, deepNestedItem = null) => {
+    console.log('🔍 handleMenuClick called with:', { item: item.name, subItem: subItem?.name, nestedSubItem: nestedSubItem?.name, deepNestedItem: deepNestedItem?.name });
+    console.log('🔍 Current openSubmenu state:', openSubmenu);
+    
     // Handle nested submenu for "Yeni Tahsilatlar"
     if (subItem && subItem.name === 'Yeni Tahsilatlar' && !nestedSubItem) {
+      console.log('🔍 Toggling Yeni Tahsilatlar submenu');
       toggleSubmenu(subItem.name);
       return;
     }
