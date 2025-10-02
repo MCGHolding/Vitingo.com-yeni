@@ -533,7 +533,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                     <tr key={receipt.id} className="hover:bg-gray-50">
                       <td className="px-4 py-4 whitespace-nowrap text-center">
                         <div className="text-sm font-medium text-gray-700">
-                          {index + 1}
+                          {globalIndex + 1}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
