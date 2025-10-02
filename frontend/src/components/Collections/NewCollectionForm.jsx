@@ -204,27 +204,21 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
   }, [formData.collectionItems, formData.totalAmount]);
 
   // Handler functions
-  const handleCustomerTypeChange = (type) => {
-    setFormData(prev => ({
-      ...prev,
-      customerType: type,
-      customerId: '',
-      supplierId: '',
-      contactPersonId: ''
-    }));
-  };
-
   const handleCustomerChange = (customerId) => {
     setFormData(prev => ({
       ...prev,
-      customerId: customerId
+      customerId: customerId,
+      supplierId: '', // Clear supplier when customer is selected
+      contactPersonId: '' // Clear contact person
     }));
   };
 
   const handleSupplierChange = (supplierId) => {
     setFormData(prev => ({
       ...prev,
-      supplierId: supplierId
+      supplierId: supplierId,
+      customerId: '', // Clear customer when supplier is selected
+      contactPersonId: '' // Clear contact person
     }));
   };
 
