@@ -371,10 +371,20 @@ export default function Sidebar({
     setSearchTerm('');
   }, [user?.id]);
   
+  // Debug user data
+  useEffect(() => {
+    console.log('🔍 Sidebar useAuth Debug - Full user object:', user);
+    console.log('🔍 Sidebar useAuth Debug - User department:', user?.department);
+    console.log('🔍 Sidebar useAuth Debug - User id:', user?.id);
+  }, [user]);
+  
   // Get navigation based on user department
   const navigation = React.useMemo(() => {
-    return getNavigation(user?.department);
-  }, [user?.department]);
+    console.log('🔍 useMemo triggered with user department:', user?.department);
+    const result = getNavigation(user?.department);
+    console.log('🔍 getNavigation result:', result);
+    return result;
+  }, [user]);
 
   const toggleSubmenu = (itemName) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName);
