@@ -119,6 +119,9 @@ const Dashboard = () => {
   
   // Invoice states
   const [selectedInvoiceForEdit, setSelectedInvoiceForEdit] = useState(null);
+  
+  // Collection states
+  const [showNewCollectionForm, setShowNewCollectionForm] = useState(false);
 
   // Load fairs from backend API
   useEffect(() => {
