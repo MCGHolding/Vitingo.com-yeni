@@ -276,6 +276,15 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     };
   }, [openDropdownId]);
 
+  // Calculate pagination
+  const sortedReceipts = [...filteredReceipts].sort((a, b) => {
+    return new Date(b.created_at) - new Date(a.created_at); // En yeni en üstte
+  });
+  
+  const totalPages = Math.ceil(sortedReceipts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedReceipts = sortedReceipts.slice(startIndex, startIndex + itemsPerPage);
+
   // Calculate local statistics (for fallback)
   const totalReceipts = receipts.length;
   const pendingReceipts = receipts.filter(r => r.signature_status === 'pending').length;
