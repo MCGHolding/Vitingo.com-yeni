@@ -365,7 +365,6 @@ export default function Sidebar({
   onPassiveBriefs,
   onRequestBrief
 }) {
-  const { user } = useAuth();
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -376,9 +375,9 @@ export default function Sidebar({
   
   // Debug user data
   useEffect(() => {
-    console.log('🔍 Sidebar useAuth Debug - Full user object:', user);
-    console.log('🔍 Sidebar useAuth Debug - User department:', user?.department);
-    console.log('🔍 Sidebar useAuth Debug - User id:', user?.id);
+    console.log('🔍 Sidebar Props Debug - Full user object:', user);
+    console.log('🔍 Sidebar Props Debug - User department:', user?.department);
+    console.log('🔍 Sidebar Props Debug - User id:', user?.id);
   }, [user]);
   
   // Get navigation based on user department
