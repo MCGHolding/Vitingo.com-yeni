@@ -276,6 +276,15 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     };
   }, [openDropdownId]);
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   // Calculate pagination
   const sortedReceipts = [...filteredReceipts].sort((a, b) => {
     return new Date(b.created_at) - new Date(a.created_at); // En yeni en üstte
