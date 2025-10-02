@@ -32,9 +32,10 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
 
   // Removed manual receipt creation - receipts are auto-generated when payments are received
 
-  // Load receipts on component mount
+  // Load receipts and statistics on component mount
   useEffect(() => {
     loadReceipts();
+    loadStatistics();
   }, []);
 
   const loadReceipts = async () => {
