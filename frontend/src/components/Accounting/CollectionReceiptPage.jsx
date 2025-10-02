@@ -546,8 +546,19 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">
-                          {getPaymentMethod(receipt.payment_details)}
+                        <div className="flex space-x-1">
+                          {getPaymentMethod(receipt.payment_details).map((method, idx) => (
+                            <div
+                              key={idx}
+                              title={method.title}
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${method.color}`}
+                            >
+                              {method.letter}
+                            </div>
+                          ))}
+                          {getPaymentMethod(receipt.payment_details).length === 0 && (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
