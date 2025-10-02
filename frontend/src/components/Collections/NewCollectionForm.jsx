@@ -461,40 +461,6 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                 className="w-full"
               />
             </div>
-
-            {/* Total Amount */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tahsilat Tutarı *
-              </label>
-              <div className="flex space-x-2">
-                <Input
-                  type="text"
-                  value={formData.totalAmount ? formatNumber(formData.totalAmount) : ''}
-                  onChange={(e) => {
-                    const value = parseNumber(e.target.value);
-                    setFormData(prev => ({ ...prev, totalAmount: value }));
-                  }}
-                  placeholder="0,00"
-                  className="flex-1"
-                />
-                <Select 
-                  value={formData.currency} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value }))}
-                >
-                  <SelectTrigger className="w-24">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
           </div>
         </div>
 
