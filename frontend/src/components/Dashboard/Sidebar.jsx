@@ -372,19 +372,9 @@ export default function Sidebar({
     setSearchTerm('');
   }, [user?.id]);
   
-  // Debug user data
-  useEffect(() => {
-    console.log('🔍 Sidebar Props Debug - Full user object:', user);
-    console.log('🔍 Sidebar Props Debug - User department:', user?.department);
-    console.log('🔍 Sidebar Props Debug - User id:', user?.id);
-  }, [user]);
-  
   // Get navigation based on user department
   const navigation = React.useMemo(() => {
-    console.log('🔍 useMemo triggered with user department:', user?.department);
-    const result = getNavigation(user?.department);
-    console.log('🔍 getNavigation result:', result);
-    return result;
+    return getNavigation(user?.department);
   }, [user]);
 
   const toggleSubmenu = (itemName) => {
