@@ -1463,11 +1463,11 @@ frontend:
 
 test_plan:
   current_focus:
-    - "New Collection Form Header Total Display"
+    - "Collection Statistics Endpoint Testing"
   stuck_tasks: 
     - "New Collection Form Header Total Display"
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
