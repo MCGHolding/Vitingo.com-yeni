@@ -5467,6 +5467,197 @@ async def generate_collection_receipt_pdf(receipt_id: str):
         logger.error(f"Error generating collection receipt PDF: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== COLLECTION MODELS & ENDPOINTS =====================
+
+class CollectionItem(BaseModel):
+    """Single collection item (payment method)"""
+    type: str = Field(..., description="Collection type: transfer, cash, check, promissory, credit_card")
+    amount: float = Field(..., description="Amount for this payment method")
+    currency: str = Field("TL", description="Currency")
+    
+    # Transfer/Bank fields
+    bank_id: Optional[str] = Field(None, description="Bank ID for transfer")
+    
+    # Check fields
+    check_date: Optional[str] = Field(None, description="Check date")
+    check_number: Optional[str] = Field(None, description="Check number")
+    check_bank: Optional[str] = Field(None, description="Check bank")
+    
+    # Promissory note fields
+    promissory_date: Optional[str] = Field(None, description="Promissory note date")
+    promissory_number: Optional[str] = Field(None, description="Promissory note number")
+    promissory_bank: Optional[str] = Field(None, description="Promissory note bank")
+
+class Collection(BaseModel):
+    """Collection record - manual payment entry"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    collection_number: str = Field(..., description="Auto-generated collection number")
+    
+    # Customer/Supplier info
+    customer_type: str = Field(..., description="customer or supplier")
+    customer_id: Optional[str] = Field(None, description="Customer ID if customer type")
+    supplier_id: Optional[str] = Field(None, description="Supplier ID if supplier type")
+    contact_person_id: Optional[str] = Field(None, description="Contact person ID")
+    
+    # Collection details
+    date: str = Field(..., description="Collection date")
+    project_id: Optional[str] = Field(None, description="Related project ID")
+    total_amount: float = Field(..., description="Total collection amount")
+    currency: str = Field("TL", description="Collection currency")
+    
+    # Collection items (multiple payment methods)
+    collection_items: List[CollectionItem] = Field(..., description="List of payment methods used")
+    
+    # Status & tracking
+    status: str = Field("completed", description="Collection status")
+    receipt_sent: bool = Field(False, description="Whether receipt was sent via email")
+    receipt_id: Optional[str] = Field(None, description="Generated collection receipt ID")
+    
+    # Timestamps
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CollectionCreate(BaseModel):
+    """Create collection model"""
+    customer_type: str
+    customer_id: Optional[str] = None
+    supplier_id: Optional[str] = None
+    contact_person_id: Optional[str] = None
+    date: str
+    project_id: Optional[str] = None
+    total_amount: float
+    currency: str = "TL"
+    collection_items: List[CollectionItem]
+
+@api_router.post("/collections", response_model=Collection)
+async def create_collection(collection_data: CollectionCreate):
+    """Create a new collection entry and automatically send receipt"""
+    try:
+        # Generate collection number
+        current_date = datetime.now().strftime("%Y%m%d")
+        count = await db.collections.count_documents({
+            "collection_number": {"$regex": f"^COL-{current_date}"}
+        }) + 1
+        collection_number = f"COL-{current_date}-{count:04d}"
+        
+        # Get customer or supplier details
+        customer_name = ""
+        customer_email = ""
+        contact_name = ""
+        contact_email = ""
+        
+        if collection_data.customer_type == "customer" and collection_data.customer_id:
+            customer = await db.customers.find_one({"id": collection_data.customer_id})
+            if customer:
+                customer_name = customer.get("companyName", "")
+                customer_email = customer.get("email", "")
+        elif collection_data.customer_type == "supplier" and collection_data.supplier_id:
+            supplier = await db.suppliers.find_one({"id": collection_data.supplier_id})
+            if supplier:
+                customer_name = supplier.get("company_short_name", "")
+                customer_email = supplier.get("email", "")
+        
+        # Get contact person details
+        if collection_data.contact_person_id:
+            # This would be implementation for real contact person data
+            # For now using mock data
+            contact_name = "Yetkili Kişi"
+            contact_email = customer_email  # Fallback to customer email
+        
+        # Create collection record
+        collection = Collection(
+            collection_number=collection_number,
+            customer_type=collection_data.customer_type,
+            customer_id=collection_data.customer_id,
+            supplier_id=collection_data.supplier_id,
+            contact_person_id=collection_data.contact_person_id,
+            date=collection_data.date,
+            project_id=collection_data.project_id,
+            total_amount=collection_data.total_amount,
+            currency=collection_data.currency,
+            collection_items=collection_data.collection_items,
+            status="completed"
+        )
+        
+        # Save collection to database
+        await db.collections.insert_one(collection.dict())
+        
+        # Create collection receipt automatically
+        receipt_data = {
+            "issuer_name": "Sistem Yöneticisi",
+            "issuer_title": "Muhasebe Departmanı",
+            "company_name": "Başarı Uluslararası Fuarcılık A.Ş.",
+            "company_address": "Küçükyalı Merkez Mh. Şevki Çavuş Sok. Merve Apt. No:9/7 34840 Maltepe / İstanbul",
+            "company_phone": "+90 216 123 45 67",
+            "company_email": "info@basariuluslararasi.com",
+            "payer_name": customer_name or "Müşteri",
+            "payer_email": contact_email or customer_email or "mbucak@gmail.com",  # Test email fallback
+            "payment_reason": f"Tahsilat - {collection_number}",
+            "total_amount": collection_data.total_amount,
+            "payment_details": {
+                "cash_amount": sum(item.amount for item in collection_data.collection_items if item.type == "cash"),
+                "credit_card_amount": sum(item.amount for item in collection_data.collection_items if item.type == "credit_card"),
+                "check_amount": sum(item.amount for item in collection_data.collection_items if item.type == "check"),
+                "promissory_note_amount": sum(item.amount for item in collection_data.collection_items if item.type == "promissory"),
+                "check_details": [
+                    {
+                        "bank": item.check_bank or "Belirtilmemiş",
+                        "branch": "Ana Şube",
+                        "account_iban": "TR00 0000 0000 0000 0000 000000",
+                        "check_number": item.check_number or "",
+                        "check_date": item.check_date or "",
+                        "amount": item.amount
+                    }
+                    for item in collection_data.collection_items if item.type == "check"
+                ]
+            }
+        }
+        
+        # Create collection receipt
+        receipt_create = CollectionReceiptCreate(**receipt_data)
+        receipt_response = await create_collection_receipt(receipt_create)
+        
+        # Update collection with receipt ID
+        if hasattr(receipt_response, 'id'):
+            await db.collections.update_one(
+                {"id": collection.id},
+                {"$set": {
+                    "receipt_id": receipt_response.id,
+                    "receipt_sent": True
+                }}
+            )
+        
+        logger.info(f"Collection created successfully: {collection_number}")
+        return collection
+        
+    except Exception as e:
+        logger.error(f"Error creating collection: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collections", response_model=List[Collection])
+async def get_collections():
+    """Get all collections"""
+    try:
+        collections = await db.collections.find().sort("created_at", -1).to_list(length=None)
+        return [Collection(**collection) for collection in collections]
+    except Exception as e:
+        logger.error(f"Error getting collections: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collections/{collection_id}", response_model=Collection)
+async def get_collection(collection_id: str):
+    """Get specific collection by ID"""
+    try:
+        collection = await db.collections.find_one({"id": collection_id})
+        if not collection:
+            raise HTTPException(status_code=404, detail="Collection not found")
+        return Collection(**collection)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting collection {collection_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
