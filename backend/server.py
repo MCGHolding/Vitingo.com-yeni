@@ -5185,7 +5185,7 @@ async def create_collection_receipt(receipt_input: CollectionReceiptCreate):
                 <p>Saygılarımızla,<br>{receipt_input.company_name}</p>
                 """
                 
-                await email_service.send_email(
+                email_service.send_email(
                     to_email=receipt_input.payer_email,
                     subject=f"Tahsilat Makbuzu İmza Talebi - {receipt_number}",
                     html_content=email_content
