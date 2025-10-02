@@ -366,6 +366,11 @@ export default function Sidebar({
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Clear search term when user changes (to prevent login username from affecting sidebar search)
+  React.useEffect(() => {
+    setSearchTerm('');
+  }, [user?.id]);
+  
   // Get navigation based on user department
   const navigation = React.useMemo(() => {
     return getNavigation(user?.department);
