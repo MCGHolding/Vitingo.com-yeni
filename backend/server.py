@@ -6012,8 +6012,22 @@ async def create_mock_customers():
                 "tags": [sector.lower(), "aktif"]
             }
             mock_customers.append(customer)
+        
+        # Insert all mock customers
+        await db.customers.insert_many(mock_customers)
+        logger.info(f"Created {len(mock_customers)} mock customers")
+        
+        return {
+            "success": True,
+            "message": f"Successfully created {len(mock_customers)} mock customers",
+            "count": len(mock_customers)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating mock customers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-        mock_customers = [
+# ===================== COLLECTION STATISTICS ENDPOINT =====================
             {
                 "id": str(uuid.uuid4()),
                 "companyName": "Anadolu Holding",
