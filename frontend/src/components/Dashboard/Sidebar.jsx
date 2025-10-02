@@ -426,7 +426,7 @@ export default function Sidebar({
   const handleMenuClick = (item, subItem = null, nestedSubItem = null, deepNestedItem = null) => {
     // Handle nested submenu for "Yeni Tahsilatlar"
     if (subItem && subItem.name === 'Yeni Tahsilatlar' && !nestedSubItem) {
-      toggleSubmenu(subItem.name);
+      setOpenNestedSubmenu(openNestedSubmenu === subItem.name ? null : subItem.name);
       return;
     }
     
