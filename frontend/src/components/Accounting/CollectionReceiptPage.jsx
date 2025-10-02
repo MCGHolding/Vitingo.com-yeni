@@ -12,7 +12,9 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  Users,
+  TrendingUp
 } from 'lucide-react';
 
 const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
