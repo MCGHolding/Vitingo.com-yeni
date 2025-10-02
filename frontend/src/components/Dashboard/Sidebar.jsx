@@ -417,12 +417,6 @@ export default function Sidebar({
   };
 
   const handleMenuClick = (item, subItem = null, nestedSubItem = null) => {
-    console.log('🔍 handleMenuClick called:', {
-      item: item?.name,
-      subItem: subItem?.name, 
-      nestedSubItem: nestedSubItem?.name
-    });
-    
     // Handle nested submenu for "Yeni Tahsilatlar"
     if (subItem && subItem.name === 'Yeni Tahsilatlar' && !nestedSubItem) {
       setOpenNestedSubmenu(openNestedSubmenu === subItem.name ? null : subItem.name);
