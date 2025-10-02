@@ -989,7 +989,7 @@ export default function Sidebar({
                   <div className="ml-6 mt-2 space-y-1">
                     {getFilteredSubmenu(item)?.map((subItem) => {
                       const SubIcon = subItem.icon;
-                      const isNestedSubmenuOpen = openSubmenu === subItem.name;
+                      const isNestedSubmenuOpen = openNestedSubmenu === subItem.name;
                       
                       return (
                         <div key={subItem.name}>
