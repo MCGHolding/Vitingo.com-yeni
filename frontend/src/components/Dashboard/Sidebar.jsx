@@ -767,7 +767,13 @@ export default function Sidebar({
       return;
     }
     
-    // The "Tahsilatlar" item now just opens its submenu since it has nested items
+    if (nestedSubItem && nestedSubItem.name === 'Tahsilatlar') {
+      // Navigate to collection receipt page (same as other users see)
+      if (onCollectionReceipt) {
+        onCollectionReceipt();
+      }
+      return;
+    }
 
     // Gider Makbuzu removed from Muhasebe submenu
 
