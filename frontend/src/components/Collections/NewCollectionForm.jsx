@@ -449,29 +449,53 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
     return totalInTL;
   };
 
-  // Get top customer (mock logic, in production fetch from backend)
-  const getTopCustomer = () => {
-    // Mock top customer logic
+  // B) En çok tahsilat yapan müşteri kısa adı
+  const getTopCustomerShortName = () => {
+    // Seçili müşteri/tedarikçi varsa onun kısa adını göster
     if (formData.customerId) {
       const customer = customers.find(c => c.id === formData.customerId);
-      return customer?.companyName?.split(' ')[0] || 'Seçili Müşteri';
+      if (customer?.companyName) {
+        // İlk kelimeyi al (kısa ad)
+        return customer.companyName.split(' ')[0];
+      }
+      return 'Seçili Müşteri';
     } else if (formData.supplierId) {
       const supplier = suppliers.find(s => s.id === formData.supplierId);
-      return supplier?.company_short_name || 'Seçili Tedarikçi';
+      if (supplier?.company_short_name) {
+        return supplier.company_short_name;
+      }
+      return 'Seçili Tedarikçi';
     }
     
-    // Mock data for demonstration
-    const mockTopCustomers = ['ABC İnşaat', 'XYZ Holding', 'DEF Turizm', 'GHI Tekstil', 'JKL Otomotiv'];
-    return mockTopCustomers[Math.floor(Math.random() * mockTopCustomers.length)];
+    // Mock data: En çok tahsilat yapan müşteriler (gerçek sistemde backend'den gelecek)
+    const topCustomersData = [
+      { name: 'ABC', fullName: 'ABC İnşaat A.Ş.', totalCollections: 150000 },
+      { name: 'XYZ', fullName: 'XYZ Holding', totalCollections: 120000 },
+      { name: 'DEF', fullName: 'DEF Turizm Ltd.', totalCollections: 98000 },
+      { name: 'GHI', fullName: 'GHI Tekstil', totalCollections: 87000 },
+      { name: 'JKL', fullName: 'JKL Otomotiv', totalCollections: 75000 }
+    ];
+    
+    // En yüksek tahsilatlı müşteriyi döndür
+    const topCustomer = topCustomersData[0]; // En üstteki zaten en yüksek
+    return topCustomer.name;
   };
 
-  // Get total collection count (current form items)
-  const getTotalCount = () => {
-    return formData.collectionItems.filter(item => parseNumber(item.amount) > 0).length;
+  // C) Toplam tahsilat adedi
+  const getTotalCollectionCount = () => {
+    // Form'daki aktif tahsilat kalemlerini say
+    const activeItems = formData.collectionItems.filter(item => parseNumber(item.amount) > 0);
+    
+    // Mock data: Genel sistem genelindeki toplam tahsilat adedi
+    // Gerçek sistemde backend'den güncel toplam gelecek
+    const systemTotalCollections = 1247; // Mock toplam sistem tahsilat sayısı
+    
+    // Şu anki form'a eklenenler + sistem toplamı
+    return systemTotalCollections + activeItems.length;
   };
 
-  // Calculate average due days (mock calculation)
-  const getAverageDueDays = () => {
+  // D) Ortalama tahsilat vadesi hesaplaması
+  const getAverageCollectionDueDays = () => {
     // Mock logic: calculate based on payment types
     let totalDays = 0;
     let count = 0;
