@@ -34,40 +34,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     dateTo: ''
   });
 
-  // Current user data (should come from auth context in real app)
-  const [currentUser, setCurrentUser] = useState({
-    name: 'Murat Başaran',
-    title: 'Mali Müşavir',
-    company_name: 'Vitingo CRM Ltd. Şti.',
-    company_address: 'Maslak Mahallesi, Büyükdere Cad. No:123, 34485 Sarıyer/İstanbul',
-    company_phone: '+90 212 555 0000',
-    company_email: 'info@vitingo.com'
-  });
-
-  // Selected payment/customer data (will be passed as props in real usage)
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-
-  // Form state for new receipt
-  const [formData, setFormData] = useState({
-    issuer_name: currentUser.name,
-    issuer_title: currentUser.title,
-    company_name: currentUser.company_name,
-    company_address: currentUser.company_address,
-    company_phone: currentUser.company_phone,
-    company_email: currentUser.company_email,
-    payer_name: '',
-    payer_email: '',
-    payment_reason: '',
-    total_amount: 0,
-    payment_details: {
-      cash_amount: 0,
-      credit_card_amount: 0,
-      check_amount: 0,
-      promissory_note_amount: 0,
-      check_details: []
-    }
-  });
+  // Removed manual receipt creation - receipts are auto-generated when payments are received
 
   // Load receipts and user data on component mount
   useEffect(() => {
