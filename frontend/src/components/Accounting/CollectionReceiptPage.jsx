@@ -153,7 +153,8 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
       filtered = filtered.filter(receipt => 
         receipt.receipt_number.toLowerCase().includes(filters.search.toLowerCase()) ||
         receipt.payer_name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        receipt.payment_reason.toLowerCase().includes(filters.search.toLowerCase())
+        getPaymentMethod(receipt.payment_details).toLowerCase().includes(filters.search.toLowerCase()) ||
+        getPaymentLocation(receipt.payment_details).toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
