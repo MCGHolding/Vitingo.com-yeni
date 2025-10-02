@@ -982,11 +982,6 @@ export default function Sidebar({
                           >
                             <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
                             <span className="flex-1">{subItem.name}</span>
-                            {subItem.hasSubmenu && (
-                              isNestedSubmenuOpen ? 
-                                <ChevronDown className="h-4 w-4 text-slate-400" /> :
-                                <ChevronRight className="h-4 w-4 text-slate-400" />
-                            )}
                           </a>
                           
                           {/* Nested submenu for "Yeni Tahsilatlar" */}
