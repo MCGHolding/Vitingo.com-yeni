@@ -585,16 +585,22 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                       
                       {/* Amount */}
                       <td className="py-3 px-2">
-                        <Input
-                          type="text"
-                          value={item.amount ? formatNumber(item.amount) : ''}
-                          onChange={(e) => {
-                            const value = parseNumber(e.target.value);
-                            updateCollectionItem(item.id, 'amount', value);
-                          }}
-                          placeholder="0,00"
-                          className="w-full"
-                        />
+                        <div>
+                          <Input
+                            type="text"
+                            value={item.amount ? formatNumber(item.amount) : ''}
+                            onChange={(e) => {
+                              updateCollectionItem(item.id, 'amount', e.target.value);
+                            }}
+                            placeholder="0,00"
+                            className={`w-full ${validationErrors[`amount_${item.id}`] ? 'border-red-500 focus:border-red-500' : ''}`}
+                          />
+                          {validationErrors[`amount_${item.id}`] && (
+                            <p className="text-xs text-red-600 mt-1">
+                              {validationErrors[`amount_${item.id}`]}
+                            </p>
+                          )}
+                        </div>
                       </td>
                       
                       {/* Currency */}
