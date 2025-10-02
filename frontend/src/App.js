@@ -1027,6 +1027,11 @@ const Dashboard = () => {
           onBackToDashboard={handleBackToDashboard}
         />;
 
+      case 'new-collection':
+        return <NewCollectionForm 
+          onBackToDashboard={handleBackToDashboard}
+        />;
+
       case 'expense-receipt':
         return (
           <div className="p-6">
