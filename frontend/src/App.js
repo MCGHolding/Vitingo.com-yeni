@@ -1293,6 +1293,7 @@ const Dashboard = () => {
       <Sidebar 
         isOpen={sidebarOpen} 
         toggleSidebar={toggleSidebar}
+        user={user}
         onDashboard={handleBackToDashboard}
         onNewOpportunity={handleNewOpportunity}
         onOpenOpportunities={handleOpenOpportunities}
