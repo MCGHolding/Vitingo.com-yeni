@@ -288,6 +288,18 @@ frontend:
         agent: "main"
         comment: "✅ DRAFT INVOICES 4-CARD STATISTICS IMPLEMENTATION COMPLETED SUCCESSFULLY! User requested implementation of 4-card statistics layout from AllInvoicesPage on DraftInvoicesPage as mentioned in current_work. Implementation completed with the following features: 1) Updated grid layout from 3-card (grid-cols-1 md:grid-cols-3) to 4-card layout (grid-cols-1 md:grid-cols-2 lg:grid-cols-4) matching AllInvoicesPage exactly 2) Implemented comprehensive statistics calculations adapted for draft invoices: - Toplam Tutar (Total Amount): Sum of all draft invoice totals - Tahsil Edilen (Collected): Shows ₺0.00 since drafts haven't been finalized/paid - Bekleyen Ödemeler (Pending Payments): Shows same as total since all drafts are pending - Eski Taslaklar (Old Drafts): Identifies drafts created >30 days ago needing attention 3) Visual design matches AllInvoicesPage with proper color coding: blue icons for total amount, green for collected, orange for pending payments, red for old drafts 4) Screenshot verification shows successful implementation: proper 4-card responsive layout, correct calculations (₺120.00 total, ₺0.00 collected, ₺120.00 pending, ₺0.00 old drafts), consistent styling and spacing 5) All original functionality preserved: filtering, table display, draft invoice operations remain unchanged. The statistics cards now provide comprehensive insight into draft invoice status exactly as requested in the pending tasks."
 
+  - task: "New Collection Form Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Collections/NewCollectionForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing comprehensive New Collection Form implementation: customer/supplier selection logic, form validation, collection items management, totals calculation, and backend integration with /api/collections endpoint."
+
 backend:
   - task: "Collection Receipt System Backend Testing"
     implemented: true
