@@ -109,17 +109,26 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     return value.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  // Get payment method display
+  // Get payment method display with abbreviated letters in circles
   const getPaymentMethod = (paymentDetails) => {
-    if (!paymentDetails) return 'Bilinmiyor';
+    if (!paymentDetails) return [];
     
     const methods = [];
-    if (paymentDetails.cash_amount > 0) methods.push('Nakit');
-    if (paymentDetails.credit_card_amount > 0) methods.push('Kredi Kartı');
-    if (paymentDetails.check_amount > 0) methods.push('Çek');
-    if (paymentDetails.promissory_note_amount > 0) methods.push('Senet');
+    if (paymentDetails.cash_amount > 0) methods.push({ letter: 'N', color: 'bg-green-100 text-green-700', title: 'Nakit' });
+    if (paymentDetails.credit_card_amount > 0) methods.push({ letter: 'K', color: 'bg-blue-100 text-blue-700', title: 'Kredi Kartı' });
+    if (paymentDetails.check_amount > 0) methods.push({ letter: 'Ç', color: 'bg-purple-100 text-purple-700', title: 'Çek' });
+    if (paymentDetails.promissory_note_amount > 0) methods.push({ letter: 'S', color: 'bg-red-100 text-red-700', title: 'Senet' });
     
-    return methods.length > 0 ? methods.join(', ') : 'Bilinmiyor';
+    // Check for EFT/Havale (if not cash, credit card, check or promissory note but has amount)
+    const totalKnown = (paymentDetails.cash_amount || 0) + (paymentDetails.credit_card_amount || 0) + 
+                      (paymentDetails.check_amount || 0) + (paymentDetails.promissory_note_amount || 0);
+    const totalAmount = paymentDetails.total_amount || 0;
+    
+    if (totalAmount > totalKnown) {
+      methods.push({ letter: 'B', color: 'bg-orange-100 text-orange-700', title: 'EFT/Havale' });
+    }
+    
+    return methods;
   };
 
   // Get payment location display
