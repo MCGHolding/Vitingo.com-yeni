@@ -295,9 +295,9 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
       const collectionData = {
-        customer_type: formData.customerType,
-        customer_id: formData.customerType === 'customer' ? formData.customerId : null,
-        supplier_id: formData.customerType === 'supplier' ? formData.supplierId : null,
+        customer_type: formData.customerId ? 'customer' : 'supplier',
+        customer_id: formData.customerId || null,
+        supplier_id: formData.supplierId || null,
         contact_person_id: formData.contactPersonId,
         date: formData.date,
         project_id: formData.projectId,
