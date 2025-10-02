@@ -963,19 +963,51 @@ export default function Sidebar({
                   <div className="ml-6 mt-2 space-y-1">
                     {getFilteredSubmenu(item)?.map((subItem) => {
                       const SubIcon = subItem.icon;
+                      const isNestedSubmenuOpen = openSubmenu === subItem.name;
+                      
                       return (
-                        <a
-                          key={subItem.name}
-                          href={subItem.href}
-                          className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleMenuClick(item, subItem);
-                          }}
-                        >
-                          <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
-                          {subItem.name}
-                        </a>
+                        <div key={subItem.name}>
+                          {/* Submenu item */}
+                          <a
+                            href={subItem.href}
+                            className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleMenuClick(item, subItem);
+                            }}
+                          >
+                            <SubIcon className="mr-3 h-4 w-4 flex-shrink-0" />
+                            <span className="flex-1">{subItem.name}</span>
+                            {subItem.hasSubmenu && (
+                              isNestedSubmenuOpen ? 
+                                <ChevronDown className="h-4 w-4 text-slate-400" /> :
+                                <ChevronRight className="h-4 w-4 text-slate-400" />
+                            )}
+                          </a>
+                          
+                          {/* Nested submenu for "Yeni Tahsilatlar" */}
+                          {subItem.hasSubmenu && isNestedSubmenuOpen && (
+                            <div className="ml-6 mt-2 space-y-1">
+                              {subItem.submenu?.map((nestedSubItem) => {
+                                const NestedIcon = nestedSubItem.icon;
+                                return (
+                                  <a
+                                    key={nestedSubItem.name}
+                                    href={nestedSubItem.href}
+                                    className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleMenuClick(item, subItem, nestedSubItem);
+                                    }}
+                                  >
+                                    <NestedIcon className="mr-3 h-4 w-4 flex-shrink-0" />
+                                    {nestedSubItem.name}
+                                  </a>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
