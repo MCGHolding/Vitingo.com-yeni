@@ -192,14 +192,11 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       return sum + (parseNumber(item.amount) || 0);
     }, 0);
     
-    const totalAmount = parseNumber(formData.totalAmount) || 0;
-    const remaining = totalAmount - totalCollected;
-    
     setTotals({
       totalCollected,
-      remaining
+      remaining: 0 // No remaining since there's no total amount field
     });
-  }, [formData.collectionItems, formData.totalAmount]);
+  }, [formData.collectionItems]);
 
   // Handler functions
   const handleCustomerChange = (customerId) => {
