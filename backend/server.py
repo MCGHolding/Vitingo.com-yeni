@@ -5134,7 +5134,7 @@ async def create_collection_receipt(receipt_input: CollectionReceiptCreate):
             "receipt_number": receipt_number,
             "issue_date": datetime.now().strftime("%Y-%m-%d"),
             "total_amount_words": amount_words,
-            "signature_status": "pending",
+            "status": "completed",
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         })
