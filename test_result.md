@@ -1352,7 +1352,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Collection Receipt System Backend Testing"
+    - "Collection Receipt Modal Auto-Fill Functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
