@@ -524,9 +524,10 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                   </td>
                 </tr>
               ) : (
-                filteredReceipts.map((receipt, index) => {
+                paginatedReceipts.map((receipt, index) => {
                   const statusInfo = getStatusDisplay(receipt.signature_status);
                   const StatusIcon = statusInfo.icon;
+                  const globalIndex = startIndex + index;
                   
                   return (
                     <tr key={receipt.id} className="hover:bg-gray-50">
