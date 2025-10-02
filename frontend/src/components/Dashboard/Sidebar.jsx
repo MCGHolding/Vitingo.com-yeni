@@ -363,6 +363,7 @@ export default function Sidebar({
   onRequestBrief
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [openNestedSubmenu, setOpenNestedSubmenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   
   // Clear search term when user changes (to prevent login username from affecting sidebar search)
