@@ -39,7 +39,7 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showMailModal, setShowMailModal] = useState(false);
   const [selectedReceiptForMail, setSelectedReceiptForMail] = useState(null);
-  const [hoveredReceiptId, setHoveredReceiptId] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
 
   // Removed manual receipt creation - receipts are auto-generated when payments are received
 
