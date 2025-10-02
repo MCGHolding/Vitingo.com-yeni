@@ -500,6 +500,10 @@ const Dashboard = () => {
     setCurrentView('collection-receipt');
   };
 
+  const handleNewCollection = () => {
+    setCurrentView('new-collection');
+  };
+
   const handleExpenseReceipt = () => {
     setCurrentView('expense-receipt');
   };
