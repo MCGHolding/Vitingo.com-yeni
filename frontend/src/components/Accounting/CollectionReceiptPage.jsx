@@ -520,7 +520,17 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         {new Date(receipt.issue_date).toLocaleDateString('tr-TR')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex justify-center space-x-2">
+                        <div className="flex justify-center items-center space-x-2">
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => handleEditReceipt(receipt)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Düzenle"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+
+                          {/* Download Button */}
                           <button
                             onClick={() => downloadReceiptPDF(receipt)}
                             className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
@@ -528,6 +538,40 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                           >
                             <Download className="h-4 w-4" />
                           </button>
+
+                          {/* More Actions Menu */}
+                          <div 
+                            className="relative"
+                            onMouseEnter={() => setHoveredReceiptId(receipt.id)}
+                            onMouseLeave={() => setHoveredReceiptId(null)}
+                          >
+                            <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </button>
+                            
+                            {/* Dropdown Menu */}
+                            {hoveredReceiptId === receipt.id && (
+                              <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                                <button
+                                  onClick={() => {
+                                    handleSendMail(receipt);
+                                    setHoveredReceiptId(null);
+                                  }}
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                                >
+                                  <Mail className="h-4 w-4" />
+                                  <span>Mail</span>
+                                </button>
+                                <button
+                                  disabled
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-400 cursor-not-allowed flex items-center space-x-2"
+                                >
+                                  <MessageCircle className="h-4 w-4" />
+                                  <span>Mesaj</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
