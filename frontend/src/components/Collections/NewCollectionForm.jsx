@@ -395,8 +395,18 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       const response = await axios.post(`${backendUrl}/api/collections`, collectionData);
       console.log('Collection created successfully:', response.data);
       
-      alert('Tahsilat başarıyla kaydedildi ve makbuz gönderildi!');
-      onBackToDashboard();
+      // Set success modal data
+      setCollectionResult({
+        collectionNumber: response.data.collection_number,
+        totalAmount: parseNumber(formData.totalAmount || totalCollected),
+        currency: formData.currency || 'TL',
+        customerName: formData.customerId ? 
+          customers.find(c => c.id === formData.customerId)?.companyName : 
+          suppliers.find(s => s.id === formData.supplierId)?.company_short_name,
+        date: formData.date,
+        receiptSent: true
+      });
+      setShowSuccessModal(true);
       
     } catch (error) {
       console.error('Collection submission error:', error);
