@@ -285,12 +285,35 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
   };
 
   const updateCollectionItem = (itemId, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      collectionItems: prev.collectionItems.map(item => 
-        item.id === itemId ? { ...item, [field]: value } : item
-      )
-    }));
+    // Special validation for amount field
+    if (field === 'amount') {
+      const currentItem = formData.collectionItems.find(item => item.id === itemId);
+      const validation = validateAmount(value, currentItem?.type);
+      
+      // Update validation errors
+      setValidationErrors(prev => ({
+        ...prev,
+        [`amount_${itemId}`]: validation.isValid ? '' : validation.error
+      }));
+      
+      // Only update if validation passes or if clearing the field
+      if (validation.isValid || value === '') {
+        setFormData(prev => ({
+          ...prev,
+          collectionItems: prev.collectionItems.map(item => 
+            item.id === itemId ? { ...item, [field]: validation.value } : item
+          )
+        }));
+      }
+    } else {
+      // Regular field update
+      setFormData(prev => ({
+        ...prev,
+        collectionItems: prev.collectionItems.map(item => 
+          item.id === itemId ? { ...item, [field]: value } : item
+        )
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
