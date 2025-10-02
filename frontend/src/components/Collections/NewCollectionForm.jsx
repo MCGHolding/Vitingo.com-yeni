@@ -292,8 +292,8 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
         contact_person_id: formData.contactPersonId,
         date: formData.date,
         project_id: formData.projectId,
-        total_amount: parseNumber(formData.totalAmount),
-        currency: formData.currency,
+        total_amount: totalCollected, // Use calculated total from collection items
+        currency: 'TL', // Default currency
         collection_items: formData.collectionItems.map(item => ({
           type: item.type,
           amount: parseNumber(item.amount),
