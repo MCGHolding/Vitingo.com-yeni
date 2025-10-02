@@ -744,14 +744,6 @@ export default function Sidebar({
       return;
     }
 
-    // Handle deep nested submenu items (third level)
-    if (deepNestedItem && deepNestedItem.name === 'Tahsilat Makbuzu') {
-      if (onCollectionReceipt) {
-        onCollectionReceipt();
-      }
-      return;
-    }
-
     // Handle nested submenu items for "Yeni Tahsilatlar"
     if (nestedSubItem && nestedSubItem.name === 'Yeni Tahsilat') {
       // For now, redirect to the existing collection receipt page
