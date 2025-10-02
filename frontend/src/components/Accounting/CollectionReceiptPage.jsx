@@ -33,6 +33,13 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     dateFrom: '',
     dateTo: ''
   });
+  
+  // Modal states
+  const [editingReceipt, setEditingReceipt] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showMailModal, setShowMailModal] = useState(false);
+  const [selectedReceiptForMail, setSelectedReceiptForMail] = useState(null);
+  const [hoveredReceiptId, setHoveredReceiptId] = useState(null);
 
   // Removed manual receipt creation - receipts are auto-generated when payments are received
 
