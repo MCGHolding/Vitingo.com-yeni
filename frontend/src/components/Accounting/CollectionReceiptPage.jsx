@@ -40,6 +40,10 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
   const [showMailModal, setShowMailModal] = useState(false);
   const [selectedReceiptForMail, setSelectedReceiptForMail] = useState(null);
   const [openDropdownId, setOpenDropdownId] = useState(null);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
 
   // Removed manual receipt creation - receipts are auto-generated when payments are received
 
