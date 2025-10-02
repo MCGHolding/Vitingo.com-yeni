@@ -335,11 +335,27 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
       return;
     }
     
+    // Check for validation errors
+    const hasValidationErrors = Object.values(validationErrors).some(error => error !== '');
+    if (hasValidationErrors) {
+      alert('Lütfen form hatalarını düzeltiniz');
+      return;
+    }
+
     // Check if at least one collection item has amount
     const totalCollected = formData.collectionItems.reduce((sum, item) => sum + (parseNumber(item.amount) || 0), 0);
     if (totalCollected <= 0) {
       alert('Lütfen tahsilat tutarlarını giriniz');
       return;
+    }
+
+    // Validate all amounts one more time before submission
+    for (const item of formData.collectionItems) {
+      const validation = validateAmount(item.amount, item.type);
+      if (!validation.isValid && item.amount) {
+        alert(`${validation.error} (Satır ${formData.collectionItems.indexOf(item) + 1})`);
+        return;
+      }
     }
     
     setIsSubmitting(true);
