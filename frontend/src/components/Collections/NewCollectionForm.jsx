@@ -445,20 +445,74 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
             </div>
           </div>
           
-          {/* Real-time Total Display */}
-          {totals.totalCollected > 0 && (
-            <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl px-4 py-3 lg:px-6 lg:py-4 shadow-sm">
-              <div className="flex items-center space-x-3">
-                <div className="p-1.5 lg:p-2 bg-green-500 rounded-full">
-                  <Calculator className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+          {/* Collection Statistics Dashboard */}
+          {formData.collectionItems.some(item => item.amount) && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+              {/* TL Total (converted from other currencies) */}
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg px-3 py-2 lg:px-4 lg:py-3 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="p-1 lg:p-1.5 bg-blue-500 rounded-full">
+                    <DollarSign className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-blue-700 uppercase tracking-wide truncate">
+                      TL Toplam
+                    </p>
+                    <p className="text-sm lg:text-lg font-bold text-blue-800 truncate">
+                      ₺{formatNumber(calculateTotalInTL())}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide">
-                    Toplam Tahsilat
-                  </p>
-                  <p className="text-xl lg:text-2xl font-bold text-green-800">
-                    ₺{formatNumber(totals.totalCollected)}
-                  </p>
+              </div>
+
+              {/* Top Customer */}
+              <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg px-3 py-2 lg:px-4 lg:py-3 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="p-1 lg:p-1.5 bg-green-500 rounded-full">
+                    <User className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-green-700 uppercase tracking-wide truncate">
+                      En Çok Tahsilat
+                    </p>
+                    <p className="text-sm lg:text-lg font-bold text-green-800 truncate">
+                      {getTopCustomer()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Total Count */}
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg px-3 py-2 lg:px-4 lg:py-3 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="p-1 lg:p-1.5 bg-purple-500 rounded-full">
+                    <Receipt className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-purple-700 uppercase tracking-wide truncate">
+                      Toplam Adet
+                    </p>
+                    <p className="text-sm lg:text-lg font-bold text-purple-800 truncate">
+                      {getTotalCount()} adet
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Average Due Date */}
+              <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg px-3 py-2 lg:px-4 lg:py-3 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="p-1 lg:p-1.5 bg-orange-500 rounded-full">
+                    <Calendar className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-orange-700 uppercase tracking-wide truncate">
+                      Ort. Vade
+                    </p>
+                    <p className="text-sm lg:text-lg font-bold text-orange-800 truncate">
+                      {getAverageDueDays()} gün
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
