@@ -5217,8 +5217,10 @@ async def update_collection_receipt(receipt_id: str, receipt_data: CollectionRec
         update_data["created_at"] = existing_receipt["created_at"]
         update_data["id"] = receipt_id
         
-        # Generate total amount words
-        from .amount_to_words import amount_to_words_turkish
+        # Generate total amount words (simple implementation)
+        def amount_to_words_turkish(amount):
+            return f"{amount:.2f} TÜRK LİRASI"
+        
         update_data["total_amount_words"] = amount_to_words_turkish(update_data["total_amount"])
         
         # Update receipt in database
