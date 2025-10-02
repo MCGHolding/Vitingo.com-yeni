@@ -1355,7 +1355,11 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Collection Receipt Modal Auto-Fill Functionality"
+    - "All Invoices Page Table Structure Improvements"
+    - "Invoice Preview Modal Functionality"
+    - "Invoice Edit Page Integration"
+    - "Invoice PDF Download Functionality"
+    - "Invoice Delete Confirmation Modal"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
