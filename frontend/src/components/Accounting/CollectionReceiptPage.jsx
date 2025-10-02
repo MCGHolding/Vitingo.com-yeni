@@ -214,7 +214,13 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Tahsilat_Makbuzu_${receipt.receipt_number}.pdf`;
+        // Fix Turkish characters in filename
+        const safeReceiptNumber = receipt.receipt_number.replace(/[ğüşöçıĞÜŞÖÇI]/g, (char) => {
+          const map = {'ğ':'g', 'ü':'u', 'ş':'s', 'ö':'o', 'ç':'c', 'ı':'i',
+                       'Ğ':'G', 'Ü':'U', 'Ş':'S', 'Ö':'O', 'Ç':'C', 'İ':'I'};
+          return map[char] || char;
+        });
+        a.download = `Tahsilat_Makbuzu_${safeReceiptNumber}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -226,6 +232,16 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
       console.error('Error downloading PDF:', error);
       alert('PDF indirme hatası: ' + error.message);
     }
+  };
+
+  const handleEditReceipt = (receipt) => {
+    setEditingReceipt(receipt);
+    setShowEditModal(true);
+  };
+
+  const handleSendMail = (receipt) => {
+    setSelectedReceiptForMail(receipt);
+    setShowMailModal(true);
   };
 
   // Calculate local statistics (for fallback)
