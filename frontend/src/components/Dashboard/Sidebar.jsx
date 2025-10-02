@@ -739,8 +739,8 @@ export default function Sidebar({
       return;
     }
 
-    // Handle new Collection menu items for Muhasebe department users
-    if (subItem && subItem.name === 'Yeni Tahsilat') {
+    // Handle nested submenu items for "Yeni Tahsilatlar"
+    if (nestedSubItem && nestedSubItem.name === 'Yeni Tahsilat') {
       // For now, redirect to the existing collection receipt page
       if (onCollectionReceipt) {
         onCollectionReceipt();
@@ -748,8 +748,8 @@ export default function Sidebar({
       return;
     }
     
-    if (subItem && subItem.name === 'Tahsilatlar') {
-      // For now, redirect to the existing collection receipt page
+    if (nestedSubItem && nestedSubItem.name === 'Tahsilatlar') {
+      // For now, redirect to the existing collection receipt page - this will have the moved "Tahsilat Makbuzu" functionality
       if (onCollectionReceipt) {
         onCollectionReceipt();
       }
