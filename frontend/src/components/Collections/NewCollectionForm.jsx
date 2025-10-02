@@ -372,23 +372,44 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
         {/* Main Form */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Customer Type Selection */}
+            {/* Customer Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tahsilat Türü *
+                Müşteri
               </label>
-              <Select 
-                value={formData.customerType} 
-                onValueChange={handleCustomerTypeChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Müşteri veya Tedarikçi seçin..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="customer">Müşteriden Tahsilat</SelectItem>
-                  <SelectItem value="supplier">Tedarikçiye Ödeme</SelectItem>
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                options={customers.map(customer => ({
+                  id: customer.id,
+                  label: customer.companyName,
+                  sublabel: `${customer.city || ''} ${customer.country || ''}`.trim() || customer.email
+                }))}
+                value={formData.customerId}
+                onChange={handleCustomerChange}
+                placeholder={isLoadingData ? "Müşteriler yükleniyor..." : "Müşteri seçiniz..."}
+                searchPlaceholder="Müşteri ara..."
+                disabled={isLoadingData || formData.supplierId} // Disable if supplier is selected
+                className="w-full"
+              />
+            </div>
+
+            {/* Supplier Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tedarikçi
+              </label>
+              <SearchableSelect
+                options={suppliers.map(supplier => ({
+                  id: supplier.id,
+                  label: supplier.company_short_name,
+                  sublabel: `${supplier.city || ''} ${supplier.country || ''}`.trim() || supplier.email
+                }))}
+                value={formData.supplierId}
+                onChange={handleSupplierChange}
+                placeholder={isLoadingData ? "Tedarikçiler yükleniyor..." : "Tedarikçi seçiniz..."}
+                searchPlaceholder="Tedarikçi ara..."
+                disabled={isLoadingData || formData.customerId} // Disable if customer is selected
+                className="w-full"
+              />
             </div>
 
             {/* Date */}
@@ -404,50 +425,6 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
               />
             </div>
 
-            {/* Customer Selection */}
-            {formData.customerType === 'customer' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Müşteri *
-                </label>
-                <SearchableSelect
-                  options={customers.map(customer => ({
-                    id: customer.id,
-                    label: customer.companyName,
-                    sublabel: `${customer.city || ''} ${customer.country || ''}`.trim() || customer.email
-                  }))}
-                  value={formData.customerId}
-                  onChange={handleCustomerChange}
-                  placeholder={isLoadingData ? "Müşteriler yükleniyor..." : "Müşteri seçiniz..."}
-                  searchPlaceholder="Müşteri ara..."
-                  disabled={isLoadingData}
-                  className="w-full"
-                />
-              </div>
-            )}
-
-            {/* Supplier Selection */}
-            {formData.customerType === 'supplier' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tedarikçi *
-                </label>
-                <SearchableSelect
-                  options={suppliers.map(supplier => ({
-                    id: supplier.id,
-                    label: supplier.company_short_name,
-                    sublabel: `${supplier.city || ''} ${supplier.country || ''}`.trim() || supplier.email
-                  }))}
-                  value={formData.supplierId}
-                  onChange={handleSupplierChange}
-                  placeholder={isLoadingData ? "Tedarikçiler yükleniyor..." : "Tedarikçi seçiniz..."}
-                  searchPlaceholder="Tedarikçi ara..."
-                  disabled={isLoadingData}
-                  className="w-full"
-                />
-              </div>
-            )}
-
             {/* Contact Person */}
             {(formData.customerId || formData.supplierId) && (
               <div>
@@ -457,8 +434,8 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                 <SearchableSelect
                   options={contactPersons
                     .filter(person => 
-                      (formData.customerType === 'customer' && person.type === 'customer') ||
-                      (formData.customerType === 'supplier' && person.type === 'supplier')
+                      (formData.customerId && person.type === 'customer') ||
+                      (formData.supplierId && person.type === 'supplier')
                     )
                     .map(person => ({
                       id: person.id,
