@@ -242,7 +242,26 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
   const handleSendMail = (receipt) => {
     setSelectedReceiptForMail(receipt);
     setShowMailModal(true);
+    setOpenDropdownId(null); // Close dropdown after action
   };
+
+  const toggleDropdown = (receiptId) => {
+    setOpenDropdownId(openDropdownId === receiptId ? null : receiptId);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openDropdownId && !event.target.closest('.dropdown-container')) {
+        setOpenDropdownId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openDropdownId]);
 
   // Calculate local statistics (for fallback)
   const totalReceipts = receipts.length;
