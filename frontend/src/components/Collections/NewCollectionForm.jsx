@@ -568,18 +568,34 @@ const NewCollectionForm = ({ onBackToDashboard }) => {
                       )}
                     </div>
                     
-                    {/* Remove Button */}
-                    {formData.collectionItems.length > 1 && (
+                    {/* Action Buttons */}
+                    <div className="flex flex-col space-y-2 mt-7">
+                      {/* Add Button - Always show */}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => removeCollectionItem(item.id)}
-                        className="text-red-600 hover:text-red-700 hover:border-red-300 mt-7"
+                        onClick={addCollectionItem}
+                        className="text-green-600 hover:text-green-700 hover:border-green-300"
+                        title="Yeni tahsilat türü ekle"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Plus className="h-4 w-4" />
                       </Button>
-                    )}
+                      
+                      {/* Remove Button - Only show if more than 1 item */}
+                      {formData.collectionItems.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeCollectionItem(item.id)}
+                          className="text-red-600 hover:text-red-700 hover:border-red-300"
+                          title="Bu satırı sil"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Additional Fields for Check */}
