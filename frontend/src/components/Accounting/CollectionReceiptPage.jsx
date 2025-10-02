@@ -98,6 +98,42 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
     return value.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  // Get payment method display
+  const getPaymentMethod = (paymentDetails) => {
+    if (!paymentDetails) return 'Bilinmiyor';
+    
+    const methods = [];
+    if (paymentDetails.cash_amount > 0) methods.push('Nakit');
+    if (paymentDetails.credit_card_amount > 0) methods.push('Kredi Kartı');
+    if (paymentDetails.check_amount > 0) methods.push('Çek');
+    if (paymentDetails.promissory_note_amount > 0) methods.push('Senet');
+    
+    return methods.length > 0 ? methods.join(', ') : 'Bilinmiyor';
+  };
+
+  // Get payment location display
+  const getPaymentLocation = (paymentDetails) => {
+    if (!paymentDetails) return 'Bilinmiyor';
+    
+    // Check for bank details in check_details
+    if (paymentDetails.check_details && paymentDetails.check_details.length > 0) {
+      const bank = paymentDetails.check_details[0].bank;
+      return bank || 'Banka Bilgisi Yok';
+    }
+    
+    // If cash payment, show "Kasa"
+    if (paymentDetails.cash_amount > 0) {
+      return 'Kasa';
+    }
+    
+    // For credit card, check, or promissory note without specific bank info
+    if (paymentDetails.credit_card_amount > 0) return 'Banka (Kredi Kartı)';
+    if (paymentDetails.check_amount > 0) return 'Banka (Çek)';
+    if (paymentDetails.promissory_note_amount > 0) return 'Banka (Senet)';
+    
+    return 'Bilinmiyor';
+  };
+
   // Get status display
   const getStatusDisplay = (status) => {
     const statusMap = {
