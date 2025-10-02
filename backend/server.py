@@ -5446,10 +5446,20 @@ def generate_collection_email_content(receipt_input, receipt_number, issue_date,
     
     # Parse payment details
     payment_details = receipt_input.payment_details
-    cash_amount = getattr(payment_details, 'cash_amount', 0) or 0
-    credit_card_amount = getattr(payment_details, 'credit_card_amount', 0) or 0
-    check_amount = getattr(payment_details, 'check_amount', 0) or 0
-    promissory_note_amount = getattr(payment_details, 'promissory_note_amount', 0) or 0
+    
+    # Handle both dict and object types
+    if hasattr(payment_details, '__dict__'):
+        # It's a Pydantic object
+        cash_amount = getattr(payment_details, 'cash_amount', 0) or 0
+        credit_card_amount = getattr(payment_details, 'credit_card_amount', 0) or 0
+        check_amount = getattr(payment_details, 'check_amount', 0) or 0
+        promissory_note_amount = getattr(payment_details, 'promissory_note_amount', 0) or 0
+    else:
+        # It's a dict
+        cash_amount = payment_details.get('cash_amount', 0) or 0
+        credit_card_amount = payment_details.get('credit_card_amount', 0) or 0
+        check_amount = payment_details.get('check_amount', 0) or 0
+        promissory_note_amount = payment_details.get('promissory_note_amount', 0) or 0
     
     # Determine primary payment method
     payment_methods = []
