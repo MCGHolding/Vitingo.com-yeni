@@ -429,13 +429,13 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center">
+                  <td colSpan="9" className="px-6 py-12 text-center">
                     <div className="text-gray-500">Tahsilat makbuzları yükleniyor...</div>
                   </td>
                 </tr>
               ) : filteredReceipts.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center">
+                  <td colSpan="9" className="px-6 py-12 text-center">
                     <div className="text-center">
                       <Receipt className="mx-auto h-12 w-12 text-gray-400" />
                       <h3 className="mt-2 text-sm font-medium text-gray-900">Tahsilat makbuzu bulunamadı</h3>
