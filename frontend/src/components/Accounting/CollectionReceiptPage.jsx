@@ -537,8 +537,11 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-mono font-medium text-blue-600">
-                          {receipt.receipt_number}
+                        <div 
+                          className="text-sm font-mono font-medium text-blue-600 cursor-help"
+                          title={receipt.receipt_number}
+                        >
+                          ...{receipt.receipt_number.slice(-4)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
