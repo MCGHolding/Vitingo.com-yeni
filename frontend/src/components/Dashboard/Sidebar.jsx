@@ -188,16 +188,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
       { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
-      { 
-        name: 'Yeni Tahsilatlar', 
-        href: '/accounting/new-collections', 
-        icon: Wallet,
-        hasSubmenu: true,
-        submenu: [
-          { name: 'Yeni Tahsilat', href: '/accounting/new-collection', icon: Plus },
-          { name: 'Tahsilatlar', href: '/accounting/collections', icon: List }
-        ]
-      },
+      { name: 'Yeni Tahsilatlar', href: '/accounting/new-collections', icon: Wallet },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
