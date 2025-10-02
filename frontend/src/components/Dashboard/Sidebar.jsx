@@ -1013,6 +1013,7 @@ export default function Sidebar({
                                     className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
                                     onClick={(e) => {
                                       e.preventDefault();
+                                      e.stopPropagation();
                                       handleMenuClick(item, subItem, nestedSubItem);
                                     }}
                                   >
