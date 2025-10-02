@@ -1014,36 +1014,8 @@ export default function Sidebar({
                                       }}
                                     >
                                       <NestedIcon className="mr-3 h-4 w-4 flex-shrink-0" />
-                                      <span className="flex-1">{nestedSubItem.name}</span>
-                                      {nestedSubItem.hasSubmenu && (
-                                        isDeepNestedSubmenuOpen ? 
-                                          <ChevronDown className="h-4 w-4 text-slate-400" /> :
-                                          <ChevronRight className="h-4 w-4 text-slate-400" />
-                                      )}
+                                      {nestedSubItem.name}
                                     </a>
-                                    
-                                    {/* Third level nested submenu for "Tahsilatlar" */}
-                                    {nestedSubItem.hasSubmenu && isDeepNestedSubmenuOpen && (
-                                      <div className="ml-6 mt-2 space-y-1">
-                                        {nestedSubItem.submenu?.map((deepNestedItem) => {
-                                          const DeepNestedIcon = deepNestedItem.icon;
-                                          return (
-                                            <a
-                                              key={deepNestedItem.name}
-                                              href={deepNestedItem.href}
-                                              className="group flex items-center px-3 py-2 text-sm font-medium text-slate-400 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
-                                              onClick={(e) => {
-                                                e.preventDefault();
-                                                handleMenuClick(item, subItem, nestedSubItem, deepNestedItem);
-                                              }}
-                                            >
-                                              <DeepNestedIcon className="mr-3 h-4 w-4 flex-shrink-0" />
-                                              {deepNestedItem.name}
-                                            </a>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
                                   </div>
                                 );
                               })}
