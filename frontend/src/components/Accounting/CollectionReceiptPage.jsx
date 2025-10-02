@@ -468,8 +468,13 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs truncate">
-                          {receipt.payment_reason}
+                        <div className="text-sm text-gray-900">
+                          {getPaymentMethod(receipt.payment_details)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {getPaymentLocation(receipt.payment_details)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -478,9 +483,9 @@ const CollectionReceiptPage = ({ onBackToDashboard, onNewReceipt }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.color}`}>
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {statusInfo.text}
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Tahsil Edildi
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
