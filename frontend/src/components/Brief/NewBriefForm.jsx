@@ -28,6 +28,27 @@ import {
   CheckCircle
 } from 'lucide-react';
 
+// Add CSS for slider styling
+const sliderStyles = `
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+    border: none;
+  }
+`;
+
 export default function NewBriefForm({ onBackToDashboard }) {
   const [formData, setFormData] = useState({
     // Basic Information
