@@ -3123,11 +3123,7 @@ if __name__ == "__main__":
         print("\n🎉 Recursive Stand Elements Backend API Testing Complete - All Tests Passed!")
     else:
         print("\n❌ Some tests failed - please review the implementation")
-        sys.exit(1)s returns recursive structure correctly
-    2. Default recursive data (Zemin > 36mm > Halı Kaplama > Renk/Miktar) is returned
-    3. Nested structure works properly with unlimited depth
-    4. Response includes proper structure with children property
-    """
+        sys.exit(1)
     
     print("=" * 80)
     print("TESTING RECURSIVE STAND ELEMENTS GET ENDPOINT")
