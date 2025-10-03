@@ -1594,7 +1594,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           onValueChange={(value) => handleRecursiveSelection(1, value)}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={`${standElementsConfig[stepData.selectedElement].label} türü seçin`} />
+                            <SelectValue placeholder={`${standElementsConfig[stepData.currentPath[0]]?.label} türü seçin`} />
                           </SelectTrigger>
                           <SelectContent>
                             {standElementsConfig && standElementsConfig[stepData.selectedElement]?.subOptions && Object.entries(standElementsConfig[stepData.selectedElement].subOptions).map(([key, config]) => (
