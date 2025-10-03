@@ -5117,7 +5117,7 @@ def test_draft_invoice_integration_workflow():
     print("=" * 80)
     print("TESTING DRAFT INVOICE INTEGRATION WORKFLOW")
     print("=" * 80)
-    print("Testing complete workflow: Create Draft → Retrieve Drafts → Delete Draft")
+    print("Testing complete workflow: Create Draft > Retrieve Drafts > Delete Draft")
     
     workflow_results = {
         "creation": False,
