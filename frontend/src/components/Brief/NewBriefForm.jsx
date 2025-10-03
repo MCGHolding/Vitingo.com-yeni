@@ -2152,13 +2152,129 @@ export default function NewBriefForm({ onBackToDashboard }) {
   );
 }
 
+// Manage Elements Panel Component
+function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
+  return (
+    <div className="space-y-6">
+      {Object.entries(elementsConfig).map(([elementKey, elementData]) => (
+        <div key={elementKey} className="border rounded-lg p-4">
+          {/* Main Element */}
+          <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">{elementData.icon}</span>
+              <div>
+                <h4 className="font-bold text-lg">{elementData.label}</h4>
+                <span className="text-sm text-gray-500">Key: {elementKey}</span>
+                {elementData.required && (
+                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800">
+                    Zorunlu
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onEdit(elementKey, elementData)}
+                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                Düzenle
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onDelete(elementKey)}
+                className="text-red-600 border-red-300 hover:bg-red-50"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Sil
+              </Button>
+            </div>
+          </div>
+
+          {/* Sub Elements */}
+          {elementData.subOptions && Object.keys(elementData.subOptions).length > 0 && (
+            <div className="ml-8 space-y-2">
+              {Object.entries(elementData.subOptions).map(([subKey, subData]) => (
+                <div key={subKey}>
+                  {/* Sub Element */}
+                  <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                    <div className="flex items-center space-x-2">
+                      {subData.icon && <span>{subData.icon}</span>}
+                      <span className="font-medium">{subData.label}</span>
+                      <span className="text-xs text-gray-500">({subKey})</span>
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onEdit(elementKey, subData, subKey)}
+                        className="text-blue-600 hover:bg-blue-100 p-1"
+                      >
+                        <Eye className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onDelete(elementKey, subKey)}
+                        className="text-red-600 hover:bg-red-100 p-1"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Sub-Sub Elements */}
+                  {subData.subOptions && Object.keys(subData.subOptions).length > 0 && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      {Object.entries(subData.subOptions).map(([subSubKey, subSubData]) => (
+                        <div key={subSubKey} className="flex items-center justify-between p-1 bg-green-50 rounded text-sm">
+                          <div className="flex items-center space-x-2">
+                            {subSubData.icon && <span>{subSubData.icon}</span>}
+                            <span>{subSubData.label}</span>
+                            <span className="text-xs text-gray-500">({subSubKey})</span>
+                          </div>
+                          <div className="flex space-x-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => onEdit(elementKey, subSubData, subKey, subSubKey)}
+                              className="text-blue-600 hover:bg-blue-100 p-1"
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => onDelete(elementKey, subKey, subSubKey)}
+                              className="text-red-600 hover:bg-red-100 p-1"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Add Element Form Component
-function AddElementForm({ level, parentKey, parentSubKey, onSuccess, onCancel }) {
+function AddElementForm({ level, parentKey, parentSubKey, editMode = false, editData = null, onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
-    key: '',
-    label: '',
-    icon: '',
-    required: false
+    key: editData?.key || '',
+    label: editData?.label || '',
+    icon: editData?.icon || '',
+    required: editData?.required || false
   });
   const [loading, setLoading] = useState(false);
   
