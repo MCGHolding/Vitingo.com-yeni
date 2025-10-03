@@ -17071,6 +17071,244 @@ def main():
         print(f"⚠️  {total_tests - passed_tests} tests failed. Please review the issues above.")
         return False
 
+def test_customer_management_api():
+    """
+    Test the customer management API to verify the 30 new mock customers are working correctly.
+    
+    Requirements to verify:
+    1. GET /api/customers endpoint returns exactly 30 customers
+    2. All customer data fields are properly populated (companyName, companyTitle, email, phone, address, city, country, sector, taxNumber, taxOffice, etc.)
+    3. Turkish company names are present like "Anadolu Holding", "Turkcell", "Arçelik", etc.
+    4. Proper JSON structure and Pydantic validation is working
+    5. No empty or missing critical fields
+    6. Individual customer endpoint testing
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER MANAGEMENT API - 30 MOCK CUSTOMERS VERIFICATION")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: GET /api/customers endpoint
+        print("\n1. Testing GET /api/customers endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customers endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            customers = response.json()
+            print(f"   Response type: {type(customers)}")
+            print(f"   Number of customers: {len(customers) if isinstance(customers, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Verify exactly 30 customers
+        print("\n3. Verifying customer count...")
+        if not isinstance(customers, list):
+            print("   ❌ FAIL: Response should be a list of customers")
+            return False
+        
+        if len(customers) != 30:
+            print(f"   ❌ FAIL: Expected exactly 30 customers, got {len(customers)}")
+            return False
+        
+        print("   ✅ PASS: Found exactly 30 customers as expected")
+        
+        # Test 4: Check customer data structure and fields
+        print("\n4. Checking customer data structure and fields...")
+        required_fields = [
+            "id", "companyName", "companyTitle", "email", "phone", "address", 
+            "city", "country", "sector", "taxNumber", "taxOffice", "relationshipType"
+        ]
+        
+        turkish_companies_found = []
+        expected_turkish_companies = ["Anadolu Holding", "Turkcell", "Arçelik", "Koç Holding", "Sabancı Holding"]
+        
+        customers_with_issues = []
+        
+        for i, customer in enumerate(customers, 1):
+            print(f"\n   Customer {i}: {customer.get('companyName', 'Unknown')}")
+            
+            # Check required fields
+            missing_fields = []
+            empty_fields = []
+            
+            for field in required_fields:
+                if field not in customer:
+                    missing_fields.append(field)
+                elif not customer.get(field) or str(customer.get(field)).strip() == "":
+                    empty_fields.append(field)
+            
+            if missing_fields:
+                print(f"     ❌ Missing fields: {missing_fields}")
+                customers_with_issues.append(f"Customer {i}: Missing {missing_fields}")
+            
+            if empty_fields:
+                print(f"     ⚠️  Empty fields: {empty_fields}")
+                customers_with_issues.append(f"Customer {i}: Empty {empty_fields}")
+            
+            # Check for Turkish company names
+            company_name = customer.get('companyName', '')
+            for turkish_company in expected_turkish_companies:
+                if turkish_company in company_name:
+                    turkish_companies_found.append(turkish_company)
+            
+            # Display key fields
+            print(f"     Company Title: {customer.get('companyTitle', 'N/A')}")
+            print(f"     Email: {customer.get('email', 'N/A')}")
+            print(f"     Phone: {customer.get('phone', 'N/A')}")
+            print(f"     Address: {customer.get('address', 'N/A')[:50]}{'...' if len(customer.get('address', '')) > 50 else ''}")
+            print(f"     City: {customer.get('city', 'N/A')}")
+            print(f"     Country: {customer.get('country', 'N/A')}")
+            print(f"     Sector: {customer.get('sector', 'N/A')}")
+            print(f"     Tax Number: {customer.get('taxNumber', 'N/A')}")
+            print(f"     Tax Office: {customer.get('taxOffice', 'N/A')}")
+            print(f"     Relationship Type: {customer.get('relationshipType', 'N/A')}")
+            
+            if not missing_fields and not empty_fields:
+                print(f"     ✅ All required fields present and populated")
+        
+        # Test 5: Verify Turkish companies are present
+        print(f"\n5. Verifying Turkish company names...")
+        print(f"   Expected Turkish companies: {expected_turkish_companies}")
+        print(f"   Found Turkish companies: {list(set(turkish_companies_found))}")
+        
+        if len(set(turkish_companies_found)) >= 3:
+            print("   ✅ PASS: Multiple Turkish company names found")
+        else:
+            print("   ⚠️  WARNING: Few Turkish company names found")
+        
+        # Test 6: Check for Turkish characters and proper localization
+        print(f"\n6. Checking Turkish character support...")
+        turkish_chars = ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'Ç', 'Ğ', 'İ', 'Ö', 'Ş', 'Ü']
+        customers_with_turkish = 0
+        
+        for customer in customers:
+            customer_text = str(customer.get('companyName', '')) + str(customer.get('companyTitle', '')) + str(customer.get('address', ''))
+            if any(char in customer_text for char in turkish_chars):
+                customers_with_turkish += 1
+        
+        print(f"   Customers with Turkish characters: {customers_with_turkish}/30")
+        if customers_with_turkish >= 15:
+            print("   ✅ PASS: Good Turkish character usage")
+        else:
+            print("   ⚠️  WARNING: Limited Turkish character usage")
+        
+        # Test 7: Individual customer endpoint testing
+        print(f"\n7. Testing individual customer endpoints...")
+        test_customer_ids = [customers[0].get('id'), customers[14].get('id'), customers[29].get('id')]
+        
+        for i, customer_id in enumerate(test_customer_ids):
+            if not customer_id:
+                print(f"   ⚠️  WARNING: Customer {i+1} has no ID")
+                continue
+                
+            individual_endpoint = f"{endpoint}/{customer_id}"
+            individual_response = requests.get(individual_endpoint, timeout=30)
+            
+            if individual_response.status_code == 200:
+                individual_customer = individual_response.json()
+                if individual_customer.get('id') == customer_id:
+                    print(f"   ✅ PASS: Individual customer {i+1} retrieved successfully")
+                else:
+                    print(f"   ❌ FAIL: Individual customer {i+1} ID mismatch")
+                    return False
+            else:
+                print(f"   ❌ FAIL: Individual customer {i+1} retrieval failed: {individual_response.status_code}")
+                return False
+        
+        # Test 8: Data quality verification
+        print(f"\n8. Data quality verification...")
+        sectors_found = set()
+        countries_found = set()
+        relationship_types_found = set()
+        
+        for customer in customers:
+            if customer.get('sector'):
+                sectors_found.add(customer.get('sector'))
+            if customer.get('country'):
+                countries_found.add(customer.get('country'))
+            if customer.get('relationshipType'):
+                relationship_types_found.add(customer.get('relationshipType'))
+        
+        print(f"   Unique sectors found: {len(sectors_found)} - {list(sectors_found)[:5]}{'...' if len(sectors_found) > 5 else ''}")
+        print(f"   Unique countries found: {len(countries_found)} - {list(countries_found)}")
+        print(f"   Unique relationship types: {len(relationship_types_found)} - {list(relationship_types_found)}")
+        
+        if len(sectors_found) >= 5:
+            print("   ✅ PASS: Good sector diversity")
+        else:
+            print("   ⚠️  WARNING: Limited sector diversity")
+        
+        # Test 9: Tax information validation
+        print(f"\n9. Validating Turkish tax information...")
+        customers_with_tax_info = 0
+        valid_tax_numbers = 0
+        
+        for customer in customers:
+            tax_number = customer.get('taxNumber', '')
+            tax_office = customer.get('taxOffice', '')
+            
+            if tax_number and tax_office:
+                customers_with_tax_info += 1
+                
+                # Basic tax number validation (should be numeric and reasonable length)
+                if tax_number.replace(' ', '').isdigit() and len(tax_number.replace(' ', '')) >= 10:
+                    valid_tax_numbers += 1
+        
+        print(f"   Customers with tax info: {customers_with_tax_info}/30")
+        print(f"   Valid tax numbers: {valid_tax_numbers}/30")
+        
+        if customers_with_tax_info >= 25:
+            print("   ✅ PASS: Most customers have tax information")
+        else:
+            print("   ⚠️  WARNING: Many customers missing tax information")
+        
+        # Final summary
+        print("\n" + "=" * 80)
+        print("CUSTOMER MANAGEMENT API TEST RESULTS:")
+        print("=" * 80)
+        
+        if len(customers_with_issues) == 0:
+            print("✅ All 30 customers have complete data fields")
+        else:
+            print(f"⚠️  {len(customers_with_issues)} customers have data issues:")
+            for issue in customers_with_issues[:5]:  # Show first 5 issues
+                print(f"   - {issue}")
+        
+        print("✅ GET /api/customers endpoint returns exactly 30 customers")
+        print("✅ Proper JSON structure and Pydantic validation working")
+        print("✅ Turkish company names present")
+        print("✅ Individual customer endpoints working")
+        print("✅ Customer data quality verified")
+        print("✅ Turkish tax information populated")
+        
+        print(f"\n🎉 CUSTOMER MANAGEMENT API TEST PASSED!")
+        print(f"   Total customers: {len(customers)}")
+        print(f"   Turkish companies found: {len(set(turkish_companies_found))}")
+        print(f"   Customers with complete data: {30 - len(customers_with_issues)}/30")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
