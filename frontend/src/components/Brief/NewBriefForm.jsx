@@ -1468,7 +1468,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                             <SelectValue placeholder="Detay seçin" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Object.entries(standElementsConfig[stepData.selectedElement].subOptions[stepData.selectedSubOption].subOptions).map(([key, config]) => (
+                            {standElementsConfig && standElementsConfig[stepData.selectedElement]?.subOptions?.[stepData.selectedSubOption]?.subOptions && Object.entries(standElementsConfig[stepData.selectedElement].subOptions[stepData.selectedSubOption].subOptions).map(([key, config]) => (
                               <SelectItem key={key} value={key}>
                                 {config.label}
                               </SelectItem>
