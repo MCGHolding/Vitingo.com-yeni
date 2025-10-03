@@ -1373,16 +1373,28 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           1. Ana Element Seçin *
                         </label>
                         {(userRole === 'admin' || userRole === 'super_admin') && (
-                          <Button
-                            type="button"
-                            onClick={() => openAddElementModal('main')}
-                            size="sm"
-                            variant="outline"
-                            className="text-green-600 border-green-300 hover:bg-green-50"
-                          >
-                            <Plus className="h-4 w-4 mr-1" />
-                            Ana Element Ekle
-                          </Button>
+                          <div className="flex space-x-2">
+                            <Button
+                              type="button"
+                              onClick={() => openAddElementModal('main')}
+                              size="sm"
+                              variant="outline"
+                              className="text-green-600 border-green-300 hover:bg-green-50"
+                            >
+                              <Plus className="h-4 w-4 mr-1" />
+                              Ana Element Ekle
+                            </Button>
+                            <Button
+                              type="button"
+                              onClick={() => setIsManageElementsModalOpen(true)}
+                              size="sm"
+                              variant="outline"
+                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              Elementleri Yönet
+                            </Button>
+                          </div>
                         )}
                       </div>
                       <Select 
