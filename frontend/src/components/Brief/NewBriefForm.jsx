@@ -1668,13 +1668,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         {stepData.selectedItems.map((item, index) => (
                           <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
                             <div>
-                              <span className="font-medium">{item.elementLabel}</span>
-                              {item.subOptionLabel && (
-                                <span className="text-gray-600"> → {item.subOptionLabel}</span>
-                              )}
-                              {item.subSubOptionLabel && (
-                                <span className="text-gray-600"> → {item.subSubOptionLabel}</span>
-                              )}
+                              <span className="font-medium">{item.pathString}</span>
                             </div>
                             <Button
                               type="button"
