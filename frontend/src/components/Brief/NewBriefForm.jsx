@@ -158,7 +158,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [selectedCountryProfile, setSelectedCountryProfile] = useState('US'); // Default to US (Amerika)
   const [formSchema, setFormSchema] = useState({});
   const [isNewCountryModalOpen, setIsNewCountryModalOpen] = useState(false);
-  const [userRole, setUserRole] = useState('viewer'); // TODO: Get from auth context
+  const [userRole, setUserRole] = useState('admin'); // TODO: Get from auth context
 
   // Load country profiles from backend API
   const fetchCountryProfiles = async () => {
