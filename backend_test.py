@@ -3159,7 +3159,7 @@ def test_recursive_stand_elements_crud_workflow():
             print("✅ GET operations working correctly")
             print("✅ Recursive structure maintained and accessible")
             print("✅ Children property and unlimited depth working")
-            print("✅ Default data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) preserved")
+            print("✅ Default data (Zemin > 36mm > Halı Kaplama > Renk/Miktar) preserved")
             print("❌ CREATE operation failed due to backend implementation issue")
             print("❌ UPDATE operation cannot be tested (depends on CREATE)")
             print("❌ DELETE operation cannot be tested (depends on CREATE)")
