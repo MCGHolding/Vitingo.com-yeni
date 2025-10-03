@@ -252,10 +252,27 @@ export default function NewBriefForm({ onBackToDashboard }) {
       }
     };
 
+    // Load stand elements configuration from backend API
+    const fetchStandElements = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/stand-elements`);
+        if (response.ok) {
+          const elementsData = await response.json();
+          setStandElementsConfig(elementsData);
+          console.log('Stand elements loaded from database:', Object.keys(elementsData).length);
+        } else {
+          console.error('Failed to fetch stand elements');
+        }
+      } catch (error) {
+        console.error('Error fetching stand elements:', error);
+      }
+    };
+
     fetchCustomers();
     fetchProjects();
     fetchCountryProfiles();
     fetchFormSchema(selectedCountryProfile);
+    fetchStandElements();
   }, []);
 
   // Reload schema when country profile changes
