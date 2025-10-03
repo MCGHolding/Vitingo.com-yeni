@@ -1816,13 +1816,17 @@ def test_recursive_stand_elements_post():
     endpoint = f"{BACKEND_URL}/api/stand-elements"
     print(f"Testing endpoint: {endpoint}")
     
-    # Test data for new recursive element
+    # Test data for new recursive element (without parent attributes for main element)
     test_element_data = {
         "key": "test_lighting",
         "label": "Test Aydınlatma",
         "icon": "💡",
         "required": False,
-        "element_type": "option"
+        "element_type": "option",
+        "input_type": None,
+        "unit": None,
+        "options": None,
+        "parent_path": None
     }
     
     print(f"Test element data: {test_element_data}")
