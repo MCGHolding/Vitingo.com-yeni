@@ -125,6 +125,18 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
+    // Add slider styles to head
+    const styleElement = document.createElement("style");
+    styleElement.innerHTML = sliderStyles;
+    document.head.appendChild(styleElement);
+    
+    // Clean up on unmount
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+
+  useEffect(() => {
     // Load customers from backend API
     const fetchCustomers = async () => {
       try {
