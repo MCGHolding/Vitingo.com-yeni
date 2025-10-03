@@ -2760,7 +2760,7 @@ if __name__ == "__main__":
         print("✅ Endpoint responds with status 200")
         print("✅ Returns proper JSON response")
         print("✅ Recursive structure is correctly implemented")
-        print("✅ Default data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) present")
+        print("✅ Default data (Zemin > 36mm > Halı Kaplama > Renk/Miktar) present")
         print("✅ Children property supports unlimited depth")
         print("✅ Element types and input types properly configured")
         print("✅ Options arrays and units properly set")
