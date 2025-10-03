@@ -6711,53 +6711,74 @@ async def create_stand_element(element_data: StandElementCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.put("/stand-elements/{element_key}")
-async def update_stand_element(element_key: str, update_data: StandElementCreate, sub_key: str = None, sub_sub_key: str = None):
-    """Update stand element or sub-element (admin+ only)"""
+async def update_stand_element(element_key: str, update_data: StandElementCreate):
+    """Update stand element with recursive path support (admin+ only)"""
     try:
         # TODO: Add role check - only admin and super_admin can update
         
-        if sub_key:
-            # Updating sub-element
+        if update_data.parent_path:
+            # Updating nested element using dot notation path
+            path_parts = update_data.parent_path.split('.')
+            main_element_key = path_parts[0]
+            
+            existing = await db.stand_elements.find_one({"key": main_element_key})
+            if not existing:
+                raise HTTPException(status_code=404, detail="Main element not found")
+            
+            # Build update path for nested element
+            if len(path_parts) == 1:
+                # Updating element in main structure
+                update_fields = {
+                    f"structure.{element_key}.label": update_data.label,
+                    f"structure.{element_key}.element_type": update_data.element_type,
+                    f"structure.{element_key}.input_type": update_data.input_type,
+                    f"structure.{element_key}.unit": update_data.unit,
+                    f"structure.{element_key}.options": update_data.options,
+                    "updated_at": datetime.utcnow()
+                }
+                if update_data.icon:
+                    update_fields[f"structure.{element_key}.icon"] = update_data.icon
+            else:
+                # Updating element in nested children
+                nested_path = f"structure.{'.children.'.join(path_parts[1:])}.children.{element_key}"
+                update_fields = {
+                    f"{nested_path}.label": update_data.label,
+                    f"{nested_path}.element_type": update_data.element_type,
+                    f"{nested_path}.input_type": update_data.input_type,
+                    f"{nested_path}.unit": update_data.unit,
+                    f"{nested_path}.options": update_data.options,
+                    "updated_at": datetime.utcnow()
+                }
+                if update_data.icon:
+                    update_fields[f"{nested_path}.icon"] = update_data.icon
+            
+            await db.stand_elements.update_one(
+                {"key": main_element_key},
+                {"$set": update_fields}
+            )
+            
+            return {"success": True, "message": f"Element {element_key} at path {update_data.parent_path} updated successfully"}
+        
+        else:
+            # Updating main element
             existing = await db.stand_elements.find_one({"key": element_key})
             if not existing:
                 raise HTTPException(status_code=404, detail="Element not found")
             
-            sub_options = existing.get("subOptions", {})
+            update_fields = {
+                "label": update_data.label,
+                "required": update_data.required,
+                "updated_at": datetime.utcnow()
+            }
+            if update_data.icon:
+                update_fields["icon"] = update_data.icon
             
-            if sub_sub_key:
-                # Updating sub-sub-element
-                if sub_key in sub_options and "subOptions" in sub_options[sub_key]:
-                    if sub_sub_key in sub_options[sub_key]["subOptions"]:
-                        sub_options[sub_key]["subOptions"][sub_sub_key] = {
-                            "label": update_data.label,
-                            "icon": update_data.icon
-                        }
-                        
-                        await db.stand_elements.update_one(
-                            {"key": element_key},
-                            {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
-                        )
-                        
-                        return {"success": True, "message": "Sub-sub-element updated"}
-                    else:
-                        raise HTTPException(status_code=404, detail="Sub-sub-element not found")
-                else:
-                    raise HTTPException(status_code=404, detail="Sub-element not found")
-            else:
-                # Updating sub-element
-                if sub_key in sub_options:
-                    sub_options[sub_key]["label"] = update_data.label
-                    if update_data.icon:
-                        sub_options[sub_key]["icon"] = update_data.icon
-                    
-                    await db.stand_elements.update_one(
-                        {"key": element_key},
-                        {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
-                    )
-                    
-                    return {"success": True, "message": "Sub-element updated"}
-                else:
-                    raise HTTPException(status_code=404, detail="Sub-element not found")
+            await db.stand_elements.update_one(
+                {"key": element_key},
+                {"$set": update_fields}
+            )
+            
+            return {"success": True, "message": f"Main element {element_key} updated successfully"}
         
         else:
             # Updating main element
