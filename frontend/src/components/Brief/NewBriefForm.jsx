@@ -1451,7 +1451,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 </div>
 
                                 {/* Third Level Sub Options */}
-                                {isSubOptionSelected(elementKey, subKey) && subConfig.subOptions && (
+                                {stepData.standElements[elementKey]?.[subKey] && subConfig.subOptions && (
                                   <div className="ml-6 mt-2 space-y-2">
                                     {Object.entries(subConfig.subOptions).map(([subSubKey, subSubConfig]) => (
                                       <div
