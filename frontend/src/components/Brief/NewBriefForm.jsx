@@ -601,8 +601,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   const handleAddElement = async (elementData) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/stand-elements`, {
-        method: 'POST',
+      const url = elementModalData.editMode 
+        ? `${BACKEND_URL}/api/stand-elements/${elementModalData.editData.key}` 
+        : `${BACKEND_URL}/api/stand-elements`;
+      
+      const method = elementModalData.editMode ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -618,22 +624,66 @@ export default function NewBriefForm({ onBackToDashboard }) {
       
       if (response.ok) {
         // Refresh stand elements
-        const elementsResponse = await fetch(`${BACKEND_URL}/api/stand-elements`);
-        if (elementsResponse.ok) {
-          const elementsData = await elementsResponse.json();
-          setStandElementsConfig(elementsData);
-        }
-        
+        await refreshStandElements();
         setIsAddElementModalOpen(false);
-        // Show success message
-        alert('Element başarıyla eklendi!');
+        alert(elementModalData.editMode ? 'Element başarıyla güncellendi!' : 'Element başarıyla eklendi!');
       } else {
         const error = await response.json();
-        alert('Hata: ' + (error.detail || 'Element eklenemedi'));
+        alert('Hata: ' + (error.detail || 'Element işlemi başarısız'));
       }
     } catch (error) {
-      console.error('Error adding element:', error);
+      console.error('Error with element:', error);
       alert('Bir hata oluştu');
+    }
+  };
+
+  const handleDeleteElement = async (elementKey, subKey = null, subSubKey = null) => {
+    const confirmMessage = subSubKey 
+      ? `"${subSubKey}" alt detayını silmek istediğinizden emin misiniz?`
+      : subKey 
+        ? `"${subKey}" alt kategorisini ve tüm alt detaylarını silmek istediğinizden emin misiniz?`
+        : `"${elementKey}" ana elementini ve tüm alt kategorilerini silmek istediğinizden emin misiniz?`;
+    
+    if (!confirm(confirmMessage)) return;
+    
+    try {
+      let url = `${BACKEND_URL}/api/stand-elements/${elementKey}`;
+      if (subKey) url += `?sub_key=${subKey}`;
+      if (subSubKey) url += `&sub_sub_key=${subSubKey}`;
+      
+      const response = await fetch(url, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        await refreshStandElements();
+        alert('Element başarıyla silindi!');
+      } else {
+        const error = await response.json();
+        alert('Hata: ' + (error.detail || 'Element silinemedi'));
+      }
+    } catch (error) {
+      console.error('Error deleting element:', error);
+      alert('Bir hata oluştu');
+    }
+  };
+
+  const handleEditElement = (elementKey, elementData, subKey = null, subSubKey = null) => {
+    setElementModalData({
+      parentKey: subKey ? elementKey : null,
+      parentSubKey: subSubKey ? subKey : null,
+      level: subSubKey ? 'subSub' : subKey ? 'sub' : 'main',
+      editMode: true,
+      editData: { ...elementData, key: subSubKey || subKey || elementKey }
+    });
+    setIsAddElementModalOpen(true);
+  };
+
+  const refreshStandElements = async () => {
+    const response = await fetch(`${BACKEND_URL}/api/stand-elements`);
+    if (response.ok) {
+      const elementsData = await response.json();
+      setStandElementsConfig(elementsData);
     }
   };
 
