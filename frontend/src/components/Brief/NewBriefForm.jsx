@@ -1202,14 +1202,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {[
-                      { key: 'counter', label: 'Counter', icon: '🏪' },
-                      { key: 'furniture', label: 'Furniture', icon: '🪑' },
-                      { key: 'multimedia', label: 'Multimedia', icon: '📺' },
-                      { key: 'closedMeeting', label: 'Closed meeting room', icon: '🏢' },
-                      { key: 'openMeeting', label: 'Open meeting room', icon: '👥' },
-                      { key: 'storage', label: 'Space storage', icon: '📦' },
-                      { key: 'catering', label: 'Catering area', icon: '☕' },
-                      { key: 'hanging', label: 'Hanging elements', icon: '🏷️' }
+                      { key: 'flooring', label: 'Zemin', icon: '🟫' },
+                      { key: 'counter', label: 'Tezgah', icon: '🏪' },
+                      { key: 'furniture', label: 'Mobilya', icon: '🪑' },
+                      { key: 'multimedia', label: 'Multimedya', icon: '📺' },
+                      { key: 'closedMeeting', label: 'Kapalı Toplantı Odası', icon: '🏢' },
+                      { key: 'storage', label: 'Depo Alanı', icon: '📦' },
+                      { key: 'catering', label: 'İkram Alanı', icon: '☕' },
+                      { key: 'seating', label: 'Oturma Alanı', icon: '🛋️' }
                     ].map((element) => (
                       <div
                         key={element.key}
