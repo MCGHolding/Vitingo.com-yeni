@@ -2031,7 +2031,167 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </div>
         </div>
       )}
+
+      {/* Add Element Modal */}
+      {isAddElementModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                {elementModalData.level === 'main' && 'Yeni Ana Element Ekle'}
+                {elementModalData.level === 'sub' && 'Yeni Alt Kategori Ekle'}
+                {elementModalData.level === 'subSub' && 'Yeni Alt Detay Ekle'}
+              </h3>
+              <button
+                onClick={() => setIsAddElementModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <AddElementForm 
+              level={elementModalData.level}
+              parentKey={elementModalData.parentKey}
+              parentSubKey={elementModalData.parentSubKey}
+              onSuccess={handleAddElement}
+              onCancel={() => setIsAddElementModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+// Add Element Form Component
+function AddElementForm({ level, parentKey, parentSubKey, onSuccess, onCancel }) {
+  const [formData, setFormData] = useState({
+    key: '',
+    label: '',
+    icon: '',
+    required: false
+  });
+  const [loading, setLoading] = useState(false);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      await onSuccess(formData);
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const generateKey = (label) => {
+    return label.toLowerCase()
+      .replace(/ş/g, 's')
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ö/g, 'o')
+      .replace(/ı/g, 'i')
+      .replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+  };
+  
+  const handleLabelChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      label: value,
+      key: generateKey(value)
+    }));
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {level === 'main' && parentKey && (
+        <div className="p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+          <p className="text-sm text-blue-800">
+            <strong>Ana Element:</strong> {parentKey}
+          </p>
+        </div>
+      )}
+      
+      {level === 'subSub' && parentKey && parentSubKey && (
+        <div className="p-3 bg-purple-50 rounded border-l-4 border-purple-400">
+          <p className="text-sm text-purple-800">
+            <strong>Üst Kategori:</strong> {parentKey} → {parentSubKey}
+          </p>
+        </div>
+      )}
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Element Adı *
+        </label>
+        <Input
+          type="text"
+          value={formData.label}
+          onChange={(e) => handleLabelChange(e.target.value)}
+          placeholder="Örn: Yeni Zemin Türü, Özel Mobilya"
+          required
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Anahtar (Otomatik)
+        </label>
+        <Input
+          type="text"
+          value={formData.key}
+          onChange={(e) => setFormData(prev => ({ ...prev, key: e.target.value }))}
+          placeholder="Otomatik oluşturulur"
+          className="bg-gray-50"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Bu değer otomatik oluşturulur, gerekirse düzenleyebilirsiniz
+        </p>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          İkon (Opsiyonel)
+        </label>
+        <Input
+          type="text"
+          value={formData.icon}
+          onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
+          placeholder="Örn: 🏗️, 🔧, 💡"
+          maxLength={5}
+        />
+      </div>
+      
+      {level === 'main' && (
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="required"
+            checked={formData.required}
+            onChange={(e) => setFormData(prev => ({ ...prev, required: e.target.checked }))}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="required" className="text-sm text-gray-700">
+            Zorunlu element (En az bir alt seçenek seçilmeli)
+          </label>
+        </div>
+      )}
+      
+      <div className="flex justify-end space-x-3 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          İptal
+        </Button>
+        <Button type="submit" disabled={loading || !formData.label.trim() || !formData.key.trim()}>
+          {loading ? 'Ekleniyor...' : 'Ekle'}
+        </Button>
+      </div>
+    </form>
   );
 }
 
