@@ -2057,7 +2057,22 @@ async def get_customers():
     """Get all customers"""
     try:
         customers = await db.customers.find().to_list(length=None)
-        return [Customer(**customer) for customer in customers]
+        logger.info(f"Found {len(customers)} customers in database")
+        
+        # Debug first customer
+        if customers:
+            logger.info(f"First customer keys: {list(customers[0].keys())}")
+        
+        validated_customers = []
+        for customer in customers:
+            try:
+                validated_customers.append(Customer(**customer))
+            except Exception as validation_error:
+                logger.error(f"Customer validation error: {validation_error}")
+                logger.error(f"Customer data: {customer}")
+                
+        logger.info(f"Successfully validated {len(validated_customers)} customers")
+        return validated_customers
         
     except Exception as e:
         logger.error(f"Error getting customers: {str(e)}")
