@@ -2641,11 +2641,11 @@ function NewCountryProfileForm({ onSuccess, onCancel }) {
         onSuccess();
       } else {
         const error = await response.json();
-        alert('Hata: ' + (error.detail || 'Ülke profili oluşturulamadı'));
+        showToast('error', 'Hata!', error.detail || 'Ülke profili oluşturulamadı');
       }
     } catch (error) {
       console.error('Error creating country profile:', error);
-      alert('Bir hata oluştu');
+      showToast('error', 'Hata!', 'Bir hata oluştu, lütfen tekrar deneyin.');
     } finally {
       setLoading(false);
     }
