@@ -616,40 +616,111 @@ export default function NewBriefForm({ onBackToDashboard }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Etkinlik/Fuar Adı
+                  Proje Seçimi
+                </label>
+                <Select value={formData.projectId} onValueChange={(value) => handleProjectSelection(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Proje seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map(project => (
+                      <SelectItem key={project.id} value={project.id}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{project.name}</span>
+                          <span className="text-xs text-gray-500">{project.city}, {project.country}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fuar Adı
                 </label>
                 <Input
                   value={formData.eventName}
                   onChange={(e) => handleInputChange('eventName', e.target.value)}
                   placeholder="Örn: CeBIT Turkey, Mobile World Congress"
+                  disabled={!!selectedProject}
+                  className={selectedProject ? 'bg-gray-50' : ''}
                 />
+                {selectedProject && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen projeden otomatik dolduruldu
+                  </p>
+                )}
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lokasyon
-                </label>
-                <Input
-                  value={formData.eventLocation}
-                  onChange={(e) => handleInputChange('eventLocation', e.target.value)}
-                  placeholder="Şehir, Ülke"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Etkinlik Tarihi
+                  Tarihi
                 </label>
                 <Input
                   type="date"
                   value={formData.eventDate}
                   onChange={(e) => handleInputChange('eventDate', e.target.value)}
+                  disabled={!!selectedProject}
+                  className={selectedProject ? 'bg-gray-50' : ''}
+                />
+                {selectedProject && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen projeden otomatik dolduruldu
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Convention Center
+                </label>
+                <Input
+                  value={formData.conventionCenter}
+                  onChange={(e) => handleInputChange('conventionCenter', e.target.value)}
+                  placeholder="Örn: İstanbul Fuar Merkezi, CNR Expo"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Süre (Gün)
+                  Şehir
+                </label>
+                <Input
+                  value={formData.eventCity}
+                  onChange={(e) => handleInputChange('eventCity', e.target.value)}
+                  placeholder="Örn: İstanbul"
+                  disabled={!!selectedProject}
+                  className={selectedProject ? 'bg-gray-50' : ''}
+                />
+                {selectedProject && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen projeden otomatik dolduruldu
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ülke
+                </label>
+                <Input
+                  value={formData.eventCountry}
+                  onChange={(e) => handleInputChange('eventCountry', e.target.value)}
+                  placeholder="Örn: Türkiye"
+                  disabled={!!selectedProject}
+                  className={selectedProject ? 'bg-gray-50' : ''}
+                />
+                {selectedProject && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen projeden otomatik dolduruldu
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Gün Sayısı
                 </label>
                 <Input
                   type="number"
