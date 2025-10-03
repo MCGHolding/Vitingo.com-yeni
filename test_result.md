@@ -1762,7 +1762,7 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Brief Form Country Profile System"
+    - "Stylish Nested Stand Elements Design Updates"
   stuck_tasks: 
     - "New Collection Form Implementation"
   test_all: false
