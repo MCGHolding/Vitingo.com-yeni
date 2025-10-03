@@ -122,7 +122,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Multi-step form states
   const [currentStep, setCurrentStep] = useState(1);
   const [stepData, setStepData] = useState({
-    standElements: {},  // Changed to object for nested selections
+    // Cascade dropdown states
+    selectedElement: '',
+    selectedSubOption: '',
+    selectedSubSubOption: '',
+    selectedItems: [], // Array of completed selections
+    
+    // Other step data
     employeeCount: '',
     employeeDetails: '',
     priceImportance: 3,
