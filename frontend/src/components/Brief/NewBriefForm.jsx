@@ -858,7 +858,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     localStorage.setItem('briefs', JSON.stringify(existingBriefs));
 
     console.log('New brief saved:', newBrief);
-    alert('Brief başarıyla oluşturuldu!');
+    showToast('success', 'Başarılı!', 'Brief başarıyla oluşturuldu!');
     
     // Reset form
     setFormData({
