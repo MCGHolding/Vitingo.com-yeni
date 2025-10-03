@@ -12,7 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 async def create_mock_customers():
     # MongoDB connection
     client = AsyncIOMotorClient("mongodb://localhost:27017")
-    db = client.vitingo_crm
+    db = client.test_database
     
     # Clear existing customers
     await db.customers.delete_many({})
