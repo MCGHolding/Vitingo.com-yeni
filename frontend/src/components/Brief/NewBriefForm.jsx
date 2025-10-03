@@ -1005,6 +1005,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 />
               </div>
             </div>
+            </div>
           </CardContent>
         </Card>
 
