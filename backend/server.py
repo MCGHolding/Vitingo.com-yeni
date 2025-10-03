@@ -6615,45 +6615,76 @@ async def get_stand_elements():
 
 @api_router.post("/stand-elements")
 async def create_stand_element(element_data: StandElementCreate):
-    """Create new stand element or sub-element (admin+ only)"""
+    """Create new stand element with recursive structure (admin+ only)"""
     try:
         # TODO: Add role check - only admin and super_admin can create
         
-        if element_data.parent_key:
-            # Adding sub-element to existing element
-            existing = await db.stand_elements.find_one({"key": element_data.parent_key})
+        if element_data.parent_path:
+            # Adding nested element using dot notation path
+            # Parse parent path: "flooring.raised36mm.carpet"
+            path_parts = element_data.parent_path.split('.')
+            
+            if len(path_parts) < 1:
+                raise HTTPException(status_code=400, detail="Invalid parent path")
+            
+            # Find main element
+            main_element_key = path_parts[0]
+            existing = await db.stand_elements.find_one({"key": main_element_key})
             if not existing:
                 raise HTTPException(status_code=404, detail="Parent element not found")
             
-            # Update sub-options
-            sub_options = existing.get("subOptions", {})
+            # Navigate to the target parent in recursive structure
+            current_node = existing.get("structure", {})
             
-            if element_data.parent_sub_key:
-                # Adding sub-sub-element
-                if element_data.parent_sub_key not in sub_options:
-                    raise HTTPException(status_code=404, detail="Parent sub-element not found")
+            # Navigate through path to find parent node
+            for i in range(1, len(path_parts)):
+                part_key = path_parts[i]
+                if part_key not in current_node:
+                    raise HTTPException(status_code=404, detail=f"Parent path not found at: {'.'.join(path_parts[:i+1])}")
                 
-                if "subOptions" not in sub_options[element_data.parent_sub_key]:
-                    sub_options[element_data.parent_sub_key]["subOptions"] = {}
-                
-                sub_options[element_data.parent_sub_key]["subOptions"][element_data.key] = {
-                    "label": element_data.label,
-                    "icon": element_data.icon
-                }
+                # Move to children of current node
+                current_node = current_node[part_key].get("children", {})
+            
+            # Add new element to parent node
+            new_element = {
+                "key": element_data.key,
+                "label": element_data.label,
+                "icon": element_data.icon,
+                "required": element_data.required,
+                "element_type": element_data.element_type,
+                "input_type": element_data.input_type,
+                "unit": element_data.unit,
+                "options": element_data.options,
+                "children": {}
+            }
+            
+            # Insert new element at the correct location
+            # We need to reconstruct the update path
+            if len(path_parts) == 1:
+                # Adding to main element's structure
+                await db.stand_elements.update_one(
+                    {"key": main_element_key},
+                    {
+                        "$set": {
+                            f"structure.{element_data.key}": new_element,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
             else:
-                # Adding sub-element
-                sub_options[element_data.key] = {
-                    "label": element_data.label,
-                    "icon": element_data.icon,
-                    "subOptions": {}
-                }
+                # Adding to nested children - build MongoDB update path
+                update_path = f"structure.{'.children.'.join(path_parts[1:])}.children.{element_data.key}"
+                await db.stand_elements.update_one(
+                    {"key": main_element_key},
+                    {
+                        "$set": {
+                            update_path: new_element,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
             
-            await db.stand_elements.update_one(
-                {"key": element_data.parent_key},
-                {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
-            )
-            
-            return {"success": True, "message": f"Sub-element added to {element_data.parent_key}"}
+            return {"success": True, "message": f"Element {element_data.key} added to path {element_data.parent_path}"}
         
         else:
             # Creating new main element
@@ -6671,7 +6702,7 @@ async def create_stand_element(element_data: StandElementCreate):
             
             await db.stand_elements.insert_one(element.dict())
             
-            return {"success": True, "message": f"Element {element_data.key} created successfully"}
+            return {"success": True, "message": f"Main element {element_data.key} created successfully"}
         
     except HTTPException:
         raise
