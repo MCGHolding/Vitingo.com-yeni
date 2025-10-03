@@ -137,122 +137,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
     designFiles: []
   });
 
-  // Stand elements configuration with nested options
-  const standElementsConfig = {
-    flooring: {
-      label: 'Zemin',
-      icon: '🟫',
-      required: true,
-      subOptions: {
-        raised36mm: {
-          label: '36mm Yükseltilmiş Zemin',
-          subOptions: {
-            carpet: { label: 'Halı Kaplama', icon: '🟫' },
-            parquet: { label: 'Parke Kaplama', icon: '🪵' },
-            pvc: { label: 'PVC Kaplama', icon: '⬜' }
-          }
-        },
-        standard: {
-          label: 'Standart Zemin',
-          subOptions: {
-            carpet: { label: 'Halı', icon: '🟫' },
-            concrete: { label: 'Beton', icon: '⬜' }
-          }
-        },
-        platform: {
-          label: 'Platform Zemin',
-          subOptions: {
-            wooden: { label: 'Ahşap Platform', icon: '🪵' },
-            metal: { label: 'Metal Platform', icon: '⚙️' }
-          }
-        }
-      }
-    },
-    counter: {
-      label: 'Tezgah',
-      icon: '🏪',
-      subOptions: {
-        reception: { label: 'Karşılama Tezgahı', icon: '🏪' },
-        display: { label: 'Sergi Tezgahı', icon: '📊' },
-        service: { label: 'Servis Tezgahı', icon: '☕' }
-      }
-    },
-    furniture: {
-      label: 'Mobilya',
-      icon: '🪑',
-      subOptions: {
-        seating: {
-          label: 'Oturma Grupları',
-          subOptions: {
-            armchairs: { label: 'Berjer/Koltuk', icon: '🛋️' },
-            chairs: { label: 'Sandalyeler', icon: '🪑' },
-            sofas: { label: 'Kanepe Takımı', icon: '🛋️' }
-          }
-        },
-        tables: {
-          label: 'Masa Grupları',
-          subOptions: {
-            meeting: { label: 'Toplantı Masası', icon: '📋' },
-            cocktail: { label: 'Kokteyl Masası', icon: '🍸' },
-            display: { label: 'Sergi Masası', icon: '📊' }
-          }
-        },
-        storage: { label: 'Dolap/Raf Sistemleri', icon: '📚' }
-      }
-    },
-    multimedia: {
-      label: 'Multimedya',
-      icon: '📺',
-      subOptions: {
-        displays: {
-          label: 'Ekran Sistemleri',
-          subOptions: {
-            tv: { label: 'LED TV', icon: '📺' },
-            projector: { label: 'Projeksiyon', icon: '📽️' },
-            touchscreen: { label: 'Dokunmatik Ekran', icon: '👆' }
-          }
-        },
-        audio: { label: 'Ses Sistemi', icon: '🔊' },
-        lighting: { label: 'Özel Aydınlatma', icon: '💡' }
-      }
-    },
-    closedMeeting: {
-      label: 'Kapalı Toplantı Odası',
-      icon: '🏢',
-      subOptions: {
-        small: { label: 'Küçük (2-4 Kişi)', icon: '👥' },
-        medium: { label: 'Orta (5-8 Kişi)', icon: '👥' },
-        large: { label: 'Büyük (9+ Kişi)', icon: '👥' }
-      }
-    },
-    storage: {
-      label: 'Depo Alanı',
-      icon: '📦',
-      subOptions: {
-        lockable: { label: 'Kilitli Depo', icon: '🔒' },
-        open: { label: 'Açık Raf', icon: '📚' },
-        hidden: { label: 'Gizli Depo', icon: '📦' }
-      }
-    },
-    catering: {
-      label: 'İkram Alanı',
-      icon: '☕',
-      subOptions: {
-        coffee: { label: 'Kahve Köşesi', icon: '☕' },
-        mini_kitchen: { label: 'Mini Mutfak', icon: '🍳' },
-        bar: { label: 'Bar Tezgahı', icon: '🍸' }
-      }
-    },
-    seating: {
-      label: 'Oturma Alanı',
-      icon: '🛋️',
-      subOptions: {
-        lounge: { label: 'Lounge Alanı', icon: '🛋️' },
-        waiting: { label: 'Bekleme Alanı', icon: '🪑' },
-        vip: { label: 'VIP Oturma', icon: '👑' }
-      }
-    }
-  };
+  // Stand elements configuration - loaded dynamically from API
+  const [standElementsConfig, setStandElementsConfig] = useState({});
+  const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
+  const [elementModalData, setElementModalData] = useState({
+    parentKey: null,
+    parentSubKey: null,
+    level: 'main' // main, sub, subSub
+  });
 
   // Load customers data
   const [customers, setCustomers] = useState([]);
