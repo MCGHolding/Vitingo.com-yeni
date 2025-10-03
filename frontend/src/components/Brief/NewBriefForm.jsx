@@ -1647,7 +1647,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     )}
 
                     {/* Add Selection Button */}
-                    {stepData.selectedElement && stepData.selectedSubOption && (
+                    {stepData.currentPath.length > 0 && (
                       <div className="pt-4">
                         <Button
                           type="button"
