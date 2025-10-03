@@ -1724,6 +1724,18 @@ agent_communication:
   - task: "Enhanced Survey System - Multi-Project Selection"
   - agent: "testing"
     message: "🎯 NEWEXPENSERECEIPTFORM SUPPLIER CONTACT INTEGRATION TESTING COMPLETED - MIXED RESULTS: Comprehensive testing of the updated NewExpenseReceiptForm with supplier contact integration completed as requested. ✅ SUCCESSFUL VERIFICATIONS: 1) Form Access: Successfully navigated via Gider Makbuzu > Yeni Gider Makbuzu (login: murb/Murat2024!) ✅ 2) Layout Verification: 'Alıcı Bilgileri' section header found with 'ABD Bankası' checkbox positioned on top right ✅ 3) Two-column Layout: 'Alıcı Adı (Tedarikçi)' and 'Yetkili Kişi' fields verified side by side ✅ 4) Contact Fields Grid: All 4 required fields found (Telefon Numarası, Ülke, Alıcı IBAN, Banka Adı) ✅ 5) UI Elements: 10 Lucide icons detected, 6 required field indicators (*) found, blue-themed styling present ✅ ⚠️ ISSUES IDENTIFIED: 1) Supplier Selection Flow: Supplier dropdown found and clickable, but no supplier options appear when clicked - suggests backend API integration issue or empty supplier data ❌ 2) Contact Selection Flow: Cannot test contact selection since supplier selection is not working ❌ 3) Data Integration: Form fields not auto-populating with supplier data due to supplier selection issue ❌ 🎯 CONCLUSION: Form layout and UI design match requirements perfectly, but core supplier/contact selection functionality needs debugging. Backend API calls may not be loading supplier data correctly."
+  - task: "Brief Form Country Profile System"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Brief/NewBriefForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing new country profile system in Brief form. Need to verify: 1) Country Profile card display at form start 2) Amerika, Türkiye, Diğer buttons visibility and functionality 3) Country selection with blue highlighting 4) Currency information display 5) Country profile info display in blue box 6) +Yeni Ülke button visibility (admin only) 7) New Country modal functionality 8) API integration (country profiles and form schema) 9) Schema reload on country change"
+
   - task: "NewSupplierForm International Phone Input Component"
     implemented: true
     working: "NA"
