@@ -689,20 +689,38 @@ export default function NewBriefForm({ onBackToDashboard }) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Project Selection - Moved to Top */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Proje Seçimi *
+              </label>
+              <Select value={formData.projectId} onValueChange={(value) => handleProjectSelection(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Proje seçin" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projects.map(project => (
+                    <SelectItem key={project.id} value={project.id}>
+                      <span className="font-medium">{project.name}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedProject && (
+                <div className="mt-2 text-sm text-gray-600 bg-green-50 p-2 rounded">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-green-500" />
+                    <span><strong>{selectedProject.name}</strong> - {selectedProject.city}, {selectedProject.country}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {selectedProject.startDate} • {selectedProject.endDate}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Basic Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Proje Adı *
-                </label>
-                <Input
-                  value={formData.projectName}
-                  onChange={(e) => handleInputChange('projectName', e.target.value)}
-                  placeholder="Örn: CeBIT Turkey 2025 Standı"
-                  required
-                />
-              </div>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Müşteri *
