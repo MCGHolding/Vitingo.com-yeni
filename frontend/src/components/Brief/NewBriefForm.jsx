@@ -1661,11 +1661,32 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <Button
                   type="button"
                   onClick={currentStep === 5 ? () => setCurrentStep(1) : handleNextStep}
-                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+                  disabled={currentStep === 2 && !canProceedFromStep2()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   <span>{currentStep === 5 ? 'Tamamla' : 'Sonraki →'}</span>
                 </Button>
               </div>
+              
+              {/* Validation Message for Step 2 */}
+              {currentStep === 2 && !canProceedFromStep2() && (
+                <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    <strong>Dikkat:</strong> Seçtiğiniz zorunlu elementler için alt seçenekleri tamamlamalısınız.
+                    {Object.entries(stepData.standElements).map(([elementKey, selections]) => {
+                      const config = standElementsConfig[elementKey];
+                      if (selections && config?.required && !hasRequiredSelections(elementKey)) {
+                        return (
+                          <span key={elementKey} className="block mt-1">
+                            • <strong>{config.label}</strong> için en az bir seçenek belirtmelisiniz
+                          </span>
+                        );
+                      }
+                      return null;
+                    })}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
