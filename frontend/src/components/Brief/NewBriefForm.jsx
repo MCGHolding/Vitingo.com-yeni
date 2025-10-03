@@ -1355,9 +1355,23 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     {/* Level 2: Sub Options */}
                     {stepData.selectedElement && standElementsConfig[stepData.selectedElement]?.subOptions && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          2. {standElementsConfig[stepData.selectedElement].label} Türü Seçin
-                        </label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            2. {standElementsConfig[stepData.selectedElement].label} Türü Seçin
+                          </label>
+                          {(userRole === 'admin' || userRole === 'super_admin') && (
+                            <Button
+                              type="button"
+                              onClick={() => openAddElementModal('sub', stepData.selectedElement)}
+                              size="sm"
+                              variant="outline"
+                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                            >
+                              <Plus className="h-4 w-4 mr-1" />
+                              Alt Kategori Ekle
+                            </Button>
+                          )}
+                        </div>
                         <Select 
                           value={stepData.selectedSubOption || ''} 
                           onValueChange={(value) => handleCascadeSelection('subOption', value)}
