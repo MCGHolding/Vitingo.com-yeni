@@ -400,7 +400,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
-  const handleFileUpload = (field, files) => {
+  const handleStepFileUpload = (field, files) => {
     const newFiles = Array.from(files).map(file => ({
       id: Date.now() + Math.random(),
       name: file.name,
@@ -413,7 +413,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
-  const removeFile = (field, fileId) => {
+  const removeStepFile = (field, fileId) => {
     setStepData(prev => ({
       ...prev,
       [field]: prev[field].filter(f => f.id !== fileId)
