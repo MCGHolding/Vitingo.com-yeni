@@ -11590,7 +11590,7 @@ def test_invoice_number_generation():
     5. Test GET /api/invoices/next-number/AED - Should return AED-012025100001 format
     
     Verify:
-    - Correct currency prefix mapping (TRY→TL, EUR→EURU)
+    - Correct currency prefix mapping (TRY>TL, EUR>EURU)
     - Current month/year format (MM/YYYY)
     - Sequential numbering starting at 100001
     - 6-digit sequence numbers
