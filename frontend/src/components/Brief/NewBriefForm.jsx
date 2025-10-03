@@ -123,6 +123,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Load projects data
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  
+  // Country profile states
+  const [countryProfiles, setCountryProfiles] = useState([]);
+  const [selectedCountryProfile, setSelectedCountryProfile] = useState('US'); // Default to US (Amerika)
+  const [formSchema, setFormSchema] = useState({});
+  const [isNewCountryModalOpen, setIsNewCountryModalOpen] = useState(false);
+  const [userRole, setUserRole] = useState('viewer'); // TODO: Get from auth context
 
   useEffect(() => {
     // Add slider styles to head
