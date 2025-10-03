@@ -1137,7 +1137,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         type="file"
                         multiple
                         accept=".pdf,.jpg,.jpeg,.cad,.zip"
-                        onChange={(e) => handleFileUpload('designFiles', e.target.files)}
+                        onChange={(e) => handleStepFileUpload('designFiles', e.target.files)}
                         className="hidden"
                         id="design-upload"
                       />
