@@ -1591,7 +1591,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         </div>
                         <Select 
                           value={stepData.selectedSubOption || ''} 
-                          onValueChange={(value) => handleCascadeSelection('subOption', value)}
+                          onValueChange={(value) => handleRecursiveSelection(1, value)}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder={`${standElementsConfig[stepData.selectedElement].label} türü seçin`} />
