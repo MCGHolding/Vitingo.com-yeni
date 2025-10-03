@@ -2548,7 +2548,7 @@ if __name__ == "__main__":
     else:
         print("\n❌ Some tests failed - please review the implementation")
         sys.exit(1)s returns recursive structure correctly
-    2. Default recursive data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) is returned
+    2. Default recursive data (Zemin > 36mm > Halı Kaplama > Renk/Miktar) is returned
     3. Nested structure works properly with unlimited depth
     4. Response includes proper structure with children property
     """
