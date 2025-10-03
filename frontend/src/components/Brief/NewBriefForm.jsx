@@ -111,7 +111,24 @@ export default function NewBriefForm({ onBackToDashboard }) {
       }
     };
 
+    // Load projects/fairs from backend API
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/fairs`);
+        if (response.ok) {
+          const projectsData = await response.json();
+          setProjects(projectsData.filter(project => project.status === 'active'));
+          console.log('Projects loaded from database:', projectsData.length);
+        } else {
+          console.error('Failed to fetch projects');
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
     fetchCustomers();
+    fetchProjects();
   }, []);
 
   // Update contact person and email when customer is selected
