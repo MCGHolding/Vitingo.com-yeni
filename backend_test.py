@@ -17005,44 +17005,31 @@ def test_collection_statistics_error_handling():
         return False
 
 def main():
-    """Main function to run comprehensive collection statistics endpoint tests"""
+    """Main function to run customer management API tests"""
     print("🎯" * 80)
-    print("COMPREHENSIVE COLLECTION STATISTICS ENDPOINT TESTING")
+    print("CUSTOMER MANAGEMENT API TESTING - 30 MOCK CUSTOMERS VERIFICATION")
     print("🎯" * 80)
-    print("Testing the new collection statistics endpoint for the 4-box dashboard")
-    print("This includes functionality testing and error handling verification")
+    print("Testing the customer management API to verify 30 new mock customers are working correctly")
+    print("This includes data validation, Turkish company verification, and endpoint functionality")
     
     test_results = []
     
-    # Test 1: Main functionality test
-    print(f"\n{'='*20} TEST 1: MAIN FUNCTIONALITY {'='*20}")
+    # Test 1: Customer Management API Test
+    print(f"\n{'='*20} TEST 1: CUSTOMER MANAGEMENT API {'='*20}")
     try:
-        result = test_collection_statistics_endpoint()
-        test_results.append(("Main Functionality", result))
+        result = test_customer_management_api()
+        test_results.append(("Customer Management API", result))
         if result:
-            print("✅ Main Functionality Test: PASSED")
+            print("✅ Customer Management API Test: PASSED")
         else:
-            print("❌ Main Functionality Test: FAILED")
+            print("❌ Customer Management API Test: FAILED")
     except Exception as e:
-        print(f"❌ Main Functionality Test: ERROR - {str(e)}")
-        test_results.append(("Main Functionality", False))
-    
-    # Test 2: Error handling test
-    print(f"\n{'='*20} TEST 2: ERROR HANDLING {'='*20}")
-    try:
-        result = test_collection_statistics_error_handling()
-        test_results.append(("Error Handling", result))
-        if result:
-            print("✅ Error Handling Test: PASSED")
-        else:
-            print("❌ Error Handling Test: FAILED")
-    except Exception as e:
-        print(f"❌ Error Handling Test: ERROR - {str(e)}")
-        test_results.append(("Error Handling", False))
+        print(f"❌ Customer Management API Test: ERROR - {str(e)}")
+        test_results.append(("Customer Management API", False))
     
     # Final summary
     print("\n" + "🎯" * 80)
-    print("COMPREHENSIVE COLLECTION STATISTICS TEST RESULTS SUMMARY")
+    print("CUSTOMER MANAGEMENT API TEST RESULTS SUMMARY")
     print("🎯" * 80)
     
     passed_tests = sum(1 for _, result in test_results if result)
@@ -17055,17 +17042,17 @@ def main():
     print(f"\n📊 Overall Results: {passed_tests}/{total_tests} tests passed")
     
     if passed_tests == total_tests:
-        print("🎉 ALL COLLECTION STATISTICS TESTS PASSED!")
-        print("\n✅ ENDPOINT VERIFICATION COMPLETE:")
-        print("   • GET /api/collection-statistics endpoint is fully functional")
-        print("   • Returns all 4 required statistics fields with correct data types")
-        print("   • Proper HTTP status codes (200 for success)")
-        print("   • Response time is acceptable for dashboard use")
-        print("   • Turkish character support verified")
-        print("   • Calculation accuracy validated with real data")
-        print("   • Error handling works correctly")
-        print("   • Response consistency verified")
-        print("   • Ready for frontend 4-box statistics dashboard integration")
+        print("🎉 ALL CUSTOMER MANAGEMENT API TESTS PASSED!")
+        print("\n✅ VERIFICATION COMPLETE:")
+        print("   • GET /api/customers endpoint returns exactly 30 customers")
+        print("   • All customer data fields properly populated")
+        print("   • Turkish company names present (Anadolu Holding, Turkcell, Arçelik, etc.)")
+        print("   • Proper JSON structure and Pydantic validation working")
+        print("   • No empty or missing critical fields")
+        print("   • Individual customer endpoints working correctly")
+        print("   • Turkish tax information populated")
+        print("   • Data quality verification passed")
+        print("   • Customer management API is ready for production use")
         return True
     else:
         print(f"⚠️  {total_tests - passed_tests} tests failed. Please review the issues above.")
