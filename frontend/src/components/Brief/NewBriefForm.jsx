@@ -154,6 +154,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [standElementsConfig, setStandElementsConfig] = useState({});
   const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
   const [isManageElementsModalOpen, setIsManageElementsModalOpen] = useState(false);
+  const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
+  const [newCategoryData, setNewCategoryData] = useState({
+    type: 'text', // text, number, color
+    label: '',
+    value: '',
+    color: '#000000'
+  });
   const [elementModalData, setElementModalData] = useState({
     parentKey: null,
     parentSubKey: null,
