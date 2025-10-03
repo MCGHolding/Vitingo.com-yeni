@@ -6427,6 +6427,237 @@ async def get_brief_form_schema(country: str = "US"):
         logger.error(f"Error getting brief form schema for country {country}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== STAND ELEMENTS ENDPOINTS =====================
+
+@api_router.get("/stand-elements")
+async def get_stand_elements():
+    """Get all stand elements configuration"""
+    try:
+        elements = await db.stand_elements.find().to_list(length=None)
+        
+        # If no custom elements exist, create default configuration
+        if not elements:
+            default_elements = [
+                {
+                    "key": "flooring",
+                    "label": "Zemin",
+                    "icon": "🟫",
+                    "required": True,
+                    "subOptions": {
+                        "raised36mm": {
+                            "label": "36mm Yükseltilmiş Zemin",
+                            "subOptions": {
+                                "carpet": {"label": "Halı Kaplama", "icon": "🟫"},
+                                "parquet": {"label": "Parke Kaplama", "icon": "🪵"},
+                                "pvc": {"label": "PVC Kaplama", "icon": "⬜"}
+                            }
+                        },
+                        "standard": {
+                            "label": "Standart Zemin",
+                            "subOptions": {
+                                "carpet": {"label": "Halı", "icon": "🟫"},
+                                "concrete": {"label": "Beton", "icon": "⬜"}
+                            }
+                        },
+                        "platform": {
+                            "label": "Platform Zemin",
+                            "subOptions": {
+                                "wooden": {"label": "Ahşap Platform", "icon": "🪵"},
+                                "metal": {"label": "Metal Platform", "icon": "⚙️"}
+                            }
+                        }
+                    },
+                    "created_by": "system"
+                },
+                {
+                    "key": "counter",
+                    "label": "Tezgah",
+                    "icon": "🏪",
+                    "required": False,
+                    "subOptions": {
+                        "reception": {"label": "Karşılama Tezgahı", "icon": "🏪"},
+                        "display": {"label": "Sergi Tezgahı", "icon": "📊"},
+                        "service": {"label": "Servis Tezgahı", "icon": "☕"}
+                    },
+                    "created_by": "system"
+                },
+                {
+                    "key": "furniture",
+                    "label": "Mobilya",
+                    "icon": "🪑",
+                    "required": False,
+                    "subOptions": {
+                        "seating": {
+                            "label": "Oturma Grupları",
+                            "subOptions": {
+                                "armchairs": {"label": "Berjer/Koltuk", "icon": "🛋️"},
+                                "chairs": {"label": "Sandalyeler", "icon": "🪑"},
+                                "sofas": {"label": "Kanepe Takımı", "icon": "🛋️"}
+                            }
+                        },
+                        "tables": {
+                            "label": "Masa Grupları",
+                            "subOptions": {
+                                "meeting": {"label": "Toplantı Masası", "icon": "📋"},
+                                "cocktail": {"label": "Kokteyl Masası", "icon": "🍸"},
+                                "display": {"label": "Sergi Masası", "icon": "📊"}
+                            }
+                        },
+                        "storage": {"label": "Dolap/Raf Sistemleri", "icon": "📚"}
+                    },
+                    "created_by": "system"
+                }
+            ]
+            
+            for element_data in default_elements:
+                element = StandElement(**element_data)
+                await db.stand_elements.insert_one(element.dict())
+                logger.info(f"Created default stand element: {element.key}")
+            
+            # Fetch again after inserting defaults
+            elements = await db.stand_elements.find().to_list(length=None)
+        
+        # Convert to the format expected by frontend
+        config = {}
+        for element in elements:
+            config[element['key']] = {
+                'label': element['label'],
+                'icon': element.get('icon'),
+                'required': element.get('required', False),
+                'subOptions': element.get('subOptions', {})
+            }
+        
+        return config
+        
+    except Exception as e:
+        logger.error(f"Error getting stand elements: {str(e)}")
+        return {}
+
+@api_router.post("/stand-elements")
+async def create_stand_element(element_data: StandElementCreate):
+    """Create new stand element or sub-element (admin+ only)"""
+    try:
+        # TODO: Add role check - only admin and super_admin can create
+        
+        if element_data.parent_key:
+            # Adding sub-element to existing element
+            existing = await db.stand_elements.find_one({"key": element_data.parent_key})
+            if not existing:
+                raise HTTPException(status_code=404, detail="Parent element not found")
+            
+            # Update sub-options
+            sub_options = existing.get("subOptions", {})
+            
+            if element_data.parent_sub_key:
+                # Adding sub-sub-element
+                if element_data.parent_sub_key not in sub_options:
+                    raise HTTPException(status_code=404, detail="Parent sub-element not found")
+                
+                if "subOptions" not in sub_options[element_data.parent_sub_key]:
+                    sub_options[element_data.parent_sub_key]["subOptions"] = {}
+                
+                sub_options[element_data.parent_sub_key]["subOptions"][element_data.key] = {
+                    "label": element_data.label,
+                    "icon": element_data.icon
+                }
+            else:
+                # Adding sub-element
+                sub_options[element_data.key] = {
+                    "label": element_data.label,
+                    "icon": element_data.icon,
+                    "subOptions": {}
+                }
+            
+            await db.stand_elements.update_one(
+                {"key": element_data.parent_key},
+                {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
+            )
+            
+            return {"success": True, "message": f"Sub-element added to {element_data.parent_key}"}
+        
+        else:
+            # Creating new main element
+            existing = await db.stand_elements.find_one({"key": element_data.key})
+            if existing:
+                raise HTTPException(status_code=400, detail="Element already exists")
+            
+            element = StandElement(
+                key=element_data.key,
+                label=element_data.label,
+                icon=element_data.icon,
+                required=element_data.required,
+                created_by="admin"  # TODO: Get from JWT
+            )
+            
+            await db.stand_elements.insert_one(element.dict())
+            
+            return {"success": True, "message": f"Element {element_data.key} created successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating stand element: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/stand-elements/{element_key}")
+async def delete_stand_element(element_key: str, sub_key: str = None, sub_sub_key: str = None):
+    """Delete stand element or sub-element (admin+ only)"""
+    try:
+        # TODO: Add role check - only admin and super_admin can delete
+        
+        if sub_key:
+            # Deleting sub-element
+            existing = await db.stand_elements.find_one({"key": element_key})
+            if not existing:
+                raise HTTPException(status_code=404, detail="Element not found")
+            
+            sub_options = existing.get("subOptions", {})
+            
+            if sub_sub_key:
+                # Deleting sub-sub-element
+                if sub_key in sub_options and "subOptions" in sub_options[sub_key]:
+                    if sub_sub_key in sub_options[sub_key]["subOptions"]:
+                        del sub_options[sub_key]["subOptions"][sub_sub_key]
+                        
+                        await db.stand_elements.update_one(
+                            {"key": element_key},
+                            {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
+                        )
+                        
+                        return {"success": True, "message": "Sub-sub-element deleted"}
+                    else:
+                        raise HTTPException(status_code=404, detail="Sub-sub-element not found")
+                else:
+                    raise HTTPException(status_code=404, detail="Sub-element not found")
+            else:
+                # Deleting sub-element
+                if sub_key in sub_options:
+                    del sub_options[sub_key]
+                    
+                    await db.stand_elements.update_one(
+                        {"key": element_key},
+                        {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
+                    )
+                    
+                    return {"success": True, "message": "Sub-element deleted"}
+                else:
+                    raise HTTPException(status_code=404, detail="Sub-element not found")
+        
+        else:
+            # Deleting main element
+            result = await db.stand_elements.delete_one({"key": element_key})
+            
+            if result.deleted_count == 0:
+                raise HTTPException(status_code=404, detail="Element not found")
+            
+            return {"success": True, "message": f"Element {element_key} deleted"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting stand element: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
