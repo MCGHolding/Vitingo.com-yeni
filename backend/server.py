@@ -172,11 +172,31 @@ class CountryProfileUpdate(BaseModel):
     form_config: Optional[CountryProfileFormConfig] = None
     status: Optional[str] = None
 
-# Stand Elements Models
-class StandElementSubOption(BaseModel):
+# Stand Elements Models - Recursive Structure
+class StandElementCreate(BaseModel):
+    key: str
     label: str
     icon: Optional[str] = None
-    subOptions: Optional[Dict[str, Any]] = None
+    required: bool = False
+    element_type: str = "option"  # option, property, unit
+    input_type: Optional[str] = None  # text, number, select, color
+    unit: Optional[str] = None  # adet, m2, m3, kg, litre
+    options: Optional[List[str]] = None  # For select type
+    parent_path: Optional[str] = None  # Dot notation path: "flooring.raised36mm.carpet"
+
+class RecursiveStandElement(BaseModel):
+    key: str
+    label: str
+    icon: Optional[str] = None
+    required: bool = False
+    element_type: str = "option"  # option, property, unit
+    input_type: Optional[str] = None  # text, number, select, color
+    unit: Optional[str] = None  # adet, m2, m3, kg, litre
+    options: Optional[List[str]] = None  # For select type
+    children: Optional[Dict[str, 'RecursiveStandElement']] = None
+
+# For Pydantic forward reference
+RecursiveStandElement.model_rebuild()
 
 class StandElement(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -184,18 +204,10 @@ class StandElement(BaseModel):
     label: str  # Display name
     icon: Optional[str] = None
     required: bool = False
-    subOptions: Dict[str, StandElementSubOption] = Field(default_factory=dict)
+    structure: Dict[str, RecursiveStandElement] = Field(default_factory=dict)  # Recursive structure
     created_by: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-class StandElementCreate(BaseModel):
-    key: str
-    label: str
-    icon: Optional[str] = None
-    required: bool = False
-    parent_key: Optional[str] = None  # For sub-categories
-    parent_sub_key: Optional[str] = None  # For sub-sub-categories
 
 class Prospect(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
