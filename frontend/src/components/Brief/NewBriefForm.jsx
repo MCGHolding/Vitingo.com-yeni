@@ -2119,6 +2119,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
               level={elementModalData.level}
               parentKey={elementModalData.parentKey}
               parentSubKey={elementModalData.parentSubKey}
+              editMode={elementModalData.editMode}
+              editData={elementModalData.editData}
               onSuccess={handleAddElement}
               onCancel={() => setIsAddElementModalOpen(false)}
             />
