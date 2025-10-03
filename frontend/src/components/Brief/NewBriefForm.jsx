@@ -600,13 +600,68 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
-  const handleElementToggle = (element) => {
+  // Enhanced element handlers for nested selections
+  const handleElementToggle = (elementKey) => {
     setStepData(prev => ({
       ...prev,
-      standElements: prev.standElements.includes(element) 
-        ? prev.standElements.filter(e => e !== element)
-        : [...prev.standElements, element]
+      standElements: {
+        ...prev.standElements,
+        [elementKey]: prev.standElements[elementKey] ? null : {}
+      }
     }));
+  };
+
+  const handleSubOptionToggle = (elementKey, subOptionKey, subSubOptionKey = null) => {
+    setStepData(prev => {
+      const newElements = { ...prev.standElements };
+      
+      if (!newElements[elementKey]) {
+        newElements[elementKey] = {};
+      }
+
+      if (subSubOptionKey) {
+        // Third level selection
+        if (!newElements[elementKey][subOptionKey]) {
+          newElements[elementKey][subOptionKey] = {};
+        }
+        newElements[elementKey][subOptionKey][subSubOptionKey] = 
+          !newElements[elementKey][subOptionKey][subSubOptionKey];
+      } else {
+        // Second level selection
+        newElements[elementKey][subOptionKey] = !newElements[elementKey][subOptionKey];
+      }
+
+      return {
+        ...prev,
+        standElements: newElements
+      };
+    });
+  };
+
+  const isElementSelected = (elementKey) => {
+    return !!stepData.standElements[elementKey];
+  };
+
+  const isSubOptionSelected = (elementKey, subOptionKey, subSubOptionKey = null) => {
+    if (!stepData.standElements[elementKey]) return false;
+    
+    if (subSubOptionKey) {
+      return !!stepData.standElements[elementKey][subOptionKey]?.[subSubOptionKey];
+    }
+    return !!stepData.standElements[elementKey][subOptionKey];
+  };
+
+  const hasRequiredSelections = (elementKey) => {
+    const element = stepData.standElements[elementKey];
+    if (!element) return false;
+    
+    const config = standElementsConfig[elementKey];
+    if (!config?.required) return true;
+    
+    // Check if at least one sub-option is selected
+    return Object.keys(element).some(key => element[key] === true || 
+      (typeof element[key] === 'object' && Object.values(element[key]).some(val => val === true))
+    );
   };
 
   const handleStepFileUpload = (field, files) => {
