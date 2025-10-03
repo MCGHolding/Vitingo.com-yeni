@@ -1574,7 +1574,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-700">
-                            2. {standElementsConfig[stepData.selectedElement].label} Türü Seçin
+                            2. {standElementsConfig[stepData.currentPath[0]]?.label} Türü Seçin
                           </label>
                           {(userRole === 'admin' || userRole === 'super_admin') && (
                             <Button
