@@ -4137,7 +4137,7 @@ def test_collection_receipt_integration_workflow():
     Test complete collection receipt workflow integration.
     
     Requirements to verify:
-    1. Complete workflow: create receipt → email sent → approval process → PDF generation
+    1. Complete workflow: create receipt > email sent > approval process > PDF generation
     2. Proper error handling for invalid data
     3. Edge cases (expired signature keys, missing data, etc.)
     """
