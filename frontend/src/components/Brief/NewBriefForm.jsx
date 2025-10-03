@@ -657,6 +657,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
+  // Refresh Stand Elements
+  const refreshStandElements = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/stand-elements`);
+      if (response.ok) {
+        const elementsData = await response.json();
+        setStandElementsConfig(elementsData);
+        console.log('Stand elements refreshed:', Object.keys(elementsData).length, 'elements');
+      }
+    } catch (error) {
+      console.error('Error refreshing stand elements:', error);
+    }
+  };
+
   // New Category Handler
   const handleAddNewCategory = async () => {
     try {
