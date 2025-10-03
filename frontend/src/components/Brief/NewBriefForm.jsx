@@ -24,8 +24,7 @@ import {
   Ruler,
   Eye,
   EyeOff,
-  User,
-  CheckCircle
+  User
 } from 'lucide-react';
 
 // Add CSS for slider styling
