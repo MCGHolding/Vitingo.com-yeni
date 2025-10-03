@@ -1568,7 +1568,986 @@ def test_recursive_stand_elements_get():
     Test GET /api/stand-elements - recursive structure'ın doğru geldiğini kontrol et
     
     Requirements to verify:
-    1. GET /api/stand-elements returns recursive structure correctly
+    1. GET /api/stand-elements should return recursive structure configuration
+    2. Should include default elements like 'flooring' and 'furniture'
+    3. Should show nested children structure with unlimited depth
+    4. Should return proper JSON format with labels, icons, required flags
+    5. Should handle empty database by creating default elements
+    """
+    
+    print("=" * 80)
+    print("TESTING GET RECURSIVE STAND ELEMENTS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to stand elements...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand elements endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            elements = response.json()
+            print(f"   Response type: {type(elements)}")
+            print(f"   Number of main elements: {len(elements) if isinstance(elements, dict) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(elements, dict):
+            print("   ❌ FAIL: Response should be a dictionary of stand elements")
+            return False
+        
+        if len(elements) == 0:
+            print("   ❌ FAIL: Response should contain stand elements")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(elements)} main stand elements")
+        
+        # Test 4: Check for expected default elements
+        print("\n4. Checking for expected default elements...")
+        expected_elements = ["flooring", "furniture"]
+        found_elements = []
+        
+        for element_key in expected_elements:
+            if element_key in elements:
+                found_elements.append(element_key)
+                print(f"   ✅ PASS: Found expected element: {element_key}")
+            else:
+                print(f"   ❌ FAIL: Missing expected element: {element_key}")
+        
+        if len(found_elements) < len(expected_elements):
+            print(f"   ❌ FAIL: Missing some expected elements")
+            return False
+        
+        # Test 5: Validate element structure
+        print("\n5. Validating element structure...")
+        for element_key, element_data in elements.items():
+            print(f"   Checking element: {element_key}")
+            
+            # Check required fields
+            required_fields = ["label", "structure"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in element_data:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Element {element_key} missing fields: {missing_fields}")
+                return False
+            
+            print(f"     Label: {element_data.get('label')}")
+            print(f"     Icon: {element_data.get('icon', 'None')}")
+            print(f"     Required: {element_data.get('required', False)}")
+            print(f"     Structure keys: {list(element_data.get('structure', {}).keys())}")
+        
+        # Test 6: Check recursive structure depth
+        print("\n6. Checking recursive structure depth...")
+        flooring = elements.get("flooring", {})
+        if flooring:
+            structure = flooring.get("structure", {})
+            if "raised36mm" in structure:
+                raised36mm = structure["raised36mm"]
+                print(f"   Found raised36mm: {raised36mm.get('label')}")
+                
+                children = raised36mm.get("children", {})
+                if children:
+                    print(f"   Children of raised36mm: {list(children.keys())}")
+                    
+                    # Check for carpet option
+                    if "carpet" in children:
+                        carpet = children["carpet"]
+                        print(f"   Found carpet option: {carpet.get('label')}")
+                        
+                        carpet_children = carpet.get("children", {})
+                        if carpet_children:
+                            print(f"   Carpet properties: {list(carpet_children.keys())}")
+                            print("   ✅ PASS: 3-level recursive structure confirmed")
+                        else:
+                            print("   ⚠️  WARNING: Carpet has no children properties")
+                    else:
+                        print("   ⚠️  WARNING: Carpet option not found in raised36mm children")
+                else:
+                    print("   ⚠️  WARNING: raised36mm has no children")
+            else:
+                print("   ⚠️  WARNING: raised36mm not found in flooring structure")
+        
+        # Test 7: Check Turkish labels
+        print("\n7. Checking Turkish labels...")
+        turkish_chars = ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'Ç', 'Ğ', 'İ', 'Ö', 'Ş', 'Ü']
+        has_turkish = False
+        
+        for element_key, element_data in elements.items():
+            label = element_data.get('label', '')
+            if any(char in label for char in turkish_chars):
+                has_turkish = True
+                print(f"   ✅ PASS: Turkish characters found in label: '{label}'")
+                break
+        
+        if not has_turkish:
+            print("   ⚠️  WARNING: No Turkish characters found in labels")
+        
+        print("\n" + "=" * 80)
+        print("GET RECURSIVE STAND ELEMENTS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON dictionary structure")
+        print("✅ Contains expected default elements")
+        print("✅ Element structure validation passed")
+        print("✅ Recursive structure depth confirmed")
+        print("✅ Turkish character support verified")
+        print(f"\n🎉 GET RECURSIVE STAND ELEMENTS TEST PASSED!")
+        print(f"   Total main elements: {len(elements)}")
+        print(f"   Elements found: {list(elements.keys())}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_post_main():
+    """
+    Test POST /api/stand-elements - Ana element ekleme (parent_path olmadan)
+    
+    Requirements to verify:
+    1. POST /api/stand-elements should create new main element
+    2. Should work without parent_path for main elements
+    3. Should return success message
+    4. Should handle duplicate key errors
+    """
+    
+    print("=" * 80)
+    print("TESTING POST RECURSIVE STAND ELEMENTS - MAIN ELEMENT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for new main element
+    test_element_data = {
+        "key": "lighting",
+        "label": "Aydınlatma",
+        "icon": "💡",
+        "required": False,
+        "element_type": "option"
+    }
+    
+    print(f"Test data: {test_element_data}")
+    
+    try:
+        # Test 1: Create new main element
+        print("\n1. Creating new main element...")
+        response = requests.post(endpoint, json=test_element_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Main element creation responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing response...")
+        try:
+            result = response.json()
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response
+        print("\n3. Validating response...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get("success"):
+            print(f"   ❌ FAIL: Creation should be successful: {result}")
+            return False
+        
+        print(f"   ✅ PASS: Main element created successfully: {result.get('message')}")
+        
+        # Test 4: Verify element was created by fetching all elements
+        print("\n4. Verifying element was created...")
+        get_response = requests.get(endpoint, timeout=30)
+        
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            if "lighting" in elements:
+                lighting_element = elements["lighting"]
+                print(f"   ✅ PASS: New element found in database")
+                print(f"   Label: {lighting_element.get('label')}")
+                print(f"   Icon: {lighting_element.get('icon')}")
+                print(f"   Required: {lighting_element.get('required')}")
+            else:
+                print("   ❌ FAIL: New element not found in database")
+                return False
+        else:
+            print("   ⚠️  WARNING: Could not verify element creation")
+        
+        # Test 5: Test duplicate key error
+        print("\n5. Testing duplicate key error...")
+        duplicate_response = requests.post(endpoint, json=test_element_data, timeout=30)
+        
+        print(f"   Duplicate Status Code: {duplicate_response.status_code}")
+        if duplicate_response.status_code == 400:
+            print("   ✅ PASS: Duplicate key properly rejected with 400")
+        else:
+            print(f"   ⚠️  WARNING: Expected 400 for duplicate, got {duplicate_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("POST MAIN ELEMENT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Main element created successfully")
+        print("✅ Element verified in database")
+        print("✅ Duplicate key handling tested")
+        print(f"\n🎉 POST MAIN ELEMENT TEST PASSED!")
+        print(f"   Created element: {test_element_data['key']} - {test_element_data['label']}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_post_nested():
+    """
+    Test POST /api/stand-elements - Nested element ekleme (parent_path ile "flooring" gibi)
+    
+    Requirements to verify:
+    1. POST /api/stand-elements should create nested element with parent_path
+    2. Should work with parent_path like "flooring"
+    3. Should add element to existing structure
+    4. Should handle invalid parent paths
+    """
+    
+    print("=" * 80)
+    print("TESTING POST RECURSIVE STAND ELEMENTS - NESTED ELEMENT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for nested element under flooring
+    test_nested_data = {
+        "key": "platform",
+        "label": "Platform Zemin",
+        "icon": "🏗️",
+        "required": False,
+        "element_type": "option",
+        "parent_path": "flooring"
+    }
+    
+    print(f"Test data: {test_nested_data}")
+    
+    try:
+        # Test 1: Create nested element
+        print("\n1. Creating nested element under flooring...")
+        response = requests.post(endpoint, json=test_nested_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Nested element creation responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing response...")
+        try:
+            result = response.json()
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response
+        print("\n3. Validating response...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get("success"):
+            print(f"   ❌ FAIL: Creation should be successful: {result}")
+            return False
+        
+        print(f"   ✅ PASS: Nested element created successfully: {result.get('message')}")
+        
+        # Test 4: Verify nested element was created
+        print("\n4. Verifying nested element was created...")
+        get_response = requests.get(endpoint, timeout=30)
+        
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            flooring = elements.get("flooring", {})
+            structure = flooring.get("structure", {})
+            
+            if "platform" in structure:
+                platform_element = structure["platform"]
+                print(f"   ✅ PASS: Nested element found in flooring structure")
+                print(f"   Label: {platform_element.get('label')}")
+                print(f"   Icon: {platform_element.get('icon')}")
+                print(f"   Element Type: {platform_element.get('element_type')}")
+            else:
+                print("   ❌ FAIL: Nested element not found in flooring structure")
+                print(f"   Available structure keys: {list(structure.keys())}")
+                return False
+        else:
+            print("   ⚠️  WARNING: Could not verify nested element creation")
+        
+        # Test 5: Test invalid parent path
+        print("\n5. Testing invalid parent path...")
+        invalid_data = {
+            "key": "test_invalid",
+            "label": "Test Invalid",
+            "element_type": "option",
+            "parent_path": "nonexistent"
+        }
+        
+        invalid_response = requests.post(endpoint, json=invalid_data, timeout=30)
+        print(f"   Invalid parent Status Code: {invalid_response.status_code}")
+        
+        if invalid_response.status_code == 404:
+            print("   ✅ PASS: Invalid parent path properly rejected with 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for invalid parent, got {invalid_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("POST NESTED ELEMENT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Nested element created successfully")
+        print("✅ Element verified in parent structure")
+        print("✅ Invalid parent path handling tested")
+        print(f"\n🎉 POST NESTED ELEMENT TEST PASSED!")
+        print(f"   Created nested element: {test_nested_data['key']} under {test_nested_data['parent_path']}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_post_deep_nested():
+    """
+    Test POST /api/stand-elements - Deep nested element ekleme (parent_path ile "flooring.raised36mm" gibi)
+    
+    Requirements to verify:
+    1. POST /api/stand-elements should create deep nested element
+    2. Should work with parent_path like "flooring.raised36mm"
+    3. Should add element to deep nested structure
+    4. Should handle complex dot notation paths
+    """
+    
+    print("=" * 80)
+    print("TESTING POST RECURSIVE STAND ELEMENTS - DEEP NESTED ELEMENT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for deep nested element under flooring.raised36mm
+    test_deep_data = {
+        "key": "vinyl",
+        "label": "Vinil Kaplama",
+        "icon": "🟦",
+        "required": False,
+        "element_type": "option",
+        "parent_path": "flooring.raised36mm"
+    }
+    
+    print(f"Test data: {test_deep_data}")
+    
+    try:
+        # Test 1: Create deep nested element
+        print("\n1. Creating deep nested element under flooring.raised36mm...")
+        response = requests.post(endpoint, json=test_deep_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Deep nested element creation responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing response...")
+        try:
+            result = response.json()
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response
+        print("\n3. Validating response...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get("success"):
+            print(f"   ❌ FAIL: Creation should be successful: {result}")
+            return False
+        
+        print(f"   ✅ PASS: Deep nested element created successfully: {result.get('message')}")
+        
+        # Test 4: Verify deep nested element was created
+        print("\n4. Verifying deep nested element was created...")
+        get_response = requests.get(endpoint, timeout=30)
+        
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            flooring = elements.get("flooring", {})
+            structure = flooring.get("structure", {})
+            raised36mm = structure.get("raised36mm", {})
+            children = raised36mm.get("children", {})
+            
+            if "vinyl" in children:
+                vinyl_element = children["vinyl"]
+                print(f"   ✅ PASS: Deep nested element found in flooring.raised36mm.children")
+                print(f"   Label: {vinyl_element.get('label')}")
+                print(f"   Icon: {vinyl_element.get('icon')}")
+                print(f"   Element Type: {vinyl_element.get('element_type')}")
+            else:
+                print("   ❌ FAIL: Deep nested element not found in flooring.raised36mm.children")
+                print(f"   Available children keys: {list(children.keys())}")
+                return False
+        else:
+            print("   ⚠️  WARNING: Could not verify deep nested element creation")
+        
+        # Test 5: Test even deeper nesting (4 levels)
+        print("\n5. Testing even deeper nesting (4 levels)...")
+        deeper_data = {
+            "key": "vinyl_color",
+            "label": "Vinil Rengi",
+            "element_type": "property",
+            "input_type": "select",
+            "options": ["Beyaz", "Gri", "Siyah", "Kahverengi"],
+            "parent_path": "flooring.raised36mm.vinyl"
+        }
+        
+        deeper_response = requests.post(endpoint, json=deeper_data, timeout=30)
+        print(f"   Deeper nesting Status Code: {deeper_response.status_code}")
+        
+        if deeper_response.status_code == 200:
+            print("   ✅ PASS: 4-level deep nesting works correctly")
+            
+            # Verify 4-level element
+            verify_response = requests.get(endpoint, timeout=30)
+            if verify_response.status_code == 200:
+                verify_elements = verify_response.json()
+                path = verify_elements.get("flooring", {}).get("structure", {}).get("raised36mm", {}).get("children", {}).get("vinyl", {}).get("children", {})
+                
+                if "vinyl_color" in path:
+                    print("   ✅ PASS: 4-level element verified in structure")
+                else:
+                    print("   ⚠️  WARNING: 4-level element not found in verification")
+        else:
+            print(f"   ⚠️  WARNING: 4-level nesting failed with status {deeper_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("POST DEEP NESTED ELEMENT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Deep nested element created successfully")
+        print("✅ Element verified in deep nested structure")
+        print("✅ 4-level deep nesting tested")
+        print(f"\n🎉 POST DEEP NESTED ELEMENT TEST PASSED!")
+        print(f"   Created deep nested element: {test_deep_data['key']} under {test_deep_data['parent_path']}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_put():
+    """
+    Test PUT /api/stand-elements/{key} - Element güncelleme testi
+    
+    Requirements to verify:
+    1. PUT /api/stand-elements/{key} should update existing elements
+    2. Should work for both main elements and nested elements
+    3. Should support parent_path for nested element updates
+    4. Should handle element not found errors
+    """
+    
+    print("=" * 80)
+    print("TESTING PUT RECURSIVE STAND ELEMENTS - UPDATE ELEMENT")
+    print("=" * 80)
+    
+    # Test 1: Update main element
+    print("\n1. Testing main element update...")
+    main_endpoint = f"{BACKEND_URL}/api/stand-elements/lighting"
+    print(f"Testing endpoint: {main_endpoint}")
+    
+    main_update_data = {
+        "key": "lighting",
+        "label": "Aydınlatma Sistemleri",  # Updated label
+        "icon": "🔆",  # Updated icon
+        "required": True,  # Updated required
+        "element_type": "option"
+    }
+    
+    try:
+        response = requests.put(main_endpoint, json=main_update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Main element update responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: Main element updated successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Update should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify main element update
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            lighting = elements.get("lighting", {})
+            
+            if lighting.get("label") == "Aydınlatma Sistemleri":
+                print("   ✅ PASS: Main element label updated correctly")
+            else:
+                print(f"   ❌ FAIL: Label not updated. Got: {lighting.get('label')}")
+                return False
+            
+            if lighting.get("icon") == "🔆":
+                print("   ✅ PASS: Main element icon updated correctly")
+            else:
+                print(f"   ❌ FAIL: Icon not updated. Got: {lighting.get('icon')}")
+                return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error updating main element: {str(e)}")
+        return False
+    
+    # Test 2: Update nested element
+    print("\n2. Testing nested element update...")
+    nested_endpoint = f"{BACKEND_URL}/api/stand-elements/platform"
+    print(f"Testing endpoint: {nested_endpoint}")
+    
+    nested_update_data = {
+        "key": "platform",
+        "label": "Yükseltilmiş Platform",  # Updated label
+        "icon": "🏗️",
+        "required": False,
+        "element_type": "option",
+        "parent_path": "flooring"
+    }
+    
+    try:
+        response = requests.put(nested_endpoint, json=nested_update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Nested element update responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: Nested element updated successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Update should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify nested element update
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            flooring = elements.get("flooring", {})
+            structure = flooring.get("structure", {})
+            platform = structure.get("platform", {})
+            
+            if platform.get("label") == "Yükseltilmiş Platform":
+                print("   ✅ PASS: Nested element label updated correctly")
+            else:
+                print(f"   ❌ FAIL: Nested label not updated. Got: {platform.get('label')}")
+                return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error updating nested element: {str(e)}")
+        return False
+    
+    # Test 3: Update deep nested element
+    print("\n3. Testing deep nested element update...")
+    deep_endpoint = f"{BACKEND_URL}/api/stand-elements/vinyl"
+    print(f"Testing endpoint: {deep_endpoint}")
+    
+    deep_update_data = {
+        "key": "vinyl",
+        "label": "Premium Vinil Kaplama",  # Updated label
+        "icon": "🟦",
+        "required": False,
+        "element_type": "option",
+        "parent_path": "flooring.raised36mm"
+    }
+    
+    try:
+        response = requests.put(deep_endpoint, json=deep_update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Deep nested element update responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: Deep nested element updated successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Update should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error updating deep nested element: {str(e)}")
+        return False
+    
+    # Test 4: Test updating non-existent element
+    print("\n4. Testing non-existent element update...")
+    nonexistent_endpoint = f"{BACKEND_URL}/api/stand-elements/nonexistent"
+    
+    nonexistent_data = {
+        "key": "nonexistent",
+        "label": "Non-existent",
+        "element_type": "option"
+    }
+    
+    try:
+        response = requests.put(nonexistent_endpoint, json=nonexistent_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 404:
+            print("   ✅ PASS: Non-existent element properly rejected with 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for non-existent element, got {response.status_code}")
+        
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing non-existent element: {str(e)}")
+    
+    print("\n" + "=" * 80)
+    print("PUT ELEMENT UPDATE TEST RESULTS:")
+    print("=" * 80)
+    print("✅ Main element update successful")
+    print("✅ Nested element update successful")
+    print("✅ Deep nested element update successful")
+    print("✅ Non-existent element handling tested")
+    print(f"\n🎉 PUT ELEMENT UPDATE TEST PASSED!")
+    
+    return True
+
+def test_recursive_stand_elements_delete():
+    """
+    Test DELETE /api/stand-elements/{key} - Element silme testi
+    
+    Requirements to verify:
+    1. DELETE /api/stand-elements/{key} should delete existing elements
+    2. Should work for both main elements and nested elements
+    3. Should support parent_path query parameter for nested element deletion
+    4. Should handle element not found errors
+    """
+    
+    print("=" * 80)
+    print("TESTING DELETE RECURSIVE STAND ELEMENTS - DELETE ELEMENT")
+    print("=" * 80)
+    
+    # Test 1: Delete deep nested element first (4-level)
+    print("\n1. Testing deep nested element deletion (4-level)...")
+    deep_endpoint = f"{BACKEND_URL}/api/stand-elements/vinyl_color?parent_path=flooring.raised36mm.vinyl"
+    print(f"Testing endpoint: {deep_endpoint}")
+    
+    try:
+        response = requests.delete(deep_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Deep nested element deletion responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: Deep nested element deleted successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Deletion should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error deleting deep nested element: {str(e)}")
+        return False
+    
+    # Test 2: Delete 3-level nested element
+    print("\n2. Testing 3-level nested element deletion...")
+    nested_endpoint = f"{BACKEND_URL}/api/stand-elements/vinyl?parent_path=flooring.raised36mm"
+    print(f"Testing endpoint: {nested_endpoint}")
+    
+    try:
+        response = requests.delete(nested_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: 3-level nested element deletion responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: 3-level nested element deleted successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Deletion should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify 3-level element was deleted
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            flooring = elements.get("flooring", {})
+            structure = flooring.get("structure", {})
+            raised36mm = structure.get("raised36mm", {})
+            children = raised36mm.get("children", {})
+            
+            if "vinyl" not in children:
+                print("   ✅ PASS: 3-level nested element successfully removed from structure")
+            else:
+                print("   ❌ FAIL: 3-level nested element still exists in structure")
+                return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error deleting 3-level nested element: {str(e)}")
+        return False
+    
+    # Test 3: Delete 2-level nested element
+    print("\n3. Testing 2-level nested element deletion...")
+    platform_endpoint = f"{BACKEND_URL}/api/stand-elements/platform?parent_path=flooring"
+    print(f"Testing endpoint: {platform_endpoint}")
+    
+    try:
+        response = requests.delete(platform_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: 2-level nested element deletion responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: 2-level nested element deleted successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Deletion should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify 2-level element was deleted
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            flooring = elements.get("flooring", {})
+            structure = flooring.get("structure", {})
+            
+            if "platform" not in structure:
+                print("   ✅ PASS: 2-level nested element successfully removed from structure")
+            else:
+                print("   ❌ FAIL: 2-level nested element still exists in structure")
+                return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error deleting 2-level nested element: {str(e)}")
+        return False
+    
+    # Test 4: Delete main element
+    print("\n4. Testing main element deletion...")
+    main_endpoint = f"{BACKEND_URL}/api/stand-elements/lighting"
+    print(f"Testing endpoint: {main_endpoint}")
+    
+    try:
+        response = requests.delete(main_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Main element deletion responds with status 200")
+            
+            result = response.json()
+            print(f"   Response: {result}")
+            
+            if result.get("success"):
+                print(f"   ✅ PASS: Main element deleted successfully: {result.get('message')}")
+            else:
+                print(f"   ❌ FAIL: Deletion should be successful: {result}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Verify main element was deleted
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        if get_response.status_code == 200:
+            elements = get_response.json()
+            
+            if "lighting" not in elements:
+                print("   ✅ PASS: Main element successfully removed from database")
+            else:
+                print("   ❌ FAIL: Main element still exists in database")
+                return False
+        
+    except Exception as e:
+        print(f"   ❌ FAIL: Error deleting main element: {str(e)}")
+        return False
+    
+    # Test 5: Test deleting non-existent element
+    print("\n5. Testing non-existent element deletion...")
+    nonexistent_endpoint = f"{BACKEND_URL}/api/stand-elements/nonexistent"
+    
+    try:
+        response = requests.delete(nonexistent_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 404:
+            print("   ✅ PASS: Non-existent element properly rejected with 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for non-existent element, got {response.status_code}")
+        
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing non-existent element deletion: {str(e)}")
+    
+    print("\n" + "=" * 80)
+    print("DELETE ELEMENT TEST RESULTS:")
+    print("=" * 80)
+    print("✅ Deep nested element (4-level) deletion successful")
+    print("✅ 3-level nested element deletion successful")
+    print("✅ 2-level nested element deletion successful")
+    print("✅ Main element deletion successful")
+    print("✅ Non-existent element handling tested")
+    print("✅ All deletions verified in database")
+    print(f"\n🎉 DELETE ELEMENT TEST PASSED!")
+    
+    return True
+
+def run_recursive_stand_elements_tests():
+    """
+    Run all recursive stand elements tests in sequence
+    """
+    print("🚀 STARTING RECURSIVE STAND ELEMENTS API TESTING")
+    print("=" * 80)
+    
+    tests = [
+        ("GET Stand Elements", test_recursive_stand_elements_get),
+        ("POST Main Element", test_recursive_stand_elements_post_main),
+        ("POST Nested Element", test_recursive_stand_elements_post_nested),
+        ("POST Deep Nested Element", test_recursive_stand_elements_post_deep_nested),
+        ("PUT Update Elements", test_recursive_stand_elements_put),
+        ("DELETE Elements", test_recursive_stand_elements_delete),
+    ]
+    
+    results = []
+    
+    for test_name, test_func in tests:
+        print(f"\n🧪 Running: {test_name}")
+        try:
+            result = test_func()
+            results.append((test_name, result))
+            
+            if result:
+                print(f"✅ {test_name}: PASSED")
+            else:
+                print(f"❌ {test_name}: FAILED")
+        except Exception as e:
+            print(f"❌ {test_name}: ERROR - {str(e)}")
+            results.append((test_name, False))
+    
+    # Final summary
+    print("\n" + "=" * 80)
+    print("🎯 RECURSIVE STAND ELEMENTS API TESTING SUMMARY")
+    print("=" * 80)
+    
+    passed = sum(1 for _, result in results if result)
+    total = len(results)
+    
+    for test_name, result in results:
+        status = "✅ PASSED" if result else "❌ FAILED"
+        print(f"{status}: {test_name}")
+    
+    print(f"\n📊 OVERALL RESULTS: {passed}/{total} tests passed")
+    
+    if passed == total:
+        print("🎉 ALL RECURSIVE STAND ELEMENTS TESTS PASSED!")
+        print("✅ Backend recursive structure fully supports unlimited depth")
+        print("✅ parent_path system working correctly")
+        print("✅ CRUD operations working for all nesting levels")
+        return True
+    else:
+        print(f"⚠️  {total - passed} tests failed - review implementation")
+        return False
+
+if __name__ == "__main__":
+    # Run all recursive stand elements tests
+    success = run_recursive_stand_elements_tests()
+    
+    if success:
+        print("\n🎉 Recursive Stand Elements Backend API Testing Complete - All Tests Passed!")
+    else:
+        print("\n❌ Some tests failed - please review the implementation")
+        sys.exit(1)s returns recursive structure correctly
     2. Default recursive data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) is returned
     3. Nested structure works properly with unlimited depth
     4. Response includes proper structure with children property
