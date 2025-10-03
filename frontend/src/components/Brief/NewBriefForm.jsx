@@ -140,10 +140,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Stand elements configuration - loaded dynamically from API
   const [standElementsConfig, setStandElementsConfig] = useState({});
   const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
+  const [isManageElementsModalOpen, setIsManageElementsModalOpen] = useState(false);
   const [elementModalData, setElementModalData] = useState({
     parentKey: null,
     parentSubKey: null,
-    level: 'main' // main, sub, subSub
+    level: 'main', // main, sub, subSub
+    editMode: false,
+    editData: null
   });
 
   // Load customers data
