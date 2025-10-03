@@ -51,7 +51,6 @@ const sliderStyles = `
 export default function NewBriefForm({ onBackToDashboard }) {
   const [formData, setFormData] = useState({
     // Basic Information
-    projectName: '',
     customerId: '', // Changed from clientCompany to customerId
     contactPerson: '',
     email: '',
