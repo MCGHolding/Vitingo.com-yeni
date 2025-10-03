@@ -680,15 +680,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
       </Card>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Basic Information Card */}
+        {/* Project Information Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Building2 className="h-5 w-5" />
-              <span>Temel Bilgiler</span>
+              <span>Proje Bilgileri</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Basic Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -735,7 +736,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   </div>
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Yetkili Kişi *
@@ -771,34 +772,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </SelectContent>
                     </Select>
                     
-                    {/* Display selected person info */}
-                    {selectedPersonId && (
-                      <div className="text-sm text-gray-600 bg-green-50 p-3 rounded border">
-                        {selectedPersonId === 'customer-default' ? (
-                          <div>
-                            <div className="flex items-center space-x-2 mb-1">
-                              <User className="h-4 w-4 text-green-500" />
-                              <span className="font-medium">{selectedCustomer.contactPerson}</span>
-                            </div>
-                            <div className="text-xs text-gray-500">Müşteri kaydından varsayılan iletişim kişisi</div>
-                          </div>
-                        ) : (
-                          (() => {
-                            const person = relatedPeople.find(p => p.id.toString() === selectedPersonId);
-                            return person ? (
-                              <div>
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <User className="h-4 w-4 text-green-500" />
-                                  <span className="font-medium">{person.first_name} {person.last_name}</span>
-                                </div>
-                                <div className="text-xs text-gray-500">{person.job_title} • {person.relationship_type}</div>
-                              </div>
-                            ) : null;
-                          })()
-                        )}
-                      </div>
-                    )}
-                    
                     {/* Hidden input for form compatibility */}
                     <Input
                       value={formData.contactPerson}
@@ -827,45 +800,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   </p>
                 )}
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  E-posta
-                </label>
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="email@example.com"
-                  disabled={!!selectedPersonId}
-                  className={selectedPersonId ? 'bg-gray-50' : ''}
-                />
-                {selectedPersonId && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Seçilen kişiden otomatik dolduruldu
-                  </p>
-                )}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Telefon
-                </label>
-                <VitingoPhoneInput
-                  value={formData.phone}
-                  onChange={(value) => handleInputChange('phone', value)}
-                  placeholder="Telefon numarası giriniz"
-                  label=""
-                  className="my-0"
-                  disabled={!!selectedPersonId}
-                />
-                {selectedPersonId && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Seçilen kişiden otomatik dolduruldu
-                  </p>
-                )}
-              </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Öncelik Seviyesi
@@ -886,36 +821,93 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </Select>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Event Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
-              <span>Etkinlik Bilgileri</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Proje Seçimi
-                </label>
-                <Select value={formData.projectId} onValueChange={(value) => handleProjectSelection(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Proje seçin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                      <SelectItem key={project.id} value={project.id}>
-                        <span className="font-medium">{project.name}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Contact Person Details Section */}
+            {selectedPersonId && (
+              <div className="border-t pt-6">
+                <h4 className="text-lg font-medium text-gray-900 mb-4">Yetkili Kişi Detayları</h4>
+                <div className="bg-green-50 p-4 rounded-lg">
+                  {selectedPersonId === 'customer-default' ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <User className="h-5 w-5 text-green-600" />
+                        <span className="font-medium text-lg">{selectedCustomer.contactPerson}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="font-medium text-gray-700">E-posta:</span>
+                          <p className="text-gray-600">{selectedCustomer.email || 'Bilgi yok'}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-700">Telefon:</span>
+                          <p className="text-gray-600">{selectedCustomer.phone || 'Bilgi yok'}</p>
+                        </div>
+                        <div className="md:col-span-2">
+                          <span className="font-medium text-gray-700">Adres:</span>
+                          <p className="text-gray-600">{selectedCustomer.address || selectedCustomer.city || 'Adres bilgisi yok'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    (() => {
+                      const person = relatedPeople.find(p => p.id.toString() === selectedPersonId);
+                      return person ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-2">
+                            <User className="h-5 w-5 text-green-600" />
+                            <span className="font-medium text-lg">{person.first_name} {person.last_name}</span>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="font-medium text-gray-700">Pozisyon:</span>
+                              <p className="text-gray-600">{person.job_title || 'Belirtilmemiş'}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-gray-700">İlişki Türü:</span>
+                              <p className="text-gray-600">{person.relationship_type || 'Belirtilmemiş'}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-gray-700">E-posta:</span>
+                              <p className="text-gray-600">{person.email || 'Bilgi yok'}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-gray-700">Telefon:</span>
+                              <p className="text-gray-600">{person.phone || 'Bilgi yok'}</p>
+                            </div>
+                            <div className="md:col-span-2">
+                              <span className="font-medium text-gray-700">Adres:</span>
+                              <p className="text-gray-600">{person.address || person.city || 'Adres bilgisi yok'}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()
+                  )}
+                </div>
               </div>
+            )}
+
+            {/* Project Selection Section */}
+            <div className="border-t pt-6">
+              <h4 className="text-lg font-medium text-gray-900 mb-4">Fuar/Etkinlik Bilgileri</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Proje Seçimi
+                  </label>
+                  <Select value={formData.projectId} onValueChange={(value) => handleProjectSelection(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Proje seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map(project => (
+                        <SelectItem key={project.id} value={project.id}>
+                          <span className="font-medium">{project.name}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
