@@ -1410,211 +1410,131 @@ export default function NewBriefForm({ onBackToDashboard }) {
             </CardHeader>
             <CardContent>
               {currentStep === 2 && (
-                <div className="space-y-8">
-                  <div className="text-center mb-12">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Standınızda hangi elementlere ihtiyacınız var?</h3>
-                    <p className="text-lg text-gray-600">Elementleri seçin ve detaylarını belirleyin</p>
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Standınızda hangi elementlere ihtiyacınız var?</h3>
+                    <p className="text-gray-600">Dropdown'lardan seçimlerinizi yapın</p>
                   </div>
                   
-                  <div className="grid gap-8">
-                    {Object.entries(standElementsConfig).map(([elementKey, elementConfig]) => (
-                      <div key={elementKey} className={`relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
-                        isElementSelected(elementKey) 
-                          ? 'ring-2 ring-blue-500 shadow-xl' 
-                          : 'hover:shadow-xl'
-                      }`}>
-                        {/* Main Element Card */}
-                        <div
-                          className={`p-6 cursor-pointer transition-all duration-300 ${
-                            isElementSelected(elementKey)
-                              ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500'
-                              : 'bg-white hover:bg-gray-50'
-                          }`}
-                          onClick={() => handleElementToggle(elementKey)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-6">
-                              <div className="relative">
-                                <div className={`text-5xl p-3 rounded-2xl ${
-                                  isElementSelected(elementKey)
-                                    ? 'bg-white shadow-md'
-                                    : 'bg-gray-100'
-                                }`}>
-                                  {elementConfig.icon}
-                                </div>
-                                {elementConfig.required && (
-                                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">!</span>
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                <h4 className="text-xl font-bold text-gray-900 mb-1">{elementConfig.label}</h4>
-                                {elementConfig.required && (
-                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                    Zorunlu Seçim
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              {isElementSelected(elementKey) && hasRequiredSelections(elementKey) && (
-                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-md">
-                                  <span className="text-white text-sm">✓</span>
-                                </div>
-                              )}
-                              {isElementSelected(elementKey) && !hasRequiredSelections(elementKey) && elementConfig.required && (
-                                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center shadow-md animate-pulse">
-                                  <span className="text-white text-sm">!</span>
-                                </div>
-                              )}
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                isElementSelected(elementKey) 
-                                  ? 'bg-blue-500 text-white transform rotate-180' 
-                                  : 'bg-gray-200 text-gray-600'
-                              }`}>
-                                ▼
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Sub Options */}
-                        {isElementSelected(elementKey) && (
-                          <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-t p-6">
-                            <div className="space-y-4">
-                              {Object.entries(elementConfig.subOptions).map(([subKey, subConfig]) => (
-                                <div key={subKey}>
-                                  {/* Sub Option Card */}
-                                  <div
-                                    className={`p-4 rounded-xl cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md ${
-                                      isSubOptionSelected(elementKey, subKey)
-                                        ? 'bg-gradient-to-r from-blue-100 to-blue-50 border border-blue-300 transform scale-[1.02]'
-                                        : 'bg-white border border-gray-200 hover:border-gray-300'
-                                    }`}
-                                    onClick={() => handleSubOptionToggle(elementKey, subKey)}
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center space-x-4">
-                                        {subConfig.icon && (
-                                          <div className={`text-2xl p-2 rounded-lg ${
-                                            isSubOptionSelected(elementKey, subKey)
-                                              ? 'bg-white shadow-sm'
-                                              : 'bg-gray-100'
-                                          }`}>
-                                            {subConfig.icon}
-                                          </div>
-                                        )}
-                                        <div className="flex items-center space-x-3">
-                                          <input
-                                            type="checkbox"
-                                            checked={isSubOptionSelected(elementKey, subKey)}
-                                            onChange={() => {}} // Handled by parent div click
-                                            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                                          />
-                                          <span className="font-semibold text-gray-900">{subConfig.label}</span>
-                                        </div>
-                                      </div>
-                                      {subConfig.subOptions && (
-                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                          stepData.standElements[elementKey]?.[subKey]
-                                            ? 'bg-blue-500 text-white transform rotate-180'
-                                            : 'bg-gray-300 text-gray-600'
-                                        }`}>
-                                          ▼
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* Third Level Sub Options */}
-                                  {stepData.standElements[elementKey]?.[subKey] && subConfig.subOptions && (
-                                    <div className="mt-3 ml-8 space-y-2 animate-fadeIn">
-                                      {Object.entries(subConfig.subOptions).map(([subSubKey, subSubConfig]) => (
-                                        <div
-                                          key={subSubKey}
-                                          className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                                            isSubOptionSelected(elementKey, subKey, subSubKey)
-                                              ? 'bg-green-100 border border-green-300 shadow-sm'
-                                              : 'bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                                          }`}
-                                          onClick={() => handleSubOptionToggle(elementKey, subKey, subSubKey)}
-                                        >
-                                          <div className="flex items-center space-x-3">
-                                            <input
-                                              type="checkbox"
-                                              checked={isSubOptionSelected(elementKey, subKey, subSubKey)}
-                                              onChange={() => {}} // Handled by parent div click
-                                              className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
-                                            />
-                                            {subSubConfig.icon && <span className="text-lg">{subSubConfig.icon}</span>}
-                                            <span className="font-medium text-gray-800">{subSubConfig.label}</span>
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Selection Summary */}
-                  <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 shadow-lg">
-                    <h4 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
-                      <span className="text-2xl mr-3">📋</span>
-                      Seçimlerinizin Özeti
-                    </h4>
-                    <div className="space-y-3">
-                      {Object.entries(stepData.standElements).map(([elementKey, selections]) => {
-                        if (!selections || Object.keys(selections).length === 0) return null;
-                        
-                        return (
-                          <div key={elementKey} className="bg-white p-4 rounded-xl shadow-sm">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-xl">{standElementsConfig[elementKey]?.icon}</span>
-                              <strong className="text-gray-900 text-lg">{standElementsConfig[elementKey]?.label}</strong>
-                            </div>
-                            <div className="ml-8 space-y-1">
-                              {Object.entries(selections).map(([subKey, subSelections]) => {
-                                if (subKey === '_selected') return null;
-                                if (subSelections === true || (typeof subSelections === 'object' && subSelections?._selected)) {
-                                  return (
-                                    <div key={subKey} className="flex items-center space-x-2">
-                                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                      <span className="text-gray-700">{standElementsConfig[elementKey]?.subOptions[subKey]?.label}</span>
-                                      {typeof subSelections === 'object' && (
-                                        <div className="ml-4 flex flex-wrap gap-2">
-                                          {Object.entries(subSelections).map(([subSubKey, selected]) => 
-                                            selected && subSubKey !== '_selected' && (
-                                              <span key={subSubKey} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                                                {standElementsConfig[elementKey]?.subOptions[subKey]?.subOptions[subSubKey]?.label}
-                                              </span>
-                                            )
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                }
-                                return null;
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {Object.keys(stepData.standElements).length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          <span className="text-4xl mb-3 block">🤔</span>
-                          <p className="text-lg">Henüz hiçbir element seçmediniz</p>
-                        </div>
-                      )}
+                  {/* Cascading Dropdowns */}
+                  <div className="space-y-4">
+                    {/* Level 1: Main Elements */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        1. Ana Element Seçin *
+                      </label>
+                      <Select 
+                        value={stepData.selectedElement || ''} 
+                        onValueChange={(value) => handleCascadeSelection('element', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Element seçin" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(standElementsConfig).map(([key, config]) => (
+                            <SelectItem key={key} value={key}>
+                              {config.label}
+                              {config.required && <span className="text-orange-600 ml-2">*</span>}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
+
+                    {/* Level 2: Sub Options */}
+                    {stepData.selectedElement && standElementsConfig[stepData.selectedElement]?.subOptions && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          2. {standElementsConfig[stepData.selectedElement].label} Türü Seçin
+                        </label>
+                        <Select 
+                          value={stepData.selectedSubOption || ''} 
+                          onValueChange={(value) => handleCascadeSelection('subOption', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={`${standElementsConfig[stepData.selectedElement].label} türü seçin`} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(standElementsConfig[stepData.selectedElement].subOptions).map(([key, config]) => (
+                              <SelectItem key={key} value={key}>
+                                {config.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Level 3: Sub-Sub Options */}
+                    {stepData.selectedElement && 
+                     stepData.selectedSubOption && 
+                     standElementsConfig[stepData.selectedElement]?.subOptions[stepData.selectedSubOption]?.subOptions && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          3. {standElementsConfig[stepData.selectedElement].subOptions[stepData.selectedSubOption].label} Detayı Seçin
+                        </label>
+                        <Select 
+                          value={stepData.selectedSubSubOption || ''} 
+                          onValueChange={(value) => handleCascadeSelection('subSubOption', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Detay seçin" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(standElementsConfig[stepData.selectedElement].subOptions[stepData.selectedSubOption].subOptions).map(([key, config]) => (
+                              <SelectItem key={key} value={key}>
+                                {config.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Add Selection Button */}
+                    {stepData.selectedElement && stepData.selectedSubOption && (
+                      <div className="pt-4">
+                        <Button
+                          type="button"
+                          onClick={addSelectionToList}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          Seçimi Ekle
+                        </Button>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Selected Items List */}
+                  {stepData.selectedItems && stepData.selectedItems.length > 0 && (
+                    <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 mb-4">Seçilen Elementler:</h4>
+                      <div className="space-y-2">
+                        {stepData.selectedItems.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                            <div>
+                              <span className="font-medium">{item.elementLabel}</span>
+                              {item.subOptionLabel && (
+                                <span className="text-gray-600"> → {item.subOptionLabel}</span>
+                              )}
+                              {item.subSubOptionLabel && (
+                                <span className="text-gray-600"> → {item.subSubOptionLabel}</span>
+                              )}
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeSelectionFromList(index)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
