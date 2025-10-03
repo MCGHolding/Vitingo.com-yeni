@@ -127,6 +127,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     selectedSubOption: '',
     selectedSubSubOption: '',
     selectedItems: [], // Array of completed selections
+    standElements: {}, // Initialize standElements as empty object
     
     // Other step data
     employeeCount: '',
