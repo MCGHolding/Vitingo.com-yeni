@@ -564,49 +564,82 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Removed old handlers - replaced with cascade dropdown system
 
-  // Cascade dropdown handlers
-  const handleCascadeSelection = (level, value) => {
+  // Recursive dropdown handler
+  const handleRecursiveSelection = (level, value) => {
     setStepData(prev => {
-      const newData = { ...prev };
+      const newPath = [...prev.currentPath];
       
-      if (level === 'element') {
-        newData.selectedElement = value;
-        newData.selectedSubOption = ''; // Reset lower levels
-        newData.selectedSubSubOption = '';
-      } else if (level === 'subOption') {
-        newData.selectedSubOption = value;
-        newData.selectedSubSubOption = ''; // Reset lower level
-      } else if (level === 'subSubOption') {
-        newData.selectedSubSubOption = value;
-      }
+      // Truncate path to current level and add new selection
+      newPath.length = level;
+      newPath[level] = value;
       
-      return newData;
+      return {
+        ...prev,
+        currentPath: newPath
+      };
     });
   };
 
-  const addSelectionToList = () => {
-    if (!stepData.selectedElement || !stepData.selectedSubOption) return;
+  // Get current node based on path
+  const getCurrentNode = (path = stepData.currentPath) => {
+    let currentNode = standElementsConfig;
     
-    const elementConfig = standElementsConfig[stepData.selectedElement];
-    const subConfig = elementConfig.subOptions[stepData.selectedSubOption];
-    const subSubConfig = stepData.selectedSubSubOption ? 
-      subConfig.subOptions?.[stepData.selectedSubSubOption] : null;
+    for (let i = 0; i < path.length; i++) {
+      const key = path[i];
+      if (i === 0) {
+        // First level - main element
+        currentNode = currentNode[key]?.structure || {};
+      } else {
+        // Nested levels - follow children
+        currentNode = currentNode[key]?.children || {};
+      }
+    }
+    
+    return currentNode;
+  };
+
+  // Get readable path for display
+  const getPathLabels = (path) => {
+    const labels = [];
+    let currentNode = standElementsConfig;
+    
+    for (let i = 0; i < path.length; i++) {
+      const key = path[i];
+      let label = '';
+      
+      if (i === 0) {
+        // First level - main element
+        label = currentNode[key]?.label || key;
+        currentNode = currentNode[key]?.structure || {};
+      } else {
+        // Nested levels - follow children
+        label = currentNode[key]?.label || key;
+        currentNode = currentNode[key]?.children || {};
+      }
+      
+      labels.push(label);
+    }
+    
+    return labels;
+  };
+
+  const addSelectionToList = () => {
+    if (stepData.currentPath.length === 0) return;
+    
+    const pathLabels = getPathLabels(stepData.currentPath);
+    const pathString = pathLabels.join(' → ');
     
     const newItem = {
-      element: stepData.selectedElement,
-      subOption: stepData.selectedSubOption,
-      subSubOption: stepData.selectedSubSubOption,
-      elementLabel: elementConfig.label,
-      subOptionLabel: subConfig.label,
-      subSubOptionLabel: subSubConfig?.label
+      path: [...stepData.currentPath],
+      pathLabels,
+      pathString,
+      timestamp: Date.now()
     };
     
     setStepData(prev => ({
       ...prev,
       selectedItems: [...(prev.selectedItems || []), newItem],
-      selectedElement: '',
-      selectedSubOption: '',
-      selectedSubSubOption: ''
+      currentPath: []
     }));
   };
 
