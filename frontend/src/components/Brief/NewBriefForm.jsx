@@ -657,6 +657,85 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
+  // New Category Handler
+  const handleAddNewCategory = async () => {
+    try {
+      if (!newCategoryData.label.trim()) {
+        showToast('error', 'Hata!', 'Kategori adı gereklidir.');
+        return;
+      }
+
+      // Determine value and input_type based on category type
+      let value = newCategoryData.value;
+      let input_type = newCategoryData.type === 'text' ? 'text' : 
+                      newCategoryData.type === 'number' ? 'number' : 
+                      'color';
+      
+      if (newCategoryData.type === 'color') {
+        value = newCategoryData.color;
+      }
+
+      // Build parent path from current selection
+      const parentPath = stepData.currentPath.length > 0 ? stepData.currentPath.join('.') : null;
+      
+      // Generate unique key from label
+      const key = newCategoryData.label.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .substring(0, 20) + '_' + Date.now().toString().substring(-4);
+
+      const categoryData = {
+        key: key,
+        label: newCategoryData.label,
+        element_type: newCategoryData.type === 'number' ? 'unit' : 'property',
+        input_type: input_type,
+        parent_path: parentPath
+      };
+
+      // Add type-specific properties
+      if (newCategoryData.type === 'number') {
+        categoryData.unit = 'adet'; // Default unit
+      } else if (newCategoryData.type === 'color') {
+        categoryData.options = [value]; // Store selected color as first option
+      } else {
+        categoryData.options = [value]; // Store text value as option
+      }
+
+      console.log('Adding new category:', categoryData);
+
+      const response = await fetch(`${BACKEND_URL}/api/stand-elements`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(categoryData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        showToast('success', 'Başarılı!', `${newCategoryData.label} kategorisi eklendi.`);
+        
+        // Refresh stand elements
+        await refreshStandElements();
+        
+        // Close modal and reset data
+        setIsNewCategoryModalOpen(false);
+        setNewCategoryData({
+          type: 'text',
+          label: '',
+          value: '',
+          color: '#000000'
+        });
+      } else {
+        const error = await response.json();
+        showToast('error', 'Hata!', error.detail || 'Kategori eklenemedi.');
+      }
+    } catch (error) {
+      console.error('Error adding new category:', error);
+      showToast('error', 'Hata!', 'Bir hata oluştu, lütfen tekrar deneyin.');
+    }
+  };
+
   // Modal handlers
   const openAddElementModal = (level, parentKey = null, parentSubKey = null) => {
     setElementModalData({
