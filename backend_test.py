@@ -11764,7 +11764,7 @@ def test_invoice_number_generation():
                 all_tests_passed = False
                 continue
             
-            print(f"   ✅ PASS: Currency prefix mapping correct: {currency} → {expected_prefix}")
+            print(f"   ✅ PASS: Currency prefix mapping correct: {currency} > {expected_prefix}")
             
             # Test 11: Validate minimum sequence number (should start at 100001 for new month/year)
             # Note: This might not always be 100001 if there are existing invoices
