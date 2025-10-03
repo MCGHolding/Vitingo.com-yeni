@@ -664,6 +664,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
     );
   };
 
+  const canProceedFromStep2 = () => {
+    // Check if all selected required elements have valid selections
+    return Object.keys(stepData.standElements).every(elementKey => {
+      const element = stepData.standElements[elementKey];
+      if (!element) return true; // Not selected, so OK
+      
+      const config = standElementsConfig[elementKey];
+      if (!config?.required) return true; // Not required, so OK
+      
+      return hasRequiredSelections(elementKey);
+    });
+  };
+
   const handleStepFileUpload = (field, files) => {
     const newFiles = Array.from(files).map(file => ({
       id: Date.now() + Math.random(),
