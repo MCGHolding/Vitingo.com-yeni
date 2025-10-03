@@ -172,6 +172,31 @@ class CountryProfileUpdate(BaseModel):
     form_config: Optional[CountryProfileFormConfig] = None
     status: Optional[str] = None
 
+# Stand Elements Models
+class StandElementSubOption(BaseModel):
+    label: str
+    icon: Optional[str] = None
+    subOptions: Optional[Dict[str, Any]] = None
+
+class StandElement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    key: str  # Unique key like 'flooring', 'counter'
+    label: str  # Display name
+    icon: Optional[str] = None
+    required: bool = False
+    subOptions: Dict[str, StandElementSubOption] = Field(default_factory=dict)
+    created_by: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class StandElementCreate(BaseModel):
+    key: str
+    label: str
+    icon: Optional[str] = None
+    required: bool = False
+    parent_key: Optional[str] = None  # For sub-categories
+    parent_sub_key: Optional[str] = None  # For sub-sub-categories
+
 class Prospect(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     company_name: str
