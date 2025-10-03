@@ -1976,6 +1976,10 @@ def test_recursive_stand_elements_delete():
     2. Response confirms successful deletion
     3. Element is removed from the database
     4. Error handling for non-existent elements
+    
+    NOTE: This test depends on POST working first to create an element to delete.
+    Since POST has backend implementation issues, this test will fail.
+    However, we can test error handling for non-existent elements.
     """
     
     print("=" * 80)
@@ -1992,6 +1996,46 @@ def test_recursive_stand_elements_delete():
         response = requests.delete(endpoint, timeout=30)
         
         print(f"   Status Code: {response.status_code}")
+        
+        # Check if this is expected 404 due to POST not working
+        if response.status_code == 404:
+            try:
+                error_response = response.json()
+                if "Element not found" in error_response.get('detail', ''):
+                    print("   🔍 EXPECTED ISSUE: Element not found (expected due to POST endpoint issues)")
+                    print("   📋 ISSUE DETAILS:")
+                    print("      • DELETE endpoint requires an existing element to delete")
+                    print("      • POST endpoint has implementation issues preventing element creation")
+                    print("      • Cannot test DELETE without first creating an element via POST")
+                    print("   ⚠️  DEPENDENCY ISSUE: DELETE test depends on working POST endpoint")
+                    
+                    # Test error handling for non-existent element (this should work)
+                    print("\n2. Testing error handling for non-existent element...")
+                    non_existent_key = "definitely_non_existent_element"
+                    error_endpoint = f"{BACKEND_URL}/api/stand-elements/{non_existent_key}"
+                    
+                    error_response = requests.delete(error_endpoint, timeout=30)
+                    print(f"   Status Code for non-existent element: {error_response.status_code}")
+                    
+                    if error_response.status_code == 404:
+                        print("   ✅ PASS: Proper 404 error for non-existent element")
+                        print("   ✅ PASS: Error handling working correctly")
+                        
+                        print("\n" + "=" * 80)
+                        print("RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST RESULTS:")
+                        print("=" * 80)
+                        print("❌ Cannot test DELETE without working POST endpoint")
+                        print("✅ Error handling for non-existent elements working")
+                        print("⚠️  Requires POST endpoint fix first for full testing")
+                        print(f"\n⚠️  RECURSIVE STAND ELEMENTS DELETE ENDPOINT PARTIALLY TESTED!")
+                        
+                        return False  # Still failed overall due to dependency
+                    else:
+                        print(f"   ❌ FAIL: Expected 404 for non-existent element, got {error_response.status_code}")
+                        return False
+            except:
+                pass
+        
         if response.status_code == 200:
             print("   ✅ PASS: Stand element delete endpoint responds with status 200")
         else:
@@ -1999,77 +2043,15 @@ def test_recursive_stand_elements_delete():
             print(f"   Response: {response.text}")
             return False
         
-        # Test 2: Check content type
-        content_type = response.headers.get('Content-Type', '')
-        print(f"   Content-Type: {content_type}")
-        if 'application/json' in content_type:
-            print("   ✅ PASS: Correct Content-Type for JSON response")
-        else:
-            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
-        
-        # Test 3: Parse JSON response
-        print("\n2. Parsing JSON response...")
-        try:
-            result = response.json()
-            print(f"   Response type: {type(result)}")
-            print(f"   Response: {result}")
-        except Exception as e:
-            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
-            return False
-        
-        # Test 4: Validate response structure
-        print("\n3. Validating response structure...")
-        if not isinstance(result, dict):
-            print("   ❌ FAIL: Response should be a dictionary")
-            return False
-        
-        if not result.get('success'):
-            print(f"   ❌ FAIL: Deletion should be successful, got: {result}")
-            return False
-        
-        print("   ✅ PASS: Element deletion successful")
-        print(f"   Message: {result.get('message', 'N/A')}")
-        
-        # Test 5: Verify element was deleted by fetching all elements
-        print("\n4. Verifying element was deleted...")
-        get_endpoint = f"{BACKEND_URL}/api/stand-elements"
-        get_response = requests.get(get_endpoint, timeout=30)
-        
-        if get_response.status_code != 200:
-            print(f"   ❌ FAIL: Could not fetch elements to verify deletion")
-            return False
-        
-        elements = get_response.json()
-        if element_key in elements:
-            print("   ❌ FAIL: Deleted element still found in elements list")
-            return False
-        
-        print("   ✅ PASS: Deleted element no longer in database")
-        
-        # Test 6: Test error handling for non-existent element
-        print("\n5. Testing error handling for non-existent element...")
-        non_existent_key = "non_existent_element"
-        error_endpoint = f"{BACKEND_URL}/api/stand-elements/{non_existent_key}"
-        
-        error_response = requests.delete(error_endpoint, timeout=30)
-        print(f"   Status Code for non-existent element: {error_response.status_code}")
-        
-        if error_response.status_code == 404:
-            print("   ✅ PASS: Proper 404 error for non-existent element")
-        else:
-            print(f"   ⚠️  WARNING: Expected 404 for non-existent element, got {error_response.status_code}")
-        
         print("\n" + "=" * 80)
         print("RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST RESULTS:")
         print("=" * 80)
-        print("✅ Endpoint responds with status 200")
-        print("✅ Returns proper JSON response")
-        print("✅ Element deletion successful")
-        print("✅ Deleted element removed from database")
-        print("✅ Error handling for non-existent elements working")
-        print(f"\n🎉 RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST PASSED!")
+        print("❌ Cannot test DELETE without working POST endpoint")
+        print("❌ Element not found (expected due to POST issues)")
+        print("⚠️  Requires POST endpoint fix first")
+        print(f"\n❌ RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST FAILED DUE TO DEPENDENCY!")
         
-        return True
+        return False
         
     except requests.exceptions.RequestException as e:
         print(f"\n❌ FAIL: Network error occurred: {str(e)}")
