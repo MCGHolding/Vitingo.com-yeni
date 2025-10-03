@@ -6599,6 +6599,82 @@ async def create_stand_element(element_data: StandElementCreate):
         logger.error(f"Error creating stand element: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/stand-elements/{element_key}")
+async def update_stand_element(element_key: str, update_data: StandElementCreate, sub_key: str = None, sub_sub_key: str = None):
+    """Update stand element or sub-element (admin+ only)"""
+    try:
+        # TODO: Add role check - only admin and super_admin can update
+        
+        if sub_key:
+            # Updating sub-element
+            existing = await db.stand_elements.find_one({"key": element_key})
+            if not existing:
+                raise HTTPException(status_code=404, detail="Element not found")
+            
+            sub_options = existing.get("subOptions", {})
+            
+            if sub_sub_key:
+                # Updating sub-sub-element
+                if sub_key in sub_options and "subOptions" in sub_options[sub_key]:
+                    if sub_sub_key in sub_options[sub_key]["subOptions"]:
+                        sub_options[sub_key]["subOptions"][sub_sub_key] = {
+                            "label": update_data.label,
+                            "icon": update_data.icon
+                        }
+                        
+                        await db.stand_elements.update_one(
+                            {"key": element_key},
+                            {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
+                        )
+                        
+                        return {"success": True, "message": "Sub-sub-element updated"}
+                    else:
+                        raise HTTPException(status_code=404, detail="Sub-sub-element not found")
+                else:
+                    raise HTTPException(status_code=404, detail="Sub-element not found")
+            else:
+                # Updating sub-element
+                if sub_key in sub_options:
+                    sub_options[sub_key]["label"] = update_data.label
+                    if update_data.icon:
+                        sub_options[sub_key]["icon"] = update_data.icon
+                    
+                    await db.stand_elements.update_one(
+                        {"key": element_key},
+                        {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
+                    )
+                    
+                    return {"success": True, "message": "Sub-element updated"}
+                else:
+                    raise HTTPException(status_code=404, detail="Sub-element not found")
+        
+        else:
+            # Updating main element
+            update_fields = {
+                "label": update_data.label,
+                "updated_at": datetime.utcnow()
+            }
+            if update_data.icon:
+                update_fields["icon"] = update_data.icon
+            if hasattr(update_data, 'required'):
+                update_fields["required"] = update_data.required
+            
+            result = await db.stand_elements.update_one(
+                {"key": element_key},
+                {"$set": update_fields}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Element not found")
+            
+            return {"success": True, "message": f"Element {element_key} updated"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating stand element: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/stand-elements/{element_key}")
 async def delete_stand_element(element_key: str, sub_key: str = None, sub_sub_key: str = None):
     """Delete stand element or sub-element (admin+ only)"""
