@@ -1,82 +1,99 @@
 <analysis>
-The trajectory documents an intensive development cycle on a CRM's accounting module, driven by a series of iterative user requests in Turkish. The initial task was to implement a 4-box statistics dashboard on the All Collections page (). This was successfully completed by adding a new FastAPI endpoint () and integrating it into the React frontend.
-
-Following this, the user requested a cascade of significant UI/UX enhancements for the collections table. This involved altering table columns, adding an actions menu with edit, download, and email functionalities, and fixing a UI bug with a hover menu by converting it to a click-driven dropdown. Further refinements included adding a success state to the email modal, implementing client-side pagination, creating abbreviations and tooltips for clarity, and sorting data by date.
-
-The final major request was to populate the customers table with 30 realistic mock customers. This led to a prolonged and difficult debugging session. Despite successfully creating a script to insert the data into MongoDB, the corresponding  endpoint persistently failed, returning an empty array. The root cause was identified as a Pydantic validation error due to a mismatch between the database field names (e.g., ) and the Pydantic model's expected fields (e.g., ). The trajectory ends with the AI engineer actively trying to resolve this data validation blocker, which prevents the final user request from being fulfilled.
+The trajectory outlines a comprehensive feature development process for a CRM application, initially focusing on an accounting module and later shifting to a Brief form with complex, dynamic input requirements. The AI engineer successfully implemented a statistics dashboard, overhauled the collections table UI, and debugged a critical Pydantic validation error that prevented mock customer data from populating the All Customers page. The bulk of the recent work involved iteratively enhancing the New Brief Form, adding dynamic project selection, a multi-step stand requirements section, and a flexible country profile system. The stand requirements evolved from simple checkboxes to a complex, visually rich nested selection, then to cascading dropdowns, and finally to an admin-managed, dynamically extensible, multi-level tree structure. A significant improvement was the replacement of system / with custom modal and toast components. The current focus is on extending the stand elements backend to support an unlimited nested tree structure.
 </analysis>
 
 <product_requirements>
-The goal is to significantly enhance the All Collections page within the accounting module and populate the application with realistic customer data.
+The overarching goal is to enhance the CRM's accounting and customer management capabilities, with a significant recent focus on a flexible Brief form.
 
-1.  **Statistics Dashboard Update:** On the Tüm Tahsilatlar (All Collections) page, implement a 4-box statistics header displaying:
-    *   Total collection amount converted to TL (using daily central bank rates).
-    *   The name of the customer with the highest total collections.
-    *   Total number of collection entries.
-    *   Average collection term in days.
-
-2.  **Collections Table UI/UX Overhaul:**
-    *   **Column Changes:** Replace Ödeme Sebebi with Ödeme Şekli (Payment Method), and add new Ödeme Yeri (Payment Location) and Durum (Status) columns.
-    *   **Data Formatting:** Abbreviate payment methods (Nakit -> N, Çek -> Ç) inside colored circles, shorten status Tahsil Edildi to TE, and display only the last 4 digits of the receipt number.
-    *   **Tooltips:** Implement tooltips to show the full company name and full receipt number on hover.
-    *   **Actions Menu:** Add an actions column with an Edit button, a Download icon (fixing Turkish character issues), and a ... dropdown menu (click-activated) containing Mail and Mesaj (disabled) options.
-    *   **Mail Modal:** The Mail option should open a modal to send the receipt via email, which displays a success screen upon completion.
-    *   **Pagination & Sorting:** Sort collections with the newest on top and implement pagination, displaying 25 items per page with a legend at the bottom explaining abbreviations.
-
-3.  **Mock Data Generation:**
-    *   Delete all existing customer data.
-    *   Generate and populate the database with 30 realistic mock customers, ensuring all data fields (short name, full name, etc.) are filled.
-    *   Ensure the Tüm Müşteriler (All Customers) page correctly displays this new data.
+1.  **Collections Module Enhancements**:
+    *   Implement a 4-box statistics dashboard on the All Collections page: Total TL collections, highest collecting customer, total collection entries, average collection term.
+    *   Overhaul the collections table: new columns (Payment Method, Payment Location, Status), abbreviated data with tooltips, actions menu (Edit, Download, Mail, Message - click-activated dropdown), email modal with success state, client-side pagination (25 items/page), and sorting by date.
+2.  **Customer Data Management**:
+    *   Generate 30 realistic mock customers with fully populated fields and ensure they are displayed on the All Customers page.
+3.  **New Brief Form Development**:
+    *   **Project Information**: Add a Proje (Project) dropdown, sourced from a Projects database, which auto-fills Fuar Adı, Tarihi, Convention Center, Şehir, Ülke, and Gün sayısı. The dropdown should only display the project name.
+    *   **Country Profile Selection**: Implement a Ülke profili selector (America, Türkiye, Diğer/Other) at the top of the Brief form. This selection should dynamically re-render the form based on schema configurations per country. Include a  button (admin/super_admin only) to add new country profiles. The display of country information (e.g., currency) should be removed from country buttons, and Germany should be relabeled Avrupa.
+    *   **Form Structure Refinement**: Remove the Temel Bilgiler (Basic Information) section. Rename Etkinlik Bilgileri to Proje Bilgileri. Ensure selected authorized person's contact details (phone, email) automatically display in the Proje Bilgileri section.
+    *   **Stand Requirements (Multi-Step & Dynamic)**:
+        *   Convert the Stand Gereksinimleri section into a multi-step process with visual support for stand elements, personnel, pricing priority, and file uploads.
+        *   Localize stand elements to Turkish, remove Hanging elements and Open meeting room, add Zemin (Floor) and Oturma Alanı (Seating Area), with Zemin appearing first.
+        *   Implement a dynamic, unlimited-depth nested selection system for stand elements. Selecting an element (e.g., Zemin) reveals sub-options (e.g., 36mm Yükseltilmiş), which can, in turn, reveal further sub-options (e.g., Halı Kaplama, Renk, Miktar). This should be managed via cascading dropdowns.
+        *   Provide  buttons for admin/super_admin users to dynamically add, edit, and delete new stand elements, sub-categories, and details at any level of the nested structure via a management panel.
+    *   **Professional Error Handling**: Replace all system , , and  calls with custom UI modals and toast notifications for a professional user experience.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend:** React with Hooks (, ) for state management, conditional rendering for UI elements (modals, tooltips), and client-side logic for pagination and filtering.
-- **Backend:** FastAPI for creating RESTful API endpoints.
-- **Data Modeling:** Pydantic for data validation and serialization between the FastAPI backend and MongoDB.
-- **Database:** MongoDB for data persistence.
-- **Debugging:** Extensive use of backend logging to diagnose Pydantic validation errors caused by schema mismatches between the database documents and API models.
+- **Frontend**: React (Hooks: , , ), client-side pagination, dynamic form rendering based on country profiles, multi-step forms, cascading dropdowns, custom modals/toasts.
+- **Backend**: FastAPI for RESTful APIs.
+- **Data Modeling**: Pydantic for data validation/serialization.
+- **Database**: MongoDB for data persistence.
+- **Auth**: JWT for user roles (admin/super_admin for specific UI elements).
 </key_technical_concepts>
 
 <code_architecture>
-The application is a monorepo with a React frontend and a FastAPI backend. The core work occurred in the accounting and customer management modules.
+The application uses a monorepo structure with a React frontend and a FastAPI backend.
 
 
 
 -   ****
-    -   **Importance:** This is the central component for displaying all collection receipts and was the primary focus of most user requests.
-    -   **Summary of Changes:** This file underwent massive changes. State was added for statistics, pagination (, ), modal visibility (), and dropdown menus. An  hook was added to fetch statistics from the new backend endpoint. The table structure was completely refactored to include new columns, custom components for abbreviated payment methods, and custom tooltips for receipt numbers and company names. The actions column was rebuilt to include edit, download, and a click-based dropdown menu. Handlers for pagination (, ) and modals were also added.
-
--   ****
-    -   **Importance:** The single source for all backend API logic. It was modified to support the new frontend features and to manage mock data.
+    -   **Importance:** Centralizes all backend API logic. Heavily modified to support new features.
     -   **Summary of Changes:**
-        -   A new endpoint  was created to calculate and return the four key metrics for the dashboard.
-        -   A new endpoint  was added to enable editing collection records.
-        -   A temporary endpoint  was created to generate 30 mock customers. This was later replaced by a standalone script due to complexity.
-        -   The  endpoint was the subject of intense debugging. Logging was repeatedly added to diagnose a Pydantic validation error that prevented customer data from being returned to the frontend.
+        -   Added  and .
+        -   Intensive debugging and fix for  due to Pydantic validation and  mismatch; now correctly returns customer data.
+        -   New  model and  model with associated CRUD API endpoints ().
+        -   Introduced  model and its API endpoints () to manage dynamic stand requirements.
+        -   Currently being updated to support a recursive (tree) structure for  models and their API endpoints.
 
 -   ****
-    -   **Importance:** A new, standalone Python script created to reliably clear the existing customer collection in MongoDB and insert 30 new, fully-populated mock customers with a correct schema.
-    -   **Summary of Changes:** This script was created from scratch to bypass issues with the temporary API endpoint. It connects directly to MongoDB, deletes all documents in the  collection, and then inserts 30 new documents generated from a predefined list of realistic company data.
+    -   **Importance:** Standalone script to populate mock customer data into MongoDB.
+    -   **Summary of Changes:** Created to clear and insert 30 realistic mock customer documents, updated to target the correct MongoDB database ().
 
 -   ****
-    -   **Importance:** The page responsible for displaying all customers. It became relevant at the end of the trajectory.
-    -   **Summary of Changes:** No code changes were made, but the file was inspected to understand how it receives and renders customer data, which helped diagnose why the page was not populating correctly.
+    -   **Importance:** Displays all collection receipts.
+    -   **Summary of Changes:** Major refactoring for statistics dashboard integration, new table columns, custom components for data formatting (abbreviations, tooltips), actions menu with edit/download/email, client-side pagination, and date sorting.
+
+-   ****
+    -   **Importance:** Displays customer data.
+    -   **Summary of Changes:** No direct code changes, but verified to display data after backend fixes.
+
+-   ****
+    -   **Importance:** The primary form for creating new briefs, which underwent extensive feature additions.
+    -   **Summary of Changes:**
+        -   Integrated project selection dropdown (fetching from ) with auto-fill logic for event details.
+        -   Implemented multi-step form navigation and UI for stand requirements, personnel, pricing, and file upload.
+        -   Integrated country profile selection () for adaptive form rendering. Added  button with  modal.
+        -   Refactored layout by removing Basic Information and renaming Event Information to Project Information, with auto-display of authorized person's contact details.
+        -   Updated customer dropdown to show only company name.
+        -   Localized and reordered stand elements, initially implementing nested selection, then redesigning to cascading dropdowns for multi-level selection.
+        -   Added dynamic admin-controlled  buttons for adding, editing, and deleting stand elements at various levels, utilizing  and updated .
+        -   Replaced all system  and  with custom  and  components.
+
+-   ** & **
+    -   **Importance:** New shared components for professional user feedback.
+    -   **Summary of Changes:** Created to provide consistent and user-friendly confirmation dialogues and notifications across the application.
+
+-   ****
+    -   **Importance:** Main navigation component.
+    -   **Summary of Changes:** Inspected for Brief menu routing; no direct code changes during this trajectory relevant to its core functionality.
 </code_architecture>
 
 <pending_tasks>
-- **Fix Customer API Endpoint:** The top priority is to resolve the Pydantic validation error in the  endpoint in  so it correctly fetches and returns the 30 mock customers from the database.
-- **Verify All Customers Page:** Once the API is fixed, confirm that the  frontend component successfully displays the 30 mock customers.
-- **Address Original Navigation Bug:** The persistent navigation bug in , mentioned in the initial summary, still needs to be addressed.
+- **Address Original Navigation Bug**: The persistent navigation bug in , mentioned in the initial summary, still needs to be addressed.
 </pending_tasks>
 
 <current_work>
-The AI engineer is currently in the middle of a critical debugging process focused on the backend. The user's request to populate the All Customers page is blocked because the  endpoint in  is failing.
+The AI engineer is currently in the middle of a significant architectural update for the Stand Gereksinimleri (Stand Requirements) section within the . The user requested an unlimited depth tree structure for stand elements, allowing for nested categories (e.g., Mobilya -> Oturma Grupları -> Berjer/Koltuk -> Renk -> Kumaş Türü -> Miktar).
 
-Despite successfully creating a Python script () that clears the MongoDB  collection and populates it with 30 well-structured mock documents, the API endpoint consistently returns an empty array (). Through extensive logging, the root cause has been narrowed down to a Pydantic . This error occurs because the data retrieved from MongoDB contains field names (e.g., , ) that do not match the fields expected by the Pydantic  model (e.g., , ).
+Before this request, the system had already implemented dynamic, admin-managed stand elements using cascading dropdowns, with the ability for admins/super_admins to add, edit, and delete elements at three levels (main element, sub-category, sub-detail). The backend  had  models and corresponding CRUD API endpoints for these three levels.
 
-The engineer has attempted multiple solutions, including restarting the backend and MongoDB services, repeatedly running the data generation script, and adding more detailed logs to the endpoint in  to pinpoint the exact field causing the validation failure. The immediate work is focused on resolving this data-to-model schema mismatch to unblock the frontend development and fulfill the user's request.
+The immediate work involves transforming this existing structure into a truly recursive one capable of handling arbitrary nesting levels. The AI engineer has already begun by updating the backend  model and its API endpoints in  to support this recursive (özyinelemeli) structure. The last action was to update the recursive API endpoints.
 </current_work>
 
 <optional_next_step>
-Modify the  endpoint in  to explicitly map the database fields to the Pydantic model fields before validation, making the API resilient to schema inconsistencies.
+Continue updating the backend  to fully implement the recursive API endpoints for managing stand elements with unlimited depth.
 </optional_next_step>
+
+<verbatim_quote_for_next_step>
+Chat Message 455:
+Şimdi recursive API endpoint'lerini güncelleyeyim:
+</verbatim_quote_for_next_step>

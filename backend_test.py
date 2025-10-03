@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://finance-tracker-735.preview.emergentagent.com"
+BACKEND_URL = "https://smart-brief-creator.preview.emergentagent.com"
 
 def test_csv_template_download_fairs():
     """
