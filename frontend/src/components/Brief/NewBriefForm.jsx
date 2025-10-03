@@ -1685,7 +1685,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                   <p className="text-sm text-orange-800">
                     <strong>Dikkat:</strong> Seçtiğiniz zorunlu elementler için alt seçenekleri tamamlamalısınız.
-                    {Object.entries(stepData.standElements).map(([elementKey, selections]) => {
+                    {stepData.standElements && Object.entries(stepData.standElements).map(([elementKey, selections]) => {
                       const config = standElementsConfig[elementKey];
                       if (selections && config?.required && !hasRequiredSelections(elementKey)) {
                         return (
