@@ -660,7 +660,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
     if (subSubOptionKey) {
       return !!stepData.standElements[elementKey][subOptionKey]?.[subSubOptionKey];
     }
-    return !!stepData.standElements[elementKey][subOptionKey];
+    
+    const selection = stepData.standElements[elementKey][subOptionKey];
+    if (typeof selection === 'boolean') return selection;
+    if (typeof selection === 'object' && selection !== null) return selection._selected || false;
+    return false;
   };
 
   const hasRequiredSelections = (elementKey) => {
