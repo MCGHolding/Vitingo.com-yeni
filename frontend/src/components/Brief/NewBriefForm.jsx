@@ -2127,7 +2127,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 drafts.unshift(draftBrief);
                 localStorage.setItem('briefDrafts', JSON.stringify(drafts));
                 
-                alert('Brief taslak olarak kaydedildi!');
+                showToast('info', 'Taslak Kaydedildi!', 'Brief taslak olarak kaydedildi!');
               }}
             >
               Taslak Kaydet
