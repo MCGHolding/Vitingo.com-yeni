@@ -293,6 +293,39 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
+  const handleProjectSelection = (projectId) => {
+    const project = projects.find(p => p.id === projectId);
+    setSelectedProject(project);
+    
+    if (project) {
+      // Calculate duration in days
+      const startDate = new Date(project.startDate);
+      const endDate = new Date(project.endDate);
+      const diffTime = Math.abs(endDate - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
+      
+      setFormData(prev => ({
+        ...prev,
+        projectId: projectId,
+        eventName: project.name,
+        eventDate: project.startDate,
+        eventCity: project.city,
+        eventCountry: project.country,
+        eventDuration: diffDays.toString()
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        projectId: projectId,
+        eventName: '',
+        eventDate: '',
+        eventCity: '',
+        eventCountry: '',
+        eventDuration: ''
+      }));
+    }
+  };
+
   const handleFileUpload = async (field, files) => {
     setUploadingSections(prev => ({ ...prev, [field]: true }));
     
