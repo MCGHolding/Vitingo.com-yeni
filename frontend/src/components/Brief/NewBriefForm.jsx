@@ -51,6 +51,10 @@ const sliderStyles = `
     animation: fadeIn 0.3s ease-in-out;
   }
 
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -59,6 +63,17 @@ const sliderStyles = `
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 `;
