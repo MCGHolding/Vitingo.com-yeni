@@ -1317,9 +1317,23 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   <div className="space-y-4">
                     {/* Level 1: Main Elements */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        1. Ana Element Seçin *
-                      </label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          1. Ana Element Seçin *
+                        </label>
+                        {(userRole === 'admin' || userRole === 'super_admin') && (
+                          <Button
+                            type="button"
+                            onClick={() => openAddElementModal('main')}
+                            size="sm"
+                            variant="outline"
+                            className="text-green-600 border-green-300 hover:bg-green-50"
+                          >
+                            <Plus className="h-4 w-4 mr-1" />
+                            Ana Element Ekle
+                          </Button>
+                        )}
+                      </div>
                       <Select 
                         value={stepData.selectedElement || ''} 
                         onValueChange={(value) => handleCascadeSelection('element', value)}
