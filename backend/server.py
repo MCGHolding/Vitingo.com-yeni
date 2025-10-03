@@ -2066,7 +2066,9 @@ async def get_customers():
         validated_customers = []
         for customer in customers:
             try:
-                validated_customers.append(Customer(**customer))
+                # Remove MongoDB _id field
+                customer_dict = {k: v for k, v in customer.items() if k != '_id'}
+                validated_customers.append(Customer(**customer_dict))
             except Exception as validation_error:
                 logger.error(f"Customer validation error: {validation_error}")
                 logger.error(f"Customer data: {customer}")
