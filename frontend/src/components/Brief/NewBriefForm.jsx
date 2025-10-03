@@ -550,8 +550,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.projectName || !formData.customerId || !formData.contactPerson) {
-      alert('Lütfen zorunlu alanları doldurun: Proje Adı, Müşteri, Yetkili Kişi');
+    if (!formData.projectId || !formData.customerId || !formData.contactPerson.trim()) {
+      alert('Lütfen zorunlu alanları doldurun: Proje, Müşteri, Yetkili Kişi');
       return;
     }
 
