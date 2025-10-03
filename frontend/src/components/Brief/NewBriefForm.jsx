@@ -148,6 +148,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
     editMode: false,
     editData: null
   });
+  
+  // Professional Modal & Toast System
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    onCancel: () => {}
+  });
+  const [toastMessage, setToastMessage] = useState({
+    isVisible: false,
+    type: 'success', // success, error, warning, info
+    title: '',
+    message: ''
+  });
 
   // Load customers data
   const [customers, setCustomers] = useState([]);
