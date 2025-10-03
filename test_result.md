@@ -1707,11 +1707,11 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "New Collection Form Implementation"
+    - "Brief Form Country Profile System"
   stuck_tasks: 
     - "New Collection Form Implementation"
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "testing"
