@@ -2218,7 +2218,11 @@ def test_recursive_stand_elements_crud_workflow():
             "label": "Test Tezgah",
             "icon": "🏢",
             "required": False,
-            "element_type": "option"
+            "element_type": "option",
+            "input_type": None,
+            "unit": None,
+            "options": None,
+            "parent_path": None
         }
         
         create_response = requests.post(f"{BACKEND_URL}/api/stand-elements", json=new_element_data, timeout=30)
