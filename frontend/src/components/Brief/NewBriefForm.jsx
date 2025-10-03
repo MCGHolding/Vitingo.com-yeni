@@ -24,7 +24,8 @@ import {
   Ruler,
   Eye,
   EyeOff,
-  User
+  User,
+  CheckCircle
 } from 'lucide-react';
 
 export default function NewBriefForm({ onBackToDashboard }) {
