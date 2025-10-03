@@ -367,6 +367,26 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
+  const handleFileUpload = (field, files) => {
+    const newFiles = Array.from(files).map(file => ({
+      id: Date.now() + Math.random(),
+      name: file.name,
+      file: file
+    }));
+    
+    setStepData(prev => ({
+      ...prev,
+      [field]: [...(prev[field] || []), ...newFiles]
+    }));
+  };
+
+  const removeFile = (field, fileId) => {
+    setStepData(prev => ({
+      ...prev,
+      [field]: prev[field].filter(f => f.id !== fileId)
+    }));
+  };
+
   const handleFileUpload = async (field, files) => {
     setUploadingSections(prev => ({ ...prev, [field]: true }));
     
