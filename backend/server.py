@@ -6181,6 +6181,227 @@ async def get_collection_statistics():
             average_days=0.0
         )
 
+# ===================== COUNTRY PROFILE ENDPOINTS =====================
+
+@api_router.get("/country-profiles", response_model=List[CountryProfile])
+async def get_country_profiles():
+    """Get all published country profiles"""
+    try:
+        profiles = await db.country_profiles.find({"status": "published"}).to_list(length=None)
+        
+        # If no profiles exist, create default ones
+        if not profiles:
+            default_profiles = [
+                {
+                    "code": "US",
+                    "name": "Amerika",
+                    "locales": ["en_US"],
+                    "currency": "USD",
+                    "phone_code": "+1",
+                    "address_format": {"format": "street,city,state,zip"},
+                    "date_format": "MM/DD/YYYY",
+                    "tax_config": {"tax_name": "Sales Tax", "rate": 0.0875},
+                    "form_config": {
+                        "fields": {},
+                        "sections": [],
+                        "validation_rules": {},
+                        "conditional_logic": [],
+                        "field_order": []
+                    },
+                    "status": "published",
+                    "created_by": "system"
+                },
+                {
+                    "code": "TR",
+                    "name": "Türkiye", 
+                    "locales": ["tr_TR"],
+                    "currency": "TRY",
+                    "phone_code": "+90",
+                    "address_format": {"format": "street,district,city,country"},
+                    "date_format": "DD/MM/YYYY",
+                    "tax_config": {"tax_name": "KDV", "rate": 0.18},
+                    "form_config": {
+                        "fields": {},
+                        "sections": [],
+                        "validation_rules": {},
+                        "conditional_logic": [],
+                        "field_order": []
+                    },
+                    "status": "draft",
+                    "created_by": "system"
+                },
+                {
+                    "code": "OTHER",
+                    "name": "Diğer",
+                    "locales": ["en_US"],
+                    "currency": "USD",
+                    "phone_code": "+1",
+                    "address_format": {"format": "street,city,country"},
+                    "date_format": "MM/DD/YYYY", 
+                    "tax_config": {"tax_name": "Tax", "rate": 0.0},
+                    "form_config": {
+                        "fields": {},
+                        "sections": [],
+                        "validation_rules": {},
+                        "conditional_logic": [],
+                        "field_order": []
+                    },
+                    "status": "draft",
+                    "created_by": "system"
+                }
+            ]
+            
+            for profile_data in default_profiles:
+                profile = CountryProfile(**profile_data)
+                await db.country_profiles.insert_one(profile.dict())
+            
+            # Fetch again after inserting defaults
+            profiles = await db.country_profiles.find({"status": "published"}).to_list(length=None)
+        
+        return [CountryProfile(**profile) for profile in profiles]
+        
+    except Exception as e:
+        logger.error(f"Error getting country profiles: {str(e)}")
+        return []
+
+@api_router.get("/country-profiles/{country_code}", response_model=CountryProfile)
+async def get_country_profile(country_code: str):
+    """Get specific country profile by code"""
+    try:
+        profile = await db.country_profiles.find_one({"code": country_code.upper()})
+        
+        if not profile:
+            raise HTTPException(status_code=404, detail="Country profile not found")
+        
+        return CountryProfile(**profile)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting country profile {country_code}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/country-profiles", response_model=CountryProfile)
+async def create_country_profile(profile_data: CountryProfileCreate):
+    """Create new country profile (admin+ only)"""
+    try:
+        # TODO: Add role check - only admin and super_admin can create
+        
+        # Check if country profile already exists
+        existing = await db.country_profiles.find_one({"code": profile_data.code.upper()})
+        if existing:
+            raise HTTPException(status_code=400, detail="Country profile already exists")
+        
+        profile = CountryProfile(**profile_data.dict())
+        profile.code = profile.code.upper()
+        
+        await db.country_profiles.insert_one(profile.dict())
+        
+        logger.info(f"Country profile created: {profile.code} - {profile.name}")
+        return profile
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating country profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/country-profiles/{country_code}", response_model=CountryProfile)
+async def update_country_profile(country_code: str, profile_data: CountryProfileUpdate):
+    """Update country profile (admin+ only)"""
+    try:
+        # TODO: Add role check - only admin and super_admin can update
+        
+        # Check if profile exists
+        existing = await db.country_profiles.find_one({"code": country_code.upper()})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Country profile not found")
+        
+        # Update fields
+        update_data = {k: v for k, v in profile_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await db.country_profiles.update_one(
+            {"code": country_code.upper()},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Country profile not found")
+        
+        # Return updated profile
+        updated_profile = await db.country_profiles.find_one({"code": country_code.upper()})
+        return CountryProfile(**updated_profile)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating country profile {country_code}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/country-profiles/{country_code}/publish")
+async def publish_country_profile(country_code: str):
+    """Publish country profile (super_admin only)"""
+    try:
+        # TODO: Add role check - only super_admin can publish
+        
+        result = await db.country_profiles.update_one(
+            {"code": country_code.upper()},
+            {"$set": {"status": "published", "updated_at": datetime.utcnow()}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Country profile not found")
+        
+        return {"success": True, "message": f"Country profile {country_code} published successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error publishing country profile {country_code}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/forms/brief")
+async def get_brief_form_schema(country: str = "US"):
+    """Get merged brief form schema for specific country"""
+    try:
+        # Get base schema (Amerika/US as default)
+        base_profile = await db.country_profiles.find_one({"code": "US"})
+        
+        # Get country-specific profile
+        country_profile = await db.country_profiles.find_one({"code": country.upper()})
+        
+        # Start with base schema
+        base_config = base_profile.get("form_config", {}) if base_profile else {}
+        
+        # Merge with country-specific overrides if different from base
+        if country_profile and country_profile.get("code") != "US":
+            country_config = country_profile.get("form_config", {})
+            
+            # Simple merge strategy - country config overrides base config
+            merged_config = {
+                "fields": {**base_config.get("fields", {}), **country_config.get("fields", {})},
+                "sections": country_config.get("sections", []) or base_config.get("sections", []),
+                "validation_rules": {**base_config.get("validation_rules", {}), **country_config.get("validation_rules", {})},
+                "conditional_logic": country_config.get("conditional_logic", []) or base_config.get("conditional_logic", []),
+                "field_order": country_config.get("field_order", []) or base_config.get("field_order", [])
+            }
+        else:
+            merged_config = base_config
+        
+        return {
+            "country_code": country.upper(),
+            "country_name": country_profile.get("name", "Unknown") if country_profile else "Amerika",
+            "form_config": merged_config,
+            "currency": country_profile.get("currency", "USD") if country_profile else "USD",
+            "date_format": country_profile.get("date_format", "MM/DD/YYYY") if country_profile else "MM/DD/YYYY",
+            "tax_config": country_profile.get("tax_config", {}) if country_profile else {}
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting brief form schema for country {country}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
