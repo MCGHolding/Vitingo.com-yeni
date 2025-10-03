@@ -865,6 +865,45 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  E-posta *
+                </label>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="ornek@email.com"
+                  disabled={!!selectedPersonId}
+                  className={selectedPersonId ? 'bg-gray-50' : ''}
+                  required
+                />
+                {selectedPersonId && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen kişiden otomatik dolduruldu
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Telefon
+                </label>
+                <Input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  placeholder="+90 555 123 45 67"
+                  disabled={!!selectedPersonId}
+                  className={selectedPersonId ? 'bg-gray-50' : ''}
+                />
+                {selectedPersonId && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Seçilen kişiden otomatik dolduruldu
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Öncelik Seviyesi
                 </label>
                 <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
