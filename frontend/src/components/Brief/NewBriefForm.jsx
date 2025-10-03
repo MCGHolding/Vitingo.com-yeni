@@ -903,8 +903,241 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 />
               </div>
             </div>
+            
+            {/* Continue Button */}
+            <div className="mt-8 pt-6 border-t">
+              <div className="text-center">
+                <Button
+                  type="button"
+                  onClick={handleNextStep}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+                >
+                  Detaylı Stand İhtiyaçları →
+                </Button>
+                <p className="text-sm text-gray-500 mt-2">
+                  Standınızın tüm detaylarını belirlemek için devam edin
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
+
+        {/* Multi-Step Stand Requirements */}
+        {currentStep > 1 && (
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Stand Detayları - {currentStep}/5</span>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((step) => (
+                    <div
+                      key={step}
+                      className={`w-3 h-3 rounded-full ${
+                        step <= currentStep ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Standınızda hangi elementlere ihtiyacınız var?</h3>
+                    <p className="text-gray-600">İhtiyacınız olan tüm elementleri seçebilirsiniz</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {[
+                      { key: 'counter', label: 'Counter', icon: '🏪' },
+                      { key: 'furniture', label: 'Furniture', icon: '🪑' },
+                      { key: 'multimedia', label: 'Multimedia', icon: '📺' },
+                      { key: 'closedMeeting', label: 'Closed meeting room', icon: '🏢' },
+                      { key: 'openMeeting', label: 'Open meeting room', icon: '👥' },
+                      { key: 'storage', label: 'Space storage', icon: '📦' },
+                      { key: 'catering', label: 'Catering area', icon: '☕' },
+                      { key: 'hanging', label: 'Hanging elements', icon: '🏷️' }
+                    ].map((element) => (
+                      <div
+                        key={element.key}
+                        className={`border-2 rounded-lg p-6 cursor-pointer text-center transition-all hover:shadow-md ${
+                          stepData.standElements.includes(element.key)
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => handleElementToggle(element.key)}
+                      >
+                        <div className="text-3xl mb-2">{element.icon}</div>
+                        <h4 className="font-medium text-sm">{element.label}</h4>
+                        {stepData.standElements.includes(element.key) && (
+                          <div className="mt-2">
+                            <div className="w-6 h-6 bg-blue-500 rounded-full mx-auto flex items-center justify-center">
+                              <span className="text-white text-xs">✓</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 3 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Etkinlik sırasında stantta kaç çalışan bulunacak?</h3>
+                    <p className="text-gray-600">
+                      Stantta görev yapacak çalışanların sayısını ve pozisyonlarını belirtin. 
+                      Bu bilgi standın tasarımı için önemlidir.
+                    </p>
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        <strong>Örnek:</strong> manager + 3 sales person + hostesses
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="max-w-2xl mx-auto">
+                    <Textarea
+                      value={stepData.employeeDetails}
+                      onChange={(e) => handleStepDataChange('employeeDetails', e.target.value)}
+                      placeholder="Çalışan sayısı ve pozisyonlarını yazın..."
+                      rows={6}
+                      className="w-full text-center"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 4 && (
+                <div className="space-y-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Satın alma kararınızda fiyat ne kadar önemli?</h3>
+                    <p className="text-gray-600">
+                      Fiyat ve tasarım aynı paranın iki yüzüdür. Daha büyük bir bütçe, 
+                      tasarıma ve standı inşa etmek için kullanılan malzemelere daha fazla yatırım anlamına gelir.
+                      Her bir unsurun ne kadar önemli olduğunu belirtin.
+                    </p>
+                  </div>
+                  
+                  <div className="max-w-2xl mx-auto space-y-8">
+                    <div>
+                      <div className="flex justify-between text-sm text-gray-500 mb-2">
+                        <span>Minimum</span>
+                        <span>Düşük</span>
+                        <span>Orta</span>
+                        <span>Yüksek</span>
+                        <span>Maksimum</span>
+                      </div>
+                      
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-lg font-medium mb-4">Fiyat</label>
+                          <input
+                            type="range"
+                            min="1"
+                            max="5"
+                            value={stepData.priceImportance}
+                            onChange={(e) => handleStepDataChange('priceImportance', parseInt(e.target.value))}
+                            className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-lg font-medium mb-4">Tasarım</label>
+                          <input
+                            type="range"
+                            min="1"
+                            max="5"
+                            value={stepData.designImportance}
+                            onChange={(e) => handleStepDataChange('designImportance', parseInt(e.target.value))}
+                            className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 5 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">
+                      Standınızın nasıl olması gerektiği konusunda bir tasarım, fikir veya konsept eklemek ister misiniz?
+                    </h3>
+                    <p className="text-gray-600">
+                      Bu, aklınızda neyin olduğunu daha iyi anlamamıza yardımcı olacaktır.
+                    </p>
+                  </div>
+                  
+                  <div className="max-w-2xl mx-auto">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+                      <Upload className="mx-auto h-12 w-12 text-blue-500 mb-4" />
+                      <h4 className="text-lg font-medium mb-2">Kendi tasarımınızı yükleyin</h4>
+                      <p className="text-gray-600 mb-4">
+                        PDF, JPG, CAD veya ZIP dosyalarını kabul ediyoruz (Dosya başına maksimum 100 MB)
+                      </p>
+                      <input
+                        type="file"
+                        multiple
+                        accept=".pdf,.jpg,.jpeg,.cad,.zip"
+                        onChange={(e) => handleFileUpload('designFiles', e.target.files)}
+                        className="hidden"
+                        id="design-upload"
+                      />
+                      <label htmlFor="design-upload" className="cursor-pointer">
+                        <Button type="button" variant="outline" className="mb-4">
+                          Dosya Seç
+                        </Button>
+                      </label>
+                      
+                      {stepData.designFiles && stepData.designFiles.length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          {stepData.designFiles.map(file => (
+                            <div key={file.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                              <span className="text-sm text-gray-700">{file.name}</span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeFile('designFiles', file.id)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handlePreviousStep}
+                  disabled={currentStep <= 1}
+                  className="flex items-center space-x-2"
+                >
+                  <span>← Önceki</span>
+                </Button>
+                
+                <Button
+                  type="button"
+                  onClick={currentStep === 5 ? () => setCurrentStep(1) : handleNextStep}
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+                >
+                  <span>{currentStep === 5 ? 'Tamamla' : 'Sonraki →'}</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Design Preferences Card - Show only in advanced mode */}
         {showAdvanced && (
