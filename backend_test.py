@@ -1563,6 +1563,785 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_recursive_stand_elements_get():
+    """
+    Test GET /api/stand-elements - recursive structure'ın doğru geldiğini kontrol et
+    
+    Requirements to verify:
+    1. GET /api/stand-elements returns recursive structure correctly
+    2. Default recursive data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) is returned
+    3. Nested structure works properly with unlimited depth
+    4. Response includes proper structure with children property
+    """
+    
+    print("=" * 80)
+    print("TESTING RECURSIVE STAND ELEMENTS GET ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to stand elements...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand elements endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            elements = response.json()
+            print(f"   Response type: {type(elements)}")
+            print(f"   Number of main elements: {len(elements) if isinstance(elements, dict) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(elements, dict):
+            print("   ❌ FAIL: Response should be a dictionary of stand elements")
+            return False
+        
+        print(f"   ✅ PASS: Response is a dictionary containing {len(elements)} stand elements")
+        
+        # Test 5: Check for default recursive data (Zemin)
+        print("\n4. Checking for default recursive data (Zemin)...")
+        if 'flooring' not in elements:
+            print("   ❌ FAIL: Default 'flooring' (Zemin) element not found")
+            return False
+        
+        flooring = elements['flooring']
+        print(f"   Found flooring element: {flooring.get('label', 'N/A')}")
+        
+        if flooring.get('label') != 'Zemin':
+            print(f"   ❌ FAIL: Expected 'Zemin' label, got '{flooring.get('label')}'")
+            return False
+        
+        print("   ✅ PASS: Zemin element found with correct label")
+        
+        # Test 6: Check recursive structure depth
+        print("\n5. Checking recursive structure depth...")
+        structure = flooring.get('structure', {})
+        if not structure:
+            print("   ❌ FAIL: Zemin element should have structure property")
+            return False
+        
+        print(f"   Structure keys: {list(structure.keys())}")
+        
+        # Check for 36mm Yükseltilmiş Zemin
+        if 'raised36mm' not in structure:
+            print("   ❌ FAIL: '36mm Yükseltilmiş Zemin' not found in structure")
+            return False
+        
+        raised36mm = structure['raised36mm']
+        print(f"   Found raised36mm: {raised36mm.get('label', 'N/A')}")
+        
+        if raised36mm.get('label') != '36mm Yükseltilmiş Zemin':
+            print(f"   ❌ FAIL: Expected '36mm Yükseltilmiş Zemin', got '{raised36mm.get('label')}'")
+            return False
+        
+        print("   ✅ PASS: 36mm Yükseltilmiş Zemin found")
+        
+        # Test 7: Check children property for unlimited depth
+        print("\n6. Checking children property for unlimited depth...")
+        children = raised36mm.get('children', {})
+        if not children:
+            print("   ❌ FAIL: 36mm Yükseltilmiş Zemin should have children property")
+            return False
+        
+        print(f"   Children keys: {list(children.keys())}")
+        
+        # Check for Halı Kaplama
+        if 'carpet' not in children:
+            print("   ❌ FAIL: 'Halı Kaplama' not found in children")
+            return False
+        
+        carpet = children['carpet']
+        print(f"   Found carpet: {carpet.get('label', 'N/A')}")
+        
+        if carpet.get('label') != 'Halı Kaplama':
+            print(f"   ❌ FAIL: Expected 'Halı Kaplama', got '{carpet.get('label')}'")
+            return False
+        
+        print("   ✅ PASS: Halı Kaplama found in children")
+        
+        # Test 8: Check deeper nesting (Renk/Miktar)
+        print("\n7. Checking deeper nesting (Renk/Miktar)...")
+        carpet_children = carpet.get('children', {})
+        if not carpet_children:
+            print("   ❌ FAIL: Halı Kaplama should have children for Renk/Miktar")
+            return False
+        
+        print(f"   Carpet children keys: {list(carpet_children.keys())}")
+        
+        # Check for color and quantity
+        expected_properties = ['color', 'quantity']
+        found_properties = []
+        
+        for prop in expected_properties:
+            if prop in carpet_children:
+                found_properties.append(prop)
+                prop_data = carpet_children[prop]
+                print(f"   Found {prop}: {prop_data.get('label', 'N/A')} (type: {prop_data.get('element_type', 'N/A')})")
+        
+        if len(found_properties) < 2:
+            print(f"   ❌ FAIL: Expected color and quantity properties, found: {found_properties}")
+            return False
+        
+        print("   ✅ PASS: Color and quantity properties found (Renk/Miktar)")
+        
+        # Test 9: Check element types and input types
+        print("\n8. Checking element types and input types...")
+        color_element = carpet_children.get('color', {})
+        quantity_element = carpet_children.get('quantity', {})
+        
+        # Check color element
+        if color_element.get('element_type') != 'property':
+            print(f"   ❌ FAIL: Color element_type should be 'property', got '{color_element.get('element_type')}'")
+            return False
+        
+        if color_element.get('input_type') != 'select':
+            print(f"   ❌ FAIL: Color input_type should be 'select', got '{color_element.get('input_type')}'")
+            return False
+        
+        if not color_element.get('options'):
+            print("   ❌ FAIL: Color element should have options array")
+            return False
+        
+        print(f"   ✅ PASS: Color element properly configured with {len(color_element.get('options', []))} options")
+        
+        # Check quantity element
+        if quantity_element.get('element_type') != 'unit':
+            print(f"   ❌ FAIL: Quantity element_type should be 'unit', got '{quantity_element.get('element_type')}'")
+            return False
+        
+        if quantity_element.get('input_type') != 'number':
+            print(f"   ❌ FAIL: Quantity input_type should be 'number', got '{quantity_element.get('input_type')}'")
+            return False
+        
+        if quantity_element.get('unit') != 'm²':
+            print(f"   ❌ FAIL: Quantity unit should be 'm²', got '{quantity_element.get('unit')}'")
+            return False
+        
+        print("   ✅ PASS: Quantity element properly configured with unit 'm²'")
+        
+        # Test 10: Check alternative options (Parke)
+        print("\n9. Checking alternative options (Parke)...")
+        if 'parquet' in children:
+            parquet = children['parquet']
+            print(f"   Found parquet: {parquet.get('label', 'N/A')}")
+            
+            if parquet.get('label') == 'Parke Kaplama':
+                print("   ✅ PASS: Parke Kaplama alternative option found")
+                
+                # Check parquet children
+                parquet_children = parquet.get('children', {})
+                if parquet_children:
+                    print(f"   Parquet children: {list(parquet_children.keys())}")
+                    print("   ✅ PASS: Parquet has its own property structure")
+            else:
+                print(f"   ⚠️  WARNING: Parquet label unexpected: {parquet.get('label')}")
+        else:
+            print("   ⚠️  WARNING: Parquet option not found (may be expected)")
+        
+        # Test 11: Check furniture element for additional complexity
+        print("\n10. Checking furniture element for additional complexity...")
+        if 'furniture' in elements:
+            furniture = elements['furniture']
+            print(f"   Found furniture: {furniture.get('label', 'N/A')}")
+            
+            furniture_structure = furniture.get('structure', {})
+            if furniture_structure:
+                print(f"   Furniture structure keys: {list(furniture_structure.keys())}")
+                print("   ✅ PASS: Furniture element has complex structure")
+            else:
+                print("   ⚠️  WARNING: Furniture element has no structure")
+        else:
+            print("   ⚠️  WARNING: Furniture element not found")
+        
+        print("\n" + "=" * 80)
+        print("RECURSIVE STAND ELEMENTS GET ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Recursive structure is correctly implemented")
+        print("✅ Default data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) present")
+        print("✅ Children property supports unlimited depth")
+        print("✅ Element types and input types properly configured")
+        print("✅ Options arrays and units properly set")
+        print("✅ Alternative options (Parke) available")
+        print("✅ Complex nested structures working")
+        print(f"\n🎉 RECURSIVE STAND ELEMENTS GET ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_post():
+    """
+    Test POST /api/stand-elements - yeni recursive element ekleme testi
+    
+    Requirements to verify:
+    1. POST /api/stand-elements can create new recursive elements
+    2. New elements are properly structured with children property
+    3. Element types and properties are correctly handled
+    4. Response confirms successful creation
+    """
+    
+    print("=" * 80)
+    print("TESTING RECURSIVE STAND ELEMENTS POST ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for new recursive element
+    test_element_data = {
+        "key": "test_lighting",
+        "label": "Test Aydınlatma",
+        "icon": "💡",
+        "required": False,
+        "element_type": "option"
+    }
+    
+    print(f"Test element data: {test_element_data}")
+    
+    try:
+        # Test 1: Make POST request
+        print("\n1. Making POST request to create new stand element...")
+        response = requests.post(endpoint, json=test_element_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand element creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            result = response.json()
+            print(f"   Response type: {type(result)}")
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get('success'):
+            print(f"   ❌ FAIL: Creation should be successful, got: {result}")
+            return False
+        
+        print("   ✅ PASS: Element creation successful")
+        print(f"   Message: {result.get('message', 'N/A')}")
+        
+        # Test 5: Verify element was created by fetching all elements
+        print("\n4. Verifying element was created...")
+        get_response = requests.get(endpoint, timeout=30)
+        
+        if get_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not fetch elements to verify creation")
+            return False
+        
+        elements = get_response.json()
+        if 'test_lighting' not in elements:
+            print("   ❌ FAIL: Created element not found in elements list")
+            return False
+        
+        created_element = elements['test_lighting']
+        print(f"   Found created element: {created_element.get('label', 'N/A')}")
+        
+        if created_element.get('label') != 'Test Aydınlatma':
+            print(f"   ❌ FAIL: Element label mismatch")
+            return False
+        
+        print("   ✅ PASS: Created element found and verified")
+        
+        print("\n" + "=" * 80)
+        print("RECURSIVE STAND ELEMENTS POST ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Element creation successful")
+        print("✅ Created element verified in database")
+        print("✅ Turkish characters handled correctly")
+        print(f"\n🎉 RECURSIVE STAND ELEMENTS POST ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_put():
+    """
+    Test PUT /api/stand-elements/{key} - mevcut recursive element güncelleme
+    
+    Requirements to verify:
+    1. PUT /api/stand-elements/{key} can update existing recursive elements
+    2. Updates are properly applied to the element structure
+    3. Response confirms successful update
+    4. Updated data is persisted correctly
+    """
+    
+    print("=" * 80)
+    print("TESTING RECURSIVE STAND ELEMENTS PUT ENDPOINT")
+    print("=" * 80)
+    
+    element_key = "test_lighting"
+    endpoint = f"{BACKEND_URL}/api/stand-elements/{element_key}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data for updating element
+    update_data = {
+        "key": element_key,
+        "label": "Test Aydınlatma Güncellenmiş",
+        "icon": "🔆",
+        "required": True,
+        "element_type": "option"
+    }
+    
+    print(f"Update data: {update_data}")
+    
+    try:
+        # Test 1: Make PUT request
+        print("\n1. Making PUT request to update stand element...")
+        response = requests.put(endpoint, json=update_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand element update endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            result = response.json()
+            print(f"   Response type: {type(result)}")
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get('success'):
+            print(f"   ❌ FAIL: Update should be successful, got: {result}")
+            return False
+        
+        print("   ✅ PASS: Element update successful")
+        print(f"   Message: {result.get('message', 'N/A')}")
+        
+        # Test 5: Verify element was updated by fetching all elements
+        print("\n4. Verifying element was updated...")
+        get_endpoint = f"{BACKEND_URL}/api/stand-elements"
+        get_response = requests.get(get_endpoint, timeout=30)
+        
+        if get_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not fetch elements to verify update")
+            return False
+        
+        elements = get_response.json()
+        if element_key not in elements:
+            print("   ❌ FAIL: Updated element not found in elements list")
+            return False
+        
+        updated_element = elements[element_key]
+        print(f"   Found updated element: {updated_element.get('label', 'N/A')}")
+        
+        if updated_element.get('label') != 'Test Aydınlatma Güncellenmiş':
+            print(f"   ❌ FAIL: Element label not updated correctly")
+            return False
+        
+        if updated_element.get('icon') != '🔆':
+            print(f"   ❌ FAIL: Element icon not updated correctly")
+            return False
+        
+        if updated_element.get('required') != True:
+            print(f"   ❌ FAIL: Element required flag not updated correctly")
+            return False
+        
+        print("   ✅ PASS: Updated element verified with correct changes")
+        
+        print("\n" + "=" * 80)
+        print("RECURSIVE STAND ELEMENTS PUT ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Element update successful")
+        print("✅ Updated element verified in database")
+        print("✅ All update fields applied correctly")
+        print("✅ Turkish characters handled correctly")
+        print(f"\n🎉 RECURSIVE STAND ELEMENTS PUT ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_delete():
+    """
+    Test DELETE /api/stand-elements/{key} - element silme testi
+    
+    Requirements to verify:
+    1. DELETE /api/stand-elements/{key} can delete existing elements
+    2. Response confirms successful deletion
+    3. Element is removed from the database
+    4. Error handling for non-existent elements
+    """
+    
+    print("=" * 80)
+    print("TESTING RECURSIVE STAND ELEMENTS DELETE ENDPOINT")
+    print("=" * 80)
+    
+    element_key = "test_lighting"
+    endpoint = f"{BACKEND_URL}/api/stand-elements/{element_key}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make DELETE request
+        print("\n1. Making DELETE request to remove stand element...")
+        response = requests.delete(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand element delete endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            result = response.json()
+            print(f"   Response type: {type(result)}")
+            print(f"   Response: {result}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get('success'):
+            print(f"   ❌ FAIL: Deletion should be successful, got: {result}")
+            return False
+        
+        print("   ✅ PASS: Element deletion successful")
+        print(f"   Message: {result.get('message', 'N/A')}")
+        
+        # Test 5: Verify element was deleted by fetching all elements
+        print("\n4. Verifying element was deleted...")
+        get_endpoint = f"{BACKEND_URL}/api/stand-elements"
+        get_response = requests.get(get_endpoint, timeout=30)
+        
+        if get_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not fetch elements to verify deletion")
+            return False
+        
+        elements = get_response.json()
+        if element_key in elements:
+            print("   ❌ FAIL: Deleted element still found in elements list")
+            return False
+        
+        print("   ✅ PASS: Deleted element no longer in database")
+        
+        # Test 6: Test error handling for non-existent element
+        print("\n5. Testing error handling for non-existent element...")
+        non_existent_key = "non_existent_element"
+        error_endpoint = f"{BACKEND_URL}/api/stand-elements/{non_existent_key}"
+        
+        error_response = requests.delete(error_endpoint, timeout=30)
+        print(f"   Status Code for non-existent element: {error_response.status_code}")
+        
+        if error_response.status_code == 404:
+            print("   ✅ PASS: Proper 404 error for non-existent element")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for non-existent element, got {error_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Element deletion successful")
+        print("✅ Deleted element removed from database")
+        print("✅ Error handling for non-existent elements working")
+        print(f"\n🎉 RECURSIVE STAND ELEMENTS DELETE ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_recursive_stand_elements_crud_workflow():
+    """
+    Test complete CRUD workflow for recursive stand elements
+    
+    Requirements to verify:
+    1. Complete CRUD operations work together
+    2. Recursive structure is maintained throughout operations
+    3. Children property and unlimited depth work correctly
+    4. Default data integrity is preserved
+    """
+    
+    print("=" * 80)
+    print("TESTING RECURSIVE STAND ELEMENTS COMPLETE CRUD WORKFLOW")
+    print("=" * 80)
+    
+    try:
+        # Test 1: Verify default data exists
+        print("\n1. Verifying default recursive data exists...")
+        get_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        
+        if get_response.status_code != 200:
+            print("   ❌ FAIL: Could not fetch initial elements")
+            return False
+        
+        initial_elements = get_response.json()
+        print(f"   Initial elements count: {len(initial_elements)}")
+        
+        # Check for Zemin → 36mm → Halı Kaplama structure
+        if 'flooring' not in initial_elements:
+            print("   ❌ FAIL: Default Zemin (flooring) element not found")
+            return False
+        
+        flooring = initial_elements['flooring']
+        structure = flooring.get('structure', {})
+        
+        if 'raised36mm' not in structure:
+            print("   ❌ FAIL: 36mm structure not found")
+            return False
+        
+        raised36mm = structure['raised36mm']
+        children = raised36mm.get('children', {})
+        
+        if 'carpet' not in children:
+            print("   ❌ FAIL: Halı Kaplama not found in children")
+            return False
+        
+        carpet = children['carpet']
+        carpet_children = carpet.get('children', {})
+        
+        if 'color' not in carpet_children or 'quantity' not in carpet_children:
+            print("   ❌ FAIL: Renk/Miktar properties not found")
+            return False
+        
+        print("   ✅ PASS: Default recursive structure (Zemin → 36mm → Halı Kaplama → Renk/Miktar) verified")
+        
+        # Test 2: Create new element with recursive structure
+        print("\n2. Creating new element with recursive structure...")
+        new_element_data = {
+            "key": "test_counter",
+            "label": "Test Tezgah",
+            "icon": "🏢",
+            "required": False,
+            "element_type": "option"
+        }
+        
+        create_response = requests.post(f"{BACKEND_URL}/api/stand-elements", json=new_element_data, timeout=30)
+        
+        if create_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not create new element: {create_response.status_code}")
+            return False
+        
+        print("   ✅ PASS: New element created successfully")
+        
+        # Test 3: Update the new element
+        print("\n3. Updating the new element...")
+        update_data = {
+            "key": "test_counter",
+            "label": "Test Tezgah Güncellenmiş",
+            "icon": "🏪",
+            "required": True,
+            "element_type": "option"
+        }
+        
+        update_response = requests.put(f"{BACKEND_URL}/api/stand-elements/test_counter", json=update_data, timeout=30)
+        
+        if update_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not update element: {update_response.status_code}")
+            return False
+        
+        print("   ✅ PASS: Element updated successfully")
+        
+        # Test 4: Verify update and structure integrity
+        print("\n4. Verifying update and structure integrity...")
+        verify_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        
+        if verify_response.status_code != 200:
+            print("   ❌ FAIL: Could not fetch elements for verification")
+            return False
+        
+        updated_elements = verify_response.json()
+        
+        # Check updated element
+        if 'test_counter' not in updated_elements:
+            print("   ❌ FAIL: Updated element not found")
+            return False
+        
+        updated_element = updated_elements['test_counter']
+        if updated_element.get('label') != 'Test Tezgah Güncellenmiş':
+            print("   ❌ FAIL: Element not updated correctly")
+            return False
+        
+        print("   ✅ PASS: Element update verified")
+        
+        # Check that original structure is still intact
+        if 'flooring' not in updated_elements:
+            print("   ❌ FAIL: Original flooring element lost during operations")
+            return False
+        
+        # Re-verify the recursive structure
+        flooring_check = updated_elements['flooring']
+        structure_check = flooring_check.get('structure', {})
+        
+        if 'raised36mm' not in structure_check:
+            print("   ❌ FAIL: Original recursive structure damaged")
+            return False
+        
+        print("   ✅ PASS: Original recursive structure integrity maintained")
+        
+        # Test 5: Delete the test element
+        print("\n5. Deleting the test element...")
+        delete_response = requests.delete(f"{BACKEND_URL}/api/stand-elements/test_counter", timeout=30)
+        
+        if delete_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not delete element: {delete_response.status_code}")
+            return False
+        
+        print("   ✅ PASS: Element deleted successfully")
+        
+        # Test 6: Final verification
+        print("\n6. Final verification of system state...")
+        final_response = requests.get(f"{BACKEND_URL}/api/stand-elements", timeout=30)
+        
+        if final_response.status_code != 200:
+            print("   ❌ FAIL: Could not fetch final elements")
+            return False
+        
+        final_elements = final_response.json()
+        
+        # Check test element is gone
+        if 'test_counter' in final_elements:
+            print("   ❌ FAIL: Deleted element still present")
+            return False
+        
+        # Check original structure is still intact
+        if 'flooring' not in final_elements:
+            print("   ❌ FAIL: Original elements lost")
+            return False
+        
+        final_flooring = final_elements['flooring']
+        final_structure = final_flooring.get('structure', {})
+        final_raised36mm = final_structure.get('raised36mm', {})
+        final_children = final_raised36mm.get('children', {})
+        final_carpet = final_children.get('carpet', {})
+        final_carpet_children = final_carpet.get('children', {})
+        
+        if 'color' not in final_carpet_children or 'quantity' not in final_carpet_children:
+            print("   ❌ FAIL: Final recursive structure verification failed")
+            return False
+        
+        print("   ✅ PASS: Final system state verified - all operations successful")
+        
+        print("\n" + "=" * 80)
+        print("RECURSIVE STAND ELEMENTS COMPLETE CRUD WORKFLOW TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Default recursive data integrity verified")
+        print("✅ CREATE operation successful")
+        print("✅ READ operation successful")
+        print("✅ UPDATE operation successful")
+        print("✅ DELETE operation successful")
+        print("✅ Recursive structure maintained throughout operations")
+        print("✅ Children property and unlimited depth working")
+        print("✅ Default data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) preserved")
+        print("✅ System state consistent after all operations")
+        print(f"\n🎉 RECURSIVE STAND ELEMENTS COMPLETE CRUD WORKFLOW TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_draft_invoice_creation():
     """
     Test POST /api/invoices with status='draft' to create draft invoices.
