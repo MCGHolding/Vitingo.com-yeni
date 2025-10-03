@@ -17784,31 +17784,87 @@ def test_collection_statistics_error_handling():
         return False
 
 def main():
-    """Main function to run customer management API tests"""
+    """Main function to run recursive stand elements API tests"""
     print("🎯" * 80)
-    print("CUSTOMER MANAGEMENT API TESTING - 30 MOCK CUSTOMERS VERIFICATION")
+    print("RECURSIVE STAND ELEMENTS API TESTING")
     print("🎯" * 80)
-    print("Testing the customer management API to verify 30 new mock customers are working correctly")
-    print("This includes data validation, Turkish company verification, and endpoint functionality")
+    print("Testing recursive stand elements backend API'lerini:")
+    print("1. GET /api/stand-elements - recursive structure'ın doğru geldiğini kontrol et")
+    print("2. POST /api/stand-elements - yeni recursive element ekleme testi")
+    print("3. PUT /api/stand-elements/{key} - mevcut recursive element güncelleme")
+    print("4. DELETE /api/stand-elements/{key} - element silme testi")
+    print("Backend'de RecursiveStandElement modeli ve sınırsız derinlik children property'si test edilecek")
     
     test_results = []
     
-    # Test 1: Customer Management API Test
-    print(f"\n{'='*20} TEST 1: CUSTOMER MANAGEMENT API {'='*20}")
+    # Test 1: GET /api/stand-elements
+    print(f"\n{'='*20} TEST 1: GET RECURSIVE STAND ELEMENTS {'='*20}")
     try:
-        result = test_customer_management_api()
-        test_results.append(("Customer Management API", result))
+        result = test_recursive_stand_elements_get()
+        test_results.append(("GET /api/stand-elements", result))
         if result:
-            print("✅ Customer Management API Test: PASSED")
+            print("✅ GET Recursive Stand Elements Test: PASSED")
         else:
-            print("❌ Customer Management API Test: FAILED")
+            print("❌ GET Recursive Stand Elements Test: FAILED")
     except Exception as e:
-        print(f"❌ Customer Management API Test: ERROR - {str(e)}")
-        test_results.append(("Customer Management API", False))
+        print(f"❌ GET Recursive Stand Elements Test: ERROR - {str(e)}")
+        test_results.append(("GET /api/stand-elements", False))
+    
+    # Test 2: POST /api/stand-elements
+    print(f"\n{'='*20} TEST 2: POST RECURSIVE STAND ELEMENTS {'='*20}")
+    try:
+        result = test_recursive_stand_elements_post()
+        test_results.append(("POST /api/stand-elements", result))
+        if result:
+            print("✅ POST Recursive Stand Elements Test: PASSED")
+        else:
+            print("❌ POST Recursive Stand Elements Test: FAILED")
+    except Exception as e:
+        print(f"❌ POST Recursive Stand Elements Test: ERROR - {str(e)}")
+        test_results.append(("POST /api/stand-elements", False))
+    
+    # Test 3: PUT /api/stand-elements/{key}
+    print(f"\n{'='*20} TEST 3: PUT RECURSIVE STAND ELEMENTS {'='*20}")
+    try:
+        result = test_recursive_stand_elements_put()
+        test_results.append(("PUT /api/stand-elements/{key}", result))
+        if result:
+            print("✅ PUT Recursive Stand Elements Test: PASSED")
+        else:
+            print("❌ PUT Recursive Stand Elements Test: FAILED")
+    except Exception as e:
+        print(f"❌ PUT Recursive Stand Elements Test: ERROR - {str(e)}")
+        test_results.append(("PUT /api/stand-elements/{key}", False))
+    
+    # Test 4: DELETE /api/stand-elements/{key}
+    print(f"\n{'='*20} TEST 4: DELETE RECURSIVE STAND ELEMENTS {'='*20}")
+    try:
+        result = test_recursive_stand_elements_delete()
+        test_results.append(("DELETE /api/stand-elements/{key}", result))
+        if result:
+            print("✅ DELETE Recursive Stand Elements Test: PASSED")
+        else:
+            print("❌ DELETE Recursive Stand Elements Test: FAILED")
+    except Exception as e:
+        print(f"❌ DELETE Recursive Stand Elements Test: ERROR - {str(e)}")
+        test_results.append(("DELETE /api/stand-elements/{key}", False))
+    
+    # Test 5: Complete CRUD Workflow
+    print(f"\n{'='*20} TEST 5: COMPLETE CRUD WORKFLOW {'='*20}")
+    try:
+        result = test_recursive_stand_elements_crud_workflow()
+        test_results.append(("Complete CRUD Workflow", result))
+        if result:
+            print("✅ Complete CRUD Workflow Test: PASSED")
+        else:
+            print("❌ Complete CRUD Workflow Test: FAILED")
+    except Exception as e:
+        print(f"❌ Complete CRUD Workflow Test: ERROR - {str(e)}")
+        test_results.append(("Complete CRUD Workflow", False))
     
     # Final summary
     print("\n" + "🎯" * 80)
-    print("CUSTOMER MANAGEMENT API TEST RESULTS SUMMARY")
+    print("RECURSIVE STAND ELEMENTS API TEST RESULTS SUMMARY")
     print("🎯" * 80)
     
     passed_tests = sum(1 for _, result in test_results if result)
@@ -17821,17 +17877,17 @@ def main():
     print(f"\n📊 Overall Results: {passed_tests}/{total_tests} tests passed")
     
     if passed_tests == total_tests:
-        print("🎉 ALL CUSTOMER MANAGEMENT API TESTS PASSED!")
+        print("🎉 ALL RECURSIVE STAND ELEMENTS API TESTS PASSED!")
         print("\n✅ VERIFICATION COMPLETE:")
-        print("   • GET /api/customers endpoint returns exactly 30 customers")
-        print("   • All customer data fields properly populated")
-        print("   • Turkish company names present (Anadolu Holding, Turkcell, Arçelik, etc.)")
-        print("   • Proper JSON structure and Pydantic validation working")
-        print("   • No empty or missing critical fields")
-        print("   • Individual customer endpoints working correctly")
-        print("   • Turkish tax information populated")
-        print("   • Data quality verification passed")
-        print("   • Customer management API is ready for production use")
+        print("   • GET /api/stand-elements returns correct recursive structure")
+        print("   • Default recursive data (Zemin → 36mm → Halı Kaplama → Renk/Miktar) working")
+        print("   • POST /api/stand-elements creates new recursive elements successfully")
+        print("   • PUT /api/stand-elements/{key} updates existing elements correctly")
+        print("   • DELETE /api/stand-elements/{key} removes elements properly")
+        print("   • Nested structures work with unlimited depth children property")
+        print("   • CRUD operations work correctly with recursive structure")
+        print("   • RecursiveStandElement model functioning as expected")
+        print("   • Backend recursive stand elements API is ready for production use")
         return True
     else:
         print(f"⚠️  {total_tests - passed_tests} tests failed. Please review the issues above.")
