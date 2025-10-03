@@ -125,6 +125,53 @@ class FairCenter(BaseModel):
     contact_email: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# Country Profile Models
+class CountryProfileFormConfig(BaseModel):
+    fields: Dict[str, Any] = Field(default_factory=dict)  # Field overrides
+    sections: List[Dict[str, Any]] = Field(default_factory=list)  # Section configs
+    validation_rules: Dict[str, Any] = Field(default_factory=dict)  # Custom validation
+    conditional_logic: List[Dict[str, Any]] = Field(default_factory=list)  # Show/hide rules
+    field_order: List[str] = Field(default_factory=list)  # Field ordering
+
+class CountryProfile(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str  # ISO-2 country code (e.g., "US", "TR")
+    name: str  # Country name
+    locales: List[str] = Field(default_factory=list)  # ["en_US", "tr_TR"]
+    currency: str = "USD"  # Currency code
+    phone_code: str = "+1"  # International phone code
+    address_format: Dict[str, Any] = Field(default_factory=dict)  # Address structure
+    date_format: str = "MM/DD/YYYY"  # Date format
+    tax_config: Dict[str, Any] = Field(default_factory=dict)  # Tax/VAT configuration
+    form_config: CountryProfileFormConfig = Field(default_factory=CountryProfileFormConfig)  # Brief form overrides
+    status: str = "draft"  # draft, published
+    version: int = 1
+    created_by: str = ""  # User ID
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CountryProfileCreate(BaseModel):
+    code: str
+    name: str
+    locales: List[str] = Field(default_factory=list)
+    currency: str = "USD"
+    phone_code: str = "+1"
+    address_format: Dict[str, Any] = Field(default_factory=dict)
+    date_format: str = "MM/DD/YYYY"
+    tax_config: Dict[str, Any] = Field(default_factory=dict)
+    form_config: CountryProfileFormConfig = Field(default_factory=CountryProfileFormConfig)
+
+class CountryProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    locales: Optional[List[str]] = None
+    currency: Optional[str] = None
+    phone_code: Optional[str] = None
+    address_format: Optional[Dict[str, Any]] = None
+    date_format: Optional[str] = None
+    tax_config: Optional[Dict[str, Any]] = None
+    form_config: Optional[CountryProfileFormConfig] = None
+    status: Optional[str] = None
+
 class Prospect(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     company_name: str
