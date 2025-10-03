@@ -1941,7 +1941,11 @@ def test_recursive_stand_elements_put():
         "label": "Test Aydınlatma Güncellenmiş",
         "icon": "🔆",
         "required": True,
-        "element_type": "option"
+        "element_type": "option",
+        "input_type": None,
+        "unit": None,
+        "options": None,
+        "parent_path": None
     }
     
     print(f"Update data: {update_data}")
