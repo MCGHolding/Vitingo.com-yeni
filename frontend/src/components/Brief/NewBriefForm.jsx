@@ -2404,7 +2404,7 @@ function AddElementForm({ level, parentKey, parentSubKey, editMode = false, edit
           İptal
         </Button>
         <Button type="submit" disabled={loading || !formData.label.trim() || !formData.key.trim()}>
-          {loading ? 'Ekleniyor...' : 'Ekle'}
+          {loading ? (editMode ? 'Güncelleniyor...' : 'Ekleniyor...') : (editMode ? 'Güncelle' : 'Ekle')}
         </Button>
       </div>
     </form>
