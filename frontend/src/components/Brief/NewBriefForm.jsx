@@ -86,6 +86,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Load customers data
   const [customers, setCustomers] = useState([]);
+  
+  // Load projects data
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     // Load customers from backend API
