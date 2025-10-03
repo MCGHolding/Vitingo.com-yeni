@@ -2064,14 +2064,18 @@ async def get_customers():
             logger.info(f"First customer keys: {list(customers[0].keys())}")
         
         validated_customers = []
-        for customer in customers:
+        for i, customer in enumerate(customers):
             try:
                 # Remove MongoDB _id field
                 customer_dict = {k: v for k, v in customer.items() if k != '_id'}
+                logger.info(f"Validating customer {i+1}: {customer_dict.get('companyName', 'Unknown')}")
                 validated_customers.append(Customer(**customer_dict))
             except Exception as validation_error:
-                logger.error(f"Customer validation error: {validation_error}")
-                logger.error(f"Customer data: {customer}")
+                logger.error(f"Customer {i+1} validation error: {validation_error}")
+                logger.error(f"Customer {i+1} keys: {list(customer.keys())}")
+                logger.error(f"CompanyName present: {'companyName' in customer}")
+                # Try to identify the specific issue
+                break  # Stop at first error
                 
         logger.info(f"Successfully validated {len(validated_customers)} customers")
         return validated_customers
