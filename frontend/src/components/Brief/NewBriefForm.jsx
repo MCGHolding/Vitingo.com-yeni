@@ -1636,6 +1636,209 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </div>
         </div>
       </form>
+
+      {/* New Country Modal */}
+      {isNewCountryModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Yeni Ülke Profili Ekle</h3>
+              <button
+                onClick={() => setIsNewCountryModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <NewCountryProfileForm 
+              onSuccess={() => {
+                setIsNewCountryModalOpen(false);
+                // Reload country profiles
+                fetchCountryProfiles();
+              }}
+              onCancel={() => setIsNewCountryModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+// New Country Profile Form Component
+function NewCountryProfileForm({ onSuccess, onCancel }) {
+  const [formData, setFormData] = useState({
+    code: '',
+    name: '',
+    currency: 'USD',
+    phone_code: '+1',
+    date_format: 'MM/DD/YYYY',
+    tax_name: 'Tax',
+    tax_rate: 0
+  });
+  const [loading, setLoading] = useState(false);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/country-profiles`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: formData.code.toUpperCase(),
+          name: formData.name,
+          currency: formData.currency,
+          phone_code: formData.phone_code,
+          date_format: formData.date_format,
+          tax_config: {
+            tax_name: formData.tax_name,
+            rate: formData.tax_rate / 100
+          },
+          locales: ['en_US'],
+          address_format: { format: 'street,city,country' },
+          form_config: {
+            fields: {},
+            sections: [],
+            validation_rules: {},
+            conditional_logic: [],
+            field_order: []
+          }
+        }),
+      });
+      
+      if (response.ok) {
+        onSuccess();
+      } else {
+        const error = await response.json();
+        alert('Hata: ' + (error.detail || 'Ülke profili oluşturulamadı'));
+      }
+    } catch (error) {
+      console.error('Error creating country profile:', error);
+      alert('Bir hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Ülke Kodu (ISO-2)
+        </label>
+        <Input
+          type="text"
+          value={formData.code}
+          onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
+          placeholder="Örn: DE, FR, IT"
+          maxLength={2}
+          required
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Ülke Adı
+        </label>
+        <Input
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          placeholder="Örn: Almanya, Fransa, İtalya"
+          required
+        />
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Para Birimi
+          </label>
+          <Input
+            type="text"
+            value={formData.currency}
+            onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value.toUpperCase() }))}
+            placeholder="EUR, GBP, JPY"
+            maxLength={3}
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Telefon Kodu
+          </label>
+          <Input
+            type="text"
+            value={formData.phone_code}
+            onChange={(e) => setFormData(prev => ({ ...prev, phone_code: e.target.value }))}
+            placeholder="+49, +33, +39"
+            required
+          />
+        </div>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Tarih Formatı
+        </label>
+        <Select value={formData.date_format} onValueChange={(value) => setFormData(prev => ({ ...prev, date_format: value }))}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="MM/DD/YYYY">MM/DD/YYYY (Amerika)</SelectItem>
+            <SelectItem value="DD/MM/YYYY">DD/MM/YYYY (Türkiye/Avrupa)</SelectItem>
+            <SelectItem value="DD.MM.YYYY">DD.MM.YYYY (Almanya)</SelectItem>
+            <SelectItem value="YYYY-MM-DD">YYYY-MM-DD (ISO)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Vergi Adı
+          </label>
+          <Input
+            type="text"
+            value={formData.tax_name}
+            onChange={(e) => setFormData(prev => ({ ...prev, tax_name: e.target.value }))}
+            placeholder="KDV, VAT, Sales Tax"
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Vergi Oranı (%)
+          </label>
+          <Input
+            type="number"
+            step="0.01"
+            min="0"
+            max="100"
+            value={formData.tax_rate}
+            onChange={(e) => setFormData(prev => ({ ...prev, tax_rate: parseFloat(e.target.value) || 0 }))}
+            placeholder="18.00"
+            required
+          />
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-3 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          İptal
+        </Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Oluşturuluyor...' : 'Oluştur'}
+        </Button>
+      </div>
+    </form>
   );
 }
