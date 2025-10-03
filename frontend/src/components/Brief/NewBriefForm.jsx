@@ -676,20 +676,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
               </div>
             )}
           </div>
-          
-          {/* Country Profile Info */}
-          {formSchema.country_name && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center space-x-4 text-sm">
-                <span><strong>Ülke:</strong> {formSchema.country_name}</span>
-                <span><strong>Para Birimi:</strong> {formSchema.currency}</span>
-                <span><strong>Tarih Formatı:</strong> {formSchema.date_format}</span>
-                {formSchema.tax_config?.tax_name && (
-                  <span><strong>Vergi:</strong> {formSchema.tax_config.tax_name} (%{(formSchema.tax_config.rate * 100).toFixed(1)})</span>
-                )}
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
 
