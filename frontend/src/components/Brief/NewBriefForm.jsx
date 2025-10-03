@@ -1369,40 +1369,147 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <div className="space-y-6">
                   <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2">Standınızda hangi elementlere ihtiyacınız var?</h3>
-                    <p className="text-gray-600">İhtiyacınız olan tüm elementleri seçebilirsiniz</p>
+                    <p className="text-gray-600">Elementleri seçin ve detaylarını belirleyin</p>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {[
-                      { key: 'flooring', label: 'Zemin', icon: '🟫' },
-                      { key: 'counter', label: 'Tezgah', icon: '🏪' },
-                      { key: 'furniture', label: 'Mobilya', icon: '🪑' },
-                      { key: 'multimedia', label: 'Multimedya', icon: '📺' },
-                      { key: 'closedMeeting', label: 'Kapalı Toplantı Odası', icon: '🏢' },
-                      { key: 'storage', label: 'Depo Alanı', icon: '📦' },
-                      { key: 'catering', label: 'İkram Alanı', icon: '☕' },
-                      { key: 'seating', label: 'Oturma Alanı', icon: '🛋️' }
-                    ].map((element) => (
-                      <div
-                        key={element.key}
-                        className={`border-2 rounded-lg p-6 cursor-pointer text-center transition-all hover:shadow-md ${
-                          stepData.standElements.includes(element.key)
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => handleElementToggle(element.key)}
-                      >
-                        <div className="text-3xl mb-2">{element.icon}</div>
-                        <h4 className="font-medium text-sm">{element.label}</h4>
-                        {stepData.standElements.includes(element.key) && (
-                          <div className="mt-2">
-                            <div className="w-6 h-6 bg-blue-500 rounded-full mx-auto flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
+                  <div className="space-y-6">
+                    {Object.entries(standElementsConfig).map(([elementKey, elementConfig]) => (
+                      <div key={elementKey} className="border rounded-lg overflow-hidden">
+                        {/* Main Element Selection */}
+                        <div
+                          className={`p-4 cursor-pointer transition-all flex items-center justify-between ${
+                            isElementSelected(elementKey)
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-200 hover:bg-gray-50'
+                          }`}
+                          onClick={() => handleElementToggle(elementKey)}
+                        >
+                          <div className="flex items-center space-x-4">
+                            <div className="text-2xl">{elementConfig.icon}</div>
+                            <div>
+                              <h4 className="font-semibold text-lg">{elementConfig.label}</h4>
+                              {elementConfig.required && (
+                                <span className="text-sm text-orange-600">* En az bir seçenek zorunlu</span>
+                              )}
                             </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {isElementSelected(elementKey) && hasRequiredSelections(elementKey) && (
+                              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <span className="text-white text-xs">✓</span>
+                              </div>
+                            )}
+                            {isElementSelected(elementKey) && !hasRequiredSelections(elementKey) && elementConfig.required && (
+                              <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                                <span className="text-white text-xs">!</span>
+                              </div>
+                            )}
+                            <span className={`transform transition-transform ${
+                              isElementSelected(elementKey) ? 'rotate-180' : ''
+                            }`}>
+                              ▼
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Sub Options */}
+                        {isElementSelected(elementKey) && (
+                          <div className="border-t bg-gray-50 p-4 space-y-4">
+                            {Object.entries(elementConfig.subOptions).map(([subKey, subConfig]) => (
+                              <div key={subKey} className="ml-4">
+                                {/* Sub Option Selection */}
+                                <div
+                                  className={`p-3 rounded-lg cursor-pointer transition-all flex items-center justify-between ${
+                                    isSubOptionSelected(elementKey, subKey)
+                                      ? 'bg-blue-100 border-blue-300'
+                                      : 'bg-white border-gray-200 hover:bg-gray-50'
+                                  } border`}
+                                  onClick={() => handleSubOptionToggle(elementKey, subKey)}
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    {subConfig.icon && <span className="text-lg">{subConfig.icon}</span>}
+                                    <span className="font-medium">{subConfig.label}</span>
+                                  </div>
+                                  {isSubOptionSelected(elementKey, subKey) && (
+                                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-xs">✓</span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Third Level Sub Options */}
+                                {isSubOptionSelected(elementKey, subKey) && subConfig.subOptions && (
+                                  <div className="ml-6 mt-2 space-y-2">
+                                    {Object.entries(subConfig.subOptions).map(([subSubKey, subSubConfig]) => (
+                                      <div
+                                        key={subSubKey}
+                                        className={`p-2 rounded cursor-pointer transition-all flex items-center space-x-2 ${
+                                          isSubOptionSelected(elementKey, subKey, subSubKey)
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-white hover:bg-gray-100'
+                                        } border`}
+                                        onClick={() => handleSubOptionToggle(elementKey, subKey, subSubKey)}
+                                      >
+                                        {subSubConfig.icon && <span className="text-sm">{subSubConfig.icon}</span>}
+                                        <span className="text-sm font-medium">{subSubConfig.label}</span>
+                                        {isSubOptionSelected(elementKey, subKey, subSubKey) && (
+                                          <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center ml-auto">
+                                            <span className="text-white text-xs">✓</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
                     ))}
+                  </div>
+
+                  {/* Selection Summary */}
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-semibold text-blue-900 mb-2">Seçimleriniz:</h4>
+                    <div className="space-y-1 text-sm text-blue-800">
+                      {Object.entries(stepData.standElements).map(([elementKey, selections]) => {
+                        if (!selections || Object.keys(selections).length === 0) return null;
+                        
+                        return (
+                          <div key={elementKey}>
+                            <strong>{standElementsConfig[elementKey]?.label}:</strong>
+                            <ul className="ml-4 list-disc">
+                              {Object.entries(selections).map(([subKey, subSelections]) => {
+                                if (subSelections === true) {
+                                  return (
+                                    <li key={subKey}>
+                                      {standElementsConfig[elementKey]?.subOptions[subKey]?.label}
+                                    </li>
+                                  );
+                                } else if (typeof subSelections === 'object') {
+                                  return (
+                                    <li key={subKey}>
+                                      {standElementsConfig[elementKey]?.subOptions[subKey]?.label}
+                                      <ul className="ml-4 list-circle">
+                                        {Object.entries(subSelections).map(([subSubKey, selected]) => 
+                                          selected && (
+                                            <li key={subSubKey}>
+                                              {standElementsConfig[elementKey]?.subOptions[subKey]?.subOptions[subSubKey]?.label}
+                                            </li>
+                                          )
+                                        )}
+                                      </ul>
+                                    </li>
+                                  );
+                                }
+                                return null;
+                              })}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
