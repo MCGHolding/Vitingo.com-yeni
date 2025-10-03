@@ -5105,7 +5105,7 @@ def test_draft_invoice_deletion(draft_invoice_id=None):
 
 def test_draft_invoice_integration_workflow():
     """
-    Test the complete draft invoice workflow: create → retrieve → delete.
+    Test the complete draft invoice workflow: create > retrieve > delete.
     
     Requirements to verify:
     1. Complete workflow from creation to deletion works seamlessly
