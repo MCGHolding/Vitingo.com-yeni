@@ -6780,27 +6780,6 @@ async def update_stand_element(element_key: str, update_data: StandElementCreate
             
             return {"success": True, "message": f"Main element {element_key} updated successfully"}
         
-        else:
-            # Updating main element
-            update_fields = {
-                "label": update_data.label,
-                "updated_at": datetime.utcnow()
-            }
-            if update_data.icon:
-                update_fields["icon"] = update_data.icon
-            if hasattr(update_data, 'required'):
-                update_fields["required"] = update_data.required
-            
-            result = await db.stand_elements.update_one(
-                {"key": element_key},
-                {"$set": update_fields}
-            )
-            
-            if result.matched_count == 0:
-                raise HTTPException(status_code=404, detail="Element not found")
-            
-            return {"success": True, "message": f"Element {element_key} updated"}
-        
     except HTTPException:
         raise
     except Exception as e:
