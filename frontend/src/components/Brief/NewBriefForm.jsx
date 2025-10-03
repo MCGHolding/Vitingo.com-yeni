@@ -2593,7 +2593,7 @@ function AddElementForm({ level, parentKey, parentSubKey, editMode = false, edit
 }
 
 // New Country Profile Form Component  
-function NewCountryProfileForm({ onSuccess, onCancel }) {
+function NewCountryProfileForm({ onSuccess, onCancel, showToast }) {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const [formData, setFormData] = useState({
     code: '',
