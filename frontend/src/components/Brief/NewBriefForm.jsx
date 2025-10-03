@@ -883,14 +883,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
     setIsAddElementModalOpen(true);
   };
 
-  const refreshStandElements = async () => {
-    const response = await fetch(`${BACKEND_URL}/api/stand-elements`);
-    if (response.ok) {
-      const elementsData = await response.json();
-      setStandElementsConfig(elementsData);
-    }
-  };
-
   const canProceedFromStep2 = () => {
     // At least one item must be selected, and if Zemin is selected, it must have proper sub-options
     const hasSelections = stepData.selectedItems && stepData.selectedItems.length > 0;
