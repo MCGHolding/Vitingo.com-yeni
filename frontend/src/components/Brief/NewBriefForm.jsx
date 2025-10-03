@@ -651,9 +651,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     }`}
                   >
                     {profile.name}
-                    {profile.currency && (
-                      <span className="ml-2 text-sm opacity-75">({profile.currency})</span>
-                    )}
                   </button>
                 ))}
               </div>
