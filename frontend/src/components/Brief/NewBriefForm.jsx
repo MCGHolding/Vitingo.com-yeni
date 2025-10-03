@@ -627,8 +627,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
         newElements[elementKey][subOptionKey][subSubOptionKey] = 
           !newElements[elementKey][subOptionKey][subSubOptionKey];
       } else {
-        // Second level selection
-        newElements[elementKey][subOptionKey] = !newElements[elementKey][subOptionKey];
+        // Second level selection - if has sub-options, initialize as object, else boolean
+        const hasSubOptions = standElementsConfig[elementKey]?.subOptions[subOptionKey]?.subOptions;
+        if (hasSubOptions) {
+          // If it has sub-options, toggle selection but keep it expanded
+          const currentState = newElements[elementKey][subOptionKey];
+          if (!currentState || typeof currentState === 'boolean') {
+            newElements[elementKey][subOptionKey] = { _selected: true };
+          } else {
+            newElements[elementKey][subOptionKey] = currentState._selected ? null : { _selected: true };
+          }
+        } else {
+          // Simple boolean toggle for options without sub-options
+          newElements[elementKey][subOptionKey] = !newElements[elementKey][subOptionKey];
+        }
       }
 
       return {
