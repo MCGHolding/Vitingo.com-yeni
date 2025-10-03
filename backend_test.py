@@ -2150,8 +2150,6 @@ def test_stand_elements_unlimited_depth():
     except Exception as e:
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
-    5. Should handle empty database by creating default elements
-    """
     
     print("=" * 80)
     print("TESTING GET RECURSIVE STAND ELEMENTS ENDPOINT")
