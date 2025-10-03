@@ -688,10 +688,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   <SelectContent>
                     {projects.map(project => (
                       <SelectItem key={project.id} value={project.id}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{project.name}</span>
-                          <span className="text-xs text-gray-500">{project.city}, {project.country}</span>
-                        </div>
+                        <span className="font-medium">{project.name}</span>
                       </SelectItem>
                     ))}
                   </SelectContent>
