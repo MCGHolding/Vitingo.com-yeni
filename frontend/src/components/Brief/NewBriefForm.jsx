@@ -83,6 +83,17 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [relatedPeople, setRelatedPeople] = useState([]);
   const [selectedPersonId, setSelectedPersonId] = useState('');
+  
+  // Multi-step form states
+  const [currentStep, setCurrentStep] = useState(1);
+  const [stepData, setStepData] = useState({
+    standElements: [],
+    employeeCount: '',
+    employeeDetails: '',
+    priceImportance: 3,
+    designImportance: 3,
+    designFiles: []
+  });
 
   // Load customers data
   const [customers, setCustomers] = useState([]);
