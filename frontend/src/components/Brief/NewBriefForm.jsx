@@ -640,19 +640,25 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 Brief formu hangi ülke için hazırlanacak?
               </label>
               <div className="flex space-x-2">
-                {countryProfiles.map((profile) => (
-                  <button
-                    key={profile.code}
-                    onClick={() => setSelectedCountryProfile(profile.code)}
-                    className={`px-6 py-3 rounded-lg font-medium transition-all ${
-                      selectedCountryProfile === profile.code
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {profile.name}
-                  </button>
-                ))}
+                {countryProfiles
+                  .sort((a, b) => {
+                    // Custom sorting: Amerika first, Türkiye second, Avrupa third, Diğer last
+                    const order = { 'US': 1, 'TR': 2, 'DE': 3, 'OTHER': 4 };
+                    return (order[a.code] || 999) - (order[b.code] || 999);
+                  })
+                  .map((profile) => (
+                    <button
+                      key={profile.code}
+                      onClick={() => setSelectedCountryProfile(profile.code)}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all ${
+                        selectedCountryProfile === profile.code
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {profile.name}
+                    </button>
+                  ))}
               </div>
             </div>
             
