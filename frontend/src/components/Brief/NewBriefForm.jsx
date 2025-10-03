@@ -2165,6 +2165,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 fetchCountryProfiles();
               }}
               onCancel={() => setIsNewCountryModalOpen(false)}
+              showToast={showToast}
             />
           </div>
         </div>
