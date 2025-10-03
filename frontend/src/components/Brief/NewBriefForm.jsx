@@ -576,7 +576,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
     
     // Reset form
     setFormData({
-      projectName: '',
       customerId: '',
       contactPerson: '',
       email: '',
