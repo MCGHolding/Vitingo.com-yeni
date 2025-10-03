@@ -749,12 +749,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   <SelectContent>
                     {customers.map(customer => (
                       <SelectItem key={customer.id} value={customer.id.toString()}>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex flex-col">
-                            <span className="font-medium">{customer.companyName}</span>
-                            <span className="text-xs text-gray-500">{customer.contactPerson}</span>
-                          </div>
-                        </div>
+                        <span className="font-medium">{customer.companyName}</span>
                       </SelectItem>
                     ))}
                   </SelectContent>
