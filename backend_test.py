@@ -2149,10 +2149,7 @@ def test_stand_elements_unlimited_depth():
         return False
     except Exception as e:
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
-        return Falses should return recursive structure configuration
-    2. Should include default elements like 'flooring' and 'furniture'
-    3. Should show nested children structure with unlimited depth
-    4. Should return proper JSON format with labels, icons, required flags
+        return False
     5. Should handle empty database by creating default elements
     """
     
