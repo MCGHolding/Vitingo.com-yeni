@@ -1579,7 +1579,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           {(userRole === 'admin' || userRole === 'super_admin') && (
                             <Button
                               type="button"
-                              onClick={() => openAddElementModal('sub', stepData.selectedElement)}
+                              onClick={() => openAddElementModal('sub', stepData.currentPath[0])}
                               size="sm"
                               variant="outline"
                               className="text-blue-600 border-blue-300 hover:bg-blue-50"
