@@ -586,6 +586,54 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
+  // Modal handlers
+  const openAddElementModal = (level, parentKey = null, parentSubKey = null) => {
+    setElementModalData({
+      level,
+      parentKey,
+      parentSubKey
+    });
+    setIsAddElementModalOpen(true);
+  };
+
+  const handleAddElement = async (elementData) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/stand-elements`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: elementData.key,
+          label: elementData.label,
+          icon: elementData.icon,
+          required: elementData.required || false,
+          parent_key: elementModalData.parentKey,
+          parent_sub_key: elementModalData.parentSubKey
+        }),
+      });
+      
+      if (response.ok) {
+        // Refresh stand elements
+        const elementsResponse = await fetch(`${BACKEND_URL}/api/stand-elements`);
+        if (elementsResponse.ok) {
+          const elementsData = await elementsResponse.json();
+          setStandElementsConfig(elementsData);
+        }
+        
+        setIsAddElementModalOpen(false);
+        // Show success message
+        alert('Element başarıyla eklendi!');
+      } else {
+        const error = await response.json();
+        alert('Hata: ' + (error.detail || 'Element eklenemedi'));
+      }
+    } catch (error) {
+      console.error('Error adding element:', error);
+      alert('Bir hata oluştu');
+    }
+  };
+
   const canProceedFromStep2 = () => {
     // At least one item must be selected, and if Zemin is selected, it must have proper sub-options
     const hasSelections = stepData.selectedItems && stepData.selectedItems.length > 0;
