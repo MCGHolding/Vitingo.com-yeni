@@ -140,7 +140,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     // Stand Elements - Recursive Selection State
     currentPath: [], // Array of selected keys for current path
     selectedItems: [], // Array of complete selections
-    standElements: {} // For backward compatibility
+    standElements: {}, // For backward compatibility
     
     // Other step data
     employeeCount: '',
