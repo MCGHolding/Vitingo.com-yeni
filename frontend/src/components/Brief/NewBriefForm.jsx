@@ -701,17 +701,76 @@ export default function NewBriefForm({ onBackToDashboard }) {
     );
   };
 
-  const canProceedFromStep2 = () => {
-    // Check if all selected required elements have valid selections
-    return Object.keys(stepData.standElements).every(elementKey => {
-      const element = stepData.standElements[elementKey];
-      if (!element) return true; // Not selected, so OK
+  // Cascade dropdown handlers
+  const handleCascadeSelection = (level, value) => {
+    setStepData(prev => {
+      const newData = { ...prev };
       
-      const config = standElementsConfig[elementKey];
-      if (!config?.required) return true; // Not required, so OK
+      if (level === 'element') {
+        newData.selectedElement = value;
+        newData.selectedSubOption = ''; // Reset lower levels
+        newData.selectedSubSubOption = '';
+      } else if (level === 'subOption') {
+        newData.selectedSubOption = value;
+        newData.selectedSubSubOption = ''; // Reset lower level
+      } else if (level === 'subSubOption') {
+        newData.selectedSubSubOption = value;
+      }
       
-      return hasRequiredSelections(elementKey);
+      return newData;
     });
+  };
+
+  const addSelectionToList = () => {
+    if (!stepData.selectedElement || !stepData.selectedSubOption) return;
+    
+    const elementConfig = standElementsConfig[stepData.selectedElement];
+    const subConfig = elementConfig.subOptions[stepData.selectedSubOption];
+    const subSubConfig = stepData.selectedSubSubOption ? 
+      subConfig.subOptions?.[stepData.selectedSubSubOption] : null;
+    
+    const newItem = {
+      element: stepData.selectedElement,
+      subOption: stepData.selectedSubOption,
+      subSubOption: stepData.selectedSubSubOption,
+      elementLabel: elementConfig.label,
+      subOptionLabel: subConfig.label,
+      subSubOptionLabel: subSubConfig?.label
+    };
+    
+    setStepData(prev => ({
+      ...prev,
+      selectedItems: [...(prev.selectedItems || []), newItem],
+      selectedElement: '',
+      selectedSubOption: '',
+      selectedSubSubOption: ''
+    }));
+  };
+
+  const removeSelectionFromList = (index) => {
+    setStepData(prev => ({
+      ...prev,
+      selectedItems: prev.selectedItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const canProceedFromStep2 = () => {
+    // At least one item must be selected, and if Zemin is selected, it must have proper sub-options
+    const hasSelections = stepData.selectedItems && stepData.selectedItems.length > 0;
+    
+    if (!hasSelections) return false;
+    
+    // Check if required elements (like Zemin/flooring) are properly configured
+    const requiredElements = ['flooring']; // Elements that require selection
+    const selectedElements = stepData.selectedItems.map(item => item.element);
+    
+    return requiredElements.every(reqElement => {
+      if (!selectedElements.includes(reqElement)) return false; // Required element not selected
+      
+      // Check if the required element has proper sub-selections
+      const elementItems = stepData.selectedItems.filter(item => item.element === reqElement);
+      return elementItems.some(item => item.subOption); // At least one has sub-option
+    }) || !requiredElements.some(reqElement => selectedElements.includes(reqElement)); // Or no required elements selected
   };
 
   const handleStepFileUpload = (field, files) => {
