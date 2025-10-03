@@ -337,6 +337,35 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   };
 
+  // Step navigation handlers
+  const handleNextStep = () => {
+    if (currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleStepDataChange = (field, value) => {
+    setStepData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleElementToggle = (element) => {
+    setStepData(prev => ({
+      ...prev,
+      standElements: prev.standElements.includes(element) 
+        ? prev.standElements.filter(e => e !== element)
+        : [...prev.standElements, element]
+    }));
+  };
+
   const handleFileUpload = async (field, files) => {
     setUploadingSections(prev => ({ ...prev, [field]: true }));
     
