@@ -27,7 +27,7 @@ import {
   User
 } from 'lucide-react';
 
-// Add CSS for slider styling
+// Add CSS for slider styling and animations
 const sliderStyles = `
   .slider::-webkit-slider-thumb {
     appearance: none;
@@ -45,6 +45,21 @@ const sliderStyles = `
     background: #2563eb;
     cursor: pointer;
     border: none;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
