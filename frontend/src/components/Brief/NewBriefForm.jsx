@@ -37,9 +37,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
     phone: '',
     
     // Event/Fair Information
+    projectId: '',
     eventName: '',
     eventLocation: '',
     eventDate: '',
+    eventCity: '',
+    eventCountry: '',
+    conventionCenter: '',
     eventDuration: '',
     
     // Stand Requirements
