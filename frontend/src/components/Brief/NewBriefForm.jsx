@@ -1418,7 +1418,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           <SelectValue placeholder="Element seçin" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.entries(standElementsConfig).map(([key, config]) => (
+                          {standElementsConfig && Object.entries(standElementsConfig).map(([key, config]) => (
                             <SelectItem key={key} value={key}>
                               {config.label}
                               {config.required && <span className="text-orange-600 ml-2">*</span>}
