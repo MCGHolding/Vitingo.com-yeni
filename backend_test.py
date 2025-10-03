@@ -3069,7 +3069,7 @@ def test_recursive_stand_elements_crud_workflow():
         initial_elements = get_response.json()
         print(f"   Initial elements count: {len(initial_elements)}")
         
-        # Check for Zemin → 36mm → Halı Kaplama structure
+        # Check for Zemin > 36mm > Halı Kaplama structure
         if 'flooring' not in initial_elements:
             print("   ❌ FAIL: Default Zemin (flooring) element not found")
             return False
