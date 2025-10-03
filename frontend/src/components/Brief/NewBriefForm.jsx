@@ -2103,9 +2103,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">
-                {elementModalData.level === 'main' && 'Yeni Ana Element Ekle'}
-                {elementModalData.level === 'sub' && 'Yeni Alt Kategori Ekle'}
-                {elementModalData.level === 'subSub' && 'Yeni Alt Detay Ekle'}
+                {elementModalData.editMode ? (
+                  <>
+                    {elementModalData.level === 'main' && 'Ana Element Düzenle'}
+                    {elementModalData.level === 'sub' && 'Alt Kategori Düzenle'}
+                    {elementModalData.level === 'subSub' && 'Alt Detay Düzenle'}
+                  </>
+                ) : (
+                  <>
+                    {elementModalData.level === 'main' && 'Yeni Ana Element Ekle'}
+                    {elementModalData.level === 'sub' && 'Yeni Alt Kategori Ekle'}
+                    {elementModalData.level === 'subSub' && 'Yeni Alt Detay Ekle'}
+                  </>
+                )}
               </h3>
               <button
                 onClick={() => setIsAddElementModalOpen(false)}
