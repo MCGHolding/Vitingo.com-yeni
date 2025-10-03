@@ -444,6 +444,25 @@ export default function NewBriefForm({ onBackToDashboard }) {
       }));
     }
   };
+  // Enhanced person selection handler with phone and email auto-fill
+  const handlePersonSelectionChange = (personId) => {
+    setSelectedPersonId(personId);
+    
+    if (personId === 'customer-default' && selectedCustomer) {
+      // Fill with customer default info
+      handleInputChange('contactPerson', selectedCustomer.contactPerson || '');
+      handleInputChange('email', selectedCustomer.email || '');
+      handleInputChange('phone', selectedCustomer.phone || '');
+    } else if (personId) {
+      // Fill with related person info
+      const person = relatedPeople.find(p => p.id.toString() === personId);
+      if (person) {
+        handleInputChange('contactPerson', `${person.first_name} ${person.last_name}`);
+        handleInputChange('email', person.email || '');
+        handleInputChange('phone', person.phone || '');
+      }
+    }
+  };
 
   // Step navigation handlers
   const handleNextStep = () => {
