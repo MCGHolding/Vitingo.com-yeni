@@ -179,9 +179,77 @@ export default function NewBriefForm({ onBackToDashboard }) {
       }
     };
 
+    // Load country profiles from backend API
+    const fetchCountryProfiles = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/country-profiles`);
+        if (response.ok) {
+          const profilesData = await response.json();
+          setCountryProfiles(profilesData);
+          console.log('Country profiles loaded:', profilesData.length);
+        } else {
+          console.error('Failed to fetch country profiles');
+          // Fallback to default profiles
+          setCountryProfiles([
+            { code: 'US', name: 'Amerika', currency: 'USD' },
+            { code: 'TR', name: 'Türkiye', currency: 'TRY' },
+            { code: 'OTHER', name: 'Diğer', currency: 'USD' }
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching country profiles:', error);
+        // Fallback to default profiles
+        setCountryProfiles([
+          { code: 'US', name: 'Amerika', currency: 'USD' },
+          { code: 'TR', name: 'Türkiye', currency: 'TRY' },
+          { code: 'OTHER', name: 'Diğer', currency: 'USD' }
+        ]);
+      }
+    };
+
+    // Load form schema for selected country
+    const fetchFormSchema = async (countryCode) => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/forms/brief?country=${countryCode}`);
+        if (response.ok) {
+          const schemaData = await response.json();
+          setFormSchema(schemaData);
+          console.log('Form schema loaded for country:', countryCode, schemaData);
+        } else {
+          console.error('Failed to fetch form schema');
+        }
+      } catch (error) {
+        console.error('Error fetching form schema:', error);
+      }
+    };
+
     fetchCustomers();
     fetchProjects();
+    fetchCountryProfiles();
+    fetchFormSchema(selectedCountryProfile);
   }, []);
+
+  // Reload schema when country profile changes
+  useEffect(() => {
+    const fetchFormSchema = async (countryCode) => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/forms/brief?country=${countryCode}`);
+        if (response.ok) {
+          const schemaData = await response.json();
+          setFormSchema(schemaData);
+          console.log('Form schema loaded for country:', countryCode, schemaData);
+        } else {
+          console.error('Failed to fetch form schema');
+        }
+      } catch (error) {
+        console.error('Error fetching form schema:', error);
+      }
+    };
+
+    if (selectedCountryProfile) {
+      fetchFormSchema(selectedCountryProfile);
+    }
+  }, [selectedCountryProfile]);
 
   // Update contact person and email when customer is selected
   useEffect(() => {
