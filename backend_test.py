@@ -3095,7 +3095,7 @@ def test_recursive_stand_elements_crud_workflow():
             print("   ❌ FAIL: Renk/Miktar properties not found")
             return False
         
-        print("   ✅ PASS: Default recursive structure (Zemin → 36mm → Halı Kaplama → Renk/Miktar) verified")
+        print("   ✅ PASS: Default recursive structure (Zemin > 36mm > Halı Kaplama > Renk/Miktar) verified")
         
         # Test 2: Attempt to create new element (expected to fail due to backend issue)
         print("\n2. Attempting to create new element (expected to fail due to backend implementation issue)...")
