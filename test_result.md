@@ -1569,7 +1569,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Collection Statistics Endpoint Testing"
+    - "New Category Addition System Testing"
   stuck_tasks: 
     - "New Collection Form Header Total Display"
   test_all: false
