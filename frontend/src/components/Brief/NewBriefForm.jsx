@@ -988,27 +988,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
               </div>
             )}
 
-            {/* Project Selection Section */}
+            {/* Event Information Section - Auto-filled from Project Selection */}
             <div className="border-t pt-6">
               <h4 className="text-lg font-medium text-gray-900 mb-4">Fuar/Etkinlik Bilgileri</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Proje Seçimi
-                  </label>
-                  <Select value={formData.projectId} onValueChange={(value) => handleProjectSelection(value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Proje seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {projects.map(project => (
-                        <SelectItem key={project.id} value={project.id}>
-                          <span className="font-medium">{project.name}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
