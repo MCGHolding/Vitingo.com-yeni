@@ -1156,7 +1156,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => removeFile('designFiles', file.id)}
+                                onClick={() => removeStepFile('designFiles', file.id)}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
