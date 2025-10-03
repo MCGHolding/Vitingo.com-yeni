@@ -1590,7 +1590,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           )}
                         </div>
                         <Select 
-                          value={stepData.selectedSubOption || ''} 
+                          value={stepData.currentPath[1] || ''} 
                           onValueChange={(value) => handleRecursiveSelection(1, value)}
                         >
                           <SelectTrigger>
