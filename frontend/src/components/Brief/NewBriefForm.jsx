@@ -2309,6 +2309,149 @@ export default function NewBriefForm({ onBackToDashboard }) {
         </div>
       )}
 
+      {/* New Category Modal */}
+      {isNewCategoryModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold">Yeni Kategori Ekle</h3>
+              <button
+                onClick={() => {
+                  setIsNewCategoryModalOpen(false);
+                  setNewCategoryData({
+                    type: 'text',
+                    label: '',
+                    value: '',
+                    color: '#000000'
+                  });
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Category Type Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kategori Türü
+                </label>
+                <Select 
+                  value={newCategoryData.type} 
+                  onValueChange={(value) => setNewCategoryData(prev => ({...prev, type: value}))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kategori türü seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Ürün / Hizmet Türü</SelectItem>
+                    <SelectItem value="number">Miktar</SelectItem>
+                    <SelectItem value="color">Renk</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Category Label */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kategori Adı
+                </label>
+                <Input
+                  type="text"
+                  value={newCategoryData.label}
+                  onChange={(e) => setNewCategoryData(prev => ({...prev, label: e.target.value}))}
+                  placeholder="Kategori adını girin"
+                  className="w-full"
+                />
+              </div>
+
+              {/* Dynamic Input Based on Type */}
+              {newCategoryData.type === 'text' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ürün/Hizmet Adı
+                  </label>
+                  <Input
+                    type="text"
+                    value={newCategoryData.value}
+                    onChange={(e) => setNewCategoryData(prev => ({...prev, value: e.target.value}))}
+                    placeholder="Ürün veya hizmet adını girin"
+                    className="w-full"
+                  />
+                </div>
+              )}
+
+              {newCategoryData.type === 'number' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Miktar
+                  </label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={newCategoryData.value}
+                    onChange={(e) => setNewCategoryData(prev => ({...prev, value: e.target.value}))}
+                    placeholder="Miktar girin"
+                    className="w-full"
+                  />
+                </div>
+              )}
+
+              {newCategoryData.type === 'color' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Renk Seçimi
+                  </label>
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="color"
+                      value={newCategoryData.color}
+                      onChange={(e) => setNewCategoryData(prev => ({...prev, color: e.target.value}))}
+                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                    />
+                    <Input
+                      type="text"
+                      value={newCategoryData.color}
+                      onChange={(e) => setNewCategoryData(prev => ({...prev, color: e.target.value}))}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsNewCategoryModalOpen(false);
+                  setNewCategoryData({
+                    type: 'text',
+                    label: '',
+                    value: '',
+                    color: '#000000'
+                  });
+                }}
+              >
+                İptal
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddNewCategory}
+                disabled={!newCategoryData.label || (!newCategoryData.value && newCategoryData.type !== 'color')}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Kategori Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Professional Toast Notification */}
       {toastMessage.isVisible && (
         <div className="fixed top-4 right-4 z-[70] animate-slideIn">
