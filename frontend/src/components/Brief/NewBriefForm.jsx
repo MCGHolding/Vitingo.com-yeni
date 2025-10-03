@@ -626,6 +626,71 @@ export default function NewBriefForm({ onBackToDashboard }) {
         </div>
       </div>
 
+      {/* Country Profile Selection */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Building2 className="h-5 w-5" />
+            <span>Ülke Profili</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Brief formu hangi ülke için hazırlanacak?
+              </label>
+              <div className="flex space-x-2">
+                {countryProfiles.map((profile) => (
+                  <button
+                    key={profile.code}
+                    onClick={() => setSelectedCountryProfile(profile.code)}
+                    className={`px-6 py-3 rounded-lg font-medium transition-all ${
+                      selectedCountryProfile === profile.code
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {profile.name}
+                    {profile.currency && (
+                      <span className="ml-2 text-sm opacity-75">({profile.currency})</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* +Yeni Ülke Button (Only for admin/super_admin) */}
+            {(userRole === 'admin' || userRole === 'super_admin') && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setIsNewCountryModalOpen(true)}
+                  className="flex items-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Yeni Ülke</span>
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Country Profile Info */}
+          {formSchema.country_name && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center space-x-4 text-sm">
+                <span><strong>Ülke:</strong> {formSchema.country_name}</span>
+                <span><strong>Para Birimi:</strong> {formSchema.currency}</span>
+                <span><strong>Tarih Formatı:</strong> {formSchema.date_format}</span>
+                {formSchema.tax_config?.tax_name && (
+                  <span><strong>Vergi:</strong> {formSchema.tax_config.tax_name} (%{(formSchema.tax_config.rate * 100).toFixed(1)})</span>
+                )}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information Card */}
         <Card>
