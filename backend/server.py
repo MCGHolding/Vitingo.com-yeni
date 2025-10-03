@@ -6787,48 +6787,38 @@ async def update_stand_element(element_key: str, update_data: StandElementCreate
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/stand-elements/{element_key}")
-async def delete_stand_element(element_key: str, sub_key: str = None, sub_sub_key: str = None):
-    """Delete stand element or sub-element (admin+ only)"""
+async def delete_stand_element(element_key: str, parent_path: str = None):
+    """Delete stand element with recursive path support (admin+ only)"""
     try:
         # TODO: Add role check - only admin and super_admin can delete
         
-        if sub_key:
-            # Deleting sub-element
-            existing = await db.stand_elements.find_one({"key": element_key})
+        if parent_path:
+            # Deleting nested element using dot notation path
+            path_parts = parent_path.split('.')
+            main_element_key = path_parts[0]
+            
+            existing = await db.stand_elements.find_one({"key": main_element_key})
             if not existing:
-                raise HTTPException(status_code=404, detail="Element not found")
+                raise HTTPException(status_code=404, detail="Main element not found")
             
-            sub_options = existing.get("subOptions", {})
-            
-            if sub_sub_key:
-                # Deleting sub-sub-element
-                if sub_key in sub_options and "subOptions" in sub_options[sub_key]:
-                    if sub_sub_key in sub_options[sub_key]["subOptions"]:
-                        del sub_options[sub_key]["subOptions"][sub_sub_key]
-                        
-                        await db.stand_elements.update_one(
-                            {"key": element_key},
-                            {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
-                        )
-                        
-                        return {"success": True, "message": "Sub-sub-element deleted"}
-                    else:
-                        raise HTTPException(status_code=404, detail="Sub-sub-element not found")
-                else:
-                    raise HTTPException(status_code=404, detail="Sub-element not found")
+            # Build unset path for nested element
+            if len(path_parts) == 1:
+                # Deleting element from main structure
+                unset_path = f"structure.{element_key}"
             else:
-                # Deleting sub-element
-                if sub_key in sub_options:
-                    del sub_options[sub_key]
-                    
-                    await db.stand_elements.update_one(
-                        {"key": element_key},
-                        {"$set": {"subOptions": sub_options, "updated_at": datetime.utcnow()}}
-                    )
-                    
-                    return {"success": True, "message": "Sub-element deleted"}
-                else:
-                    raise HTTPException(status_code=404, detail="Sub-element not found")
+                # Deleting element from nested children
+                nested_path = f"structure.{'.children.'.join(path_parts[1:])}.children.{element_key}"
+                unset_path = nested_path
+            
+            await db.stand_elements.update_one(
+                {"key": main_element_key},
+                {
+                    "$unset": {unset_path: ""},
+                    "$set": {"updated_at": datetime.utcnow()}
+                }
+            )
+            
+            return {"success": True, "message": f"Element {element_key} deleted from path {parent_path}"}
         
         else:
             # Deleting main element
@@ -6837,7 +6827,7 @@ async def delete_stand_element(element_key: str, sub_key: str = None, sub_sub_ke
             if result.deleted_count == 0:
                 raise HTTPException(status_code=404, detail="Element not found")
             
-            return {"success": True, "message": f"Element {element_key} deleted"}
+            return {"success": True, "message": f"Main element {element_key} deleted"}
         
     except HTTPException:
         raise
