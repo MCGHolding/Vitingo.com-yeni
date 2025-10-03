@@ -6443,11 +6443,11 @@ async def get_brief_form_schema(country: str = "US"):
 
 @api_router.get("/stand-elements")
 async def get_stand_elements():
-    """Get all stand elements configuration"""
+    """Get all stand elements configuration with recursive structure"""
     try:
         elements = await db.stand_elements.find().to_list(length=None)
         
-        # If no custom elements exist, create default configuration
+        # If no custom elements exist, create default recursive configuration
         if not elements:
             default_elements = [
                 {
@@ -6455,41 +6455,77 @@ async def get_stand_elements():
                     "label": "Zemin",
                     "icon": "🟫",
                     "required": True,
-                    "subOptions": {
+                    "structure": {
                         "raised36mm": {
+                            "key": "raised36mm",
                             "label": "36mm Yükseltilmiş Zemin",
-                            "subOptions": {
-                                "carpet": {"label": "Halı Kaplama", "icon": "🟫"},
-                                "parquet": {"label": "Parke Kaplama", "icon": "🪵"},
-                                "pvc": {"label": "PVC Kaplama", "icon": "⬜"}
+                            "element_type": "option",
+                            "children": {
+                                "carpet": {
+                                    "key": "carpet",
+                                    "label": "Halı Kaplama",
+                                    "icon": "🟫",
+                                    "element_type": "option",
+                                    "children": {
+                                        "carpet_type": {
+                                            "key": "carpet_type",
+                                            "label": "Halı Türü",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["İnce Tüylü", "Kalın Tüylü", "Düz Dokuma", "Berber Halısı"]
+                                        },
+                                        "color": {
+                                            "key": "color",
+                                            "label": "Renk",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Gri", "Bej", "Lacivert", "Kırmızı", "Yeşil", "Siyah"]
+                                        },
+                                        "quantity": {
+                                            "key": "quantity",
+                                            "label": "Miktar",
+                                            "element_type": "unit",
+                                            "input_type": "number",
+                                            "unit": "m²"
+                                        }
+                                    }
+                                },
+                                "parquet": {
+                                    "key": "parquet",
+                                    "label": "Parke Kaplama",
+                                    "icon": "🪵",
+                                    "element_type": "option",
+                                    "children": {
+                                        "wood_type": {
+                                            "key": "wood_type",
+                                            "label": "Ahşap Türü",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Meşe", "Ceviz", "Kayın", "Laminat"]
+                                        },
+                                        "color": {
+                                            "key": "color",
+                                            "label": "Renk Tonu",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Açık Ton", "Orta Ton", "Koyu Ton", "Doğal"]
+                                        },
+                                        "quantity": {
+                                            "key": "quantity",
+                                            "label": "Miktar",
+                                            "element_type": "unit",
+                                            "input_type": "number",
+                                            "unit": "m²"
+                                        }
+                                    }
+                                }
                             }
                         },
                         "standard": {
+                            "key": "standard",
                             "label": "Standart Zemin",
-                            "subOptions": {
-                                "carpet": {"label": "Halı", "icon": "🟫"},
-                                "concrete": {"label": "Beton", "icon": "⬜"}
-                            }
-                        },
-                        "platform": {
-                            "label": "Platform Zemin",
-                            "subOptions": {
-                                "wooden": {"label": "Ahşap Platform", "icon": "🪵"},
-                                "metal": {"label": "Metal Platform", "icon": "⚙️"}
-                            }
+                            "element_type": "option"
                         }
-                    },
-                    "created_by": "system"
-                },
-                {
-                    "key": "counter",
-                    "label": "Tezgah",
-                    "icon": "🏪",
-                    "required": False,
-                    "subOptions": {
-                        "reception": {"label": "Karşılama Tezgahı", "icon": "🏪"},
-                        "display": {"label": "Sergi Tezgahı", "icon": "📊"},
-                        "service": {"label": "Servis Tezgahı", "icon": "☕"}
                     },
                     "created_by": "system"
                 },
@@ -6498,24 +6534,56 @@ async def get_stand_elements():
                     "label": "Mobilya",
                     "icon": "🪑",
                     "required": False,
-                    "subOptions": {
+                    "structure": {
                         "seating": {
+                            "key": "seating",
                             "label": "Oturma Grupları",
-                            "subOptions": {
-                                "armchairs": {"label": "Berjer/Koltuk", "icon": "🛋️"},
-                                "chairs": {"label": "Sandalyeler", "icon": "🪑"},
-                                "sofas": {"label": "Kanepe Takımı", "icon": "🛋️"}
+                            "element_type": "option",
+                            "children": {
+                                "armchairs": {
+                                    "key": "armchairs",
+                                    "label": "Berjer/Koltuk",
+                                    "icon": "🛋️",
+                                    "element_type": "option",
+                                    "children": {
+                                        "style": {
+                                            "key": "style",
+                                            "label": "Stil",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Modern", "Klasik", "Avangard", "Minimalist"]
+                                        },
+                                        "fabric_type": {
+                                            "key": "fabric_type",
+                                            "label": "Kumaş Türü",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Deri", "Kumaş", "Suni Deri", "Kadife"]
+                                        },
+                                        "color": {
+                                            "key": "color",
+                                            "label": "Renk",
+                                            "element_type": "property",
+                                            "input_type": "select",
+                                            "options": ["Siyah", "Beyaz", "Gri", "Kahverengi", "Lacivert", "Kırmızı"]
+                                        },
+                                        "quantity": {
+                                            "key": "quantity",
+                                            "label": "Miktar",
+                                            "element_type": "unit",
+                                            "input_type": "number",
+                                            "unit": "adet"
+                                        }
+                                    }
+                                },
+                                "sofas": {
+                                    "key": "sofas",
+                                    "label": "Kanepe Takımı",
+                                    "icon": "🛋️",
+                                    "element_type": "option"
+                                }
                             }
-                        },
-                        "tables": {
-                            "label": "Masa Grupları",
-                            "subOptions": {
-                                "meeting": {"label": "Toplantı Masası", "icon": "📋"},
-                                "cocktail": {"label": "Kokteyl Masası", "icon": "🍸"},
-                                "display": {"label": "Sergi Masası", "icon": "📊"}
-                            }
-                        },
-                        "storage": {"label": "Dolap/Raf Sistemleri", "icon": "📚"}
+                        }
                     },
                     "created_by": "system"
                 }
@@ -6524,19 +6592,19 @@ async def get_stand_elements():
             for element_data in default_elements:
                 element = StandElement(**element_data)
                 await db.stand_elements.insert_one(element.dict())
-                logger.info(f"Created default stand element: {element.key}")
+                logger.info(f"Created default recursive stand element: {element.key}")
             
             # Fetch again after inserting defaults
             elements = await db.stand_elements.find().to_list(length=None)
         
-        # Convert to the format expected by frontend
+        # Return recursive structure directly
         config = {}
         for element in elements:
             config[element['key']] = {
                 'label': element['label'],
                 'icon': element.get('icon'),
                 'required': element.get('required', False),
-                'subOptions': element.get('subOptions', {})
+                'structure': element.get('structure', {})
             }
         
         return config
