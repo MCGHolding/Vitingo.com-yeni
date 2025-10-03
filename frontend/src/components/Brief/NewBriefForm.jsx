@@ -394,9 +394,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
       contactPerson: '',
       email: '',
       phone: '',
+      projectId: '',
       eventName: '',
       eventLocation: '',
       eventDate: '',
+      eventCity: '',
+      eventCountry: '',
+      conventionCenter: '',
       eventDuration: '',
       standArea: '',
       standType: '',
@@ -419,6 +423,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     setSelectedCustomer(null);
     setRelatedPeople([]);
     setSelectedPersonId('');
+    setSelectedProject(null);
   };
 
   return (
