@@ -131,6 +131,34 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [isNewCountryModalOpen, setIsNewCountryModalOpen] = useState(false);
   const [userRole, setUserRole] = useState('viewer'); // TODO: Get from auth context
 
+  // Load country profiles from backend API
+  const fetchCountryProfiles = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/country-profiles`);
+      if (response.ok) {
+        const profilesData = await response.json();
+        setCountryProfiles(profilesData);
+        console.log('Country profiles loaded:', profilesData.length);
+      } else {
+        console.error('Failed to fetch country profiles');
+        // Fallback to default profiles
+        setCountryProfiles([
+          { code: 'US', name: 'Amerika', currency: 'USD' },
+          { code: 'TR', name: 'Türkiye', currency: 'TRY' },
+          { code: 'OTHER', name: 'Diğer', currency: 'USD' }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching country profiles:', error);
+      // Fallback to default profiles
+      setCountryProfiles([
+        { code: 'US', name: 'Amerika', currency: 'USD' },
+        { code: 'TR', name: 'Türkiye', currency: 'TRY' },
+        { code: 'OTHER', name: 'Diğer', currency: 'USD' }
+      ]);
+    }
+  };
+
   useEffect(() => {
     // Add slider styles to head
     const styleElement = document.createElement("style");
