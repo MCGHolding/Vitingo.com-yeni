@@ -1518,133 +1518,128 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     <p className="text-gray-600">Dropdown'lardan seçimlerinizi yapın</p>
                   </div>
                   
-                  {/* Cascading Dropdowns */}
+                  {/* Recursive Dynamic Dropdowns */}
                   <div className="space-y-4">
-                    {/* Level 1: Main Elements */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          1. Ana Element Seçin *
-                        </label>
-                        {(userRole === 'admin' || userRole === 'super_admin') && (
-                          <div className="flex space-x-2">
-                            <Button
-                              type="button"
-                              onClick={() => openAddElementModal('main')}
-                              size="sm"
-                              variant="outline"
-                              className="text-green-600 border-green-300 hover:bg-green-50"
+                    {/* Admin Controls */}
+                    {(userRole === 'admin' || userRole === 'super_admin') && (
+                      <div className="flex justify-end space-x-2 mb-4">
+                        <Button
+                          type="button"
+                          onClick={() => openAddElementModal('main')}
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600 border-green-300 hover:bg-green-50"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Yeni Ana Element
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => setIsManageElementsModalOpen(true)}
+                          size="sm"
+                          variant="outline"
+                          className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          Elementleri Yönet
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Recursive Dropdown Levels */}
+                    {(() => {
+                      const renderDropdownLevel = (level) => {
+                        // Get available options for current level
+                        let availableOptions = {};
+                        
+                        if (level === 0) {
+                          // First level - main elements
+                          availableOptions = standElementsConfig || {};
+                        } else {
+                          // Nested levels
+                          const pathToCurrentLevel = stepData.currentPath.slice(0, level);
+                          availableOptions = getCurrentNode(pathToCurrentLevel);
+                        }
+
+                        // If no options available, don't render this level
+                        if (!availableOptions || Object.keys(availableOptions).length === 0) {
+                          return null;
+                        }
+
+                        // Generate level label
+                        let levelLabel = '';
+                        if (level === 0) {
+                          levelLabel = 'Ana Element Seçin *';
+                        } else {
+                          const parentPath = stepData.currentPath.slice(0, level);
+                          const parentLabels = getPathLabels(parentPath);
+                          levelLabel = `${parentLabels[parentLabels.length - 1]} - Alt Kategori Seçin`;
+                        }
+
+                        return (
+                          <div key={level}>
+                            <div className="flex items-center justify-between mb-2">
+                              <label className="block text-sm font-medium text-gray-700">
+                                {level + 1}. {levelLabel}
+                              </label>
+                              {(userRole === 'admin' || userRole === 'super_admin') && level > 0 && (
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    const parentPath = stepData.currentPath.slice(0, level);
+                                    openAddElementModal('sub', ...parentPath);
+                                  }}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                                >
+                                  <Plus className="h-4 w-4 mr-1" />
+                                  Alt Kategori Ekle
+                                </Button>
+                              )}
+                            </div>
+                            <Select 
+                              value={stepData.currentPath[level] || ''} 
+                              onValueChange={(value) => handleRecursiveSelection(level, value)}
                             >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Ana Element Ekle
-                            </Button>
-                            <Button
-                              type="button"
-                              onClick={() => setIsManageElementsModalOpen(true)}
-                              size="sm"
-                              variant="outline"
-                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              Elementleri Yönet
-                            </Button>
+                              <SelectTrigger>
+                                <SelectValue placeholder={
+                                  level === 0 
+                                    ? "Ana element seçin" 
+                                    : "Alt kategori seçin"
+                                } />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(availableOptions).map(([key, config]) => (
+                                  <SelectItem key={key} value={key}>
+                                    {config.label}
+                                    {level === 0 && config.required && <span className="text-orange-600 ml-2">*</span>}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
-                        )}
-                      </div>
-                      <Select 
-                        value={stepData.currentPath[0] || ''} 
-                        onValueChange={(value) => handleRecursiveSelection(0, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Element seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {standElementsConfig && Object.entries(standElementsConfig).map(([key, config]) => (
-                            <SelectItem key={key} value={key}>
-                              {config.label}
-                              {config.required && <span className="text-orange-600 ml-2">*</span>}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        );
+                      };
 
-                    {/* Level 2: Sub Options */}
-                    {stepData.currentPath[0] && Object.keys(getCurrentNode([stepData.currentPath[0]])).length > 0 && (
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            2. {standElementsConfig[stepData.currentPath[0]]?.label} Türü Seçin
-                          </label>
-                          {(userRole === 'admin' || userRole === 'super_admin') && (
-                            <Button
-                              type="button"
-                              onClick={() => openAddElementModal('sub', stepData.currentPath[0])}
-                              size="sm"
-                              variant="outline"
-                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                            >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Alt Kategori Ekle
-                            </Button>
-                          )}
-                        </div>
-                        <Select 
-                          value={stepData.currentPath[1] || ''} 
-                          onValueChange={(value) => handleRecursiveSelection(1, value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={`${standElementsConfig[stepData.currentPath[0]]?.label} türü seçin`} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(getCurrentNode([stepData.currentPath[0]])).map(([key, config]) => (
-                              <SelectItem key={key} value={key}>
-                                {config.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-
-                    {/* Level 3: Sub-Sub Options */}
-                    {stepData.currentPath[0] && stepData.currentPath[1] && 
-                     Object.keys(getCurrentNode([stepData.currentPath[0], stepData.currentPath[1]])).length > 0 && (
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            3. {getCurrentNode([stepData.currentPath[0]])[stepData.currentPath[1]]?.label} Detayı Seçin
-                          </label>
-                          {(userRole === 'admin' || userRole === 'super_admin') && (
-                            <Button
-                              type="button"
-                              onClick={() => openAddElementModal('subSub', stepData.currentPath[0], stepData.currentPath[1])}
-                              size="sm"
-                              variant="outline"
-                              className="text-purple-600 border-purple-300 hover:bg-purple-50"
-                            >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Alt Detay Ekle
-                            </Button>
-                          )}
-                        </div>
-                        <Select 
-                          value={stepData.currentPath[2] || ''} 
-                          onValueChange={(value) => handleRecursiveSelection(2, value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Detay seçin" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(getCurrentNode([stepData.currentPath[0], stepData.currentPath[1]])).map(([key, config]) => (
-                              <SelectItem key={key} value={key}>
-                                {config.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
+                      // Generate dropdowns dynamically based on current path and available options
+                      const dropdowns = [];
+                      
+                      // Always show first level
+                      dropdowns.push(renderDropdownLevel(0));
+                      
+                      // Show subsequent levels if previous level is selected and has children
+                      for (let level = 1; level <= stepData.currentPath.length; level++) {
+                        const dropdown = renderDropdownLevel(level);
+                        if (dropdown) {
+                          dropdowns.push(dropdown);
+                        } else {
+                          break;
+                        }
+                      }
+                      
+                      return dropdowns;
+                    })()}
 
                     {/* Add Selection Button */}
                     {stepData.currentPath.length > 0 && (
