@@ -652,35 +652,76 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   };
 
-  const handleDeleteElement = async (elementKey, subKey = null, subSubKey = null) => {
-    const confirmMessage = subSubKey 
-      ? `"${subSubKey}" alt detayını silmek istediğinizden emin misiniz?`
-      : subKey 
-        ? `"${subKey}" alt kategorisini ve tüm alt detaylarını silmek istediğinizden emin misiniz?`
-        : `"${elementKey}" ana elementini ve tüm alt kategorilerini silmek istediğinizden emin misiniz?`;
+  // Professional Toast System
+  const showToast = (type, title, message) => {
+    setToastMessage({
+      isVisible: true,
+      type,
+      title,
+      message
+    });
     
-    if (!confirm(confirmMessage)) return;
-    
-    try {
-      let url = `${BACKEND_URL}/api/stand-elements/${elementKey}`;
-      if (subKey) url += `?sub_key=${subKey}`;
-      if (subSubKey) url += `&sub_sub_key=${subSubKey}`;
-      
-      const response = await fetch(url, {
-        method: 'DELETE'
-      });
-      
-      if (response.ok) {
-        await refreshStandElements();
-        alert('Element başarıyla silindi!');
-      } else {
-        const error = await response.json();
-        alert('Hata: ' + (error.detail || 'Element silinemedi'));
+    // Auto hide after 4 seconds
+    setTimeout(() => {
+      setToastMessage(prev => ({ ...prev, isVisible: false }));
+    }, 4000);
+  };
+
+  // Professional Confirmation Dialog
+  const showConfirmation = (title, message, onConfirm) => {
+    setConfirmationModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        setConfirmationModal(prev => ({ ...prev, isOpen: false }));
+        onConfirm();
+      },
+      onCancel: () => {
+        setConfirmationModal(prev => ({ ...prev, isOpen: false }));
       }
-    } catch (error) {
-      console.error('Error deleting element:', error);
-      alert('Bir hata oluştu');
-    }
+    });
+  };
+
+  const handleDeleteElement = async (elementKey, subKey = null, subSubKey = null) => {
+    const elementName = subSubKey 
+      ? `"${subSubKey}" alt detayı`
+      : subKey 
+        ? `"${subKey}" alt kategorisi`
+        : `"${elementKey}" ana elementi`;
+    
+    const warningMessage = subSubKey 
+      ? `Bu alt detay kalıcı olarak silinecektir.`
+      : subKey 
+        ? `Bu alt kategori ve tüm alt detayları kalıcı olarak silinecektir.`
+        : `Bu ana element ve tüm alt kategorileri kalıcı olarak silinecektir.`;
+    
+    showConfirmation(
+      `${elementName} Sil`,
+      `${elementName} silmek istediğinizden emin misiniz?\n\n${warningMessage}\n\nBu işlem geri alınamaz.`,
+      async () => {
+        try {
+          let url = `${BACKEND_URL}/api/stand-elements/${elementKey}`;
+          if (subKey) url += `?sub_key=${subKey}`;
+          if (subSubKey) url += `&sub_sub_key=${subSubKey}`;
+          
+          const response = await fetch(url, {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            await refreshStandElements();
+            showToast('success', 'Başarılı!', `${elementName} başarıyla silindi.`);
+          } else {
+            const error = await response.json();
+            showToast('error', 'Hata!', error.detail || 'Element silinemedi.');
+          }
+        } catch (error) {
+          console.error('Error deleting element:', error);
+          showToast('error', 'Hata!', 'Bir hata oluştu, lütfen tekrar deneyin.');
+        }
+      }
+    );
   };
 
   const handleEditElement = (elementKey, elementData, subKey = null, subSubKey = null) => {
