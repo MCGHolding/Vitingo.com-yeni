@@ -641,14 +641,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
         // Refresh stand elements
         await refreshStandElements();
         setIsAddElementModalOpen(false);
-        alert(elementModalData.editMode ? 'Element başarıyla güncellendi!' : 'Element başarıyla eklendi!');
+        showToast('success', 'Başarılı!', 
+          elementModalData.editMode ? 'Element başarıyla güncellendi!' : 'Element başarıyla eklendi!'
+        );
       } else {
         const error = await response.json();
-        alert('Hata: ' + (error.detail || 'Element işlemi başarısız'));
+        showToast('error', 'Hata!', error.detail || 'Element işlemi başarısız.');
       }
     } catch (error) {
       console.error('Error with element:', error);
-      alert('Bir hata oluştu');
+      showToast('error', 'Hata!', 'Bir hata oluştu, lütfen tekrar deneyin.');
     }
   };
 
