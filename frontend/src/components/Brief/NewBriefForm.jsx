@@ -1665,8 +1665,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
   );
 }
 
-// New Country Profile Form Component
+// New Country Profile Form Component  
 function NewCountryProfileForm({ onSuccess, onCancel }) {
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const [formData, setFormData] = useState({
     code: '',
     name: '',
