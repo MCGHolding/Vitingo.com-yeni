@@ -1570,7 +1570,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     </div>
 
                     {/* Level 2: Sub Options */}
-                    {stepData.selectedElement && standElementsConfig[stepData.selectedElement]?.subOptions && (
+                    {stepData.currentPath[0] && Object.keys(getCurrentNode([stepData.currentPath[0]])).length > 0 && (
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-700">
