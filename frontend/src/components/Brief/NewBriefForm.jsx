@@ -1598,10 +1598,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                           type="button"
                           onClick={() => {
                             // Set modal context for main element addition
-                            setNewCategoryData(prev => ({
-                              ...prev,
+                            setNewCategoryData({
+                              label: '',
                               parentPath: null
-                            }));
+                            });
                             setIsNewCategoryModalOpen(true);
                           }}
                           size="sm"
