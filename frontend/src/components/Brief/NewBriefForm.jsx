@@ -861,6 +861,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
     });
   };
 
+  const handleAddChildElement = (pathString) => {
+    console.log('Adding child to:', pathString);
+    
+    // Set modal context for adding child to specific element
+    setNewCategoryData({
+      label: '',
+      parentPath: pathString, // Use the full path as parent
+      editMode: false,
+      editKey: null,
+      editPathString: null
+    });
+    
+    setIsNewCategoryModalOpen(true);
+  };
+
   const handleDeleteElement = async (pathString) => {
     const pathParts = pathString.split('.');
     const elementKey = pathParts[pathParts.length - 1];
