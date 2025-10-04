@@ -675,6 +675,53 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   };
 
+  // Check for duplicate category names in the same parent
+  const checkForDuplicate = (newLabel, parentPath) => {
+    try {
+      if (!standElementsConfig || Object.keys(standElementsConfig).length === 0) {
+        return false;
+      }
+
+      const normalizeLabel = (label) => label.toLowerCase().trim();
+      const newLabelNormalized = normalizeLabel(newLabel);
+
+      if (!parentPath) {
+        // Checking in main elements
+        return Object.values(standElementsConfig).some(element => 
+          normalizeLabel(element.label) === newLabelNormalized
+        );
+      }
+
+      // Navigate to the parent category
+      const pathParts = parentPath.split('.');
+      let currentNode = standElementsConfig;
+      
+      // Navigate through the path
+      for (let i = 0; i < pathParts.length; i++) {
+        const key = pathParts[i];
+        if (i === 0) {
+          // First level - main element
+          currentNode = currentNode[key];
+          if (!currentNode) return false;
+          currentNode = currentNode.structure || {};
+        } else {
+          // Nested levels - follow children
+          currentNode = currentNode[key];
+          if (!currentNode) return false;
+          currentNode = currentNode.children || {};
+        }
+      }
+
+      // Check if the new label already exists in current level
+      return Object.values(currentNode).some(element => 
+        element.label && normalizeLabel(element.label) === newLabelNormalized
+      );
+    } catch (error) {
+      console.error('Error checking for duplicates:', error);
+      return false; // In case of error, allow addition but log the error
+    }
+  };
+
   // New Category or Edit Category Handler
   const handleAddNewCategory = async () => {
     try {
