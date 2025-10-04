@@ -1841,29 +1841,27 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 )}
                               </div>
                             </div>
-                            <Select 
+                            <select 
                               value={stepData.currentPath[level] || ''} 
-                              onValueChange={(value) => handleRecursiveSelection(level, value)}
+                              onChange={(e) => handleRecursiveSelection(level, e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                              <SelectTrigger>
-                                <SelectValue placeholder={
-                                  level === 0 
-                                    ? "Ana element seçin" 
-                                    : "Alt kategori seçin"
-                                } />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.entries(availableOptions).map(([key, config]) => {
-                                  console.log(`DEBUG SelectItem - Level ${level}, Key: ${key}, Config:`, config);
-                                  return (
-                                    <SelectItem key={key} value={key}>
-                                      {config.label}
-                                      {level === 0 && config.required && <span className="text-orange-600 ml-2">*</span>}
-                                    </SelectItem>
-                                  );
-                                })}
-                              </SelectContent>
-                            </Select>
+                              <option value="">
+                                {level === 0 
+                                  ? "Ana element seçin" 
+                                  : "Alt kategori seçin"
+                                }
+                              </option>
+                              {Object.entries(availableOptions).map(([key, config]) => {
+                                console.log(`DEBUG SelectOption - Level ${level}, Key: ${key}, Config:`, config);
+                                return (
+                                  <option key={key} value={key}>
+                                    {config.label}
+                                    {level === 0 && config.required ? ' *' : ''}
+                                  </option>
+                                );
+                              })}
+                            </select>
                           </div>
                         );
                       };
