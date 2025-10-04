@@ -2723,7 +2723,7 @@ function DraggableElement({ elementKey, elementData, path, depth, index, moveEle
   );
 }
 
-function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
+function ManageElementsPanel({ elementsConfig, onEdit, onDelete, onAddChild }) {
   const [elements, setElements] = useState([]);
 
   // Convert elementsConfig to flat array for drag&drop
