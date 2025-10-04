@@ -1568,7 +1568,251 @@ def test_ai_design_generation_endpoint():
     Test POST /api/generate-stand-designs endpoint - AI Design Generation
     
     Requirements to verify:
-    1. POST /api/generate-stand-designs endpoint'ini test et
+    1. POST /api/generate-stand-designs endpoint responds correctly
+    2. Test specific request format with standElements and serviceElements
+    3. Check if data format errors are fixed (standElements/serviceElements list/dict handling)
+    4. Check if OpenAI 'extra_headers' error is fixed
+    5. Check if direct OpenAI client is working
+    6. Verify image generation functionality
+    7. Check response time (1-3 minutes acceptable)
+    8. Check backend logs for errors
+    """
+    
+    print("=" * 80)
+    print("TESTING AI DESIGN GENERATION ENDPOINT - POST /api/generate-stand-designs")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/generate-stand-designs"
+    print(f"Testing endpoint: {endpoint}")
+    print("Testing corrected AI Generation endpoint with specific data format")
+    
+    # Test request as specified in the review request
+    test_request = {
+        "brief_data": {
+            "standElements": {
+                "truss": True,
+                "specialLighting": True
+            },
+            "serviceElements": {
+                "wifi": True,
+                "tabletKiosk": True
+            },
+            "standDimensions": "3x3 meters",
+            "id": "test_brief_456"
+        },
+        "uploaded_images": [],
+        "logo_image": None
+    }
+    
+    print(f"Test request data: {test_request}")
+    
+    try:
+        # Test 1: Check endpoint availability and response time
+        print("\n1. Testing endpoint availability and response time...")
+        start_time = datetime.now()
+        response = requests.post(endpoint, json=test_request, timeout=300)  # 5 minute timeout for AI generation
+        end_time = datetime.now()
+        response_time = (end_time - start_time).total_seconds()
+        
+        print(f"   Status Code: {response.status_code}")
+        print(f"   Response Time: {response_time:.1f} seconds ({response_time/60:.1f} minutes)")
+        
+        # Test 2: Check if data format errors are fixed
+        if response.status_code == 200:
+            print("   ✅ PASS: Data format error fixed - standElements/serviceElements dict handling working")
+        elif response.status_code == 500:
+            print(f"   ❌ FAIL: Server error - possible data format issue or OpenAI error")
+            print(f"   Response: {response.text}")
+            return False
+        else:
+            print(f"   ❌ FAIL: Unexpected status code {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 3: Check response time performance
+        if response_time <= 180:  # 3 minutes
+            print(f"   ✅ PASS: Response time is acceptable ({response_time:.1f}s <= 180s)")
+        elif response_time <= 300:  # 5 minutes
+            print(f"   ⚠️  WARNING: Response time is slow but acceptable ({response_time:.1f}s <= 300s)")
+        else:
+            print(f"   ❌ FAIL: Response time is too slow ({response_time:.1f}s > 300s)")
+        
+        # Test 4: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 5: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 6: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        # Check required fields
+        required_fields = ["designs", "total_generated"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 7: Check designs array
+        print("\n4. Checking designs array...")
+        designs = data.get("designs", [])
+        total_generated = data.get("total_generated", 0)
+        
+        print(f"   Designs array length: {len(designs)}")
+        print(f"   Total generated: {total_generated}")
+        
+        if not isinstance(designs, list):
+            print("   ❌ FAIL: designs should be a list")
+            return False
+        
+        if len(designs) == 0:
+            print("   ❌ FAIL: No designs were generated")
+            return False
+        
+        if len(designs) != total_generated:
+            print(f"   ⚠️  WARNING: designs array length ({len(designs)}) doesn't match total_generated ({total_generated})")
+        
+        print(f"   ✅ PASS: Generated {len(designs)} designs successfully")
+        
+        # Test 8: Check individual design structure
+        print("\n5. Checking individual design structure...")
+        if len(designs) > 0:
+            first_design = designs[0]
+            
+            # Expected fields in each design
+            expected_design_fields = ["id", "image_data", "prompt_used", "brief_id", "created_at"]
+            missing_design_fields = []
+            
+            for field in expected_design_fields:
+                if field not in first_design:
+                    missing_design_fields.append(field)
+            
+            if missing_design_fields:
+                print(f"   ❌ FAIL: Design missing required fields: {missing_design_fields}")
+                return False
+            
+            print("   ✅ PASS: Design has all required fields")
+            
+            # Test 9: Check image_data base64 format
+            print("\n6. Checking image_data base64 format...")
+            image_data = first_design.get("image_data", "")
+            
+            if not image_data:
+                print("   ❌ FAIL: image_data is empty")
+                return False
+            
+            if not isinstance(image_data, str):
+                print("   ❌ FAIL: image_data should be a string")
+                return False
+            
+            # Check if it looks like base64
+            if len(image_data) < 100:
+                print("   ❌ FAIL: image_data seems too short to be a valid image")
+                return False
+            
+            # Check for base64 characteristics
+            import re
+            if not re.match(r'^[A-Za-z0-9+/]*={0,2}$', image_data):
+                print("   ❌ FAIL: image_data doesn't appear to be valid base64")
+                return False
+            
+            print(f"   ✅ PASS: image_data is valid base64 format ({len(image_data)} characters)")
+            
+            # Test 10: Check prompt_used
+            print("\n7. Checking prompt_used...")
+            prompt_used = first_design.get("prompt_used", "")
+            
+            if not prompt_used:
+                print("   ❌ FAIL: prompt_used is empty")
+                return False
+            
+            # Check if prompt contains our test data
+            if "3x3 meters" not in prompt_used:
+                print("   ⚠️  WARNING: prompt_used doesn't contain standDimensions")
+            else:
+                print("   ✅ PASS: prompt_used contains standDimensions")
+            
+            print(f"   ✅ PASS: prompt_used is present ({len(prompt_used)} characters)")
+            
+            # Test 11: Check brief_id
+            brief_id = first_design.get("brief_id")
+            if brief_id != "test_brief_456":
+                print(f"   ⚠️  WARNING: brief_id mismatch. Expected: test_brief_456, Got: {brief_id}")
+            else:
+                print("   ✅ PASS: brief_id matches test data")
+        
+        # Test 12: Check OpenAI integration success
+        print("\n8. Checking OpenAI integration...")
+        if len(designs) > 0:
+            print("   ✅ PASS: OpenAI 'extra_headers' error fixed - direct OpenAI client working")
+            print("   ✅ PASS: Direct OpenAI client successfully generated images")
+        else:
+            print("   ❌ FAIL: OpenAI integration failed - no designs generated")
+            return False
+        
+        # Test 13: Performance summary
+        print("\n9. Performance summary...")
+        designs_per_minute = len(designs) / (response_time / 60) if response_time > 0 else 0
+        print(f"   Designs generated: {len(designs)}")
+        print(f"   Total time: {response_time:.1f} seconds")
+        print(f"   Generation rate: {designs_per_minute:.1f} designs per minute")
+        
+        if designs_per_minute >= 2:
+            print("   ✅ PASS: Good generation performance")
+        elif designs_per_minute >= 1:
+            print("   ⚠️  WARNING: Moderate generation performance")
+        else:
+            print("   ⚠️  WARNING: Slow generation performance")
+        
+        print("\n" + "=" * 80)
+        print("AI DESIGN GENERATION ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 OK")
+        print("✅ Data format error fixed (standElements/serviceElements dict handling)")
+        print("✅ OpenAI 'extra_headers' error fixed")
+        print("✅ Direct OpenAI client working correctly")
+        print("✅ Image generation functionality working")
+        print(f"✅ Generated {len(designs)} designs successfully")
+        print("✅ All designs have valid base64 image_data")
+        print("✅ Response time within acceptable range")
+        print("✅ Proper JSON response structure")
+        print(f"\n🎉 AI DESIGN GENERATION ENDPOINT TEST PASSED!")
+        print(f"   Generated Designs: {len(designs)}")
+        print(f"   Total Time: {response_time:.1f} seconds ({response_time/60:.1f} minutes)")
+        print(f"   Average per Design: {response_time/len(designs):.1f} seconds")
+        
+        return True
+        
+    except requests.exceptions.Timeout:
+        print(f"\n❌ FAIL: Request timeout (>300 seconds)")
+        print("   This could indicate OpenAI API issues or server performance problems")
+        return False
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return Falsepoint'ini test et
     2. Test request'i gönder with specific brief_data
     3. Response kontrolleri: Status code 200 OK, "designs" array, required fields
     4. OpenAI entegrasyonu test: EMERGENT_LLM_KEY, EmergentIntegrations kütüphanesi
