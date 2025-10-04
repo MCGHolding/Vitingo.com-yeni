@@ -2415,6 +2415,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
               elementsConfig={standElementsConfig}
               onEdit={handleEditElement}
               onDelete={handleDeleteElement}
+              onAddChild={handleAddChildElement}
             />
           </div>
         </div>
