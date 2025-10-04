@@ -7003,10 +7003,23 @@ async def generate_stand_designs(request: DesignRequest):
             try:
                 full_prompt = base_prompt + common_suffix
                 
-                # Generate image (simplified parameters to avoid extra_headers issue)
-                images = await image_gen.generate_images(
-                    prompt=full_prompt
+                # Generate image using direct OpenAI client
+                response = await openai_client.images.generate(
+                    model="dall-e-3",
+                    prompt=full_prompt,
+                    size="1024x1024",
+                    quality="standard",
+                    n=1
                 )
+                
+                # Get image URL and download
+                image_url = response.data[0].url
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(image_url) as img_response:
+                        if img_response.status == 200:
+                            images = [await img_response.read()]
+                        else:
+                            images = []
                 
                 if images and len(images) > 0:
                     # Convert to base64
