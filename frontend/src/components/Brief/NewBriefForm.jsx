@@ -1794,7 +1794,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 {level + 1}. {levelLabel}
                               </label>
                               <div className="flex items-center gap-2">
-                                {true && ( // Development: Always show for testing
+                                {level > 0 && ( // Only show on alt kategori levels (level > 0)
                                   <Button
                                     type="button"
                                     onClick={() => {
