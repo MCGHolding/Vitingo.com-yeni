@@ -1797,7 +1797,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                             const parentPath = stepData.currentPath.join('.');
                             setNewCategoryData({
                               label: '',
-                              parentPath: parentPath
+                              parentPath: parentPath,
+                              editMode: false,
+                              editKey: null,
+                              editPathString: null
                             });
                             setIsNewCategoryModalOpen(true);
                           }}
