@@ -6695,9 +6695,17 @@ async def create_stand_element(element_data: StandElementCreate):
         
         else:
             # Creating new main element
-            existing = await db.stand_elements.find_one({"key": element_data.key})
-            if existing:
-                raise HTTPException(status_code=400, detail="Element already exists")
+            existing_key = await db.stand_elements.find_one({"key": element_data.key})
+            if existing_key:
+                raise HTTPException(status_code=400, detail="Element key already exists")
+            
+            # Check for duplicate labels in main elements
+            existing_elements = await db.stand_elements.find().to_list(length=None)
+            existing_labels = [item.get("label", "").lower().strip() for item in existing_elements if item.get("label")]
+            new_label_normalized = element_data.label.lower().strip()
+            
+            if new_label_normalized in existing_labels:
+                raise HTTPException(status_code=400, detail=f'Ana kategori "{element_data.label}" zaten mevcut. Farklı bir isim kullanın.')
             
             element = StandElement(
                 key=element_data.key,
