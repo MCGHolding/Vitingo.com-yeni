@@ -2345,26 +2345,79 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {currentStep === 5 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
-                    <h3 className="text-xl font-semibold mb-2">Etkinlik sırasında stantta kaç çalışan bulunacak?</h3>
-                    <p className="text-gray-600">
-                      Stantta görev yapacak çalışanların sayısını ve pozisyonlarını belirtin. 
-                      Bu bilgi standın tasarımı için önemlidir.
-                    </p>
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-700">
-                        <strong>Örnek:</strong> manager + 3 sales person + hostesses
-                      </p>
-                    </div>
+                    <h3 className="text-xl font-semibold mb-2">Aşağıdakilerden hangisi size uygun?</h3>
+                    <p className="text-gray-600">Birden fazla seçenek işaretleyebilirsiniz</p>
                   </div>
                   
-                  <div className="max-w-2xl mx-auto">
-                    <Textarea
-                      value={stepData.employeeDetails}
-                      onChange={(e) => handleStepDataChange('employeeDetails', e.target.value)}
-                      placeholder="Çalışan sayısı ve pozisyonlarını yazın..."
-                      rows={6}
-                      className="w-full text-center"
-                    />
+                  <div className="max-w-4xl mx-auto space-y-4">
+                    {/* Service Options */}
+                    {[
+                      { id: 'cleaning_during_fair', label: 'Fuar süresince Fuar saatlerinde temizlik görevlisi', hasDetails: false },
+                      { id: 'cleaning_after_fair', label: 'Fuar süresince Fuar kapandıktan sonra temizlik', hasDetails: false },
+                      { id: 'sweep_after_fair', label: 'Fuar süresince Fuar kapandıktan sonra sadece süpürge', hasDetails: false },
+                      { id: 'special_product_cleaning', label: 'Müşteri ait ürünlere özel temizlik', hasDetails: false },
+                      { id: 'steel_polishing', label: 'Paslanmaz çelikler için parlatma hizmeti', hasDetails: true },
+                      { id: 'security_setup', label: 'Kurulum süresince güvenlik görevlisi', hasDetails: false },
+                      { id: 'security_during_fair', label: 'Fuar süresince fuar saatlerinde güvenlik görevlisi', hasDetails: false },
+                      { id: 'security_after_fair', label: 'Fuar süresince fuar kapandıktan sonra güvenlik görevlisi', hasDetails: false },
+                      { id: 'security_dismantling', label: 'Söküm süresince güvenlik görevlisi', hasDetails: false },
+                      { id: 'translator', label: 'Fuar süresince fuar saatlerinde tercüman', hasDetails: true },
+                      { id: 'technical_staff', label: 'Fuar süresince fuar saatlerinde teknik görevli', hasDetails: false },
+                      { id: 'chef', label: 'Fuar süresince Fuar saatlerinde aşçı', hasDetails: false },
+                      { id: 'presenter', label: 'Fuar süresince Fuar saatlerinde sunucu', hasDetails: false }
+                    ].map((service) => (
+                      <div key={service.id} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-start space-x-3">
+                          <input
+                            type="checkbox"
+                            id={service.id}
+                            checked={selectedServices[service.id] || false}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              setSelectedServices(prev => ({
+                                ...prev,
+                                [service.id]: isChecked
+                              }));
+                              // Clear details if unchecked
+                              if (!isChecked && service.hasDetails) {
+                                setServiceDetails(prev => ({
+                                  ...prev,
+                                  [service.id]: ''
+                                }));
+                              }
+                            }}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                          />
+                          <label htmlFor={service.id} className="text-gray-700 cursor-pointer flex-1">
+                            {service.label}
+                          </label>
+                        </div>
+                        
+                        {/* Detail text box for services with hasDetails: true */}
+                        {service.hasDetails && selectedServices[service.id] && (
+                          <div className="mt-3 ml-7">
+                            <textarea
+                              value={serviceDetails[service.id] || ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value.length <= 500) {
+                                  setServiceDetails(prev => ({
+                                    ...prev,
+                                    [service.id]: value
+                                  }));
+                                }
+                              }}
+                              placeholder="Lütfen bu alana detaylı açıklama yazınız"
+                              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[80px] placeholder-gray-400"
+                              rows={3}
+                            />
+                            <div className="text-right text-xs text-gray-500 mt-1">
+                              {(serviceDetails[service.id] || '').length}/500 karakter
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
