@@ -1725,7 +1725,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                     // Set modal context for current level
                                     setNewCategoryData({
                                       label: '',
-                                      parentPath: parentPath.length > 0 ? parentPath.join('.') : null
+                                      parentPath: parentPath.length > 0 ? parentPath.join('.') : null,
+                                      editMode: false,
+                                      editKey: null,
+                                      editPathString: null
                                     });
                                     setIsNewCategoryModalOpen(true);
                                   }}
