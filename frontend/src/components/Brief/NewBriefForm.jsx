@@ -81,6 +81,27 @@ const sliderStyles = `
   }
 `;
 
+// Color palette helper functions
+const getColorPalette = () => [
+  { name: 'Kırmızı', hex: '#EF4444' },
+  { name: 'Turuncu', hex: '#F97316' },
+  { name: 'Sarı', hex: '#EAB308' },
+  { name: 'Yeşil', hex: '#22C55E' },
+  { name: 'Mavi', hex: '#3B82F6' },
+  { name: 'Mor', hex: '#8B5CF6' },
+  { name: 'Pembe', hex: '#EC4899' },
+  { name: 'Kahverengi', hex: '#A16207' },
+  { name: 'Gri', hex: '#6B7280' },
+  { name: 'Siyah', hex: '#1F2937' },
+  { name: 'Beyaz', hex: '#FFFFFF' },
+  { name: 'Lacivert', hex: '#1E40AF' }
+];
+
+const getColorName = (hex) => {
+  const color = getColorPalette().find(c => c.hex === hex);
+  return color ? color.name : 'Renk seçildi';
+};
+
 export default function NewBriefForm({ onBackToDashboard }) {
   const [formData, setFormData] = useState({
     // Basic Information
