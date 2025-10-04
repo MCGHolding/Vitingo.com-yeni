@@ -2193,26 +2193,147 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
-                    <h3 className="text-xl font-semibold mb-2">Etkinlik sırasında stantta kaç çalışan bulunacak?</h3>
-                    <p className="text-gray-600">
-                      Stantta görev yapacak çalışanların sayısını ve pozisyonlarını belirtin. 
-                      Bu bilgi standın tasarımı için önemlidir.
-                    </p>
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-700">
-                        <strong>Örnek:</strong> manager + 3 sales person + hostesses
-                      </p>
-                    </div>
+                    <h3 className="text-xl font-semibold mb-2">Hizmet ve Teknoloji İhtiyaçlarınız</h3>
+                    <p className="text-gray-600">Standınızda bulunmasını istediğiniz hizmet ve teknolojileri seçin</p>
                   </div>
-                  
-                  <div className="max-w-2xl mx-auto">
-                    <Textarea
-                      value={stepData.employeeDetails}
-                      onChange={(e) => handleStepDataChange('employeeDetails', e.target.value)}
-                      placeholder="Çalışan sayısı ve pozisyonlarını yazın..."
-                      rows={6}
-                      className="w-full text-center"
-                    />
+
+                  {/* Service & Technology Icon Selection */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {/* Hava (makineler için) */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.airForMachines ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        airForMachines: !(stepData.serviceElements?.airForMachines)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🌬️</div>
+                        <h4 className="font-semibold">Hava</h4>
+                        <p className="text-sm text-gray-600 mt-1">Makineler için hava basıncı</p>
+                      </div>
+                    </div>
+
+                    {/* Wifi */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.wifi ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        wifi: !(stepData.serviceElements?.wifi)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">📶</div>
+                        <h4 className="font-semibold">Wifi</h4>
+                        <p className="text-sm text-gray-600 mt-1">Kablosuz internet bağlantısı</p>
+                      </div>
+                    </div>
+
+                    {/* Tablet Kiosk */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.tabletKiosk ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        tabletKiosk: !(stepData.serviceElements?.tabletKiosk)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">📱</div>
+                        <h4 className="font-semibold">Tablet Kiosk</h4>
+                        <p className="text-sm text-gray-600 mt-1">Bilgi ve sunum tableti</p>
+                      </div>
+                    </div>
+
+                    {/* Dokunmatik Kiosk */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.touchKiosk ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        touchKiosk: !(stepData.serviceElements?.touchKiosk)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🖥️</div>
+                        <h4 className="font-semibold">Dokunmatik Kiosk</h4>
+                        <p className="text-sm text-gray-600 mt-1">Etkileşimli bilgi ekranı</p>
+                      </div>
+                    </div>
+
+                    {/* Özel Vitrin (Kuyumcu) */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.jewelryShowcase ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        jewelryShowcase: !(stepData.serviceElements?.jewelryShowcase)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">💎</div>
+                        <h4 className="font-semibold">Özel Vitrin</h4>
+                        <p className="text-sm text-gray-600 mt-1">Kuyumcu vitrin, güvenli sergi</p>
+                      </div>
+                    </div>
+
+                    {/* Host/Hostess */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.hostess ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        hostess: !(stepData.serviceElements?.hostess)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">👩‍💼</div>
+                        <h4 className="font-semibold">Host/Hostess</h4>
+                        <p className="text-sm text-gray-600 mt-1">Karşılama ve yönlendirme</p>
+                      </div>
+                    </div>
+
+                    {/* Garson */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.waiter ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        waiter: !(stepData.serviceElements?.waiter)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🍽️</div>
+                        <h4 className="font-semibold">Garson</h4>
+                        <p className="text-sm text-gray-600 mt-1">İkram ve servis hizmeti</p>
+                      </div>
+                    </div>
+
+                    {/* Barista */}
+                    <div 
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
+                        stepData.serviceElements?.barista ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => handleStepDataChange('serviceElements', {
+                        ...(stepData.serviceElements || {}),
+                        barista: !(stepData.serviceElements?.barista)
+                      })}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">☕</div>
+                        <h4 className="font-semibold">Barista</h4>
+                        <p className="text-sm text-gray-600 mt-1">Profesyonel kahve hizmeti</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
