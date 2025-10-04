@@ -2081,7 +2081,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       <div className="text-center">
                         <div className="text-4xl mb-3">💡</div>
                         <h4 className="font-semibold">Özel Aydınlatma</h4>
-                        <p className="text-sm text-gray-600 mt-1">Spot, LED, dekoratif</p>
+                        <p className="text-sm text-gray-600 mt-1">Robot, Avize, 1000 Watt</p>
                       </div>
                     </div>
 
