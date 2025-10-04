@@ -571,12 +571,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Recursive dropdown handler
   const handleRecursiveSelection = (level, value) => {
+    console.log(`Selection made - Level: ${level}, Value: ${value}`);
     setStepData(prev => {
       const newPath = [...prev.currentPath];
       
       // Truncate path to current level and add new selection
       newPath.length = level;
       newPath[level] = value;
+      
+      console.log('New currentPath:', newPath);
+      console.log('Path length:', newPath.length);
       
       return {
         ...prev,
