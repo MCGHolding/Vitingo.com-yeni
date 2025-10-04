@@ -1648,7 +1648,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   
                   {/* Recursive Dynamic Dropdowns */}
                   <div className="space-y-4">
-                    {/* Admin Controls - Temporarily open for testing */}
+                    {/* Admin Controls - Development: Always show for testing */}
                     <div className="flex justify-end space-x-2 mb-4">
                       <Button
                         type="button"
