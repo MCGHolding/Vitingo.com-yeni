@@ -2416,7 +2416,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     type: 'text',
                     label: '',
                     value: '',
-                    color: '#000000'
+                    color: '#000000',
+                    parentPath: null
                   });
                 }}
                 className="text-gray-500 hover:text-gray-700"
