@@ -2456,13 +2456,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-semibold">Yeni Kategori Ekle</h3>
-                {newCategoryData.parentPath && (
+                <h3 className="text-xl font-semibold">
+                  {newCategoryData.editMode ? 'Kategori Düzenle' : 'Yeni Kategori Ekle'}
+                </h3>
+                {newCategoryData.editMode && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Düzenlenen: {newCategoryData.editPathString?.replace(/\./g, ' → ')}
+                  </p>
+                )}
+                {!newCategoryData.editMode && newCategoryData.parentPath && (
                   <p className="text-sm text-gray-600 mt-1">
                     Üst kategori: {newCategoryData.parentPath.replace(/\./g, ' → ')}
                   </p>
                 )}
-                {!newCategoryData.parentPath && (
+                {!newCategoryData.editMode && !newCategoryData.parentPath && (
                   <p className="text-sm text-gray-600 mt-1">
                     Ana element dropdown'una kategori ekleniyor
                   </p>
