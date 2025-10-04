@@ -1894,34 +1894,95 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     {/* Miktar Input Section */}
                     {stepData.currentPath.length > 0 && (
                       <div className="pt-6 space-y-4">
-                        {/* Miktar Row */}
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Miktar
-                          </label>
-                          <div className="flex gap-3 items-center">
-                            <Input
-                              type="number"
-                              placeholder="Miktar girin"
-                              className="flex-1"
-                              min="0"
-                              step="0.01"
-                            />
-                            <select 
-                              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[100px]"
-                            >
-                              <option value="">Birim</option>
-                              <option value="adet">Adet</option>
-                              <option value="m2">m²</option>
-                              <option value="m3">m³</option>
-                              <option value="m">Metre</option>
-                              <option value="kg">Kilogram</option>
-                              <option value="ton">Ton</option>
-                              <option value="lt">Litre</option>
-                              <option value="paket">Paket</option>
-                              <option value="kutu">Kutu</option>
-                              <option value="rulo">Rulo</option>
-                            </select>
+                        {/* Miktar ve Renk Paleti Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Miktar Column */}
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              Miktar
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <Input
+                                type="number"
+                                placeholder="Miktar girin"
+                                className="flex-1"
+                                min="0"
+                                step="0.01"
+                                value={selectedQuantity}
+                                onChange={(e) => setSelectedQuantity(e.target.value)}
+                              />
+                              <select 
+                                value={selectedUnit}
+                                onChange={(e) => setSelectedUnit(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[80px]"
+                              >
+                                <option value="">Birim</option>
+                                <option value="adet">Adet</option>
+                                <option value="m2">m²</option>
+                                <option value="m3">m³</option>
+                                <option value="m">Metre</option>
+                                <option value="kg">Kilogram</option>
+                                <option value="ton">Ton</option>
+                                <option value="lt">Litre</option>
+                                <option value="paket">Paket</option>
+                                <option value="kutu">Kutu</option>
+                                <option value="rulo">Rulo</option>
+                              </select>
+                            </div>
+                          </div>
+                          
+                          {/* Renk Paleti Column */}
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              Renk Paleti
+                            </label>
+                            <div className="relative">
+                              <button
+                                type="button"
+                                onClick={() => setIsColorDropdownOpen(!isColorDropdownOpen)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex items-center justify-between"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {selectedColor && (
+                                    <div 
+                                      className="w-5 h-5 rounded border border-gray-300"
+                                      style={{ backgroundColor: selectedColor }}
+                                    ></div>
+                                  )}
+                                  <span className="text-gray-700">
+                                    {selectedColor ? getColorName(selectedColor) : "Renk seçin"}
+                                  </span>
+                                </div>
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                              
+                              {/* Color Dropdown */}
+                              {isColorDropdownOpen && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                                  <div className="p-3">
+                                    <div className="grid grid-cols-6 gap-2">
+                                      {getColorPalette().map((color) => (
+                                        <button
+                                          key={color.hex}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedColor(color.hex);
+                                            setIsColorDropdownOpen(false);
+                                          }}
+                                          className={`w-8 h-8 rounded border-2 hover:scale-110 transition-transform ${
+                                            selectedColor === color.hex ? 'border-blue-500 shadow-lg' : 'border-gray-300'
+                                          }`}
+                                          style={{ backgroundColor: color.hex }}
+                                          title={color.name}
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                         
