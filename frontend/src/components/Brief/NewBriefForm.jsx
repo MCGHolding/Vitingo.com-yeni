@@ -676,18 +676,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const handleAddNewCategory = async () => {
     try {
       if (!newCategoryData.label.trim()) {
-        showToast('error', 'Hata!', 'Kategori adı gereklidir.');
+        showToast('error', 'Hata!', 'Alt kategori adı gereklidir.');
         return;
-      }
-
-      // Determine value and input_type based on category type
-      let value = newCategoryData.value;
-      let input_type = newCategoryData.type === 'text' ? 'text' : 
-                      newCategoryData.type === 'number' ? 'number' : 
-                      'color';
-      
-      if (newCategoryData.type === 'color') {
-        value = newCategoryData.color;
       }
 
       // Use parent path from modal context
@@ -695,26 +685,17 @@ export default function NewBriefForm({ onBackToDashboard }) {
       
       // Generate unique key from label
       const key = newCategoryData.label.toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '')
+        .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .substring(0, 20) + '_' + Date.now().toString().substring(-4);
 
       const categoryData = {
         key: key,
         label: newCategoryData.label,
-        element_type: newCategoryData.type === 'number' ? 'unit' : 'property',
-        input_type: input_type,
+        element_type: 'option',
+        input_type: 'text',
         parent_path: parentPath
       };
-
-      // Add type-specific properties
-      if (newCategoryData.type === 'number') {
-        categoryData.unit = 'adet'; // Default unit
-      } else if (newCategoryData.type === 'color') {
-        categoryData.options = [value]; // Store selected color as first option
-      } else {
-        categoryData.options = [value]; // Store text value as option
-      }
 
       console.log('Adding new category:', categoryData);
 
@@ -736,10 +717,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
         // Close modal and reset data (but keep current path for continuation)
         setIsNewCategoryModalOpen(false);
         setNewCategoryData({
-          type: 'text',
           label: '',
-          value: '',
-          color: '#000000',
           parentPath: null
         });
         
