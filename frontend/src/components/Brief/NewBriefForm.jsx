@@ -2438,94 +2438,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
             </div>
             
             <div className="space-y-4">
-              {/* Category Type Selection */}
+              {/* Simple Text Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kategori Türü
-                </label>
-                <Select 
-                  value={newCategoryData.type} 
-                  onValueChange={(value) => setNewCategoryData(prev => ({...prev, type: value}))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Kategori türü seçin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="text">Ürün / Hizmet Türü</SelectItem>
-                    <SelectItem value="number">Miktar</SelectItem>
-                    <SelectItem value="color">Renk</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Category Label */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kategori Adı
+                  Alt Kategori Adı
                 </label>
                 <Input
                   type="text"
                   value={newCategoryData.label}
                   onChange={(e) => setNewCategoryData(prev => ({...prev, label: e.target.value}))}
-                  placeholder="Kategori adını girin"
+                  placeholder="Alt kategori adını girin"
                   className="w-full"
+                  autoFocus
                 />
               </div>
-
-              {/* Dynamic Input Based on Type */}
-              {newCategoryData.type === 'text' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ürün/Hizmet Adı
-                  </label>
-                  <Input
-                    type="text"
-                    value={newCategoryData.value}
-                    onChange={(e) => setNewCategoryData(prev => ({...prev, value: e.target.value}))}
-                    placeholder="Ürün veya hizmet adını girin"
-                    className="w-full"
-                  />
-                </div>
-              )}
-
-              {newCategoryData.type === 'number' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Miktar
-                  </label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={newCategoryData.value}
-                    onChange={(e) => setNewCategoryData(prev => ({...prev, value: e.target.value}))}
-                    placeholder="Miktar girin"
-                    className="w-full"
-                  />
-                </div>
-              )}
-
-              {newCategoryData.type === 'color' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Renk Seçimi
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="color"
-                      value={newCategoryData.color}
-                      onChange={(e) => setNewCategoryData(prev => ({...prev, color: e.target.value}))}
-                      className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-                    />
-                    <Input
-                      type="text"
-                      value={newCategoryData.color}
-                      onChange={(e) => setNewCategoryData(prev => ({...prev, color: e.target.value}))}
-                      placeholder="#000000"
-                      className="flex-1"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Modal Actions */}
