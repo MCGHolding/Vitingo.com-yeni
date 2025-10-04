@@ -851,15 +851,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
     );
   };
 
-  const handleEditElement = (elementKey, elementData, subKey = null, subSubKey = null) => {
-    setElementModalData({
-      parentKey: subKey ? elementKey : null,
-      parentSubKey: subSubKey ? subKey : null,
-      level: subSubKey ? 'subSub' : subKey ? 'sub' : 'main',
-      editMode: true,
-      editData: { ...elementData, key: subSubKey || subKey || elementKey }
-    });
-    setIsAddElementModalOpen(true);
+  const handleEditElement = (pathString, elementData) => {
+    console.log('Editing element:', pathString, elementData);
+    // For now, show a toast - we can implement edit modal later
+    showToast('info', 'Düzenleme', `${elementData.label} düzenleme özelliği yakında eklenecek.`);
+    
+    // TODO: Implement recursive element editing modal
+    // This would need to handle the new recursive structure
   };
 
   const canProceedFromStep2 = () => {
