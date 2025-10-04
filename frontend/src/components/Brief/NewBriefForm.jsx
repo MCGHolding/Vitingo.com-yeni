@@ -1648,41 +1648,39 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   
                   {/* Recursive Dynamic Dropdowns */}
                   <div className="space-y-4">
-                    {/* Admin Controls */}
-                    {(userRole === 'admin' || userRole === 'super_admin') && (
-                      <div className="flex justify-end space-x-2 mb-4">
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            // Set modal context for main element addition
-                            setNewCategoryData({
-                              label: '',
-                              parentPath: null,
-                              editMode: false,
-                              editKey: null,
-                              editPathString: null
-                            });
-                            setIsNewCategoryModalOpen(true);
-                          }}
-                          size="sm"
-                          variant="outline"
-                          className="text-green-600 border-green-300 hover:bg-green-50"
-                        >
-                          <Plus className="h-4 w-4 mr-1" />
-                          Alt Kategori Ekle
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={() => setIsManageElementsModalOpen(true)}
-                          size="sm"
-                          variant="outline"
-                          className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Elementleri Yönet
-                        </Button>
-                      </div>
-                    )}
+                    {/* Admin Controls - Temporarily open for testing */}
+                    <div className="flex justify-end space-x-2 mb-4">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          // Set modal context for main element addition
+                          setNewCategoryData({
+                            label: '',
+                            parentPath: null,
+                            editMode: false,
+                            editKey: null,
+                            editPathString: null
+                          });
+                          setIsNewCategoryModalOpen(true);
+                        }}
+                        size="sm"
+                        variant="outline"
+                        className="text-green-600 border-green-300 hover:bg-green-50"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Alt Kategori Ekle
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => setIsManageElementsModalOpen(true)}
+                        size="sm"
+                        variant="outline"
+                        className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Elementleri Yönet
+                      </Button>
+                    </div>
 
                     {/* Recursive Dropdown Levels */}
                     {(() => {
