@@ -1885,35 +1885,50 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       return dropdowns;
                     })()}
 
-                    {/* Action Buttons - Yeni Kategori Ekle + Seçimi Ekle */}
+                    {/* Miktar Input Section */}
                     {stepData.currentPath.length > 0 && (
-                      <div className="pt-4" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px'}}>
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            // Set context for current path level (last selected level)
-                            const parentPath = stepData.currentPath.join('.');
-                            setNewCategoryData({
-                              label: '',
-                              parentPath: parentPath,
-                              editMode: false,
-                              editKey: null,
-                              editPathString: null
-                            });
-                            setIsNewCategoryModalOpen(true);
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Yeni Kategori Ekle
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={addSelectionToList}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          Seçimi Ekle
-                        </Button>
+                      <div className="pt-6 space-y-4">
+                        {/* Miktar Row */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Miktar
+                          </label>
+                          <div className="flex gap-3 items-center">
+                            <Input
+                              type="number"
+                              placeholder="Miktar girin"
+                              className="flex-1"
+                              min="0"
+                              step="0.01"
+                            />
+                            <select 
+                              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[100px]"
+                            >
+                              <option value="">Birim</option>
+                              <option value="adet">Adet</option>
+                              <option value="m2">m²</option>
+                              <option value="m3">m³</option>
+                              <option value="m">Metre</option>
+                              <option value="kg">Kilogram</option>
+                              <option value="ton">Ton</option>
+                              <option value="lt">Litre</option>
+                              <option value="paket">Paket</option>
+                              <option value="kutu">Kutu</option>
+                              <option value="rulo">Rulo</option>
+                            </select>
+                          </div>
+                        </div>
+                        
+                        {/* Seçimi Ekle Button */}
+                        <div className="pt-2">
+                          <Button
+                            type="button"
+                            onClick={addSelectionToList}
+                            className="bg-green-600 hover:bg-green-700 text-white w-full"
+                          >
+                            Seçimi Ekle
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
