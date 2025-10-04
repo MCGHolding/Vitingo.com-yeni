@@ -158,7 +158,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Yeni kategori ekleme sisteminin backend entegrasyonunu test et: 1. GET /api/stand-elements - mevcut recursive yapının doğru olduğunu kontrol et 2. POST /api/stand-elements ile yeni kategoriler ekle: parent_path='flooring' ile 'Halı Türü' (text/property), parent_path='flooring.raised36mm' ile 'Özel Renk' (color/property), parent_path='furniture.seating' ile 'Koltuk Sayısı' (number/unit) 3. Her ekleme sonrası GET ile yapının güncellendiğini doğrula 4. Yeni eklenen kategorilerin doğru parent_path ile kaydedildiğini kontrol et 5. Recursive children yapısında sınırsız derinliğin çalıştığını test et"
+user_problem_statement: "Alt kategori ekleme ve görünürlük sorununu debug et: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > Stand Requirements'e git 3. Ana element seç (Zemin) 4. Console log'lara dikkat et - stand elements kaç tane yükleniyor? 5. 'Yeni Kategori Ekle' ile bir kategori ekle (text türü, 'Test Kategori') 6. Ekleme sonrası console log'da refresh olup olmadığını kontrol et 7. Dropdown'da yeni kategori görünüyor mu? 8. Network tab'ında API call'ları kontrol et 9. Sorun nerede - backend'de ekleniyor mu, frontend'de refresh olmuyor mu?"
 
 backend:
   - task: "Stand Elements Recursive Structure GET Endpoint"
