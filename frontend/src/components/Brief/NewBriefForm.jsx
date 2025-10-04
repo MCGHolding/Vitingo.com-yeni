@@ -2499,7 +2499,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   type="text"
                   value={newCategoryData.label}
                   onChange={(e) => setNewCategoryData(prev => ({...prev, label: e.target.value}))}
-                  placeholder="Alt kategori adını girin"
+                  placeholder={newCategoryData.editMode ? "Kategori adını girin" : "Alt kategori adını girin"}
                   className="w-full"
                   autoFocus
                 />
