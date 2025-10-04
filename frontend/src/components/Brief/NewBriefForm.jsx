@@ -2170,20 +2170,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     </div>
 
-                    {/* Hava Bağlantısı */}
+                    {/* Videowall */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.airConnection ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.videowall ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        airConnection: !stepData.standElements.airConnection
+                        videowall: !stepData.standElements.videowall
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">💨</div>
-                        <h4 className="font-semibold">Hava Bağlantısı</h4>
-                        <p className="text-sm text-gray-600 mt-1">Klima, havalandırma</p>
+                        <div className="text-4xl mb-3">📺</div>
+                        <h4 className="font-semibold">Videowall</h4>
+                        <p className="text-sm text-gray-600 mt-1">Video duvarı, büyük ekran</p>
                       </div>
                     </div>
                   </div>
