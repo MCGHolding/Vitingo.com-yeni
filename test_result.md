@@ -1621,7 +1621,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Alt Kategori Ekleme ve Görünürlük Sorunu Debug"
+    - "Alt Kategori Ekle Button Text Fix Testing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
