@@ -6854,6 +6854,194 @@ async def delete_stand_element(element_key: str, parent_path: str = None):
         logger.error(f"Error deleting stand element: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== AI DESIGN GENERATION ENDPOINTS =====================
+
+# Models for AI Design Generation
+class ImageUpload(BaseModel):
+    filename: str
+    image_data: str  # base64 encoded image
+    
+class DesignRequest(BaseModel):
+    brief_data: dict  # Brief form data including dimensions, stand elements etc.
+    uploaded_images: List[ImageUpload] = []
+    logo_image: Optional[ImageUpload] = None
+
+class GeneratedDesign(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    image_data: str  # base64 encoded generated image
+    prompt_used: str
+    brief_id: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+@api_router.post("/analyze-uploaded-images")
+async def analyze_uploaded_images(images: List[ImageUpload]):
+    """Analyze uploaded design inspiration images using OpenAI Vision API"""
+    try:
+        load_dotenv()
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY not configured")
+        
+        analyses = []
+        
+        for image in images:
+            try:
+                # Create a new chat instance for image analysis
+                chat = LlmChat(
+                    api_key=api_key,
+                    session_id=f"image-analysis-{uuid.uuid4()}",
+                    system_message="You are an expert in exhibition stand design. Analyze the provided image and extract design elements, colors, style, materials, layout concepts that could inspire new designs."
+                ).with_model("openai", "gpt-4o")
+                
+                # Create image content for analysis
+                image_content = ImageContent(image_base64=image.image_data)
+                
+                # Analyze the image
+                user_message = UserMessage(
+                    text="Please analyze this exhibition stand design image and provide detailed insights about: 1) Design style and aesthetic, 2) Color palette used, 3) Materials visible, 4) Layout and space organization, 5) Key design elements that make it effective, 6) Lighting concepts, 7) Brand presentation approaches. Focus on elements that could inspire new stand designs.",
+                    file_contents=[image_content]
+                )
+                
+                response = await chat.send_message(user_message)
+                
+                analyses.append({
+                    "filename": image.filename,
+                    "analysis": response,
+                    "status": "success"
+                })
+                
+            except Exception as e:
+                logger.error(f"Error analyzing image {image.filename}: {str(e)}")
+                analyses.append({
+                    "filename": image.filename,
+                    "analysis": f"Analysis failed: {str(e)}",
+                    "status": "error"
+                })
+        
+        return {"analyses": analyses}
+        
+    except Exception as e:
+        logger.error(f"Error in analyze_uploaded_images: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/generate-stand-designs")
+async def generate_stand_designs(request: DesignRequest):
+    """Generate stand design concepts using OpenAI Image Generation"""
+    try:
+        load_dotenv()
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY not configured")
+        
+        # Initialize image generator
+        image_gen = OpenAIImageGeneration(api_key=api_key)
+        
+        # Analyze uploaded images if provided
+        design_inspiration = ""
+        if request.uploaded_images:
+            image_analyses = await analyze_uploaded_images(request.uploaded_images)
+            inspiration_texts = [analysis["analysis"] for analysis in image_analyses["analyses"] if analysis["status"] == "success"]
+            if inspiration_texts:
+                design_inspiration = f"\n\nDesign Inspiration from uploaded images:\n" + "\n".join(inspiration_texts[:3])  # Limit to 3 analyses
+        
+        # Extract brief information
+        brief = request.brief_data
+        stand_elements = brief.get('standElements', {})
+        selected_elements = [k for k, v in stand_elements.items() if v]
+        
+        service_elements = brief.get('serviceElements', {})
+        selected_services = [k for k, v in service_elements.items() if v]
+        
+        # Build comprehensive design prompts
+        base_prompts = [
+            # Modern & Minimalist
+            f"Modern minimalist exhibition stand design, {brief.get('standDimensions', '3x3 meters')}, clean lines, white and corporate color palette, featuring {', '.join(selected_elements[:3]) if selected_elements else 'display areas'}, professional lighting, company branding space, high-end materials, glass and metal accents, spacious layout",
+            
+            # Tech & Innovation
+            f"High-tech innovation exhibition stand, {brief.get('standDimensions', '3x3 meters')}, LED screens, interactive displays, futuristic design, blue and white color scheme, featuring {', '.join(selected_elements[:3]) if selected_elements else 'technology showcase'}, ambient lighting, sleek surfaces, digital elements",
+            
+            # Warm & Inviting
+            f"Warm inviting exhibition stand design, {brief.get('standDimensions', '3x3 meters')}, wood materials, comfortable seating area, earth tones, featuring {', '.join(selected_elements[:3]) if selected_elements else 'meeting spaces'}, soft lighting, natural materials, welcoming atmosphere",
+            
+            # Bold & Creative
+            f"Bold creative exhibition stand, {brief.get('standDimensions', '3x3 meters')}, vibrant colors, artistic elements, dynamic layout, featuring {', '.join(selected_elements[:3]) if selected_elements else 'creative displays'}, dramatic lighting, unique shapes, eye-catching design",
+            
+            # Luxury & Premium
+            f"Luxury premium exhibition stand, {brief.get('standDimensions', '3x3 meters')}, premium materials, marble accents, gold details, sophisticated design, featuring {', '.join(selected_elements[:3]) if selected_elements else 'VIP areas'}, elegant lighting, high-end finishes",
+            
+            # Industrial & Modern
+            f"Industrial modern exhibition stand, {brief.get('standDimensions', '3x3 meters')}, metal framework, concrete elements, industrial lighting, featuring {', '.join(selected_elements[:3]) if selected_elements else 'product displays'}, raw materials, urban aesthetic",
+            
+            # Open & Airy
+            f"Open airy exhibition stand design, {brief.get('standDimensions', '3x3 meters')}, glass walls, transparent elements, light colors, featuring {', '.join(selected_elements[:3]) if selected_elements else 'open spaces'}, natural lighting, spacious feel",
+            
+            # Sustainable & Eco
+            f"Sustainable eco-friendly exhibition stand, {brief.get('standDimensions', '3x3 meters')}, recycled materials, green elements, natural wood, featuring {', '.join(selected_elements[:3]) if selected_elements else 'eco displays'}, energy-efficient lighting, sustainable design",
+            
+            # Dynamic & Interactive
+            f"Dynamic interactive exhibition stand, {brief.get('standDimensions', '3x3 meters')}, curved surfaces, interactive zones, bright colors, featuring {', '.join(selected_elements[:3]) if selected_elements else 'engagement areas'}, dynamic lighting, movement elements",
+            
+            # Classic & Professional
+            f"Classic professional exhibition stand, {brief.get('standDimensions', '3x3 meters')}, traditional materials, corporate colors, formal layout, featuring {', '.join(selected_elements[:3]) if selected_elements else 'business areas'}, professional lighting, timeless design"
+        ]
+        
+        # Add common suffixes to all prompts
+        common_suffix = f"{design_inspiration}, photorealistic, professional trade show environment, 8K quality, architectural visualization style, detailed render"
+        
+        generated_designs = []
+        
+        for i, base_prompt in enumerate(base_prompts):
+            try:
+                full_prompt = base_prompt + common_suffix
+                
+                # Generate image
+                images = await image_gen.generate_images(
+                    prompt=full_prompt,
+                    model="gpt-image-1",
+                    number_of_images=1
+                )
+                
+                if images and len(images) > 0:
+                    # Convert to base64
+                    image_base64 = base64.b64encode(images[0]).decode('utf-8')
+                    
+                    design = GeneratedDesign(
+                        image_data=image_base64,
+                        prompt_used=full_prompt,
+                        brief_id=brief.get('id')
+                    )
+                    
+                    # Save to database
+                    await db.generated_designs.insert_one(design.dict())
+                    
+                    generated_designs.append(design)
+                    
+                    logger.info(f"Generated design {i+1}/10 successfully")
+                else:
+                    logger.error(f"No image generated for prompt {i+1}")
+                    
+            except Exception as e:
+                logger.error(f"Error generating design {i+1}: {str(e)}")
+                continue
+        
+        return {"designs": generated_designs, "total_generated": len(generated_designs)}
+        
+    except Exception as e:
+        logger.error(f"Error in generate_stand_designs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/generated-designs/{brief_id}")
+async def get_generated_designs(brief_id: str):
+    """Get all generated designs for a specific brief"""
+    try:
+        designs = await db.generated_designs.find({"brief_id": brief_id}).to_list(length=None)
+        return [GeneratedDesign(**design) for design in designs]
+    except Exception as e:
+        logger.error(f"Error getting generated designs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== END AI DESIGN GENERATION ENDPOINTS =====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
