@@ -682,7 +682,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
       path: [...stepData.currentPath],
       pathLabels,
       pathString,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      // Miktar ve renk bilgilerini ekle
+      quantity: selectedQuantity || '',
+      unit: selectedUnit || '',
+      color: selectedColor || ''
     };
     
     setStepData(prev => ({
