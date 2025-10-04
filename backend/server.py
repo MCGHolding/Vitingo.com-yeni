@@ -6934,8 +6934,8 @@ async def generate_stand_designs(request: DesignRequest):
         if not api_key:
             raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY not configured")
         
-        # Initialize image generator
-        image_gen = OpenAIImageGeneration(api_key=api_key)
+        # Initialize direct OpenAI client to avoid EmergentIntegrations issues
+        openai_client = AsyncOpenAI(api_key=api_key)
         
         # Analyze uploaded images if provided
         design_inspiration = ""
