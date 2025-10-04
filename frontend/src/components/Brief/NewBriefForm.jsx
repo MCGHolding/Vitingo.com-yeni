@@ -2339,6 +2339,33 @@ export default function NewBriefForm({ onBackToDashboard }) {
               )}
 
               {currentStep === 5 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Etkinlik sırasında stantta kaç çalışan bulunacak?</h3>
+                    <p className="text-gray-600">
+                      Stantta görev yapacak çalışanların sayısını ve pozisyonlarını belirtin. 
+                      Bu bilgi standın tasarımı için önemlidir.
+                    </p>
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        <strong>Örnek:</strong> manager + 3 sales person + hostesses
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="max-w-2xl mx-auto">
+                    <Textarea
+                      value={stepData.employeeDetails}
+                      onChange={(e) => handleStepDataChange('employeeDetails', e.target.value)}
+                      placeholder="Çalışan sayısı ve pozisyonlarını yazın..."
+                      rows={6}
+                      className="w-full text-center"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 6 && (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2">Satın alma kararınızda fiyat ne kadar önemli?</h3>
