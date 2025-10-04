@@ -1618,12 +1618,10 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Stand Elements Recursive Structure GET Endpoint"
-    - "Stand Elements POST New Categories Addition"
-    - "Stand Elements Unlimited Depth Capability"
+    - "Alt Kategori Ekleme ve Görünürlük Sorunu Debug"
   stuck_tasks: []
-  test_all: true
-  test_priority: "sequential"
+  test_all: false
+  test_priority: "high_first"
 
   - task: "Brief Form Multi-Step Stand Requirements"
     implemented: true
