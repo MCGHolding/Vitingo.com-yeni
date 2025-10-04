@@ -3441,13 +3441,17 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    # Run all recursive stand elements tests
-    success = run_recursive_stand_elements_tests()
+    # Run the stand elements endpoint test
+    print("🚀 Starting Stand Elements API Endpoint Testing...")
+    print("=" * 80)
+    
+    success = test_stand_elements_endpoint()
     
     if success:
-        print("\n🎉 Recursive Stand Elements Backend API Testing Complete - All Tests Passed!")
+        print("\n🎉 Stand Elements API Endpoint Testing Complete - All Tests Passed!")
+        print("Backend verilerinin frontend'in beklediği formatla uyumlu olduğu doğrulandı.")
     else:
-        print("\n❌ Some tests failed - please review the implementation")
+        print("\n❌ Stand Elements API test failed - please review the implementation")
         sys.exit(1)
     
     print("=" * 80)
