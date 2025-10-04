@@ -683,6 +683,15 @@ export default function NewBriefForm({ onBackToDashboard }) {
         return;
       }
 
+      // Check for duplicate names in the same parent category (only for new additions)
+      if (!newCategoryData.editMode) {
+        const isDuplicate = checkForDuplicate(newCategoryData.label, newCategoryData.parentPath);
+        if (isDuplicate) {
+          showToast('error', 'Hata!', `"${newCategoryData.label}" kategorisi zaten mevcut. Farklı bir isim kullanın.`);
+          return;
+        }
+      }
+
       if (newCategoryData.editMode) {
         // Edit existing category
         const categoryData = {
