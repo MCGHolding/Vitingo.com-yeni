@@ -3820,15 +3820,51 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    # Run the stand elements endpoint test
-    print("🚀 Starting Stand Elements API Endpoint Testing...")
+    # Run the AI Design Generation endpoint tests
+    print("🚀 Starting AI Design Generation API Endpoint Testing...")
     print("=" * 80)
     
-    success = test_stand_elements_endpoint()
+    all_tests_passed = True
     
-    if success:
-        print("\n🎉 Stand Elements API Endpoint Testing Complete - All Tests Passed!")
-        print("Backend verilerinin frontend'in beklediği formatla uyumlu olduğu doğrulandı.")
+    # Test 1: OpenAI Integration Status
+    print("\n" + "="*50)
+    print("TEST 1: OpenAI Integration Status")
+    print("="*50)
+    integration_success = test_openai_integration_status()
+    if not integration_success:
+        all_tests_passed = False
+    
+    # Test 2: AI Design Generation Endpoint
+    print("\n" + "="*50)
+    print("TEST 2: AI Design Generation Endpoint")
+    print("="*50)
+    generation_success = test_ai_design_generation_endpoint()
+    if not generation_success:
+        all_tests_passed = False
+    
+    # Test 3: Error Handling
+    print("\n" + "="*50)
+    print("TEST 3: Error Handling")
+    print("="*50)
+    error_handling_success = test_ai_design_generation_error_handling()
+    if not error_handling_success:
+        all_tests_passed = False
+    
+    # Final Results
+    print("\n" + "="*80)
+    print("FINAL TEST RESULTS SUMMARY")
+    print("="*80)
+    
+    if all_tests_passed:
+        print("🎉 AI Design Generation API Testing Complete - All Tests Passed!")
+        print("✅ EMERGENT_LLM_KEY configuration working")
+        print("✅ EmergentIntegrations library functional")
+        print("✅ POST /api/generate-stand-designs endpoint working")
+        print("✅ Response format correct (designs array with required fields)")
+        print("✅ Error handling working properly")
+        print("✅ OpenAI image generation successful")
+        print("\nAI backend'inin çalışıp çalışmadığı kapsamlı test edildi ve başarılı!")
     else:
-        print("\n❌ Stand Elements API test failed - please review the implementation")
+        print("❌ Some AI Design Generation tests failed - please review the implementation")
+        print("AI backend test sonuçlarını kontrol edin ve sorunları düzeltin.")
         sys.exit(1)
