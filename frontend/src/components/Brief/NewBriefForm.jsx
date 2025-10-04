@@ -81,20 +81,61 @@ const sliderStyles = `
   }
 `;
 
-// Color palette helper functions
+// Professional Color palette helper functions
 const getColorPalette = () => [
-  { name: 'Kırmızı', hex: '#EF4444' },
-  { name: 'Turuncu', hex: '#F97316' },
-  { name: 'Sarı', hex: '#EAB308' },
-  { name: 'Yeşil', hex: '#22C55E' },
-  { name: 'Mavi', hex: '#3B82F6' },
-  { name: 'Mor', hex: '#8B5CF6' },
+  // Kırmızı Tonları
+  { name: 'Kırmızı', hex: '#DC2626' },
+  { name: 'Bordo', hex: '#991B1B' },
+  { name: 'Pembe Kırmızı', hex: '#E11D48' },
+  
+  // Turuncu Tonları  
+  { name: 'Turuncu', hex: '#EA580C' },
+  { name: 'Koyu Turuncu', hex: '#C2410C' },
+  { name: 'Amber', hex: '#D97706' },
+  
+  // Sarı Tonları
+  { name: 'Sarı', hex: '#FACC15' },
+  { name: 'Altın Sarısı', hex: '#EAB308' },
+  { name: 'Limon Sarısı', hex: '#FDE047' },
+  
+  // Yeşil Tonları
+  { name: 'Yeşil', hex: '#16A34A' },
+  { name: 'Koyu Yeşil', hex: '#15803D' },
+  { name: 'Nane Yeşili', hex: '#10B981' },
+  { name: 'Zeytin Yeşili', hex: '#65A30D' },
+  
+  // Mavi Tonları
+  { name: 'Mavi', hex: '#2563EB' },
+  { name: 'Açık Mavi', hex: '#0EA5E9' },
+  { name: 'Lacivert', hex: '#1E40AF' },
+  { name: 'Teal', hex: '#0D9488' },
+  { name: 'Cyan', hex: '#0891B2' },
+  
+  // Mor Tonları
+  { name: 'Mor', hex: '#7C3AED' },
+  { name: 'İndigo', hex: '#4338CA' },
+  { name: 'Lila', hex: '#A855F7' },
   { name: 'Pembe', hex: '#EC4899' },
-  { name: 'Kahverengi', hex: '#A16207' },
+  
+  // Nötr Tonlar
+  { name: 'Siyah', hex: '#000000' },
+  { name: 'Koyu Gri', hex: '#374151' },
   { name: 'Gri', hex: '#6B7280' },
-  { name: 'Siyah', hex: '#1F2937' },
+  { name: 'Açık Gri', hex: '#9CA3AF' },
   { name: 'Beyaz', hex: '#FFFFFF' },
-  { name: 'Lacivert', hex: '#1E40AF' }
+  { name: 'Krem', hex: '#FEF3C7' },
+  
+  // Kahverengi Tonları
+  { name: 'Kahverengi', hex: '#92400E' },
+  { name: 'Koyu Kahve', hex: '#78350F' },
+  { name: 'Açık Kahve', hex: '#A16207' },
+  
+  // Pastel Tonlar
+  { name: 'Pastel Mavi', hex: '#BFDBFE' },
+  { name: 'Pastel Yeşil', hex: '#BBF7D0' },
+  { name: 'Pastel Sarı', hex: '#FEF3C7' },
+  { name: 'Pastel Pembe', hex: '#FBCFE8' },
+  { name: 'Pastel Mor', hex: '#DDD6FE' }
 ];
 
 const getColorName = (hex) => {
