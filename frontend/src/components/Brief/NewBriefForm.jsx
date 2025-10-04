@@ -2793,6 +2793,7 @@ function ManageElementsPanel({ elementsConfig, onEdit, onDelete, onAddChild }) {
               moveElement={moveElement}
               onEdit={onEdit}
               onDelete={onDelete}
+              onAddChild={onAddChild}
             />
           ))}
         </div>
