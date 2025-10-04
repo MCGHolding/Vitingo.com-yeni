@@ -2182,7 +2182,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     >
                       <div className="text-center">
                         <div className="text-4xl mb-3">🛋️</div>
-                        <h4 className="font-semibend">Oturma Alanı</h4>
+                        <h4 className="font-semibold">Oturma Alanı</h4>
                         <p className="text-sm text-gray-600 mt-1">Dinlenme, bekleme</p>
                       </div>
                     </div>
