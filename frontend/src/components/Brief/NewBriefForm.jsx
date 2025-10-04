@@ -2621,6 +2621,99 @@ export default function NewBriefForm({ onBackToDashboard }) {
 }
 
 // Manage Elements Panel Component
+// Draggable Item Component
+function DraggableElement({ elementKey, elementData, path, depth, index, moveElement, onEdit, onDelete }) {
+  const [{ isDragging }, drag] = useDrag({
+    type: 'element',
+    item: { elementKey, path, depth, index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: 'element',
+    hover: (item) => {
+      if (item.index !== index) {
+        moveElement(item.index, index);
+        item.index = index;
+      }
+    },
+  });
+
+  const currentPath = [...path, elementKey];
+  const pathString = currentPath.join('.');
+  
+  // Color scheme based on depth
+  const bgColors = [
+    'bg-gray-50',    // Main elements
+    'bg-blue-50',    // Level 1
+    'bg-green-50',   // Level 2  
+    'bg-purple-50',  // Level 3
+    'bg-orange-50',  // Level 4
+    'bg-pink-50'     // Level 5+
+  ];
+  
+  const bgColor = bgColors[depth] || bgColors[bgColors.length - 1];
+  const marginLeft = depth * 24; // 24px per level
+  
+  return (
+    <div 
+      ref={(node) => drag(drop(node))}
+      className={`flex items-center justify-between p-3 ${bgColor} rounded border-l-4 border-l-blue-400 cursor-move ${
+        isDragging ? 'opacity-50' : 'opacity-100'
+      }`}
+      style={{ marginLeft: `${marginLeft}px` }}
+    >
+      <div className="flex items-center space-x-3">
+        <GripVertical className="h-5 w-5 text-gray-400" />
+        {elementData.icon && <span className="text-lg">{elementData.icon}</span>}
+        <div>
+          <h4 className={`font-medium ${depth === 0 ? 'text-lg' : 'text-sm'}`}>
+            {elementData.label}
+          </h4>
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-gray-500">
+              {depth === 0 ? `Ana Element: ${elementKey}` : `Path: ${pathString}`}
+            </span>
+            {elementData.required && (
+              <span className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-orange-100 text-orange-800">
+                Zorunlu
+              </span>
+            )}
+            {elementData.element_type && (
+              <span className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+                {elementData.element_type}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex space-x-1">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onEdit(pathString, elementData)}
+          className="text-blue-600 border-blue-300 hover:bg-blue-50"
+        >
+          <Eye className="h-3 w-3 mr-1" />
+          Düzenle
+        </Button>
+        <Button
+          size="sm" 
+          variant="outline"
+          onClick={() => onDelete(pathString)}
+          className="text-red-600 border-red-300 hover:bg-red-50"
+        >
+          <X className="h-3 w-3 mr-1" />
+          Sil
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
   // Recursive function to render elements at any depth
   const renderElement = (elementKey, elementData, path = [], depth = 0) => {
