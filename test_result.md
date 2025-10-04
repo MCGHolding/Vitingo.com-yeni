@@ -1962,9 +1962,8 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Brief Form Country Profile System"
-  stuck_tasks: 
-    - "New Collection Form Implementation"
+    - "Drag&Drop Özelliği Test"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
