@@ -2051,71 +2051,71 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
                   {/* Icon-based Element Selection */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {/* Zemin */}
+                    {/* Truss */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.flooring ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.truss ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        flooring: !stepData.standElements.flooring
+                        truss: !stepData.standElements.truss
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">🟫</div>
-                        <h4 className="font-semibold">Zemin</h4>
-                        <p className="text-sm text-gray-600 mt-1">Halı, parke, platform</p>
+                        <div className="text-4xl mb-3">🏗️</div>
+                        <h4 className="font-semibold">Truss</h4>
+                        <p className="text-sm text-gray-600 mt-1">Alüminyum konstrüksiyon</p>
                       </div>
                     </div>
 
-                    {/* Tezgah */}
+                    {/* Özel Aydınlatma */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.counter ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.specialLighting ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        counter: !stepData.standElements.counter
+                        specialLighting: !stepData.standElements.specialLighting
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">🏢</div>
-                        <h4 className="font-semibold">Tezgah</h4>
-                        <p className="text-sm text-gray-600 mt-1">Karşılama, sergi tezgahı</p>
+                        <div className="text-4xl mb-3">💡</div>
+                        <h4 className="font-semibold">Özel Aydınlatma</h4>
+                        <p className="text-sm text-gray-600 mt-1">Spot, LED, dekoratif</p>
                       </div>
                     </div>
 
-                    {/* Mobilya */}
+                    {/* Ses Sistemi */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.furniture ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.soundSystem ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        furniture: !stepData.standElements.furniture
+                        soundSystem: !stepData.standElements.soundSystem
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">🪑</div>
-                        <h4 className="font-semibold">Mobilya</h4>
-                        <p className="text-sm text-gray-600 mt-1">Sandalye, masa, koltuk</p>
+                        <div className="text-4xl mb-3">🔊</div>
+                        <h4 className="font-semibold">Ses Sistemi</h4>
+                        <p className="text-sm text-gray-600 mt-1">Hoparlör, mikrofon, amfi</p>
                       </div>
                     </div>
 
-                    {/* Multimedya */}
+                    {/* Led Ekran */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.multimedia ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.ledScreen ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        multimedia: !stepData.standElements.multimedia
+                        ledScreen: !stepData.standElements.ledScreen
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">📺</div>
-                        <h4 className="font-semibold">Multimedya</h4>
-                        <p className="text-sm text-gray-600 mt-1">TV, projeksiyon, ses</p>
+                        <div className="text-4xl mb-3">📱</div>
+                        <h4 className="font-semibold">Led Ekran</h4>
+                        <p className="text-sm text-gray-600 mt-1">LED panel, video duvarı</p>
                       </div>
                     </div>
 
