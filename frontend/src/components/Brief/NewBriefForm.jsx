@@ -2119,71 +2119,71 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     </div>
 
-                    {/* Kapalı Toplantı Odası */}
+                    {/* Broşürlük */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.meetingRoom ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.brochureRack ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        meetingRoom: !stepData.standElements.meetingRoom
+                        brochureRack: !stepData.standElements.brochureRack
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">🚪</div>
-                        <h4 className="font-semibold">Kapalı Toplantı Odası</h4>
-                        <p className="text-sm text-gray-600 mt-1">Özel görüşme alanı</p>
+                        <div className="text-4xl mb-3">📄</div>
+                        <h4 className="font-semibold">Broşürlük</h4>
+                        <p className="text-sm text-gray-600 mt-1">Katalog, broşür standı</p>
                       </div>
                     </div>
 
-                    {/* Depo Alanı */}
+                    {/* Rampa */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.storage ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.ramp ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        storage: !stepData.standElements.storage
+                        ramp: !stepData.standElements.ramp
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">📦</div>
-                        <h4 className="font-semibold">Depo Alanı</h4>
-                        <p className="text-sm text-gray-600 mt-1">Saklama, kiler</p>
+                        <div className="text-4xl mb-3">🛤️</div>
+                        <h4 className="font-semibold">Rampa</h4>
+                        <p className="text-sm text-gray-600 mt-1">Engelli erişim, yükleme</p>
                       </div>
                     </div>
 
-                    {/* İkram Alanı */}
+                    {/* Su Bağlantısı */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.refreshment ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.waterConnection ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        refreshment: !stepData.standElements.refreshment
+                        waterConnection: !stepData.standElements.waterConnection
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">☕</div>
-                        <h4 className="font-semibold">İkram Alanı</h4>
-                        <p className="text-sm text-gray-600 mt-1">Kahve, çay, aperatif</p>
+                        <div className="text-4xl mb-3">🚰</div>
+                        <h4 className="font-semibold">Su Bağlantısı</h4>
+                        <p className="text-sm text-gray-600 mt-1">Musluk, lavabo, su tesisatı</p>
                       </div>
                     </div>
 
-                    {/* Oturma Alanı */}
+                    {/* Hava Bağlantısı */}
                     <div 
                       className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                        stepData.standElements.seating ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        stepData.standElements.airConnection ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleStepDataChange('standElements', {
                         ...stepData.standElements,
-                        seating: !stepData.standElements.seating
+                        airConnection: !stepData.standElements.airConnection
                       })}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-3">🛋️</div>
-                        <h4 className="font-semibold">Oturma Alanı</h4>
-                        <p className="text-sm text-gray-600 mt-1">Dinlenme, bekleme</p>
+                        <div className="text-4xl mb-3">💨</div>
+                        <h4 className="font-semibold">Hava Bağlantısı</h4>
+                        <p className="text-sm text-gray-600 mt-1">Klima, havalandırma</p>
                       </div>
                     </div>
                   </div>
