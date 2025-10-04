@@ -1742,17 +1742,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       return dropdowns;
                     })()}
 
-                    {/* Action Buttons */}
+                    {/* Add Selection Button */}
                     {stepData.currentPath.length > 0 && (
-                      <div className="pt-4 flex space-x-3">
-                        <Button
-                          type="button"
-                          onClick={() => setIsNewCategoryModalOpen(true)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Yeni Kategori Ekle
-                        </Button>
+                      <div className="pt-4">
                         <Button
                           type="button"
                           onClick={addSelectionToList}
