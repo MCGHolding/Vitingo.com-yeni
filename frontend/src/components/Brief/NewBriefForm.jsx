@@ -193,6 +193,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [selectedQuantity, setSelectedQuantity] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  
+  // Service selection states
+  const [selectedServices, setSelectedServices] = useState({});
+  const [serviceDetails, setServiceDetails] = useState({});
   const [newCategoryData, setNewCategoryData] = useState({
     label: '',
     parentPath: null, // Will be set when button is clicked
