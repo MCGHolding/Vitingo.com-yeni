@@ -1607,7 +1607,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
             
             {/* Continue Button */}
             <div className="mt-8 pt-6 border-t">
-              <div className="text-center">
+              <div className="text-center space-y-4">
+                {/* Temporary test button for drag&drop */}
+                <div>
+                  <Button
+                    type="button"
+                    onClick={() => setIsManageElementsModalOpen(true)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 mr-4"
+                  >
+                    🧪 Test Drag&Drop
+                  </Button>
+                  <span className="text-xs text-gray-500">(Geliştirici Test Butonu)</span>
+                </div>
+                
                 <Button
                   type="button"
                   onClick={handleNextStep}
