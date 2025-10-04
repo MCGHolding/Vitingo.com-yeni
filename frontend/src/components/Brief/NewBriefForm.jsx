@@ -1726,7 +1726,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
                     {/* Action Buttons - Yeni Kategori Ekle + Seçimi Ekle */}
                     {stepData.currentPath.length > 0 && (
-                      <div className="pt-4 flex flex-row items-center space-x-3">
+                      <div className="pt-4" style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px'}}>
                         <Button
                           type="button"
                           onClick={() => {
