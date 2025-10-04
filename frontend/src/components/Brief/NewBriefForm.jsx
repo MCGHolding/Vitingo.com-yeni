@@ -732,7 +732,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
       // Check for duplicate names in the same parent category (only for new additions)
       if (!newCategoryData.editMode) {
+        console.log('Checking for duplicate:', { label: newCategoryData.label, parentPath: newCategoryData.parentPath });
         const isDuplicate = checkForDuplicate(newCategoryData.label, newCategoryData.parentPath);
+        console.log('Duplicate check result:', isDuplicate);
         if (isDuplicate) {
           showToast('error', 'Hata!', `"${newCategoryData.label}" kategorisi zaten mevcut. Farklı bir isim kullanın.`);
           return;
