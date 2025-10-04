@@ -594,7 +594,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Step navigation handlers
   const handleNextStep = () => {
-    if (currentStep < 9) {
+    if (currentStep < 10) {
       setCurrentStep(currentStep + 1);
     }
   };
