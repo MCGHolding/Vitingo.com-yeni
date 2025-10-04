@@ -157,7 +157,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
   const [newCategoryData, setNewCategoryData] = useState({
     label: '',
-    parentPath: null // Will be set when button is clicked
+    parentPath: null, // Will be set when button is clicked
+    editMode: false,  // Whether we're editing an existing element
+    editKey: null,    // The key of the element being edited
+    editPathString: null // The full path string for edit
   });
   const [elementModalData, setElementModalData] = useState({
     parentKey: null,
