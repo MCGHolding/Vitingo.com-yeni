@@ -2622,7 +2622,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
 // Manage Elements Panel Component
 // Draggable Item Component
-function DraggableElement({ elementKey, elementData, path, depth, index, moveElement, onEdit, onDelete }) {
+function DraggableElement({ elementKey, elementData, path, depth, index, moveElement, onEdit, onDelete, onAddChild }) {
   const [{ isDragging }, drag] = useDrag({
     type: 'element',
     item: { elementKey, path, depth, index },
