@@ -2493,7 +2493,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {/* Simple Text Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Alt Kategori Adı
+                  {newCategoryData.editMode ? 'Kategori Adı' : 'Alt Kategori Adı'}
                 </label>
                 <Input
                   type="text"
