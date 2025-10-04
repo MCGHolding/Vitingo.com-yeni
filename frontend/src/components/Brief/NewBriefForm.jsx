@@ -2492,7 +2492,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 )}
                 {!newCategoryData.editMode && newCategoryData.parentPath && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Üst kategori: {newCategoryData.parentPath.replace(/\./g, ' → ')}
+                    <span className="font-medium">Alt kategori ekleniyor:</span><br />
+                    {newCategoryData.parentPath.replace(/\./g, ' → ')}
                   </p>
                 )}
                 {!newCategoryData.editMode && !newCategoryData.parentPath && (
