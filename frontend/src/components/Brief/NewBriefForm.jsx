@@ -197,6 +197,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Service selection states
   const [selectedServices, setSelectedServices] = useState({});
   const [serviceDetails, setServiceDetails] = useState({});
+  
+  // AI Design Generation states
+  const [isGeneratingDesigns, setIsGeneratingDesigns] = useState(false);
+  const [generatedDesigns, setGeneratedDesigns] = useState([]);
+  const [generationError, setGenerationError] = useState(null);
   const [newCategoryData, setNewCategoryData] = useState({
     label: '',
     parentPath: null, // Will be set when button is clicked
