@@ -2542,116 +2542,116 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
 // Manage Elements Panel Component
 function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
-  return (
-    <div className="space-y-6">
-      {Object.entries(elementsConfig).map(([elementKey, elementData]) => (
-        <div key={elementKey} className="border rounded-lg p-4">
-          {/* Main Element */}
-          <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded">
-            <div className="flex items-center space-x-3">
-              <span className="text-2xl">{elementData.icon}</span>
-              <div>
-                <h4 className="font-bold text-lg">{elementData.label}</h4>
-                <span className="text-sm text-gray-500">Key: {elementKey}</span>
+  // Recursive function to render elements at any depth
+  const renderElement = (elementKey, elementData, path = [], depth = 0) => {
+    const currentPath = [...path, elementKey];
+    const pathString = currentPath.join('.');
+    
+    // Color scheme based on depth
+    const bgColors = [
+      'bg-gray-50',    // Main elements
+      'bg-blue-50',    // Level 1
+      'bg-green-50',   // Level 2  
+      'bg-purple-50',  // Level 3
+      'bg-orange-50',  // Level 4
+      'bg-pink-50'     // Level 5+
+    ];
+    
+    const bgColor = bgColors[depth] || bgColors[bgColors.length - 1];
+    const marginLeft = depth * 24; // 24px per level
+    
+    return (
+      <div key={`${pathString}-${depth}`} className="space-y-2">
+        {/* Current Element */}
+        <div 
+          className={`flex items-center justify-between p-3 ${bgColor} rounded border-l-4 border-l-blue-400`}
+          style={{ marginLeft: `${marginLeft}px` }}
+        >
+          <div className="flex items-center space-x-3">
+            {elementData.icon && <span className="text-lg">{elementData.icon}</span>}
+            <div>
+              <h4 className={`font-medium ${depth === 0 ? 'text-lg' : 'text-sm'}`}>
+                {elementData.label}
+              </h4>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500">
+                  {depth === 0 ? `Ana Element: ${elementKey}` : `Path: ${pathString}`}
+                </span>
                 {elementData.required && (
-                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800">
+                  <span className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-orange-100 text-orange-800">
                     Zorunlu
+                  </span>
+                )}
+                {elementData.element_type && (
+                  <span className="inline-flex items-center px-1 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+                    {elementData.element_type}
                   </span>
                 )}
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => onEdit(elementKey, elementData)}
-                className="text-blue-600 border-blue-300 hover:bg-blue-50"
-              >
-                <Eye className="h-4 w-4 mr-1" />
-                Düzenle
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => onDelete(elementKey)}
-                className="text-red-600 border-red-300 hover:bg-red-50"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Sil
-              </Button>
-            </div>
           </div>
-
-          {/* Sub Elements */}
-          {elementData.subOptions && Object.keys(elementData.subOptions).length > 0 && (
-            <div className="ml-8 space-y-2">
-              {Object.entries(elementData.subOptions).map(([subKey, subData]) => (
-                <div key={subKey}>
-                  {/* Sub Element */}
-                  <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                    <div className="flex items-center space-x-2">
-                      {subData.icon && <span>{subData.icon}</span>}
-                      <span className="font-medium">{subData.label}</span>
-                      <span className="text-xs text-gray-500">({subKey})</span>
-                    </div>
-                    <div className="flex space-x-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => onEdit(elementKey, subData, subKey)}
-                        className="text-blue-600 hover:bg-blue-100 p-1"
-                      >
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => onDelete(elementKey, subKey)}
-                        className="text-red-600 hover:bg-red-100 p-1"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Sub-Sub Elements */}
-                  {subData.subOptions && Object.keys(subData.subOptions).length > 0 && (
-                    <div className="ml-6 mt-1 space-y-1">
-                      {Object.entries(subData.subOptions).map(([subSubKey, subSubData]) => (
-                        <div key={subSubKey} className="flex items-center justify-between p-1 bg-green-50 rounded text-sm">
-                          <div className="flex items-center space-x-2">
-                            {subSubData.icon && <span>{subSubData.icon}</span>}
-                            <span>{subSubData.label}</span>
-                            <span className="text-xs text-gray-500">({subSubKey})</span>
-                          </div>
-                          <div className="flex space-x-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => onEdit(elementKey, subSubData, subKey, subSubKey)}
-                              className="text-blue-600 hover:bg-blue-100 p-1"
-                            >
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => onDelete(elementKey, subKey, subSubKey)}
-                              className="text-red-600 hover:bg-red-100 p-1"
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          
+          <div className="flex space-x-1">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onEdit(pathString, elementData)}
+              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+            >
+              <Eye className="h-3 w-3 mr-1" />
+              Düzenle
+            </Button>
+            <Button
+              size="sm" 
+              variant="outline"
+              onClick={() => onDelete(pathString)}
+              className="text-red-600 border-red-300 hover:bg-red-50"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Sil
+            </Button>
+          </div>
         </div>
-      ))}
+        
+        {/* Recursive Children */}
+        {depth === 0 && elementData.structure && Object.keys(elementData.structure).length > 0 && (
+          <div className="space-y-2">
+            {Object.entries(elementData.structure).map(([childKey, childData]) =>
+              renderElement(childKey, childData, currentPath, depth + 1)
+            )}
+          </div>
+        )}
+        
+        {depth > 0 && elementData.children && Object.keys(elementData.children).length > 0 && (
+          <div className="space-y-2">
+            {Object.entries(elementData.children).map(([childKey, childData]) =>
+              renderElement(childKey, childData, currentPath, depth + 1)
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="mb-4 p-3 bg-blue-100 rounded-lg">
+        <h3 className="font-semibold text-blue-900 mb-2">Stand Elementleri Yönetimi</h3>
+        <p className="text-sm text-blue-800">
+          Bu panelde tüm stand elementlerini ve alt kategorilerini görüntüleyebilir, düzenleyebilir veya silebilirsiniz.
+          Her seviyedeki elementler farklı renklerle gösterilmiştir.
+        </p>
+      </div>
+      
+      {Object.entries(elementsConfig).map(([elementKey, elementData]) =>
+        renderElement(elementKey, elementData, [], 0)
+      )}
+      
+      {Object.keys(elementsConfig).length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          <p>Henüz hiç stand elementi tanımlanmamış.</p>
+        </div>
+      )}
     </div>
   );
 }
