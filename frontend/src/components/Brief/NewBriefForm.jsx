@@ -1666,10 +1666,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                   onClick={() => {
                                     const parentPath = stepData.currentPath.slice(0, level);
                                     // Set modal context for current level
-                                    setNewCategoryData(prev => ({
-                                      ...prev,
+                                    setNewCategoryData({
+                                      label: '',
                                       parentPath: parentPath.length > 0 ? parentPath.join('.') : null
-                                    }));
+                                    });
                                     setIsNewCategoryModalOpen(true);
                                   }}
                                   size="sm"
