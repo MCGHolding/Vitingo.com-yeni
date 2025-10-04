@@ -2399,10 +2399,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 onClick={() => {
                   setIsNewCategoryModalOpen(false);
                   setNewCategoryData({
-                    type: 'text',
                     label: '',
-                    value: '',
-                    color: '#000000',
                     parentPath: null
                   });
                 }}
@@ -2437,10 +2434,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 onClick={() => {
                   setIsNewCategoryModalOpen(false);
                   setNewCategoryData({
-                    type: 'text',
                     label: '',
-                    value: '',
-                    color: '#000000',
                     parentPath: null
                   });
                 }}
