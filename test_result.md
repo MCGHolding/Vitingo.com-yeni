@@ -191,7 +191,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "EditMode debug testi: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > 'Detaylı Stand İhtiyaçları →' > Step 2'ye git 3. 'Elementleri Yönet' butonuna tıkla 4. Console aç 5. Zemin'in 'Alt Ekle' butonuna tıkla 6. Modal'da 'Test Kategori' yaz 7. 'Kategori Ekle' butonuna tıkla 8. Console'da şu mesajları ara: - 'newCategoryData.editMode: false' görünüyor mu? - 'Checking for duplicate' görünüyor mu? - Eğer 'Skipping duplicate check - in edit mode' görünüyorsa editMode true demektir EditMode değeri nedir?"
+user_problem_statement: "Final duplicate prevention sistemi testi: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > 'Detaylı Stand İhtiyaçları →' > Step 2'ye git 3. 'Elementleri Yönet' butonuna tıkla **Test Case 1 - Valid New Category:** 4. Zemin'in 'Alt Ekle' butonuna tıkla 5. Modal'da 'Laminat Parke' yaz (yeni kategori) 6. 'Kategori Ekle' butonuna tıkla 7. Success toast görünsün ve kategori eklensin **Test Case 2 - Duplicate Prevention:** 8. Zemin'in 'Alt Ekle' butonuna tıkla 9. Modal'da 'Standart Zemin' yaz (mevcut kategori) 10. 'Kategori Ekle' butonuna tıkla 11. Error toast: '\"Standart Zemin\" kategorisi zaten mevcut. Farklı bir isim kullanın.' görünsün **Test Case 3 - Case Insensitive Check:** 12. Zemin'in 'Alt Ekle' butonuna tıkla 13. Modal'da 'STANDART ZEMİN' yaz (büyük harflerle aynı kategori) 14. 'Kategori Ekle' butonuna tıkla 15. Error toast görünsün Duplicate prevention sistemi çalışıyor mu?"
 
 backend:
   - task: "Stand Elements Recursive Structure GET Endpoint"
