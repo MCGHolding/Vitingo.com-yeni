@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://smart-brief-creator.preview.emergentagent.com"
+BACKEND_URL = "https://stand-builder-1.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None

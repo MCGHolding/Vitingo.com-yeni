@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://smart-brief-creator.preview.emergentagent.com"
+BACKEND_URL = "https://stand-builder-1.preview.emergentagent.com"
 
 def test_opportunities_endpoints_comprehensive():
     """
