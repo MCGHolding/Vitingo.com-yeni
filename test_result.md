@@ -2022,8 +2022,9 @@ agent_communication:
 
 test_plan:
   current_focus:
-    - "Drag&Drop Özelliği Test"
-  stuck_tasks: []
+    - "AI Generation Step 7 Testing"
+  stuck_tasks: 
+    - "AI Generation OpenAI Integration Issue"
   test_all: false
   test_priority: "high_first"
 
