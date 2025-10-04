@@ -1724,9 +1724,25 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       return dropdowns;
                     })()}
 
-                    {/* Add Selection Button */}
+                    {/* Action Buttons - Yeni Kategori Ekle + Seçimi Ekle */}
                     {stepData.currentPath.length > 0 && (
-                      <div className="pt-4">
+                      <div className="pt-4 flex space-x-3">
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            // Set context for current path level (last selected level)
+                            const parentPath = stepData.currentPath.join('.');
+                            setNewCategoryData({
+                              label: '',
+                              parentPath: parentPath
+                            });
+                            setIsNewCategoryModalOpen(true);
+                          }}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Yeni Kategori Ekle
+                        </Button>
                         <Button
                           type="button"
                           onClick={addSelectionToList}
