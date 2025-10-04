@@ -2724,18 +2724,23 @@ function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
       const processElement = (key, data, path = [], depth = 0) => {
         result.push({ key, data, path, depth });
         
-        // Process children recursively
+        // Process children recursively - handle both structure (main level) and children (nested)
         const children = depth === 0 ? data.structure : data.children;
-        if (children) {
+        
+        // Check if children exists and has content (not null and not empty object)
+        if (children && Object.keys(children).length > 0) {
           Object.entries(children).forEach(([childKey, childData]) => {
             processElement(childKey, childData, [...path, key], depth + 1);
           });
         }
       };
 
-      Object.entries(config).forEach(([key, data]) => {
-        processElement(key, data, [], 0);
-      });
+      // Only process if config is defined and not empty
+      if (config && Object.keys(config).length > 0) {
+        Object.entries(config).forEach(([key, data]) => {
+          processElement(key, data, [], 0);
+        });
+      }
 
       return result;
     };
