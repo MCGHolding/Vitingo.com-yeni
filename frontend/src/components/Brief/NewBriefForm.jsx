@@ -2846,25 +2846,39 @@ function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="mb-4 p-3 bg-blue-100 rounded-lg">
-        <h3 className="font-semibold text-blue-900 mb-2">Stand Elementleri Yönetimi</h3>
-        <p className="text-sm text-blue-800">
-          Bu panelde tüm stand elementlerini ve alt kategorilerini görüntüleyebilir, düzenleyebilir veya silebilirsiniz.
-          Her seviyedeki elementler farklı renklerle gösterilmiştir.
-        </p>
-      </div>
-      
-      {Object.entries(elementsConfig).map(([elementKey, elementData]) =>
-        renderElement(elementKey, elementData, [], 0)
-      )}
-      
-      {Object.keys(elementsConfig).length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <p>Henüz hiç stand elementi tanımlanmamış.</p>
+    <DndProvider backend={HTML5Backend}>
+      <div className="space-y-6">
+        <div className="mb-4 p-3 bg-blue-100 rounded-lg">
+          <h3 className="font-semibold text-blue-900 mb-2">Stand Elementleri Yönetimi</h3>
+          <p className="text-sm text-blue-800">
+            Bu panelde tüm stand elementlerini ve alt kategorilerini görüntüleyebilir, düzenleyebilir veya silebilirsiniz.
+            Elementleri sürükleyerek yeniden sıralayabilirsiniz.
+          </p>
         </div>
-      )}
-    </div>
+        
+        <div className="space-y-2">
+          {elements.map((element, index) => (
+            <DraggableElement
+              key={`${element.path.join('.')}.${element.key}-${index}`}
+              elementKey={element.key}
+              elementData={element.data}
+              path={element.path}
+              depth={element.depth}
+              index={index}
+              moveElement={moveElement}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+        
+        {elements.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <p>Henüz hiç stand elementi tanımlanmamış.</p>
+          </div>
+        )}
+      </div>
+    </DndProvider>
   );
 }
 
