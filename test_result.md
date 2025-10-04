@@ -1626,6 +1626,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Alt Kategori Ekle Button Text Fix Testing"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Brief/NewBriefForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing the fixed Alt Kategori Ekle buttons to ensure all buttons at each level now say 'Alt Kategori Ekle' instead of different text at different levels. Need to verify: 1) Login with murb/Murat2024! 2) Navigate to Brief > Yeni Brief > Stand Requirements > Detaylı Stand İhtiyaçları 3) Click Alt Kategori Ekle button next to '1. Ana Element Seçin *' 4) Verify modal opens with 'Ana element dropdown'una kategori ekleniyor' message 5) Add test category 'Işıklandırma' (text type, 'LED Aydınlatma') 6) Close modal and see new 'Işıklandırma' category in main dropdown 7) Select 'Işıklandırma' 8) See 2nd dropdown appear - click its 'Alt Kategori Ekle' button 9) Modal should show 'Üst kategori: Işıklandırma' message 10) Add sub category 'Spot' (text type, 'Spot Işık') 11) Verify all buttons at each level say 'Alt Kategori Ekle'"
+
   - task: "Brief Form Multi-Step Stand Requirements"
     implemented: true
     working: true
