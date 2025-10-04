@@ -1621,13 +1621,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       <div className="flex justify-end space-x-2 mb-4">
                         <Button
                           type="button"
-                          onClick={() => openAddElementModal('main')}
+                          onClick={() => {
+                            // Set modal context for main element addition
+                            setNewCategoryData(prev => ({
+                              ...prev,
+                              parentPath: null
+                            }));
+                            setIsNewCategoryModalOpen(true);
+                          }}
                           size="sm"
                           variant="outline"
                           className="text-green-600 border-green-300 hover:bg-green-50"
                         >
                           <Plus className="h-4 w-4 mr-1" />
-                          Yeni Ana Element
+                          Alt Kategori Ekle
                         </Button>
                         <Button
                           type="button"
