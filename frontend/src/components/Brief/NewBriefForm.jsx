@@ -2527,7 +2527,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 disabled={!newCategoryData.label}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Kategori Ekle
+                {newCategoryData.editMode ? 'Güncelle' : 'Kategori Ekle'}
               </Button>
             </div>
           </div>
