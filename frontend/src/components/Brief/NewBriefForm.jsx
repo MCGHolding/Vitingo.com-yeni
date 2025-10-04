@@ -2480,7 +2480,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   setIsNewCategoryModalOpen(false);
                   setNewCategoryData({
                     label: '',
-                    parentPath: null
+                    parentPath: null,
+                    editMode: false,
+                    editKey: null,
+                    editPathString: null
                   });
                 }}
                 className="text-gray-500 hover:text-gray-700"
@@ -2515,7 +2518,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   setIsNewCategoryModalOpen(false);
                   setNewCategoryData({
                     label: '',
-                    parentPath: null
+                    parentPath: null,
+                    editMode: false,
+                    editKey: null,
+                    editPathString: null
                   });
                 }}
               >
