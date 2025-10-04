@@ -1960,64 +1960,23 @@ export default function NewBriefForm({ onBackToDashboard }) {
                             </div>
                           </div>
                           
-                          {/* Renk Paleti Column */}
+                          {/* Renkler Column */}
                           <div className="space-y-2">
                             <label className="block text-sm font-medium text-gray-700">
-                              Renk Paleti
+                              Renkler
                             </label>
-                            <div className="relative">
-                              <button
-                                type="button"
-                                onClick={() => setIsColorDropdownOpen(!isColorDropdownOpen)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-left flex items-center justify-between"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {selectedColor && (
-                                    <div 
-                                      className="w-5 h-5 rounded border border-gray-300"
-                                      style={{ backgroundColor: selectedColor }}
-                                    ></div>
-                                  )}
-                                  <span className="text-gray-700">
-                                    {selectedColor ? getColorName(selectedColor) : "Renk seçin"}
-                                  </span>
-                                </div>
-                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </button>
-                              
-                              {/* Color Dropdown */}
-                              {isColorDropdownOpen && (
-                                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl color-dropdown-container" style={{minWidth: '320px'}}>
-                                  <div className="p-4">
-                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Renk Paleti</h4>
-                                    <div className="grid grid-cols-8 gap-1.5">
-                                      {getColorPalette().map((color) => (
-                                        <button
-                                          key={color.hex}
-                                          type="button"
-                                          onClick={() => {
-                                            setSelectedColor(color.hex);
-                                            setIsColorDropdownOpen(false);
-                                          }}
-                                          className={`w-7 h-7 rounded-md border-2 hover:scale-125 hover:shadow-md transition-all duration-200 ${
-                                            selectedColor === color.hex ? 'border-blue-600 shadow-md ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-400'
-                                          }`}
-                                          style={{ backgroundColor: color.hex }}
-                                          title={color.name}
-                                        />
-                                      ))}
-                                    </div>
-                                    <div className="mt-3 pt-3 border-t border-gray-200">
-                                      <p className="text-xs text-gray-500 text-center">
-                                        {selectedColor ? getColorName(selectedColor) : 'Bir renk seçin'}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                            <select 
+                              value={selectedColor}
+                              onChange={(e) => setSelectedColor(e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="">Renk seçin</option>
+                              {getColorOptions().map((color) => (
+                                <option key={color} value={color}>
+                                  {color}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         </div>
                         
