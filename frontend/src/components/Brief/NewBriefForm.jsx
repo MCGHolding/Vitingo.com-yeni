@@ -2571,6 +2571,95 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {currentStep === 9 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Brief Detayları ve Görüşleriniz</h3>
+                    <p className="text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                      Tasarımınızı isteklerinize ve kurumsal kimliğinize en uygun şekilde yapabilmemiz, 
+                      fuar standınızın hedef kitlenize güçlü bir mesaj verebilmesi ve markanızın değerlerini 
+                      en iyi şekilde yansıtabilmesi için, lütfen briefinize ilişkin tüm detayları, 
+                      beklentilerinizi, özel isteklerinizi, kaçınmak istediğiniz yaklaşımları, 
+                      hedef kitlenizin demografik özelliklerini, standınızda yaratmak istediğiniz 
+                      atmosferi ve genel tasarım felsefenizi yazılı olarak detaylı şekilde 
+                      burada belirtiniz. Bu bilgiler, tasarım ekibimizin size en uygun çözümü 
+                      sunabilmesi için kritik öneme sahiptir.
+                    </p>
+                  </div>
+                  
+                  <div className="max-w-4xl mx-auto space-y-6">
+                    {/* Detailed Brief Text Area */}
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Detaylı Brief Açıklaması *
+                      </label>
+                      <textarea
+                        value={stepData.detailedBrief || ''}
+                        onChange={(e) => handleStepDataChange('detailedBrief', e.target.value)}
+                        placeholder="Lütfen standınız hakkındaki tüm detayları, beklentilerinizi, hedef kitlenizi, yaratmak istediğiniz atmosferi, kaçınmak istediğiniz yaklaşımları ve özel isteklerinizi detaylıca yazınız..."
+                        rows={12}
+                        className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[300px] text-sm leading-relaxed"
+                      />
+                      <div className="text-right text-xs text-gray-500">
+                        {(stepData.detailedBrief || '').length} karakter
+                      </div>
+                    </div>
+
+                    {/* Ready File Upload Option */}
+                    <div className="border-t border-gray-200 pt-6">
+                      <div className="flex items-start space-x-3">
+                        <input
+                          type="checkbox"
+                          id="hasReadyFile"
+                          checked={stepData.hasReadyFile || false}
+                          onChange={(e) => handleStepDataChange('hasReadyFile', e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                        />
+                        <div className="flex-1">
+                          <label htmlFor="hasReadyFile" className="text-sm font-medium text-gray-700 cursor-pointer">
+                            Hazır Dosya
+                          </label>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Hazır bir yazılı briefiniz varsa buraya yükleyebilirsiniz
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* File Upload Area - only show when checkbox is checked */}
+                      {stepData.hasReadyFile && (
+                        <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-6">
+                          <div className="text-center">
+                            <div className="text-3xl mb-3">📄</div>
+                            <p className="text-sm text-gray-600 mb-4">
+                              Brief dosyanızı buraya yükleyebilirsiniz
+                            </p>
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx,.txt"
+                              onChange={(e) => {
+                                console.log('Brief file selected:', e.target.files[0]);
+                                // TODO: Handle brief file upload
+                              }}
+                              className="hidden"
+                              id="brief-file-upload"
+                            />
+                            <label
+                              htmlFor="brief-file-upload"
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                            >
+                              Dosya Seç
+                            </label>
+                            <p className="text-xs text-gray-500 mt-2">
+                              PDF, DOC, DOCX, TXT dosyaları kabul edilir
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 10 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2">
                       Standınızın nasıl olması gerektiği konusunda bir tasarım, fikir veya konsept eklemek ister misiniz?
                     </h3>
