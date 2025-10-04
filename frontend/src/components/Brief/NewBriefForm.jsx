@@ -921,11 +921,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const handleAddChildElement = (pathString) => {
     console.log('Adding child to:', pathString);
     
-    // Set modal context for adding child to specific element
+    // Ensure modal is properly reset for new category addition
     setNewCategoryData({
       label: '',
       parentPath: pathString, // Use the full path as parent
-      editMode: false,
+      editMode: false,      // Explicitly set to false for new addition
       editKey: null,
       editPathString: null
     });
