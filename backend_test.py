@@ -1812,12 +1812,7 @@ def test_ai_design_generation_endpoint():
         return False
     except Exception as e:
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
-        return Falsepoint'ini test et
-    2. Test request'i gönder with specific brief_data
-    3. Response kontrolleri: Status code 200 OK, "designs" array, required fields
-    4. OpenAI entegrasyonu test: EMERGENT_LLM_KEY, EmergentIntegrations kütüphanesi
-    5. Error handling test: Geçersiz brief_data, API key sorunu
-    """
+        return False
     
     print("=" * 80)
     print("TESTING AI DESIGN GENERATION ENDPOINT - POST /api/generate-stand-designs")
