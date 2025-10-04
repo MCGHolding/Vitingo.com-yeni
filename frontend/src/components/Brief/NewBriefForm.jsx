@@ -739,7 +739,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
           type: 'text',
           label: '',
           value: '',
-          color: '#000000'
+          color: '#000000',
+          parentPath: null
         });
         
         // Note: We don't reset currentPath here to keep the dropdown context
