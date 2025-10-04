@@ -6645,6 +6645,13 @@ async def create_stand_element(element_data: StandElementCreate):
                 # Move to children of current node
                 current_node = current_node[part_key].get("children", {})
             
+            # Check for duplicate labels in current level
+            existing_labels = [item.get("label", "").lower().strip() for item in current_node.values() if item.get("label")]
+            new_label_normalized = element_data.label.lower().strip()
+            
+            if new_label_normalized in existing_labels:
+                raise HTTPException(status_code=400, detail=f'Kategori "{element_data.label}" bu seviyede zaten mevcut. Farklı bir isim kullanın.')
+            
             # Add new element to parent node
             new_element = {
                 "key": element_data.key,
