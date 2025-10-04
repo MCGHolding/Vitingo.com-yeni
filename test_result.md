@@ -189,7 +189,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Alt kategori ekleme ve görünürlük sorununu debug et: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > Stand Requirements'e git 3. Ana element seç (Zemin) 4. Console log'lara dikkat et - stand elements kaç tane yükleniyor? 5. 'Yeni Kategori Ekle' ile bir kategori ekle (text türü, 'Test Kategori') 6. Ekleme sonrası console log'da refresh olup olmadığını kontrol et 7. Dropdown'da yeni kategori görünüyor mu? 8. Network tab'ında API call'ları kontrol et 9. Sorun nerede - backend'de ekleniyor mu, frontend'de refresh olmuyor mu?"
+user_problem_statement: "EditMode debug testi: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > 'Detaylı Stand İhtiyaçları →' > Step 2'ye git 3. 'Elementleri Yönet' butonuna tıkla 4. Console aç 5. Zemin'in 'Alt Ekle' butonuna tıkla 6. Modal'da 'Test Kategori' yaz 7. 'Kategori Ekle' butonuna tıkla 8. Console'da şu mesajları ara: - 'newCategoryData.editMode: false' görünüyor mu? - 'Checking for duplicate' görünüyor mu? - Eğer 'Skipping duplicate check - in edit mode' görünüyorsa editMode true demektir EditMode değeri nedir?"
 
 backend:
   - task: "Stand Elements Recursive Structure GET Endpoint"
