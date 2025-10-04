@@ -2005,8 +2005,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       <div className="space-y-2">
                         {stepData.selectedItems.map((item, index) => (
                           <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
-                            <div>
-                              <span className="font-medium">{item.pathString}</span>
+                            <div className="flex-1">
+                              <div className="font-medium">{item.pathString}</div>
+                              <div className="flex flex-wrap gap-4 mt-1 text-sm text-gray-600">
+                                {item.quantity && item.unit && (
+                                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                    📊 {item.quantity} {item.unit}
+                                  </span>
+                                )}
+                                {item.color && (
+                                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                    🎨 {item.color}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <Button
                               type="button"
