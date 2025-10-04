@@ -2444,7 +2444,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
               <Button
                 type="button"
                 onClick={handleAddNewCategory}
-                disabled={!newCategoryData.label || (!newCategoryData.value && newCategoryData.type !== 'color')}
+                disabled={!newCategoryData.label}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Kategori Ekle
