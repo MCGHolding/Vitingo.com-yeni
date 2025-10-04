@@ -2745,9 +2745,7 @@ function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
       return result;
     };
 
-    const flatElements = flattenElements(elementsConfig);
-    console.log('Flattened elements for drag&drop:', flatElements.map(e => `${e.depth}: ${e.key} - ${e.data.label}`));
-    setElements(flatElements);
+    setElements(flattenElements(elementsConfig));
   }, [elementsConfig]);
 
   // Handle drag & drop reordering
