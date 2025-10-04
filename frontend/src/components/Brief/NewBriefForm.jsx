@@ -690,8 +690,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
         value = newCategoryData.color;
       }
 
-      // Build parent path from current selection
-      const parentPath = stepData.currentPath.length > 0 ? stepData.currentPath.join('.') : null;
+      // Use parent path from modal context
+      const parentPath = newCategoryData.parentPath;
       
       // Generate unique key from label
       const key = newCategoryData.label.toLowerCase()
