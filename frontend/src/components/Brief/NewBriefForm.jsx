@@ -2022,9 +2022,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               
                               {/* Color Dropdown */}
                               {isColorDropdownOpen && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-                                  <div className="p-3">
-                                    <div className="grid grid-cols-6 gap-2">
+                                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl color-dropdown-container" style={{minWidth: '320px'}}>
+                                  <div className="p-4">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Renk Paleti</h4>
+                                    <div className="grid grid-cols-8 gap-1.5">
                                       {getColorPalette().map((color) => (
                                         <button
                                           key={color.hex}
@@ -2033,13 +2034,18 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                             setSelectedColor(color.hex);
                                             setIsColorDropdownOpen(false);
                                           }}
-                                          className={`w-8 h-8 rounded border-2 hover:scale-110 transition-transform ${
-                                            selectedColor === color.hex ? 'border-blue-500 shadow-lg' : 'border-gray-300'
+                                          className={`w-7 h-7 rounded-md border-2 hover:scale-125 hover:shadow-md transition-all duration-200 ${
+                                            selectedColor === color.hex ? 'border-blue-600 shadow-md ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-400'
                                           }`}
                                           style={{ backgroundColor: color.hex }}
                                           title={color.name}
                                         />
                                       ))}
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-gray-200">
+                                      <p className="text-xs text-gray-500 text-center">
+                                        {selectedColor ? getColorName(selectedColor) : 'Bir renk seçin'}
+                                      </p>
                                     </div>
                                   </div>
                                 </div>
