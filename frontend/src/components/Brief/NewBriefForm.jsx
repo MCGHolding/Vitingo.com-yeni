@@ -2400,7 +2400,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold">Yeni Kategori Ekle</h3>
+              <div>
+                <h3 className="text-xl font-semibold">Yeni Kategori Ekle</h3>
+                {newCategoryData.parentPath && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Üst kategori: {newCategoryData.parentPath.replace(/\./g, ' → ')}
+                  </p>
+                )}
+                {!newCategoryData.parentPath && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Ana kategori ekleniyor
+                  </p>
+                )}
+              </div>
               <button
                 onClick={() => {
                   setIsNewCategoryModalOpen(false);
