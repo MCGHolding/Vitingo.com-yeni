@@ -2694,6 +2694,15 @@ function DraggableElement({ elementKey, elementData, path, depth, index, moveEle
         <Button
           size="sm"
           variant="outline"
+          onClick={() => onAddChild(pathString)}
+          className="text-green-600 border-green-300 hover:bg-green-50"
+        >
+          <Plus className="h-3 w-3 mr-1" />
+          Alt Ekle
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
           onClick={() => onEdit(pathString, elementData)}
           className="text-blue-600 border-blue-300 hover:bg-blue-50"
         >
