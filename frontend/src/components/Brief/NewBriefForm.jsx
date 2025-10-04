@@ -1850,12 +1850,15 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 } />
                               </SelectTrigger>
                               <SelectContent>
-                                {Object.entries(availableOptions).map(([key, config]) => (
-                                  <SelectItem key={key} value={key}>
-                                    {config.label}
-                                    {level === 0 && config.required && <span className="text-orange-600 ml-2">*</span>}
-                                  </SelectItem>
-                                ))}
+                                {Object.entries(availableOptions).map(([key, config]) => {
+                                  console.log(`DEBUG SelectItem - Level ${level}, Key: ${key}, Config:`, config);
+                                  return (
+                                    <SelectItem key={key} value={key}>
+                                      {config.label}
+                                      {level === 0 && config.required && <span className="text-orange-600 ml-2">*</span>}
+                                    </SelectItem>
+                                  );
+                                })}
                               </SelectContent>
                             </Select>
                           </div>
