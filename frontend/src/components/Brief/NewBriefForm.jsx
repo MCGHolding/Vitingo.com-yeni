@@ -2528,7 +2528,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     type: 'text',
                     label: '',
                     value: '',
-                    color: '#000000'
+                    color: '#000000',
+                    parentPath: null
                   });
                 }}
               >
