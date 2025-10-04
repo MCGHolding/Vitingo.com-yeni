@@ -672,62 +672,107 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   };
 
-  // New Category Handler
+  // New Category or Edit Category Handler
   const handleAddNewCategory = async () => {
     try {
       if (!newCategoryData.label.trim()) {
-        showToast('error', 'Hata!', 'Alt kategori adı gereklidir.');
+        showToast('error', 'Hata!', 'Kategori adı gereklidir.');
         return;
       }
 
-      // Use parent path from modal context
-      const parentPath = newCategoryData.parentPath;
-      
-      // Generate unique key from label
-      const key = newCategoryData.label.toLowerCase()
-        .replace(/[^a-zA-Z0-9\s]/g, '')
-        .replace(/\s+/g, '_')
-        .substring(0, 20) + '_' + Date.now().toString().substring(-4);
+      if (newCategoryData.editMode) {
+        // Edit existing category
+        const categoryData = {
+          key: newCategoryData.editKey,
+          label: newCategoryData.label,
+          element_type: 'option',
+          input_type: 'text',
+          parent_path: newCategoryData.parentPath
+        };
 
-      const categoryData = {
-        key: key,
-        label: newCategoryData.label,
-        element_type: 'option',
-        input_type: 'text',
-        parent_path: parentPath
-      };
+        console.log('Editing category:', categoryData);
 
-      console.log('Adding new category:', categoryData);
-
-      const response = await fetch(`${BACKEND_URL}/api/stand-elements`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(categoryData)
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        showToast('success', 'Başarılı!', `${newCategoryData.label} kategorisi eklendi.`);
-        
-        // Refresh stand elements
-        await refreshStandElements();
-        
-        // Close modal and reset data (but keep current path for continuation)
-        setIsNewCategoryModalOpen(false);
-        setNewCategoryData({
-          label: '',
-          parentPath: null
+        const response = await fetch(`${BACKEND_URL}/api/stand-elements/${newCategoryData.editKey}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(categoryData)
         });
-        
-        // Note: We don't reset currentPath here to keep the dropdown context
+
+        if (response.ok) {
+          const result = await response.json();
+          showToast('success', 'Başarılı!', `${newCategoryData.label} kategorisi güncellendi.`);
+          
+          // Refresh stand elements
+          await refreshStandElements();
+          
+          // Close modal and reset data
+          setIsNewCategoryModalOpen(false);
+          setNewCategoryData({
+            label: '',
+            parentPath: null,
+            editMode: false,
+            editKey: null,
+            editPathString: null
+          });
+        } else {
+          const error = await response.json();
+          showToast('error', 'Hata!', error.detail || 'Kategori güncellenemedi.');
+        }
       } else {
-        const error = await response.json();
-        showToast('error', 'Hata!', error.detail || 'Kategori eklenemedi.');
+        // Add new category
+        const parentPath = newCategoryData.parentPath;
+        
+        // Generate unique key from label
+        const key = newCategoryData.label.toLowerCase()
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .substring(0, 20) + '_' + Date.now().toString().substring(-4);
+
+        const categoryData = {
+          key: key,
+          label: newCategoryData.label,
+          element_type: 'option',
+          input_type: 'text',
+          parent_path: parentPath
+        };
+
+        console.log('Adding new category:', categoryData);
+
+        const response = await fetch(`${BACKEND_URL}/api/stand-elements`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(categoryData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          showToast('success', 'Başarılı!', `${newCategoryData.label} kategorisi eklendi.`);
+          
+          // Refresh stand elements
+          await refreshStandElements();
+          
+          // Close modal and reset data (but keep current path for continuation)
+          setIsNewCategoryModalOpen(false);
+          setNewCategoryData({
+            label: '',
+            parentPath: null,
+            editMode: false,
+            editKey: null,
+            editPathString: null
+          });
+          
+          // Note: We don't reset currentPath here to keep the dropdown context
+        } else {
+          const error = await response.json();
+          showToast('error', 'Hata!', error.detail || 'Kategori eklenemedi.');
+        }
       }
     } catch (error) {
-      console.error('Error adding new category:', error);
+      console.error('Error with category operation:', error);
       showToast('error', 'Hata!', 'Bir hata oluştu, lütfen tekrar deneyin.');
     }
   };
