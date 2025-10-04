@@ -855,11 +855,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   const handleEditElement = (pathString, elementData) => {
     console.log('Editing element:', pathString, elementData);
-    // For now, show a toast - we can implement edit modal later
-    showToast('info', 'Düzenleme', `${elementData.label} düzenleme özelliği yakında eklenecek.`);
     
-    // TODO: Implement recursive element editing modal
-    // This would need to handle the new recursive structure
+    const pathParts = pathString.split('.');
+    const parentPath = pathParts.length > 1 ? pathParts.slice(0, -1).join('.') : null;
+    
+    // Set modal data for editing
+    setNewCategoryData({
+      label: elementData.label,
+      parentPath: parentPath,
+      editMode: true,
+      editKey: pathParts[pathParts.length - 1],
+      editPathString: pathString
+    });
+    
+    setIsNewCategoryModalOpen(true);
   };
 
   const canProceedFromStep2 = () => {
