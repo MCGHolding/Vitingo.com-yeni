@@ -1793,29 +1793,46 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               <label className="block text-sm font-medium text-gray-700">
                                 {level + 1}. {levelLabel}
                               </label>
-                              {true && ( // Development: Always show for testing
-                                <Button
-                                  type="button"
-                                  onClick={() => {
-                                    const parentPath = stepData.currentPath.slice(0, level);
-                                    // Set modal context for current level
-                                    setNewCategoryData({
-                                      label: '',
-                                      parentPath: parentPath.length > 0 ? parentPath.join('.') : null,
-                                      editMode: false,
-                                      editKey: null,
-                                      editPathString: null
-                                    });
-                                    setIsNewCategoryModalOpen(true);
-                                  }}
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                                >
-                                  <Plus className="h-4 w-4 mr-1" />
-                                  Alt Kategori Ekle
-                                </Button>
-                              )}
+                              <div className="flex items-center gap-2">
+                                {true && ( // Development: Always show for testing
+                                  <Button
+                                    type="button"
+                                    onClick={() => {
+                                      // Placeholder for future Özellik functionality
+                                      console.log('Özellik Ekle clicked for level:', level);
+                                    }}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-green-600 border-green-300 hover:bg-green-50"
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    Özellik Ekle
+                                  </Button>
+                                )}
+                                {true && ( // Development: Always show for testing
+                                  <Button
+                                    type="button"
+                                    onClick={() => {
+                                      const parentPath = stepData.currentPath.slice(0, level);
+                                      // Set modal context for current level
+                                      setNewCategoryData({
+                                        label: '',
+                                        parentPath: parentPath.length > 0 ? parentPath.join('.') : null,
+                                        editMode: false,
+                                        editKey: null,
+                                        editPathString: null
+                                      });
+                                      setIsNewCategoryModalOpen(true);
+                                    }}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    Alt Kategori Ekle
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                             <Select 
                               value={stepData.currentPath[level] || ''} 
