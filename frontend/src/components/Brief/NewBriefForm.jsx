@@ -2563,20 +2563,82 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {currentStep === 7 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
-                    <h3 className="text-xl font-semibold mb-2">AI Tasarım Örnekleri Oluşturuluyor</h3>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {isGeneratingDesigns ? 'AI Tasarım Örnekleri Oluşturuluyor' : 'AI Tasarım Örnekleri'}
+                    </h3>
                     <p className="text-gray-600">
-                      Verdiğiniz bilgilere göre 10 farklı tasarım örneği üretiyoruz...
+                      {isGeneratingDesigns 
+                        ? 'Verdiğiniz bilgilere göre 10 farklı tasarım örneği üretiyoruz...'
+                        : 'Sizin için üretilen tasarım örnekleri aşağıdadır'
+                      }
                     </p>
                   </div>
 
-                  {/* AI Design Generation Area */}
-                  <div className="max-w-6xl mx-auto">
-                    <div className="text-center py-20">
-                      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-8"></div>
-                      <p className="text-lg text-gray-600 mb-4">Tasarımlar üretiliyor...</p>
-                      <p className="text-sm text-gray-500">Bu işlem 2-3 dakika sürebilir</p>
+                  {/* Loading State */}
+                  {isGeneratingDesigns && (
+                    <div className="max-w-6xl mx-auto">
+                      <div className="text-center py-20">
+                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-8"></div>
+                        <p className="text-lg text-gray-600 mb-4">Tasarımlar üretiliyor...</p>
+                        <p className="text-sm text-gray-500">Bu işlem 2-3 dakika sürebilir</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Error State */}
+                  {generationError && (
+                    <div className="max-w-4xl mx-auto">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                        <div className="text-4xl mb-4">⚠️</div>
+                        <h4 className="text-lg font-semibold text-red-800 mb-2">Tasarım Üretimi Hatası</h4>
+                        <p className="text-red-600 mb-4">{generationError}</p>
+                        <button 
+                          onClick={generateAIDesigns}
+                          className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                        >
+                          Tekrar Dene
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Generated Designs Display */}
+                  {!isGeneratingDesigns && !generationError && generatedDesigns.length > 0 && (
+                    <div className="max-w-7xl mx-auto">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {generatedDesigns.map((design, index) => (
+                          <div key={design.id} className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-colors">
+                            <div className="aspect-w-16 aspect-h-9">
+                              <img 
+                                src={`data:image/png;base64,${design.image_data}`}
+                                alt={`Tasarım ${index + 1}`}
+                                className="w-full h-64 object-cover"
+                              />
+                            </div>
+                            <div className="p-4">
+                              <h4 className="font-semibold mb-2">Tasarım Konsepti {index + 1}</h4>
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-3">{design.prompt_used.split(',').slice(0, 3).join(', ')}</p>
+                              <button 
+                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                                onClick={() => {
+                                  console.log('Selected design:', design.id);
+                                  // TODO: Handle design selection
+                                }}
+                              >
+                                Bu Tasarımı Beğendim
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="text-center mt-8">
+                        <p className="text-sm text-gray-600 mb-4">
+                          Beğendiğiniz tasarımları seçerek detaylı teklife geçebilirsiniz
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
