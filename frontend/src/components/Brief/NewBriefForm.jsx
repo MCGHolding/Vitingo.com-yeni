@@ -1718,7 +1718,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               <label className="block text-sm font-medium text-gray-700">
                                 {level + 1}. {levelLabel}
                               </label>
-                              {true && (
+                              {true && ( // Development: Always show for testing
                                 <Button
                                   type="button"
                                   onClick={() => {
