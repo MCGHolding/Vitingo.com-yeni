@@ -1676,19 +1676,24 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               <label className="block text-sm font-medium text-gray-700">
                                 {level + 1}. {levelLabel}
                               </label>
-                              {(userRole === 'admin' || userRole === 'super_admin') && level > 0 && (
+                              {(userRole === 'admin' || userRole === 'super_admin') && (
                                 <Button
                                   type="button"
                                   onClick={() => {
                                     const parentPath = stepData.currentPath.slice(0, level);
-                                    openAddElementModal('sub', ...parentPath);
+                                    // Set modal context for current level
+                                    setNewCategoryData(prev => ({
+                                      ...prev,
+                                      parentPath: parentPath.length > 0 ? parentPath.join('.') : null
+                                    }));
+                                    setIsNewCategoryModalOpen(true);
                                   }}
                                   size="sm"
                                   variant="outline"
                                   className="text-blue-600 border-blue-300 hover:bg-blue-50"
                                 >
                                   <Plus className="h-4 w-4 mr-1" />
-                                  Alt Kategori Ekle
+                                  {level === 0 ? 'Ana Element Ekle' : 'Alt Kategori Ekle'}
                                 </Button>
                               )}
                             </div>
