@@ -732,7 +732,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
         // Refresh stand elements
         await refreshStandElements();
         
-        // Close modal and reset data
+        // Close modal and reset data (but keep current path for continuation)
         setIsNewCategoryModalOpen(false);
         setNewCategoryData({
           type: 'text',
@@ -740,6 +740,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
           value: '',
           color: '#000000'
         });
+        
+        // Note: We don't reset currentPath here to keep the dropdown context
       } else {
         const error = await response.json();
         showToast('error', 'Hata!', error.detail || 'Kategori eklenemedi.');
