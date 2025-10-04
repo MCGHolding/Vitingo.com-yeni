@@ -2423,6 +2423,101 @@ export default function NewBriefForm({ onBackToDashboard }) {
               )}
 
               {currentStep === 6 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Tasarım İçin İlham Kaynakları</h3>
+                    <p className="text-gray-600">
+                      Tasarımımıza ilham verecek örnek resimler ve logonuzu yükleyin
+                    </p>
+                  </div>
+
+                  {/* File Upload Areas */}
+                  <div className="max-w-4xl mx-auto space-y-8">
+                    {/* Inspiration Images Upload */}
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
+                      <div className="text-center">
+                        <div className="text-4xl mb-4">📷</div>
+                        <h4 className="text-lg font-semibold mb-2">Örnek Tasarım Resimleri</h4>
+                        <p className="text-gray-600 mb-4">
+                          Beğendiğiniz fuar standı tasarımları, geçmiş çalışmalarınız (En fazla 15 resim)
+                        </p>
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) => {
+                            console.log('Inspiration images selected:', e.target.files);
+                            // TODO: Handle file upload
+                          }}
+                          className="hidden"
+                          id="inspiration-images"
+                        />
+                        <label
+                          htmlFor="inspiration-images"
+                          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                        >
+                          Resimleri Seçin
+                        </label>
+                        <p className="text-sm text-gray-500 mt-2">
+                          JPG, PNG, WEBP dosyaları kabul edilir (Maksimum 15 dosya)
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Logo Upload */}
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
+                      <div className="text-center">
+                        <div className="text-4xl mb-4">🏢</div>
+                        <h4 className="text-lg font-semibold mb-2">Firma Logosu</h4>
+                        <p className="text-gray-600 mb-4">
+                          Standınızda kullanılacak firma logonuzu yükleyin
+                        </p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            console.log('Logo selected:', e.target.files[0]);
+                            // TODO: Handle logo upload
+                          }}
+                          className="hidden"
+                          id="logo-upload"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 cursor-pointer"
+                        >
+                          Logo Seçin
+                        </label>
+                        <p className="text-sm text-gray-500 mt-2">
+                          PNG, SVG, JPG formatları önerilir
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 7 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">AI Tasarım Örnekleri Oluşturuluyor</h3>
+                    <p className="text-gray-600">
+                      Verdiğiniz bilgilere göre 10 farklı tasarım örneği üretiyoruz...
+                    </p>
+                  </div>
+
+                  {/* AI Design Generation Area */}
+                  <div className="max-w-6xl mx-auto">
+                    <div className="text-center py-20">
+                      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-8"></div>
+                      <p className="text-lg text-gray-600 mb-4">Tasarımlar üretiliyor...</p>
+                      <p className="text-sm text-gray-500">Bu işlem 2-3 dakika sürebilir</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 8 && (
                 <div className="space-y-8">
                   <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2">Satın alma kararınızda fiyat ne kadar önemli?</h3>
