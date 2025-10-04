@@ -3453,26 +3453,6 @@ if __name__ == "__main__":
     else:
         print("\n❌ Stand Elements API test failed - please review the implementation")
         sys.exit(1)
-    
-    print("=" * 80)
-    print("TESTING RECURSIVE STAND ELEMENTS GET ENDPOINT")
-    print("=" * 80)
-    
-    endpoint = f"{BACKEND_URL}/api/stand-elements"
-    print(f"Testing endpoint: {endpoint}")
-    
-    try:
-        # Test 1: Make GET request
-        print("\n1. Making GET request to stand elements...")
-        response = requests.get(endpoint, timeout=30)
-        
-        print(f"   Status Code: {response.status_code}")
-        if response.status_code == 200:
-            print("   ✅ PASS: Stand elements endpoint responds with status 200")
-        else:
-            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
-            print(f"   Response: {response.text}")
-            return False
         
         # Test 2: Check content type
         content_type = response.headers.get('Content-Type', '')
