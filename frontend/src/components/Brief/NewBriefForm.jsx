@@ -477,6 +477,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }
   }, [selectedPersonId, selectedCustomer, relatedPeople]);
 
+  // Auto-start AI generation when reaching step 7
+  useEffect(() => {
+    if (currentStep === 7 && !isGeneratingDesigns && generatedDesigns.length === 0 && !generationError) {
+      console.log('Step 7 reached, starting AI generation...');
+      generateAIDesigns();
+    }
+  }, [currentStep]);
+
   const standTypes = [
     { value: 'shell-scheme', label: 'Shell Scheme (Kabuk Stand)' },
     { value: 'space-only', label: 'Space Only (Boş Alan)' },
