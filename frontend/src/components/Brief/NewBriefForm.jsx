@@ -159,7 +159,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
     type: 'text', // text, number, color
     label: '',
     value: '',
-    color: '#000000'
+    color: '#000000',
+    parentPath: null // Will be set when button is clicked
   });
   const [elementModalData, setElementModalData] = useState({
     parentKey: null,
