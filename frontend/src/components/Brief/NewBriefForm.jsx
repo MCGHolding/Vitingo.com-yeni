@@ -24,7 +24,8 @@ import {
   Ruler,
   Eye,
   EyeOff,
-  User
+  User,
+  GripVertical
 } from 'lucide-react';
 
 // Add CSS for slider styling and animations
