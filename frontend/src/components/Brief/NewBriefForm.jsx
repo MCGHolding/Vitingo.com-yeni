@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import VitingoPhoneInput from '../ui/SupplierPhone';
 import { allCustomers } from '../../mock/customersData';
 import { allPeople } from '../../mock/peopleData';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 import { 
