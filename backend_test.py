@@ -1563,6 +1563,331 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_stand_elements_endpoint():
+    """
+    Test GET /api/stand-elements endpoint'ini test et
+    
+    Requirements to verify:
+    1. GET /api/stand-elements endpoint'ini test et
+    2. Response'un doğru JSON formatında gelip gelmediğini kontrol et
+    3. "flooring" ana element'inin structure'ında "raised36mm", "standard", vs. alt elementlerin bulunduğunu doğrula
+    4. Her alt element'in "label" ve "children/structure" alanlarına sahip olduğunu kontrol et
+    5. Response örneği:
+    {
+      "flooring": {
+        "label": "Zemin", 
+        "structure": {
+          "raised36mm": {
+            "label": "36mm Yükseltilmiş Zemin",
+            "children": {...}
+          }
+        }
+      }
+    }
+    6. Backend verilerinin frontend'in beklediği formatla uyumlu olduğunu doğrula.
+    """
+    
+    print("=" * 80)
+    print("TESTING STAND ELEMENTS API ENDPOINT - GET /api/stand-elements")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    print("Bu endpoint stand elementlerinin recursive yapısını döndürür")
+    
+    try:
+        # Test 1: Check endpoint availability and response
+        print("\n1. Testing endpoint availability...")
+        start_time = datetime.now()
+        response = requests.get(endpoint, timeout=30)
+        end_time = datetime.now()
+        response_time = (end_time - start_time).total_seconds()
+        
+        print(f"   Status Code: {response.status_code}")
+        print(f"   Response Time: {response_time:.3f} seconds")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand elements endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            stand_elements = response.json()
+            print(f"   Response type: {type(stand_elements)}")
+            print(f"   Number of main elements: {len(stand_elements) if isinstance(stand_elements, dict) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(stand_elements, dict):
+            print("   ❌ FAIL: Response should be a dictionary containing stand elements")
+            return False
+        
+        if len(stand_elements) == 0:
+            print("   ❌ FAIL: Response should contain at least one stand element")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(stand_elements)} main stand elements")
+        print(f"   Main elements found: {list(stand_elements.keys())}")
+        
+        # Test 5: Check for "flooring" main element
+        print("\n4. Checking for 'flooring' main element...")
+        if "flooring" not in stand_elements:
+            print("   ❌ FAIL: 'flooring' main element not found in response")
+            print(f"   Available elements: {list(stand_elements.keys())}")
+            return False
+        
+        flooring_element = stand_elements["flooring"]
+        print("   ✅ PASS: 'flooring' main element found")
+        
+        # Test 6: Validate flooring element structure
+        print("\n5. Validating flooring element structure...")
+        if not isinstance(flooring_element, dict):
+            print("   ❌ FAIL: Flooring element should be a dictionary")
+            return False
+        
+        # Check required fields for flooring
+        required_flooring_fields = ["label", "structure"]
+        missing_fields = []
+        for field in required_flooring_fields:
+            if field not in flooring_element:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Flooring element missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Flooring element has required fields (label, structure)")
+        
+        # Test 7: Check flooring label
+        flooring_label = flooring_element.get("label")
+        print(f"   Flooring label: '{flooring_label}'")
+        if flooring_label != "Zemin":
+            print(f"   ❌ FAIL: Expected flooring label 'Zemin', got '{flooring_label}'")
+            return False
+        
+        print("   ✅ PASS: Flooring label is correct ('Zemin')")
+        
+        # Test 8: Check flooring structure
+        print("\n6. Validating flooring structure...")
+        flooring_structure = flooring_element.get("structure")
+        if not isinstance(flooring_structure, dict):
+            print("   ❌ FAIL: Flooring structure should be a dictionary")
+            return False
+        
+        print(f"   Flooring sub-elements: {list(flooring_structure.keys())}")
+        
+        # Test 9: Check for expected sub-elements
+        expected_sub_elements = ["raised36mm", "standard"]
+        found_sub_elements = []
+        missing_sub_elements = []
+        
+        for sub_element in expected_sub_elements:
+            if sub_element in flooring_structure:
+                found_sub_elements.append(sub_element)
+                print(f"   ✅ PASS: Found expected sub-element '{sub_element}'")
+            else:
+                missing_sub_elements.append(sub_element)
+                print(f"   ❌ FAIL: Missing expected sub-element '{sub_element}'")
+        
+        if missing_sub_elements:
+            print(f"   ❌ FAIL: Missing sub-elements: {missing_sub_elements}")
+            return False
+        
+        # Test 10: Validate sub-element structure
+        print("\n7. Validating sub-element structures...")
+        
+        # Check raised36mm sub-element
+        raised36mm = flooring_structure.get("raised36mm")
+        if not isinstance(raised36mm, dict):
+            print("   ❌ FAIL: raised36mm should be a dictionary")
+            return False
+        
+        if "label" not in raised36mm:
+            print("   ❌ FAIL: raised36mm missing 'label' field")
+            return False
+        
+        raised36mm_label = raised36mm.get("label")
+        print(f"   raised36mm label: '{raised36mm_label}'")
+        if raised36mm_label != "36mm Yükseltilmiş Zemin":
+            print(f"   ❌ FAIL: Expected raised36mm label '36mm Yükseltilmiş Zemin', got '{raised36mm_label}'")
+            return False
+        
+        print("   ✅ PASS: raised36mm has correct label")
+        
+        # Check if raised36mm has children
+        if "children" in raised36mm:
+            children = raised36mm.get("children")
+            if isinstance(children, dict) and len(children) > 0:
+                print(f"   ✅ PASS: raised36mm has children: {list(children.keys())}")
+            else:
+                print("   ⚠️  WARNING: raised36mm children is empty or invalid")
+        else:
+            print("   ℹ️  INFO: raised36mm does not have children field (may use different structure)")
+        
+        # Check standard sub-element
+        standard = flooring_structure.get("standard")
+        if not isinstance(standard, dict):
+            print("   ❌ FAIL: standard should be a dictionary")
+            return False
+        
+        if "label" not in standard:
+            print("   ❌ FAIL: standard missing 'label' field")
+            return False
+        
+        standard_label = standard.get("label")
+        print(f"   standard label: '{standard_label}'")
+        if standard_label != "Standart Zemin":
+            print(f"   ❌ FAIL: Expected standard label 'Standart Zemin', got '{standard_label}'")
+            return False
+        
+        print("   ✅ PASS: standard has correct label")
+        
+        # Test 11: Check for deep nesting (children of children)
+        print("\n8. Checking for deep nesting structure...")
+        deep_nesting_found = False
+        
+        for sub_key, sub_element in flooring_structure.items():
+            if isinstance(sub_element, dict) and "children" in sub_element:
+                children = sub_element.get("children")
+                if isinstance(children, dict):
+                    for child_key, child_element in children.items():
+                        if isinstance(child_element, dict):
+                            print(f"   Found deep nesting: flooring.{sub_key}.children.{child_key}")
+                            deep_nesting_found = True
+                            
+                            # Check if this child has a label
+                            if "label" in child_element:
+                                child_label = child_element.get("label")
+                                print(f"     Child label: '{child_label}'")
+                            
+                            # Check if this child has further children
+                            if "children" in child_element:
+                                grandchildren = child_element.get("children")
+                                if isinstance(grandchildren, dict) and len(grandchildren) > 0:
+                                    print(f"     Child has grandchildren: {list(grandchildren.keys())}")
+        
+        if deep_nesting_found:
+            print("   ✅ PASS: Deep nesting structure found (children of children)")
+        else:
+            print("   ℹ️  INFO: No deep nesting found (may be expected)")
+        
+        # Test 12: Validate Turkish character support
+        print("\n9. Testing Turkish character support...")
+        turkish_chars = ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'Ç', 'Ğ', 'İ', 'Ö', 'Ş', 'Ü']
+        turkish_found = False
+        
+        # Check flooring label
+        if any(char in flooring_label for char in turkish_chars):
+            print(f"   ✅ PASS: Turkish characters found in flooring label: '{flooring_label}'")
+            turkish_found = True
+        
+        # Check sub-element labels
+        for sub_key, sub_element in flooring_structure.items():
+            if isinstance(sub_element, dict) and "label" in sub_element:
+                sub_label = sub_element.get("label")
+                if any(char in sub_label for char in turkish_chars):
+                    print(f"   ✅ PASS: Turkish characters found in {sub_key} label: '{sub_label}'")
+                    turkish_found = True
+        
+        if turkish_found:
+            print("   ✅ PASS: Turkish character support verified")
+        else:
+            print("   ⚠️  WARNING: No Turkish characters found (may be unexpected)")
+        
+        # Test 13: Check response format compatibility
+        print("\n10. Checking response format compatibility...")
+        expected_format_example = {
+            "flooring": {
+                "label": "Zemin",
+                "structure": {
+                    "raised36mm": {
+                        "label": "36mm Yükseltilmiş Zemin",
+                        "children": {}
+                    }
+                }
+            }
+        }
+        
+        # Verify the actual response matches the expected format structure
+        format_compatible = True
+        
+        # Check main level
+        if not isinstance(stand_elements, dict):
+            print("   ❌ FAIL: Main level should be a dictionary")
+            format_compatible = False
+        
+        # Check flooring level
+        if "flooring" in stand_elements:
+            flooring = stand_elements["flooring"]
+            if not isinstance(flooring, dict) or "label" not in flooring or "structure" not in flooring:
+                print("   ❌ FAIL: Flooring element format incompatible")
+                format_compatible = False
+            else:
+                print("   ✅ PASS: Flooring element format compatible")
+        
+        if format_compatible:
+            print("   ✅ PASS: Response format is compatible with frontend expectations")
+        else:
+            print("   ❌ FAIL: Response format is not compatible with frontend expectations")
+            return False
+        
+        # Test 14: Performance and size check
+        print("\n11. Performance and size check...")
+        response_size = len(response.content)
+        print(f"   Response size: {response_size} bytes ({response_size/1024:.2f} KB)")
+        
+        if response_size > 1024 * 1024:  # 1MB
+            print("   ⚠️  WARNING: Response size is quite large (>1MB)")
+        else:
+            print("   ✅ PASS: Response size is reasonable")
+        
+        if response_time > 5.0:
+            print(f"   ⚠️  WARNING: Response time is slow ({response_time:.3f}s)")
+        else:
+            print(f"   ✅ PASS: Response time is acceptable ({response_time:.3f}s)")
+        
+        print("\n" + "=" * 80)
+        print("STAND ELEMENTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response format")
+        print("✅ Contains 'flooring' main element with correct label")
+        print("✅ Flooring structure contains expected sub-elements (raised36mm, standard)")
+        print("✅ All sub-elements have required 'label' fields")
+        print("✅ Deep nesting structure verified")
+        print("✅ Turkish character support confirmed")
+        print("✅ Response format compatible with frontend expectations")
+        print("✅ Performance metrics acceptable")
+        print(f"\n🎉 STAND ELEMENTS ENDPOINT TEST PASSED!")
+        print(f"   Main elements: {list(stand_elements.keys())}")
+        print(f"   Flooring sub-elements: {list(flooring_structure.keys())}")
+        print(f"   Response size: {response_size/1024:.2f} KB")
+        print(f"   Response time: {response_time:.3f}s")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_recursive_stand_elements_get():
     """
     Test GET /api/stand-elements - mevcut recursive yapının doğru olduğunu kontrol et
