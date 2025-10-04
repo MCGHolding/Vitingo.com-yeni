@@ -2409,7 +2409,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 )}
                 {!newCategoryData.parentPath && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Ana kategori ekleniyor
+                    Ana element dropdown'una kategori ekleniyor
                   </p>
                 )}
               </div>
