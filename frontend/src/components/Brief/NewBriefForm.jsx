@@ -2715,6 +2715,45 @@ function DraggableElement({ elementKey, elementData, path, depth, index, moveEle
 }
 
 function ManageElementsPanel({ elementsConfig, onEdit, onDelete }) {
+  const [elements, setElements] = useState([]);
+
+  // Convert elementsConfig to flat array for drag&drop
+  useEffect(() => {
+    const flattenElements = (config) => {
+      const result = [];
+      const processElement = (key, data, path = [], depth = 0) => {
+        result.push({ key, data, path, depth });
+        
+        // Process children recursively
+        const children = depth === 0 ? data.structure : data.children;
+        if (children) {
+          Object.entries(children).forEach(([childKey, childData]) => {
+            processElement(childKey, childData, [...path, key], depth + 1);
+          });
+        }
+      };
+
+      Object.entries(config).forEach(([key, data]) => {
+        processElement(key, data, [], 0);
+      });
+
+      return result;
+    };
+
+    setElements(flattenElements(elementsConfig));
+  }, [elementsConfig]);
+
+  // Handle drag & drop reordering
+  const moveElement = (fromIndex, toIndex) => {
+    const newElements = [...elements];
+    const [movedElement] = newElements.splice(fromIndex, 1);
+    newElements.splice(toIndex, 0, movedElement);
+    setElements(newElements);
+    
+    // TODO: Send reorder request to backend
+    console.log('Element reordered:', { from: fromIndex, to: toIndex, element: movedElement.key });
+  };
+
   // Recursive function to render elements at any depth
   const renderElement = (elementKey, elementData, path = [], depth = 0) => {
     const currentPath = [...path, elementKey];
