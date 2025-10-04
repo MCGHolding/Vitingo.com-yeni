@@ -6994,11 +6994,9 @@ async def generate_stand_designs(request: DesignRequest):
             try:
                 full_prompt = base_prompt + common_suffix
                 
-                # Generate image
+                # Generate image (simplified parameters to avoid extra_headers issue)
                 images = await image_gen.generate_images(
-                    prompt=full_prompt,
-                    model="gpt-image-1",
-                    number_of_images=1
+                    prompt=full_prompt
                 )
                 
                 if images and len(images) > 0:
