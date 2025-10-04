@@ -694,6 +694,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
       selectedItems: [...(prev.selectedItems || []), newItem],
       currentPath: []
     }));
+    
+    // Input'ları temizle
+    setSelectedQuantity('');
+    setSelectedUnit('');
+    setSelectedColor('');
   };
 
   const removeSelectionFromList = (index) => {
