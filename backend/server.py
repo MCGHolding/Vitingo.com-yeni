@@ -6947,10 +6947,18 @@ async def generate_stand_designs(request: DesignRequest):
         # Extract brief information
         brief = request.brief_data
         stand_elements = brief.get('standElements', {})
-        selected_elements = [k for k, v in stand_elements.items() if v]
+        # Handle both dict and list formats from frontend
+        if isinstance(stand_elements, dict):
+            selected_elements = [k for k, v in stand_elements.items() if v]
+        else:
+            selected_elements = stand_elements if isinstance(stand_elements, list) else []
         
         service_elements = brief.get('serviceElements', {})
-        selected_services = [k for k, v in service_elements.items() if v]
+        # Handle both dict and list formats from frontend  
+        if isinstance(service_elements, dict):
+            selected_services = [k for k, v in service_elements.items() if v]
+        else:
+            selected_services = service_elements if isinstance(service_elements, list) else []
         
         # Build comprehensive design prompts
         base_prompts = [
