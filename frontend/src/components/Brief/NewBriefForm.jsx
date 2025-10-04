@@ -810,18 +810,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
     });
   };
 
-  const handleDeleteElement = async (elementKey, subKey = null, subSubKey = null) => {
-    const elementName = subSubKey 
-      ? `"${subSubKey}" alt detayı`
-      : subKey 
-        ? `"${subKey}" alt kategorisi`
-        : `"${elementKey}" ana elementi`;
+  const handleDeleteElement = async (pathString) => {
+    const pathParts = pathString.split('.');
+    const elementKey = pathParts[pathParts.length - 1];
+    const parentPath = pathParts.length > 1 ? pathParts.slice(0, -1).join('.') : null;
     
-    const warningMessage = subSubKey 
-      ? `Bu alt detay kalıcı olarak silinecektir.`
-      : subKey 
-        ? `Bu alt kategori ve tüm alt detayları kalıcı olarak silinecektir.`
-        : `Bu ana element ve tüm alt kategorileri kalıcı olarak silinecektir.`;
+    const isMainElement = pathParts.length === 1;
+    const elementName = isMainElement 
+      ? `"${elementKey}" ana elementi`
+      : `"${elementKey}" kategorisi`;
+    
+    const warningMessage = isMainElement 
+      ? `Bu ana element ve tüm alt kategorileri kalıcı olarak silinecektir.`
+      : `Bu kategori ve tüm alt kategorileri kalıcı olarak silinecektir.`;
     
     showConfirmation(
       `${elementName} Sil`,
@@ -829,8 +830,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
       async () => {
         try {
           let url = `${BACKEND_URL}/api/stand-elements/${elementKey}`;
-          if (subKey) url += `?sub_key=${subKey}`;
-          if (subSubKey) url += `&sub_sub_key=${subSubKey}`;
+          if (parentPath) {
+            url += `?parent_path=${encodeURIComponent(parentPath)}`;
+          }
           
           const response = await fetch(url, {
             method: 'DELETE'
