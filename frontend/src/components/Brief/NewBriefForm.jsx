@@ -678,65 +678,45 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Check for duplicate category names in the same parent
   const checkForDuplicate = (newLabel, parentPath) => {
     try {
-      console.log('checkForDuplicate called with:', { newLabel, parentPath });
-      console.log('standElementsConfig:', Object.keys(standElementsConfig));
-      
       if (!standElementsConfig || Object.keys(standElementsConfig).length === 0) {
-        console.log('No standElementsConfig available');
         return false;
       }
 
       const normalizeLabel = (label) => label.toLowerCase().trim();
       const newLabelNormalized = normalizeLabel(newLabel);
-      console.log('Normalized new label:', newLabelNormalized);
 
       if (!parentPath) {
         // Checking in main elements
         const mainLabels = Object.values(standElementsConfig).map(element => normalizeLabel(element.label));
-        console.log('Main element labels:', mainLabels);
-        const isDuplicate = mainLabels.includes(newLabelNormalized);
-        console.log('Main level duplicate check:', isDuplicate);
-        return isDuplicate;
+        return mainLabels.includes(newLabelNormalized);
       }
 
       // Navigate to the parent category
       const pathParts = parentPath.split('.');
-      console.log('Path parts:', pathParts);
       let currentNode = standElementsConfig;
       
       // Navigate through the path
       for (let i = 0; i < pathParts.length; i++) {
         const key = pathParts[i];
-        console.log(`Navigating level ${i}, key: ${key}`);
         if (i === 0) {
           // First level - main element
           currentNode = currentNode[key];
-          if (!currentNode) {
-            console.log('Main element not found');
-            return false;
-          }
+          if (!currentNode) return false;
           currentNode = currentNode.structure || {};
         } else {
           // Nested levels - follow children
           currentNode = currentNode[key];
-          if (!currentNode) {
-            console.log('Nested element not found');
-            return false;
-          }
+          if (!currentNode) return false;
           currentNode = currentNode.children || {};
         }
-        console.log('Current node keys:', Object.keys(currentNode));
       }
 
       // Check if the new label already exists in current level
       const existingLabels = Object.values(currentNode).map(element => 
         element.label ? normalizeLabel(element.label) : null
       ).filter(Boolean);
-      console.log('Existing labels at current level:', existingLabels);
       
-      const isDuplicate = existingLabels.includes(newLabelNormalized);
-      console.log('Duplicate found:', isDuplicate);
-      return isDuplicate;
+      return existingLabels.includes(newLabelNormalized);
     } catch (error) {
       console.error('Error checking for duplicates:', error);
       return false; // In case of error, allow addition but log the error
