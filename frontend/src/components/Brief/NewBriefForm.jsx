@@ -3260,30 +3260,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       )}
                     </div>
 
-                    {/* 8. Logo ve Dosyalar */}
-                    <div className="bg-white rounded-lg p-5 shadow-sm">
-                      <h4 className="text-lg font-semibold text-indigo-900 mb-3 flex items-center">
-                        🏢 Logo ve Kurumsal Kimlik
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-sm"><strong>Logo Dosyası:</strong> {stepData.logoFile ? '✅ Yüklendi (' + stepData.logoFile.name + ')' : '❌ Yüklenmedi'}</p>
-                          <p className="text-sm"><strong>Guideline:</strong> {stepData.guidelineFile ? '✅ Var (' + stepData.guidelineFile.name + ')' : '⚪ Yok'}</p>
-                        </div>
-                        <div>
-                          {stepData.logoUsageInstructions && (
-                            <div>
-                              <strong className="text-sm">Logo Kullanım Talimatları:</strong>
-                              <div className="bg-gray-50 p-2 rounded text-sm mt-1">
-                                {stepData.logoUsageInstructions}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 9. Rapor Bilgileri */}
+                    {/* 8. Rapor Bilgileri */}
                     <div className="bg-white rounded-lg p-5 shadow-sm border-2 border-blue-200">
                       <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
                         📊 Rapor Bilgileri
