@@ -1131,6 +1131,107 @@ export default function NewBriefForm({ onBackToDashboard }) {
     return true;
   };
 
+  // Dimension validation function
+  const validateDimension = (value, fieldName) => {
+    console.log('🔍 Validating dimension:', value, 'for field:', fieldName);
+    
+    if (!value || value.trim() === '') {
+      return "Bu alan zorunludur";
+    }
+    
+    // Replace comma with dot
+    const normalizedValue = value.replace(',', '.');
+    
+    // Check for valid decimal number pattern
+    // Allow only digits and one decimal point
+    const validPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+    
+    if (!validPattern.test(normalizedValue)) {
+      return "Lütfen sadece rakam ve en fazla iki ondalık basamak giriniz.";
+    }
+    
+    const numValue = parseFloat(normalizedValue);
+    
+    // Check for negative values
+    if (numValue < 0) {
+      return "Negatif değer girilemez.";
+    }
+    
+    // Check for reasonable range (1cm to 50000cm / 500m)
+    if (numValue < 1 || numValue > 50000) {
+      return "Değer 1 cm ile 50000 cm arasında olmalıdır.";
+    }
+    
+    return ""; // No error
+  };
+
+  // Handle dimension input change with validation
+  const handleDimensionChange = (fieldName, value) => {
+    console.log('📏 Dimension change:', fieldName, '=', value);
+    
+    // Clean the value - allow only digits, one dot/comma
+    let cleanValue = value;
+    
+    // Replace multiple commas/dots with single dot
+    cleanValue = cleanValue.replace(/[,]/g, '.'); // Convert comma to dot
+    cleanValue = cleanValue.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except dots
+    
+    // Handle multiple dots - keep only the first one
+    const dotCount = (cleanValue.match(/\./g) || []).length;
+    if (dotCount > 1) {
+      const firstDotIndex = cleanValue.indexOf('.');
+      cleanValue = cleanValue.substring(0, firstDotIndex + 1) + cleanValue.substring(firstDotIndex + 1).replace(/\./g, '');
+    }
+    
+    // Limit decimal places to 2
+    if (cleanValue.includes('.')) {
+      const parts = cleanValue.split('.');
+      if (parts[1] && parts[1].length > 2) {
+        cleanValue = parts[0] + '.' + parts[1].substring(0, 2);
+      }
+    }
+    
+    console.log('🧹 Cleaned value:', cleanValue);
+    
+    // Update stepData
+    const fieldMap = {
+      width: 'standWidth',
+      length: 'standLength'
+    };
+    
+    setStepData(prev => {
+      const newData = { ...prev, [fieldMap[fieldName]]: cleanValue };
+      
+      // Calculate area if both dimensions are valid
+      const width = fieldName === 'width' ? cleanValue : prev.standWidth;
+      const length = fieldName === 'length' ? cleanValue : prev.standLength;
+      
+      if (width && length) {
+        const widthNum = parseFloat(width.replace(',', '.'));
+        const lengthNum = parseFloat(length.replace(',', '.'));
+        
+        if (!isNaN(widthNum) && !isNaN(lengthNum) && widthNum > 0 && lengthNum > 0) {
+          // Convert cm to m² (divide by 100 twice)
+          newData.calculatedArea = ((widthNum * lengthNum) / 10000).toFixed(2);
+          console.log('📐 Calculated area:', newData.calculatedArea, 'm²');
+        } else {
+          newData.calculatedArea = 0;
+        }
+      } else {
+        newData.calculatedArea = 0;
+      }
+      
+      return newData;
+    });
+    
+    // Validate the field
+    const error = validateDimension(cleanValue, fieldName);
+    setDimensionErrors(prev => ({
+      ...prev,
+      [fieldName]: error
+    }));
+  };
+
   const handleStepFileUpload = (field, files) => {
     console.log('📁 handleStepFileUpload called:', { field, filesLength: files?.length });
     if (!files || files.length === 0) {
