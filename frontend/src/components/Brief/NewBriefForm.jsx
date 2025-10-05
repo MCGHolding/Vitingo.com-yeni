@@ -208,6 +208,64 @@ export default function NewBriefForm({ onBackToDashboard }) {
     width: '',
     length: ''
   });
+
+  // Global Turkish Number Formatting Functions
+  const formatTurkishNumber = (value, decimalPlaces = 2) => {
+    if (!value || value === '') return '';
+    
+    // Convert to number and handle decimals
+    const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]/g, '')) : value;
+    if (isNaN(numValue)) return '';
+    
+    // Format with Turkish locale
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces
+    }).format(numValue);
+  };
+
+  const parseTurkishNumber = (formattedValue) => {
+    if (!formattedValue) return '';
+    
+    // Remove thousand separators (dots) and replace comma with dot for decimal
+    return formattedValue
+      .replace(/\./g, '')  // Remove thousand separators
+      .replace(/,/g, '.');  // Replace decimal comma with dot
+  };
+
+  const validateTurkishNumber = (value, fieldName, options = {}) => {
+    const { required = false, min = 0, max = Infinity, maxDecimals = 2 } = options;
+    
+    console.log('🔍 Validating Turkish number:', value, 'for field:', fieldName);
+    
+    if (!value || value.trim() === '') {
+      return required ? "Bu alan zorunludur" : "";
+    }
+    
+    // Parse the Turkish formatted number
+    const cleanValue = parseTurkishNumber(value);
+    
+    // Check for valid decimal number pattern
+    const validPattern = new RegExp(`^[0-9]+(\\.[0-9]{1,${maxDecimals}})?$`);
+    
+    if (!validPattern.test(cleanValue)) {
+      return `Lütfen sadece rakam ve en fazla ${maxDecimals} ondalık basamak giriniz.`;
+    }
+    
+    const numValue = parseFloat(cleanValue);
+    
+    // Check for negative values
+    if (numValue < 0) {
+      return "Negatif değer girilemez.";
+    }
+    
+    // Check range
+    if (numValue < min || numValue > max) {
+      return `Değer ${formatTurkishNumber(min, 0)} ile ${formatTurkishNumber(max, 0)} arasında olmalıdır.`;
+    }
+    
+    return ""; // No error
+  };
   const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
   const [isManageElementsModalOpen, setIsManageElementsModalOpen] = useState(false);
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
