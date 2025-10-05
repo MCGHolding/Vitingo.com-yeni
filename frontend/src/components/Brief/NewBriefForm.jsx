@@ -1250,7 +1250,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Handle Turkish formatted number input change
   const handleTurkishNumberChange = (fieldName, value, options = {}) => {
-    console.log('🔢 Turkish number change:', fieldName, '=', value);
+    // console.log('🔢 Turkish number change:', fieldName, '=', value);
     
     // Clean input - allow only digits, dots, and commas
     let cleanValue = value.replace(/[^0-9.,]/g, '');
