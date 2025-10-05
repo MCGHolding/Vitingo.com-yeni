@@ -1095,7 +1095,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
   };
 
   const handleStepFileUpload = (field, files) => {
-    if (!files || files.length === 0) return;
+    console.log('📁 handleStepFileUpload called:', { field, filesLength: files?.length });
+    if (!files || files.length === 0) {
+      console.log('❌ No files provided to handleStepFileUpload');
+      return;
+    }
     
     const maxSizeBytes = 100 * 1024 * 1024; // 100 MB
     const allowedTypes = ['.pdf', '.jpg', '.jpeg', '.cad', '.zip'];
