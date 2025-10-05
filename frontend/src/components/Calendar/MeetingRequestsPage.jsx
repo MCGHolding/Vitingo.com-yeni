@@ -519,19 +519,37 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                   />
                 </div>
               ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Platform *
-                  </label>
-                  <select
-                    value={requestForm.platform}
-                    onChange={(e) => setRequestForm({...requestForm, platform: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {platformOptions.map(platform => (
-                      <option key={platform} value={platform}>{platform}</option>
-                    ))}
-                  </select>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Platform *
+                    </label>
+                    <select
+                      value={requestForm.platform}
+                      onChange={(e) => setRequestForm({...requestForm, platform: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {platformOptions.map(platform => (
+                        <option key={platform} value={platform}>{platform}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Toplantı Linki
+                    </label>
+                    <input
+                      type="url"
+                      value={requestForm.meeting_link}
+                      onChange={(e) => setRequestForm({...requestForm, meeting_link: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://zoom.us/j/123456789 veya Google Meet linki"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Toplantı linkinizi buraya kopyalayın. Katılımcılar bu linke tıklayarak toplantıya katılabilecek.
+                    </p>
+                  </div>
                 </div>
               )}
 
