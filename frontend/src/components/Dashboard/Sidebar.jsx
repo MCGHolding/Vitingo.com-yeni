@@ -370,7 +370,11 @@ export default function Sidebar({
   onPassiveBriefs,
   // Teklif handlers  
   onNewTeklif,
-  onRequestBrief
+  onRequestBrief,
+  // Calendar handlers
+  onCalendar,
+  onNewMeeting,
+  onMeetingInvitations
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openNestedSubmenu, setOpenNestedSubmenu] = useState(null);
