@@ -2616,8 +2616,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               type="file"
                               accept=".pdf,.doc,.docx,.txt"
                               onChange={(e) => {
-                                console.log('Brief file selected:', e.target.files[0]);
-                                // TODO: Handle brief file upload
+                                const file = e.target.files[0];
+                                console.log('Brief file selected:', file);
+                                if (file) {
+                                  // Validate file type
+                                  const allowedTypes = ['.pdf', '.doc', '.docx', '.txt'];
+                                  const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                                  
+                                  if (allowedTypes.includes(fileExtension)) {
+                                    setStepData(prev => ({ ...prev, briefFile: file }));
+                                    showToast('success', 'Dosya Yüklendi', `${file.name} başarıyla seçildi`);
+                                  } else {
+                                    showToast('error', 'Geçersiz Dosya', 'Sadece PDF, DOC, DOCX, TXT dosyaları kabul edilir');
+                                    e.target.value = ''; // Reset input
+                                  }
+                                }
                               }}
                               className="hidden"
                               id="brief-file-upload"
