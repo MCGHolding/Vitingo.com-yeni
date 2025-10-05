@@ -2385,14 +2385,15 @@ export default function NewBriefForm({ onBackToDashboard }) {
                               Miktar
                             </label>
                             <div className="flex gap-2 items-center">
-                              <Input
-                                type="number"
+                              <TurkishNumberInput
                                 placeholder="Miktar girin"
                                 className="flex-1"
-                                min="0"
-                                step="0.01"
+                                min={0}
+                                max={999999}
+                                maxDecimals={2}
                                 value={selectedQuantity}
-                                onChange={(e) => setSelectedQuantity(e.target.value)}
+                                onChange={setSelectedQuantity}
+                                required={false}
                               />
                               <select 
                                 value={selectedUnit}
