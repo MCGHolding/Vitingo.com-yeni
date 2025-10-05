@@ -298,28 +298,76 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
 
                     {/* Action Buttons - Only show if user is not organizer */}
                     {request.organizer_id !== currentUser.id && (
-                      <div className="flex space-x-3">
-                        <button
-                          onClick={() => handleResponse(request.id, 'accepted')}
-                          className="flex items-center space-x-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-sm"
-                        >
-                          <Check className="h-3 w-3" />
-                          <span>Kabul</span>
-                        </button>
-                        <button
-                          onClick={() => handleResponse(request.id, 'maybe')}
-                          className="flex items-center space-x-1 px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-sm"
-                        >
-                          <Clock3 className="h-3 w-3" />
-                          <span>Belki</span>
-                        </button>
-                        <button
-                          onClick={() => handleResponse(request.id, 'declined')}
-                          className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
-                        >
-                          <X className="h-3 w-3" />
-                          <span>Reddet</span>
-                        </button>
+                      <div>
+                        {/* Current user response status */}
+                        {request.responses && request.responses[currentUser.id] && (
+                          <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-blue-700 font-medium">Yanıtınız:</span>
+                              {request.responses[currentUser.id].response === 'accepted' && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                  <Check className="h-4 w-4 mr-1" />
+                                  Kabul Ettiniz
+                                </span>
+                              )}
+                              {request.responses[currentUser.id].response === 'maybe' && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                  <Clock3 className="h-4 w-4 mr-1" />
+                                  Belki Dediniz
+                                </span>
+                              )}
+                              {request.responses[currentUser.id].response === 'declined' && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                  <X className="h-4 w-4 mr-1" />
+                                  Reddettiniz
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-blue-600 mt-1">
+                              Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Response Buttons */}
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => handleResponse(request.id, 'accepted')}
+                            disabled={responseLoading === request.id}
+                            className="flex items-center space-x-1 px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white rounded text-sm"
+                          >
+                            {responseLoading === request.id ? (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                            ) : (
+                              <Check className="h-3 w-3" />
+                            )}
+                            <span>Kabul</span>
+                          </button>
+                          <button
+                            onClick={() => handleResponse(request.id, 'maybe')}
+                            disabled={responseLoading === request.id}
+                            className="flex items-center space-x-1 px-3 py-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 disabled:cursor-not-allowed text-white rounded text-sm"
+                          >
+                            {responseLoading === request.id ? (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                            ) : (
+                              <Clock3 className="h-3 w-3" />
+                            )}
+                            <span>Belki</span>
+                          </button>
+                          <button
+                            onClick={() => handleResponse(request.id, 'declined')}
+                            disabled={responseLoading === request.id}
+                            className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-sm"
+                          >
+                            {responseLoading === request.id ? (
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                            ) : (
+                              <X className="h-3 w-3" />
+                            )}
+                            <span>Reddet</span>
+                          </button>
+                        </div>
                       </div>
                     )}
 
