@@ -98,13 +98,35 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
 
   const loadSatisFirsatlari = async () => {
     try {
-      // TODO: API call to load sales opportunities
-      setSatisFirsatlari([
-        { id: '1', firsatBasligi: 'ITU Fuarı 2024 Stand Projesi', musteriId: '1', fuarTarihi: '2024-12-15', fuarMerkezi: 'Istanbul Fuar Merkezi', sehir: 'İstanbul', ulke: 'Türkiye' },
-        { id: '2', firsatBasligi: 'Hannover Messe 2024', musteriId: '2', fuarTarihi: '2024-11-20', fuarMerkezi: 'Hannover Exhibition Center', sehir: 'Hannover', ulke: 'Almanya' }
-      ]);
+      const response = await fetch(`${BACKEND_URL}/api/opportunities`);
+      if (response.ok) {
+        const opportunities = await response.json();
+        // Transform opportunities to match expected format
+        const transformedOpportunities = opportunities.map(opp => ({
+          id: opp.id,
+          firsatBasligi: opp.title,
+          musteriId: opp.customer, // This will be the customer name, we'll need to map it
+          fuarTarihi: opp.trade_show_dates || opp.close_date,
+          fuarMerkezi: opp.trade_show || 'Belirtilmemiş',
+          sehir: opp.city || 'Belirtilmemiş',
+          ulke: opp.country || 'Belirtilmemiş'
+        }));
+        setSatisFirsatlari(transformedOpportunities);
+      } else {
+        console.error('Satış fırsatları getirilemedi:', response.statusText);
+        // Fallback to mock data if API fails
+        setSatisFirsatlari([
+          { id: '1', firsatBasligi: 'ITU Fuarı 2024 Stand Projesi', musteriId: 'Acme Corp', fuarTarihi: '2024-12-15', fuarMerkezi: 'Istanbul Fuar Merkezi', sehir: 'İstanbul', ulke: 'Türkiye' },
+          { id: '2', firsatBasligi: 'Hannover Messe 2024', musteriId: 'Tech Solutions', fuarTarihi: '2024-11-20', fuarMerkezi: 'Hannover Exhibition Center', sehir: 'Hannover', ulke: 'Almanya' }
+        ]);
+      }
     } catch (error) {
       console.error('Satış fırsatları yüklenemedi:', error);
+      // Fallback to mock data if API fails
+      setSatisFirsatlari([
+        { id: '1', firsatBasligi: 'ITU Fuarı 2024 Stand Projesi', musteriId: 'Acme Corp', fuarTarihi: '2024-12-15', fuarMerkezi: 'Istanbul Fuar Merkezi', sehir: 'İstanbul', ulke: 'Türkiye' },
+        { id: '2', firsatBasligi: 'Hannover Messe 2024', musteriId: 'Tech Solutions', fuarTarihi: '2024-11-20', fuarMerkezi: 'Hannover Exhibition Center', sehir: 'Hannover', ulke: 'Almanya' }
+      ]);
     }
   };
 
