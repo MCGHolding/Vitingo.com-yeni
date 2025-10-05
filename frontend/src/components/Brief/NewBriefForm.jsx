@@ -184,7 +184,12 @@ export default function NewBriefForm({ onBackToDashboard }) {
     employeeDetails: '',
     priceImportance: 3,
     designImportance: 3,
-    designFiles: []
+    designFiles: [],
+    
+    // Budget and Requirements (Step 7)
+    budgetRange: '',
+    deadline: '',
+    customRequirements: ''
   });
 
   // Stand elements configuration - loaded dynamically from API
