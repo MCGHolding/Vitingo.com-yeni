@@ -3521,7 +3521,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       )}
                     </div>
 
-                    {/* 6. Seçilen Hizmetler (Checkbox) */}
+                    {/* 5. Seçilen Hizmetler (Checkbox) */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-teal-900 mb-3 flex items-center">
                         ✅ Seçilen Hizmetler
