@@ -2180,7 +2180,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <Button
                   type="button"
                   onClick={handleNextStep}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+                  disabled={!canProceedFromStep1()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Detaylı Stand İhtiyaçları →
                 </Button>
