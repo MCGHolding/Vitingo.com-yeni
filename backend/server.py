@@ -7464,6 +7464,278 @@ async def create_sample_calendar_data():
 
 # ===================== END CALENDAR & MEETINGS ENDPOINTS =====================
 
+# ===================== WEBSOCKET CHAT MODELS =====================
+
+class ChatMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    sender_id: str
+    sender_name: str  
+    content: str
+    message_type: str = "text"  # text, file, image
+    chatroom_id: str
+    file_name: Optional[str] = None
+    file_size: Optional[int] = None
+    file_url: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ChatRoom(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    room_type: str = "private"  # private, group
+    participant_ids: List[str]
+    participant_names: Dict[str, str] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_activity: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# ===================== WEBSOCKET CONNECTION MANAGER =====================
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, Dict[str, WebSocket]] = {}
+        self.user_chatrooms: Dict[str, List[str]] = {}
+    
+    async def connect(self, websocket: WebSocket, user_id: str, chatroom_id: str):
+        await websocket.accept()
+        
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = {}
+        
+        self.active_connections[user_id][chatroom_id] = websocket
+        
+        if user_id not in self.user_chatrooms:
+            self.user_chatrooms[user_id] = []
+        
+        if chatroom_id not in self.user_chatrooms[user_id]:
+            self.user_chatrooms[user_id].append(chatroom_id)
+        
+        logger.info(f"User {user_id} connected to chatroom {chatroom_id}")
+    
+    def disconnect(self, user_id: str, chatroom_id: str):
+        if user_id in self.active_connections and chatroom_id in self.active_connections[user_id]:
+            del self.active_connections[user_id][chatroom_id]
+            
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+                
+            if user_id in self.user_chatrooms and chatroom_id in self.user_chatrooms[user_id]:
+                self.user_chatrooms[user_id].remove(chatroom_id)
+                
+        logger.info(f"User {user_id} disconnected from chatroom {chatroom_id}")
+    
+    async def send_personal_message(self, message: str, user_id: str, chatroom_id: str):
+        if user_id in self.active_connections and chatroom_id in self.active_connections[user_id]:
+            try:
+                await self.active_connections[user_id][chatroom_id].send_text(message)
+            except Exception as e:
+                logger.error(f"Error sending message to {user_id}: {e}")
+                self.disconnect(user_id, chatroom_id)
+    
+    async def broadcast_to_chatroom(self, message: str, chatroom_id: str, exclude_user: str = None):
+        for user_id, chatrooms in self.active_connections.items():
+            if user_id != exclude_user and chatroom_id in chatrooms:
+                try:
+                    await chatrooms[chatroom_id].send_text(message)
+                except Exception as e:
+                    logger.error(f"Error broadcasting to {user_id}: {e}")
+                    self.disconnect(user_id, chatroom_id)
+
+manager = ConnectionManager()
+
+# ===================== WEBSOCKET ENDPOINTS =====================
+
+@app.websocket("/api/v1/ws")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    token: str = None,
+    chatroom_id: str = None
+):
+    """WebSocket endpoint for real-time chat"""
+    
+    # Mock auth - in production, validate JWT token here
+    if not token:
+        await websocket.close(code=1008, reason="Missing authentication token")
+        return
+    
+    if not chatroom_id:
+        await websocket.close(code=1008, reason="Missing chatroom_id")
+        return
+    
+    # Extract user info from token (mock implementation)
+    user_id = token.replace("demo_token", "demo_user")  # Simple mock
+    user_name = "Demo User"  # In production, get from database
+    
+    try:
+        await manager.connect(websocket, user_id, chatroom_id)
+        
+        # Send connection success with recent messages
+        try:
+            recent_messages = await db.chat_messages.find(
+                {"chatroom_id": chatroom_id}
+            ).sort("created_at", -1).limit(50).to_list(50)
+            
+            recent_messages.reverse()  # Show oldest first
+            
+            await websocket.send_text(json.dumps({
+                "type": "connection_success",
+                "chatroom_id": chatroom_id,
+                "user_id": user_id,
+                "recent_messages": [
+                    {
+                        "id": msg.get("id"),
+                        "sender_id": msg.get("sender_id"),
+                        "sender_name": msg.get("sender_name"),
+                        "content": msg.get("content"),
+                        "message_type": msg.get("message_type", "text"),
+                        "created_at": msg.get("created_at").isoformat() if isinstance(msg.get("created_at"), datetime) else msg.get("created_at"),
+                        "file_name": msg.get("file_name"),
+                        "file_size": msg.get("file_size")
+                    }
+                    for msg in recent_messages
+                ]
+            }))
+        except Exception as e:
+            logger.error(f"Error fetching recent messages: {e}")
+            await websocket.send_text(json.dumps({
+                "type": "connection_success",
+                "chatroom_id": chatroom_id,
+                "user_id": user_id,
+                "recent_messages": []
+            }))
+        
+        # Notify other users in chatroom
+        await manager.broadcast_to_chatroom(
+            json.dumps({
+                "type": "user_joined",
+                "user_id": user_id,
+                "username": user_name,
+                "chatroom_id": chatroom_id
+            }),
+            chatroom_id,
+            exclude_user=user_id
+        )
+        
+        # Listen for messages
+        while True:
+            try:
+                data = await websocket.receive_text()
+                message_data = json.loads(data)
+                
+                await handle_websocket_message(message_data, user_id, user_name, chatroom_id, websocket)
+                
+            except WebSocketDisconnect:
+                break
+            except json.JSONDecodeError:
+                await websocket.send_text(json.dumps({
+                    "type": "error",
+                    "message": "Invalid JSON format"
+                }))
+            except Exception as e:
+                logger.error(f"WebSocket error for user {user_id}: {e}")
+                await websocket.send_text(json.dumps({
+                    "type": "error", 
+                    "message": str(e)
+                }))
+                
+    except Exception as e:
+        logger.error(f"WebSocket connection error: {e}")
+    finally:
+        manager.disconnect(user_id, chatroom_id)
+        
+        # Notify other users
+        await manager.broadcast_to_chatroom(
+            json.dumps({
+                "type": "user_left",
+                "user_id": user_id,
+                "username": user_name,
+                "chatroom_id": chatroom_id
+            }),
+            chatroom_id
+        )
+
+async def handle_websocket_message(message_data: dict, user_id: str, user_name: str, chatroom_id: str, websocket: WebSocket):
+    """Handle incoming WebSocket messages"""
+    
+    message_type = message_data.get("type")
+    
+    if message_type == "chat_message":
+        # Create and save chat message
+        chat_message = ChatMessage(
+            sender_id=user_id,
+            sender_name=user_name,
+            content=message_data.get("content", ""),
+            message_type=message_data.get("message_type", "text"),
+            chatroom_id=chatroom_id,
+            file_name=message_data.get("file_name"),
+            file_size=message_data.get("file_size")
+        )
+        
+        # Save to database
+        try:
+            await db.chat_messages.insert_one(chat_message.dict())
+        except Exception as e:
+            logger.error(f"Error saving chat message: {e}")
+        
+        # Update chatroom last activity
+        try:
+            await db.chat_rooms.update_one(
+                {"id": chatroom_id},
+                {
+                    "$set": {"last_activity": datetime.now(timezone.utc)},
+                    "$setOnInsert": {
+                        "id": chatroom_id,
+                        "room_type": "private", 
+                        "participant_ids": [user_id],
+                        "participant_names": {user_id: user_name},
+                        "created_at": datetime.now(timezone.utc)
+                    }
+                },
+                upsert=True
+            )
+        except Exception as e:
+            logger.error(f"Error updating chatroom: {e}")
+        
+        # Broadcast message to all users in chatroom
+        broadcast_data = {
+            "type": "message_received",
+            "message": {
+                "id": chat_message.id,
+                "sender_id": chat_message.sender_id,
+                "sender_name": chat_message.sender_name,
+                "content": chat_message.content,
+                "message_type": chat_message.message_type,
+                "created_at": chat_message.created_at.isoformat(),
+                "file_name": chat_message.file_name,
+                "file_size": chat_message.file_size
+            }
+        }
+        
+        await manager.broadcast_to_chatroom(
+            json.dumps(broadcast_data),
+            chatroom_id
+        )
+        
+    elif message_type == "typing":
+        # Handle typing indicators
+        is_typing = message_data.get("is_typing", False)
+        
+        await manager.broadcast_to_chatroom(
+            json.dumps({
+                "type": "typing",
+                "user_id": user_id,
+                "username": user_name,
+                "is_typing": is_typing
+            }),
+            chatroom_id,
+            exclude_user=user_id
+        )
+        
+    else:
+        await websocket.send_text(json.dumps({
+            "type": "error",
+            "message": f"Unknown message type: {message_type}"
+        }))
+
+# ===================== END WEBSOCKET ENDPOINTS =====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
