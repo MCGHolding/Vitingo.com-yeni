@@ -7102,6 +7102,50 @@ class CalendarEventCreate(BaseModel):
     reminder_minutes: List[int] = Field(default_factory=lambda: [15])
     visibility: str = "public"
 
+# Meeting Request Model - for new meeting requests with detailed info
+class MeetingRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    subject: str = Field(..., description="Toplantı konusu")
+    date: str = Field(..., description="Toplantı tarihi (YYYY-MM-DD)")
+    start_time: str = Field(..., description="Başlangıç saati (HH:MM)")
+    end_time: str = Field(..., description="Bitiş saati (HH:MM)")
+    meeting_type: str = Field(..., description="Toplantı türü: physical, virtual")
+    location: Optional[str] = Field(None, description="Fiziki toplantı için adres")
+    platform: Optional[str] = Field(None, description="Sanal toplantı için platform")
+    attendee_ids: List[str] = Field(default_factory=list, description="Katılımcı ID'leri")
+    attendee_names: List[str] = Field(default_factory=list, description="Katılımcı isimleri")
+    organizer_id: str = Field(..., description="Toplantı organize eden kişi")
+    organizer_name: str = Field(..., description="Organize eden kişi adı")
+    status: str = Field(default="pending", description="Toplantı durumu")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MeetingRequestCreate(BaseModel):
+    subject: str
+    date: str
+    start_time: str
+    end_time: str
+    meeting_type: str  # physical, virtual
+    location: Optional[str] = None
+    platform: Optional[str] = None
+    attendee_ids: List[str] = Field(default_factory=list)
+
+# Meeting Request Response Model - for individual responses to meeting requests
+class MeetingRequestResponse(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    request_id: str = Field(..., description="Meeting request ID")
+    user_id: str = Field(..., description="Responding user ID")
+    user_name: str = Field(..., description="Responding user name")
+    response: str = Field(..., description="Response: accepted, maybe, declined")
+    response_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    message: Optional[str] = Field("", description="Optional response message")
+
+class MeetingRequestResponseCreate(BaseModel):
+    request_id: str
+    response: str  # accepted, maybe, declined
+    message: Optional[str] = ""
+
+# Legacy Meeting Invitation Model - keeping for backward compatibility
 class MeetingInvitation(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     event_id: str
