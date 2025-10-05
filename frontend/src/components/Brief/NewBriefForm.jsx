@@ -2910,19 +2910,211 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   </Button>
                 </div>
 
-                {/* Brief Summary Preview */}
+                {/* Comprehensive Brief Report */}
                 <div className="bg-gray-50 rounded-lg p-6 mt-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Brief Özeti</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-left">
-                    <div>
-                      <p><strong>Proje:</strong> {stepData.selectedProject || 'Belirtilmemiş'}</p>
-                      <p><strong>Ülke Profili:</strong> {stepData.selectedCountryProfile || 'Belirtilmemiş'}</p>
-                      <p><strong>Stand Alanı:</strong> {stepData.eventSpace || 'Belirtilmemiş'}</p>
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Stand Brief Raporu</h3>
+                    <div className="text-sm text-gray-500">
+                      Brief ID: {stepData.briefId}
                     </div>
-                    <div>
-                      <p><strong>Seçilen Elementler:</strong> {stepData.selectedItems ? stepData.selectedItems.length : 0} adet</p>
-                      <p><strong>Logo Dosyası:</strong> {stepData.logoFile ? '✅ Yüklendi' : '❌ Yüklenmedi'}</p>
-                      <p><strong>Guideline:</strong> {stepData.guidelineFile ? '✅ Var' : '⚪ Yok'}</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* 1. Proje Bilgileri */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                        📋 Proje Bilgileri
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="space-y-2">
+                          <p><strong>Proje:</strong> {stepData.selectedProject || 'Belirtilmemiş'}</p>
+                          <p><strong>Etkinlik Adı:</strong> {stepData.eventName || 'Belirtilmemiş'}</p>
+                          <p><strong>Etkinlik Yeri:</strong> {stepData.eventLocation || 'Belirtilmemiş'}</p>
+                          <p><strong>Fuar Merkezi:</strong> {stepData.conventionCenter || 'Belirtilmemiş'}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p><strong>Etkinlik Tarihi:</strong> {stepData.eventDate || 'Belirtilmemiş'}</p>
+                          <p><strong>Ülke:</strong> {stepData.eventCountry || 'Belirtilmemiş'}</p>
+                          <p><strong>Ülke Profili:</strong> {stepData.selectedCountryProfile || 'Belirtilmemiş'}</p>
+                          <p><strong>Stand Alanı:</strong> {stepData.eventSpace || 'Belirtilmemiş'}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. Seçilen Stand Elementleri */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-green-900 mb-3 flex items-center">
+                        🏗️ Stand Elementleri ({stepData.selectedItems ? stepData.selectedItems.length : 0} adet)
+                      </h4>
+                      {stepData.selectedItems && stepData.selectedItems.length > 0 ? (
+                        <div className="space-y-2">
+                          {stepData.selectedItems.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded">
+                              <div>
+                                <span className="font-medium text-sm">{item.pathString}</span>
+                                {(item.quantity || item.color) && (
+                                  <div className="flex gap-2 mt-1">
+                                    {item.quantity && item.unit && (
+                                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                        {item.quantity} {item.unit}
+                                      </span>
+                                    )}
+                                    {item.color && (
+                                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                        {item.color}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm">Henüz stand elementi seçilmemiş.</p>
+                      )}
+                    </div>
+
+                    {/* 3. Icon'lu Element Seçimleri */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-purple-900 mb-3 flex items-center">
+                        ⚙️ Teknik Elementler
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {Object.entries(stepData.standElements || {}).map(([key, selected]) => 
+                          selected && (
+                            <div key={key} className="bg-purple-50 text-purple-800 p-2 rounded text-sm font-medium text-center">
+                              {key === 'truss' && '🏗️ Truss'}
+                              {key === 'specialLighting' && '💡 Özel Aydınlatma'}
+                              {key === 'soundSystem' && '🔊 Ses Sistemi'}
+                              {key === 'ledScreen' && '📱 Led Ekran'}
+                              {key === 'brochureRack' && '📄 Broşürlük'}
+                              {key === 'ramp' && '🛤️ Rampa'}
+                              {key === 'waterConnection' && '🚰 Su Bağlantısı'}
+                              {key === 'videowall' && '📺 Videowall'}
+                            </div>
+                          )
+                        )}
+                      </div>
+                      {!Object.values(stepData.standElements || {}).some(Boolean) && (
+                        <p className="text-gray-500 text-sm">Henüz teknik element seçilmemiş.</p>
+                      )}
+                    </div>
+
+                    {/* 4. Hizmet ve Teknoloji */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-orange-900 mb-3 flex items-center">
+                        🛠️ Hizmet ve Teknoloji
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {Object.entries(stepData.serviceElements || {}).map(([key, selected]) => 
+                          selected && (
+                            <div key={key} className="bg-orange-50 text-orange-800 p-2 rounded text-sm font-medium text-center">
+                              {key === 'airForMachines' && '🌬️ Hava'}
+                              {key === 'wifi' && '📶 Wifi'}
+                              {key === 'tabletKiosk' && '📱 Tablet Kiosk'}
+                              {key === 'touchKiosk' && '🖥️ Dokunmatik Kiosk'}
+                              {key === 'jewelryShowcase' && '💎 Özel Vitrin'}
+                              {key === 'hostess' && '👩‍💼 Host/Hostess'}
+                              {key === 'waiter' && '🍽️ Garson'}
+                              {key === 'barista' && '☕ Barista'}
+                            </div>
+                          )
+                        )}
+                      </div>
+                      {!Object.values(stepData.serviceElements || {}).some(Boolean) && (
+                        <p className="text-gray-500 text-sm">Henüz hizmet seçilmemiş.</p>
+                      )}
+                    </div>
+
+                    {/* 5. Seçilen Hizmetler (Checkbox) */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-teal-900 mb-3 flex items-center">
+                        ✅ Seçilen Hizmetler
+                      </h4>
+                      <div className="space-y-3">
+                        {Object.entries(selectedServices || {}).map(([key, selected]) => 
+                          selected && (
+                            <div key={key} className="bg-teal-50 border-l-4 border-teal-400 p-3">
+                              <div className="text-sm font-medium text-teal-900">
+                                {key === 'cleaning_during_fair' && 'Fuar süresince Fuar saatlerinde temizlik görevlisi'}
+                                {key === 'cleaning_after_fair' && 'Fuar süresince Fuar kapandıktan sonra temizlik'}
+                                {key === 'sweep_after_fair' && 'Fuar süresince Fuar kapandıktan sonra sadece süpürge'}
+                                {key === 'special_product_cleaning' && 'Müşteri ait ürünlere özel temizlik'}
+                                {key === 'steel_polishing' && 'Paslanmaz çelikler için parlatma hizmeti'}
+                                {key === 'security_setup' && 'Kurulum süresince güvenlik görevlisi'}
+                                {key === 'security_during_fair' && 'Fuar süresince fuar saatlerinde güvenlik görevlisi'}
+                                {key === 'security_after_fair' && 'Fuar süresince fuar kapandıktan sonra güvenlik görevlisi'}
+                                {key === 'security_dismantling' && 'Söküm süresince güvenlik görevlisi'}
+                                {key === 'translator' && 'Fuar süresince fuar saatlerinde tercüman'}
+                                {key === 'technical_staff' && 'Fuar süresince fuar saatlerinde teknik görevli'}
+                                {key === 'chef' && 'Fuar süresince Fuar saatlerinde aşçı'}
+                                {key === 'presenter' && 'Fuar süresince Fuar saatlerinde sunucu'}
+                              </div>
+                              {serviceDetails[key] && (
+                                <div className="mt-2 text-sm text-teal-700 bg-white p-2 rounded">
+                                  <strong>Detay:</strong> {serviceDetails[key]}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                      {!Object.values(selectedServices || {}).some(Boolean) && (
+                        <p className="text-gray-500 text-sm">Henüz hizmet seçilmemiş.</p>
+                      )}
+                    </div>
+
+                    {/* 6. Detaylı Brief */}
+                    {stepData.detailedBrief && (
+                      <div className="bg-white rounded-lg p-5 shadow-sm">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                          📝 Detaylı Brief
+                        </h4>
+                        <div className="bg-gray-50 p-4 rounded text-sm whitespace-pre-wrap">
+                          {stepData.detailedBrief}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 7. Logo ve Dosyalar */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-indigo-900 mb-3 flex items-center">
+                        🏢 Logo ve Kurumsal Kimlik
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-sm"><strong>Logo Dosyası:</strong> {stepData.logoFile ? '✅ Yüklendi (' + stepData.logoFile.name + ')' : '❌ Yüklenmedi'}</p>
+                          <p className="text-sm"><strong>Guideline:</strong> {stepData.guidelineFile ? '✅ Var (' + stepData.guidelineFile.name + ')' : '⚪ Yok'}</p>
+                        </div>
+                        <div>
+                          {stepData.logoUsageInstructions && (
+                            <div>
+                              <strong className="text-sm">Logo Kullanım Talimatları:</strong>
+                              <div className="bg-gray-50 p-2 rounded text-sm mt-1">
+                                {stepData.logoUsageInstructions}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 8. Rapor Bilgileri */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm border-2 border-blue-200">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                        📊 Rapor Bilgileri
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p><strong>Brief ID:</strong> {stepData.briefId}</p>
+                          <p><strong>Oluşturulma:</strong> {new Date().toLocaleDateString('tr-TR')}</p>
+                        </div>
+                        <div>
+                          <p><strong>Durum:</strong> <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Tamamlandı</span></p>
+                          <p><strong>Link:</strong> <a href={`https://stand-builder-1.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} className="text-blue-600 underline text-xs">Brief'i Görüntüle</a></p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
