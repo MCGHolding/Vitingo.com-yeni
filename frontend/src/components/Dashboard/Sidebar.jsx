@@ -49,6 +49,7 @@ import {
   FileX,
   Briefcase,
   Truck,
+  UserCheck,
 } from 'lucide-react';
 
 // Function to get navigation based on user department
