@@ -42,16 +42,20 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
     }
   };
 
-  // Load system users
+  // Load system users  
   const loadUsers = async () => {
     setIsLoadingUsers(true);
     try {
+      // Initialize users if needed
+      await fetch(`${BACKEND_URL}/api/users/initialize`, { method: 'POST' });
+      
       const response = await fetch(`${BACKEND_URL}/api/users`);
       if (response.ok) {
         const usersData = await response.json();
         // Filter out current user
         const filteredUsers = usersData.filter(user => user.id !== currentUser.id);
         setUsers(filteredUsers);
+        console.log(`Loaded ${filteredUsers.length} company employees`);
       }
     } catch (error) {
       console.error('Error loading users:', error);
