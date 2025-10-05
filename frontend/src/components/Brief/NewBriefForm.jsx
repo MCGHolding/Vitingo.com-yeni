@@ -2905,8 +2905,8 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </Card>
         )}
 
-        {/* Success Page - Step 8 */}
-        {currentStep === 8 && (
+        {/* Success Page - Step 9 */}
+        {currentStep === 9 && (
           <Card className="w-full max-w-4xl mx-auto">
             <CardContent className="p-8">
               <div className="text-center space-y-8">
