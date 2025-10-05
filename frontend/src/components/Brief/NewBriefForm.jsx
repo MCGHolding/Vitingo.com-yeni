@@ -1873,6 +1873,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
                     {/* Recursive Dropdown Levels */}
                     {(() => {
+                      console.log(`🔄 RENDER - Current stepData.currentPath:`, stepData.currentPath);
+                      console.log(`🔄 RENDER - Current stepData.currentPath.length:`, stepData.currentPath.length);
+                      
                       const renderDropdownLevel = (level) => {
                         // Get available options for current level
                         let availableOptions = {};
