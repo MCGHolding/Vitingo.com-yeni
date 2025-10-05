@@ -611,16 +611,16 @@ Saygılarımızla,`;
               <option value="standart">Standart Ön Yazı</option>
               <option value="formal">Formal Ön Yazı</option>
             </select>
-            <Button
+            <button
               onClick={() => setIsOnYaziEklemeModalOpen(true)}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-md text-white font-medium flex items-center space-x-2"
             >
               <Plus className="h-4 w-4 mr-2" />
               Yeni Ön Yazı Ekle
-            </Button>
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Dahil Hizmetler */}
       <Card>
