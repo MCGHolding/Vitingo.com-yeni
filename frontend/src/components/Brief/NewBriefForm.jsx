@@ -2769,26 +2769,24 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         className="hidden"
                         id="design-upload"
                       />
-                      <label htmlFor="design-upload" className="cursor-pointer">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="mb-4"
-                          onClick={(e) => {
-                            console.log('🔘 Dosya Seç button clicked');
-                            // Manually trigger file input click if needed
-                            const fileInput = document.getElementById('design-upload');
-                            if (fileInput) {
-                              console.log('📁 File input found, triggering click');
-                              fileInput.click();
-                            } else {
-                              console.log('❌ File input not found');
-                            }
-                          }}
-                        >
-                          Dosya Seç
-                        </Button>
-                      </label>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="mb-4 cursor-pointer"
+                        onClick={(e) => {
+                          console.log('🔘 Dosya Seç button clicked');
+                          // Manually trigger file input click
+                          const fileInput = document.getElementById('design-upload');
+                          if (fileInput) {
+                            console.log('📁 File input found, triggering click');
+                            fileInput.click();
+                          } else {
+                            console.log('❌ File input not found');
+                          }
+                        }}
+                      >
+                        Dosya Seç
+                      </Button>
                       
                       {stepData.designFiles && stepData.designFiles.length > 0 && (
                         <div className="mt-6">
