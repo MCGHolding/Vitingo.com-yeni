@@ -1106,6 +1106,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
     return hasDetailedBrief;
   };
 
+  const canProceedFromStep7 = () => {
+    return stepData.budgetRange && stepData.deadline;
+  };
+
   const canProceedFromStep8 = () => {
     // Logo upload is now optional, so always allow proceeding
     return true;
