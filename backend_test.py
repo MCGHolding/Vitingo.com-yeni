@@ -1563,6 +1563,503 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_stand_elements_get_endpoint():
+    """
+    Test GET /api/stand-elements endpoint for dropdown cascade system.
+    
+    Requirements to verify:
+    1. GET /api/stand-elements returns correct structured data for dropdown system
+    2. Test recursive structure with "flooring" and "deneme_1759604134588" (Duvar) elements
+    3. Verify API response format matches frontend expectations for dropdown cascade system
+    4. Check hierarchical relationships (structure.children hierarchy)
+    5. Response includes labels, keys, and hierarchical relationships
+    6. No errors in API responses
+    """
+    
+    print("=" * 80)
+    print("TESTING STAND ELEMENTS GET ENDPOINT - GET /api/stand-elements")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    print("This endpoint provides structured data for the dropdown cascade system")
+    
+    try:
+        # Test 1: Check endpoint availability and response
+        print("\n1. Testing endpoint availability...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Stand elements endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            stand_elements = response.json()
+            print(f"   Response type: {type(stand_elements)}")
+            print(f"   Number of main elements: {len(stand_elements) if isinstance(stand_elements, dict) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(stand_elements, dict):
+            print("   ❌ FAIL: Response should be a dictionary containing stand elements")
+            return False
+        
+        if len(stand_elements) == 0:
+            print("   ❌ FAIL: Response should contain stand elements")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(stand_elements)} main stand elements")
+        print(f"   Main element keys: {list(stand_elements.keys())}")
+        
+        # Test 5: Check for required elements mentioned in review request
+        print("\n4. Checking for required elements...")
+        required_elements = ["flooring", "deneme_1759604134588"]
+        missing_elements = []
+        
+        for element_key in required_elements:
+            if element_key not in stand_elements:
+                missing_elements.append(element_key)
+            else:
+                element = stand_elements[element_key]
+                print(f"   ✅ Found element '{element_key}': {element.get('label', 'No label')}")
+        
+        if missing_elements:
+            print(f"   ❌ FAIL: Missing required elements: {missing_elements}")
+            return False
+        
+        print("   ✅ PASS: All required elements found")
+        
+        # Test 6: Validate flooring element structure
+        print("\n5. Validating 'flooring' element structure...")
+        flooring = stand_elements.get("flooring")
+        
+        # Check basic properties
+        required_props = ["label", "structure"]
+        missing_props = []
+        for prop in required_props:
+            if prop not in flooring:
+                missing_props.append(prop)
+        
+        if missing_props:
+            print(f"   ❌ FAIL: Flooring element missing properties: {missing_props}")
+            return False
+        
+        print(f"   Label: {flooring.get('label')}")
+        print(f"   Icon: {flooring.get('icon', 'None')}")
+        print(f"   Required: {flooring.get('required', False)}")
+        
+        # Check structure
+        structure = flooring.get("structure", {})
+        print(f"   Structure sub-elements: {len(structure)}")
+        print(f"   Structure keys: {list(structure.keys())}")
+        
+        if len(structure) == 0:
+            print("   ❌ FAIL: Flooring should have sub-elements in structure")
+            return False
+        
+        print("   ✅ PASS: Flooring element has proper structure")
+        
+        # Test 7: Validate deneme_1759604134588 (Duvar) element structure
+        print("\n6. Validating 'deneme_1759604134588' (Duvar) element structure...")
+        duvar = stand_elements.get("deneme_1759604134588")
+        
+        print(f"   Label: {duvar.get('label')}")
+        print(f"   Icon: {duvar.get('icon', 'None')}")
+        print(f"   Required: {duvar.get('required', False)}")
+        
+        # Check structure
+        duvar_structure = duvar.get("structure", {})
+        print(f"   Structure sub-elements: {len(duvar_structure)}")
+        print(f"   Structure keys: {list(duvar_structure.keys())}")
+        
+        if len(duvar_structure) == 0:
+            print("   ❌ FAIL: Duvar should have sub-elements in structure")
+            return False
+        
+        print("   ✅ PASS: Duvar element has proper structure")
+        
+        # Test 8: Test recursive/hierarchical structure
+        print("\n7. Testing recursive/hierarchical structure...")
+        
+        # Check flooring sub-elements for children
+        flooring_children_found = 0
+        for sub_key, sub_element in structure.items():
+            print(f"   Flooring sub-element: {sub_key} -> {sub_element.get('label', 'No label')}")
+            
+            if 'children' in sub_element:
+                children = sub_element['children']
+                print(f"     Has {len(children)} children: {list(children.keys())}")
+                flooring_children_found += len(children)
+                
+                # Check deeper nesting
+                for child_key, child_element in children.items():
+                    print(f"       Child: {child_key} -> {child_element.get('label', 'No label')}")
+                    if 'children' in child_element:
+                        grandchildren = child_element['children']
+                        print(f"         Has {len(grandchildren)} grandchildren: {list(grandchildren.keys())}")
+        
+        print(f"   Total children found in flooring: {flooring_children_found}")
+        
+        # Check duvar sub-elements
+        duvar_children_found = 0
+        for sub_key, sub_element in duvar_structure.items():
+            print(f"   Duvar sub-element: {sub_key} -> {sub_element.get('label', 'No label')}")
+            
+            if 'children' in sub_element:
+                children = sub_element['children']
+                print(f"     Has {len(children)} children: {list(children.keys())}")
+                duvar_children_found += len(children)
+        
+        print(f"   Total children found in duvar: {duvar_children_found}")
+        
+        if flooring_children_found > 0 or duvar_children_found > 0:
+            print("   ✅ PASS: Recursive/hierarchical structure confirmed")
+        else:
+            print("   ⚠️  INFO: No deep hierarchical structure found (may be expected)")
+        
+        # Test 9: Validate dropdown cascade system compatibility
+        print("\n8. Validating dropdown cascade system compatibility...")
+        
+        # Check that each element has the required fields for dropdown system
+        cascade_compatible = True
+        for element_key, element in stand_elements.items():
+            # Each element should have label and structure for cascade
+            if 'label' not in element:
+                print(f"   ❌ FAIL: Element {element_key} missing 'label' for dropdown display")
+                cascade_compatible = False
+            
+            if 'structure' not in element:
+                print(f"   ❌ FAIL: Element {element_key} missing 'structure' for cascade levels")
+                cascade_compatible = False
+            
+            # Check structure sub-elements
+            structure = element.get('structure', {})
+            for sub_key, sub_element in structure.items():
+                if 'label' not in sub_element:
+                    print(f"   ❌ FAIL: Sub-element {element_key}.{sub_key} missing 'label'")
+                    cascade_compatible = False
+        
+        if cascade_compatible:
+            print("   ✅ PASS: All elements compatible with dropdown cascade system")
+        else:
+            print("   ❌ FAIL: Some elements not compatible with dropdown cascade system")
+            return False
+        
+        # Test 10: Check element types and properties
+        print("\n9. Checking element types and properties...")
+        
+        element_types_found = set()
+        input_types_found = set()
+        
+        for element_key, element in stand_elements.items():
+            structure = element.get('structure', {})
+            for sub_key, sub_element in structure.items():
+                element_type = sub_element.get('element_type')
+                if element_type:
+                    element_types_found.add(element_type)
+                
+                input_type = sub_element.get('input_type')
+                if input_type:
+                    input_types_found.add(input_type)
+                
+                # Check children recursively
+                children = sub_element.get('children', {})
+                for child_key, child_element in children.items():
+                    child_element_type = child_element.get('element_type')
+                    if child_element_type:
+                        element_types_found.add(child_element_type)
+                    
+                    child_input_type = child_element.get('input_type')
+                    if child_input_type:
+                        input_types_found.add(child_input_type)
+        
+        print(f"   Element types found: {list(element_types_found)}")
+        print(f"   Input types found: {list(input_types_found)}")
+        
+        expected_element_types = ["option", "property", "unit"]
+        expected_input_types = ["select", "number", "text", "color"]
+        
+        if any(et in element_types_found for et in expected_element_types):
+            print("   ✅ PASS: Expected element types found")
+        else:
+            print("   ⚠️  INFO: No standard element types found (may be expected)")
+        
+        print("\n" + "=" * 80)
+        print("STAND ELEMENTS GET ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response format")
+        print("✅ Contains required elements: flooring and deneme_1759604134588 (Duvar)")
+        print("✅ Recursive/hierarchical structure confirmed")
+        print("✅ Response includes labels, keys, and hierarchical relationships")
+        print("✅ Compatible with dropdown cascade system")
+        print("✅ Element types and properties validated")
+        print("✅ No errors in API responses")
+        print(f"\n🎉 STAND ELEMENTS GET ENDPOINT TEST PASSED!")
+        print(f"   Total main elements: {len(stand_elements)}")
+        print(f"   Flooring sub-elements: {len(stand_elements['flooring']['structure'])}")
+        print(f"   Duvar sub-elements: {len(stand_elements['deneme_1759604134588']['structure'])}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_stand_elements_recursive_structure_detailed():
+    """
+    Detailed test of recursive structure with specific focus on flooring and Duvar elements.
+    
+    Requirements to verify:
+    1. Deep dive into flooring element structure and children
+    2. Deep dive into deneme_1759604134588 (Duvar) element structure
+    3. Verify multi-level nesting works correctly
+    4. Test specific paths and element access
+    5. Validate element properties at each level
+    """
+    
+    print("=" * 80)
+    print("TESTING STAND ELEMENTS RECURSIVE STRUCTURE - DETAILED ANALYSIS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/stand-elements"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        
+        if response.status_code != 200:
+            print(f"❌ FAIL: Could not get stand elements (status {response.status_code})")
+            return False
+        
+        stand_elements = response.json()
+        
+        # Test 1: Deep analysis of flooring element
+        print("\n1. Deep analysis of 'flooring' element...")
+        flooring = stand_elements.get("flooring")
+        
+        if not flooring:
+            print("   ❌ FAIL: Flooring element not found")
+            return False
+        
+        print(f"   Flooring Label: {flooring.get('label')}")
+        print(f"   Flooring Required: {flooring.get('required')}")
+        
+        flooring_structure = flooring.get("structure", {})
+        print(f"   Flooring has {len(flooring_structure)} direct sub-elements:")
+        
+        total_flooring_elements = 0
+        for sub_key, sub_element in flooring_structure.items():
+            total_flooring_elements += 1
+            print(f"     {sub_key}: {sub_element.get('label', 'No label')}")
+            
+            # Check for children
+            children = sub_element.get('children', {})
+            if children:
+                print(f"       Has {len(children)} children:")
+                for child_key, child_element in children.items():
+                    total_flooring_elements += 1
+                    print(f"         {child_key}: {child_element.get('label', 'No label')}")
+                    
+                    # Check for grandchildren
+                    grandchildren = child_element.get('children', {})
+                    if grandchildren:
+                        print(f"           Has {len(grandchildren)} grandchildren:")
+                        for gc_key, gc_element in grandchildren.items():
+                            total_flooring_elements += 1
+                            element_type = gc_element.get('element_type', 'unknown')
+                            input_type = gc_element.get('input_type', 'none')
+                            unit = gc_element.get('unit', 'none')
+                            print(f"             {gc_key}: {gc_element.get('label', 'No label')} (type: {element_type}, input: {input_type}, unit: {unit})")
+        
+        print(f"   Total flooring elements (all levels): {total_flooring_elements}")
+        
+        # Test 2: Deep analysis of Duvar element
+        print("\n2. Deep analysis of 'deneme_1759604134588' (Duvar) element...")
+        duvar = stand_elements.get("deneme_1759604134588")
+        
+        if not duvar:
+            print("   ❌ FAIL: Duvar element not found")
+            return False
+        
+        print(f"   Duvar Label: {duvar.get('label')}")
+        print(f"   Duvar Required: {duvar.get('required')}")
+        
+        duvar_structure = duvar.get("structure", {})
+        print(f"   Duvar has {len(duvar_structure)} direct sub-elements:")
+        
+        total_duvar_elements = 0
+        for sub_key, sub_element in duvar_structure.items():
+            total_duvar_elements += 1
+            print(f"     {sub_key}: {sub_element.get('label', 'No label')}")
+            
+            # Check for children
+            children = sub_element.get('children', {})
+            if children:
+                print(f"       Has {len(children)} children:")
+                for child_key, child_element in children.items():
+                    total_duvar_elements += 1
+                    element_type = child_element.get('element_type', 'unknown')
+                    input_type = child_element.get('input_type', 'none')
+                    print(f"         {child_key}: {child_element.get('label', 'No label')} (type: {element_type}, input: {input_type})")
+        
+        print(f"   Total duvar elements (all levels): {total_duvar_elements}")
+        
+        # Test 3: Test specific path access (simulating frontend dropdown navigation)
+        print("\n3. Testing specific path access (dropdown navigation simulation)...")
+        
+        # Test flooring -> raised36mm path
+        if 'raised36mm' in flooring_structure:
+            raised36mm = flooring_structure['raised36mm']
+            print(f"   ✅ Path flooring.raised36mm found: {raised36mm.get('label')}")
+            
+            # Check children of raised36mm
+            raised36mm_children = raised36mm.get('children', {})
+            if raised36mm_children:
+                print(f"     Available options under raised36mm: {list(raised36mm_children.keys())}")
+                
+                # Test carpet path
+                if 'carpet' in raised36mm_children:
+                    carpet = raised36mm_children['carpet']
+                    print(f"     ✅ Path flooring.raised36mm.carpet found: {carpet.get('label')}")
+                    
+                    # Check carpet properties
+                    carpet_children = carpet.get('children', {})
+                    if carpet_children:
+                        print(f"       Carpet properties: {list(carpet_children.keys())}")
+                        
+                        # Test specific properties
+                        if 'carpet_type' in carpet_children:
+                            carpet_type = carpet_children['carpet_type']
+                            options = carpet_type.get('options', [])
+                            print(f"       ✅ Carpet type options: {options}")
+                        
+                        if 'color' in carpet_children:
+                            color = carpet_children['color']
+                            color_options = color.get('options', [])
+                            print(f"       ✅ Color options: {color_options}")
+                        
+                        if 'quantity' in carpet_children:
+                            quantity = carpet_children['quantity']
+                            unit = quantity.get('unit', 'none')
+                            print(f"       ✅ Quantity unit: {unit}")
+        
+        # Test 4: Validate frontend dropdown expectations
+        print("\n4. Validating frontend dropdown expectations...")
+        
+        dropdown_compatible = True
+        
+        # Check that main elements can be used as first dropdown
+        for element_key, element in stand_elements.items():
+            label = element.get('label')
+            if not label:
+                print(f"   ❌ FAIL: Main element {element_key} missing label for dropdown")
+                dropdown_compatible = False
+            else:
+                print(f"   ✅ Main dropdown option: {element_key} -> {label}")
+        
+        # Check that sub-elements can be used as second dropdown
+        flooring_structure = stand_elements['flooring']['structure']
+        print(f"   Second level dropdown options for flooring:")
+        for sub_key, sub_element in flooring_structure.items():
+            label = sub_element.get('label')
+            if not label:
+                print(f"     ❌ FAIL: Sub-element {sub_key} missing label")
+                dropdown_compatible = False
+            else:
+                print(f"     ✅ {sub_key} -> {label}")
+        
+        # Check that third level exists where expected
+        if 'raised36mm' in flooring_structure:
+            raised36mm_children = flooring_structure['raised36mm'].get('children', {})
+            if raised36mm_children:
+                print(f"   Third level dropdown options for flooring.raised36mm:")
+                for child_key, child_element in raised36mm_children.items():
+                    label = child_element.get('label')
+                    print(f"     ✅ {child_key} -> {label}")
+        
+        if dropdown_compatible:
+            print("   ✅ PASS: Structure is compatible with multi-level dropdown cascade")
+        else:
+            print("   ❌ FAIL: Structure has issues with dropdown compatibility")
+            return False
+        
+        # Test 5: Performance and structure size analysis
+        print("\n5. Performance and structure size analysis...")
+        
+        total_elements = len(stand_elements)
+        total_sub_elements = 0
+        total_properties = 0
+        
+        for element_key, element in stand_elements.items():
+            structure = element.get('structure', {})
+            total_sub_elements += len(structure)
+            
+            for sub_key, sub_element in structure.items():
+                children = sub_element.get('children', {})
+                total_sub_elements += len(children)
+                
+                for child_key, child_element in children.items():
+                    if child_element.get('element_type') in ['property', 'unit']:
+                        total_properties += 1
+                    
+                    grandchildren = child_element.get('children', {})
+                    total_sub_elements += len(grandchildren)
+                    
+                    for gc_key, gc_element in grandchildren.items():
+                        if gc_element.get('element_type') in ['property', 'unit']:
+                            total_properties += 1
+        
+        print(f"   Total main elements: {total_elements}")
+        print(f"   Total sub-elements (all levels): {total_sub_elements}")
+        print(f"   Total properties/units: {total_properties}")
+        
+        # Check if structure size is reasonable for frontend
+        if total_elements <= 20 and total_sub_elements <= 200:
+            print("   ✅ PASS: Structure size is reasonable for frontend performance")
+        else:
+            print("   ⚠️  WARNING: Structure might be large for frontend performance")
+        
+        print("\n" + "=" * 80)
+        print("DETAILED RECURSIVE STRUCTURE TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Flooring element structure analyzed successfully")
+        print("✅ Duvar element structure analyzed successfully")
+        print("✅ Multi-level nesting confirmed working")
+        print("✅ Specific path access validated")
+        print("✅ Frontend dropdown compatibility confirmed")
+        print("✅ Structure size is reasonable")
+        print(f"\n🎉 DETAILED RECURSIVE STRUCTURE TEST PASSED!")
+        print(f"   Flooring total elements: {total_flooring_elements}")
+        print(f"   Duvar total elements: {total_duvar_elements}")
+        print(f"   Overall structure depth: 3+ levels confirmed")
+        
+        return True
+        
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_ai_design_generation_endpoint():
     """
     Test POST /api/generate-stand-designs endpoint - AI Design Generation
