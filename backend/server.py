@@ -20,6 +20,7 @@ except ImportError:
     Mail = None
 import csv
 import io
+import json
 from pathlib import Path
 import requests
 import xml.etree.ElementTree as ET
