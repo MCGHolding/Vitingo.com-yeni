@@ -1851,9 +1851,12 @@ frontend:
         comment: "🎉 IBAN VALIDATION SYSTEM COMPREHENSIVE TESTING COMPLETED SUCCESSFULLY! Tested centralized useIban hook integration across both NewSupplierForm and NewExpenseReceiptForm with all validation scenarios. ✅ NEWSUPPLIERFORM TESTING: 1) Successfully navigated to Tedarikçi > Yeni Tedarikçi and found IBAN field in 'Banka / Ödeme Bilgileri' section ✅ 2) Length validation working: 'TR123' shows 'IBAN uzunluğu 15 ile 34 karakter arasında olmalıdır.' ✅ 3) Formatting working: 'TR330006100519786457841326' formats to 'TR33 0006 1005 1978 6457 8413 26' ✅ 4) Checksum validation working: Invalid checksum shows 'Geçersiz IBAN (checksum hatası).' ✅ 5) Placeholder consistent: 'TR00 0000 0000 0000 0000 00 00' ✅ NEWEXPENSERECEIPTFORM TESTING: 1) Successfully navigated to Gider Makbuzu > Yeni Gider Makbuzu and found 'Alıcı IBAN' field in supplier information section ✅ 2) Same length validation working correctly ✅ 3) Same formatting working correctly (4-character groups with spaces) ✅ 4) Same checksum validation working correctly ✅ 5) Same placeholder text format ✅ CROSS-FORM CONSISTENCY VERIFIED: Both forms use identical useIban hook, Turkish error messages, IBAN formatting (4-character groups), and consistent placeholder text. All validation rules working identically across both forms. ✅ CONCLUSION: The centralized IBAN validation system is 100% functional and provides consistent validation experience across all forms in the Vitingo CRM application. Users can rely on robust IBAN validation with proper formatting and clear Turkish error messages."
 
 test_plan:
-  current_focus: []
-  stuck_tasks:
-    - "Horizontal Button Layout Fix - Yeni Kategori Ekle and Seçimi Ekle"
+  current_focus:
+    - "WebSocket Connection Test"
+    - "WebSocket Chat Message Flow Test"
+    - "WebSocket Real-time Broadcasting Test"
+    - "WebSocket MongoDB Integration Test"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
