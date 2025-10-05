@@ -7549,9 +7549,28 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
         logger.error(f"Error creating meeting request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating meeting request: {str(e)}")
 
-@api_router.get("/meeting-requests", response_model=List[MeetingRequest])
+# Enhanced Meeting Request model with responses
+class MeetingRequestWithResponses(BaseModel):
+    id: str
+    subject: str
+    date: str
+    start_time: str
+    end_time: str
+    meeting_type: str
+    location: Optional[str] = None
+    platform: Optional[str] = None
+    attendee_ids: List[str]
+    attendee_names: List[str]
+    organizer_id: str
+    organizer_name: str
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    responses: Dict[str, Dict] = Field(default_factory=dict)  # attendee_id -> response info
+
+@api_router.get("/meeting-requests", response_model=List[MeetingRequestWithResponses])
 async def get_meeting_requests(user_id: str = "demo_user"):
-    """Get meeting requests for a user (both created by them and requests they are invited to)"""
+    """Get meeting requests for a user with response information"""
     try:
         # Find meeting requests where user is organizer OR attendee
         meeting_requests = await db.meeting_requests.find({
@@ -7561,7 +7580,32 @@ async def get_meeting_requests(user_id: str = "demo_user"):
             ]
         }).sort("created_at", -1).to_list(100)
         
-        return [MeetingRequest(**request) for request in meeting_requests]
+        # Enhance with response information
+        enhanced_requests = []
+        for request in meeting_requests:
+            # Get all responses for this meeting request
+            responses = await db.meeting_request_responses.find(
+                {"request_id": request["id"]}
+            ).to_list(100)
+            
+            # Create responses dict
+            responses_dict = {}
+            for response in responses:
+                responses_dict[response["user_id"]] = {
+                    "response": response["response"],
+                    "user_name": response["user_name"],
+                    "response_date": response["response_date"].isoformat() if isinstance(response["response_date"], datetime) else response["response_date"],
+                    "message": response.get("message", "")
+                }
+            
+            # Add responses to request
+            request_with_responses = MeetingRequestWithResponses(
+                **request,
+                responses=responses_dict
+            )
+            enhanced_requests.append(request_with_responses)
+        
+        return enhanced_requests
         
     except Exception as e:
         logger.error(f"Error getting meeting requests: {str(e)}")
