@@ -2761,20 +2761,37 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </label>
                       
                       {stepData.designFiles && stepData.designFiles.length > 0 && (
-                        <div className="mt-4 space-y-2">
-                          {stepData.designFiles.map(file => (
-                            <div key={file.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                              <span className="text-sm text-gray-700">{file.name}</span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeStepFile('designFiles', file.id)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
+                        <div className="mt-6">
+                          <h5 className="text-sm font-medium text-gray-900 mb-3">Yüklenen Dosyalar:</h5>
+                          <div className="space-y-2">
+                            {stepData.designFiles.map(file => (
+                              <div key={file.id} className="flex items-center justify-between bg-green-50 border border-green-200 p-3 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <div className="text-green-600">
+                                    {file.name.toLowerCase().endsWith('.pdf') ? '📄' : 
+                                     file.name.toLowerCase().match(/\.(jpg|jpeg)$/) ? '🖼️' : 
+                                     file.name.toLowerCase().endsWith('.zip') ? '🗂️' : '📁'}
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-medium text-gray-900">{file.name}</div>
+                                    <div className="text-xs text-gray-500">
+                                      {file.size ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'Bilinmeyen boyut'}
+                                    </div>
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeStepFile('designFiles', file.id)}
+                                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                  title="Dosyayı kaldır"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
