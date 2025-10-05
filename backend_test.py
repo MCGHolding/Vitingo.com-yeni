@@ -6432,27 +6432,23 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Calendar/Meeting System Backend API Tests...")
+    print("🚀 Starting Meeting Requests Backend API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    # Calendar/Meeting System Tests
-    calendar_tests = [
-        ("Calendar Create Sample Data", test_calendar_create_sample_data_endpoint),
-        ("Calendar Events GET", test_calendar_events_get_endpoint),
-        ("Calendar Events Date Filtering", test_calendar_events_date_filtering),
-        ("Calendar Events POST", test_calendar_events_post_endpoint),
-        ("Calendar Events PUT", test_calendar_events_put_endpoint),
-        ("Calendar Events DELETE", test_calendar_events_delete_endpoint),
-        ("Calendar Invitations GET", test_calendar_invitations_get_endpoint),
-        ("Calendar Invitations Respond", test_calendar_invitations_respond_endpoint),
+    # Meeting Requests System Tests
+    meeting_request_tests = [
+        ("Meeting Request Creation", test_meeting_request_creation),
+        ("Meeting Request Retrieval", test_meeting_request_retrieval),
+        ("Meeting Request Response", test_meeting_request_response),
+        ("Meeting Request Database Integration", test_meeting_request_database_integration),
     ]
     
     passed_tests = 0
     failed_tests = 0
     test_results = []
     
-    for test_name, test_function in calendar_tests:
+    for test_name, test_function in meeting_request_tests:
         print(f"\n{'='*20} {test_name} {'='*20}")
         
         try:
@@ -6471,7 +6467,7 @@ if __name__ == "__main__":
     
     # Final Summary
     print("\n" + "=" * 80)
-    print("CALENDAR/MEETING SYSTEM BACKEND API TEST SUMMARY")
+    print("MEETING REQUESTS BACKEND API TEST SUMMARY")
     print("=" * 80)
     
     for test_name, status, error in test_results:
@@ -6480,21 +6476,22 @@ if __name__ == "__main__":
         if error:
             print(f"   Error: {error}")
     
-    print(f"\nTotal Tests: {len(calendar_tests)}")
+    print(f"\nTotal Tests: {len(meeting_request_tests)}")
     print(f"Passed: {passed_tests}")
     print(f"Failed: {failed_tests}")
-    print(f"Success Rate: {(passed_tests/len(calendar_tests)*100):.1f}%")
+    print(f"Success Rate: {(passed_tests/len(meeting_request_tests)*100):.1f}%")
     
     if failed_tests == 0:
-        print("\n🎉 ALL CALENDAR/MEETING SYSTEM BACKEND API TESTS PASSED!")
-        print("All calendar backend functionality is working correctly:")
-        print("• Calendar Events CRUD operations")
-        print("• Meeting Invitations system")
-        print("• Sample data creation")
-        print("• User role-based access")
-        print("• Date filtering")
+        print("\n🎉 ALL MEETING REQUESTS BACKEND API TESTS PASSED!")
+        print("All meeting request functionality is working correctly:")
+        print("• Meeting Request Creation (physical and virtual)")
+        print("• Meeting Request Retrieval and Filtering")
+        print("• Meeting Request Response System (accepted, maybe, declined)")
+        print("• Database Integration (meeting_requests and meeting_request_responses collections)")
+        print("• Turkish Character Support")
+        print("• Data Validation and Error Handling")
         sys.exit(0)
     else:
-        print(f"\n⚠️  {failed_tests} CALENDAR/MEETING SYSTEM TESTS FAILED.")
+        print(f"\n⚠️  {failed_tests} MEETING REQUEST TESTS FAILED.")
         print("Please check the issues above and fix the failing endpoints.")
         sys.exit(1)
