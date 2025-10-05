@@ -4837,45 +4837,25 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    # Run the Stand Elements API endpoint tests
-    print("🚀 Starting Stand Elements API Endpoint Testing...")
+    print("🚀 Starting Backend API Tests...")
+    print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    all_tests_passed = True
+    # Run the opportunities test as requested
+    test_name = "Opportunities API and TeklifForm Data Loading"
+    print(f"\n{'='*20} {test_name} {'='*20}")
     
-    # Test 1: Stand Elements GET Endpoint
-    print("\n" + "="*50)
-    print("TEST 1: Stand Elements GET Endpoint")
-    print("="*50)
-    get_success = test_stand_elements_get_endpoint()
-    if not get_success:
-        all_tests_passed = False
-    
-    # Test 2: Detailed Recursive Structure Analysis
-    print("\n" + "="*50)
-    print("TEST 2: Detailed Recursive Structure Analysis")
-    print("="*50)
-    recursive_success = test_stand_elements_recursive_structure_detailed()
-    if not recursive_success:
-        all_tests_passed = False
-    
-    # Final Results
-    print("\n" + "="*80)
-    print("FINAL TEST RESULTS SUMMARY")
-    print("="*80)
-    
-    if all_tests_passed:
-        print("🎉 Stand Elements API Testing Complete - All Tests Passed!")
-        print("✅ GET /api/stand-elements endpoint working correctly")
-        print("✅ Returns correct structured data for dropdown system")
-        print("✅ Recursive structure with flooring and deneme_1759604134588 (Duvar) confirmed")
-        print("✅ API response format matches frontend expectations")
-        print("✅ Hierarchical relationships (structure.children) working")
-        print("✅ Response includes labels, keys, and hierarchical relationships")
-        print("✅ No errors in API responses")
-        print("✅ Multi-level dropdown cascade system supported")
-        print("\nStand elements API functionality has been comprehensively tested and is working correctly!")
-    else:
-        print("❌ Some Stand Elements API tests failed - please review the implementation")
-        print("Stand elements API test sonuçlarını kontrol edin ve sorunları düzeltin.")
+    try:
+        if test_opportunities_api_and_teklif_form_data_loading():
+            print(f"✅ {test_name} PASSED")
+            print("\n🎉 OPPORTUNITIES API TEST COMPLETED SUCCESSFULLY!")
+            print("Backend APIs are working correctly for TeklifForm data loading.")
+            sys.exit(0)
+        else:
+            print(f"❌ {test_name} FAILED")
+            print("\n⚠️  OPPORTUNITIES API TEST FAILED. Please check the issues above.")
+            sys.exit(1)
+    except Exception as e:
+        print(f"❌ {test_name} FAILED with exception: {str(e)}")
+        print("\n⚠️  OPPORTUNITIES API TEST FAILED WITH EXCEPTION.")
         sys.exit(1)
