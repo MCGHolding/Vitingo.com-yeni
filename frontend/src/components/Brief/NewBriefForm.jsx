@@ -1319,7 +1319,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     return cleanValue;
   };
 
-  // Generic Turkish Number Input Component
+  // Simplified Turkish Number Input Component
   const TurkishNumberInput = ({ 
     value, 
     onChange, 
@@ -1332,59 +1332,23 @@ export default function NewBriefForm({ onBackToDashboard }) {
     onError = null,
     ...props 
   }) => {
-    const [localError, setLocalError] = useState('');
     
     const handleChange = (e) => {
       const inputValue = e.target.value;
-      
-      // Allow basic numeric input with comma and dot
-      // Only keep digits, comma, and dot
-      const allowedValue = inputValue.replace(/[^0-9,\.]/g, '');
-      
-      // Validate
-      const error = validateTurkishNumber(allowedValue, 'field', {
-        required,
-        min,
-        max,
-        maxDecimals
-      });
-      
-      setLocalError(error);
-      if (onError) onError(error);
-      
-      onChange(allowedValue);
-    };
-
-    const handleBlur = (e) => {
-      // Simple formatting on blur
-      const inputValue = e.target.value;
-      if (inputValue && inputValue.trim() !== '') {
-        // Convert comma to dot for internal processing, but keep display as is
-        onChange(inputValue);
-      }
+      // Just pass the value directly without complex processing
+      onChange(inputValue);
     };
 
     return (
-      <div>
-        <input
-          {...props}
-          type="text"
-          inputMode="decimal"
-          value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            localError ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          } ${className}`}
-        />
-        {localError && (
-          <p className="text-red-600 text-xs mt-1 flex items-center">
-            <span className="mr-1">⚠️</span>
-            {localError}
-          </p>
-        )}
-      </div>
+      <input
+        {...props}
+        type="text"
+        inputMode="decimal"
+        value={value || ''}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300 ${className}`}
+      />
     );
   };
 
