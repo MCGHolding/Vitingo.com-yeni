@@ -2022,10 +2022,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   Hesaplanan Alan (m²)
                 </label>
                 <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-800 font-medium">
-                  {stepData.calculatedArea || '0.00'} m²
+                  {stepData.calculatedArea || '0,00'} m²
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  En × Boy / 10.000
+                  En × Boy ÷ 10.000
                 </p>
               </div>
               
