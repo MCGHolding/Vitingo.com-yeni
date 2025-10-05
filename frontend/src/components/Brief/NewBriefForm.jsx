@@ -186,11 +186,6 @@ export default function NewBriefForm({ onBackToDashboard }) {
     designImportance: 3,
     designFiles: [],
     
-    // Budget and Requirements (Step 7)
-    budgetRange: '',
-    deadline: '',
-    customRequirements: '',
-    
     // Brief File (Step 6)
     briefFile: null
   });
