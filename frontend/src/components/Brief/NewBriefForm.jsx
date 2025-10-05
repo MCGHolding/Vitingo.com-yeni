@@ -2132,13 +2132,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Yükseklik (m)
                 </label>
-                <Input
-                  type="number"
-                  step="0.1"
+                <TurkishNumberInput
                   value={formData.standHeight}
-                  onChange={(e) => handleInputChange('standHeight', e.target.value)}
-                  placeholder="2.5"
-                  min="1"
+                  onChange={(value) => handleInputChange('standHeight', value)}
+                  placeholder="2,50"
+                  min={1}
+                  max={10}
+                  maxDecimals={2}
+                  required={false}
                 />
               </div>
             </div>
