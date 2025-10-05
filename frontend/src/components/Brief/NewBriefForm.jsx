@@ -1371,11 +1371,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
     };
 
     const handleBlur = (e) => {
-      // Format display value on blur
-      const cleanValue = parseTurkishNumber(e.target.value);
-      if (cleanValue && !isNaN(parseFloat(cleanValue))) {
-        const formatted = formatTurkishNumber(parseFloat(cleanValue), maxDecimals);
-        onChange(formatted);
+      // Simple formatting on blur
+      const inputValue = e.target.value;
+      if (inputValue && inputValue.trim() !== '') {
+        // Convert comma to dot for internal processing, but keep display as is
+        onChange(inputValue);
       }
     };
 
