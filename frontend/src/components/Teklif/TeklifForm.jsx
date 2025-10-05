@@ -335,7 +335,7 @@ Saygılarımızla,`;
               </label>
               <input
                 type="text"
-                value={musteriler.find(m => m.id === formData.musteriId)?.ad || ''}
+                value={musteriler.find(m => m.id === formData.musteriId || m.ad === formData.musteriId)?.ad || formData.musteriId || ''}
                 readOnly
                 className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50"
               />
