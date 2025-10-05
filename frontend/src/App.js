@@ -1322,10 +1322,7 @@ const Dashboard = () => {
         onCustomerProspects={handleCustomerProspects}
         onNewPerson={handleNewPerson}
         onAllPeople={handleAllPeople}
-        onNewQuote={handleNewQuote}
-        onAllQuotes={handleAllQuotes}
-        onDraftQuotes={handleDraftQuotes}
-        onPendingApprovalQuotes={handlePendingApprovalQuotes}
+        // Removed old quote handlers - replaced with new Teklif handlers
         onSentQuotes={handleSentQuotes}
         onWonQuotes={handleWonQuotes}
         onLostQuotes={handleLostQuotes}
