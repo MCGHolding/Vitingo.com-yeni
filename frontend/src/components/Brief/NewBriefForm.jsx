@@ -242,26 +242,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
       return required ? "Bu alan zorunludur" : "";
     }
     
-    // Parse the Turkish formatted number
-    const cleanValue = parseTurkishNumber(value);
+    // Simple validation - just check if it contains only numbers, comma, and dot
+    const simplePattern = /^[0-9,\.]+$/;
     
-    // Check for valid decimal number pattern
-    const validPattern = new RegExp(`^[0-9]+(\\.[0-9]{1,${maxDecimals}})?$`);
-    
-    if (!validPattern.test(cleanValue)) {
-      return `Lütfen sadece rakam ve en fazla ${maxDecimals} ondalık basamak giriniz.`;
-    }
-    
-    const numValue = parseFloat(cleanValue);
-    
-    // Check for negative values
-    if (numValue < 0) {
-      return "Negatif değer girilemez.";
-    }
-    
-    // Check range
-    if (numValue < min || numValue > max) {
-      return `Değer ${formatTurkishNumber(min, 0)} ile ${formatTurkishNumber(max, 0)} arasında olmalıdır.`;
+    if (!simplePattern.test(value)) {
+      return `Lütfen sadece rakam giriniz.`;
     }
     
     return ""; // No error
