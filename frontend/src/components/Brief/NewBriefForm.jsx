@@ -2500,56 +2500,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </div>
               )}
 
-              {currentStep === 6 && (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-xl font-semibold mb-2">Satın alma kararınızda fiyat ne kadar önemli?</h3>
-                    <p className="text-gray-600">
-                      Fiyat ve tasarım aynı paranın iki yüzüdür. Daha büyük bir bütçe, 
-                      tasarıma ve standı inşa etmek için kullanılan malzemelere daha fazla yatırım anlamına gelir.
-                      Her bir unsurun ne kadar önemli olduğunu belirtin.
-                    </p>
-                  </div>
-                  
-                  <div className="max-w-2xl mx-auto space-y-8">
-                    <div>
-                      <div className="flex justify-between text-sm text-gray-500 mb-2">
-                        <span>Minimum</span>
-                        <span>Düşük</span>
-                        <span>Orta</span>
-                        <span>Yüksek</span>
-                        <span>Maksimum</span>
-                      </div>
-                      
-                      <div className="space-y-6">
-                        <div>
-                          <label className="block text-lg font-medium mb-4">Fiyat</label>
-                          <input
-                            type="range"
-                            min="1"
-                            max="5"
-                            value={stepData.priceImportance}
-                            onChange={(e) => handleStepDataChange('priceImportance', parseInt(e.target.value))}
-                            className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-lg font-medium mb-4">Tasarım</label>
-                          <input
-                            type="range"
-                            min="1"
-                            max="5"
-                            value={stepData.designImportance}
-                            onChange={(e) => handleStepDataChange('designImportance', parseInt(e.target.value))}
-                            className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Step 6 (Fiyat önem derecesi) silindi */}
 
               {currentStep === 9 && (
                 <div className="space-y-6">
