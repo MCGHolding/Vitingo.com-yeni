@@ -491,14 +491,14 @@ Saygılarımızla,`;
       </div>
 
       {/* Vade Sistemi */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
             <Clock className="h-5 w-5" />
             <span>Ödeme Vadesi</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+        </div>
+        <div className="p-6 space-y-4">
           {formData.vadeler.map((vade, index) => (
             <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
               <span className="font-medium text-gray-700 min-w-[80px]">
