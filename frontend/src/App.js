@@ -1409,6 +1409,7 @@ const Dashboard = () => {
         onCalendar={handleCalendar}
         onNewMeeting={handleNewMeeting}
         onMeetingInvitations={handleMeetingInvitations}
+        onMeetingRequests={handleMeetingRequests}
       />
       
       {/* Header */}
