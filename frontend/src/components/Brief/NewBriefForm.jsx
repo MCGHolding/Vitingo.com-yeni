@@ -1137,12 +1137,17 @@ export default function NewBriefForm({ onBackToDashboard }) {
     
     // Show success message
     if (validFiles.length > 0) {
+      console.log('✅ Valid files to be added:', validFiles);
       showToast('success', 'Dosyalar Eklendi', `${validFiles.length} dosya başarıyla eklendi`);
       
-      setStepData(prev => ({
-        ...prev,
-        [field]: [...(prev[field] || []), ...validFiles]
-      }));
+      setStepData(prev => {
+        const newStepData = {
+          ...prev,
+          [field]: [...(prev[field] || []), ...validFiles]
+        };
+        console.log('📊 Updated stepData:', newStepData);
+        return newStepData;
+      });
     }
   };
 
