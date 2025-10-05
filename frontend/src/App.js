@@ -1097,6 +1097,10 @@ const Dashboard = () => {
       case 'all-briefs':
         return <AllBriefsPage onBackToDashboard={handleBackToDashboard} onNewBrief={handleNewBrief} />;
 
+      // Teklif cases
+      case 'new-teklif':
+        return <TeklifForm onBackToDashboard={handleBackToDashboard} showToast={showToast} />;
+
       case 'closed-briefs':
         return (
           <div className="p-6">
