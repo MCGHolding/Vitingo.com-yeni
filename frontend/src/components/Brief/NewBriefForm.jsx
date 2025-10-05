@@ -1916,26 +1916,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                   <Button
                                     type="button"
                                     onClick={() => {
-                                      console.log(`DEBUG X Button - Before: currentPath=`, stepData.currentPath, `level=${level}`);
-                                      
                                       // Bu seviyeyi ve sonrasını kaldır
                                       const newPath = stepData.currentPath.slice(0, level);
-                                      console.log(`DEBUG X Button - New path will be:`, newPath);
                                       
-                                      setStepData(prev => {
-                                        const updated = {
-                                          ...prev,
-                                          currentPath: newPath
-                                        };
-                                        console.log(`DEBUG X Button - Updated stepData:`, updated);
-                                        return updated;
-                                      });
+                                      setStepData(prev => ({
+                                        ...prev,
+                                        currentPath: newPath
+                                      }));
                                       
+                                      // User feedback
+                                      showToast(`${level}. seviye kaldırıldı`, 'success');
                                       console.log(`Level ${level} removed, currentPath updated to length ${newPath.length}`);
                                     }}
                                     size="sm"
                                     variant="outline"
-                                    className="text-red-600 border-red-300 hover:bg-red-50 px-2"
+                                    className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400 px-2 transition-colors"
                                     title="Bu kategoriyi kaldır"
                                   >
                                     <X className="h-4 w-4" />
