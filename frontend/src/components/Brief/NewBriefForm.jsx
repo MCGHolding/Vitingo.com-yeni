@@ -1880,17 +1880,18 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         // Get available options for current level
                         let availableOptions = {};
                         
+                        console.log(`🔄 RENDER Level ${level} - Processing...`);
+                        
                         if (level === 0) {
                           // First level - main elements
                           availableOptions = standElementsConfig || {};
-                          console.log('DEBUG Level 0 - standElementsConfig keys:', Object.keys(standElementsConfig));
-                          console.log('DEBUG Level 0 - availableOptions keys:', Object.keys(availableOptions));
+                          console.log('🔄 RENDER Level 0 - availableOptions keys:', Object.keys(availableOptions));
                         } else {
                           // Nested levels
                           const pathToCurrentLevel = stepData.currentPath.slice(0, level);
                           availableOptions = getCurrentNode(pathToCurrentLevel);
-                          console.log(`DEBUG Level ${level} - pathToCurrentLevel:`, pathToCurrentLevel);
-                          console.log(`DEBUG Level ${level} - availableOptions keys:`, Object.keys(availableOptions || {}));
+                          console.log(`🔄 RENDER Level ${level} - pathToCurrentLevel:`, pathToCurrentLevel);
+                          console.log(`🔄 RENDER Level ${level} - availableOptions keys:`, Object.keys(availableOptions || {}));
                         }
 
                         // If no options available, don't render this level
