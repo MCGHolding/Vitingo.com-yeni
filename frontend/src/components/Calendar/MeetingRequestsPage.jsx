@@ -23,6 +23,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
   const [users, setUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'sent', 'received'
 
   const platformOptions = ['Zoom', 'Google Meet', 'Microsoft Teams', 'Skype', 'WebEx'];
 
