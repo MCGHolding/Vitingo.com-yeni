@@ -405,9 +405,38 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
 
               {/* Attendees */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Katılımcılar ({requestForm.attendee_ids.length} kişi seçildi)
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-gray-700">
+                    Katılımcılar ({requestForm.attendee_ids.length} kişi seçildi)
+                  </label>
+                  <div className="flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRequestForm({
+                          ...requestForm,
+                          attendee_ids: users.map(user => user.id)
+                        });
+                      }}
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      Tümünü Seç
+                    </button>
+                    <span className="text-xs text-gray-300">|</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRequestForm({
+                          ...requestForm,
+                          attendee_ids: []
+                        });
+                      }}
+                      className="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Tümünü Temizle
+                    </button>
+                  </div>
+                </div>
                 
                 {isLoadingUsers ? (
                   <div className="text-sm text-gray-500 py-4">Kullanıcılar yükleniyor...</div>
