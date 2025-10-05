@@ -2973,6 +2973,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </div>
               )}
 
+              {/* Validation Message for Step 6 */}
+              {currentStep === 6 && !canProceedFromStep6() && (
+                <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    <strong>Dikkat:</strong> Aşağıdaki alanları tamamlamalısınız:
+                    {(!stepData.detailedBrief || stepData.detailedBrief.trim().length <= 10) && (
+                      <span className="block mt-1">• Detaylı brief açıklaması (en az 10 karakter)</span>
+                    )}
+                    {stepData.hasReadyFile && (!stepData.briefFile || !stepData.briefFile.name) && (
+                      <span className="block mt-1">• "Hazır Dosya" seçili olduğu için dosya yüklemelisiniz</span>
+                    )}
+                  </p>
+                </div>
+              )}
+
               {/* Validation Message for Step 7 */}
               {currentStep === 7 && !canProceedFromStep7() && (
                 <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
