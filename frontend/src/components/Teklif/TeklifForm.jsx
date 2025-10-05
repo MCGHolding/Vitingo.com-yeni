@@ -878,28 +878,28 @@ Saygılarımızla,`;
 
       {/* Action Buttons */}
       <div className="flex justify-between items-center pt-6 border-t">
-        <Button
+        <button
           onClick={onBackToDashboard}
-          variant="outline"
+          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 flex items-center space-x-2"
         >
           <X className="h-4 w-4 mr-2" />
           İptal
-        </Button>
+        </button>
         <div className="space-x-3">
-          <Button
-            variant="outline"
+          <button
             onClick={() => console.log('Taslak kaydet')}
+            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 flex items-center space-x-2"
           >
             <Save className="h-4 w-4 mr-2" />
             Taslak Kaydet
-          </Button>
-          <Button
-            className="bg-blue-600 hover:bg-blue-700"
+          </button>
+          <button
             onClick={() => console.log('Teklif oluştur')}
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-white font-medium flex items-center space-x-2"
           >
             <Check className="h-4 w-4 mr-2" />
             Teklif Oluştur
-          </Button>
+          </button>
         </div>
       </div>
     </div>
