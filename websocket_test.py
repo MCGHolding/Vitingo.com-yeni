@@ -34,7 +34,7 @@ async def test_websocket_connection():
         uri = f"{websocket_endpoint}?token=demo_token_123&chatroom_id=test_room_001"
         print(f"   Connecting to: {uri}")
         
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             print("   ✅ PASS: WebSocket connection established successfully")
             
             # Wait for connection success message
@@ -152,7 +152,7 @@ async def test_websocket_chat_message_flow():
         uri = f"{websocket_endpoint}?token=demo_token_sender&chatroom_id={chatroom_id}"
         print(f"\n1. Connecting to WebSocket...")
         
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             print("   ✅ PASS: WebSocket connection established")
             
             # Wait for connection success
@@ -213,7 +213,7 @@ async def test_websocket_chat_message_flow():
         # We'll verify by connecting again and checking recent messages
         uri = f"{websocket_endpoint}?token=demo_token_verify&chatroom_id={chatroom_id}"
         
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             response = await asyncio.wait_for(websocket.recv(), timeout=5)
             connection_data = json.loads(response)
             
@@ -468,7 +468,7 @@ async def test_websocket_mongodb_integration():
             {"type": "chat_message", "content": "Third test message with file", "message_type": "file", "file_name": "test.txt", "file_size": 512}
         ]
         
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             # Wait for connection
             await asyncio.wait_for(websocket.recv(), timeout=5)
             print("   ✅ PASS: Connected to WebSocket")
@@ -488,7 +488,7 @@ async def test_websocket_mongodb_integration():
         # Test 2: Reconnect and verify recent messages are fetched
         print("\n2. Reconnecting to verify recent messages retrieval...")
         
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             response = await asyncio.wait_for(websocket.recv(), timeout=5)
             connection_data = json.loads(response)
             
@@ -550,7 +550,7 @@ async def test_websocket_mongodb_integration():
         print("\n4. Testing chatroom creation/update...")
         
         # Send another message to trigger chatroom update
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             await asyncio.wait_for(websocket.recv(), timeout=5)  # Connection success
             
             update_message = {
@@ -568,7 +568,7 @@ async def test_websocket_mongodb_integration():
         await asyncio.sleep(1)
         
         # Reconnect to verify chatroom was updated
-        async with websockets.connect(uri, timeout=10) as websocket:
+        async with websockets.connect(uri) as websocket:
             response = await asyncio.wait_for(websocket.recv(), timeout=5)
             connection_data = json.loads(response)
             
