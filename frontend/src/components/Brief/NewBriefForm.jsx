@@ -2099,14 +2099,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Kapalı Kenar Sayısı
                 </label>
-                <TurkishNumberInput
+                <input
+                  type="text"
+                  inputMode="decimal"
                   value={formData.closedSides || ''}
-                  onChange={(value) => handleInputChange('closedSides', value)}
+                  onChange={(e) => handleInputChange('closedSides', e.target.value)}
                   placeholder="2,00"
-                  min={0}
-                  max={4}
-                  maxDecimals={0}
-                  required={false}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
                   style={{ pointerEvents: 'auto', zIndex: 10 }}
                 />
               </div>
