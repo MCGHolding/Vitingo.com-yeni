@@ -2496,7 +2496,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
               {/* Step 6 (Fiyat önem derecesi) silindi */}
 
-              {currentStep === 9 && (
+              {currentStep === 6 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2">Brief Detayları ve Görüşleriniz</h3>
