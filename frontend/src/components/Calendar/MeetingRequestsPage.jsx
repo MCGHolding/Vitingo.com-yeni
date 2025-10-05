@@ -810,11 +810,13 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                                   </p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-xs text-gray-600">
+                                  <p className="text-xs font-medium text-gray-700">
                                     {user.department}
                                   </p>
-                                  <p className="text-xs text-gray-400">
-                                    {user.role}
+                                  <p className="text-xs text-gray-500 capitalize">
+                                    {user.role === 'admin' ? '👑 Yönetici' : 
+                                     user.role === 'manager' ? '📋 Müdür' : 
+                                     '👤 Çalışan'}
                                   </p>
                                 </div>
                               </div>
