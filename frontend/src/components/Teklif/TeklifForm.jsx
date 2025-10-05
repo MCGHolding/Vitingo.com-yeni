@@ -723,12 +723,12 @@ Saygılarımızla,`;
                   <option key={hizmet} value={hizmet}>{hizmet}</option>
                 ))}
             </select>
-            <Button
+            <button
               onClick={() => setIsHaricHizmetEklemeModalOpen(true)}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-white"
             >
               <Plus className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
           
           {/* Seçilen Hariç Hizmetler */}
