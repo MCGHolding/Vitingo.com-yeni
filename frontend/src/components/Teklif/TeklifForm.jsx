@@ -691,8 +691,8 @@ Saygılarımızla,`;
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Hariç Hizmetler */}
       <Card>
