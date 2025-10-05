@@ -7544,6 +7544,69 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
         # Save to database
         await db.meeting_requests.insert_one(meeting_request.dict())
         
+        # Send invitation emails to all attendees
+        try:
+            for attendee_id in request_data.attendee_ids:
+                # Get attendee details
+                attendee = await db.users.find_one({"id": attendee_id})
+                if attendee:
+                    attendee_email = attendee["email"]
+                    attendee_name = attendee["name"]
+                    
+                    # Prepare meeting info for email
+                    meeting_location_info = ""
+                    if meeting_request.meeting_type == 'physical':
+                        meeting_location_info = f"📍 Konum: {meeting_request.location}"
+                    else:
+                        meeting_location_info = f"💻 Platform: {meeting_request.platform}"
+                        if meeting_request.meeting_link:
+                            meeting_location_info += f"\n🔗 Toplantı Linki: {meeting_request.meeting_link}"
+                    
+                    email_subject = f"Yeni Toplantı Daveti: {meeting_request.subject}"
+                    
+                    email_body = f"""
+Merhaba {attendee_name},
+
+{organizer_name}, sizi "{meeting_request.subject}" konulu toplantıya davet etti.
+
+📅 Toplantı Detayları:
+• Konu: {meeting_request.subject}
+• Tarih: {meeting_request.date}
+• Saat: {meeting_request.start_time} - {meeting_request.end_time}
+• Tür: {'Fiziki Toplantı' if meeting_request.meeting_type == 'physical' else 'Sanal Toplantı'}
+{meeting_location_info}
+
+👥 Diğer Katılımcılar: {', '.join([name for name in attendee_names if name != attendee_name])}
+
+Lütfen bu davete yanıtınızı vermek için sisteme giriş yapın ve "Toplantı Talepleri" bölümünden davetinizi yanıtlayın.
+
+Yanıt seçenekleriniz:
+✅ Kabul - Toplantıya katılacağım
+❓ Belki - Kesin değil, duruma göre katılabilirim  
+❌ Reddet - Toplantıya katılamayacağım
+
+Organize Eden: {organizer_name}
+
+İyi çalışmalar,
+Toplantı Yönetim Sistemi
+                    """
+                    
+                    # Send invitation email
+                    email_result = email_service.send_user_email(
+                        to_email=attendee_email,
+                        to_name=attendee_name,
+                        from_email="noreply@company.com",
+                        from_name="Toplantı Sistemi",
+                        subject=email_subject,
+                        body=email_body.strip()
+                    )
+                    
+                    logger.info(f"Invitation email sent to {attendee_name}: {email_result}")
+                    
+        except Exception as email_error:
+            logger.error(f"Failed to send invitation emails: {email_error}")
+            # Don't fail the request creation if email fails
+        
         logger.info(f"Meeting request created: {meeting_request.subject}")
         return meeting_request
         
