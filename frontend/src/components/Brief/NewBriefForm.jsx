@@ -1095,16 +1095,51 @@ export default function NewBriefForm({ onBackToDashboard }) {
   };
 
   const handleStepFileUpload = (field, files) => {
-    const newFiles = Array.from(files).map(file => ({
-      id: Date.now() + Math.random(),
-      name: file.name,
-      file: file
-    }));
+    if (!files || files.length === 0) return;
     
-    setStepData(prev => ({
-      ...prev,
-      [field]: [...(prev[field] || []), ...newFiles]
-    }));
+    const maxSizeBytes = 100 * 1024 * 1024; // 100 MB
+    const allowedTypes = ['.pdf', '.jpg', '.jpeg', '.cad', '.zip'];
+    const validFiles = [];
+    const errors = [];
+    
+    Array.from(files).forEach(file => {
+      // Check file size
+      if (file.size > maxSizeBytes) {
+        errors.push(`${file.name}: Dosya boyutu 100 MB'dan büyük olamaz (${(file.size / 1024 / 1024).toFixed(1)} MB)`);
+        return;
+      }
+      
+      // Check file type
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+      if (!allowedTypes.includes(fileExtension)) {
+        errors.push(`${file.name}: Desteklenmeyen dosya türü. Sadece PDF, JPG, CAD, ZIP dosyaları kabul edilir`);
+        return;
+      }
+      
+      validFiles.push({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        file: file
+      });
+    });
+    
+    // Show errors if any
+    if (errors.length > 0) {
+      showToast('error', 'Dosya Upload Hatası', errors.join('\n'));
+      return;
+    }
+    
+    // Show success message
+    if (validFiles.length > 0) {
+      showToast('success', 'Dosyalar Eklendi', `${validFiles.length} dosya başarıyla eklendi`);
+      
+      setStepData(prev => ({
+        ...prev,
+        [field]: [...(prev[field] || []), ...validFiles]
+      }));
+    }
   };
 
   const removeStepFile = (field, fileId) => {
