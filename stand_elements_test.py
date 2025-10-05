@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://stand-builder-1.preview.emergentagent.com"
+BACKEND_URL = "https://crm-brief-hub.preview.emergentagent.com"
 
 def test_recursive_stand_elements_get():
     """
