@@ -3435,7 +3435,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     </div>
 
-                    {/* 3. Seçilen Stand Elementleri */}
+                    {/* 2. Seçilen Stand Elementleri */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-green-900 mb-3 flex items-center">
                         🏗️ Stand Elementleri ({stepData.selectedItems ? stepData.selectedItems.length : 0} adet)
