@@ -247,6 +247,20 @@ const getNavigation = (userDepartment) => {
       ]
     },
     { 
+      name: 'Teklif', 
+      href: '/teklif', 
+      icon: FileText, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Teklif', href: '/teklif/new', icon: Plus },
+        { name: 'Tüm Teklifler', href: '/teklif/all', icon: FolderOpen },
+        { name: 'Onaylanan', href: '/teklif/approved', icon: CheckCircle },
+        { name: 'Reddedilen', href: '/teklif/rejected', icon: XCircle },
+        { name: 'Bekleyen', href: '/teklif/pending', icon: Clock }
+      ]
+    },
+    { 
       name: 'Raporlar', 
       href: '/reports', 
       icon: BarChart3, 
