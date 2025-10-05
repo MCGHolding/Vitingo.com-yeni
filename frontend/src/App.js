@@ -573,8 +573,9 @@ const Dashboard = () => {
 
   // Teklif handlers
   const handleNewTeklif = () => {
-    console.log('handleNewTeklif called - setting view to new-teklif');
+    console.log('🎯 handleNewTeklif called - setting view to new-teklif');
     setCurrentView('new-teklif');
+    console.log('✅ Current view set to: new-teklif');
   };
 
   const handleAllBriefs = () => {
