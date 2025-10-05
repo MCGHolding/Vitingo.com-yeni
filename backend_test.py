@@ -7707,49 +7707,93 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Meeting Requests Backend API Tests...")
+    print("🚀 Starting Enhanced Meeting Requests Backend API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    # Meeting Requests System Tests
-    meeting_request_tests = [
-        ("Meeting Request Creation", test_meeting_request_creation),
-        ("Meeting Request Retrieval", test_meeting_request_retrieval),
-        ("Meeting Request Response", test_meeting_request_response),
-        ("Meeting Request Database Integration", test_meeting_request_database_integration),
-    ]
+    # Enhanced Meeting Requests System Tests
+    meeting_request_tests = []
+    meeting_id = None
     
-    passed_tests = 0
-    failed_tests = 0
-    test_results = []
+    # Test 1: Meeting Request Creation
+    print(f"\n{'='*20} Meeting Request Creation {'='*20}")
+    try:
+        success, meeting_id = test_meeting_request_creation()
+        if success:
+            print("✅ Meeting Request Creation PASSED")
+            meeting_request_tests.append(("Meeting Request Creation", "PASSED", None))
+        else:
+            print("❌ Meeting Request Creation FAILED")
+            meeting_request_tests.append(("Meeting Request Creation", "FAILED", None))
+    except Exception as e:
+        print(f"❌ Meeting Request Creation FAILED with exception: {str(e)}")
+        meeting_request_tests.append(("Meeting Request Creation", "FAILED", str(e)))
     
-    for test_name, test_function in meeting_request_tests:
-        print(f"\n{'='*20} {test_name} {'='*20}")
+    # Test 2: Meeting Request Response (only if creation succeeded)
+    print(f"\n{'='*20} Meeting Request Response {'='*20}")
+    try:
+        if meeting_id:
+            success = test_meeting_request_response_endpoint(meeting_id)
+        else:
+            print("⚠️  SKIP: No meeting ID available from creation test")
+            success = False
         
-        try:
-            if test_function():
-                print(f"✅ {test_name} PASSED")
-                passed_tests += 1
-                test_results.append((test_name, "PASSED", None))
-            else:
-                print(f"❌ {test_name} FAILED")
-                failed_tests += 1
-                test_results.append((test_name, "FAILED", None))
-        except Exception as e:
-            print(f"❌ {test_name} FAILED with exception: {str(e)}")
-            failed_tests += 1
-            test_results.append((test_name, "FAILED", str(e)))
+        if success:
+            print("✅ Meeting Request Response PASSED")
+            meeting_request_tests.append(("Meeting Request Response", "PASSED", None))
+        else:
+            print("❌ Meeting Request Response FAILED")
+            meeting_request_tests.append(("Meeting Request Response", "FAILED", None))
+    except Exception as e:
+        print(f"❌ Meeting Request Response FAILED with exception: {str(e)}")
+        meeting_request_tests.append(("Meeting Request Response", "FAILED", str(e)))
+    
+    # Test 3: Enhanced Meeting Requests Retrieval
+    print(f"\n{'='*20} Enhanced Meeting Requests Retrieval {'='*20}")
+    try:
+        success = test_meeting_requests_with_responses_endpoint()
+        if success:
+            print("✅ Enhanced Meeting Requests Retrieval PASSED")
+            meeting_request_tests.append(("Enhanced Meeting Requests Retrieval", "PASSED", None))
+        else:
+            print("❌ Enhanced Meeting Requests Retrieval FAILED")
+            meeting_request_tests.append(("Enhanced Meeting Requests Retrieval", "FAILED", None))
+    except Exception as e:
+        print(f"❌ Enhanced Meeting Requests Retrieval FAILED with exception: {str(e)}")
+        meeting_request_tests.append(("Enhanced Meeting Requests Retrieval", "FAILED", str(e)))
+    
+    # Test 4: Complete Meeting Request Workflow
+    print(f"\n{'='*20} Complete Meeting Request Workflow {'='*20}")
+    try:
+        success = test_meeting_request_workflow()
+        if success:
+            print("✅ Complete Meeting Request Workflow PASSED")
+            meeting_request_tests.append(("Complete Meeting Request Workflow", "PASSED", None))
+        else:
+            print("❌ Complete Meeting Request Workflow FAILED")
+            meeting_request_tests.append(("Complete Meeting Request Workflow", "FAILED", None))
+    except Exception as e:
+        print(f"❌ Complete Meeting Request Workflow FAILED with exception: {str(e)}")
+        meeting_request_tests.append(("Complete Meeting Request Workflow", "FAILED", str(e)))
     
     # Final Summary
     print("\n" + "=" * 80)
-    print("MEETING REQUESTS BACKEND API TEST SUMMARY")
+    print("ENHANCED MEETING REQUESTS BACKEND API TEST SUMMARY")
     print("=" * 80)
     
-    for test_name, status, error in test_results:
+    passed_tests = 0
+    failed_tests = 0
+    
+    for test_name, status, error in meeting_request_tests:
         status_icon = "✅" if status == "PASSED" else "❌"
         print(f"{status_icon} {test_name}: {status}")
         if error:
             print(f"   Error: {error}")
+        
+        if status == "PASSED":
+            passed_tests += 1
+        else:
+            failed_tests += 1
     
     print(f"\nTotal Tests: {len(meeting_request_tests)}")
     print(f"Passed: {passed_tests}")
@@ -7757,16 +7801,25 @@ if __name__ == "__main__":
     print(f"Success Rate: {(passed_tests/len(meeting_request_tests)*100):.1f}%")
     
     if failed_tests == 0:
-        print("\n🎉 ALL MEETING REQUESTS BACKEND API TESTS PASSED!")
-        print("All meeting request functionality is working correctly:")
-        print("• Meeting Request Creation (physical and virtual)")
-        print("• Meeting Request Retrieval and Filtering")
+        print("\n🎉 ALL ENHANCED MEETING REQUESTS BACKEND API TESTS PASSED!")
+        print("All enhanced meeting request functionality is working correctly:")
+        print("• Meeting Request Creation with attendee management")
         print("• Meeting Request Response System (accepted, maybe, declined)")
-        print("• Database Integration (meeting_requests and meeting_request_responses collections)")
-        print("• Turkish Character Support")
-        print("• Data Validation and Error Handling")
+        print("• Response Update (changing previous responses)")
+        print("• Email Notification Integration with Turkish templates")
+        print("• Enhanced Meeting Request Retrieval with responses")
+        print("• MeetingRequestWithResponses model validation")
+        print("• Response mapping to attendee IDs")
+        print("• Complete workflow testing")
+        print("• Multiple attendees responding to same request")
+        print("• Turkish character support throughout")
         sys.exit(0)
     else:
-        print(f"\n⚠️  {failed_tests} MEETING REQUEST TESTS FAILED.")
+        print(f"\n⚠️  {failed_tests} ENHANCED MEETING REQUEST TESTS FAILED.")
         print("Please check the issues above and fix the failing endpoints.")
+        print("Key areas to review:")
+        print("• Meeting request response endpoint functionality")
+        print("• Email notification service integration")
+        print("• Response data structure and mapping")
+        print("• Database persistence of responses")
         sys.exit(1)
