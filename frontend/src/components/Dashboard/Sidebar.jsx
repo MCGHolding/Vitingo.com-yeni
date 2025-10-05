@@ -56,6 +56,18 @@ const getNavigation = (userDepartment) => {
   const baseNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard, current: true },
     { 
+      name: 'Takvim', 
+      href: '/calendar', 
+      icon: Calendar, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Takvim Görünümü', href: '/calendar', icon: Calendar },
+        { name: 'Yeni Toplantı', href: '/calendar/new-meeting', icon: Plus },
+        { name: 'Toplantı Davetleri', href: '/calendar/invitations', icon: Clock }
+      ]
+    },
+    { 
       name: 'Müşteriler', 
       href: '/customers', 
       icon: Building, 
