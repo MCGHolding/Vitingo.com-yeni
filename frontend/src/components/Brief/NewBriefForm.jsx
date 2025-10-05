@@ -1155,14 +1155,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
     const hasCustomer = formData.customerId && formData.customerId.trim() !== '';
     const hasAuthorizedPerson = selectedPersonId && selectedPersonId.trim() !== '';
     
-    console.log('🔍 Step 1 validation:', { 
-      hasProject, 
-      hasCustomer, 
-      hasAuthorizedPerson,
-      projectId: formData.projectId,
-      customerId: formData.customerId,
-      selectedPersonId
-    });
+    // console.log('🔍 Step 1 validation:', { 
+    //   hasProject, 
+    //   hasCustomer, 
+    //   hasAuthorizedPerson,
+    //   projectId: formData.projectId,
+    //   customerId: formData.customerId,
+    //   selectedPersonId
+    // });
     
     return hasProject && hasCustomer && hasAuthorizedPerson;
   };
