@@ -189,7 +189,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
     // Budget and Requirements (Step 7)
     budgetRange: '',
     deadline: '',
-    customRequirements: ''
+    customRequirements: '',
+    
+    // Brief File (Step 6)
+    briefFile: null
   });
 
   // Stand elements configuration - loaded dynamically from API
