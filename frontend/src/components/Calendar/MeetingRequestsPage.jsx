@@ -413,10 +413,19 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                     </div>
 
                     {/* Organizer Info */}
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-                      <span>Organize Eden: {request.organizer_name}</span>
-                      <span>•</span>
-                      <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <span>Organize Eden: {request.organizer_name}</span>
+                        <span>•</span>
+                        <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
+                      </div>
+                      
+                      {/* Meeting Type Badge */}
+                      {request.organizer_id !== currentUser.id && (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          📨 Size gönderildi
+                        </span>
+                      )}
                     </div>
 
                     {/* Action Buttons - Only show if user is not organizer */}
