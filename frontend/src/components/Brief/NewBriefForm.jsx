@@ -716,55 +716,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }));
   };
 
-  // AI Design Generation Function
-  const generateAIDesigns = async () => {
-    try {
-      setIsGeneratingDesigns(true);
-      setGenerationError(null);
-      
-      // Prepare brief data for AI generation
-      const briefData = {
-        ...stepData,
-        standDimensions: stepData.eventSpace || '3x3 meters',
-        id: `brief_${Date.now()}`
-      };
-      
-      console.log('Starting AI design generation with data:', briefData);
-      
-      const response = await fetch(`${BACKEND_URL}/api/generate-stand-designs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          brief_data: briefData,
-          uploaded_images: [], // TODO: Add uploaded images when file upload is implemented
-          logo_image: null // TODO: Add logo when file upload is implemented
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('AI generation response:', result);
-      
-      setGeneratedDesigns(result.designs || []);
-      
-      if (result.designs && result.designs.length > 0) {
-        console.log(`Successfully generated ${result.designs.length} designs`);
-      } else {
-        throw new Error('No designs were generated');
-      }
-      
-    } catch (error) {
-      console.error('AI Generation Error:', error);
-      setGenerationError(`Tasarım üretiminde hata: ${error.message}`);
-    } finally {
-      setIsGeneratingDesigns(false);
-    }
-  };
+  // AI Design Generation Function removed
 
   // Refresh Stand Elements
   const refreshStandElements = async () => {
