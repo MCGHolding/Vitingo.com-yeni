@@ -1912,6 +1912,25 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 {level + 1}. {levelLabel}
                               </label>
                               <div className="flex items-center gap-2">
+                                {level > 0 && ( // X butonu - sadece alt kategoriler için
+                                  <Button
+                                    type="button"
+                                    onClick={() => {
+                                      // Bu seviyeyi ve sonrasını kaldır
+                                      setStepData(prev => ({
+                                        ...prev,
+                                        currentPath: prev.currentPath.slice(0, level)
+                                      }));
+                                      console.log(`Level ${level} removed, currentPath updated`);
+                                    }}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-300 hover:bg-red-50 px-2"
+                                    title="Bu kategoriyi kaldır"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                )}
                                 {level > 0 && ( // Only show on alt kategori levels (level > 0)
                                   <Button
                                     type="button"
