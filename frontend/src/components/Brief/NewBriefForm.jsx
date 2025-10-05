@@ -3260,7 +3260,38 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       )}
                     </div>
 
-                    {/* 8. Rapor Bilgileri */}
+                    {/* 8. Tasarım Dosyaları */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-purple-900 mb-3 flex items-center">
+                        🎨 Tasarım Dosyaları
+                      </h4>
+                      <div className="space-y-3">
+                        {stepData.designFiles && stepData.designFiles.length > 0 ? (
+                          <div className="space-y-2">
+                            {stepData.designFiles.map((file, index) => (
+                              <div key={index} className="flex items-center space-x-3 bg-gray-50 p-3 rounded">
+                                <span className="text-2xl">
+                                  {file.name.toLowerCase().endsWith('.pdf') ? '📄' : 
+                                   file.name.toLowerCase().match(/\.(jpg|jpeg|png)$/) ? '🖼️' : 
+                                   file.name.toLowerCase().endsWith('.zip') ? '🗂️' : 
+                                   file.name.toLowerCase().endsWith('.cad') ? '📐' : '📁'}
+                                </span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                                  {file.size && (
+                                    <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-sm">Henüz tasarım dosyası yüklenmemiş.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 9. Rapor Bilgileri */}
                     <div className="bg-white rounded-lg p-5 shadow-sm border-2 border-blue-200">
                       <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
                         📊 Rapor Bilgileri
