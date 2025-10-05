@@ -2754,7 +2754,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         type="file"
                         multiple
                         accept=".pdf,.jpg,.jpeg,.cad,.zip"
-                        onChange={(e) => handleStepFileUpload('designFiles', e.target.files)}
+                        onChange={(e) => {
+                          console.log('📂 File input onChange triggered:', e.target.files);
+                          handleStepFileUpload('designFiles', e.target.files);
+                        }}
+                        onClick={(e) => {
+                          console.log('🖱️ File input clicked');
+                        }}
                         className="hidden"
                         id="design-upload"
                       />
