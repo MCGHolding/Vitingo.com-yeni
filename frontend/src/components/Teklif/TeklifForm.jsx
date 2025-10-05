@@ -583,10 +583,10 @@ Saygılarımızla,`;
             >
               <Plus className="h-4 w-4 mr-2" />
               Yeni Koşul Ekle
-            </Button>
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Teklif Ön Yazısı */}
       <Card>
