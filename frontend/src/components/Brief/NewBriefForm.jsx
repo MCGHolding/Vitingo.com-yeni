@@ -2117,13 +2117,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Kapalı Kenar Sayısı
                 </label>
-                <Input
-                  type="number"
+                <TurkishNumberInput
                   value={formData.closedSides}
-                  onChange={(e) => handleInputChange('closedSides', e.target.value)}
-                  placeholder="2"
-                  min="0"
-                  max="4"
+                  onChange={(value) => handleInputChange('closedSides', value)}
+                  placeholder="2,00"
+                  min={0}
+                  max={4}
+                  maxDecimals={0}
+                  required={false}
                 />
               </div>
               
