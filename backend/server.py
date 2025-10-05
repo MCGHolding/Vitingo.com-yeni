@@ -8017,6 +8017,45 @@ async def get_user(user_id: str):
         logger.error(f"Error getting user: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting user: {str(e)}")
 
+@api_router.post("/users/initialize")
+async def initialize_company_users():
+    """Initialize the company with realistic user data"""
+    try:
+        # Clear existing demo users first
+        await db.users.delete_many({
+            "id": {"$in": ["demo_user", "admin_user", "user1", "user2", "user3", "user4", "user5", "user6"]}
+        })
+        
+        # Force recreation of users by calling get_users which will create them if they don't exist
+        users = await get_users()
+        
+        return {
+            "success": True,
+            "message": f"Company initialized with {len(users)} employees", 
+            "users_created": len(users)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error initializing company users: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error initializing company users: {str(e)}")
+
+@api_router.get("/users/count")
+async def get_users_count():
+    """Get count of users in the system"""
+    try:
+        total_users = await db.users.count_documents({})
+        active_users = await db.users.count_documents({"status": "active"})
+        
+        return {
+            "total_users": total_users,
+            "active_users": active_users,
+            "departments": await db.users.distinct("department", {"status": "active"})
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting user count: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user count: {str(e)}")
+
 # ===================== END USERS ENDPOINTS =====================
 
 # ===================== END MEETING REQUESTS ENDPOINTS =====================
