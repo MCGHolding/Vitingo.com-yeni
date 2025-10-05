@@ -5674,25 +5674,69 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Backend API Tests...")
+    print("🚀 Starting Calendar/Meeting System Backend API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    # Run the opportunities test as requested
-    test_name = "Opportunities API and TeklifForm Data Loading"
-    print(f"\n{'='*20} {test_name} {'='*20}")
+    # Calendar/Meeting System Tests
+    calendar_tests = [
+        ("Calendar Create Sample Data", test_calendar_create_sample_data_endpoint),
+        ("Calendar Events GET", test_calendar_events_get_endpoint),
+        ("Calendar Events Date Filtering", test_calendar_events_date_filtering),
+        ("Calendar Events POST", test_calendar_events_post_endpoint),
+        ("Calendar Events PUT", test_calendar_events_put_endpoint),
+        ("Calendar Events DELETE", test_calendar_events_delete_endpoint),
+        ("Calendar Invitations GET", test_calendar_invitations_get_endpoint),
+        ("Calendar Invitations Respond", test_calendar_invitations_respond_endpoint),
+    ]
     
-    try:
-        if test_opportunities_api_and_teklif_form_data_loading():
-            print(f"✅ {test_name} PASSED")
-            print("\n🎉 OPPORTUNITIES API TEST COMPLETED SUCCESSFULLY!")
-            print("Backend APIs are working correctly for TeklifForm data loading.")
-            sys.exit(0)
-        else:
-            print(f"❌ {test_name} FAILED")
-            print("\n⚠️  OPPORTUNITIES API TEST FAILED. Please check the issues above.")
-            sys.exit(1)
-    except Exception as e:
-        print(f"❌ {test_name} FAILED with exception: {str(e)}")
-        print("\n⚠️  OPPORTUNITIES API TEST FAILED WITH EXCEPTION.")
+    passed_tests = 0
+    failed_tests = 0
+    test_results = []
+    
+    for test_name, test_function in calendar_tests:
+        print(f"\n{'='*20} {test_name} {'='*20}")
+        
+        try:
+            if test_function():
+                print(f"✅ {test_name} PASSED")
+                passed_tests += 1
+                test_results.append((test_name, "PASSED", None))
+            else:
+                print(f"❌ {test_name} FAILED")
+                failed_tests += 1
+                test_results.append((test_name, "FAILED", None))
+        except Exception as e:
+            print(f"❌ {test_name} FAILED with exception: {str(e)}")
+            failed_tests += 1
+            test_results.append((test_name, "FAILED", str(e)))
+    
+    # Final Summary
+    print("\n" + "=" * 80)
+    print("CALENDAR/MEETING SYSTEM BACKEND API TEST SUMMARY")
+    print("=" * 80)
+    
+    for test_name, status, error in test_results:
+        status_icon = "✅" if status == "PASSED" else "❌"
+        print(f"{status_icon} {test_name}: {status}")
+        if error:
+            print(f"   Error: {error}")
+    
+    print(f"\nTotal Tests: {len(calendar_tests)}")
+    print(f"Passed: {passed_tests}")
+    print(f"Failed: {failed_tests}")
+    print(f"Success Rate: {(passed_tests/len(calendar_tests)*100):.1f}%")
+    
+    if failed_tests == 0:
+        print("\n🎉 ALL CALENDAR/MEETING SYSTEM BACKEND API TESTS PASSED!")
+        print("All calendar backend functionality is working correctly:")
+        print("• Calendar Events CRUD operations")
+        print("• Meeting Invitations system")
+        print("• Sample data creation")
+        print("• User role-based access")
+        print("• Date filtering")
+        sys.exit(0)
+    else:
+        print(f"\n⚠️  {failed_tests} CALENDAR/MEETING SYSTEM TESTS FAILED.")
+        print("Please check the issues above and fix the failing endpoints.")
         sys.exit(1)
