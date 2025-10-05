@@ -13,6 +13,7 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
   const [invitations, setInvitations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const calendarRef = useRef(null);
