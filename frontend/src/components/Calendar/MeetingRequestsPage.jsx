@@ -39,6 +39,24 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
     }
   };
 
+  // Load system users
+  const loadUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/users`);
+      if (response.ok) {
+        const usersData = await response.json();
+        // Filter out current user
+        const filteredUsers = usersData.filter(user => user.id !== currentUser.id);
+        setUsers(filteredUsers);
+      }
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
   useEffect(() => {
     loadMeetingRequests();
   }, []);
