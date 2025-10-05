@@ -201,6 +201,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [selectedServices, setSelectedServices] = useState({});
   const [serviceDetails, setServiceDetails] = useState({});
   
+  // Mail modal states
+  const [isMailModalOpen, setIsMailModalOpen] = useState(false);
+  const [mailData, setMailData] = useState({
+    toEmail: '',
+    subject: `Stand Brief - ${stepData.briefId}`,
+    message: ''
+  });
+  
   // AI Design Generation states removed
   const [newCategoryData, setNewCategoryData] = useState({
     label: '',
