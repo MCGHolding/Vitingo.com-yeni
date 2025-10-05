@@ -548,8 +548,9 @@ export default function Sidebar({
     }
     
     if (subItem && subItem.name === 'Yeni Teklif') {
-      if (onNewQuote) {
-        onNewQuote();
+      console.log('Yeni Teklif clicked - calling onNewTeklif handler');
+      if (onNewTeklif) {
+        onNewTeklif();
       }
       return;
     }
