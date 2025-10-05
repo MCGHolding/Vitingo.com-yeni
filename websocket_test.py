@@ -332,6 +332,12 @@ async def test_websocket_real_time_broadcasting():
                 user1_response = await asyncio.wait_for(ws1.recv(), timeout=5)
                 user1_data = json.loads(user1_response)
                 
+                # Handle user_joined notification first if received
+                if user1_data.get("type") == "user_joined":
+                    print("   ℹ️  INFO: User 1 received user_joined notification, waiting for message...")
+                    user1_response = await asyncio.wait_for(ws1.recv(), timeout=5)
+                    user1_data = json.loads(user1_response)
+                
                 if user1_data.get("type") == "message_received":
                     print("   ✅ PASS: User 1 received their own message broadcast")
                 else:
