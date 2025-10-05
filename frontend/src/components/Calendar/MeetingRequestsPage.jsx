@@ -96,8 +96,13 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
     }
   };
 
+  // Response state management
+  const [responseLoading, setResponseLoading] = useState(null);
+  const [responseMessage, setResponseMessage] = useState(null);
+
   // Respond to meeting request
   const handleResponse = async (requestId, response) => {
+    setResponseLoading(requestId);
     try {
       const res = await fetch(`${BACKEND_URL}/api/meeting-requests/${requestId}/respond`, {
         method: 'POST',
@@ -106,16 +111,38 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
         },
         body: JSON.stringify({
           request_id: requestId,
-          response: response,
-          user_id: currentUser.id
+          response: response
         })
       });
 
       if (res.ok) {
+        const result = await res.json();
+        setResponseMessage({
+          type: 'success',
+          text: result.message || 'Yanıtınız başarıyla kaydedildi'
+        });
         loadMeetingRequests(); // Reload to reflect changes
+        
+        // Clear message after 3 seconds
+        setTimeout(() => {
+          setResponseMessage(null);
+        }, 3000);
+      } else {
+        throw new Error('Response failed');
       }
     } catch (error) {
       console.error('Error responding to meeting request:', error);
+      setResponseMessage({
+        type: 'error',
+        text: 'Yanıtınız kaydedilemedi. Lütfen tekrar deneyin.'
+      });
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setResponseMessage(null);
+      }, 3000);
+    } finally {
+      setResponseLoading(null);
     }
   };
 
