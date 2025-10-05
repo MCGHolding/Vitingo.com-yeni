@@ -88,6 +88,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           meeting_type: 'physical',
           location: '',
           platform: 'Zoom',
+          meeting_link: '',
           attendee_ids: []
         });
         loadMeetingRequests();
