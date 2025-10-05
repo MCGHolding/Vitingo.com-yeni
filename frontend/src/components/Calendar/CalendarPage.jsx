@@ -588,6 +588,13 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
           </div>
         </div>
       )}
+
+      {/* Chat Modal */}
+      <ChatModal 
+        isOpen={showChatModal}
+        onClose={() => setShowChatModal(false)}
+        currentUser={currentUser}
+      />
     </div>
   );
 };
