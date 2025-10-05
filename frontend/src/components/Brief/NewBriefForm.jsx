@@ -2185,9 +2185,20 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 >
                   Detaylı Stand İhtiyaçları →
                 </Button>
-                <p className="text-sm text-gray-500 mt-2">
-                  Standınızın tüm detaylarını belirlemek için devam edin
-                </p>
+                {canProceedFromStep1() ? (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Standınızın tüm detaylarını belirlemek için devam edin
+                  </p>
+                ) : (
+                  <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg text-center">
+                    <p className="text-sm text-orange-800 font-medium">
+                      ⚠️ Stand Gereksinimleri bölümüne geçmek için üstteki zorunlu alanları doldurun
+                    </p>
+                    <div className="text-xs text-orange-700 mt-1">
+                      Proje Seçimi • Müşteri • Yetkili Kişi
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
