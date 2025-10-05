@@ -1096,7 +1096,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
   };
 
   const canProceedFromStep6 = () => {
-    return stepData.detailedBrief && stepData.detailedBrief.trim().length > 10;
+    // Detaylı brief zorunlu
+    const hasDetailedBrief = stepData.detailedBrief && stepData.detailedBrief.trim().length > 10;
+    
+    // Eğer "Hazır Dosya" checkbox'ı işaretliyse, dosya yüklemesi zorunlu
+    if (stepData.hasReadyFile && (!stepData.briefFile || !stepData.briefFile.name)) {
+      console.log('❌ Hazır dosya seçili ama dosya yüklenmemiş');
+      return false;
+    }
+    
+    return hasDetailedBrief;
   };
 
   const canProceedFromStep7 = () => {
