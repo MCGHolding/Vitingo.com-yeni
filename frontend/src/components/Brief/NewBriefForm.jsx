@@ -4245,14 +4245,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     rows={4}
                   />
                 ) : featureModalData.featureType === 'number' ? (
-                  <TurkishNumberInput
-                    value={featureModalData.featureValue}
-                    onChange={(value) => setFeatureModalData(prev => ({...prev, featureValue: value}))}
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={featureModalData.featureValue || ''}
+                    onChange={(e) => setFeatureModalData(prev => ({...prev, featureValue: e.target.value}))}
                     placeholder="Örn: 100,00"
-                    min={0}
-                    max={999999}
-                    maxDecimals={2}
-                    className="w-full"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
+                    style={{ pointerEvents: 'auto', zIndex: 10 }}
                   />
                 ) : (
                   <Input
