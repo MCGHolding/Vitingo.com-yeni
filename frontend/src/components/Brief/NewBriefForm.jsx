@@ -1220,71 +1220,90 @@ export default function NewBriefForm({ onBackToDashboard }) {
     return ""; // No error
   };
 
-  // Handle dimension input change with validation
-  const handleDimensionChange = (fieldName, value) => {
-    console.log('📏 Dimension change:', fieldName, '=', value);
+  // Handle Turkish formatted number input change
+  const handleTurkishNumberChange = (fieldName, value, options = {}) => {
+    console.log('🔢 Turkish number change:', fieldName, '=', value);
     
-    // Clean the value - allow only digits, one dot/comma
-    let cleanValue = value;
+    // Clean input - allow only digits, dots, and commas
+    let cleanValue = value.replace(/[^0-9.,]/g, '');
     
-    // Replace multiple commas/dots with single dot
-    cleanValue = cleanValue.replace(/[,]/g, '.'); // Convert comma to dot
-    cleanValue = cleanValue.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except dots
-    
-    // Handle multiple dots - keep only the first one
-    const dotCount = (cleanValue.match(/\./g) || []).length;
-    if (dotCount > 1) {
-      const firstDotIndex = cleanValue.indexOf('.');
-      cleanValue = cleanValue.substring(0, firstDotIndex + 1) + cleanValue.substring(firstDotIndex + 1).replace(/\./g, '');
-    }
-    
-    // Limit decimal places to 2
-    if (cleanValue.includes('.')) {
-      const parts = cleanValue.split('.');
+    // Handle decimal comma input (convert for internal processing)
+    if (cleanValue.includes(',')) {
+      // Split by comma and ensure only one decimal separator
+      const parts = cleanValue.split(',');
+      if (parts.length > 2) {
+        cleanValue = parts[0] + ',' + parts.slice(1).join('');
+      }
+      // Limit decimal places
       if (parts[1] && parts[1].length > 2) {
-        cleanValue = parts[0] + '.' + parts[1].substring(0, 2);
+        cleanValue = parts[0] + ',' + parts[1].substring(0, 2);
       }
     }
     
-    console.log('🧹 Cleaned value:', cleanValue);
-    
-    // Update stepData
-    const fieldMap = {
-      width: 'standWidth',
-      length: 'standLength'
-    };
-    
-    setStepData(prev => {
-      const newData = { ...prev, [fieldMap[fieldName]]: cleanValue };
-      
-      // Calculate area if both dimensions are valid
-      const width = fieldName === 'width' ? cleanValue : prev.standWidth;
-      const length = fieldName === 'length' ? cleanValue : prev.standLength;
-      
-      if (width && length) {
-        const widthNum = parseFloat(width.replace(',', '.'));
-        const lengthNum = parseFloat(length.replace(',', '.'));
-        
-        if (!isNaN(widthNum) && !isNaN(lengthNum) && widthNum > 0 && lengthNum > 0) {
-          // Convert cm to m² (divide by 100 twice)
-          newData.calculatedArea = ((widthNum * lengthNum) / 10000).toFixed(2);
-          console.log('📐 Calculated area:', newData.calculatedArea, 'm²');
-        } else {
-          newData.calculatedArea = 0;
-        }
+    // Remove extra thousand separators (dots) except when they're clearly thousand separators
+    const dotCount = (cleanValue.match(/\./g) || []).length;
+    if (dotCount > 0) {
+      // If there's a comma, all dots should be thousand separators
+      if (cleanValue.includes(',')) {
+        // Keep dots as thousand separators
       } else {
-        newData.calculatedArea = 0;
+        // If no comma but multiple dots, keep only the last one as decimal
+        if (dotCount > 1) {
+          const lastDotIndex = cleanValue.lastIndexOf('.');
+          cleanValue = cleanValue.substring(0, lastDotIndex).replace(/\./g, '') + '.' + cleanValue.substring(lastDotIndex + 1);
+        }
       }
-      
-      return newData;
-    });
+    }
     
-    // Validate the field
-    const error = validateDimension(cleanValue, fieldName);
-    setDimensionErrors(prev => ({
-      ...prev,
-      [fieldName]: error
-    }));
+    console.log('🧹 Cleaned Turkish value:', cleanValue);
+    
+    // For dimension fields, update stepData and calculate area
+    if (fieldName === 'width' || fieldName === 'length') {
+      const fieldMap = {
+        width: 'standWidth',
+        length: 'standLength'
+      };
+      
+      setStepData(prev => {
+        const newData = { ...prev, [fieldMap[fieldName]]: cleanValue };
+        
+        // Calculate area if both dimensions are valid
+        const width = fieldName === 'width' ? cleanValue : prev.standWidth;
+        const length = fieldName === 'length' ? cleanValue : prev.standLength;
+        
+        if (width && length) {
+          const widthNum = parseFloat(parseTurkishNumber(width));
+          const lengthNum = parseFloat(parseTurkishNumber(length));
+          
+          if (!isNaN(widthNum) && !isNaN(lengthNum) && widthNum > 0 && lengthNum > 0) {
+            // Convert cm to m² and format in Turkish style
+            const areaValue = (widthNum * lengthNum) / 10000;
+            newData.calculatedArea = formatTurkishNumber(areaValue, 2);
+            console.log('📐 Calculated area:', newData.calculatedArea, 'm²');
+          } else {
+            newData.calculatedArea = '0,00';
+          }
+        } else {
+          newData.calculatedArea = '0,00';
+        }
+        
+        return newData;
+      });
+      
+      // Validate the field using Turkish number validation
+      const error = validateTurkishNumber(cleanValue, fieldName, { 
+        required: true, 
+        min: 1, 
+        max: 50000, 
+        maxDecimals: 2 
+      });
+      setDimensionErrors(prev => ({
+        ...prev,
+        [fieldName]: error
+      }));
+    }
+    
+    return cleanValue;
   };
 
   const handleStepFileUpload = (field, files) => {
