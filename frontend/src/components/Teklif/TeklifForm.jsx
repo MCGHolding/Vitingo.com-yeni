@@ -132,7 +132,32 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
 
   const loadMusteriler = async () => {
     try {
-      // TODO: API call to load customers
+      const response = await fetch(`${BACKEND_URL}/api/customers`);
+      if (response.ok) {
+        const customers = await response.json();
+        // Transform customers to match expected format
+        const transformedCustomers = customers.map(customer => ({
+          id: customer.id,
+          ad: customer.companyName,
+          yetkiliKisiler: [] // We'll populate this from contacts if needed
+        }));
+        setMusteriler(transformedCustomers);
+      } else {
+        console.error('Müşteriler getirilemedi:', response.statusText);
+        // Fallback to mock data if API fails
+        setMusteriler([
+          { id: '1', ad: 'Acme Corp', yetkiliKisiler: [
+            { id: '1', ad: 'AHMET', soyad: 'YILMAZ' },
+            { id: '2', ad: 'FATMA', soyad: 'KAYA' }
+          ]},
+          { id: '2', ad: 'Tech Solutions', yetkiliKisiler: [
+            { id: '3', ad: 'MEHMET', soyad: 'ÖZ' }
+          ]}
+        ]);
+      }
+    } catch (error) {
+      console.error('Müşteriler yüklenemedi:', error);
+      // Fallback to mock data if API fails
       setMusteriler([
         { id: '1', ad: 'Acme Corp', yetkiliKisiler: [
           { id: '1', ad: 'AHMET', soyad: 'YILMAZ' },
@@ -142,8 +167,6 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
           { id: '3', ad: 'MEHMET', soyad: 'ÖZ' }
         ]}
       ]);
-    } catch (error) {
-      console.error('Müşteriler yüklenemedi:', error);
     }
   };
 
