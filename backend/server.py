@@ -7507,6 +7507,165 @@ async def create_sample_calendar_data():
         logger.error(f"Error creating sample calendar data: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== MEETING REQUESTS ENDPOINTS =====================
+
+@api_router.post("/meeting-requests", response_model=MeetingRequest)
+async def create_meeting_request(request_data: MeetingRequestCreate, organizer_id: str = "demo_user"):
+    """Create a new meeting request"""
+    try:
+        # Get organizer name (in production, fetch from user database)
+        organizer_name = "Demo User"  # Mock for now
+        
+        # Get attendee names (in production, fetch from user database)
+        attendee_names = []
+        for attendee_id in request_data.attendee_ids:
+            # Mock names - in production, query user database
+            if attendee_id == "admin_user":
+                attendee_names.append("Admin User")
+            elif attendee_id == "user1":
+                attendee_names.append("Ahmet Yılmaz")
+            elif attendee_id == "user2":
+                attendee_names.append("Fatma Demir")
+            elif attendee_id == "user3":
+                attendee_names.append("Mehmet Kaya")
+            else:
+                attendee_names.append(f"User {attendee_id}")
+        
+        # Create meeting request
+        meeting_request = MeetingRequest(
+            **request_data.dict(),
+            organizer_id=organizer_id,
+            organizer_name=organizer_name,
+            attendee_names=attendee_names
+        )
+        
+        # Save to database
+        await db.meeting_requests.insert_one(meeting_request.dict())
+        
+        logger.info(f"Meeting request created: {meeting_request.subject}")
+        return meeting_request
+        
+    except Exception as e:
+        logger.error(f"Error creating meeting request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating meeting request: {str(e)}")
+
+@api_router.get("/meeting-requests", response_model=List[MeetingRequest])
+async def get_meeting_requests(user_id: str = "demo_user"):
+    """Get meeting requests for a user (both created by them and requests they are invited to)"""
+    try:
+        # Find meeting requests where user is organizer OR attendee
+        meeting_requests = await db.meeting_requests.find({
+            "$or": [
+                {"organizer_id": user_id},
+                {"attendee_ids": {"$in": [user_id]}}
+            ]
+        }).sort("created_at", -1).to_list(100)
+        
+        return [MeetingRequest(**request) for request in meeting_requests]
+        
+    except Exception as e:
+        logger.error(f"Error getting meeting requests: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting meeting requests: {str(e)}")
+
+@api_router.get("/meeting-requests/{request_id}", response_model=MeetingRequest)
+async def get_meeting_request(request_id: str):
+    """Get a specific meeting request by ID"""
+    try:
+        request = await db.meeting_requests.find_one({"id": request_id})
+        if not request:
+            raise HTTPException(status_code=404, detail="Meeting request not found")
+            
+        return MeetingRequest(**request)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting meeting request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting meeting request: {str(e)}")
+
+@api_router.post("/meeting-requests/{request_id}/respond")
+async def respond_to_meeting_request(
+    request_id: str, 
+    response_data: MeetingRequestResponseCreate,
+    user_id: str = "demo_user"
+):
+    """Respond to a meeting request (accept, maybe, decline)"""
+    try:
+        # Verify meeting request exists
+        meeting_request = await db.meeting_requests.find_one({"id": request_id})
+        if not meeting_request:
+            raise HTTPException(status_code=404, detail="Meeting request not found")
+        
+        # Get user name (in production, fetch from user database)
+        user_name = "Demo User"  # Mock for now
+        
+        # Create response record
+        response_record = MeetingRequestResponse(
+            **response_data.dict(),
+            user_id=user_id,
+            user_name=user_name
+        )
+        
+        # Save response
+        await db.meeting_request_responses.insert_one(response_record.dict())
+        
+        logger.info(f"Meeting request response saved: {user_id} -> {response_data.response}")
+        
+        return {
+            "success": True,
+            "message": f"Response '{response_data.response}' saved successfully",
+            "response_id": response_record.id
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error responding to meeting request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error responding to meeting request: {str(e)}")
+
+@api_router.get("/meeting-requests/{request_id}/responses")
+async def get_meeting_request_responses(request_id: str):
+    """Get all responses for a meeting request"""
+    try:
+        responses = await db.meeting_request_responses.find(
+            {"request_id": request_id}
+        ).sort("response_date", -1).to_list(100)
+        
+        return [MeetingRequestResponse(**response) for response in responses]
+        
+    except Exception as e:
+        logger.error(f"Error getting meeting request responses: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting meeting request responses: {str(e)}")
+
+@api_router.delete("/meeting-requests/{request_id}")
+async def delete_meeting_request(request_id: str, user_id: str = "demo_user"):
+    """Delete a meeting request (only by organizer)"""
+    try:
+        # Verify meeting request exists and user is organizer
+        meeting_request = await db.meeting_requests.find_one({"id": request_id})
+        if not meeting_request:
+            raise HTTPException(status_code=404, detail="Meeting request not found")
+            
+        if meeting_request["organizer_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Only organizer can delete meeting request")
+        
+        # Delete meeting request
+        await db.meeting_requests.delete_one({"id": request_id})
+        
+        # Delete associated responses
+        await db.meeting_request_responses.delete_many({"request_id": request_id})
+        
+        logger.info(f"Meeting request deleted: {request_id}")
+        return {"success": True, "message": "Meeting request deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting meeting request: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting meeting request: {str(e)}")
+
+# ===================== END MEETING REQUESTS ENDPOINTS =====================
+
 # ===================== END CALENDAR & MEETINGS ENDPOINTS =====================
 
 # ===================== WEBSOCKET CHAT MODELS =====================
