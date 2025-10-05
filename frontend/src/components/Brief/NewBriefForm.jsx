@@ -202,6 +202,12 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
   // Stand elements configuration - loaded dynamically from API
   const [standElementsConfig, setStandElementsConfig] = useState({});
+  
+  // Dimension validation errors
+  const [dimensionErrors, setDimensionErrors] = useState({
+    width: '',
+    length: ''
+  });
   const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
   const [isManageElementsModalOpen, setIsManageElementsModalOpen] = useState(false);
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
