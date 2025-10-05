@@ -593,6 +593,14 @@ export default function Sidebar({
       return;
     }
     
+    if (subItem && subItem.name === 'Toplantı Talepleri') {
+      console.log('Toplantı Talepleri clicked - calling onMeetingRequests handler');
+      if (onMeetingRequests) {
+        onMeetingRequests();
+      }
+      return;
+    }
+    
     if (subItem && subItem.name === 'Tüm Teklifler') {
       if (onAllQuotes) {
         onAllQuotes();
