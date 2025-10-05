@@ -9728,7 +9728,92 @@ if __name__ == "__main__":
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    # Enhanced Meeting Requests System Tests
+    # Realistic Company Users System Tests
+    user_tests = []
+    
+    # Test 1: Users Initialization
+    print(f"\n{'='*20} Users Initialization Test {'='*20}")
+    try:
+        result = test_users_initialization()
+        user_tests.append(("Users Initialization", result))
+        if result:
+            print("✅ Users Initialization Test PASSED")
+        else:
+            print("❌ Users Initialization Test FAILED")
+    except Exception as e:
+        print(f"❌ Users Initialization Test ERROR: {str(e)}")
+        user_tests.append(("Users Initialization", False))
+    
+    # Test 2: Users Database Integration
+    print(f"\n{'='*20} Users Database Integration Test {'='*20}")
+    try:
+        result = test_users_database_integration()
+        user_tests.append(("Users Database Integration", result))
+        if result:
+            print("✅ Users Database Integration Test PASSED")
+        else:
+            print("❌ Users Database Integration Test FAILED")
+    except Exception as e:
+        print(f"❌ Users Database Integration Test ERROR: {str(e)}")
+        user_tests.append(("Users Database Integration", False))
+    
+    # Test 3: Users Count and Statistics
+    print(f"\n{'='*20} Users Count and Statistics Test {'='*20}")
+    try:
+        result = test_users_count_and_statistics()
+        user_tests.append(("Users Count and Statistics", result))
+        if result:
+            print("✅ Users Count and Statistics Test PASSED")
+        else:
+            print("❌ Users Count and Statistics Test FAILED")
+    except Exception as e:
+        print(f"❌ Users Count and Statistics Test ERROR: {str(e)}")
+        user_tests.append(("Users Count and Statistics", False))
+    
+    # Test 4: Meeting Request Integration with Real Users
+    print(f"\n{'='*20} Meeting Request Integration with Real Users Test {'='*20}")
+    try:
+        result = test_meeting_request_integration_with_real_users()
+        user_tests.append(("Meeting Request Integration with Real Users", result))
+        if result:
+            print("✅ Meeting Request Integration with Real Users Test PASSED")
+        else:
+            print("❌ Meeting Request Integration with Real Users Test FAILED")
+    except Exception as e:
+        print(f"❌ Meeting Request Integration with Real Users Test ERROR: {str(e)}")
+        user_tests.append(("Meeting Request Integration with Real Users", False))
+    
+    # Final Results Summary
+    print("\n" + "=" * 80)
+    print("REALISTIC COMPANY USERS SYSTEM TEST RESULTS SUMMARY")
+    print("=" * 80)
+    
+    passed_tests = 0
+    total_tests = len(user_tests)
+    
+    for test_name, result in user_tests:
+        status = "✅ PASSED" if result else "❌ FAILED"
+        print(f"{test_name}: {status}")
+        if result:
+            passed_tests += 1
+    
+    print(f"\nOverall Results: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("🎉 ALL REALISTIC COMPANY USERS SYSTEM TESTS PASSED!")
+        print("✅ Users initialization working correctly")
+        print("✅ Real company employees data verified")
+        print("✅ Turkish names and departments supported")
+        print("✅ vitingo.com email addresses confirmed")
+        print("✅ Meeting request integration with real users working")
+        print("✅ User ID to name mapping functioning correctly")
+        print("✅ Company structure statistics accurate")
+        print("✅ No mock/demo data found - system uses real company employees")
+    else:
+        print(f"⚠️  {total_tests - passed_tests} tests failed - review implementation")
+        print("❌ Some aspects of the realistic company users system need attention")
+    
+    # Enhanced Meeting Requests System Tests (keeping original tests)
     meeting_request_tests = []
     
     # Test 1: Meeting Request Creation
