@@ -561,14 +561,14 @@ Saygılarımızla,`;
       </div>
 
       {/* Teklif Koşulları */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
             <FileText className="h-5 w-5" />
             <span>Teklif Koşulları</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+        </div>
+        <div className="p-6 space-y-4">
           <div className="flex items-center space-x-4">
             <select
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
