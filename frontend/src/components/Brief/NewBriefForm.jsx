@@ -3644,6 +3644,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
               </div>
             </CardContent>
           </Card>
+          </div>
         )}
 
         {/* Mail Sending Modal */}
