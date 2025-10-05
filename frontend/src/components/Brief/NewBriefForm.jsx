@@ -182,7 +182,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     // Stand Dimensions (Step 2)
     standWidth: '',  // Stand Eni (cm)
     standLength: '', // Stand Boyu (cm)
-    calculatedArea: 0 // Otomatik hesaplanan alan (m²)
+    calculatedArea: 0, // Otomatik hesaplanan alan (m²)
     
     // Other step data
     employeeCount: '',
