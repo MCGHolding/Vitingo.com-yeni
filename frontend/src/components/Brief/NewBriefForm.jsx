@@ -3602,7 +3602,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     </div>
 
-                    {/* 9. Rapor Bilgileri */}
+                    {/* 8. Rapor Bilgileri */}
                     <div className="bg-white rounded-lg p-5 shadow-sm border-2 border-blue-200">
                       <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
                         📊 Rapor Bilgileri
