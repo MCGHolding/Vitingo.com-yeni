@@ -18,13 +18,9 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
     attendee_ids: []
   });
 
-  // Mock users for demo
-  const [users] = useState([
-    { id: 'admin_user', name: 'Admin User', email: 'admin@example.com' },
-    { id: 'user1', name: 'Ahmet Yılmaz', email: 'ahmet@example.com' },
-    { id: 'user2', name: 'Fatma Demir', email: 'fatma@example.com' },
-    { id: 'user3', name: 'Mehmet Kaya', email: 'mehmet@example.com' }
-  ]);
+  // System users
+  const [users, setUsers] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   const platformOptions = ['Zoom', 'Google Meet', 'Microsoft Teams', 'Skype', 'WebEx'];
 
