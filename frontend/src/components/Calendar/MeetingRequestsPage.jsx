@@ -530,7 +530,10 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                               )}
                             </div>
                           </label>
-                        ))}
+                              ))}
+                            </div>
+                          ));
+                        })()}
                       </div>
                     )}
                   </div>
