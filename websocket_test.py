@@ -284,8 +284,8 @@ async def test_websocket_real_time_broadcasting():
         
         print("\n1. Establishing connections for User 1 and User 2...")
         
-        async with websockets.connect(uri1, timeout=10) as ws1, \
-                   websockets.connect(uri2, timeout=10) as ws2:
+        async with websockets.connect(uri1) as ws1, \
+                   websockets.connect(uri2) as ws2:
             
             print("   ✅ PASS: Both WebSocket connections established")
             
