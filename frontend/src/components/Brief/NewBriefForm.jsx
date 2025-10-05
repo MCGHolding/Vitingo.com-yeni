@@ -1306,6 +1306,72 @@ export default function NewBriefForm({ onBackToDashboard }) {
     return cleanValue;
   };
 
+  // Generic Turkish Number Input Component
+  const TurkishNumberInput = ({ 
+    value, 
+    onChange, 
+    placeholder = "0,00", 
+    className = "",
+    required = false,
+    min = 0,
+    max = Infinity,
+    maxDecimals = 2,
+    onError = null,
+    ...props 
+  }) => {
+    const [localError, setLocalError] = useState('');
+    
+    const handleChange = (e) => {
+      const inputValue = e.target.value;
+      const cleanValue = handleTurkishNumberChange('generic', inputValue);
+      
+      // Validate
+      const error = validateTurkishNumber(cleanValue, 'field', {
+        required,
+        min,
+        max,
+        maxDecimals
+      });
+      
+      setLocalError(error);
+      if (onError) onError(error);
+      
+      onChange(cleanValue);
+    };
+
+    const handleBlur = (e) => {
+      // Format display value on blur
+      const cleanValue = parseTurkishNumber(e.target.value);
+      if (cleanValue && !isNaN(parseFloat(cleanValue))) {
+        const formatted = formatTurkishNumber(parseFloat(cleanValue), maxDecimals);
+        onChange(formatted);
+      }
+    };
+
+    return (
+      <div>
+        <input
+          {...props}
+          type="text"
+          inputMode="decimal"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            localError ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          } ${className}`}
+        />
+        {localError && (
+          <p className="text-red-600 text-xs mt-1 flex items-center">
+            <span className="mr-1">⚠️</span>
+            {localError}
+          </p>
+        )}
+      </div>
+    );
+  };
+
   const handleStepFileUpload = (field, files) => {
     console.log('📁 handleStepFileUpload called:', { field, filesLength: files?.length });
     if (!files || files.length === 0) {
