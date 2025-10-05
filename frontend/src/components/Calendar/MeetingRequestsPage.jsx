@@ -805,7 +805,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                                   <p className="text-sm font-medium text-gray-900">
                                     {user.name}
                                   </p>
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-blue-600">
                                     {user.email}
                                   </p>
                                 </div>
