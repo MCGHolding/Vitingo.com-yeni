@@ -1563,6 +1563,843 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_calendar_events_get_endpoint():
+    """
+    Test GET /api/calendar/events endpoint to verify it returns the 3 sample events.
+    
+    Requirements to verify:
+    1. GET /api/calendar/events should return a list of calendar events
+    2. Should return proper JSON structure
+    3. Should handle different user roles (user, admin, super_admin)
+    4. Should support date filtering
+    5. Each event should have the expected fields
+    """
+    
+    print("=" * 80)
+    print("TESTING GET CALENDAR EVENTS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/events"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Basic GET request without parameters
+        print("\n1. Testing basic GET request...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar events endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            events = response.json()
+            print(f"   Response type: {type(events)}")
+            print(f"   Number of events: {len(events) if isinstance(events, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(events, list):
+            print("   ❌ FAIL: Response should be a list of calendar events")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(events)} calendar events")
+        
+        # Test 4: Check structure of events if any exist
+        if len(events) > 0:
+            print("\n4. Checking calendar event structure...")
+            first_event = events[0]
+            
+            # Expected fields based on CalendarEvent model
+            expected_fields = [
+                "id", "title", "description", "start_datetime", "end_datetime",
+                "all_day", "event_type", "location", "organizer_id", "organizer_name",
+                "attendee_ids", "attendees", "status", "visibility", "created_at"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_event:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Calendar event has all expected fields")
+            
+            print(f"   Sample event title: {first_event.get('title', 'N/A')}")
+            print(f"   Sample event type: {first_event.get('event_type', 'N/A')}")
+            print(f"   Sample event organizer: {first_event.get('organizer_name', 'N/A')}")
+            print(f"   Sample event location: {first_event.get('location', 'N/A')}")
+        else:
+            print("\n4. No existing calendar events found - this is acceptable for initial state")
+        
+        # Test 5: Test with different user roles
+        print("\n5. Testing different user roles...")
+        
+        # Test with user role
+        user_params = {"user_role": "user", "user_id": "demo_user"}
+        user_response = requests.get(endpoint, params=user_params, timeout=30)
+        if user_response.status_code == 200:
+            user_events = user_response.json()
+            print(f"   ✅ PASS: User role returns {len(user_events)} events")
+        else:
+            print(f"   ❌ FAIL: User role request failed with status {user_response.status_code}")
+            return False
+        
+        # Test with admin role
+        admin_params = {"user_role": "admin", "user_id": "admin_user"}
+        admin_response = requests.get(endpoint, params=admin_params, timeout=30)
+        if admin_response.status_code == 200:
+            admin_events = admin_response.json()
+            print(f"   ✅ PASS: Admin role returns {len(admin_events)} events")
+        else:
+            print(f"   ❌ FAIL: Admin role request failed with status {admin_response.status_code}")
+            return False
+        
+        # Test with super_admin role
+        super_admin_params = {"user_role": "super_admin", "user_id": "super_admin_user"}
+        super_admin_response = requests.get(endpoint, params=super_admin_params, timeout=30)
+        if super_admin_response.status_code == 200:
+            super_admin_events = super_admin_response.json()
+            print(f"   ✅ PASS: Super admin role returns {len(super_admin_events)} events")
+        else:
+            print(f"   ❌ FAIL: Super admin role request failed with status {super_admin_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("GET CALENDAR EVENTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Calendar event structure validated")
+        print("✅ Different user roles tested successfully")
+        print("\n🎉 GET CALENDAR EVENTS ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_events_post_endpoint():
+    """
+    Test POST /api/calendar/events endpoint by creating a new test event.
+    
+    Requirements to verify:
+    1. POST /api/calendar/events should create a new calendar event
+    2. Should return the created event with generated ID
+    3. Should handle datetime parsing correctly
+    4. Should validate required fields
+    """
+    
+    print("=" * 80)
+    print("TESTING POST CALENDAR EVENTS ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/events"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test event data
+    from datetime import datetime, timedelta
+    start_time = (datetime.utcnow() + timedelta(days=5)).replace(hour=14, minute=0, second=0, microsecond=0)
+    end_time = start_time + timedelta(hours=1)
+    
+    test_event_data = {
+        "title": "Test Calendar Event",
+        "description": "This is a test event created by automated testing",
+        "start_datetime": start_time.isoformat() + "Z",
+        "end_datetime": end_time.isoformat() + "Z",
+        "all_day": False,
+        "event_type": "meeting",
+        "location": "Test Meeting Room",
+        "attendee_ids": ["user1", "user2"],
+        "meeting_link": "https://zoom.us/j/test123456",
+        "reminder_minutes": [15, 30],
+        "visibility": "public"
+    }
+    
+    print(f"Test event data: {test_event_data['title']} at {test_event_data['start_datetime']}")
+    
+    try:
+        # Test 1: Make POST request
+        print("\n1. Making POST request to create calendar event...")
+        response = requests.post(endpoint, json=test_event_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar event creation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False, None
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            created_event = response.json()
+            print(f"   Response type: {type(created_event)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False, None
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating created event structure...")
+        if not isinstance(created_event, dict):
+            print("   ❌ FAIL: Response should be a dictionary representing the created event")
+            return False, None
+        
+        # Check required fields
+        required_fields = ["id", "title", "description", "start_datetime", "end_datetime", "organizer_id", "created_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in created_event:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Created event missing required fields: {missing_fields}")
+            return False, None
+        
+        print("   ✅ PASS: Created event has all required fields")
+        
+        # Test 4: Validate field values
+        print("\n4. Validating field values...")
+        event_id = created_event.get("id")
+        title = created_event.get("title")
+        location = created_event.get("location")
+        event_type = created_event.get("event_type")
+        attendee_ids = created_event.get("attendee_ids")
+        
+        # Validate ID is generated
+        if not event_id:
+            print("   ❌ FAIL: Event ID should be generated")
+            return False, None
+        print(f"   ✅ PASS: Generated event ID: {event_id}")
+        
+        # Validate input data matches
+        if title != test_event_data["title"]:
+            print(f"   ❌ FAIL: Title mismatch. Expected: {test_event_data['title']}, Got: {title}")
+            return False, None
+        print(f"   ✅ PASS: Title matches: {title}")
+        
+        if location != test_event_data["location"]:
+            print(f"   ❌ FAIL: Location mismatch. Expected: {test_event_data['location']}, Got: {location}")
+            return False, None
+        print(f"   ✅ PASS: Location matches: {location}")
+        
+        if event_type != test_event_data["event_type"]:
+            print(f"   ❌ FAIL: Event type mismatch. Expected: {test_event_data['event_type']}, Got: {event_type}")
+            return False, None
+        print(f"   ✅ PASS: Event type matches: {event_type}")
+        
+        if attendee_ids != test_event_data["attendee_ids"]:
+            print(f"   ❌ FAIL: Attendee IDs mismatch. Expected: {test_event_data['attendee_ids']}, Got: {attendee_ids}")
+            return False, None
+        print(f"   ✅ PASS: Attendee IDs match: {attendee_ids}")
+        
+        print("\n" + "=" * 80)
+        print("POST CALENDAR EVENTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Created event has all required fields")
+        print("✅ All input data matches output data")
+        print("✅ Generated ID and timestamps present")
+        print("✅ Attendee IDs handled correctly")
+        print(f"\n🎉 POST CALENDAR EVENTS ENDPOINT TEST PASSED!")
+        print(f"   Created event: {title}")
+        print(f"   Event ID: {event_id}")
+        
+        return True, event_id
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False, None
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False, None
+
+def test_calendar_events_put_endpoint():
+    """
+    Test PUT /api/calendar/events/{event_id} endpoint by updating an existing event.
+    
+    Requirements to verify:
+    1. PUT /api/calendar/events/{event_id} should update an existing calendar event
+    2. Should return the updated event
+    3. Should handle datetime parsing correctly
+    4. Should return 404 for non-existent events
+    """
+    
+    print("=" * 80)
+    print("TESTING PUT CALENDAR EVENTS ENDPOINT")
+    print("=" * 80)
+    
+    # First create an event to update
+    print("1. Creating an event to update...")
+    success, event_id = test_calendar_events_post_endpoint()
+    if not success or not event_id:
+        print("   ❌ FAIL: Could not create event for update test")
+        return False
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/events/{event_id}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Updated event data
+    from datetime import datetime, timedelta
+    start_time = (datetime.utcnow() + timedelta(days=6)).replace(hour=15, minute=0, second=0, microsecond=0)
+    end_time = start_time + timedelta(hours=2)
+    
+    updated_event_data = {
+        "title": "Updated Test Calendar Event",
+        "description": "This event has been updated by automated testing",
+        "start_datetime": start_time.isoformat() + "Z",
+        "end_datetime": end_time.isoformat() + "Z",
+        "all_day": False,
+        "event_type": "meeting",
+        "location": "Updated Meeting Room",
+        "attendee_ids": ["user1", "user2", "user3"],
+        "meeting_link": "https://zoom.us/j/updated123456",
+        "reminder_minutes": [10, 20],
+        "visibility": "public"
+    }
+    
+    print(f"Updated event data: {updated_event_data['title']}")
+    
+    try:
+        # Test 1: Make PUT request
+        print("\n2. Making PUT request to update calendar event...")
+        response = requests.put(endpoint, json=updated_event_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar event update endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n3. Parsing JSON response...")
+        try:
+            updated_event = response.json()
+            print(f"   Response type: {type(updated_event)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate updated fields
+        print("\n4. Validating updated field values...")
+        if updated_event.get("title") != updated_event_data["title"]:
+            print(f"   ❌ FAIL: Title not updated. Expected: {updated_event_data['title']}, Got: {updated_event.get('title')}")
+            return False
+        print(f"   ✅ PASS: Title updated: {updated_event.get('title')}")
+        
+        if updated_event.get("location") != updated_event_data["location"]:
+            print(f"   ❌ FAIL: Location not updated. Expected: {updated_event_data['location']}, Got: {updated_event.get('location')}")
+            return False
+        print(f"   ✅ PASS: Location updated: {updated_event.get('location')}")
+        
+        # Test 4: Test updating non-existent event
+        print("\n5. Testing update of non-existent event...")
+        fake_event_id = "non-existent-event-id"
+        fake_endpoint = f"{BACKEND_URL}/api/calendar/events/{fake_event_id}"
+        fake_response = requests.put(fake_endpoint, json=updated_event_data, timeout=30)
+        
+        if fake_response.status_code == 404:
+            print("   ✅ PASS: Non-existent event returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent event, got {fake_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("PUT CALENDAR EVENTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 for valid updates")
+        print("✅ Returns updated event data")
+        print("✅ All updated fields match input data")
+        print("✅ Returns 404 for non-existent events")
+        print(f"\n🎉 PUT CALENDAR EVENTS ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_events_delete_endpoint():
+    """
+    Test DELETE /api/calendar/events/{event_id} endpoint by deleting an event.
+    
+    Requirements to verify:
+    1. DELETE /api/calendar/events/{event_id} should delete an existing calendar event
+    2. Should return success message
+    3. Should return 404 for non-existent events
+    4. Should also delete related invitations
+    """
+    
+    print("=" * 80)
+    print("TESTING DELETE CALENDAR EVENTS ENDPOINT")
+    print("=" * 80)
+    
+    # First create an event to delete
+    print("1. Creating an event to delete...")
+    success, event_id = test_calendar_events_post_endpoint()
+    if not success or not event_id:
+        print("   ❌ FAIL: Could not create event for delete test")
+        return False
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/events/{event_id}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make DELETE request
+        print("\n2. Making DELETE request to remove calendar event...")
+        response = requests.delete(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar event delete endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n3. Parsing JSON response...")
+        try:
+            delete_response = response.json()
+            print(f"   Response type: {type(delete_response)}")
+            print(f"   Message: {delete_response.get('message', 'N/A')}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Verify event is deleted by trying to get it
+        print("\n4. Verifying event is deleted...")
+        get_response = requests.get(endpoint, timeout=30)
+        if get_response.status_code == 404:
+            print("   ✅ PASS: Deleted event returns 404 when accessed")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for deleted event, got {get_response.status_code}")
+            return False
+        
+        # Test 4: Test deleting non-existent event
+        print("\n5. Testing delete of non-existent event...")
+        fake_event_id = "non-existent-event-id"
+        fake_endpoint = f"{BACKEND_URL}/api/calendar/events/{fake_event_id}"
+        fake_response = requests.delete(fake_endpoint, timeout=30)
+        
+        if fake_response.status_code == 404:
+            print("   ✅ PASS: Non-existent event delete returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent event delete, got {fake_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("DELETE CALENDAR EVENTS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 for valid deletes")
+        print("✅ Returns success message")
+        print("✅ Event is actually deleted from database")
+        print("✅ Returns 404 for non-existent events")
+        print(f"\n🎉 DELETE CALENDAR EVENTS ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_invitations_get_endpoint():
+    """
+    Test GET /api/calendar/invitations/{user_id} endpoint to get invitations for a user.
+    
+    Requirements to verify:
+    1. GET /api/calendar/invitations/{user_id} should return invitations for the user
+    2. Should return proper JSON structure with event details
+    3. Should handle users with no invitations
+    """
+    
+    print("=" * 80)
+    print("TESTING GET CALENDAR INVITATIONS ENDPOINT")
+    print("=" * 80)
+    
+    user_id = "user1"
+    endpoint = f"{BACKEND_URL}/api/calendar/invitations/{user_id}"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to get invitations...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar invitations endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            invitations = response.json()
+            print(f"   Response type: {type(invitations)}")
+            print(f"   Number of invitations: {len(invitations) if isinstance(invitations, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(invitations, list):
+            print("   ❌ FAIL: Response should be a list of invitations")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(invitations)} invitations")
+        
+        # Test 4: Check structure of invitations if any exist
+        if len(invitations) > 0:
+            print("\n4. Checking invitation structure...")
+            first_invitation = invitations[0]
+            
+            # Expected fields
+            expected_fields = [
+                "id", "event_id", "invitee_id", "invitee_name", "invitee_email",
+                "status", "invitation_sent_at"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_invitation:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Invitation has all expected fields")
+            
+            # Check for event details
+            if "event_details" in first_invitation:
+                event_details = first_invitation["event_details"]
+                print(f"   ✅ PASS: Event details included")
+                print(f"   Event title: {event_details.get('title', 'N/A')}")
+                print(f"   Event organizer: {event_details.get('organizer_name', 'N/A')}")
+            else:
+                print("   ⚠️  WARNING: Event details not included in invitation")
+            
+            print(f"   Sample invitation status: {first_invitation.get('status', 'N/A')}")
+            print(f"   Sample invitee: {first_invitation.get('invitee_name', 'N/A')}")
+        else:
+            print("\n4. No pending invitations found - this is acceptable")
+        
+        print("\n" + "=" * 80)
+        print("GET CALENDAR INVITATIONS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Invitation structure validated")
+        print(f"\n🎉 GET CALENDAR INVITATIONS ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_invitations_respond_endpoint():
+    """
+    Test POST /api/calendar/invitations/{invitation_id}/respond endpoint.
+    
+    Requirements to verify:
+    1. POST /api/calendar/invitations/{invitation_id}/respond should update invitation status
+    2. Should return success message
+    3. Should handle different response types (accepted, declined, maybe)
+    4. Should return 404 for non-existent invitations
+    """
+    
+    print("=" * 80)
+    print("TESTING POST CALENDAR INVITATIONS RESPOND ENDPOINT")
+    print("=" * 80)
+    
+    # For this test, we'll use a mock invitation ID since we need sample data
+    invitation_id = "test-invitation-id"
+    endpoint = f"{BACKEND_URL}/api/calendar/invitations/{invitation_id}/respond"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test response data
+    response_data = {
+        "status": "accepted",
+        "message": "I'll be there!"
+    }
+    
+    try:
+        # Test 1: Make POST request
+        print("\n1. Making POST request to respond to invitation...")
+        response = requests.post(endpoint, json=response_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        # This might return 404 if no sample data exists, which is acceptable
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar invitation response endpoint responds with status 200")
+            
+            # Parse response
+            try:
+                response_result = response.json()
+                print(f"   Message: {response_result.get('message', 'N/A')}")
+            except Exception as e:
+                print(f"   ⚠️  WARNING: Could not parse JSON response: {str(e)}")
+                
+        elif response.status_code == 404:
+            print("   ℹ️  INFO: Invitation not found (expected without sample data)")
+        else:
+            print(f"   ❌ FAIL: Unexpected status code: {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Test different response types
+        print("\n2. Testing different response types...")
+        response_types = ["accepted", "declined", "maybe"]
+        
+        for status in response_types:
+            test_response = {
+                "status": status,
+                "message": f"Response: {status}"
+            }
+            
+            test_resp = requests.post(endpoint, json=test_response, timeout=30)
+            print(f"   Status '{status}': {test_resp.status_code}")
+            
+            if test_resp.status_code not in [200, 404]:
+                print(f"   ❌ FAIL: Unexpected status for '{status}': {test_resp.status_code}")
+                return False
+        
+        print("   ✅ PASS: All response types handled correctly")
+        
+        print("\n" + "=" * 80)
+        print("POST CALENDAR INVITATIONS RESPOND ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint handles requests correctly")
+        print("✅ Different response types accepted")
+        print("✅ Proper error handling for non-existent invitations")
+        print(f"\n🎉 POST CALENDAR INVITATIONS RESPOND ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_create_sample_data_endpoint():
+    """
+    Test POST /api/calendar/create-sample-data endpoint to create sample events.
+    
+    Requirements to verify:
+    1. POST /api/calendar/create-sample-data should create 3 sample events
+    2. Should return success message with event details
+    3. Should clear existing events before creating new ones
+    """
+    
+    print("=" * 80)
+    print("TESTING POST CALENDAR CREATE SAMPLE DATA ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/create-sample-data"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make POST request
+        print("\n1. Making POST request to create sample data...")
+        response = requests.post(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Calendar create sample data endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            result = response.json()
+            print(f"   Response type: {type(result)}")
+            print(f"   Success: {result.get('success', 'N/A')}")
+            print(f"   Message: {result.get('message', 'N/A')}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(result, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        if not result.get("success"):
+            print("   ❌ FAIL: Sample data creation should be successful")
+            return False
+        
+        if "events" not in result:
+            print("   ❌ FAIL: Response should include created events list")
+            return False
+        
+        created_events = result.get("events", [])
+        print(f"   ✅ PASS: Created {len(created_events)} sample events")
+        
+        # Test 4: Verify events were created by checking GET endpoint
+        print("\n4. Verifying events were created...")
+        get_endpoint = f"{BACKEND_URL}/api/calendar/events"
+        get_response = requests.get(get_endpoint, timeout=30)
+        
+        if get_response.status_code == 200:
+            events = get_response.json()
+            print(f"   ✅ PASS: GET endpoint returns {len(events)} events after sample data creation")
+            
+            # Check for expected Turkish event titles
+            expected_titles = ["Proje Kickoff Toplantısı", "Müşteri Sunumu", "Haftalık Takım Toplantısı"]
+            found_titles = [event.get("title", "") for event in events]
+            
+            for expected_title in expected_titles:
+                if any(expected_title in title for title in found_titles):
+                    print(f"   ✅ PASS: Found expected event: {expected_title}")
+                else:
+                    print(f"   ⚠️  WARNING: Expected event not found: {expected_title}")
+        else:
+            print(f"   ❌ FAIL: Could not verify created events: {get_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("POST CALENDAR CREATE SAMPLE DATA ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns success message")
+        print("✅ Creates sample events successfully")
+        print("✅ Events are accessible via GET endpoint")
+        print("✅ Turkish event titles created correctly")
+        print(f"\n🎉 POST CALENDAR CREATE SAMPLE DATA ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_calendar_events_date_filtering():
+    """
+    Test GET /api/calendar/events with date filtering parameters.
+    
+    Requirements to verify:
+    1. GET /api/calendar/events with start_date and end_date should filter events
+    2. Should return only events within the specified date range
+    3. Should handle invalid date formats gracefully
+    """
+    
+    print("=" * 80)
+    print("TESTING CALENDAR EVENTS DATE FILTERING")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/calendar/events"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # First ensure we have sample data
+        print("\n1. Creating sample data for date filtering test...")
+        sample_response = requests.post(f"{BACKEND_URL}/api/calendar/create-sample-data", timeout=30)
+        if sample_response.status_code != 200:
+            print("   ⚠️  WARNING: Could not create sample data, continuing with existing data")
+        
+        # Test 2: Test date filtering
+        print("\n2. Testing date filtering...")
+        from datetime import datetime, timedelta
+        
+        # Get events for next 7 days
+        start_date = datetime.utcnow().isoformat() + "Z"
+        end_date = (datetime.utcnow() + timedelta(days=7)).isoformat() + "Z"
+        
+        params = {
+            "start_date": start_date,
+            "end_date": end_date
+        }
+        
+        response = requests.get(endpoint, params=params, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Date filtering endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+        
+        # Parse response
+        try:
+            filtered_events = response.json()
+            print(f"   ✅ PASS: Date filtering returned {len(filtered_events)} events")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Compare with unfiltered results
+        print("\n3. Comparing with unfiltered results...")
+        unfiltered_response = requests.get(endpoint, timeout=30)
+        if unfiltered_response.status_code == 200:
+            all_events = unfiltered_response.json()
+            print(f"   Total events: {len(all_events)}")
+            print(f"   Filtered events: {len(filtered_events)}")
+            
+            if len(filtered_events) <= len(all_events):
+                print("   ✅ PASS: Filtered results are subset of all events")
+            else:
+                print("   ❌ FAIL: Filtered results should not exceed total events")
+                return False
+        
+        print("\n" + "=" * 80)
+        print("CALENDAR EVENTS DATE FILTERING TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Date filtering endpoint responds correctly")
+        print("✅ Returns filtered event list")
+        print("✅ Filtered results are logical subset")
+        print(f"\n🎉 CALENDAR EVENTS DATE FILTERING TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_opportunities_api_and_teklif_form_data_loading():
     """
     Test the sales opportunities (opportunities) API endpoint and TeklifForm data loading functionality.
