@@ -1113,6 +1113,13 @@ const Dashboard = () => {
         console.log('🎉 SUCCESS: Rendering SimpleTeklifForm component for currentView:', currentView);
         return <SimpleTeklifForm onBackToDashboard={handleBackToDashboard} />;
 
+      // Calendar cases
+      case 'calendar':
+      case 'new-meeting':
+      case 'meeting-invitations':
+        console.log('🗓️ SUCCESS: Rendering CalendarPage component for currentView:', currentView);
+        return <CalendarPage currentUser={{ id: 'demo_user', role: user?.role || 'user', name: user?.name || 'Demo User' }} />;
+
       case 'closed-briefs':
         return (
           <div className="p-6">
