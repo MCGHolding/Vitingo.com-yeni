@@ -2931,6 +2931,95 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </Card>
         )}
 
+        {/* Mail Sending Modal */}
+        {isMailModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Brief Mail Gönder</h3>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsMailModalOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                console.log('Mail gönderiliyor:', mailData);
+                showToast('Mail başarıyla gönderildi!', 'success');
+                setIsMailModalOpen(false);
+                // TODO: Implement actual email sending
+              }} className="space-y-4">
+                {/* To Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Alıcı Email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={mailData.toEmail}
+                    onChange={(e) => setMailData({...mailData, toEmail: e.target.value})}
+                    placeholder="ornek@email.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                {/* Subject */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Konu
+                  </label>
+                  <input
+                    type="text"
+                    value={mailData.subject}
+                    onChange={(e) => setMailData({...mailData, subject: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mesaj
+                  </label>
+                  <textarea
+                    value={mailData.message}
+                    onChange={(e) => setMailData({...mailData, message: e.target.value})}
+                    placeholder={`Merhaba,\n\nStand brief dosyamı sizinle paylaşıyorum.\n\nBrief ID: ${stepData.briefId}\nLink: https://stand-builder-1.preview.emergentagent.com/dashboard#brief-${stepData.briefId}\n\nİyi çalışmalar.`}
+                    rows={6}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                  />
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsMailModalOpen(false)}
+                  >
+                    İptal
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Gönder
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Design Preferences Card - Show only in advanced mode */}
         {showAdvanced && (
           <Card>
