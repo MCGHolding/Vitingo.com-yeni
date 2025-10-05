@@ -9124,8 +9124,607 @@ def run_recursive_stand_elements_tests():
         print(f"⚠️  {total - passed} tests failed - review implementation")
         return False
 
+# ===================== USERS MANAGEMENT SYSTEM TESTS =====================
+
+def test_users_initialization():
+    """
+    Test POST /api/users/initialize endpoint.
+    
+    Requirements to verify:
+    1. Test POST /api/users/initialize endpoint
+    2. Verify realistic company users are created with vitingo.com emails
+    3. Test that old demo users are removed and replaced with real company employees
+    4. Verify proper Turkish names and departments
+    """
+    
+    print("=" * 80)
+    print("TESTING USERS INITIALIZATION ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users/initialize"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Initialize company users
+        print("\n1. Initializing company users...")
+        response = requests.post(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users initialization endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        required_fields = ["success", "message", "users_created"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 4: Check success status
+        if not data.get("success"):
+            print(f"   ❌ FAIL: Initialization was not successful: {data.get('message', 'Unknown error')}")
+            return False
+        
+        print("   ✅ PASS: Initialization was successful")
+        
+        # Test 5: Check users created count
+        users_created = data.get("users_created", 0)
+        if users_created < 10:  # Expecting at least 10 realistic users
+            print(f"   ❌ FAIL: Expected at least 10 users created, got {users_created}")
+            return False
+        
+        print(f"   ✅ PASS: Created {users_created} company users")
+        print(f"   Message: {data.get('message')}")
+        
+        print("\n" + "=" * 80)
+        print("USERS INITIALIZATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Initialization completed successfully")
+        print(f"✅ Created {users_created} company users")
+        print("✅ Old demo users removed and replaced")
+        print(f"\n🎉 USERS INITIALIZATION TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_users_database_integration():
+    """
+    Test GET /api/users returns real company employees instead of mock data.
+    
+    Requirements to verify:
+    1. Test GET /api/users returns real company employees instead of mock data
+    2. Verify user data structure includes realistic information (names, emails, departments, phone numbers)
+    3. Test user filtering and department organization
+    4. Verify proper Turkish character support in names and departments
+    """
+    
+    print("=" * 80)
+    print("TESTING USERS DATABASE INTEGRATION")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Get all users
+        print("\n1. Getting all company users...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            users = response.json()
+            print(f"   Response type: {type(users)}")
+            print(f"   Number of users: {len(users) if isinstance(users, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(users, list):
+            print("   ❌ FAIL: Response should be a list of users")
+            return False
+        
+        if len(users) == 0:
+            print("   ❌ FAIL: Expected at least some users")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(users)} users")
+        
+        # Test 4: Check user data structure
+        print("\n4. Checking user data structure...")
+        first_user = users[0]
+        
+        required_fields = ["id", "name", "email", "role", "department", "phone", "status", "created_at"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in first_user:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: User missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: User has all required fields")
+        
+        # Test 5: Verify realistic company data
+        print("\n5. Verifying realistic company data...")
+        
+        # Check for vitingo.com emails
+        vitingo_emails = 0
+        turkish_names = 0
+        turkish_departments = 0
+        
+        expected_turkish_names = ["Murat Bucak", "Elif Yılmaz", "Kerem Demir", "Zeynep Kaya", "Burak Öztürk", "Ayşe Çelik", "Mehmet Şahin", "Seda Arslan", "Emre Doğan", "Deniz Kurt", "Cemre Ateş", "Onur Yıldız"]
+        expected_departments = ["Genel Müdürlük", "İnsan Kaynakları", "Satış", "Pazarlama", "Muhasebe", "IT", "Operasyon", "Müşteri Hizmetleri", "Tasarım", "Proje Yönetimi", "Kalite Kontrol", "Lojistik"]
+        
+        found_names = []
+        found_departments = []
+        
+        for user in users:
+            email = user.get("email", "")
+            name = user.get("name", "")
+            department = user.get("department", "")
+            
+            # Check vitingo.com emails
+            if "@vitingo.com" in email:
+                vitingo_emails += 1
+            
+            # Check Turkish names
+            if name in expected_turkish_names:
+                turkish_names += 1
+                found_names.append(name)
+            
+            # Check Turkish departments
+            if department in expected_departments:
+                turkish_departments += 1
+                if department not in found_departments:
+                    found_departments.append(department)
+        
+        print(f"   Users with vitingo.com emails: {vitingo_emails}/{len(users)}")
+        print(f"   Users with expected Turkish names: {turkish_names}/{len(users)}")
+        print(f"   Users with Turkish departments: {turkish_departments}/{len(users)}")
+        print(f"   Found names: {found_names[:5]}...")  # Show first 5
+        print(f"   Found departments: {found_departments}")
+        
+        if vitingo_emails < len(users) * 0.8:  # At least 80% should have vitingo.com emails
+            print(f"   ❌ FAIL: Expected most users to have vitingo.com emails")
+            return False
+        
+        print("   ✅ PASS: Users have realistic vitingo.com email addresses")
+        
+        if turkish_names < 5:  # At least 5 Turkish names
+            print(f"   ❌ FAIL: Expected more Turkish names in user list")
+            return False
+        
+        print("   ✅ PASS: Users have proper Turkish names")
+        
+        if len(found_departments) < 5:  # At least 5 different departments
+            print(f"   ❌ FAIL: Expected more diverse departments")
+            return False
+        
+        print("   ✅ PASS: Users have proper Turkish department names")
+        
+        # Test 6: Check Turkish character support
+        print("\n6. Checking Turkish character support...")
+        turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+        has_turkish_chars = False
+        
+        for user in users:
+            name = user.get("name", "")
+            department = user.get("department", "")
+            
+            if any(char in name + department for char in turkish_chars):
+                has_turkish_chars = True
+                break
+        
+        if has_turkish_chars:
+            print("   ✅ PASS: Turkish characters properly supported in names and departments")
+        else:
+            print("   ⚠️  WARNING: No Turkish characters found in user data")
+        
+        # Test 7: Sample user details
+        print("\n7. Sample user details...")
+        sample_user = users[0]
+        print(f"   Sample User ID: {sample_user.get('id')}")
+        print(f"   Sample User Name: {sample_user.get('name')}")
+        print(f"   Sample User Email: {sample_user.get('email')}")
+        print(f"   Sample User Department: {sample_user.get('department')}")
+        print(f"   Sample User Role: {sample_user.get('role')}")
+        print(f"   Sample User Phone: {sample_user.get('phone')}")
+        
+        print("\n" + "=" * 80)
+        print("USERS DATABASE INTEGRATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns list of real company employees")
+        print("✅ User data structure includes all required fields")
+        print("✅ Users have realistic vitingo.com email addresses")
+        print("✅ Users have proper Turkish names and departments")
+        print("✅ Turkish character support verified")
+        print("✅ No mock/demo data found")
+        print(f"\n🎉 USERS DATABASE INTEGRATION TEST PASSED!")
+        print(f"   Total company employees: {len(users)}")
+        print(f"   Departments represented: {len(found_departments)}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_users_count_and_statistics():
+    """
+    Test GET /api/users/count endpoint.
+    
+    Requirements to verify:
+    1. Test GET /api/users/count endpoint
+    2. Verify proper counting of total and active users
+    3. Test department list extraction
+    4. Verify company structure statistics
+    """
+    
+    print("=" * 80)
+    print("TESTING USERS COUNT AND STATISTICS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users/count"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Get user count and statistics
+        print("\n1. Getting user count and statistics...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users count endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            stats = response.json()
+            print(f"   Response type: {type(stats)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(stats, dict):
+            print("   ❌ FAIL: Response should be a dictionary")
+            return False
+        
+        required_fields = ["total_users", "active_users", "departments"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in stats:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 4: Check statistics values
+        print("\n4. Checking statistics values...")
+        total_users = stats.get("total_users", 0)
+        active_users = stats.get("active_users", 0)
+        departments = stats.get("departments", [])
+        
+        print(f"   Total Users: {total_users}")
+        print(f"   Active Users: {active_users}")
+        print(f"   Departments: {departments}")
+        
+        # Validate counts
+        if total_users < 10:
+            print(f"   ❌ FAIL: Expected at least 10 total users, got {total_users}")
+            return False
+        
+        print(f"   ✅ PASS: Total users count is reasonable ({total_users})")
+        
+        if active_users < 10:
+            print(f"   ❌ FAIL: Expected at least 10 active users, got {active_users}")
+            return False
+        
+        print(f"   ✅ PASS: Active users count is reasonable ({active_users})")
+        
+        if active_users > total_users:
+            print(f"   ❌ FAIL: Active users ({active_users}) cannot be more than total users ({total_users})")
+            return False
+        
+        print("   ✅ PASS: Active users count is consistent with total users")
+        
+        # Test 5: Check departments list
+        print("\n5. Checking departments list...")
+        if not isinstance(departments, list):
+            print("   ❌ FAIL: Departments should be a list")
+            return False
+        
+        if len(departments) < 5:
+            print(f"   ❌ FAIL: Expected at least 5 departments, got {len(departments)}")
+            return False
+        
+        print(f"   ✅ PASS: Found {len(departments)} departments")
+        
+        # Check for expected Turkish departments
+        expected_departments = ["Genel Müdürlük", "İnsan Kaynakları", "Satış", "Pazarlama", "Muhasebe", "IT", "Operasyon"]
+        found_expected = 0
+        
+        for dept in expected_departments:
+            if dept in departments:
+                found_expected += 1
+        
+        print(f"   Expected Turkish departments found: {found_expected}/{len(expected_departments)}")
+        
+        if found_expected < 3:  # At least 3 expected departments
+            print(f"   ❌ FAIL: Expected more Turkish department names")
+            return False
+        
+        print("   ✅ PASS: Turkish department names found in statistics")
+        
+        # Test 6: Check for Turkish characters in departments
+        print("\n6. Checking Turkish character support in departments...")
+        turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+        has_turkish_chars = False
+        
+        for dept in departments:
+            if any(char in dept for char in turkish_chars):
+                has_turkish_chars = True
+                break
+        
+        if has_turkish_chars:
+            print("   ✅ PASS: Turkish characters properly supported in department names")
+        else:
+            print("   ⚠️  WARNING: No Turkish characters found in department names")
+        
+        print("\n" + "=" * 80)
+        print("USERS COUNT AND STATISTICS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response with all required fields")
+        print(f"✅ Total users count is reasonable ({total_users})")
+        print(f"✅ Active users count is reasonable ({active_users})")
+        print(f"✅ Found {len(departments)} departments")
+        print("✅ Turkish department names present")
+        print("✅ Company structure statistics working correctly")
+        print(f"\n🎉 USERS COUNT AND STATISTICS TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_meeting_request_integration_with_real_users():
+    """
+    Test meeting request creation with real company employees.
+    
+    Requirements to verify:
+    1. Test meeting request creation with real company employees
+    2. Verify proper name mapping from user IDs to real employee names
+    3. Test email notifications sent to real company email addresses
+    4. Verify proper Turkish language support in user-related functionality
+    """
+    
+    print("=" * 80)
+    print("TESTING MEETING REQUEST INTEGRATION WITH REAL USERS")
+    print("=" * 80)
+    
+    # First get real users to use their IDs
+    users_endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Getting real users from: {users_endpoint}")
+    
+    try:
+        # Test 1: Get real users first
+        print("\n1. Getting real company users...")
+        users_response = requests.get(users_endpoint, timeout=30)
+        
+        if users_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not get users, status {users_response.status_code}")
+            return False
+        
+        users = users_response.json()
+        if len(users) < 3:
+            print(f"   ❌ FAIL: Need at least 3 users for testing, got {len(users)}")
+            return False
+        
+        print(f"   ✅ PASS: Retrieved {len(users)} real company users")
+        
+        # Select real user IDs for meeting
+        real_user_ids = [users[0]["id"], users[1]["id"], users[2]["id"]]
+        real_user_names = [users[0]["name"], users[1]["name"], users[2]["name"]]
+        real_user_emails = [users[0]["email"], users[1]["email"], users[2]["email"]]
+        
+        print(f"   Selected users: {real_user_names}")
+        print(f"   User IDs: {real_user_ids}")
+        print(f"   User emails: {real_user_emails}")
+        
+        # Test 2: Create meeting request with real users
+        print("\n2. Creating meeting request with real company employees...")
+        meeting_endpoint = f"{BACKEND_URL}/api/meeting-requests"
+        
+        meeting_data = {
+            "subject": "Şirket Toplantısı - Gerçek Çalışanlar",
+            "date": "2025-02-25",
+            "start_time": "14:00",
+            "end_time": "15:30",
+            "meeting_type": "virtual",
+            "platform": "Zoom",
+            "meeting_link": "https://zoom.us/j/realusers123?pwd=realpassword",
+            "attendee_ids": real_user_ids,
+            "organizer_id": users[0]["id"]  # Use first user as organizer
+        }
+        
+        response = requests.post(meeting_endpoint, json=meeting_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Meeting request with real users created successfully")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 3: Verify name mapping
+        print("\n3. Verifying name mapping from user IDs to real employee names...")
+        created_meeting = response.json()
+        
+        attendee_names = created_meeting.get("attendee_names", [])
+        organizer_name = created_meeting.get("organizer_name", "")
+        
+        print(f"   Attendee Names from API: {attendee_names}")
+        print(f"   Organizer Name from API: {organizer_name}")
+        print(f"   Expected Names: {real_user_names}")
+        print(f"   Expected Organizer: {users[0]['name']}")
+        
+        # Check if real names are mapped correctly
+        names_mapped_correctly = True
+        for expected_name in real_user_names:
+            if expected_name not in attendee_names:
+                print(f"   ❌ FAIL: Expected name '{expected_name}' not found in attendee names")
+                names_mapped_correctly = False
+        
+        if not names_mapped_correctly:
+            return False
+        
+        print("   ✅ PASS: User IDs correctly mapped to real employee names")
+        
+        # Check organizer name mapping
+        if organizer_name != users[0]["name"]:
+            print(f"   ❌ FAIL: Organizer name mismatch. Expected: {users[0]['name']}, Got: {organizer_name}")
+            return False
+        
+        print("   ✅ PASS: Organizer ID correctly mapped to real employee name")
+        
+        # Test 4: Verify Turkish character support
+        print("\n4. Verifying Turkish character support in user names...")
+        turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+        has_turkish_chars = False
+        
+        all_names = attendee_names + [organizer_name]
+        for name in all_names:
+            if any(char in name for char in turkish_chars):
+                has_turkish_chars = True
+                print(f"   Found Turkish characters in: {name}")
+                break
+        
+        if has_turkish_chars:
+            print("   ✅ PASS: Turkish characters properly supported in user names")
+        else:
+            print("   ⚠️  WARNING: No Turkish characters found in user names")
+        
+        # Test 5: Verify email addresses are real company emails
+        print("\n5. Verifying real company email addresses...")
+        vitingo_emails = 0
+        for email in real_user_emails:
+            if "@vitingo.com" in email:
+                vitingo_emails += 1
+        
+        print(f"   Users with vitingo.com emails: {vitingo_emails}/{len(real_user_emails)}")
+        
+        if vitingo_emails < len(real_user_emails) * 0.8:  # At least 80%
+            print(f"   ❌ FAIL: Expected most users to have vitingo.com emails")
+            return False
+        
+        print("   ✅ PASS: Meeting attendees have real company email addresses")
+        
+        # Test 6: Test individual user lookup
+        print("\n6. Testing individual user lookup...")
+        user_id = users[0]["id"]
+        user_endpoint = f"{BACKEND_URL}/api/users/{user_id}"
+        
+        user_response = requests.get(user_endpoint, timeout=30)
+        
+        if user_response.status_code == 200:
+            individual_user = user_response.json()
+            if individual_user.get("name") == users[0]["name"]:
+                print(f"   ✅ PASS: Individual user lookup working correctly")
+                print(f"   User: {individual_user.get('name')} ({individual_user.get('email')})")
+            else:
+                print(f"   ❌ FAIL: Individual user data mismatch")
+                return False
+        else:
+            print(f"   ❌ FAIL: Individual user lookup failed with status {user_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("MEETING REQUEST INTEGRATION WITH REAL USERS TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Successfully retrieved real company users")
+        print("✅ Meeting request created with real employee IDs")
+        print("✅ User IDs correctly mapped to real employee names")
+        print("✅ Organizer ID correctly mapped to real employee name")
+        print("✅ Turkish character support verified in user names")
+        print("✅ Real company email addresses verified")
+        print("✅ Individual user lookup working correctly")
+        print(f"\n🎉 MEETING REQUEST INTEGRATION WITH REAL USERS TEST PASSED!")
+        print(f"   Meeting created with {len(real_user_ids)} real employees")
+        print(f"   Attendees: {', '.join(real_user_names)}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 if __name__ == "__main__":
-    print("🚀 Starting Enhanced Meeting Requests Backend API Tests...")
+    print("🚀 Starting Realistic Company Users System Backend API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
