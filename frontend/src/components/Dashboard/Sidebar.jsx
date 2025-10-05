@@ -313,10 +313,7 @@ export default function Sidebar({
   onCustomerProspects,
   onNewPerson,
   onAllPeople,
-  onNewQuote,
-  onAllQuotes,
-  onDraftQuotes,
-  onPendingApprovalQuotes,
+  // Old quote handlers removed - replaced with Teklif handlers
   onSentQuotes,
   onWonQuotes,
   onLostQuotes,
