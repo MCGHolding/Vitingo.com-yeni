@@ -6,6 +6,11 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { Calendar, Clock, Users, MapPin, Plus, Edit2, Trash2, Check, X } from 'lucide-react';
 import moment from 'moment';
 
+// Import FullCalendar CSS
+import '@fullcalendar/core/index.css';
+import '@fullcalendar/daygrid/index.css';
+import '@fullcalendar/timegrid/index.css';
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'Demo User' } }) => {
