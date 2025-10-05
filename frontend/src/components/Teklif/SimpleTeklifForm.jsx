@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Calendar, Check, Minus, Edit, Save, FileText, Users, Building } from 'lucide-react';
 
-const SimpleTeklifForm = ({ onBackToDashboard, showToast }) => {
+const SimpleTeklifForm = ({ onBackToDashboard }) => {
   const [formData, setFormData] = useState({
     teklifKonusu: '',
     musteriId: '',
