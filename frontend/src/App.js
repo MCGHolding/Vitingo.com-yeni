@@ -594,6 +594,11 @@ const Dashboard = () => {
     setCurrentView('meeting-invitations');
   };
 
+  const handleMeetingRequests = () => {
+    console.log('📋 handleMeetingRequests called - setting view to meeting-requests');
+    setCurrentView('meeting-requests');
+  };
+
   const handleAllBriefs = () => {
     setCurrentView('all-briefs');
   };
