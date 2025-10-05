@@ -7886,71 +7886,103 @@ async def get_users(status: str = "active"):
         if users_from_db:
             return [User(**user) for user in users_from_db]
         
-        # If no users in database, return mock users
-        mock_users = [
+        # Create realistic company users automatically if database is empty
+        realistic_users = [
             User(
-                id="demo_user",
-                name="Demo User", 
-                email="demo@company.com",
-                role="user",
-                department="Genel",
-                phone="+90 532 123 4567"
-            ),
-            User(
-                id="admin_user",
-                name="Admin User", 
-                email="admin@company.com", 
+                id="murat_bucak",
+                name="Murat Bucak", 
+                email="murat.bucak@vitingo.com",
                 role="admin",
-                department="IT",
-                phone="+90 532 123 4568"
+                department="Genel Müdürlük",
+                phone="+90 532 111 1111"
             ),
             User(
-                id="user1",
-                name="Ahmet Yılmaz",
-                email="ahmet.yilmaz@company.com",
-                role="user", 
-                department="Satış",
-                phone="+90 532 123 4569"
-            ),
-            User(
-                id="user2", 
-                name="Fatma Demir",
-                email="fatma.demir@company.com",
-                role="user",
-                department="Pazarlama", 
-                phone="+90 532 123 4570"
-            ),
-            User(
-                id="user3",
-                name="Mehmet Kaya", 
-                email="mehmet.kaya@company.com",
-                role="user",
+                id="elif_yilmaz", 
+                name="Elif Yılmaz",
+                email="elif.yilmaz@vitingo.com",
+                role="manager",
                 department="İnsan Kaynakları",
-                phone="+90 532 123 4571"
+                phone="+90 532 222 2222"
             ),
             User(
-                id="user4",
-                name="Ayşe Öz",
-                email="ayse.oz@company.com", 
+                id="kerem_demir",
+                name="Kerem Demir",
+                email="kerem.demir@vitingo.com", 
+                role="user",
+                department="Satış",
+                phone="+90 532 333 3333"
+            ),
+            User(
+                id="zeynep_kaya",
+                name="Zeynep Kaya",
+                email="zeynep.kaya@vitingo.com",
+                role="user", 
+                department="Pazarlama",
+                phone="+90 532 444 4444"
+            ),
+            User(
+                id="burak_ozturk",
+                name="Burak Öztürk", 
+                email="burak.ozturk@vitingo.com",
                 role="user",
                 department="Muhasebe",
-                phone="+90 532 123 4572"
+                phone="+90 532 555 5555"
             ),
             User(
-                id="user5",
-                name="Can Kara",
-                email="can.kara@company.com",
-                role="manager", 
-                department="Proje Yönetimi",
-                phone="+90 532 123 4573"
-            ),
-            User(
-                id="user6",
-                name="Selin Ak", 
-                email="selin.ak@company.com",
+                id="ayse_celik",
+                name="Ayşe Çelik",
+                email="ayse.celik@vitingo.com",
                 role="user",
+                department="IT", 
+                phone="+90 532 666 6666"
+            ),
+            User(
+                id="mehmet_sahin",
+                name="Mehmet Şahin",
+                email="mehmet.sahin@vitingo.com",
+                role="manager",
+                department="Operasyon",
+                phone="+90 532 777 7777"  
+            ),
+            User(
+                id="seda_arslan",
+                name="Seda Arslan", 
+                email="seda.arslan@vitingo.com",
+                role="user",
+                department="Müşteri Hizmetleri",
+                phone="+90 532 888 8888"
+            ),
+            User(
+                id="emre_dogan",
+                name="Emre Doğan",
+                email="emre.dogan@vitingo.com",
+                role="user", 
                 department="Tasarım",
-                phone="+90 532 123 4574"
+                phone="+90 532 999 9999"
+            ),
+            User(
+                id="deniz_kurt",
+                name="Deniz Kurt",
+                email="deniz.kurt@vitingo.com", 
+                role="user",
+                department="Proje Yönetimi",
+                phone="+90 532 101 0101"
+            ),
+            User(
+                id="cemre_ates",
+                name="Cemre Ateş",
+                email="cemre.ates@vitingo.com",
+                role="user",
+                department="Kalite Kontrol",
+                phone="+90 532 121 2121"
+            ),
+            User(
+                id="onur_yildiz",
+                name="Onur Yıldız", 
+                email="onur.yildiz@vitingo.com",
+                role="user",
+                department="Lojistik",
+                phone="+90 532 131 3131"
             )
         ]
         
