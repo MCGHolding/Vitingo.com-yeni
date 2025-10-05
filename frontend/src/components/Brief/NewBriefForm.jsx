@@ -3034,18 +3034,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
               {currentStep === 2 && !canProceedFromStep2() && (
                 <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                   <p className="text-sm text-orange-800">
-                    <strong>Dikkat:</strong> Seçtiğiniz zorunlu elementler için alt seçenekleri tamamlamalısınız.
-                    {stepData.standElements && Object.entries(stepData.standElements).map(([elementKey, selections]) => {
-                      const config = standElementsConfig[elementKey];
-                      if (selections && config?.required && !hasRequiredSelections(elementKey)) {
-                        return (
-                          <span key={elementKey} className="block mt-1">
-                            • <strong>{config.label}</strong> için en az bir seçenek belirtmelisiniz
-                          </span>
-                        );
-                      }
-                      return null;
-                    })}
+                    <strong>Dikkat:</strong> Devam etmek için aşağıdaki alanları tamamlamalısınız:
+                    {stepData.selectedItems.length === 0 && (
+                      <span className="block mt-1">• En az bir stand elementi seçmelisiniz</span>
+                    )}
+                    {(!stepData.standWidth || dimensionErrors.width) && (
+                      <span className="block mt-1">• Stand eni (cm) geçerli bir değer giriniz</span>
+                    )}
+                    {(!stepData.standLength || dimensionErrors.length) && (
+                      <span className="block mt-1">• Stand boyu (cm) geçerli bir değer giriniz</span>
+                    )}
                   </p>
                 </div>
               )}
