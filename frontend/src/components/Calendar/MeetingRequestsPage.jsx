@@ -460,8 +460,8 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                       </div>
                     ) : (
                       <div className="p-3 space-y-2">
-                        {users
-                          .filter(user => {
+                        {(() => {
+                          const filteredUsers = users.filter(user => {
                             if (!userSearchTerm) return true;
                             const searchLower = userSearchTerm.toLowerCase();
                             return (
@@ -469,8 +469,22 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                               user.email.toLowerCase().includes(searchLower) ||
                               (user.department && user.department.toLowerCase().includes(searchLower))
                             );
-                          })
-                          .map(user => (
+                          });
+
+                          // Group by department
+                          const groupedUsers = filteredUsers.reduce((groups, user) => {
+                            const dept = user.department || 'Diğer';
+                            if (!groups[dept]) groups[dept] = [];
+                            groups[dept].push(user);
+                            return groups;
+                          }, {});
+
+                          return Object.keys(groupedUsers).sort().map(department => (
+                            <div key={department} className="mb-3">
+                              <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 px-2">
+                                {department}
+                              </div>
+                              {groupedUsers[department].map(user => (
                           <label key={user.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
                             <input
                               type="checkbox"
