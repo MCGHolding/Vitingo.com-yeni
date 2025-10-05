@@ -7063,6 +7063,309 @@ async def get_generated_designs(brief_id: str):
 
 # ===================== END AI DESIGN GENERATION ENDPOINTS =====================
 
+# ===================== CALENDAR & MEETINGS MODELS =====================
+
+class CalendarEvent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = ""
+    start_datetime: datetime
+    end_datetime: datetime
+    all_day: bool = False
+    event_type: str = "meeting"  # meeting, task, reminder, personal
+    location: Optional[str] = ""
+    organizer_id: str  # User ID who created the event
+    organizer_name: str  # User name for display
+    attendee_ids: List[str] = Field(default_factory=list)  # List of user IDs
+    attendees: List[Dict[str, Any]] = Field(default_factory=list)  # Full attendee info
+    status: str = "confirmed"  # confirmed, tentative, cancelled
+    recurring: bool = False
+    recurrence_rule: Optional[str] = None  # RRULE format for recurring events
+    meeting_link: Optional[str] = ""  # Zoom, Teams, etc.
+    reminder_minutes: List[int] = Field(default_factory=lambda: [15])  # Reminder before event
+    visibility: str = "public"  # public, private
+    created_by: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CalendarEventCreate(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    start_datetime: str  # ISO format string
+    end_datetime: str    # ISO format string
+    all_day: bool = False
+    event_type: str = "meeting"
+    location: Optional[str] = ""
+    attendee_ids: List[str] = Field(default_factory=list)
+    meeting_link: Optional[str] = ""
+    reminder_minutes: List[int] = Field(default_factory=lambda: [15])
+    visibility: str = "public"
+
+class MeetingInvitation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    event_id: str
+    invitee_id: str
+    invitee_name: str
+    invitee_email: str
+    status: str = "pending"  # pending, accepted, declined, maybe
+    response_date: Optional[datetime] = None
+    response_message: Optional[str] = ""
+    invitation_sent_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MeetingResponse(BaseModel):
+    invitation_id: str
+    status: str  # accepted, declined, maybe
+    message: Optional[str] = ""
+
+# User Permission Model for Calendar Access
+class UserRole(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    username: str
+    email: str
+    role: str = "user"  # user, admin, super_admin
+    department: Optional[str] = ""
+    can_view_all_calendars: bool = False
+    can_create_meetings: bool = True
+    can_manage_users: bool = False
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Calendar API Endpoints
+@api_router.post("/calendar/events", response_model=CalendarEvent)
+async def create_calendar_event(event_input: CalendarEventCreate, current_user_id: str = "demo_user"):
+    """Create a new calendar event"""
+    try:
+        # Parse datetime strings
+        start_dt = datetime.fromisoformat(event_input.start_datetime.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(event_input.end_datetime.replace('Z', '+00:00'))
+        
+        # Get organizer info (for demo, use hardcoded values)
+        organizer_name = "Demo User"  # In real app, fetch from user management
+        
+        # Create event
+        event_data = event_input.dict()
+        event_data.update({
+            "id": str(uuid.uuid4()),
+            "start_datetime": start_dt,
+            "end_datetime": end_dt,
+            "organizer_id": current_user_id,
+            "organizer_name": organizer_name,
+            "created_by": current_user_id,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        })
+        
+        # Add attendee info
+        attendees = []
+        for attendee_id in event_input.attendee_ids:
+            # In real app, fetch user details from database
+            attendees.append({
+                "id": attendee_id,
+                "name": f"User {attendee_id}",  # Placeholder
+                "email": f"user{attendee_id}@example.com",  # Placeholder
+                "status": "pending"
+            })
+        event_data["attendees"] = attendees
+        
+        # Create calendar event object
+        calendar_event = CalendarEvent(**event_data)
+        
+        # Insert to database
+        result = await db.calendar_events.insert_one(calendar_event.dict())
+        
+        # Send meeting invitations
+        for attendee_id in event_input.attendee_ids:
+            if attendee_id != current_user_id:  # Don't send invitation to organizer
+                invitation = MeetingInvitation(
+                    event_id=calendar_event.id,
+                    invitee_id=attendee_id,
+                    invitee_name=f"User {attendee_id}",
+                    invitee_email=f"user{attendee_id}@example.com"
+                )
+                await db.meeting_invitations.insert_one(invitation.dict())
+        
+        return calendar_event
+        
+    except Exception as e:
+        logger.error(f"Error creating calendar event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/calendar/events", response_model=List[CalendarEvent])
+async def get_calendar_events(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    user_id: str = "demo_user",
+    user_role: str = "user"  # user, admin, super_admin
+):
+    """Get calendar events based on user permissions"""
+    try:
+        query = {}
+        
+        # Date filtering
+        if start_date and end_date:
+            start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+            query["$or"] = [
+                {"start_datetime": {"$gte": start_dt, "$lte": end_dt}},
+                {"end_datetime": {"$gte": start_dt, "$lte": end_dt}},
+                {"start_datetime": {"$lte": start_dt}, "end_datetime": {"$gte": end_dt}}
+            ]
+        
+        # Permission-based filtering
+        if user_role in ["admin", "super_admin"]:
+            # Admin and super admin can see all events
+            pass
+        else:
+            # Regular users can only see their own events and public events they're invited to
+            query["$or"] = [
+                {"organizer_id": user_id},
+                {"attendee_ids": user_id, "visibility": "public"},
+                {"visibility": "public"}
+            ]
+        
+        events = await db.calendar_events.find(query).sort("start_datetime", 1).to_list(length=None)
+        return [CalendarEvent(**event) for event in events]
+        
+    except Exception as e:
+        logger.error(f"Error getting calendar events: {str(e)}")
+        return []
+
+@api_router.get("/calendar/events/{event_id}", response_model=CalendarEvent)
+async def get_calendar_event(event_id: str):
+    """Get a specific calendar event"""
+    try:
+        event = await db.calendar_events.find_one({"id": event_id})
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return CalendarEvent(**event)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting calendar event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/calendar/events/{event_id}", response_model=CalendarEvent)
+async def update_calendar_event(event_id: str, event_input: CalendarEventCreate):
+    """Update a calendar event"""
+    try:
+        # Parse datetime strings
+        start_dt = datetime.fromisoformat(event_input.start_datetime.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(event_input.end_datetime.replace('Z', '+00:00'))
+        
+        update_data = event_input.dict()
+        update_data.update({
+            "start_datetime": start_dt,
+            "end_datetime": end_dt,
+            "updated_at": datetime.utcnow()
+        })
+        
+        result = await db.calendar_events.update_one(
+            {"id": event_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            updated_event = await db.calendar_events.find_one({"id": event_id})
+            return CalendarEvent(**updated_event)
+        else:
+            raise HTTPException(status_code=404, detail="Event not found or no changes made")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating calendar event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/calendar/events/{event_id}")
+async def delete_calendar_event(event_id: str):
+    """Delete a calendar event"""
+    try:
+        result = await db.calendar_events.delete_one({"id": event_id})
+        
+        if result.deleted_count:
+            # Also delete related invitations
+            await db.meeting_invitations.delete_many({"event_id": event_id})
+            return {"message": "Event deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Event not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting calendar event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/calendar/invitations/{user_id}")
+async def get_meeting_invitations(user_id: str):
+    """Get pending meeting invitations for a user"""
+    try:
+        invitations = await db.meeting_invitations.find({
+            "invitee_id": user_id,
+            "status": "pending"
+        }).to_list(length=None)
+        
+        # Enrich with event details
+        enriched_invitations = []
+        for invitation in invitations:
+            event = await db.calendar_events.find_one({"id": invitation["event_id"]})
+            if event:
+                invitation["event_details"] = {
+                    "title": event["title"],
+                    "description": event["description"],
+                    "start_datetime": event["start_datetime"],
+                    "end_datetime": event["end_datetime"],
+                    "location": event["location"],
+                    "organizer_name": event["organizer_name"]
+                }
+            enriched_invitations.append(invitation)
+        
+        return enriched_invitations
+        
+    except Exception as e:
+        logger.error(f"Error getting meeting invitations: {str(e)}")
+        return []
+
+@api_router.post("/calendar/invitations/{invitation_id}/respond")
+async def respond_to_meeting_invitation(invitation_id: str, response: MeetingResponse):
+    """Respond to a meeting invitation"""
+    try:
+        # Update invitation status
+        result = await db.meeting_invitations.update_one(
+            {"id": invitation_id},
+            {
+                "$set": {
+                    "status": response.status,
+                    "response_message": response.message,
+                    "response_date": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.modified_count:
+            # Update attendee status in the event
+            invitation = await db.meeting_invitations.find_one({"id": invitation_id})
+            if invitation:
+                await db.calendar_events.update_one(
+                    {
+                        "id": invitation["event_id"],
+                        "attendees.id": invitation["invitee_id"]
+                    },
+                    {"$set": {"attendees.$.status": response.status}}
+                )
+            
+            return {"message": "Response recorded successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Invitation not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error responding to invitation: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== END CALENDAR & MEETINGS ENDPOINTS =====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
