@@ -3365,7 +3365,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                       <div className="mt-3 text-xs text-gray-500 text-center">
                         <span className="bg-gray-100 px-2 py-1 rounded">
-                          Hesaplama: {stepData.standWidth || '0'} × {stepData.standLength || '0'} ÷ 10.000 = {stepData.calculatedArea || '0.00'} m²
+                          Hesaplama: {stepData.standWidth || '0,00'} × {stepData.standLength || '0,00'} ÷ 10.000 = {stepData.calculatedArea || '0,00'} m²
                         </span>
                       </div>
                     </div>
