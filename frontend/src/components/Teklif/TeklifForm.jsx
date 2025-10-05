@@ -199,12 +199,13 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
   const handleTeklifKonusuChange = (firsatId) => {
     const seciliFirsat = satisFirsatlari.find(f => f.id === firsatId);
     if (seciliFirsat) {
-      const seciliMusteri = musteriler.find(m => m.id === seciliFirsat.musteriId);
+      // Find customer by name since opportunities store customer names
+      const seciliMusteri = musteriler.find(m => m.ad === seciliFirsat.musteriId || m.id === seciliFirsat.musteriId);
       
       setFormData(prev => ({
         ...prev,
         teklifKonusu: firsatId,
-        musteriId: seciliFirsat.musteriId,
+        musteriId: seciliMusteri?.id || seciliFirsat.musteriId,
         fuarTarihi: seciliFirsat.fuarTarihi,
         fuarMerkezi: seciliFirsat.fuarMerkezi,
         sehir: seciliFirsat.sehir,
