@@ -362,7 +362,18 @@ const ChatModal = ({ isOpen, onClose, currentUser }) => {
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t bg-gray-50">
+              <div className="p-4 border-t bg-gray-50 relative">
+                {/* Emoji Picker */}
+                {showEmojiPicker && (
+                  <div className="absolute bottom-16 left-4 z-50">
+                    <EmojiPicker 
+                      onEmojiClick={handleEmojiClick}
+                      width={320}
+                      height={400}
+                    />
+                  </div>
+                )}
+                
                 <div className="flex items-end space-x-2">
                   <button
                     onClick={handleFileUpload}
@@ -370,6 +381,14 @@ const ChatModal = ({ isOpen, onClose, currentUser }) => {
                     title="Dosya Ekle"
                   >
                     <Paperclip className="h-5 w-5" />
+                  </button>
+                  
+                  <button
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                    title="Emoji Ekle"
+                  >
+                    <Smile className="h-5 w-5" />
                   </button>
                   
                   <div className="flex-1">
