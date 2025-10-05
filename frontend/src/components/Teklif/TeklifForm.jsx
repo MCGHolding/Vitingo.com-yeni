@@ -803,8 +803,8 @@ Saygılarımızla,`;
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Modals */}
       
