@@ -1392,6 +1392,10 @@ const Dashboard = () => {
         // Teklif handlers
         onNewTeklif={handleNewTeklif}
         onRequestBrief={handleRequestBrief}
+        // Calendar handlers
+        onCalendar={handleCalendar}
+        onNewMeeting={handleNewMeeting}
+        onMeetingInvitations={handleMeetingInvitations}
       />
       
       {/* Header */}
