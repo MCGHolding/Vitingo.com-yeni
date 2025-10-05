@@ -216,9 +216,48 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                             </>
                           )}
                         </div>
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Users className="h-4 w-4" />
-                          <span>Katılımcılar: {request.attendee_names.join(', ')}</span>
+                        <div className="flex items-start space-x-2 text-sm text-gray-600">
+                          <Users className="h-4 w-4 mt-0.5" />
+                          <div className="flex-1">
+                            <span>Katılımcılar:</span>
+                            <div className="mt-1 space-y-1">
+                              {request.attendee_names.map((name, index) => {
+                                const attendeeId = request.attendee_ids[index];
+                                const response = request.responses && request.responses[attendeeId];
+                                return (
+                                  <div key={attendeeId || index} className="flex items-center space-x-2">
+                                    <span className="text-gray-700">{name}</span>
+                                    {response ? (
+                                      <div className="flex items-center space-x-1">
+                                        {response.response === 'accepted' && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Kabul
+                                          </span>
+                                        )}
+                                        {response.response === 'maybe' && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <Clock3 className="h-3 w-3 mr-1" />
+                                            Belki
+                                          </span>
+                                        )}
+                                        {response.response === 'declined' && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <X className="h-3 w-3 mr-1" />
+                                            Reddet
+                                          </span>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                        Bekliyor
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
