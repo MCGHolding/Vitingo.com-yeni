@@ -71,7 +71,6 @@ const getNavigation = (userDepartment) => {
       hasSubmenu: true,
       submenu: [
         { name: 'Takvim Görünümü', href: '/calendar', icon: Calendar },
-        { name: 'Yeni Toplantı', href: '/calendar/new-meeting', icon: Plus },
         { name: 'Toplantı Davetleri', href: '/calendar/invitations', icon: Clock }
       ]
     },
