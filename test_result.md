@@ -222,7 +222,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Kullanıcının istediği '+Özellik Ekle' butonunun doğru şekilde eklendiğini test et: 1. Login ol (murb/Murat2024!) 2. Brief > Yeni Brief > 'Detaylı Stand İhtiyaçları →' > Step 2'ye git 3. Ana Element dropdown'ından 'Zemin' seç 4. 'Alt Kategori Seçin' dropdown'ı çıksın 5. Bu alt kategori satırında şu butonları kontrol et: - Solda 'Özellik Ekle' butonu olmalı (yeşil renk) - Sağda 'Alt Kategori Ekle' butonu olmalı (mavi renk) 6. İki buton yan yana horizontal durumda mı kontrol et 7. 'Özellik Ekle' butonuna tıkladığında console'da 'Özellik Ekle clicked for level: 1' mesajı görünüyor mu kontrol et"
+user_problem_statement: "Test the WebSocket chat functionality that I just implemented"
 
 backend:
   - task: "Stand Elements Recursive Structure GET Endpoint"
