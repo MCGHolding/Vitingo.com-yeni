@@ -513,6 +513,323 @@ Saygılarımızla,`;
         </CardContent>
       </Card>
 
+      {/* Teklif Koşulları */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <FileText className="h-5 w-5" />
+            <span>Teklif Koşulları</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <select
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Kayıtlı koşul seçiniz...</option>
+              <option value="standart">Standart Koşullar</option>
+              <option value="ozel">Özel Koşullar</option>
+            </select>
+            <Button
+              onClick={() => setIsKosulEklemeModalOpen(true)}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Yeni Koşul Ekle
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Teklif Ön Yazısı */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Edit className="h-5 w-5" />
+            <span>Teklif Ön Yazısı</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 mb-2">🤖 AI Tarafından Oluşturulan Ön Yazı</h4>
+            <div className="text-sm text-gray-700 whitespace-pre-line">
+              {generateAIOnYazi()}
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <select
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Kayıtlı ön yazı seçiniz...</option>
+              <option value="standart">Standart Ön Yazı</option>
+              <option value="formal">Formal Ön Yazı</option>
+            </select>
+            <Button
+              onClick={() => setIsOnYaziEklemeModalOpen(true)}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Yeni Ön Yazı Ekle
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Dahil Hizmetler */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Check className="h-5 w-5" />
+            <span>Dahil Hizmetler</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <select
+              onChange={(e) => {
+                if (e.target.value && !formData.dahilHizmetler.includes(e.target.value)) {
+                  setFormData(prev => ({
+                    ...prev,
+                    dahilHizmetler: [...prev.dahilHizmetler, e.target.value]
+                  }));
+                }
+                e.target.value = '';
+              }}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Dahil hizmet seçiniz...</option>
+              {dahilHizmetlerVT
+                .filter(hizmet => !formData.dahilHizmetler.includes(hizmet))
+                .map(hizmet => (
+                  <option key={hizmet} value={hizmet}>{hizmet}</option>
+                ))}
+            </select>
+            <Button
+              onClick={() => setIsDahilHizmetEklemeModalOpen(true)}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {/* Seçilen Dahil Hizmetler */}
+          {formData.dahilHizmetler.length > 0 && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Seçilen Dahil Hizmetler:
+              </label>
+              <div className="space-y-2">
+                {formData.dahilHizmetler.map((hizmet, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-2"
+                  >
+                    <span className="flex items-center text-green-800">
+                      <Check className="h-4 w-4 mr-2 text-green-600" />
+                      {hizmet}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          dahilHizmetler: prev.dahilHizmetler.filter((_, i) => i !== index)
+                        }));
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Hariç Hizmetler */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <X className="h-5 w-5" />
+            <span>Hariç Hizmetler</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <select
+              onChange={(e) => {
+                if (e.target.value && !formData.haricHizmetler.includes(e.target.value)) {
+                  setFormData(prev => ({
+                    ...prev,
+                    haricHizmetler: [...prev.haricHizmetler, e.target.value]
+                  }));
+                }
+                e.target.value = '';
+              }}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Hariç hizmet seçiniz...</option>
+              {haricHizmetlerVT
+                .filter(hizmet => !formData.haricHizmetler.includes(hizmet))
+                .map(hizmet => (
+                  <option key={hizmet} value={hizmet}>{hizmet}</option>
+                ))}
+            </select>
+            <Button
+              onClick={() => setIsHaricHizmetEklemeModalOpen(true)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {/* Seçilen Hariç Hizmetler */}
+          {formData.haricHizmetler.length > 0 && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Seçilen Hariç Hizmetler:
+              </label>
+              <div className="space-y-2">
+                {formData.haricHizmetler.map((hizmet, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-red-50 border border-red-200 rounded-lg px-4 py-2"
+                  >
+                    <span className="flex items-center text-red-800">
+                      <X className="h-4 w-4 mr-2 text-red-600" />
+                      {hizmet}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          haricHizmetler: prev.haricHizmetler.filter((_, i) => i !== index)
+                        }));
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* İmza */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Edit className="h-5 w-5" />
+            <span>İmza</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Birinci İmza (Otomatik)
+              </label>
+              <input
+                type="text"
+                value="Murat Admin (Otomatik İmza)"
+                readOnly
+                className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                İkinci İmza (Opsiyonel)
+              </label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">İkinci imza için kullanıcı seçiniz...</option>
+                {kullanicilar.map(kullanici => (
+                  <option key={kullanici.id} value={kullanici.id}>
+                    {kullanici.ad} {kullanici.soyad}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Modals */}
+      
+      {/* Koşul Ekleme Modal */}
+      {isKosulEklemeModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-auto">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Yeni Teklif Koşulu Ekle</h3>
+                <Button
+                  onClick={() => setIsKosulEklemeModalOpen(false)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Koşul İçeriği (Rich Text)
+                </label>
+                <textarea
+                  rows={10}
+                  value={yeniKosul.icerik}
+                  onChange={(e) => setYeniKosul(prev => ({ ...prev, icerik: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Teklif koşullarınızı buraya yazın..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Koşul Kısa Adı *
+                </label>
+                <input
+                  type="text"
+                  value={yeniKosul.kisaAd}
+                  onChange={(e) => setYeniKosul(prev => ({ ...prev, kisaAd: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Örn: Standart Koşullar"
+                />
+                <p className="text-xs text-red-600 mt-1">
+                  Bu koşulları daha sonraki tekliflerinizde veritabanından çağırmak için kaydedebilirsiniz
+                </p>
+              </div>
+              <div className="flex justify-end space-x-3 pt-4 border-t">
+                <Button
+                  onClick={() => setIsKosulEklemeModalOpen(false)}
+                  variant="outline"
+                >
+                  İptal
+                </Button>
+                <Button
+                  onClick={() => {
+                    console.log('Koşul kaydediliyor:', yeniKosul);
+                    setIsKosulEklemeModalOpen(false);
+                    setYeniKosul({ icerik: '', kisaAd: '' });
+                    showToast && showToast('Teklif koşulu başarıyla kaydedildi!', 'success');
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Kaydet
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex justify-between items-center pt-6 border-t">
         <Button
