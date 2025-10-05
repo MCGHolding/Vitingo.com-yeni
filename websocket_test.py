@@ -65,7 +65,7 @@ async def test_websocket_connection():
         uri = f"{websocket_endpoint}?chatroom_id=test_room_001"
         print(f"   Connecting to: {uri}")
         
-        async with websockets.connect(uri, timeout=5) as websocket:
+        async with websockets.connect(uri) as websocket:
             print("   ❌ FAIL: Connection should have been rejected")
             return False
             
@@ -83,7 +83,7 @@ async def test_websocket_connection():
         uri = f"{websocket_endpoint}?token=demo_token_123"
         print(f"   Connecting to: {uri}")
         
-        async with websockets.connect(uri, timeout=5) as websocket:
+        async with websockets.connect(uri) as websocket:
             print("   ❌ FAIL: Connection should have been rejected")
             return False
             
