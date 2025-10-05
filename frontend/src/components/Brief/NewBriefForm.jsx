@@ -1283,7 +1283,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
       }
     }
     
-    console.log('🧹 Cleaned Turkish value:', cleanValue);
+    // console.log('🧹 Cleaned Turkish value:', cleanValue);
     
     // For dimension fields, update stepData and calculate area
     if (fieldName === 'width' || fieldName === 'length') {
