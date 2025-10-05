@@ -3337,7 +3337,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       )}
                     </div>
 
-                    {/* 4. Hizmet ve Teknoloji */}
+                    {/* 5. Hizmet ve Teknoloji */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-orange-900 mb-3 flex items-center">
                         🛠️ Hizmet ve Teknoloji
