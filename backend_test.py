@@ -2187,6 +2187,7 @@ def test_calendar_invitations_respond_endpoint():
         
         for status in response_types:
             test_response = {
+                "invitation_id": invitation_id,
                 "status": status,
                 "message": f"Response: {status}"
             }
