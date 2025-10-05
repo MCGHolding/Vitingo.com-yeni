@@ -39,7 +39,7 @@ const ChatModal = ({ isOpen, onClose, currentUser }) => {
     scrollToBottom();
   }, [messages]);
 
-  // WebSocket connection management
+  // WebSocket connection management  
   const connectWebSocket = (userId) => {
     if (ws) {
       ws.close();
@@ -52,7 +52,10 @@ const ChatModal = ({ isOpen, onClose, currentUser }) => {
     const token = localStorage.getItem('auth_token') || 'demo_token';
     
     try {
-      const websocket = new WebSocket(`ws://localhost:8001/api/v1/ws?token=${token}&chatroom_id=${chatRoomId}`);
+      // Use the REACT_APP_BACKEND_URL environment variable but replace http with ws
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const wsUrl = backendUrl.replace('http', 'ws');
+      const websocket = new WebSocket(`${wsUrl}/api/v1/ws?token=${token}&chatroom_id=${chatRoomId}`);
       
       websocket.onopen = () => {
         console.log('WebSocket connected');
