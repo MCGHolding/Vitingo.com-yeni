@@ -8001,21 +8001,22 @@ async def get_users(status: str = "active"):
         logger.error(f"Error getting users: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting users: {str(e)}")
 
-@api_router.get("/users/{user_id}", response_model=User)
-async def get_user(user_id: str):
-    """Get a specific user by ID"""
+@api_router.get("/users/count")
+async def get_users_count():
+    """Get count of users in the system"""
     try:
-        user = await db.users.find_one({"id": user_id})
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-            
-        return User(**user)
+        total_users = await db.users.count_documents({})
+        active_users = await db.users.count_documents({"status": "active"})
         
-    except HTTPException:
-        raise
+        return {
+            "total_users": total_users,
+            "active_users": active_users,
+            "departments": await db.users.distinct("department", {"status": "active"})
+        }
+        
     except Exception as e:
-        logger.error(f"Error getting user: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error getting user: {str(e)}")
+        logger.error(f"Error getting user count: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user count: {str(e)}")
 
 @api_router.post("/users/initialize")
 async def initialize_company_users():
@@ -8039,22 +8040,21 @@ async def initialize_company_users():
         logger.error(f"Error initializing company users: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error initializing company users: {str(e)}")
 
-@api_router.get("/users/count")
-async def get_users_count():
-    """Get count of users in the system"""
+@api_router.get("/users/{user_id}", response_model=User)
+async def get_user(user_id: str):
+    """Get a specific user by ID"""
     try:
-        total_users = await db.users.count_documents({})
-        active_users = await db.users.count_documents({"status": "active"})
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        return User(**user)
         
-        return {
-            "total_users": total_users,
-            "active_users": active_users,
-            "departments": await db.users.distinct("department", {"status": "active"})
-        }
-        
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error getting user count: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error getting user count: {str(e)}")
+        logger.error(f"Error getting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user: {str(e)}")
 
 # ===================== END USERS ENDPOINTS =====================
 
