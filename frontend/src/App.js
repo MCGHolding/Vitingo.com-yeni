@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { useActivityTracker } from './hooks/useActivityTracker';
 import Sidebar from './components/Dashboard/Sidebar';
+import CalendarPage from './components/Calendar/CalendarPage';
 import StatCard from './components/Dashboard/StatCard';
 import RevenueChart from './components/Dashboard/RevenueChart';
 import CustomerSegmentChart from './components/Dashboard/CustomerSegmentChart';
