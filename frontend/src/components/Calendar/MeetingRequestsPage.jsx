@@ -171,6 +171,41 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
     }
   };
 
+  // Filter meeting requests based on active tab
+  const getFilteredRequests = () => {
+    switch (activeTab) {
+      case 'sent':
+        return meetingRequests.filter(request => request.organizer_id === currentUser.id);
+      case 'received':
+        return meetingRequests.filter(request => 
+          request.organizer_id !== currentUser.id && 
+          request.attendee_ids.includes(currentUser.id)
+        );
+      default:
+        return meetingRequests;
+    }
+  };
+
+  const filteredRequests = getFilteredRequests();
+
+  // Count requests for tab badges
+  const getRequestCounts = () => {
+    const sent = meetingRequests.filter(request => request.organizer_id === currentUser.id).length;
+    const received = meetingRequests.filter(request => 
+      request.organizer_id !== currentUser.id && 
+      request.attendee_ids.includes(currentUser.id)
+    ).length;
+    const pendingReceived = meetingRequests.filter(request => 
+      request.organizer_id !== currentUser.id && 
+      request.attendee_ids.includes(currentUser.id) &&
+      (!request.responses || !request.responses[currentUser.id])
+    ).length;
+    
+    return { sent, received, pendingReceived, total: meetingRequests.length };
+  };
+
+  const counts = getRequestCounts();
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Header */}
