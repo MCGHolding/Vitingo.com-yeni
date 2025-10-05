@@ -2910,6 +2910,21 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </div>
               )}
 
+              {/* Validation Message for Step 7 */}
+              {currentStep === 7 && !canProceedFromStep7() && (
+                <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    <strong>Dikkat:</strong> Devam etmek için aşağıdaki alanları doldurmalısınız:
+                    {!stepData.budgetRange && (
+                      <span className="block mt-1">• Bütçe aralığı seçimi</span>
+                    )}
+                    {!stepData.deadline && (
+                      <span className="block mt-1">• Son teslim tarihi</span>
+                    )}
+                  </p>
+                </div>
+              )}
+
             </CardContent>
           </Card>
         )}
