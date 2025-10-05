@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { Calendar, Clock, Users, MapPin, Plus, Edit2, Trash2, Check, X } from 'lucide-react';
 import moment from 'moment';
+import ChatModal from './ChatModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
