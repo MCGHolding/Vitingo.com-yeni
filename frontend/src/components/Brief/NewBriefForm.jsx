@@ -1917,8 +1917,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 <Button
                                   type="button"
                                   onClick={() => {
-                                    // Placeholder for future Özellik functionality
                                     console.log('Özellik Ekle clicked for level:', level);
+                                    const currentPath = stepData.currentPath.slice(0, level + 1);
+                                    setFeatureModalData({
+                                      level,
+                                      currentPath,
+                                      featureName: '',
+                                      featureValue: '',
+                                      featureType: 'text'
+                                    });
+                                    setIsFeatureModalOpen(true);
                                   }}
                                   size="sm"
                                   variant="outline"
