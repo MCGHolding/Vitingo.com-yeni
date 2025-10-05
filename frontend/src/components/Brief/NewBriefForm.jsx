@@ -2727,7 +2727,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 
                 <Button
                   type="button"
-                  onClick={currentStep === 8 ? () => setCurrentStep(1) : handleNextStep}
+                  onClick={currentStep === 8 ? () => setCurrentStep(9) : handleNextStep}
                   disabled={(currentStep === 2 && !canProceedFromStep2()) || (currentStep === 7 && !canProceedFromStep7())}
                   className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
