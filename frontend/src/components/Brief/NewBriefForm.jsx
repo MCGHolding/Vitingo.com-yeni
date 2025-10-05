@@ -1916,12 +1916,22 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                   <Button
                                     type="button"
                                     onClick={() => {
+                                      console.log(`DEBUG X Button - Before: currentPath=`, stepData.currentPath, `level=${level}`);
+                                      
                                       // Bu seviyeyi ve sonrasını kaldır
-                                      setStepData(prev => ({
-                                        ...prev,
-                                        currentPath: prev.currentPath.slice(0, level)
-                                      }));
-                                      console.log(`Level ${level} removed, currentPath updated`);
+                                      const newPath = stepData.currentPath.slice(0, level);
+                                      console.log(`DEBUG X Button - New path will be:`, newPath);
+                                      
+                                      setStepData(prev => {
+                                        const updated = {
+                                          ...prev,
+                                          currentPath: newPath
+                                        };
+                                        console.log(`DEBUG X Button - Updated stepData:`, updated);
+                                        return updated;
+                                      });
+                                      
+                                      console.log(`Level ${level} removed, currentPath updated to length ${newPath.length}`);
                                     }}
                                     size="sm"
                                     variant="outline"
