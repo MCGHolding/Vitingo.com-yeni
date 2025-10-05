@@ -560,6 +560,31 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Calendar menu actions
+    if (subItem && subItem.name === 'Takvim Görünümü') {
+      console.log('Takvim Görünümü clicked - calling onCalendar handler');
+      if (onCalendar) {
+        onCalendar();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Yeni Toplantı') {
+      console.log('Yeni Toplantı clicked - calling onNewMeeting handler');
+      if (onNewMeeting) {
+        onNewMeeting();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Toplantı Davetleri') {
+      console.log('Toplantı Davetleri clicked - calling onMeetingInvitations handler');
+      if (onMeetingInvitations) {
+        onMeetingInvitations();
+      }
+      return;
+    }
+    
     if (subItem && subItem.name === 'Tüm Teklifler') {
       if (onAllQuotes) {
         onAllQuotes();
