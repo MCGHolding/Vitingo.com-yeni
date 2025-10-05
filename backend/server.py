@@ -7112,6 +7112,7 @@ class MeetingRequest(BaseModel):
     meeting_type: str = Field(..., description="Toplantı türü: physical, virtual")
     location: Optional[str] = Field(None, description="Fiziki toplantı için adres")
     platform: Optional[str] = Field(None, description="Sanal toplantı için platform")
+    meeting_link: Optional[str] = Field(None, description="Sanal toplantı için bağlantı linki")
     attendee_ids: List[str] = Field(default_factory=list, description="Katılımcı ID'leri")
     attendee_names: List[str] = Field(default_factory=list, description="Katılımcı isimleri")
     organizer_id: str = Field(..., description="Toplantı organize eden kişi")
