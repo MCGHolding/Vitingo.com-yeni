@@ -815,13 +815,12 @@ Saygılarımızla,`;
             <div className="p-6 border-b">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Yeni Teklif Koşulu Ekle</h3>
-                <Button
+                <button
                   onClick={() => setIsKosulEklemeModalOpen(false)}
-                  variant="ghost"
-                  size="sm"
+                  className="p-2 hover:bg-gray-100 rounded-md"
                 >
                   <X className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
             <div className="p-6 space-y-4">
