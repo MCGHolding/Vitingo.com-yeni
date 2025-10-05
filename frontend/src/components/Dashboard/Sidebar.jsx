@@ -50,6 +50,11 @@ import {
   Briefcase,
   Truck,
   UserCheck,
+  BarChart,
+  FolderOpen,
+  MessageSquare,
+  Pause,
+  PenTool,
 } from 'lucide-react';
 
 // Function to get navigation based on user department
