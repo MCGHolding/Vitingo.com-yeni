@@ -4,10 +4,15 @@ import requests
 import csv
 import io
 import sys
+import json
+import asyncio
+import websockets
+import time
 from datetime import datetime, timedelta
 
 # Backend URL from environment
 BACKEND_URL = "https://offer-calendar.preview.emergentagent.com"
+WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
 def test_csv_template_download_fairs():
     """
