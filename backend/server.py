@@ -7364,6 +7364,104 @@ async def respond_to_meeting_invitation(invitation_id: str, response: MeetingRes
         logger.error(f"Error responding to invitation: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Create Sample Calendar Data Endpoint (for testing)
+@api_router.post("/calendar/create-sample-data")
+async def create_sample_calendar_data():
+    """Create sample calendar events for testing"""
+    try:
+        # Clear existing events
+        await db.calendar_events.delete_many({})
+        await db.meeting_invitations.delete_many({})
+        
+        sample_events = [
+            {
+                "title": "Proje Kickoff Toplantısı",
+                "description": "Yeni proje için başlangıç toplantısı",
+                "start_datetime": (datetime.utcnow() + timedelta(days=1)).replace(hour=10, minute=0),
+                "end_datetime": (datetime.utcnow() + timedelta(days=1)).replace(hour=11, minute=30),
+                "event_type": "meeting",
+                "location": "Toplantı Odası A",
+                "organizer_id": "demo_user",
+                "organizer_name": "Demo User",
+                "attendee_ids": ["user1", "user2"],
+                "visibility": "public"
+            },
+            {
+                "title": "Müşteri Sunumu",
+                "description": "ABC Corp için proje sunumu",
+                "start_datetime": (datetime.utcnow() + timedelta(days=2)).replace(hour=14, minute=0),
+                "end_datetime": (datetime.utcnow() + timedelta(days=2)).replace(hour=15, minute=0),
+                "event_type": "meeting",
+                "location": "Online - Zoom",
+                "organizer_id": "demo_user",
+                "organizer_name": "Demo User",
+                "attendee_ids": ["user1"],
+                "meeting_link": "https://zoom.us/j/123456789",
+                "visibility": "public"
+            },
+            {
+                "title": "Haftalık Takım Toplantısı",
+                "description": "Haftalık durumsal güncellemeler",
+                "start_datetime": (datetime.utcnow() + timedelta(days=3)).replace(hour=9, minute=0),
+                "end_datetime": (datetime.utcnow() + timedelta(days=3)).replace(hour=10, minute=0),
+                "event_type": "meeting",
+                "location": "Toplantı Odası B",
+                "organizer_id": "admin_user",
+                "organizer_name": "Admin User",
+                "attendee_ids": ["demo_user", "user1", "user2", "user3"],
+                "visibility": "public"
+            }
+        ]
+        
+        created_events = []
+        for event_data in sample_events:
+            # Create attendees array
+            attendees = []
+            for attendee_id in event_data.get("attendee_ids", []):
+                attendees.append({
+                    "id": attendee_id,
+                    "name": f"User {attendee_id}",
+                    "email": f"{attendee_id}@example.com",
+                    "status": "pending"
+                })
+            event_data["attendees"] = attendees
+            
+            # Add additional fields
+            event_data["id"] = str(uuid.uuid4())
+            event_data["created_by"] = event_data["organizer_id"]
+            event_data["created_at"] = datetime.utcnow()
+            event_data["updated_at"] = datetime.utcnow()
+            event_data["status"] = "confirmed"
+            event_data["all_day"] = False
+            event_data["recurring"] = False
+            event_data["reminder_minutes"] = [15]
+            
+            # Create event
+            calendar_event = CalendarEvent(**event_data)
+            result = await db.calendar_events.insert_one(calendar_event.dict())
+            created_events.append(calendar_event)
+            
+            # Create invitations for attendees
+            for attendee_id in event_data.get("attendee_ids", []):
+                if attendee_id != event_data["organizer_id"]:
+                    invitation = MeetingInvitation(
+                        event_id=calendar_event.id,
+                        invitee_id=attendee_id,
+                        invitee_name=f"User {attendee_id}",
+                        invitee_email=f"{attendee_id}@example.com"
+                    )
+                    await db.meeting_invitations.insert_one(invitation.dict())
+        
+        return {
+            "success": True,
+            "message": f"{len(created_events)} sample events created successfully",
+            "events": [{"id": e.id, "title": e.title} for e in created_events]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating sample calendar data: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== END CALENDAR & MEETINGS ENDPOINTS =====================
 
 # ===================== MAIN APP SETUP =====================
