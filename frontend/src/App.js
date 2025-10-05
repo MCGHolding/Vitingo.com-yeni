@@ -1105,6 +1105,7 @@ const Dashboard = () => {
 
       // Teklif cases
       case 'new-teklif':
+        console.log('Rendering TeklifForm component');
         return <TeklifForm onBackToDashboard={handleBackToDashboard} showToast={showToast} />;
 
       case 'closed-briefs':
