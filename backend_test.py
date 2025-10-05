@@ -3066,8 +3066,11 @@ def test_meeting_request_creation():
         return False
     
     # Store meeting IDs for later tests
-    global created_meeting_request_ids
+    global created_meeting_request_ids, test_meeting_id
     created_meeting_request_ids = created_meeting_ids
+    # Set the first created meeting ID for response testing
+    if created_meeting_ids:
+        test_meeting_id = created_meeting_ids[0]
     
     # Final results
     if all(test_results):
