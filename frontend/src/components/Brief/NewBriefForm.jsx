@@ -177,6 +177,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
     currentPath: [], // Array of selected keys for current path
     selectedItems: [], // Array of complete selections
     standElements: {}, // For backward compatibility
+    features: {}, // Features added to specific paths { "flooring.raised36mm": [{ name: "Renk", value: "Kırmızı", type: "text" }] }
     
     // Other step data
     employeeCount: '',
