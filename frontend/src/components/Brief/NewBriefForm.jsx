@@ -3257,36 +3257,42 @@ export default function NewBriefForm({ onBackToDashboard }) {
 
         {/* Success Page - Step 9 */}
         {currentStep === 9 && (
-          <Card className="w-full max-w-4xl mx-auto">
-            <CardContent className="p-8">
-              <div className="text-center space-y-8">
+          <div className="w-full max-w-6xl mx-auto space-y-8">
+            {/* Success Header - Fixed at Top */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-8 shadow-lg">
+              <div className="text-center space-y-6">
                 {/* Success Icon and Message */}
-                <div className="space-y-6">
-                  <div className="flex justify-center">
-                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h1 className="text-3xl font-bold text-gray-900">
-                      Tebrikler! Brief formunuzu başarı ile oluşturdunuz
-                    </h1>
-                    <div className="max-w-2xl mx-auto space-y-3">
-                      <p className="text-lg text-gray-600">
-                        Briefinizin özetini şu linkten görebilirsiniz
-                      </p>
-                      <p className="text-gray-600">
-                        İstediğiniz zaman briefinizde update yapabilirsiniz
-                      </p>
-                      <p className="text-gray-600">
-                        Tasarımcılarımız iş planına göre size bir takvim iletecek ve tasarım çalışmalarınızı yürütecektir
-                      </p>
-                    </div>
+                <div className="flex justify-center">
+                  <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                    <svg className="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                 </div>
+                
+                <div className="space-y-4">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                    🎉 Tebrikler! Brief formunuzu başarı ile oluşturdunuz
+                  </h1>
+                  <div className="max-w-3xl mx-auto space-y-3">
+                    <p className="text-xl text-gray-700 font-medium">
+                      Briefinizin özetini aşağıdan inceleyebilirsiniz
+                    </p>
+                    <p className="text-gray-600">
+                      İstediğiniz zaman briefinizde güncelleme yapabilirsiniz
+                    </p>
+                    <p className="text-gray-600">
+                      Tasarımcılarımız iş planına göre size bir takvim iletecek ve tasarım çalışmalarınızı yürütecektir
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Content Card */}
+            <Card className="w-full">
+              <CardContent className="p-8">
+                <div className="text-center space-y-8">
 
                 {/* Brief Link */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
