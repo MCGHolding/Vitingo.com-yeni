@@ -7721,12 +7721,11 @@ if __name__ == "__main__":
     
     # Enhanced Meeting Requests System Tests
     meeting_request_tests = []
-    meeting_id = None
     
     # Test 1: Meeting Request Creation
     print(f"\n{'='*20} Meeting Request Creation {'='*20}")
     try:
-        success, meeting_id = test_meeting_request_creation()
+        success = test_meeting_request_creation()
         if success:
             print("✅ Meeting Request Creation PASSED")
             meeting_request_tests.append(("Meeting Request Creation", "PASSED", None))
@@ -7740,8 +7739,8 @@ if __name__ == "__main__":
     # Test 2: Meeting Request Response (only if creation succeeded)
     print(f"\n{'='*20} Meeting Request Response {'='*20}")
     try:
-        if meeting_id:
-            success = test_meeting_request_response_endpoint(meeting_id)
+        if test_meeting_id:
+            success = test_meeting_request_response_endpoint(test_meeting_id)
         else:
             print("⚠️  SKIP: No meeting ID available from creation test")
             success = False
