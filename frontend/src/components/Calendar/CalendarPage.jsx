@@ -209,7 +209,7 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
               select={handleDateSelect}
               eventClick={handleEventClick}
               locale="tr"
-              height="auto"
+              height="calc(100vh - 150px)"
               buttonText={{
                 today: 'Bugün',
                 month: 'Ay',
