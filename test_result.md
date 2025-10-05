@@ -2050,6 +2050,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Step 6 Validation Fixes for Sonraki Button"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Brief/NewBriefForm.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive Step 6 validation fixes: 1) Updated canProceedFromStep6() function to check both detailed brief text (minimum 10 characters) and file upload requirement when 'Hazır Dosya' checkbox is checked, 2) Added detailed validation messages showing exactly what's missing, 3) Implemented proper file upload handling for brief files with success/error feedback, 4) Added visual feedback for uploaded files with file info and removal option. Ready for testing."
+
   - task: "Brief Success Page Updated Features Implementation"
     implemented: true
     working: true
