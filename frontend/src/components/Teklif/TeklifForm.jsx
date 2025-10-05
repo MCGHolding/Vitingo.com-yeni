@@ -577,9 +577,9 @@ Saygılarımızla,`;
               <option value="standart">Standart Koşullar</option>
               <option value="ozel">Özel Koşullar</option>
             </select>
-            <Button
+            <button
               onClick={() => setIsKosulEklemeModalOpen(true)}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md text-white font-medium flex items-center space-x-2"
             >
               <Plus className="h-4 w-4 mr-2" />
               Yeni Koşul Ekle
