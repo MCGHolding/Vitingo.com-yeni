@@ -763,8 +763,8 @@ Saygılarımızla,`;
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* İmza */}
       <Card>
