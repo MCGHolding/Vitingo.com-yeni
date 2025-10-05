@@ -1915,18 +1915,36 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                 {level > 0 && ( // X butonu - sadece alt kategoriler için
                                   <Button
                                     type="button"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      
+                                      console.log(`🔴 X Button clicked - Level ${level}`);
+                                      console.log(`🔴 Before - currentPath:`, stepData.currentPath);
+                                      console.log(`🔴 Current stepData:`, stepData);
+                                      
                                       // Bu seviyeyi ve sonrasını kaldır
                                       const newPath = stepData.currentPath.slice(0, level);
+                                      console.log(`🔴 New path will be:`, newPath);
                                       
-                                      setStepData(prev => ({
-                                        ...prev,
-                                        currentPath: newPath
-                                      }));
+                                      // Force re-render ile state update
+                                      setStepData(prev => {
+                                        console.log(`🔴 Previous state:`, prev);
+                                        const newState = {
+                                          ...prev,
+                                          currentPath: [...newPath] // Force new array
+                                        };
+                                        console.log(`🔴 New state:`, newState);
+                                        return newState;
+                                      });
                                       
                                       // User feedback
-                                      showToast(`${level}. seviye kaldırıldı`, 'success');
-                                      console.log(`Level ${level} removed, currentPath updated to length ${newPath.length}`);
+                                      showToast(`${level}. seviye kaldırıldı - Path: [${newPath.join(', ')}]`, 'success');
+                                      
+                                      // Force component update
+                                      setTimeout(() => {
+                                        console.log(`🔴 After timeout - stepData:`, stepData);
+                                      }, 100);
                                     }}
                                     size="sm"
                                     variant="outline"
