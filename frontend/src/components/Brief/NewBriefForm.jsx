@@ -3275,7 +3275,40 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     )}
 
-                    {/* 7. Logo ve Dosyalar */}
+                    {/* 7. Bütçe ve Gereksinimler */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                        💰 Bütçe ve Gereksinimler
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm"><strong>Bütçe Aralığı:</strong></p>
+                          <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mt-1">
+                            {stepData.budgetRange ? (
+                              stepData.budgetRange === 'custom' ? 'Özel Bütçe' :
+                              stepData.budgetRange.replace('-', ' - ').replace('5000', '5.000').replace('10000', '10.000').replace('25000', '25.000').replace('50000', '50.000').replace('100000', '100.000').replace('250000', '250.000').replace('500000', '500.000') + 
+                              (stepData.budgetRange.includes('+') ? '' : ' ₺')
+                            ) : 'Belirtilmemiş'}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm"><strong>Son Teslim Tarihi:</strong></p>
+                          <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm mt-1">
+                            {stepData.deadline ? new Date(stepData.deadline).toLocaleDateString('tr-TR') : 'Belirtilmemiş'}
+                          </span>
+                        </div>
+                      </div>
+                      {stepData.customRequirements && (
+                        <div>
+                          <p className="text-sm font-medium mb-2">Özel Gereksinimler:</p>
+                          <div className="bg-gray-50 p-4 rounded text-sm whitespace-pre-wrap">
+                            {stepData.customRequirements}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 8. Logo ve Dosyalar */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-indigo-900 mb-3 flex items-center">
                         🏢 Logo ve Kurumsal Kimlik
