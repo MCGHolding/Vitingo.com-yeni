@@ -59,6 +59,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
 
   useEffect(() => {
     loadMeetingRequests();
+    loadUsers();
   }, []);
 
   // Create meeting request
