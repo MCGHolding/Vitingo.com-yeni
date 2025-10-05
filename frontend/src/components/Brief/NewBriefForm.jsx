@@ -1351,10 +1351,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
     
     const handleChange = (e) => {
       const inputValue = e.target.value;
-      const cleanValue = handleTurkishNumberChange('generic', inputValue);
+      
+      // Allow basic numeric input with comma and dot
+      // Only keep digits, comma, and dot
+      const allowedValue = inputValue.replace(/[^0-9,\.]/g, '');
       
       // Validate
-      const error = validateTurkishNumber(cleanValue, 'field', {
+      const error = validateTurkishNumber(allowedValue, 'field', {
         required,
         min,
         max,
@@ -1364,7 +1367,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
       setLocalError(error);
       if (onError) onError(error);
       
-      onChange(cleanValue);
+      onChange(allowedValue);
     };
 
     const handleBlur = (e) => {
