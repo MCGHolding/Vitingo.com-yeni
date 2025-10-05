@@ -7515,23 +7515,31 @@ async def create_sample_calendar_data():
 async def create_meeting_request(request_data: MeetingRequestCreate, organizer_id: str = "demo_user"):
     """Create a new meeting request"""
     try:
-        # Get organizer name (in production, fetch from user database)
-        organizer_name = "Demo User"  # Mock for now
+        # Get organizer name from user database
+        organizer_user = await db.users.find_one({"id": organizer_id})
+        if organizer_user:
+            organizer_name = organizer_user["name"]
+        else:
+            organizer_name = f"User {organizer_id}"  # Fallback
         
-        # Get attendee names (in production, fetch from user database)
+        # Get attendee names from user database
         attendee_names = []
         for attendee_id in request_data.attendee_ids:
-            # Mock names - in production, query user database
-            if attendee_id == "admin_user":
-                attendee_names.append("Admin User")
-            elif attendee_id == "user1":
-                attendee_names.append("Ahmet Yılmaz")
-            elif attendee_id == "user2":
-                attendee_names.append("Fatma Demir")
-            elif attendee_id == "user3":
-                attendee_names.append("Mehmet Kaya")
+            attendee_user = await db.users.find_one({"id": attendee_id})
+            if attendee_user:
+                attendee_names.append(attendee_user["name"])
             else:
-                attendee_names.append(f"User {attendee_id}")
+                # Fallback to mock names for backward compatibility
+                if attendee_id == "admin_user":
+                    attendee_names.append("Admin User")
+                elif attendee_id == "user1":
+                    attendee_names.append("Ahmet Yılmaz")
+                elif attendee_id == "user2":
+                    attendee_names.append("Fatma Demir")
+                elif attendee_id == "user3":
+                    attendee_names.append("Mehmet Kaya")
+                else:
+                    attendee_names.append(f"User {attendee_id}")
         
         # Create meeting request
         meeting_request = MeetingRequest(
