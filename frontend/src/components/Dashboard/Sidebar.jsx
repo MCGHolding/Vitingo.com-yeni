@@ -48,14 +48,6 @@ import {
   ShoppingCart,
   FileX,
   Briefcase,
-  Archive,
-  Pause,
-  MessageSquare,
-  PenTool,
-  FolderOpen,
-  Truck,
-  UserCheck,
-  Search
 } from 'lucide-react';
 
 // Function to get navigation based on user department
