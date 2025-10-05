@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Paperclip, Smile, Users, MessageCircle } from 'lucide-react';
+import EmojiPicker from 'emoji-picker-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
