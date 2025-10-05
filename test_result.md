@@ -2231,7 +2231,10 @@ agent_communication:
 
 test_plan:
   current_focus: 
-    - "Step 6 Validation Fixes for Sonraki Button"
+    - "Meeting Request Creation Test"
+    - "Meeting Request Retrieval Test"
+    - "Meeting Request Response Test"
+    - "Meeting Request Database Integration Test"
   stuck_tasks: 
     - "AI Generation OpenAI Integration Issue"
   test_all: false
