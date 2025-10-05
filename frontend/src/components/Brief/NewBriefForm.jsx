@@ -236,7 +236,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const validateTurkishNumber = (value, fieldName, options = {}) => {
     const { required = false, min = 0, max = Infinity, maxDecimals = 2 } = options;
     
-    console.log('🔍 Validating Turkish number:', value, 'for field:', fieldName);
+    // console.log('🔍 Validating Turkish number:', value, 'for field:', fieldName);
     
     if (!value || value.trim() === '') {
       return required ? "Bu alan zorunludur" : "";
