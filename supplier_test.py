@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://crm-briefer.preview.emergentagent.com"
+BACKEND_URL = "https://brief-offer-system.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None
