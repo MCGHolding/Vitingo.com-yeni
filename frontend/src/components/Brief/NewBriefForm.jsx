@@ -3717,6 +3717,157 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </div>
         )}
 
+        {/* Final Success Modal */}
+        {isFinalSuccessModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-auto shadow-2xl">
+              {/* Modal Header */}
+              <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-8 rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 className="text-3xl font-bold">🎉 Brief Başarıyla Tamamlandı!</h2>
+                      <p className="text-green-100 mt-1">Stand tasarım brief'iniz hazır ve paylaşıma uygun</p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsFinalSuccessModalOpen(false)}
+                    className="text-white hover:bg-white hover:bg-opacity-20"
+                  >
+                    <X className="h-6 w-6" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-8 space-y-8">
+                {/* Brief Summary Info */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    📋 Brief Özeti
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Brief ID:</span>
+                        <span className="text-blue-600 font-bold">{stepData.briefId}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Oluşturulma Tarihi:</span>
+                        <span className="text-gray-900">{new Date().toLocaleDateString('tr-TR')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Proje:</span>
+                        <span className="text-gray-900">{stepData.selectedProject || formData.projectName || 'Belirtilmemiş'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Müşteri:</span>
+                        <span className="text-gray-900">{customers.find(c => c.id.toString() === formData.customerId)?.companyName || 'Belirtilmemiş'}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Etkinlik:</span>
+                        <span className="text-gray-900">{stepData.eventName || formData.eventName || 'Belirtilmemiş'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Tarih:</span>
+                        <span className="text-gray-900">{stepData.eventDate || formData.eventDate || 'Belirtilmemiş'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Konum:</span>
+                        <span className="text-gray-900">{stepData.eventLocation || formData.eventLocation || 'Belirtilmemiş'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">Stand Alanı:</span>
+                        <span className="text-gray-900 font-bold text-purple-600">{stepData.calculatedArea || '0,00'} m²</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Files Section */}
+                {((stepData.designFiles && stepData.designFiles.length > 0) || (stepData.briefFile)) && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      📁 Yüklenen Dosyalar
+                    </h3>
+                    <div className="space-y-3">
+                      {stepData.briefFile && (
+                        <div className="flex items-center justify-between bg-white p-4 rounded-lg border">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-2xl">📄</span>
+                            <div>
+                              <p className="font-medium text-gray-900">Brief Dosyası</p>
+                              <p className="text-sm text-gray-500">{stepData.briefFile.name}</p>
+                            </div>
+                          </div>
+                          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            Hazır
+                          </span>
+                        </div>
+                      )}
+                      {stepData.designFiles && stepData.designFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-white p-4 rounded-lg border">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-2xl">
+                              {file.name.toLowerCase().endsWith('.pdf') ? '📄' : 
+                               file.name.toLowerCase().match(/\.(jpg|jpeg|png)$/) ? '🖼️' : 
+                               file.name.toLowerCase().endsWith('.zip') ? '🗂️' : 
+                               file.name.toLowerCase().endsWith('.cad') ? '📐' : '📁'}
+                            </span>
+                            <div>
+                              <p className="font-medium text-gray-900">{file.name}</p>
+                              {file.size && (
+                                <p className="text-sm text-gray-500">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+                              )}
+                            </div>
+                          </div>
+                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                            Tasarım
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex justify-between items-center pt-6 border-t">
+                  <div className="text-sm text-gray-500">
+                    Brief Link: <a href={`https://crm-briefer.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} 
+                               className="text-blue-600 underline">Brief'i Görüntüle</a>
+                  </div>
+                  <div className="flex space-x-3">
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setIsFinalSuccessModalOpen(false);
+                        onBackToDashboard();
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
+                      </svg>
+                      Dashboard'a Dön
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Design Preferences Card - Show only in advanced mode */}
         {showAdvanced && (
           <Card>
