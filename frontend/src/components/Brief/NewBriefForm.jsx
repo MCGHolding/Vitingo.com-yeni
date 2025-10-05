@@ -3403,28 +3403,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   </div>
 
                   <div className="space-y-6">
-                    {/* 1. Proje Bilgileri */}
-                    <div className="bg-white rounded-lg p-5 shadow-sm">
-                      <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
-                        📋 Proje Bilgileri
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div className="space-y-2">
-                          <p><strong>Proje:</strong> {stepData.selectedProject || 'Belirtilmemiş'}</p>
-                          <p><strong>Etkinlik Adı:</strong> {stepData.eventName || 'Belirtilmemiş'}</p>
-                          <p><strong>Etkinlik Yeri:</strong> {stepData.eventLocation || 'Belirtilmemiş'}</p>
-                          <p><strong>Fuar Merkezi:</strong> {stepData.conventionCenter || 'Belirtilmemiş'}</p>
-                        </div>
-                        <div className="space-y-2">
-                          <p><strong>Etkinlik Tarihi:</strong> {stepData.eventDate || 'Belirtilmemiş'}</p>
-                          <p><strong>Ülke:</strong> {stepData.eventCountry || 'Belirtilmemiş'}</p>
-                          <p><strong>Ülke Profili:</strong> {stepData.selectedCountryProfile || 'Belirtilmemiş'}</p>
-                          <p><strong>Stand Alanı:</strong> {stepData.eventSpace || 'Belirtilmemiş'}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 2. Stand Boyutları */}
+                    {/* Stand Boyutları - Proje Bilgileri bölümü kaldırıldı */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
                         📐 Stand Boyutları
