@@ -1568,6 +1568,9 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+# Global variable to store meeting ID for subsequent tests
+test_meeting_id = None
+
 def test_meeting_request_creation():
     """
     Test POST /api/meeting-requests endpoint to create a meeting request for testing responses.
@@ -1578,6 +1581,8 @@ def test_meeting_request_creation():
     3. Store meeting request in database
     4. Generate unique ID and timestamps
     """
+    
+    global test_meeting_id
     
     print("=" * 80)
     print("TESTING MEETING REQUEST CREATION")
@@ -1610,7 +1615,7 @@ def test_meeting_request_creation():
         else:
             print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
             print(f"   Response: {response.text}")
-            return False, None
+            return False
         
         # Test 2: Parse response
         print("\n2. Parsing response...")
@@ -1619,7 +1624,7 @@ def test_meeting_request_creation():
             print(f"   Response type: {type(meeting_request)}")
         except Exception as e:
             print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
-            return False, None
+            return False
         
         # Test 3: Validate response structure
         print("\n3. Validating meeting request structure...")
@@ -1634,7 +1639,7 @@ def test_meeting_request_creation():
         
         if missing_fields:
             print(f"   ❌ FAIL: Missing required fields: {missing_fields}")
-            return False, None
+            return False
         
         print("   ✅ PASS: Meeting request has all required fields")
         
@@ -1647,22 +1652,25 @@ def test_meeting_request_creation():
         
         if not meeting_id:
             print("   ❌ FAIL: Meeting ID should be generated")
-            return False, None
+            return False
         print(f"   ✅ PASS: Generated meeting ID: {meeting_id}")
+        
+        # Store meeting ID for subsequent tests
+        test_meeting_id = meeting_id
         
         if subject != test_meeting_data["subject"]:
             print(f"   ❌ FAIL: Subject mismatch. Expected: {test_meeting_data['subject']}, Got: {subject}")
-            return False, None
+            return False
         print(f"   ✅ PASS: Subject matches: {subject}")
         
         if attendee_ids != test_meeting_data["attendee_ids"]:
             print(f"   ❌ FAIL: Attendee IDs mismatch. Expected: {test_meeting_data['attendee_ids']}, Got: {attendee_ids}")
-            return False, None
+            return False
         print(f"   ✅ PASS: Attendee IDs match: {attendee_ids}")
         
         if len(attendee_names) != len(attendee_ids):
             print(f"   ❌ FAIL: Attendee names count mismatch. Expected: {len(attendee_ids)}, Got: {len(attendee_names)}")
-            return False, None
+            return False
         print(f"   ✅ PASS: Attendee names generated: {attendee_names}")
         
         print("\n" + "=" * 80)
@@ -1677,14 +1685,14 @@ def test_meeting_request_creation():
         print(f"   Subject: {subject}")
         print(f"   Attendees: {len(attendee_ids)} people")
         
-        return True, meeting_id
+        return True
         
     except requests.exceptions.RequestException as e:
         print(f"\n❌ FAIL: Network error occurred: {str(e)}")
-        return False, None
+        return False
     except Exception as e:
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
-        return False, None
+        return False
 
 def test_meeting_request_response_endpoint(meeting_id):
     """
