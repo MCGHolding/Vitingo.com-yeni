@@ -579,6 +579,21 @@ const Dashboard = () => {
     console.log('✅ Current view set to: new-teklif');
   };
 
+  const handleCalendar = () => {
+    console.log('🗓️ handleCalendar called - setting view to calendar');
+    setCurrentView('calendar');
+  };
+
+  const handleNewMeeting = () => {
+    console.log('➕ handleNewMeeting called - setting view to new-meeting');
+    setCurrentView('new-meeting');
+  };
+
+  const handleMeetingInvitations = () => {
+    console.log('📬 handleMeetingInvitations called - setting view to meeting-invitations');
+    setCurrentView('meeting-invitations');
+  };
+
   const handleAllBriefs = () => {
     setCurrentView('all-briefs');
   };
