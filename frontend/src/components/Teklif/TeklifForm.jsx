@@ -487,8 +487,8 @@ Saygılarımızla,`;
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Vade Sistemi */}
       <Card>
