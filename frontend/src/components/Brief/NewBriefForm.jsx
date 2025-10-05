@@ -1148,6 +1148,25 @@ export default function NewBriefForm({ onBackToDashboard }) {
     setIsNewCategoryModalOpen(true);
   };
 
+  // Step 1 validation function
+  const canProceedFromStep1 = () => {
+    // Check required fields for Step 1
+    const hasProject = formData.projectId && formData.projectId.trim() !== '';
+    const hasCustomer = formData.customerId && formData.customerId.trim() !== '';
+    const hasAuthorizedPerson = selectedPersonId && selectedPersonId.trim() !== '';
+    
+    console.log('🔍 Step 1 validation:', { 
+      hasProject, 
+      hasCustomer, 
+      hasAuthorizedPerson,
+      projectId: formData.projectId,
+      customerId: formData.customerId,
+      selectedPersonId
+    });
+    
+    return hasProject && hasCustomer && hasAuthorizedPerson;
+  };
+
   const canProceedFromStep2 = () => {
     // Check if stand elements are selected
     const hasSelectedItems = stepData.selectedItems.length > 0;
