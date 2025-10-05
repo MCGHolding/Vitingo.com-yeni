@@ -381,7 +381,8 @@ export default function Sidebar({
   // Calendar handlers
   onCalendar,
   onNewMeeting,
-  onMeetingInvitations
+  onMeetingInvitations,
+  onMeetingRequests
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openNestedSubmenu, setOpenNestedSubmenu] = useState(null);
