@@ -156,29 +156,7 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
     }
   };
 
-  // Respond to invitation
-  const handleInvitationResponse = async (invitationId, status, message = '') => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/calendar/invitations/${invitationId}/respond`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          invitation_id: invitationId,
-          status: status,
-          message: message
-        })
-      });
-
-      if (response.ok) {
-        loadInvitations(); // Reload invitations
-        loadEvents(); // Reload events to see updated attendee status
-      }
-    } catch (error) {
-      console.error('Error responding to invitation:', error);
-    }
-  };
+  // Removed invitation response functionality
 
   const canViewAllCalendars = currentUser.role === 'admin' || currentUser.role === 'super_admin';
 
