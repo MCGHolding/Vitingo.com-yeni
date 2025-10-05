@@ -309,7 +309,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           </div>
         ) : (
           <div className="divide-y">
-            {meetingRequests.map((request) => (
+            {filteredRequests.map((request) => (
               <div key={request.id} className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
