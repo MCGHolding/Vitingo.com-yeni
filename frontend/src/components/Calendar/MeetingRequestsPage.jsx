@@ -300,7 +300,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           <div className="flex items-center justify-center h-96">
             <div className="text-gray-500">Toplantı talepleri yükleniyor...</div>
           </div>
-        ) : meetingRequests.length === 0 ? (
+        ) : filteredRequests.length === 0 ? (
           <div className="flex items-center justify-center h-96">
             <div className="text-center">
               <Clock className="h-16 w-16 text-gray-300 mx-auto mb-4" />
