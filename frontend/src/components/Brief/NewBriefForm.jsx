@@ -2647,6 +2647,33 @@ export default function NewBriefForm({ onBackToDashboard }) {
                             <p className="text-xs text-gray-500 mt-2">
                               PDF, DOC, DOCX, TXT dosyaları kabul edilir
                             </p>
+                            
+                            {/* Show uploaded file info */}
+                            {stepData.briefFile && (
+                              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-green-600">📄</span>
+                                  <div>
+                                    <p className="text-sm font-medium text-green-800">{stepData.briefFile.name}</p>
+                                    <p className="text-xs text-green-600">
+                                      {(stepData.briefFile.size / 1024 / 1024).toFixed(1)} MB
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setStepData(prev => ({ ...prev, briefFile: null }));
+                                      document.getElementById('brief-file-upload').value = '';
+                                      showToast('info', 'Dosya Kaldırıldı', 'Brief dosyası kaldırıldı');
+                                    }}
+                                    className="ml-auto text-red-600 hover:text-red-800"
+                                    title="Dosyayı kaldır"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
