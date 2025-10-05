@@ -170,6 +170,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
   // Multi-step form states
   const [currentStep, setCurrentStep] = useState(1);
   const [stepData, setStepData] = useState({
+    // Brief ID for tracking
+    briefId: `brief_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    
     // Stand Elements - Recursive Selection State
     currentPath: [], // Array of selected keys for current path
     selectedItems: [], // Array of complete selections
