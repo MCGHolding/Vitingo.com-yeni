@@ -179,6 +179,11 @@ export default function NewBriefForm({ onBackToDashboard }) {
     standElements: {}, // For backward compatibility
     features: {}, // Features added to specific paths { "flooring.raised36mm": [{ name: "Renk", value: "Kırmızı", type: "text" }] }
     
+    // Stand Dimensions (Step 2)
+    standWidth: '',  // Stand Eni (cm)
+    standLength: '', // Stand Boyu (cm)
+    calculatedArea: 0 // Otomatik hesaplanan alan (m²)
+    
     // Other step data
     employeeCount: '',
     employeeDetails: '',
