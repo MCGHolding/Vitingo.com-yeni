@@ -651,12 +651,12 @@ Saygılarımızla,`;
                   <option key={hizmet} value={hizmet}>{hizmet}</option>
                 ))}
             </select>
-            <Button
+            <button
               onClick={() => setIsDahilHizmetEklemeModalOpen(true)}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded-md text-white"
             >
               <Plus className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
           
           {/* Seçilen Dahil Hizmetler */}
