@@ -3358,7 +3358,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         </div>
                         <div className="bg-purple-50 p-4 rounded-lg text-center">
                           <div className="text-2xl font-bold text-purple-700">
-                            {stepData.calculatedArea || '0.00'} m²
+                            {stepData.calculatedArea || '0,00'} m²
                           </div>
                           <div className="text-sm text-purple-600 font-medium">Toplam Alan</div>
                         </div>
