@@ -304,7 +304,21 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           <div className="flex items-center justify-center h-96">
             <div className="text-center">
               <Clock className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Henüz toplantı talebi yok</p>
+              {activeTab === 'received' && (
+                <div>
+                  <p className="text-gray-500 mb-2">Size gönderilen toplantı daveti yok</p>
+                  <p className="text-gray-400 text-sm">Birisi size toplantı daveti gönderdiğinde burada görüntülenecek</p>
+                </div>
+              )}
+              {activeTab === 'sent' && (
+                <div>
+                  <p className="text-gray-500 mb-2">Henüz toplantı talebi göndermediniz</p>
+                  <p className="text-gray-400 text-sm">Yeni bir toplantı talebi oluşturmak için yukarıdaki butonu kullanın</p>
+                </div>
+              )}
+              {activeTab === 'all' && (
+                <p className="text-gray-500">Henüz toplantı talebi yok</p>
+              )}
             </div>
           </div>
         ) : (
