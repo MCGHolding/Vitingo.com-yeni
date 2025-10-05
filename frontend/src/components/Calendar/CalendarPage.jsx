@@ -76,18 +76,7 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
     }
   };
 
-  // Load invitations
-  const loadInvitations = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/calendar/invitations/${currentUser.id}`);
-      if (response.ok) {
-        const invitationsData = await response.json();
-        setInvitations(invitationsData);
-      }
-    } catch (error) {
-      console.error('Error loading invitations:', error);
-    }
-  };
+  // Removed invitation loading functionality
 
   useEffect(() => {
     loadEvents();
