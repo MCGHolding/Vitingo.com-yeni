@@ -4556,34 +4556,26 @@ def run_recursive_stand_elements_tests():
         return False
 
 if __name__ == "__main__":
-    # Run the AI Design Generation endpoint tests
-    print("🚀 Starting AI Design Generation API Endpoint Testing...")
+    # Run the Stand Elements API endpoint tests
+    print("🚀 Starting Stand Elements API Endpoint Testing...")
     print("=" * 80)
     
     all_tests_passed = True
     
-    # Test 1: OpenAI Integration Status
+    # Test 1: Stand Elements GET Endpoint
     print("\n" + "="*50)
-    print("TEST 1: OpenAI Integration Status")
+    print("TEST 1: Stand Elements GET Endpoint")
     print("="*50)
-    integration_success = test_openai_integration_status()
-    if not integration_success:
+    get_success = test_stand_elements_get_endpoint()
+    if not get_success:
         all_tests_passed = False
     
-    # Test 2: AI Design Generation Endpoint
+    # Test 2: Detailed Recursive Structure Analysis
     print("\n" + "="*50)
-    print("TEST 2: AI Design Generation Endpoint")
+    print("TEST 2: Detailed Recursive Structure Analysis")
     print("="*50)
-    generation_success = test_ai_design_generation_endpoint()
-    if not generation_success:
-        all_tests_passed = False
-    
-    # Test 3: Error Handling
-    print("\n" + "="*50)
-    print("TEST 3: Error Handling")
-    print("="*50)
-    error_handling_success = test_ai_design_generation_error_handling()
-    if not error_handling_success:
+    recursive_success = test_stand_elements_recursive_structure_detailed()
+    if not recursive_success:
         all_tests_passed = False
     
     # Final Results
@@ -4592,15 +4584,17 @@ if __name__ == "__main__":
     print("="*80)
     
     if all_tests_passed:
-        print("🎉 AI Design Generation API Testing Complete - All Tests Passed!")
-        print("✅ EMERGENT_LLM_KEY configuration working")
-        print("✅ EmergentIntegrations library functional")
-        print("✅ POST /api/generate-stand-designs endpoint working")
-        print("✅ Response format correct (designs array with required fields)")
-        print("✅ Error handling working properly")
-        print("✅ OpenAI image generation successful")
-        print("\nAI backend'inin çalışıp çalışmadığı kapsamlı test edildi ve başarılı!")
+        print("🎉 Stand Elements API Testing Complete - All Tests Passed!")
+        print("✅ GET /api/stand-elements endpoint working correctly")
+        print("✅ Returns correct structured data for dropdown system")
+        print("✅ Recursive structure with flooring and deneme_1759604134588 (Duvar) confirmed")
+        print("✅ API response format matches frontend expectations")
+        print("✅ Hierarchical relationships (structure.children) working")
+        print("✅ Response includes labels, keys, and hierarchical relationships")
+        print("✅ No errors in API responses")
+        print("✅ Multi-level dropdown cascade system supported")
+        print("\nStand elements API functionality has been comprehensively tested and is working correctly!")
     else:
-        print("❌ Some AI Design Generation tests failed - please review the implementation")
-        print("AI backend test sonuçlarını kontrol edin ve sorunları düzeltin.")
+        print("❌ Some Stand Elements API tests failed - please review the implementation")
+        print("Stand elements API test sonuçlarını kontrol edin ve sorunları düzeltin.")
         sys.exit(1)
