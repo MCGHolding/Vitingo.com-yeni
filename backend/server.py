@@ -7516,8 +7516,11 @@ async def create_sample_calendar_data():
 async def create_meeting_request(request_data: MeetingRequestCreate, organizer_id: str = "demo_user"):
     """Create a new meeting request"""
     try:
+        # Use organizer_id from request data if provided, otherwise use parameter default
+        actual_organizer_id = request_data.organizer_id if request_data.organizer_id else organizer_id
+        
         # Get organizer name from user database
-        organizer_user = await db.users.find_one({"id": organizer_id})
+        organizer_user = await db.users.find_one({"id": actual_organizer_id})
         if organizer_user:
             organizer_name = organizer_user["name"]
         else:
