@@ -248,17 +248,34 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
 
                       {/* Location/Platform */}
                       <div className="space-y-2">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          {request.meeting_type === 'physical' ? (
-                            <>
-                              <MapPin className="h-4 w-4" />
-                              <span>Fiziki: {request.location}</span>
-                            </>
-                          ) : (
-                            <>
-                              <Video className="h-4 w-4" />
-                              <span>Sanal: {request.platform}</span>
-                            </>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            {request.meeting_type === 'physical' ? (
+                              <>
+                                <MapPin className="h-4 w-4" />
+                                <span>Fiziki: {request.location}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Video className="h-4 w-4" />
+                                <span>Sanal: {request.platform}</span>
+                              </>
+                            )}
+                          </div>
+                          
+                          {/* Meeting Link - Only for virtual meetings */}
+                          {request.meeting_type === 'virtual' && request.meeting_link && (
+                            <div className="flex items-center space-x-2 text-sm">
+                              <ExternalLink className="h-4 w-4 text-blue-500" />
+                              <a
+                                href={request.meeting_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
+                              >
+                                Toplantıya Katıl
+                              </a>
+                            </div>
                           )}
                         </div>
                         <div className="flex items-start space-x-2 text-sm text-gray-600">
