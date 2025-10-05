@@ -6,6 +6,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { useActivityTracker } from './hooks/useActivityTracker';
 import Sidebar from './components/Dashboard/Sidebar';
 import CalendarPage from './components/Calendar/CalendarPage';
+import MeetingRequestsPage from './components/Calendar/MeetingRequestsPage';
 import StatCard from './components/Dashboard/StatCard';
 import RevenueChart from './components/Dashboard/RevenueChart';
 import CustomerSegmentChart from './components/Dashboard/CustomerSegmentChart';
