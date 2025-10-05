@@ -852,24 +852,24 @@ Saygılarımızla,`;
                 </p>
               </div>
               <div className="flex justify-end space-x-3 pt-4 border-t">
-                <Button
+                <button
                   onClick={() => setIsKosulEklemeModalOpen(false)}
-                  variant="outline"
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
                 >
                   İptal
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={() => {
                     console.log('Koşul kaydediliyor:', yeniKosul);
                     setIsKosulEklemeModalOpen(false);
                     setYeniKosul({ icerik: '', kisaAd: '' });
                     showToast && showToast('Teklif koşulu başarıyla kaydedildi!', 'success');
                   }}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-white font-medium flex items-center space-x-2"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   Kaydet
-                </Button>
+                </button>
               </div>
             </div>
           </div>
