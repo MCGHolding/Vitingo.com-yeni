@@ -1880,17 +1880,63 @@ export default function NewBriefForm({ onBackToDashboard }) {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Stand Width */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Alan (m²)
+                  Stand Eni (cm) *
                 </label>
-                <Input
-                  type="number"
-                  value={formData.standArea}
-                  onChange={(e) => handleInputChange('standArea', e.target.value)}
-                  placeholder="36"
-                  min="1"
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={stepData.standWidth}
+                  onChange={(e) => handleDimensionChange('width', e.target.value)}
+                  placeholder="600"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    dimensionErrors.width ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
                 />
+                {dimensionErrors.width && (
+                  <p className="text-red-600 text-xs mt-1 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {dimensionErrors.width}
+                  </p>
+                )}
+              </div>
+
+              {/* Stand Length */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stand Boyu (cm) *
+                </label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={stepData.standLength}
+                  onChange={(e) => handleDimensionChange('length', e.target.value)}
+                  placeholder="600"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    dimensionErrors.length ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
+                />
+                {dimensionErrors.length && (
+                  <p className="text-red-600 text-xs mt-1 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {dimensionErrors.length}
+                  </p>
+                )}
+              </div>
+
+              {/* Calculated Area Display */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hesaplanan Alan (m²)
+                </label>
+                <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-800 font-medium">
+                  {stepData.calculatedArea || '0.00'} m²
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  En × Boy / 10.000
+                </p>
               </div>
               
               <div>
