@@ -4235,12 +4235,22 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     className="w-full"
                     rows={4}
                   />
+                ) : featureModalData.featureType === 'number' ? (
+                  <TurkishNumberInput
+                    value={featureModalData.featureValue}
+                    onChange={(value) => setFeatureModalData(prev => ({...prev, featureValue: value}))}
+                    placeholder="Örn: 100,00"
+                    min={0}
+                    max={999999}
+                    maxDecimals={2}
+                    className="w-full"
+                  />
                 ) : (
                   <Input
-                    type={featureModalData.featureType === 'number' ? 'number' : 'text'}
+                    type="text"
                     value={featureModalData.featureValue}
                     onChange={(e) => setFeatureModalData(prev => ({...prev, featureValue: e.target.value}))}
-                    placeholder={featureModalData.featureType === 'number' ? "Örn: 100" : "Örn: Ahşap, 2x1 metre"}
+                    placeholder="Örn: Ahşap, 2x1 metre"
                     className="w-full"
                   />
                 )}
