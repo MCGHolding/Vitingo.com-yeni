@@ -683,6 +683,7 @@ const Dashboard = () => {
   };
 
   const renderContent = () => {
+    console.log('🔍 renderContent called with currentView:', currentView);
     switch (currentView) {
       case 'open-opportunities':
         return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} />;
