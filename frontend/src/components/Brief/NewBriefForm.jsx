@@ -2621,6 +2621,87 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </div>
               )}
 
+              {currentStep === 7 && (
+                <div className="space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2 flex items-center justify-center gap-2">
+                      📋 Bütçe ve Gereksinimler
+                    </h3>
+                    <p className="text-gray-600">
+                      Projeniz için bütçe aralığınızı, teslim tarihini ve özel gereksinimlerinizi belirtiniz
+                    </p>
+                  </div>
+                  
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-white rounded-lg p-6 shadow-sm border">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        {/* Budget Range */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Bütçe Aralığı *
+                          </label>
+                          <select
+                            value={stepData.budgetRange}
+                            onChange={(e) => handleStepDataChange('budgetRange', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                          >
+                            <option value="">Bütçe seçin</option>
+                            <option value="5000-10000">5.000 - 10.000 ₺</option>
+                            <option value="10000-25000">10.000 - 25.000 ₺</option>
+                            <option value="25000-50000">25.000 - 50.000 ₺</option>
+                            <option value="50000-100000">50.000 - 100.000 ₺</option>
+                            <option value="100000-250000">100.000 - 250.000 ₺</option>
+                            <option value="250000-500000">250.000 - 500.000 ₺</option>
+                            <option value="500000+">500.000 ₺ ve üzeri</option>
+                            <option value="custom">Özel bütçe (lütfen açıklayın)</option>
+                          </select>
+                        </div>
+
+                        {/* Deadline */}
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Son Teslim Tarihi *
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="date"
+                              value={stepData.deadline}
+                              onChange={(e) => handleStepDataChange('deadline', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              required
+                              min={new Date().toISOString().split('T')[0]} // Minimum today
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Custom Requirements */}
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Özel Gereksinimler
+                        </label>
+                        <textarea
+                          value={stepData.customRequirements}
+                          onChange={(e) => handleStepDataChange('customRequirements', e.target.value)}
+                          placeholder="Özel talep, kısıtlama veya gereksinimler..."
+                          rows={6}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+                        />
+                        <p className="text-xs text-gray-500">
+                          Proje için özel istekleriniz, kısıtlamalarınız veya dikkat edilmesi gereken hususları belirtebilirsiniz
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {currentStep === 8 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
