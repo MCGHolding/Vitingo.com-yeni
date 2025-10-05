@@ -7596,25 +7596,106 @@ async def respond_to_meeting_request(
         if not meeting_request:
             raise HTTPException(status_code=404, detail="Meeting request not found")
         
-        # Get user name (in production, fetch from user database)
-        user_name = "Demo User"  # Mock for now
+        # Get responding user details
+        responding_user = await db.users.find_one({"id": user_id})
+        user_name = responding_user["name"] if responding_user else f"User {user_id}"
+        user_email = responding_user["email"] if responding_user else f"{user_id}@company.com"
         
-        # Create response record
-        response_record = MeetingRequestResponse(
-            **response_data.dict(),
-            user_id=user_id,
-            user_name=user_name
-        )
+        # Get organizer details
+        organizer = await db.users.find_one({"id": meeting_request["organizer_id"]})
+        organizer_email = organizer["email"] if organizer else f"{meeting_request['organizer_id']}@company.com"
+        organizer_name = organizer["name"] if organizer else meeting_request["organizer_name"]
         
-        # Save response
-        await db.meeting_request_responses.insert_one(response_record.dict())
+        # Check if user already responded
+        existing_response = await db.meeting_request_responses.find_one({
+            "request_id": request_id,
+            "user_id": user_id
+        })
+        
+        if existing_response:
+            # Update existing response
+            await db.meeting_request_responses.update_one(
+                {"request_id": request_id, "user_id": user_id},
+                {"$set": {
+                    "response": response_data.response,
+                    "message": response_data.message,
+                    "response_date": datetime.now(timezone.utc)
+                }}
+            )
+            response_record_id = existing_response["id"]
+        else:
+            # Create new response record
+            response_record = MeetingRequestResponse(
+                **response_data.dict(),
+                user_id=user_id,
+                user_name=user_name
+            )
+            
+            # Save response
+            await db.meeting_request_responses.insert_one(response_record.dict())
+            response_record_id = response_record.id
+        
+        # Send email notification to organizer
+        try:
+            response_text_map = {
+                "accepted": "kabul etti",
+                "maybe": "belki dedi", 
+                "declined": "reddetti"
+            }
+            
+            response_emoji_map = {
+                "accepted": "✅",
+                "maybe": "❓",
+                "declined": "❌"
+            }
+            
+            response_text = response_text_map.get(response_data.response, response_data.response)
+            response_emoji = response_emoji_map.get(response_data.response, "")
+            
+            email_subject = f"Toplantı Yanıtı: {meeting_request['subject']}"
+            
+            email_body = f"""
+Merhaba {organizer_name},
+
+{user_name}, "{meeting_request['subject']}" konulu toplantı davetinizi {response_emoji} {response_text}.
+
+Toplantı Detayları:
+• Konu: {meeting_request['subject']}
+• Tarih: {meeting_request['date']}
+• Saat: {meeting_request['start_time']} - {meeting_request['end_time']}
+• Tür: {'Fiziki' if meeting_request['meeting_type'] == 'physical' else 'Sanal'}
+• {'Konum: ' + meeting_request.get('location', '') if meeting_request['meeting_type'] == 'physical' else 'Platform: ' + meeting_request.get('platform', '')}
+
+{f"Yanıt Mesajı: {response_data.message}" if response_data.message else ""}
+
+Tüm katılımcı yanıtlarını görmek için sisteme giriş yapabilirsiniz.
+
+İyi çalışmalar,
+Toplantı Yönetim Sistemi
+            """
+            
+            # Send email using the existing email service
+            email_result = email_service.send_user_email(
+                to_email=organizer_email,
+                to_name=organizer_name,
+                from_email="noreply@company.com",
+                from_name="Toplantı Sistemi",
+                subject=email_subject,
+                body=email_body.strip()
+            )
+            
+            logger.info(f"Email notification sent to organizer: {email_result}")
+            
+        except Exception as email_error:
+            logger.error(f"Failed to send email notification: {email_error}")
+            # Don't fail the response if email fails
         
         logger.info(f"Meeting request response saved: {user_id} -> {response_data.response}")
         
         return {
             "success": True,
-            "message": f"Response '{response_data.response}' saved successfully",
-            "response_id": response_record.id
+            "message": f"Yanıtınız '{response_text}' başarıyla kaydedildi ve organize edene bildirildi",
+            "response_id": response_record_id
         }
         
     except HTTPException:
