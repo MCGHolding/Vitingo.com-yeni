@@ -3854,7 +3854,29 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 onClick={() => {
                   console.log('Özellik eklendi:', featureModalData);
                   
-                  // TODO: Save feature to selected item
+                  // Create path key for current selection
+                  const pathKey = featureModalData.currentPath.join('.');
+                  
+                  // Create feature object
+                  const newFeature = {
+                    name: featureModalData.featureName,
+                    value: featureModalData.featureValue,
+                    type: featureModalData.featureType,
+                    createdAt: new Date().toISOString()
+                  };
+                  
+                  // Add feature to stepData
+                  setStepData(prev => ({
+                    ...prev,
+                    features: {
+                      ...prev.features,
+                      [pathKey]: [
+                        ...(prev.features[pathKey] || []),
+                        newFeature
+                      ]
+                    }
+                  }));
+                  
                   showToast('success', 'Özellik Eklendi!', `${featureModalData.featureName} özelliği başarıyla eklendi.`);
                   
                   setIsFeatureModalOpen(false);
