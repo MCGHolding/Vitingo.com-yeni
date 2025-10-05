@@ -242,6 +242,58 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
         </div>
       )}
 
+      {/* Tabs */}
+      <div className="bg-white rounded-lg shadow-sm border mb-6">
+        <div className="border-b">
+          <nav className="flex space-x-8 px-6">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'all'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Tüm Talepler
+              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                {counts.total}
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('received')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'received'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Gelen Davetler
+              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-600">
+                {counts.received}
+              </span>
+              {counts.pendingReceived > 0 && (
+                <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-600">
+                  {counts.pendingReceived} Bekliyor
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('sent')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'sent'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Gönderdiğim Talepler
+              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-600">
+                {counts.sent}
+              </span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* Meeting Requests List */}
       <div className="bg-white rounded-lg shadow-sm border">
         {isLoading ? (
