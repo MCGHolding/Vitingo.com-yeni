@@ -1095,7 +1095,7 @@ const Dashboard = () => {
       // Teklif cases
       case 'new-teklif':
         console.log('🎉 SUCCESS: Rendering SimpleTeklifForm component for currentView:', currentView);
-        return <SimpleTeklifForm onBackToDashboard={handleBackToDashboard} showToast={showToast} />;
+        return <SimpleTeklifForm onBackToDashboard={handleBackToDashboard} />;
 
       case 'closed-briefs':
         return (
