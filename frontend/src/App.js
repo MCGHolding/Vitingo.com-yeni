@@ -88,7 +88,7 @@ import ExpenseReceiptApprovalPage from './components/ExpenseReceipts/ExpenseRece
 import NewBriefForm from './components/Brief/NewBriefForm';
 import NewCollectionForm from './components/Collections/NewCollectionForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
-import SimpleTeklifForm from './components/Teklif/SimpleTeklifForm';
+import TeklifForm from './components/Teklif/TeklifForm';
 import NewCustomerPage from './pages/NewCustomerPage';
 import Header from './components/Dashboard/Header';
 import { 
