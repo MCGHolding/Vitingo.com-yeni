@@ -7524,7 +7524,7 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
         if organizer_user:
             organizer_name = organizer_user["name"]
         else:
-            organizer_name = f"User {organizer_id}"  # Fallback
+            organizer_name = f"User {actual_organizer_id}"  # Fallback
         
         # Get attendee names from user database
         attendee_names = []
