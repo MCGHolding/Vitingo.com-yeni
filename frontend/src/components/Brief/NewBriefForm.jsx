@@ -1091,22 +1091,19 @@ export default function NewBriefForm({ onBackToDashboard }) {
   };
 
   const canProceedFromStep2 = () => {
-    // At least one item must be selected, and if Zemin is selected, it must have proper sub-options
-    const hasSelections = stepData.selectedItems && stepData.selectedItems.length > 0;
+    // Check if stand elements are selected
+    const hasSelectedItems = stepData.selectedItems.length > 0;
     
-    if (!hasSelections) return false;
+    // Check if dimensions are valid
+    const hasValidDimensions = stepData.standWidth && 
+                              stepData.standLength && 
+                              !dimensionErrors.width && 
+                              !dimensionErrors.length &&
+                              stepData.calculatedArea > 0;
     
-    // Check if required elements (like Zemin/flooring) are properly configured
-    const requiredElements = ['flooring']; // Elements that require selection
-    const selectedElements = stepData.selectedItems.map(item => item.element);
+    console.log('🔍 Step 2 validation:', { hasSelectedItems, hasValidDimensions });
     
-    return requiredElements.every(reqElement => {
-      if (!selectedElements.includes(reqElement)) return false; // Required element not selected
-      
-      // Check if the required element has proper sub-selections
-      const elementItems = stepData.selectedItems.filter(item => item.element === reqElement);
-      return elementItems.some(item => item.subOption); // At least one has sub-option
-    }) || !requiredElements.some(reqElement => selectedElements.includes(reqElement)); // Or no required elements selected
+    return hasSelectedItems && hasValidDimensions;
   };
 
   const canProceedFromStep6 = () => {
