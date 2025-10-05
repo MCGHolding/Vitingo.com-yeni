@@ -7546,8 +7546,11 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
                     attendee_names.append(f"User {attendee_id}")
         
         # Create meeting request
+        request_dict = request_data.dict()
+        request_dict.pop('organizer_id', None)  # Remove organizer_id from request data to avoid conflict
+        
         meeting_request = MeetingRequest(
-            **request_data.dict(),
+            **request_dict,
             organizer_id=actual_organizer_id,
             organizer_name=organizer_name,
             attendee_names=attendee_names
