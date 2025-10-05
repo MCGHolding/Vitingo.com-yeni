@@ -2080,6 +2080,12 @@ export default function NewBriefForm({ onBackToDashboard }) {
                                     🎨 {item.color}
                                   </span>
                                 )}
+                                {/* Display Features for this item */}
+                                {stepData.features[item.path] && stepData.features[item.path].map((feature, featureIdx) => (
+                                  <span key={featureIdx} className="bg-green-100 text-green-800 px-2 py-1 rounded">
+                                    ✨ {feature.name}: {feature.value}
+                                  </span>
+                                ))}
                               </div>
                             </div>
                             <Button
