@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { X, Plus, Calendar, Check, Minus, Edit, Save, FileText, Users, Building, MapPin, Globe, Clock, DollarSign, Package } from 'lucide-react';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const TeklifForm = ({ onBackToDashboard, showToast }) => {
   // Form data state
   const [formData, setFormData] = useState({
