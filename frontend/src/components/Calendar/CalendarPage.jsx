@@ -196,9 +196,9 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
   const canViewAllCalendars = currentUser.role === 'admin' || currentUser.role === 'super_admin';
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50">
       {/* Main Calendar Area */}
-      <div className="flex-1 p-6">
+      <div className="p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-3">
