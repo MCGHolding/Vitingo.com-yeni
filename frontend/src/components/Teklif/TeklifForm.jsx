@@ -589,14 +589,14 @@ Saygılarımızla,`;
       </div>
 
       {/* Teklif Ön Yazısı */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
             <Edit className="h-5 w-5" />
             <span>Teklif Ön Yazısı</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </h3>
+        </div>
+        <div className="p-6 space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="font-medium text-blue-900 mb-2">🤖 AI Tarafından Oluşturulan Ön Yazı</h4>
             <div className="text-sm text-gray-700 whitespace-pre-line">
