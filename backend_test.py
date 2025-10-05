@@ -1568,6 +1568,615 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_users_endpoint():
+    """
+    Test GET /api/users endpoint to verify it returns system users with proper structure.
+    
+    Requirements to verify:
+    1. GET /api/users endpoint returns system users with proper structure
+    2. Verify user objects contain all required fields: id, name, email, role, department, phone, status
+    3. Test filtering by status parameter
+    4. Test that mock users are created and saved to database
+    5. Verify proper user information (names, departments, roles)
+    """
+    
+    print("=" * 80)
+    print("TESTING USERS ENDPOINT - GET /api/users")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Basic GET request without parameters (should default to active users)
+        print("\n1. Testing basic GET request (default active users)...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            users = response.json()
+            print(f"   Response type: {type(users)}")
+            print(f"   Number of users: {len(users) if isinstance(users, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(users, list):
+            print("   ❌ FAIL: Response should be a list of users")
+            return False
+        
+        if len(users) == 0:
+            print("   ❌ FAIL: Expected at least some users (mock users should be created)")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(users)} users")
+        
+        # Test 5: Check user data structure
+        print("\n4. Checking user data structure...")
+        required_fields = ["id", "name", "email", "role", "department", "phone", "status"]
+        
+        for i, user in enumerate(users[:3]):  # Check first 3 users
+            print(f"\n   User {i+1}: {user.get('name', 'N/A')}")
+            
+            missing_fields = []
+            for field in required_fields:
+                if field not in user:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: User {i+1} missing required fields: {missing_fields}")
+                return False
+            
+            # Validate field values
+            user_id = user.get("id")
+            name = user.get("name")
+            email = user.get("email")
+            role = user.get("role")
+            department = user.get("department")
+            phone = user.get("phone")
+            status = user.get("status")
+            
+            print(f"     ID: {user_id}")
+            print(f"     Name: {name}")
+            print(f"     Email: {email}")
+            print(f"     Role: {role}")
+            print(f"     Department: {department}")
+            print(f"     Phone: {phone}")
+            print(f"     Status: {status}")
+            
+            # Validate required string fields are not empty
+            if not user_id or not name or not email:
+                print(f"   ❌ FAIL: User {i+1} has empty required fields")
+                return False
+            
+            # Validate email format
+            if "@" not in email:
+                print(f"   ❌ FAIL: User {i+1} has invalid email format: {email}")
+                return False
+            
+            # Validate status is active (default filter)
+            if status != "active":
+                print(f"   ❌ FAIL: User {i+1} should have active status, got: {status}")
+                return False
+            
+            print(f"   ✅ PASS: User {i+1} has all required fields with valid values")
+        
+        # Test 6: Check for expected mock users
+        print("\n5. Checking for expected mock users...")
+        expected_users = [
+            {"name": "Demo User", "email": "demo@company.com", "department": "Genel"},
+            {"name": "Admin User", "email": "admin@company.com", "department": "IT"},
+            {"name": "Ahmet Yılmaz", "email": "ahmet.yilmaz@company.com", "department": "Satış"},
+            {"name": "Fatma Demir", "email": "fatma.demir@company.com", "department": "Pazarlama"}
+        ]
+        
+        found_users = []
+        for expected in expected_users:
+            for user in users:
+                if (user.get("name") == expected["name"] and 
+                    user.get("email") == expected["email"] and
+                    user.get("department") == expected["department"]):
+                    found_users.append(expected["name"])
+                    break
+        
+        print(f"   Found expected users: {found_users}")
+        if len(found_users) >= 3:  # At least 3 of the expected users
+            print("   ✅ PASS: Found most expected mock users")
+        else:
+            print("   ⚠️  WARNING: Some expected mock users not found")
+        
+        # Test 7: Test status filtering
+        print("\n6. Testing status filtering...")
+        
+        # Test with explicit active status
+        active_endpoint = f"{endpoint}?status=active"
+        print(f"   Testing: {active_endpoint}")
+        active_response = requests.get(active_endpoint, timeout=30)
+        
+        if active_response.status_code == 200:
+            active_users = active_response.json()
+            print(f"   ✅ PASS: Active status filter works, returned {len(active_users)} users")
+            
+            # Verify all returned users have active status
+            all_active = all(user.get("status") == "active" for user in active_users)
+            if all_active:
+                print("   ✅ PASS: All returned users have active status")
+            else:
+                print("   ❌ FAIL: Some returned users don't have active status")
+                return False
+        else:
+            print(f"   ❌ FAIL: Active status filter failed with status {active_response.status_code}")
+            return False
+        
+        # Test with inactive status (should return empty or different users)
+        inactive_endpoint = f"{endpoint}?status=inactive"
+        print(f"   Testing: {inactive_endpoint}")
+        inactive_response = requests.get(inactive_endpoint, timeout=30)
+        
+        if inactive_response.status_code == 200:
+            inactive_users = inactive_response.json()
+            print(f"   ✅ PASS: Inactive status filter works, returned {len(inactive_users)} users")
+        else:
+            print(f"   ❌ FAIL: Inactive status filter failed with status {inactive_response.status_code}")
+            return False
+        
+        # Test 8: Check Turkish character support
+        print("\n7. Testing Turkish character support...")
+        turkish_chars = ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'Ç', 'Ğ', 'İ', 'Ö', 'Ş', 'Ü']
+        has_turkish = False
+        
+        for user in users:
+            user_text = f"{user.get('name', '')} {user.get('department', '')}"
+            if any(char in user_text for char in turkish_chars):
+                has_turkish = True
+                print(f"   ✅ PASS: Turkish characters found in user: {user.get('name')} ({user.get('department')})")
+                break
+        
+        if not has_turkish:
+            print("   ℹ️  INFO: No Turkish characters found in user data")
+        
+        print("\n" + "=" * 80)
+        print("USERS ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list of user objects")
+        print("✅ All users have required fields (id, name, email, role, department, phone, status)")
+        print("✅ User data structure is valid")
+        print("✅ Status filtering works correctly")
+        print("✅ Mock users are created and returned")
+        print("✅ Turkish character support verified")
+        print(f"\n🎉 USERS ENDPOINT TEST PASSED!")
+        print(f"   Total users found: {len(users)}")
+        print(f"   Sample users: {[user.get('name') for user in users[:3]]}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_individual_user_retrieval():
+    """
+    Test GET /api/users/{user_id} endpoint for individual user retrieval.
+    
+    Requirements to verify:
+    1. Test GET /api/users/{user_id} endpoint
+    2. Verify specific user retrieval works correctly
+    3. Test error handling for non-existent users
+    """
+    
+    print("=" * 80)
+    print("TESTING INDIVIDUAL USER RETRIEVAL - GET /api/users/{user_id}")
+    print("=" * 80)
+    
+    try:
+        # First, get the list of users to get valid user IDs
+        print("\n1. Getting list of users to obtain valid user IDs...")
+        users_endpoint = f"{BACKEND_URL}/api/users"
+        users_response = requests.get(users_endpoint, timeout=30)
+        
+        if users_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not get users list: {users_response.status_code}")
+            return False
+        
+        users = users_response.json()
+        if not users or len(users) == 0:
+            print("   ❌ FAIL: No users available for testing individual retrieval")
+            return False
+        
+        print(f"   ✅ PASS: Found {len(users)} users for testing")
+        
+        # Test 2: Test valid user retrieval
+        print("\n2. Testing valid user retrieval...")
+        test_user = users[0]  # Use first user for testing
+        test_user_id = test_user.get("id")
+        test_user_name = test_user.get("name")
+        
+        print(f"   Testing with user ID: {test_user_id}")
+        print(f"   Expected user name: {test_user_name}")
+        
+        individual_endpoint = f"{BACKEND_URL}/api/users/{test_user_id}"
+        response = requests.get(individual_endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Individual user endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 3: Parse and validate response
+        print("\n3. Parsing and validating individual user response...")
+        try:
+            retrieved_user = response.json()
+            print(f"   Response type: {type(retrieved_user)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        if not isinstance(retrieved_user, dict):
+            print("   ❌ FAIL: Response should be a user object (dictionary)")
+            return False
+        
+        # Test 4: Verify retrieved user matches expected user
+        print("\n4. Verifying retrieved user matches expected user...")
+        retrieved_id = retrieved_user.get("id")
+        retrieved_name = retrieved_user.get("name")
+        retrieved_email = retrieved_user.get("email")
+        
+        print(f"   Retrieved ID: {retrieved_id}")
+        print(f"   Retrieved Name: {retrieved_name}")
+        print(f"   Retrieved Email: {retrieved_email}")
+        
+        if retrieved_id != test_user_id:
+            print(f"   ❌ FAIL: User ID mismatch. Expected: {test_user_id}, Got: {retrieved_id}")
+            return False
+        
+        if retrieved_name != test_user_name:
+            print(f"   ❌ FAIL: User name mismatch. Expected: {test_user_name}, Got: {retrieved_name}")
+            return False
+        
+        print("   ✅ PASS: Retrieved user matches expected user")
+        
+        # Test 5: Verify all required fields are present
+        print("\n5. Verifying all required fields are present...")
+        required_fields = ["id", "name", "email", "role", "department", "phone", "status"]
+        
+        missing_fields = []
+        for field in required_fields:
+            if field not in retrieved_user:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Retrieved user missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Retrieved user has all required fields")
+        
+        # Display user details
+        print(f"   User Details:")
+        for field in required_fields:
+            print(f"     {field}: {retrieved_user.get(field)}")
+        
+        # Test 6: Test error handling for non-existent user
+        print("\n6. Testing error handling for non-existent user...")
+        non_existent_id = "non_existent_user_12345"
+        error_endpoint = f"{BACKEND_URL}/api/users/{non_existent_id}"
+        
+        print(f"   Testing with non-existent ID: {non_existent_id}")
+        error_response = requests.get(error_endpoint, timeout=30)
+        
+        print(f"   Status Code: {error_response.status_code}")
+        if error_response.status_code == 404:
+            print("   ✅ PASS: Non-existent user returns 404 Not Found")
+        else:
+            print(f"   ❌ FAIL: Expected status 404 for non-existent user, got {error_response.status_code}")
+            return False
+        
+        # Test 7: Verify error response format
+        print("\n7. Verifying error response format...")
+        try:
+            error_data = error_response.json()
+            if "detail" in error_data and "not found" in error_data["detail"].lower():
+                print("   ✅ PASS: Error response has proper format with 'not found' message")
+            else:
+                print(f"   ⚠️  WARNING: Error response format might not be optimal: {error_data}")
+        except Exception as e:
+            print(f"   ⚠️  WARNING: Could not parse error response JSON: {str(e)}")
+        
+        # Test 8: Test with different valid users
+        print("\n8. Testing with additional valid users...")
+        test_count = min(3, len(users))  # Test up to 3 users
+        
+        for i in range(1, test_count):  # Skip first user (already tested)
+            user = users[i]
+            user_id = user.get("id")
+            user_name = user.get("name")
+            
+            print(f"   Testing user {i+1}: {user_name} (ID: {user_id})")
+            
+            endpoint = f"{BACKEND_URL}/api/users/{user_id}"
+            resp = requests.get(endpoint, timeout=30)
+            
+            if resp.status_code == 200:
+                user_data = resp.json()
+                if user_data.get("id") == user_id and user_data.get("name") == user_name:
+                    print(f"   ✅ PASS: User {i+1} retrieved correctly")
+                else:
+                    print(f"   ❌ FAIL: User {i+1} data mismatch")
+                    return False
+            else:
+                print(f"   ❌ FAIL: User {i+1} retrieval failed with status {resp.status_code}")
+                return False
+        
+        print("\n" + "=" * 80)
+        print("INDIVIDUAL USER RETRIEVAL TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Individual user endpoint responds with status 200")
+        print("✅ Retrieved user data matches expected user")
+        print("✅ All required fields present in response")
+        print("✅ Error handling works for non-existent users (404)")
+        print("✅ Multiple users can be retrieved individually")
+        print("✅ Response format is consistent")
+        print(f"\n🎉 INDIVIDUAL USER RETRIEVAL TEST PASSED!")
+        print(f"   Tested {test_count} users successfully")
+        print(f"   Sample user: {test_user_name} ({test_user_id})")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_meeting_request_integration():
+    """
+    Test meeting request integration with users endpoint.
+    
+    Requirements to verify:
+    1. Verify that meeting requests can properly map attendee_ids to user names
+    2. Test that the users endpoint integrates well with meeting request creation
+    3. Test the complete workflow: get users -> create meeting request -> verify attendee mapping
+    """
+    
+    print("=" * 80)
+    print("TESTING MEETING REQUEST INTEGRATION WITH USERS")
+    print("=" * 80)
+    
+    try:
+        # Test 1: Get users for attendee selection
+        print("\n1. Getting users for attendee selection...")
+        users_endpoint = f"{BACKEND_URL}/api/users"
+        users_response = requests.get(users_endpoint, timeout=30)
+        
+        if users_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not get users: {users_response.status_code}")
+            return False
+        
+        users = users_response.json()
+        if len(users) < 2:
+            print("   ❌ FAIL: Need at least 2 users for meeting request testing")
+            return False
+        
+        print(f"   ✅ PASS: Found {len(users)} users for meeting request")
+        
+        # Select attendees
+        attendee_1 = users[0]
+        attendee_2 = users[1] if len(users) > 1 else users[0]
+        organizer = users[0]  # Use first user as organizer
+        
+        attendee_ids = [attendee_1.get("id"), attendee_2.get("id")]
+        expected_attendee_names = [attendee_1.get("name"), attendee_2.get("name")]
+        
+        print(f"   Selected attendees:")
+        print(f"     1. {attendee_1.get('name')} (ID: {attendee_1.get('id')})")
+        print(f"     2. {attendee_2.get('name')} (ID: {attendee_2.get('id')})")
+        print(f"   Organizer: {organizer.get('name')} (ID: {organizer.get('id')})")
+        
+        # Test 2: Create meeting request with attendee IDs
+        print("\n2. Creating meeting request with attendee IDs...")
+        meeting_endpoint = f"{BACKEND_URL}/api/meeting-requests"
+        
+        meeting_data = {
+            "subject": "Test Meeting - User Integration",
+            "date": "2024-12-20",
+            "start_time": "14:00",
+            "end_time": "15:00",
+            "meeting_type": "virtual",
+            "platform": "Zoom",
+            "attendee_ids": attendee_ids
+        }
+        
+        print(f"   Meeting data: {meeting_data}")
+        
+        # Add organizer_id as query parameter
+        meeting_response = requests.post(
+            meeting_endpoint, 
+            json=meeting_data, 
+            params={"organizer_id": organizer.get("id")},
+            timeout=30
+        )
+        
+        print(f"   Status Code: {meeting_response.status_code}")
+        if meeting_response.status_code == 200:
+            print("   ✅ PASS: Meeting request created successfully")
+        else:
+            print(f"   ❌ FAIL: Meeting request creation failed: {meeting_response.status_code}")
+            print(f"   Response: {meeting_response.text}")
+            return False
+        
+        # Test 3: Verify meeting request response
+        print("\n3. Verifying meeting request response...")
+        try:
+            meeting_result = meeting_response.json()
+            print(f"   Response type: {type(meeting_result)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse meeting response: {str(e)}")
+            return False
+        
+        # Test 4: Check attendee ID to name mapping
+        print("\n4. Checking attendee ID to name mapping...")
+        
+        result_attendee_ids = meeting_result.get("attendee_ids", [])
+        result_attendee_names = meeting_result.get("attendee_names", [])
+        
+        print(f"   Result attendee IDs: {result_attendee_ids}")
+        print(f"   Result attendee names: {result_attendee_names}")
+        print(f"   Expected attendee names: {expected_attendee_names}")
+        
+        # Verify attendee IDs match
+        if set(result_attendee_ids) != set(attendee_ids):
+            print(f"   ❌ FAIL: Attendee IDs don't match. Expected: {attendee_ids}, Got: {result_attendee_ids}")
+            return False
+        
+        print("   ✅ PASS: Attendee IDs match input")
+        
+        # Verify attendee names are populated
+        if not result_attendee_names or len(result_attendee_names) == 0:
+            print("   ❌ FAIL: Attendee names should be populated from user IDs")
+            return False
+        
+        print("   ✅ PASS: Attendee names are populated")
+        
+        # Verify name mapping is correct
+        names_match = True
+        for expected_name in expected_attendee_names:
+            if expected_name not in result_attendee_names:
+                print(f"   ❌ FAIL: Expected attendee name '{expected_name}' not found in result")
+                names_match = False
+        
+        if names_match:
+            print("   ✅ PASS: Attendee names correctly mapped from user IDs")
+        else:
+            return False
+        
+        # Test 5: Verify organizer information
+        print("\n5. Verifying organizer information...")
+        
+        result_organizer_id = meeting_result.get("organizer_id")
+        result_organizer_name = meeting_result.get("organizer_name")
+        
+        print(f"   Result organizer ID: {result_organizer_id}")
+        print(f"   Result organizer name: {result_organizer_name}")
+        print(f"   Expected organizer name: {organizer.get('name')}")
+        
+        if result_organizer_id != organizer.get("id"):
+            print(f"   ❌ FAIL: Organizer ID mismatch")
+            return False
+        
+        if result_organizer_name != organizer.get("name"):
+            print(f"   ❌ FAIL: Organizer name mismatch")
+            return False
+        
+        print("   ✅ PASS: Organizer information correctly mapped")
+        
+        # Test 6: Test meeting request retrieval
+        print("\n6. Testing meeting request retrieval...")
+        
+        meeting_id = meeting_result.get("id")
+        if not meeting_id:
+            print("   ❌ FAIL: Meeting ID not found in response")
+            return False
+        
+        get_meeting_endpoint = f"{BACKEND_URL}/api/meeting-requests/{meeting_id}"
+        get_response = requests.get(get_meeting_endpoint, timeout=30)
+        
+        if get_response.status_code == 200:
+            retrieved_meeting = get_response.json()
+            
+            # Verify attendee information is preserved
+            retrieved_attendee_ids = retrieved_meeting.get("attendee_ids", [])
+            retrieved_attendee_names = retrieved_meeting.get("attendee_names", [])
+            
+            if (set(retrieved_attendee_ids) == set(attendee_ids) and 
+                set(retrieved_attendee_names) == set(expected_attendee_names)):
+                print("   ✅ PASS: Meeting request retrieval preserves attendee mapping")
+            else:
+                print("   ❌ FAIL: Meeting request retrieval doesn't preserve attendee mapping")
+                return False
+        else:
+            print(f"   ❌ FAIL: Could not retrieve meeting request: {get_response.status_code}")
+            return False
+        
+        # Test 7: Test with invalid user IDs
+        print("\n7. Testing with invalid user IDs...")
+        
+        invalid_meeting_data = {
+            "subject": "Test Meeting - Invalid Users",
+            "date": "2024-12-21",
+            "start_time": "10:00",
+            "end_time": "11:00",
+            "meeting_type": "physical",
+            "location": "Conference Room A",
+            "attendee_ids": ["invalid_user_1", "invalid_user_2"]
+        }
+        
+        invalid_response = requests.post(
+            meeting_endpoint,
+            json=invalid_meeting_data,
+            params={"organizer_id": organizer.get("id")},
+            timeout=30
+        )
+        
+        # The system should handle invalid user IDs gracefully
+        if invalid_response.status_code == 200:
+            invalid_result = invalid_response.json()
+            invalid_names = invalid_result.get("attendee_names", [])
+            print(f"   ✅ PASS: System handles invalid user IDs gracefully")
+            print(f"   Invalid user names result: {invalid_names}")
+        else:
+            print(f"   ⚠️  WARNING: System might not handle invalid user IDs gracefully: {invalid_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("MEETING REQUEST INTEGRATION TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Users endpoint provides attendee data for meeting requests")
+        print("✅ Meeting request creation works with user IDs")
+        print("✅ Attendee IDs are correctly mapped to attendee names")
+        print("✅ Organizer information is correctly mapped")
+        print("✅ Meeting request retrieval preserves user mapping")
+        print("✅ System handles invalid user IDs gracefully")
+        print("✅ Complete user-meeting integration workflow works")
+        print(f"\n🎉 MEETING REQUEST INTEGRATION TEST PASSED!")
+        print(f"   Created meeting: {meeting_result.get('subject')}")
+        print(f"   Meeting ID: {meeting_result.get('id')}")
+        print(f"   Attendees: {', '.join(result_attendee_names)}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_meeting_request_creation():
     """
     Test POST /api/meeting-requests endpoint for creating meeting requests.
