@@ -1125,6 +1125,10 @@ const Dashboard = () => {
       case 'meeting-invitations':
         console.log('🗓️ SUCCESS: Rendering CalendarPage component for currentView:', currentView);
         return <CalendarPage currentUser={{ id: 'demo_user', role: user?.role || 'user', name: user?.name || 'Demo User' }} />;
+      
+      case 'meeting-requests':
+        console.log('📋 SUCCESS: Rendering MeetingRequestsPage component for currentView:', currentView);
+        return <MeetingRequestsPage currentUser={{ id: 'demo_user', role: user?.role || 'user', name: user?.name || 'Demo User' }} />;
 
       case 'closed-briefs':
         return (
