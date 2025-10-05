@@ -460,7 +460,17 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                       </div>
                     ) : (
                       <div className="p-3 space-y-2">
-                        {users.map(user => (
+                        {users
+                          .filter(user => {
+                            if (!userSearchTerm) return true;
+                            const searchLower = userSearchTerm.toLowerCase();
+                            return (
+                              user.name.toLowerCase().includes(searchLower) ||
+                              user.email.toLowerCase().includes(searchLower) ||
+                              (user.department && user.department.toLowerCase().includes(searchLower))
+                            );
+                          })
+                          .map(user => (
                           <label key={user.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
                             <input
                               type="checkbox"
