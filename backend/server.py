@@ -7561,6 +7561,7 @@ class MeetingRequestWithResponses(BaseModel):
     meeting_type: str
     location: Optional[str] = None
     platform: Optional[str] = None
+    meeting_link: Optional[str] = None
     attendee_ids: List[str]
     attendee_names: List[str]
     organizer_id: str
