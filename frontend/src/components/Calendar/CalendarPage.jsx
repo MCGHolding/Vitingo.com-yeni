@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Calendar, Clock, Users, MapPin, Plus, Edit2, Trash2, Check, X } from 'lucide-react';
+import { Calendar, Plus, Edit2, Trash2, X } from 'lucide-react';
 import moment from 'moment';
 import ChatModal from './ChatModal';
 
