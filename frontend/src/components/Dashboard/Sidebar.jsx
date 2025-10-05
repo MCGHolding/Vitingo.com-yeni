@@ -901,6 +901,14 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Teklif menu actions
+    if (subItem && subItem.name === 'Yeni Teklif') {
+      if (onNewTeklif) {
+        onNewTeklif();
+      }
+      return;
+    }
     
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
