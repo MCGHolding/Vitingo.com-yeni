@@ -75,10 +75,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const success = await login(cred.username, cred.password);
-      if (!success) {
-        setError('Geçersiz kullanıcı adı veya şifre');
-      }
+      await login(cred);
     } catch (err) {
       setError(err.message || 'Giriş yapılırken bir hata oluştu');
     } finally {
