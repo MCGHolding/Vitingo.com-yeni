@@ -1872,175 +1872,144 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     </div>
 
                     {/* Recursive Dropdown Levels */}
-                    {(() => {
-                      console.log(`🔄 RENDER - Current stepData.currentPath:`, stepData.currentPath);
-                      console.log(`🔄 RENDER - Current stepData.currentPath.length:`, stepData.currentPath.length);
+                    {Array.from({ length: stepData.currentPath.length + 1 }, (_, level) => {
+                      console.log(`🔄 RENDER - Level ${level} for currentPath:`, stepData.currentPath);
                       
-                      const renderDropdownLevel = (level) => {
-                        // Get available options for current level
-                        let availableOptions = {};
-                        
-                        console.log(`🔄 RENDER Level ${level} - Processing...`);
-                        
-                        if (level === 0) {
-                          // First level - main elements
-                          availableOptions = standElementsConfig || {};
-                          console.log('🔄 RENDER Level 0 - availableOptions keys:', Object.keys(availableOptions));
-                        } else {
-                          // Nested levels
-                          const pathToCurrentLevel = stepData.currentPath.slice(0, level);
-                          availableOptions = getCurrentNode(pathToCurrentLevel);
-                          console.log(`🔄 RENDER Level ${level} - pathToCurrentLevel:`, pathToCurrentLevel);
-                          console.log(`🔄 RENDER Level ${level} - availableOptions keys:`, Object.keys(availableOptions || {}));
-                        }
-
-                        // If no options available, don't render this level
-                        if (!availableOptions || Object.keys(availableOptions).length === 0) {
-                          return null;
-                        }
-
-                        // Generate level label
-                        let levelLabel = '';
-                        if (level === 0) {
-                          levelLabel = 'Ana Element Seçin *';
-                        } else {
-                          const parentPath = stepData.currentPath.slice(0, level);
-                          const parentLabels = getPathLabels(parentPath);
-                          levelLabel = `${parentLabels[parentLabels.length - 1]} - Alt Kategori Seçin`;
-                        }
-
-                        return (
-                          <div key={level}>
-                            <div className="flex items-center justify-between mb-2">
-                              <label className="block text-sm font-medium text-gray-700">
-                                {level + 1}. {levelLabel}
-                              </label>
-                              <div className="flex items-center gap-2">
-                                {level > 0 && ( // X butonu - sadece alt kategoriler için
-                                  <Button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      
-                                      console.log(`🔴 X Button clicked - Level ${level}`);
-                                      console.log(`🔴 Before - currentPath:`, stepData.currentPath);
-                                      console.log(`🔴 Current stepData:`, stepData);
-                                      
-                                      // Bu seviyeyi ve sonrasını kaldır
-                                      const newPath = stepData.currentPath.slice(0, level);
-                                      console.log(`🔴 New path will be:`, newPath);
-                                      
-                                      // Force re-render ile state update
-                                      setStepData(prev => {
-                                        console.log(`🔴 Previous state:`, prev);
-                                        const newState = {
-                                          ...prev,
-                                          currentPath: [...newPath] // Force new array
-                                        };
-                                        console.log(`🔴 New state:`, newState);
-                                        return newState;
-                                      });
-                                      
-                                      // User feedback
-                                      showToast(`${level}. seviye kaldırıldı - Path: [${newPath.join(', ')}]`, 'success');
-                                      
-                                      // Force component update
-                                      setTimeout(() => {
-                                        console.log(`🔴 After timeout - stepData:`, stepData);
-                                      }, 100);
-                                    }}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400 px-2 transition-colors"
-                                    title="Bu kategoriyi kaldır"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                )}
-                                {level > 0 && ( // Only show on alt kategori levels (level > 0)
-                                  <Button
-                                    type="button"
-                                    onClick={() => {
-                                      // Placeholder for future Özellik functionality
-                                      console.log('Özellik Ekle clicked for level:', level);
-                                    }}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-green-600 border-green-300 hover:bg-green-50"
-                                  >
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Özellik Ekle
-                                  </Button>
-                                )}
-                                {true && ( // Development: Always show for testing
-                                  <Button
-                                    type="button"
-                                    onClick={() => {
-                                      const parentPath = stepData.currentPath.slice(0, level);
-                                      // Set modal context for current level
-                                      setNewCategoryData({
-                                        label: '',
-                                        parentPath: parentPath.length > 0 ? parentPath.join('.') : null,
-                                        editMode: false,
-                                        editKey: null,
-                                        editPathString: null
-                                      });
-                                      setIsNewCategoryModalOpen(true);
-                                    }}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                                  >
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Alt Kategori Ekle
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                            <select 
-                              value={stepData.currentPath[level] || ''} 
-                              onChange={(e) => handleRecursiveSelection(level, e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                              <option value="">
-                                {level === 0 
-                                  ? "Ana element seçin" 
-                                  : "Alt kategori seçin"
-                                }
-                              </option>
-                              {Object.entries(availableOptions).map(([key, config]) => {
-                                console.log(`DEBUG SelectOption - Level ${level}, Key: ${key}, Config:`, config);
-                                return (
-                                  <option key={key} value={key}>
-                                    {config.label}
-                                    {level === 0 && config.required ? ' *' : ''}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
-                        );
-                      };
-
-                      // Generate dropdowns dynamically based on current path and available options
-                      const dropdowns = [];
-                      
-                      // Always show first level
-                      dropdowns.push(renderDropdownLevel(0));
-                      
-                      // Show subsequent levels if previous level is selected and has children
-                      for (let level = 1; level <= stepData.currentPath.length; level++) {
-                        const dropdown = renderDropdownLevel(level);
-                        if (dropdown) {
-                          dropdowns.push(dropdown);
-                        } else {
-                          break;
-                        }
+                      // Get available options for current level
+                      let availableOptions = {};
+                      if (level === 0) {
+                        // First level - main elements
+                        availableOptions = standElementsConfig || {};
+                        console.log('🔄 RENDER Level 0 - availableOptions keys:', Object.keys(availableOptions));
+                      } else {
+                        // Nested levels
+                        const pathToCurrentLevel = stepData.currentPath.slice(0, level);
+                        availableOptions = getCurrentNode(pathToCurrentLevel);
+                        console.log(`🔄 RENDER Level ${level} - pathToCurrentLevel:`, pathToCurrentLevel);
+                        console.log(`🔄 RENDER Level ${level} - availableOptions keys:`, Object.keys(availableOptions || {}));
                       }
-                      
-                      return dropdowns;
-                    })()}
+
+                      // If no options available, don't render this level
+                      if (!availableOptions || Object.keys(availableOptions).length === 0) {
+                        console.log(`🔄 RENDER Level ${level} - No options, skipping`);
+                        return null;
+                      }
+
+                      // Generate level label
+                      let levelLabel = '';
+                      if (level === 0) {
+                        levelLabel = 'Ana Element Seçin *';
+                      } else {
+                        const parentPath = stepData.currentPath.slice(0, level);
+                        const parentLabels = getPathLabels(parentPath);
+                        levelLabel = `${parentLabels[parentLabels.length - 1]} - Alt Kategori Seçin`;
+                      }
+
+                      return (
+                        <div key={`dropdown-level-${level}-${stepData.currentPath.length}`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {level + 1}. {levelLabel}
+                            </label>
+                            <div className="flex items-center gap-2">
+                              {level > 0 && ( // X butonu - sadece alt kategoriler için
+                                <Button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    
+                                    console.log(`🔴 X Button clicked - Level ${level}`);
+                                    console.log(`🔴 Before - currentPath:`, stepData.currentPath);
+                                    
+                                    // Bu seviyeyi ve sonrasını kaldır - FORCED UPDATE
+                                    const newPath = stepData.currentPath.slice(0, level);
+                                    console.log(`🔴 New path will be:`, newPath);
+                                    
+                                    // Force component re-render with key change
+                                    setStepData(prev => {
+                                      const newState = {
+                                        ...prev,
+                                        currentPath: newPath,
+                                        _forceUpdateKey: Date.now() // Force re-render
+                                      };
+                                      console.log(`🔴 State updated:`, newState);
+                                      return newState;
+                                    });
+                                    
+                                    showToast(`${level}. seviye kaldırıldı`, 'success');
+                                  }}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400 px-2 transition-colors"
+                                  title="Bu kategoriyi kaldır"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              )}
+                              {level > 0 && ( // Only show on alt kategori levels (level > 0)
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    // Placeholder for future Özellik functionality
+                                    console.log('Özellik Ekle clicked for level:', level);
+                                  }}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-green-600 border-green-300 hover:bg-green-50"
+                                >
+                                  <Plus className="h-4 w-4 mr-1" />
+                                  Özellik Ekle
+                                </Button>
+                              )}
+                              {true && ( // Development: Always show for testing
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    const parentPath = stepData.currentPath.slice(0, level);
+                                    // Set modal context for current level
+                                    setNewCategoryData({
+                                      label: '',
+                                      parentPath: parentPath.length > 0 ? parentPath.join('.') : null,
+                                      editMode: false,
+                                      editKey: null,
+                                      editPathString: null
+                                    });
+                                    setIsNewCategoryModalOpen(true);
+                                  }}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                                >
+                                  <Plus className="h-4 w-4 mr-1" />
+                                  Alt Kategori Ekle
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <select 
+                            value={stepData.currentPath[level] || ''} 
+                            onChange={(e) => handleRecursiveSelection(level, e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">
+                              {level === 0 
+                                ? "Ana element seçin" 
+                                : "Alt kategori seçin"
+                              }
+                            </option>
+                            {Object.entries(availableOptions).map(([key, config]) => {
+                              return (
+                                <option key={key} value={key}>
+                                  {config.label}
+                                  {level === 0 && config.required ? ' *' : ''}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      );
+                    })}
 
                     {/* Miktar Input Section */}
                     {stepData.currentPath.length > 0 && (
