@@ -3571,7 +3571,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     )}
 
-                    {/* 8. Tasarım Dosyaları */}
+                    {/* 7. Tasarım Dosyaları */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-purple-900 mb-3 flex items-center">
                         🎨 Tasarım Dosyaları
