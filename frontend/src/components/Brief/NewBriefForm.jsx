@@ -1095,8 +1095,17 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }) || !requiredElements.some(reqElement => selectedElements.includes(reqElement)); // Or no required elements selected
   };
 
+  const canProceedFromStep6 = () => {
+    return stepData.detailedBrief && stepData.detailedBrief.trim().length > 10;
+  };
+
   const canProceedFromStep7 = () => {
-    return stepData.logoFile; // Logo dosyası zorunlu
+    return stepData.budgetRange && stepData.deadline;
+  };
+
+  const canProceedFromStep8 = () => {
+    // Logo upload is now optional, so always allow proceeding
+    return true;
   };
 
   const handleStepFileUpload = (field, files) => {
