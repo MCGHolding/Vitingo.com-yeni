@@ -7701,6 +7701,15 @@ async def respond_to_meeting_request(
             
             email_subject = f"Toplantı Yanıtı: {meeting_request['subject']}"
             
+            # Prepare meeting location/platform info
+            meeting_location_info = ""
+            if meeting_request['meeting_type'] == 'physical':
+                meeting_location_info = f"• Konum: {meeting_request.get('location', '')}"
+            else:
+                meeting_location_info = f"• Platform: {meeting_request.get('platform', '')}"
+                if meeting_request.get('meeting_link'):
+                    meeting_location_info += f"\n• Toplantı Linki: {meeting_request['meeting_link']}"
+            
             email_body = f"""
 Merhaba {organizer_name},
 
@@ -7711,7 +7720,7 @@ Toplantı Detayları:
 • Tarih: {meeting_request['date']}
 • Saat: {meeting_request['start_time']} - {meeting_request['end_time']}
 • Tür: {'Fiziki' if meeting_request['meeting_type'] == 'physical' else 'Sanal'}
-• {'Konum: ' + meeting_request.get('location', '') if meeting_request['meeting_type'] == 'physical' else 'Platform: ' + meeting_request.get('platform', '')}
+{meeting_location_info}
 
 {f"Yanıt Mesajı: {response_data.message}" if response_data.message else ""}
 
