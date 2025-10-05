@@ -557,8 +557,8 @@ Saygılarımızla,`;
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Teklif Koşulları */}
       <Card>
