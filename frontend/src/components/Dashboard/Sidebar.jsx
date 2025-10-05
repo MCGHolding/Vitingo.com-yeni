@@ -904,6 +904,7 @@ export default function Sidebar({
 
     // Handle Teklif menu actions
     if (subItem && subItem.name === 'Yeni Teklif') {
+      console.log('Yeni Teklif clicked - calling onNewTeklif handler');
       if (onNewTeklif) {
         onNewTeklif();
       }
