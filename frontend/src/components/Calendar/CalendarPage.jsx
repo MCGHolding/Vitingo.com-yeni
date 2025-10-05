@@ -267,68 +267,6 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
         </div>
       </div>
 
-      {/* Right Sidebar - Invitations */}
-      <div className="w-80 bg-white border-l p-6 overflow-y-auto">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-          <Clock className="h-5 w-5" />
-          <span>Toplantı Davetleri</span>
-        </h3>
-        
-        {invitations.length === 0 ? (
-          <p className="text-gray-500 text-sm">Bekleyen davet yok</p>
-        ) : (
-          <div className="space-y-4">
-            {invitations.map((invitation) => (
-              <div key={invitation.id} className="bg-gray-50 rounded-lg p-4 border">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-gray-900 text-sm">
-                    {invitation.event_details?.title}
-                  </h4>
-                </div>
-                
-                <div className="space-y-1 text-xs text-gray-600 mb-3">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>
-                      {moment(invitation.event_details?.start_datetime).format('DD.MM.YYYY HH:mm')}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-1">
-                    <Users className="h-3 w-3" />
-                    <span>{invitation.event_details?.organizer_name}</span>
-                  </div>
-                  
-                  {invitation.event_details?.location && (
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{invitation.event_details?.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleInvitationResponse(invitation.id, 'accepted')}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center justify-center space-x-1"
-                  >
-                    <Check className="h-3 w-3" />
-                    <span>Kabul</span>
-                  </button>
-                  <button
-                    onClick={() => handleInvitationResponse(invitation.id, 'declined')}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs flex items-center justify-center space-x-1"
-                  >
-                    <X className="h-3 w-3" />
-                    <span>Reddet</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Event Detail Modal */}
       {showEventModal && selectedEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
