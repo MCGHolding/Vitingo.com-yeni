@@ -3755,6 +3755,126 @@ export default function NewBriefForm({ onBackToDashboard }) {
         </div>
       )}
 
+      {/* Feature Modal */}
+      {isFeatureModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-semibold">Özellik Ekle</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  <span className="font-medium">Ekleniyor:</span><br />
+                  {featureModalData.currentPath.map((key, idx) => {
+                    let config = standElementsConfig;
+                    for (let i = 0; i <= idx; i++) {
+                      if (i === 0) {
+                        config = config[featureModalData.currentPath[i]];
+                      } else {
+                        config = config.structure?.[featureModalData.currentPath[i]] || config.children?.[featureModalData.currentPath[i]];
+                      }
+                    }
+                    return config?.label || key;
+                  }).join(' → ')}
+                </p>
+              </div>
+              <button
+                onClick={() => setIsFeatureModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Özellik Adı
+                </label>
+                <Input
+                  type="text"
+                  value={featureModalData.featureName}
+                  onChange={(e) => setFeatureModalData(prev => ({...prev, featureName: e.target.value}))}
+                  placeholder="Örn: Renk, Boyut, Materyal"
+                  className="w-full"
+                  autoFocus
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Özellik Türü
+                </label>
+                <select
+                  value={featureModalData.featureType}
+                  onChange={(e) => setFeatureModalData(prev => ({...prev, featureType: e.target.value}))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="text">Metin</option>
+                  <option value="select">Seçenek Listesi</option>
+                  <option value="number">Sayı</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Özellik Değeri
+                </label>
+                {featureModalData.featureType === 'select' ? (
+                  <Textarea
+                    value={featureModalData.featureValue}
+                    onChange={(e) => setFeatureModalData(prev => ({...prev, featureValue: e.target.value}))}
+                    placeholder="Her satıra bir seçenek yazın&#10;Örn:&#10;Kırmızı&#10;Mavi&#10;Yeşil"
+                    className="w-full"
+                    rows={4}
+                  />
+                ) : (
+                  <Input
+                    type={featureModalData.featureType === 'number' ? 'number' : 'text'}
+                    value={featureModalData.featureValue}
+                    onChange={(e) => setFeatureModalData(prev => ({...prev, featureValue: e.target.value}))}
+                    placeholder={featureModalData.featureType === 'number' ? "Örn: 100" : "Örn: Ahşap, 2x1 metre"}
+                    className="w-full"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsFeatureModalOpen(false)}
+              >
+                İptal
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  console.log('Özellik eklendi:', featureModalData);
+                  
+                  // TODO: Save feature to selected item
+                  showToast('success', 'Özellik Eklendi!', `${featureModalData.featureName} özelliği başarıyla eklendi.`);
+                  
+                  setIsFeatureModalOpen(false);
+                  setFeatureModalData({
+                    level: 0,
+                    currentPath: [],
+                    featureName: '',
+                    featureValue: '',
+                    featureType: 'text'
+                  });
+                }}
+                disabled={!featureModalData.featureName || !featureModalData.featureValue}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Özellik Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Professional Toast Notification */}
       {toastMessage.isVisible && (
         <div className="fixed top-4 right-4 z-[70] animate-slideIn">
