@@ -367,6 +367,8 @@ export default function Sidebar({
   onAllBriefs,
   onClosedBriefs,
   onPassiveBriefs,
+  // Teklif handlers  
+  onNewTeklif,
   onRequestBrief
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
