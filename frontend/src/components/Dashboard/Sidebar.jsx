@@ -48,6 +48,7 @@ import {
   ShoppingCart,
   FileX,
   Briefcase,
+  Truck,
 } from 'lucide-react';
 
 // Function to get navigation based on user department
