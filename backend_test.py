@@ -2152,6 +2152,7 @@ def test_calendar_invitations_respond_endpoint():
     
     # Test response data
     response_data = {
+        "invitation_id": invitation_id,
         "status": "accepted",
         "message": "I'll be there!"
     }
