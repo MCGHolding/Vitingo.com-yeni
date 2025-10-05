@@ -2976,7 +2976,7 @@ def test_collection_statistics_endpoint():
         return False
 
 # Global variable to store meeting ID for subsequent tests
-test_meeting_id = Nonene
+test_meeting_id = None
 
 def test_meeting_request_creation():
     """
