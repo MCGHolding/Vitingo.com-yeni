@@ -440,13 +440,14 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                 </div>
 
                 {/* Search box */}
-                <div className="mb-2">
+                <div className="mb-2 relative">
+                  <Search className="h-4 w-4 absolute left-3 top-2.5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Kullanıcı ara (ad, email, departman)..."
                     value={userSearchTerm}
                     onChange={(e) => setUserSearchTerm(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
