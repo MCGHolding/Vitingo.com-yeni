@@ -2812,15 +2812,15 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     <input
                       type="text"
                       readOnly
-                      value={`https://stand-builder-1.preview.emergentagent.com/brief/${stepData.briefId || 'preview'}`}
+                      value={`https://stand-builder-1.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
                     />
                     <Button
                       type="button"
                       onClick={() => {
-                        const link = `https://stand-builder-1.preview.emergentagent.com/brief/${stepData.briefId || 'preview'}`;
+                        const link = `https://stand-builder-1.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`;
                         navigator.clipboard.writeText(link);
-                        showToast('Link kopyalandı', 'success');
+                        showToast('Brief link kopyalandı!', 'success');
                       }}
                       variant="outline"
                       size="sm"
