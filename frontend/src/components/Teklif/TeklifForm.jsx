@@ -400,8 +400,8 @@ Saygılarımızla,`;
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Tarih ve Konum Bilgileri */}
