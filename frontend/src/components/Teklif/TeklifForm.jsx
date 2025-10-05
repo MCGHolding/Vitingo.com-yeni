@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
 import { X, Plus, Calendar, Check, Minus, Edit, Save, FileText, Users, Building, MapPin, Globe, Clock, DollarSign, Package } from 'lucide-react';
 
 const TeklifForm = ({ onBackToDashboard, showToast }) => {
