@@ -346,14 +346,14 @@ Saygılarımızla,`;
 
       {/* Yetkili Kişiler */}
       {formData.musteriId && yetkiliKisiler.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
               <Users className="h-5 w-5" />
               <span>Yetkili Kişiler</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </h3>
+          </div>
+          <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Yetkili Kişi Seçin
