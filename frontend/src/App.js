@@ -571,6 +571,11 @@ const Dashboard = () => {
     setCurrentView('new-brief');
   };
 
+  // Teklif handlers
+  const handleNewTeklif = () => {
+    setCurrentView('new-teklif');
+  };
+
   const handleAllBriefs = () => {
     setCurrentView('all-briefs');
   };
