@@ -80,7 +80,6 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
 
   useEffect(() => {
     loadEvents();
-    loadInvitations();
   }, []);
 
   // Get event color based on type
