@@ -1997,12 +1997,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Gün Sayısı
                 </label>
-                <Input
-                  type="number"
+                <TurkishNumberInput
                   value={formData.eventDuration}
-                  onChange={(e) => handleInputChange('eventDuration', e.target.value)}
-                  placeholder="3"
-                  min="1"
+                  onChange={(value) => handleInputChange('eventDuration', value)}
+                  placeholder="3,00"
+                  min={1}
+                  max={365}
+                  maxDecimals={0}
+                  required={false}
                 />
               </div>
             </div>
