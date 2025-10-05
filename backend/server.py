@@ -7986,15 +7986,16 @@ async def get_users(status: str = "active"):
             )
         ]
         
-        # Save mock users to database for future use
-        for user in mock_users:
+        # Save realistic users to database for future use
+        for user in realistic_users:
             await db.users.update_one(
                 {"id": user.id},
                 {"$setOnInsert": user.dict()},
                 upsert=True
             )
         
-        return mock_users
+        logger.info(f"Created {len(realistic_users)} realistic company users in database")
+        return realistic_users
         
     except Exception as e:
         logger.error(f"Error getting users: {str(e)}")
