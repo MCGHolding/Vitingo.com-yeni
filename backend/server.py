@@ -7129,6 +7129,7 @@ class MeetingRequestCreate(BaseModel):
     meeting_type: str  # physical, virtual
     location: Optional[str] = None
     platform: Optional[str] = None
+    meeting_link: Optional[str] = None
     attendee_ids: List[str] = Field(default_factory=list)
 
 # Meeting Request Response Model - for individual responses to meeting requests
