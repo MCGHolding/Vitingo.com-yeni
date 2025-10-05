@@ -1963,8 +1963,16 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   type="text"
                   inputMode="decimal"
                   value={stepData.standWidth}
-                  onChange={(e) => handleDimensionChange('width', e.target.value)}
-                  placeholder="600"
+                  onChange={(e) => handleTurkishNumberChange('width', e.target.value)}
+                  onBlur={(e) => {
+                    // Format display value on blur
+                    const cleanValue = parseTurkishNumber(e.target.value);
+                    if (cleanValue && !isNaN(parseFloat(cleanValue))) {
+                      const formatted = formatTurkishNumber(parseFloat(cleanValue), 2);
+                      setStepData(prev => ({ ...prev, standWidth: formatted }));
+                    }
+                  }}
+                  placeholder="600,00"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     dimensionErrors.width ? 'border-red-500 bg-red-50' : 'border-gray-300'
                   }`}
