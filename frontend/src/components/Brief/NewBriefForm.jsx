@@ -2657,7 +2657,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   disabled={currentStep === 2 && !canProceedFromStep2()}
                   className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  <span>{currentStep === 10 ? 'Tamamla' : 'Sonraki →'}</span>
+                  <span>{currentStep === 7 ? 'Tamamla' : 'Sonraki →'}</span>
                 </Button>
               </div>
               
