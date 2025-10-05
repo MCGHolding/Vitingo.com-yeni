@@ -3245,7 +3245,39 @@ export default function NewBriefForm({ onBackToDashboard }) {
                       </div>
                     </div>
 
-                    {/* 2. Seçilen Stand Elementleri */}
+                    {/* 2. Stand Boyutları */}
+                    <div className="bg-white rounded-lg p-5 shadow-sm">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                        📐 Stand Boyutları
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-blue-50 p-4 rounded-lg text-center">
+                          <div className="text-2xl font-bold text-blue-700">
+                            {stepData.standWidth || 'Belirtilmemiş'} cm
+                          </div>
+                          <div className="text-sm text-blue-600 font-medium">Stand Eni</div>
+                        </div>
+                        <div className="bg-green-50 p-4 rounded-lg text-center">
+                          <div className="text-2xl font-bold text-green-700">
+                            {stepData.standLength || 'Belirtilmemiş'} cm
+                          </div>
+                          <div className="text-sm text-green-600 font-medium">Stand Boyu</div>
+                        </div>
+                        <div className="bg-purple-50 p-4 rounded-lg text-center">
+                          <div className="text-2xl font-bold text-purple-700">
+                            {stepData.calculatedArea || '0.00'} m²
+                          </div>
+                          <div className="text-sm text-purple-600 font-medium">Toplam Alan</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs text-gray-500 text-center">
+                        <span className="bg-gray-100 px-2 py-1 rounded">
+                          Hesaplama: {stepData.standWidth || '0'} × {stepData.standLength || '0'} ÷ 10.000 = {stepData.calculatedArea || '0.00'} m²
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 3. Seçilen Stand Elementleri */}
                     <div className="bg-white rounded-lg p-5 shadow-sm">
                       <h4 className="text-lg font-semibold text-green-900 mb-3 flex items-center">
                         🏗️ Stand Elementleri ({stepData.selectedItems ? stepData.selectedItems.length : 0} adet)
