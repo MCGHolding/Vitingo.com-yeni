@@ -7131,6 +7131,7 @@ class MeetingRequestCreate(BaseModel):
     platform: Optional[str] = None
     meeting_link: Optional[str] = None
     attendee_ids: List[str] = Field(default_factory=list)
+    organizer_id: Optional[str] = None  # Allow organizer_id to be specified in request
 
 # Meeting Request Response Model - for individual responses to meeting requests
 class MeetingRequestResponse(BaseModel):
