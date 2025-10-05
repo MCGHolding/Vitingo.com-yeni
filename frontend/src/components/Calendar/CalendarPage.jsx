@@ -209,11 +209,11 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
             </div>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            onClick={() => setShowChatModal(true)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
-            <span>Yeni Toplantı</span>
+            <span>Sohbet</span>
           </button>
         </div>
 
