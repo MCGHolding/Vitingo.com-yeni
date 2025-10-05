@@ -432,7 +432,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                     {request.organizer_id !== currentUser.id && (
                       <div>
                         {/* Current user response status */}
-                        {request.responses && request.responses[currentUser.id] && (
+                        {request.responses && request.responses[currentUser.id] ? (
                           <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                             <div className="flex items-center space-x-2">
                               <span className="text-sm text-blue-700 font-medium">Yanıtınız:</span>
@@ -457,6 +457,18 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                             </div>
                             <p className="text-xs text-blue-600 mt-1">
                               Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="mb-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div className="flex items-center space-x-2">
+                              <Clock className="h-4 w-4 text-yellow-600" />
+                              <span className="text-sm text-yellow-800 font-medium">
+                                Bu toplantı davetine henüz yanıt vermediniz
+                              </span>
+                            </div>
+                            <p className="text-xs text-yellow-700 mt-1">
+                              Lütfen katılım durumunuzu belirtmek için aşağıdaki butonlardan birini seçin
                             </p>
                           </div>
                         )}
