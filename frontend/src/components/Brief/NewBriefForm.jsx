@@ -279,6 +279,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
     subject: `Stand Brief - ${stepData.briefId}`,
     message: ''
   });
+
+  // Final success modal state
+  const [isFinalSuccessModalOpen, setIsFinalSuccessModalOpen] = useState(false);
   
   // AI Design Generation states removed
   const [newCategoryData, setNewCategoryData] = useState({
