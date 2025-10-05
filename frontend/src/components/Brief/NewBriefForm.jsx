@@ -1757,9 +1757,9 @@ export default function NewBriefForm({ onBackToDashboard }) {
           <Card className="mt-8">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Stand Detayları - {currentStep}/7</span>
+                <span>Stand Detayları - {currentStep}/8</span>
                 <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5, 6, 7].map((step) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((step) => (
                     <div
                       key={step}
                       className={`w-3 h-3 rounded-full ${
