@@ -2682,7 +2682,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </div>
               )}
 
-              {currentStep === 8 && (
+              {currentStep === 7 && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
                     <h3 className="text-xl font-semibold mb-2 flex items-center justify-center gap-2">
