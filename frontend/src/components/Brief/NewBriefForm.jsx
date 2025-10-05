@@ -1152,14 +1152,23 @@ export default function NewBriefForm({ onBackToDashboard }) {
     // Check if stand elements are selected
     const hasSelectedItems = stepData.selectedItems.length > 0;
     
-    // Check if dimensions are valid
-    const hasValidDimensions = stepData.standWidth && 
-                              stepData.standLength && 
+    // Check if dimensions are valid (Turkish number format)
+    const widthValue = parseTurkishNumber(stepData.standWidth);
+    const lengthValue = parseTurkishNumber(stepData.standLength);
+    const hasValidDimensions = widthValue && 
+                              lengthValue && 
                               !dimensionErrors.width && 
                               !dimensionErrors.length &&
-                              stepData.calculatedArea > 0;
+                              parseFloat(widthValue) > 0 &&
+                              parseFloat(lengthValue) > 0;
     
-    console.log('🔍 Step 2 validation:', { hasSelectedItems, hasValidDimensions });
+    console.log('🔍 Step 2 validation:', { 
+      hasSelectedItems, 
+      hasValidDimensions,
+      widthValue,
+      lengthValue,
+      calculatedArea: stepData.calculatedArea
+    });
     
     return hasSelectedItems && hasValidDimensions;
   };
