@@ -7664,6 +7664,128 @@ async def delete_meeting_request(request_id: str, user_id: str = "demo_user"):
         logger.error(f"Error deleting meeting request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting meeting request: {str(e)}")
 
+# ===================== USERS ENDPOINTS =====================
+
+class User(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str = Field(..., description="User full name")
+    email: str = Field(..., description="User email")
+    role: str = Field(default="user", description="User role")
+    department: Optional[str] = Field(None, description="User department")
+    phone: Optional[str] = Field(None, description="User phone")
+    status: str = Field(default="active", description="User status: active, inactive")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+@api_router.get("/users", response_model=List[User])
+async def get_users(status: str = "active"):
+    """Get all active users in the system"""
+    try:
+        # Try to get users from database first
+        users_from_db = await db.users.find({"status": status}).to_list(100)
+        
+        if users_from_db:
+            return [User(**user) for user in users_from_db]
+        
+        # If no users in database, return mock users
+        mock_users = [
+            User(
+                id="demo_user",
+                name="Demo User", 
+                email="demo@company.com",
+                role="user",
+                department="Genel",
+                phone="+90 532 123 4567"
+            ),
+            User(
+                id="admin_user",
+                name="Admin User", 
+                email="admin@company.com", 
+                role="admin",
+                department="IT",
+                phone="+90 532 123 4568"
+            ),
+            User(
+                id="user1",
+                name="Ahmet Yılmaz",
+                email="ahmet.yilmaz@company.com",
+                role="user", 
+                department="Satış",
+                phone="+90 532 123 4569"
+            ),
+            User(
+                id="user2", 
+                name="Fatma Demir",
+                email="fatma.demir@company.com",
+                role="user",
+                department="Pazarlama", 
+                phone="+90 532 123 4570"
+            ),
+            User(
+                id="user3",
+                name="Mehmet Kaya", 
+                email="mehmet.kaya@company.com",
+                role="user",
+                department="İnsan Kaynakları",
+                phone="+90 532 123 4571"
+            ),
+            User(
+                id="user4",
+                name="Ayşe Öz",
+                email="ayse.oz@company.com", 
+                role="user",
+                department="Muhasebe",
+                phone="+90 532 123 4572"
+            ),
+            User(
+                id="user5",
+                name="Can Kara",
+                email="can.kara@company.com",
+                role="manager", 
+                department="Proje Yönetimi",
+                phone="+90 532 123 4573"
+            ),
+            User(
+                id="user6",
+                name="Selin Ak", 
+                email="selin.ak@company.com",
+                role="user",
+                department="Tasarım",
+                phone="+90 532 123 4574"
+            )
+        ]
+        
+        # Save mock users to database for future use
+        for user in mock_users:
+            await db.users.update_one(
+                {"id": user.id},
+                {"$setOnInsert": user.dict()},
+                upsert=True
+            )
+        
+        return mock_users
+        
+    except Exception as e:
+        logger.error(f"Error getting users: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting users: {str(e)}")
+
+@api_router.get("/users/{user_id}", response_model=User)
+async def get_user(user_id: str):
+    """Get a specific user by ID"""
+    try:
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        return User(**user)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user: {str(e)}")
+
+# ===================== END USERS ENDPOINTS =====================
+
 # ===================== END MEETING REQUESTS ENDPOINTS =====================
 
 # ===================== END CALENDAR & MEETINGS ENDPOINTS =====================
