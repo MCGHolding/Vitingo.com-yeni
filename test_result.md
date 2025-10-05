@@ -289,7 +289,7 @@ agent_communication:
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the WebSocket chat functionality that I just implemented"
+user_problem_statement: "Test the enhanced Meeting Requests functionality with responses and email notifications"
 
 backend:
   - task: "WebSocket Connection Test"
