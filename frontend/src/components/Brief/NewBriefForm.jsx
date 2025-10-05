@@ -1070,6 +1070,10 @@ export default function NewBriefForm({ onBackToDashboard }) {
     }) || !requiredElements.some(reqElement => selectedElements.includes(reqElement)); // Or no required elements selected
   };
 
+  const canProceedFromStep7 = () => {
+    return stepData.logoFile; // Logo dosyası zorunlu
+  };
+
   const handleStepFileUpload = (field, files) => {
     const newFiles = Array.from(files).map(file => ({
       id: Date.now() + Math.random(),
