@@ -196,6 +196,11 @@ const ChatModal = ({ isOpen, onClose, currentUser }) => {
     }
   };
 
+  const handleEmojiClick = (emojiData) => {
+    setNewMessage(prev => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   const selectUser = (user) => {
     setSelectedUser(user);
     setMessages([]);
