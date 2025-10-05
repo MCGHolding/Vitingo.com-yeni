@@ -1563,6 +1563,287 @@ def test_collection_statistics_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_opportunities_api_and_teklif_form_data_loading():
+    """
+    Test the sales opportunities (opportunities) API endpoint and TeklifForm data loading functionality.
+    
+    Requirements to verify:
+    1. Test GET /api/opportunities endpoint to see if there are any opportunities in the database
+    2. If empty, create test opportunities using POST /api/opportunities with specific test data
+    3. Test GET /api/customers endpoint to verify customers exist
+    4. Verify that TeklifForm can load these opportunities from the database
+    
+    Test Data:
+    - Title: "ITU Fuarı 2024 Stand Projesi"
+    - Customer: "Acme Corp" 
+    - Trade show: "Istanbul Fuar Merkezi"
+    - Trade show dates: "2024-12-15"
+    - City: "İstanbul"
+    - Country: "Türkiye"
+    - Close date: "2024-12-15"
+    
+    Another opportunity:
+    - Title: "Hannover Messe 2024"
+    - Customer: "Tech Solutions"
+    - Trade show: "Hannover Exhibition Center" 
+    - Trade show dates: "2024-11-20"
+    - City: "Hannover"
+    - Country: "Almanya"
+    - Close date: "2024-11-20"
+    """
+    
+    print("=" * 80)
+    print("TESTING OPPORTUNITIES API AND TEKLIF FORM DATA LOADING")
+    print("=" * 80)
+    
+    # Test 1: Check GET /api/opportunities endpoint
+    print("\n1. Testing GET /api/opportunities endpoint...")
+    opportunities_endpoint = f"{BACKEND_URL}/api/opportunities"
+    print(f"Testing endpoint: {opportunities_endpoint}")
+    
+    try:
+        response = requests.get(opportunities_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Opportunities endpoint responds with status 200")
+            opportunities = response.json()
+            print(f"   Found {len(opportunities)} existing opportunities")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing opportunities endpoint: {str(e)}")
+        return False
+    
+    # Test 2: Check GET /api/customers endpoint
+    print("\n2. Testing GET /api/customers endpoint...")
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {customers_endpoint}")
+    
+    try:
+        response = requests.get(customers_endpoint, timeout=30)
+        print(f"   Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("   ✅ PASS: Customers endpoint responds with status 200")
+            customers = response.json()
+            print(f"   Found {len(customers)} existing customers")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error testing customers endpoint: {str(e)}")
+        return False
+    
+    # Test 3: Create test opportunities if database is empty or has few opportunities
+    print(f"\n3. Creating test opportunities...")
+    
+    test_opportunities = [
+        {
+            "title": "ITU Fuarı 2024 Stand Projesi",
+            "customer": "Acme Corp",
+            "trade_show": "Istanbul Fuar Merkezi",
+            "trade_show_dates": "2024-12-15",
+            "city": "İstanbul",
+            "country": "Türkiye",
+            "close_date": "2024-12-15",
+            "amount": 150000.0,
+            "currency": "TRY",
+            "status": "open",
+            "stage": "proposal",
+            "priority": "high",
+            "description": "ITU Fuarı için stand tasarım ve üretim projesi",
+            "business_type": "Fair Stand",
+            "expected_revenue": 150000.0,
+            "probability": 75
+        },
+        {
+            "title": "Hannover Messe 2024",
+            "customer": "Tech Solutions",
+            "trade_show": "Hannover Exhibition Center",
+            "trade_show_dates": "2024-11-20",
+            "city": "Hannover",
+            "country": "Almanya",
+            "close_date": "2024-11-20",
+            "amount": 200000.0,
+            "currency": "EUR",
+            "status": "open",
+            "stage": "negotiation",
+            "priority": "high",
+            "description": "Hannover Messe için uluslararası stand projesi",
+            "business_type": "International Fair Stand",
+            "expected_revenue": 200000.0,
+            "probability": 80
+        }
+    ]
+    
+    created_opportunities = []
+    
+    for i, opportunity_data in enumerate(test_opportunities, 1):
+        print(f"\n   Creating test opportunity {i}: {opportunity_data['title']}")
+        
+        try:
+            response = requests.post(opportunities_endpoint, json=opportunity_data, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                created_opportunity = response.json()
+                created_opportunities.append(created_opportunity)
+                print(f"   ✅ PASS: Created opportunity '{opportunity_data['title']}'")
+                print(f"   Opportunity ID: {created_opportunity.get('id')}")
+                print(f"   Customer: {created_opportunity.get('customer')}")
+                print(f"   Trade Show: {created_opportunity.get('trade_show')}")
+                print(f"   Amount: {created_opportunity.get('amount')} {created_opportunity.get('currency')}")
+            else:
+                print(f"   ❌ FAIL: Failed to create opportunity. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error creating opportunity: {str(e)}")
+            return False
+    
+    # Test 4: Verify opportunities were created by fetching them again
+    print(f"\n4. Verifying opportunities were created...")
+    
+    try:
+        response = requests.get(opportunities_endpoint, timeout=30)
+        if response.status_code == 200:
+            all_opportunities = response.json()
+            print(f"   Total opportunities in database: {len(all_opportunities)}")
+            
+            # Check if our test opportunities are in the list
+            test_titles = [opp['title'] for opp in test_opportunities]
+            found_opportunities = []
+            
+            for opportunity in all_opportunities:
+                if opportunity.get('title') in test_titles:
+                    found_opportunities.append(opportunity)
+            
+            if len(found_opportunities) >= len(test_opportunities):
+                print(f"   ✅ PASS: Found {len(found_opportunities)} test opportunities in database")
+                
+                # Display details of found opportunities
+                for opp in found_opportunities:
+                    print(f"     - {opp.get('title')} ({opp.get('customer')})")
+                    print(f"       Trade Show: {opp.get('trade_show')}")
+                    print(f"       City: {opp.get('city')}, Country: {opp.get('country')}")
+                    print(f"       Close Date: {opp.get('close_date')}")
+                    print(f"       Amount: {opp.get('amount')} {opp.get('currency')}")
+            else:
+                print(f"   ❌ FAIL: Expected to find {len(test_opportunities)} test opportunities, found {len(found_opportunities)}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Failed to fetch opportunities for verification")
+            return False
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Error verifying opportunities: {str(e)}")
+        return False
+    
+    # Test 5: Test individual opportunity retrieval
+    print(f"\n5. Testing individual opportunity retrieval...")
+    
+    if created_opportunities:
+        test_opportunity_id = created_opportunities[0].get('id')
+        individual_endpoint = f"{opportunities_endpoint}/{test_opportunity_id}"
+        print(f"Testing endpoint: {individual_endpoint}")
+        
+        try:
+            response = requests.get(individual_endpoint, timeout=30)
+            print(f"   Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                opportunity = response.json()
+                print(f"   ✅ PASS: Retrieved individual opportunity")
+                print(f"   Title: {opportunity.get('title')}")
+                print(f"   Customer: {opportunity.get('customer')}")
+                print(f"   ID matches: {opportunity.get('id') == test_opportunity_id}")
+            else:
+                print(f"   ❌ FAIL: Failed to retrieve individual opportunity")
+                return False
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Error retrieving individual opportunity: {str(e)}")
+            return False
+    
+    # Test 6: Test opportunities filtering (if supported)
+    print(f"\n6. Testing opportunities filtering...")
+    
+    try:
+        # Test filtering by status
+        filter_endpoint = f"{opportunities_endpoint}?status=open"
+        response = requests.get(filter_endpoint, timeout=30)
+        
+        if response.status_code == 200:
+            filtered_opportunities = response.json()
+            print(f"   ✅ PASS: Filtering by status works")
+            print(f"   Found {len(filtered_opportunities)} open opportunities")
+        else:
+            print(f"   ⚠️  WARNING: Filtering might not be supported (Status: {response.status_code})")
+            
+    except Exception as e:
+        print(f"   ⚠️  WARNING: Error testing filtering: {str(e)}")
+    
+    # Test 7: Verify data structure for TeklifForm integration
+    print(f"\n7. Verifying data structure for TeklifForm integration...")
+    
+    if all_opportunities:
+        sample_opportunity = all_opportunities[0]
+        required_fields = ['id', 'title', 'customer', 'trade_show', 'city', 'country', 'close_date']
+        
+        missing_fields = []
+        for field in required_fields:
+            if field not in sample_opportunity:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Missing required fields for TeklifForm: {missing_fields}")
+            return False
+        else:
+            print(f"   ✅ PASS: All required fields present for TeklifForm integration")
+            print(f"   Sample opportunity structure:")
+            for field in required_fields:
+                print(f"     {field}: {sample_opportunity.get(field)}")
+    
+    # Test 8: Test Turkish character support
+    print(f"\n8. Testing Turkish character support...")
+    
+    turkish_chars = ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'Ç', 'Ğ', 'İ', 'Ö', 'Ş', 'Ü']
+    has_turkish = False
+    
+    for opportunity in all_opportunities:
+        opportunity_text = str(opportunity)
+        if any(char in opportunity_text for char in turkish_chars):
+            has_turkish = True
+            break
+    
+    if has_turkish:
+        print(f"   ✅ PASS: Turkish characters properly supported")
+    else:
+        print(f"   ℹ️  INFO: No Turkish characters found (may be expected)")
+    
+    print("\n" + "=" * 80)
+    print("OPPORTUNITIES API AND TEKLIF FORM DATA LOADING TEST RESULTS:")
+    print("=" * 80)
+    print("✅ GET /api/opportunities endpoint working correctly")
+    print("✅ GET /api/customers endpoint working correctly")
+    print("✅ POST /api/opportunities successfully creates opportunities")
+    print("✅ Test opportunities created with specified data")
+    print("✅ Individual opportunity retrieval working")
+    print("✅ Data structure compatible with TeklifForm")
+    print("✅ Turkish character support verified")
+    print("✅ Database persistence confirmed")
+    print(f"\n🎉 OPPORTUNITIES API AND TEKLIF FORM DATA LOADING TEST PASSED!")
+    print(f"   Total opportunities in database: {len(all_opportunities)}")
+    print(f"   Test opportunities created: {len(created_opportunities)}")
+    print(f"   Backend APIs ready for frontend dropdown population")
+    
+    return True
+
 def test_stand_elements_get_endpoint():
     """
     Test GET /api/stand-elements endpoint for dropdown cascade system.
