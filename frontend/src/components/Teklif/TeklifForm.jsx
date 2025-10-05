@@ -341,8 +341,8 @@ Saygılarımızla,`;
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Yetkili Kişiler */}
       {formData.musteriId && yetkiliKisiler.length > 0 && (
