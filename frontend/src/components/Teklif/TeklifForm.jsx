@@ -235,7 +235,7 @@ Saygılarımızla,`;
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div className="flex items-center space-x-3">
           <FileText className="h-8 w-8 text-blue-600" />
           <div>
@@ -243,25 +243,24 @@ Saygılarımızla,`;
             <p className="text-gray-600">Satış fırsatınız için profesyonel teklif hazırlayın</p>
           </div>
         </div>
-        <Button
+        <button
           onClick={onBackToDashboard}
-          variant="outline"
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
         >
           <X className="h-4 w-4" />
           <span>İptal</span>
-        </Button>
+        </button>
       </div>
 
       {/* Teklif Konusu */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
             <Building className="h-5 w-5" />
             <span>Teklif Konusu</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h3>
+        </div>
+        <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
