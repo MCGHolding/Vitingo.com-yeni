@@ -2100,13 +2100,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   Kapalı Kenar Sayısı
                 </label>
                 <TurkishNumberInput
-                  value={formData.closedSides}
+                  value={formData.closedSides || ''}
                   onChange={(value) => handleInputChange('closedSides', value)}
                   placeholder="2,00"
                   min={0}
                   max={4}
                   maxDecimals={0}
                   required={false}
+                  style={{ pointerEvents: 'auto', zIndex: 10 }}
                 />
               </div>
               
