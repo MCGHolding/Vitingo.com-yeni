@@ -191,6 +191,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
   const [isAddElementModalOpen, setIsAddElementModalOpen] = useState(false);
   const [isManageElementsModalOpen, setIsManageElementsModalOpen] = useState(false);
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
+  const [featureModalData, setFeatureModalData] = useState({
+    level: 0,
+    currentPath: [],
+    featureName: '',
+    featureValue: '',
+    featureType: 'text' // 'text', 'select', 'number'
+  });
   
   // Form input states
   const [selectedQuantity, setSelectedQuantity] = useState('');
