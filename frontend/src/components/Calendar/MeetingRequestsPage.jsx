@@ -405,27 +405,102 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
 
               {/* Attendees */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Katılımcılar
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Katılımcılar ({requestForm.attendee_ids.length} kişi seçildi)
                 </label>
-                <select
-                  multiple
-                  value={requestForm.attendee_ids}
-                  onChange={(e) => {
-                    const selectedIds = Array.from(e.target.selectedOptions, option => option.value);
-                    setRequestForm({...requestForm, attendee_ids: selectedIds});
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
-                >
-                  {users.map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.name} ({user.email})
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  Birden fazla katılımcı seçmek için Ctrl/Cmd tuşunu basılı tutun
-                </p>
+                
+                {isLoadingUsers ? (
+                  <div className="text-sm text-gray-500 py-4">Kullanıcılar yükleniyor...</div>
+                ) : (
+                  <div className="border border-gray-300 rounded-md max-h-48 overflow-y-auto">
+                    {users.length === 0 ? (
+                      <div className="p-4 text-sm text-gray-500 text-center">
+                        Sistem kayıtlı kullanıcı bulunamadı
+                      </div>
+                    ) : (
+                      <div className="p-3 space-y-2">
+                        {users.map(user => (
+                          <label key={user.id} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={requestForm.attendee_ids.includes(user.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setRequestForm({
+                                    ...requestForm,
+                                    attendee_ids: [...requestForm.attendee_ids, user.id]
+                                  });
+                                } else {
+                                  setRequestForm({
+                                    ...requestForm,
+                                    attendee_ids: requestForm.attendee_ids.filter(id => id !== user.id)
+                                  });
+                                }
+                              }}
+                              className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {user.name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {user.email}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs text-gray-600">
+                                    {user.department}
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    {user.role}
+                                  </p>
+                                </div>
+                              </div>
+                              {user.phone && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {user.phone}
+                                </p>
+                              )}
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Selected users summary */}
+                {requestForm.attendee_ids.length > 0 && (
+                  <div className="mt-2 p-2 bg-blue-50 rounded border">
+                    <p className="text-xs text-blue-700 font-medium mb-1">Seçilen Katılımcılar:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {requestForm.attendee_ids.map(userId => {
+                        const user = users.find(u => u.id === userId);
+                        return user ? (
+                          <span
+                            key={userId}
+                            className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-800"
+                          >
+                            {user.name}
+                            <button
+                              onClick={() => {
+                                setRequestForm({
+                                  ...requestForm,
+                                  attendee_ids: requestForm.attendee_ids.filter(id => id !== userId)
+                                });
+                              }}
+                              className="ml-1 hover:text-blue-600"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t">
