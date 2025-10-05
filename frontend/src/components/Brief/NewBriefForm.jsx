@@ -3222,6 +3222,24 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 </Button>
               </div>
               
+              {/* Validation Message for Step 1 */}
+              {currentStep === 1 && !canProceedFromStep1() && (
+                <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    <strong>Dikkat:</strong> Stand Gereksinimleri bölümüne geçmek için aşağıdaki zorunlu alanları doldurmalısınız:
+                    {!formData.projectId && (
+                      <span className="block mt-1">• Proje seçimi yapmalısınız</span>
+                    )}
+                    {!formData.customerId && (
+                      <span className="block mt-1">• Müşteri seçmelisiniz</span>
+                    )}
+                    {!selectedPersonId && (
+                      <span className="block mt-1">• Yetkili kişi seçmelisiniz</span>
+                    )}
+                  </p>
+                </div>
+              )}
+
               {/* Validation Message for Step 2 */}
               {currentStep === 2 && !canProceedFromStep2() && (
                 <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
