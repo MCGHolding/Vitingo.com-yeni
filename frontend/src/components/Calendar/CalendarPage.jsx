@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { Calendar, Plus, Edit2, Trash2, X } from 'lucide-react';
 import moment from 'moment';
 import ChatModal from './ChatModal';
+import MeetingRequestModal from './MeetingRequestModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
