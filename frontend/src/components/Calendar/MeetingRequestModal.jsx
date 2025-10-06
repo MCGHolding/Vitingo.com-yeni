@@ -27,16 +27,38 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
   const loadUsers = async () => {
     setIsLoadingUsers(true);
     try {
-      // Initialize users if needed
-      await fetch(`${BACKEND_URL}/api/users/initialize`, { method: 'POST' });
+      // Initialize users if needed - force cache bust
+      const initResponse = await fetch(`${BACKEND_URL}/api/users/initialize`, { 
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      console.log('Users initialize response:', await initResponse.text());
       
-      const response = await fetch(`${BACKEND_URL}/api/users`);
+      // Force cache bust for users API
+      const response = await fetch(`${BACKEND_URL}/api/users?t=${Date.now()}`, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
       if (response.ok) {
         const usersData = await response.json();
+        console.log('RAW API RESPONSE:', usersData);
+        
         // Filter out current user
         const filteredUsers = usersData.filter(user => user.id !== currentUser.id);
         setUsers(filteredUsers);
-        console.log(`Loaded ${filteredUsers.length} company employees`);
+        console.log(`✅ LOADED ${filteredUsers.length} REAL COMPANY EMPLOYEES:`);
+        
+        filteredUsers.forEach(user => {
+          console.log(`- ${user.name} (${user.email}) - ${user.department}`);
+        });
+      } else {
+        console.error('Failed to load users, status:', response.status);
       }
     } catch (error) {
       console.error('Error loading users:', error);
