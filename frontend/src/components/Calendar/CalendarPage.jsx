@@ -510,6 +510,18 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
         onClose={() => setShowChatModal(false)}
         currentUser={currentUser}
       />
+
+      {/* Meeting Request Modal */}
+      <MeetingRequestModal 
+        isOpen={showMeetingRequestModal}
+        onClose={() => setShowMeetingRequestModal(false)}
+        currentUser={currentUser}
+        onSuccess={(result) => {
+          console.log('Meeting request created successfully:', result);
+          // Optionally reload events or show success message
+          loadEvents();
+        }}
+      />
     </div>
   );
 };
