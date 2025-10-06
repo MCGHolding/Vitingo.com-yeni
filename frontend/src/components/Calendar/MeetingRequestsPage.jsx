@@ -432,7 +432,7 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                       </div>
                     </div>
 
-                    {/* Organizer Info */}
+                    {/* Organizer Info & Actions */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2 text-sm text-gray-500">
                         <span>Organize Eden: {request.organizer_name}</span>
@@ -440,12 +440,26 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                         <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
                       </div>
                       
-                      {/* Meeting Type Badge */}
-                      {request.organizer_id !== currentUser.id && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          📨 Size gönderildi
-                        </span>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        {/* Toplantı Detayları Butonu */}
+                        <button
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setShowDetailsModal(true);
+                          }}
+                          className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        >
+                          <FileText className="h-3 w-3 mr-1" />
+                          TOPLANTI DETAYLARI
+                        </button>
+                        
+                        {/* Meeting Type Badge */}
+                        {request.organizer_id !== currentUser.id && (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            📨 Size gönderildi
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Action Buttons - Only show if user is not organizer */}
