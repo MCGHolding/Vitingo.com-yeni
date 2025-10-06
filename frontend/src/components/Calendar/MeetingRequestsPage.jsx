@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, MapPin, Video, Users, Calendar, Plus, Check, X, Clock3, Search, ExternalLink } from 'lucide-react';
+import { Clock, MapPin, Video, Users, Calendar, Plus, Check, X, Clock3, Search, ExternalLink, FileText } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
