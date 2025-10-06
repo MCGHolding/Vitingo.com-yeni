@@ -7914,6 +7914,112 @@ async def get_users(status: str = "active"):
         logger.error(f"Error getting users: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting users: {str(e)}")
 
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    role: str = "user"
+    department: str
+    phone: Optional[str] = None
+    username: str
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    department: Optional[str] = None
+    phone: Optional[str] = None
+    status: Optional[str] = None
+
+@api_router.post("/users", response_model=User)
+async def create_user(user_data: UserCreate):
+    """Create a new user"""
+    try:
+        # Check if user with same username or email already exists
+        existing_user = await db.users.find_one({
+            "$or": [
+                {"username": user_data.username},
+                {"email": user_data.email}
+            ]
+        })
+        
+        if existing_user:
+            raise HTTPException(status_code=400, detail="User with this username or email already exists")
+        
+        # Create new user
+        new_user = User(
+            id=user_data.username,  # Use username as ID
+            **user_data.dict()
+        )
+        
+        # Save to database
+        await db.users.insert_one(new_user.dict())
+        
+        logger.info(f"Created new user: {new_user.name} ({new_user.email})")
+        return new_user
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating user: {str(e)}")
+
+@api_router.put("/users/{user_id}", response_model=User)
+async def update_user(user_id: str, user_data: UserUpdate):
+    """Update an existing user"""
+    try:
+        # Check if user exists
+        existing_user = await db.users.find_one({"id": user_id})
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Prepare update data (only include non-None fields)
+        update_data = {k: v for k, v in user_data.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Update user
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": update_data}
+        )
+        
+        # Return updated user
+        updated_user = await db.users.find_one({"id": user_id})
+        logger.info(f"Updated user: {user_id}")
+        return User(**updated_user)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error updating user: {str(e)}")
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str):
+    """Delete a user (soft delete - set status to inactive)"""
+    try:
+        # Check if user exists
+        existing_user = await db.users.find_one({"id": user_id})
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Soft delete (set status to inactive)
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {
+                "status": "inactive",
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        
+        logger.info(f"Soft deleted user: {user_id}")
+        return {"success": True, "message": "User deactivated successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting user: {str(e)}")
+
 @api_router.get("/users/count")
 async def get_users_count():
     """Get count of users in the system"""
