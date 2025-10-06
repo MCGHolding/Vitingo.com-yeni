@@ -7524,7 +7524,20 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
         if organizer_user:
             organizer_name = organizer_user["name"]
         else:
-            organizer_name = f"User {actual_organizer_id}"  # Fallback
+            # More user-friendly fallback based on known user IDs
+            user_name_map = {
+                "murb": "Murat Bucak",
+                "tame": "Tamer Erdim", 
+                "batu": "Batuhan Cücük",
+                "vata": "Vatan Dalkılıç",
+                "biry": "Birtan Yılmaz",
+                "beyn": "Beyza Nur",
+                "niyk": "Niyazi Karahan",
+                "sukb": "Şükran Bucak",
+                "icla": "İclal Aksu",
+                "meha": "Mehmet Ağdaş"
+            }
+            organizer_name = user_name_map.get(actual_organizer_id, f"Kullanıcı {actual_organizer_id}")
         
         # Get attendee names from user database
         attendee_names = []
