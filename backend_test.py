@@ -10401,57 +10401,57 @@ if __name__ == "__main__":
     # MeetingRequestModal Users Debug Tests
     debug_tests = []
     
-    # Test 1: Users Initialization
-    print(f"\n{'='*20} Users Initialization Test {'='*20}")
+    # Test 1: API Response Debug Test
+    print(f"\n{'='*20} API Response Debug Test {'='*20}")
     try:
-        result = test_users_initialization()
-        user_tests.append(("Users Initialization", result))
+        result = test_users_api_response_debug()
+        debug_tests.append(("API Response Debug", result))
         if result:
-            print("✅ Users Initialization Test PASSED")
+            print("✅ API Response Debug Test PASSED")
         else:
-            print("❌ Users Initialization Test FAILED")
+            print("❌ API Response Debug Test FAILED")
     except Exception as e:
-        print(f"❌ Users Initialization Test ERROR: {str(e)}")
-        user_tests.append(("Users Initialization", False))
+        print(f"❌ API Response Debug Test ERROR: {str(e)}")
+        debug_tests.append(("API Response Debug", False))
     
-    # Test 2: Users Database Integration
-    print(f"\n{'='*20} Users Database Integration Test {'='*20}")
+    # Test 2: Frontend-Backend Integration Debug Test
+    print(f"\n{'='*20} Frontend-Backend Integration Debug Test {'='*20}")
     try:
-        result = test_users_database_integration()
-        user_tests.append(("Users Database Integration", result))
+        result = test_users_initialize_endpoint_debug()
+        debug_tests.append(("Frontend-Backend Integration Debug", result))
         if result:
-            print("✅ Users Database Integration Test PASSED")
+            print("✅ Frontend-Backend Integration Debug Test PASSED")
         else:
-            print("❌ Users Database Integration Test FAILED")
+            print("❌ Frontend-Backend Integration Debug Test FAILED")
     except Exception as e:
-        print(f"❌ Users Database Integration Test ERROR: {str(e)}")
-        user_tests.append(("Users Database Integration", False))
+        print(f"❌ Frontend-Backend Integration Debug Test ERROR: {str(e)}")
+        debug_tests.append(("Frontend-Backend Integration Debug", False))
     
-    # Test 3: Users Count and Statistics
-    print(f"\n{'='*20} Users Count and Statistics Test {'='*20}")
+    # Test 3: Console Log Verification Test
+    print(f"\n{'='*20} Console Log Verification Test {'='*20}")
     try:
-        result = test_users_count_and_statistics()
-        user_tests.append(("Users Count and Statistics", result))
+        result = test_users_count_endpoint_debug()
+        debug_tests.append(("Console Log Verification", result))
         if result:
-            print("✅ Users Count and Statistics Test PASSED")
+            print("✅ Console Log Verification Test PASSED")
         else:
-            print("❌ Users Count and Statistics Test FAILED")
+            print("❌ Console Log Verification Test FAILED")
     except Exception as e:
-        print(f"❌ Users Count and Statistics Test ERROR: {str(e)}")
-        user_tests.append(("Users Count and Statistics", False))
+        print(f"❌ Console Log Verification Test ERROR: {str(e)}")
+        debug_tests.append(("Console Log Verification", False))
     
-    # Test 4: Meeting Request Integration with Real Users
-    print(f"\n{'='*20} Meeting Request Integration with Real Users Test {'='*20}")
+    # Test 4: MeetingRequestModal Integration Debug Test
+    print(f"\n{'='*20} MeetingRequestModal Integration Debug Test {'='*20}")
     try:
-        result = test_meeting_request_integration_with_real_users()
-        user_tests.append(("Meeting Request Integration with Real Users", result))
+        result = test_meeting_request_modal_users_integration()
+        debug_tests.append(("MeetingRequestModal Integration Debug", result))
         if result:
-            print("✅ Meeting Request Integration with Real Users Test PASSED")
+            print("✅ MeetingRequestModal Integration Debug Test PASSED")
         else:
-            print("❌ Meeting Request Integration with Real Users Test FAILED")
+            print("❌ MeetingRequestModal Integration Debug Test FAILED")
     except Exception as e:
-        print(f"❌ Meeting Request Integration with Real Users Test ERROR: {str(e)}")
-        user_tests.append(("Meeting Request Integration with Real Users", False))
+        print(f"❌ MeetingRequestModal Integration Debug Test ERROR: {str(e)}")
+        debug_tests.append(("MeetingRequestModal Integration Debug", False))
     
     # Final Results Summary
     print("\n" + "=" * 80)
