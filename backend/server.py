@@ -7893,94 +7893,22 @@ class User(BaseModel):
 
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
-    """Get all active users in the system"""
+    """Get all active users from database"""
     try:
-        # Return the actual system users (matching AuthContext)
-        system_users = [
-            User(
-                id="murb",
-                name="Murat Bucak", 
-                email="murat.bucak@quattrostand.com",
-                role="admin",
-                department="Genel Müdürlük",
-                phone="+90 532 507 5555"
-            ),
-            User(
-                id="tame", 
-                name="Tamer Erdim",
-                email="tamer.erdim@quattrostand.com",
-                role="manager",
-                department="Satış",
-                phone="+90 532 507 5556"
-            ),
-            User(
-                id="batu",
-                name="Batuhan Cücük",
-                email="batuhan.cucuk@quattrostand.com", 
-                role="user",
-                department="Müşteri Temsilcisi",
-                phone="+90 532 507 5557"
-            ),
-            User(
-                id="vata",
-                name="Vatan Dalkılıç",
-                email="vatan.dalkilic@quattrostand.com",
-                role="user", 
-                department="Müşteri Temsilcisi",
-                phone="+90 532 507 5558"
-            ),
-            User(
-                id="biry",
-                name="Birtan Yılmaz", 
-                email="birtan.yilmaz@quattrostand.com",
-                role="admin",
-                department="Admin",
-                phone="+90 532 507 5559"
-            ),
-            User(
-                id="beyn",
-                name="Beyza Nur",
-                email="beyza.nur@quattrostand.com",
-                role="user",
-                department="Tasarım", 
-                phone="+90 532 507 5560"
-            ),
-            User(
-                id="niyk",
-                name="Niyazi Karahan",
-                email="niyazi.karahan@quattrostand.com",
-                role="user",
-                department="Tasarım",
-                phone="+90 532 507 5561"  
-            ),
-            User(
-                id="sukb",
-                name="Şükran Bucak", 
-                email="sukran.bucak@quattrostand.com",
-                role="user",
-                department="Muhasebe",
-                phone="+90 532 507 5562"
-            ),
-            User(
-                id="icla",
-                name="İclal Aksu",
-                email="iclal.aksu@quattrostand.com",
-                role="user", 
-                department="Tasarım",
-                phone="+90 532 507 5563"
-            ),
-            User(
-                id="meha",
-                name="Mehmet Ağdaş",
-                email="info@noktafuar.com", 
-                role="user",
-                department="Üretim Müdürü",
-                phone="+90 532 507 5564"
-            )
-        ]
+        # Get users from database
+        users_from_db = await db.users.find({"status": status}).sort("name", 1).to_list(100)
         
-        logger.info(f"Returning {len(system_users)} actual system users (matching AuthContext)")
-        return system_users
+        if users_from_db:
+            logger.info(f"Retrieved {len(users_from_db)} users from database")
+            return [User(**user) for user in users_from_db]
+        
+        # If no users in database, return empty list and suggest migration
+        logger.warning("No users found in database. Run POST /api/users/migrate to migrate AuthContext users.")
+        return []
+        
+    except Exception as e:
+        logger.error(f"Error getting users from database: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting users: {str(e)}")
         
     except Exception as e:
         logger.error(f"Error getting users: {str(e)}")
