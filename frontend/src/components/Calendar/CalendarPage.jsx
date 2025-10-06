@@ -176,13 +176,23 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setShowChatModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Sohbet</span>
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowMeetingRequestModal(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Yeni Toplantı Talebi</span>
+            </button>
+            
+            <button
+              onClick={() => setShowChatModal(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Sohbet</span>
+            </button>
+          </div>
         </div>
 
         {/* Calendar */}
