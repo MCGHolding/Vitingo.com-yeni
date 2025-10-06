@@ -7542,21 +7542,25 @@ async def create_meeting_request(request_data: MeetingRequestCreate, organizer_i
         # Get attendee names from user database
         attendee_names = []
         for attendee_id in request_data.attendee_ids:
+            # Try to get from user database first
             attendee_user = await db.users.find_one({"id": attendee_id})
             if attendee_user:
                 attendee_names.append(attendee_user["name"])
             else:
-                # Fallback to mock names for backward compatibility
-                if attendee_id == "admin_user":
-                    attendee_names.append("Admin User")
-                elif attendee_id == "user1":
-                    attendee_names.append("Ahmet Yılmaz")
-                elif attendee_id == "user2":
-                    attendee_names.append("Fatma Demir")
-                elif attendee_id == "user3":
-                    attendee_names.append("Mehmet Kaya")
-                else:
-                    attendee_names.append(f"User {attendee_id}")
+                # Fallback with known user mapping
+                user_name_map = {
+                    "murb": "Murat Bucak",
+                    "tame": "Tamer Erdim", 
+                    "batu": "Batuhan Cücük",
+                    "vata": "Vatan Dalkılıç",
+                    "biry": "Birtan Yılmaz",
+                    "beyn": "Beyza Nur",
+                    "niyk": "Niyazi Karahan",
+                    "sukb": "Şükran Bucak",
+                    "icla": "İclal Aksu",
+                    "meha": "Mehmet Ağdaş"
+                }
+                attendee_names.append(user_name_map.get(attendee_id, f"Kullanıcı {attendee_id}"))
         
         # Create meeting request
         request_dict = request_data.dict()
