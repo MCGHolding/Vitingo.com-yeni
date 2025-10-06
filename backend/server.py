@@ -7979,16 +7979,8 @@ async def get_users(status: str = "active"):
             )
         ]
         
-        # Save realistic users to database for future use
-        for user in realistic_users:
-            await db.users.update_one(
-                {"id": user.id},
-                {"$setOnInsert": user.dict()},
-                upsert=True
-            )
-        
-        logger.info(f"Created {len(realistic_users)} realistic company users in database")
-        return realistic_users
+        logger.info(f"Returning {len(system_users)} actual system users (matching AuthContext)")
+        return system_users
         
     except Exception as e:
         logger.error(f"Error getting users: {str(e)}")
