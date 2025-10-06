@@ -27,7 +27,7 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
   const loadUsers = async () => {
     setIsLoadingUsers(true);
     try {
-      // Force cache bust for users API
+      // First try to get users from database
       const response = await fetch(`${BACKEND_URL}/api/users?t=${Date.now()}`, {
         cache: 'no-cache',
         headers: {
@@ -39,14 +39,45 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
         const usersData = await response.json();
         console.log('RAW API RESPONSE:', usersData);
         
-        // Filter out current user
-        const filteredUsers = usersData.filter(user => user.id !== currentUser.id);
-        setUsers(filteredUsers);
-        console.log(`✅ LOADED ${filteredUsers.length} REAL COMPANY EMPLOYEES:`);
-        
-        filteredUsers.forEach(user => {
-          console.log(`- ${user.name} (${user.email}) - ${user.department}`);
-        });
+        // If no users in database, run migration
+        if (usersData.length === 0) {
+          console.log('No users found in database, running migration...');
+          
+          const migrationResponse = await fetch(`${BACKEND_URL}/api/users/migrate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (migrationResponse.ok) {
+            const migrationResult = await migrationResponse.json();
+            console.log('Migration successful:', migrationResult);
+            
+            // Reload users after migration
+            const retryResponse = await fetch(`${BACKEND_URL}/api/users?t=${Date.now()}`);
+            if (retryResponse.ok) {
+              const retryUsersData = await retryResponse.json();
+              const filteredUsers = retryUsersData.filter(user => user.id !== currentUser.id);
+              setUsers(filteredUsers);
+              console.log(`✅ LOADED ${filteredUsers.length} MIGRATED USERS FROM DATABASE:`);
+              filteredUsers.forEach(user => {
+                console.log(`- ${user.name} (${user.email}) - ${user.department}`);
+              });
+            }
+          } else {
+            console.error('Migration failed');
+          }
+        } else {
+          // Users exist in database, use them
+          const filteredUsers = usersData.filter(user => user.id !== currentUser.id);
+          setUsers(filteredUsers);
+          console.log(`✅ LOADED ${filteredUsers.length} USERS FROM DATABASE:`);
+          
+          filteredUsers.forEach(user => {
+            console.log(`- ${user.name} (${user.email}) - ${user.department}`);
+          });
+        }
       } else {
         console.error('Failed to load users, status:', response.status);
       }
