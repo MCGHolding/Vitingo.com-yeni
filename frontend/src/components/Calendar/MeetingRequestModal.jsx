@@ -27,16 +27,6 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
   const loadUsers = async () => {
     setIsLoadingUsers(true);
     try {
-      // Initialize users if needed - force cache bust
-      const initResponse = await fetch(`${BACKEND_URL}/api/users/initialize`, { 
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      });
-      console.log('Users initialize response:', await initResponse.text());
-      
       // Force cache bust for users API
       const response = await fetch(`${BACKEND_URL}/api/users?t=${Date.now()}`, {
         cache: 'no-cache',
