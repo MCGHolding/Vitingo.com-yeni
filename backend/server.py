@@ -7895,14 +7895,8 @@ class User(BaseModel):
 async def get_users(status: str = "active"):
     """Get all active users in the system"""
     try:
-        # Try to get users from database first
-        users_from_db = await db.users.find({"status": status}).to_list(100)
-        
-        if users_from_db:
-            return [User(**user) for user in users_from_db]
-        
-        # Create realistic company users automatically if database is empty
-        realistic_users = [
+        # Return the actual system users (matching AuthContext)
+        system_users = [
             User(
                 id="murat_bucak",
                 name="Murat Bucak", 
