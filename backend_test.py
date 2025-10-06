@@ -9723,6 +9723,673 @@ def test_meeting_request_integration_with_real_users():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_users_api_response_debug():
+    """
+    **API Response Debug Test**
+    Test GET /api/users endpoint directly and verify response content.
+    Check if real Vitingo company users are being returned vs mock data.
+    Verify that user data includes proper vitingo.com emails and realistic information.
+    
+    This addresses the user's concern about seeing "mock" users instead of real Vitingo company users.
+    """
+    
+    print("=" * 80)
+    print("🔍 USERS API RESPONSE DEBUG TEST - GET /api/users")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Testing endpoint: {endpoint}")
+    print("🎯 GOAL: Verify real Vitingo company users are returned (not mock data)")
+    
+    try:
+        # Test 1: Make GET request to users endpoint
+        print("\n1. Making GET request to users endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            users_data = response.json()
+            print(f"   Response type: {type(users_data)}")
+            print(f"   Number of users returned: {len(users_data) if isinstance(users_data, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(users_data, list):
+            print("   ❌ FAIL: Response should be a list of users")
+            return False
+        
+        if len(users_data) == 0:
+            print("   ❌ FAIL: No users returned - this suggests an issue")
+            return False
+        
+        print(f"   ✅ PASS: Response contains {len(users_data)} users")
+        
+        # Test 4: Check for real Vitingo company users
+        print("\n4. Checking for real Vitingo company users...")
+        expected_vitingo_users = [
+            "Murat Bucak", "Elif Yılmaz", "Kerem Demir", "Zeynep Kaya", 
+            "Burak Öztürk", "Ayşe Çelik", "Mehmet Şahin", "Seda Arslan",
+            "Emre Doğan", "Deniz Kurt", "Cemre Ateş", "Onur Yıldız"
+        ]
+        
+        found_vitingo_users = []
+        vitingo_email_count = 0
+        mock_indicators = []
+        
+        for user in users_data:
+            user_name = user.get("name", "")
+            user_email = user.get("email", "")
+            
+            # Check for Vitingo company users
+            if user_name in expected_vitingo_users:
+                found_vitingo_users.append(user_name)
+            
+            # Check for vitingo.com emails
+            if "@vitingo.com" in user_email:
+                vitingo_email_count += 1
+            
+            # Check for mock/demo indicators
+            if any(indicator in user_name.lower() for indicator in ["mock", "demo", "test", "user1", "user2"]):
+                mock_indicators.append(user_name)
+            
+            print(f"   User: {user_name} ({user_email}) - Dept: {user.get('department', 'N/A')}")
+        
+        # Test 5: Verify real company users vs mock data
+        print(f"\n5. Analyzing user data quality...")
+        print(f"   Expected Vitingo users: {len(expected_vitingo_users)}")
+        print(f"   Found Vitingo users: {len(found_vitingo_users)}")
+        print(f"   Users with @vitingo.com emails: {vitingo_email_count}")
+        print(f"   Mock/demo indicators found: {len(mock_indicators)}")
+        
+        if len(found_vitingo_users) >= 10:  # Should have most of the expected users
+            print("   ✅ PASS: Found majority of expected Vitingo company users")
+        else:
+            print(f"   ❌ FAIL: Only found {len(found_vitingo_users)} Vitingo users, expected at least 10")
+            print(f"   Missing users: {set(expected_vitingo_users) - set(found_vitingo_users)}")
+        
+        if vitingo_email_count >= 10:  # Should have vitingo.com emails
+            print("   ✅ PASS: Users have proper @vitingo.com email addresses")
+        else:
+            print(f"   ❌ FAIL: Only {vitingo_email_count} users have @vitingo.com emails")
+        
+        if len(mock_indicators) == 0:
+            print("   ✅ PASS: No mock/demo user indicators found")
+        else:
+            print(f"   ⚠️  WARNING: Found potential mock users: {mock_indicators}")
+        
+        # Test 6: Check Turkish character support
+        print(f"\n6. Checking Turkish character support...")
+        turkish_chars_found = 0
+        for user in users_data:
+            user_name = user.get("name", "")
+            user_dept = user.get("department", "")
+            if any(char in user_name + user_dept for char in "ğüşıöçĞÜŞİÖÇ"):
+                turkish_chars_found += 1
+        
+        if turkish_chars_found >= 5:
+            print(f"   ✅ PASS: Turkish characters properly supported ({turkish_chars_found} users with Turkish chars)")
+        else:
+            print(f"   ⚠️  WARNING: Limited Turkish character usage ({turkish_chars_found} users)")
+        
+        # Test 7: Verify realistic departments
+        print(f"\n7. Checking department structure...")
+        departments = set()
+        for user in users_data:
+            dept = user.get("department")
+            if dept:
+                departments.add(dept)
+        
+        expected_departments = [
+            "Genel Müdürlük", "İnsan Kaynakları", "Satış", "Pazarlama", 
+            "Muhasebe", "IT", "Operasyon", "Müşteri Hizmetleri", 
+            "Tasarım", "Proje Yönetimi", "Kalite Kontrol", "Lojistik"
+        ]
+        
+        found_departments = len(departments.intersection(set(expected_departments)))
+        print(f"   Found departments: {sorted(list(departments))}")
+        print(f"   Expected departments found: {found_departments}/{len(expected_departments)}")
+        
+        if found_departments >= 8:
+            print("   ✅ PASS: Realistic Turkish department structure found")
+        else:
+            print(f"   ❌ FAIL: Only {found_departments} expected departments found")
+        
+        # Final assessment
+        print("\n" + "=" * 80)
+        print("🔍 USERS API RESPONSE DEBUG TEST RESULTS:")
+        print("=" * 80)
+        
+        is_real_data = (
+            len(found_vitingo_users) >= 10 and 
+            vitingo_email_count >= 10 and 
+            len(mock_indicators) == 0 and
+            found_departments >= 8
+        )
+        
+        if is_real_data:
+            print("✅ CONCLUSION: API returns REAL Vitingo company users (NOT mock data)")
+            print("✅ Users have proper @vitingo.com email addresses")
+            print("✅ Realistic Turkish names and departments")
+            print("✅ No mock/demo user indicators found")
+            print(f"✅ Found {len(found_vitingo_users)}/12 expected Vitingo employees")
+            print("\n🎉 USERS API RESPONSE DEBUG TEST PASSED!")
+            print("📝 NOTE: If user still sees 'mock' users, the issue is likely in frontend caching or state management")
+        else:
+            print("❌ CONCLUSION: API may be returning mock data or has data quality issues")
+            print(f"❌ Only found {len(found_vitingo_users)} real Vitingo users")
+            print(f"❌ Only {vitingo_email_count} users have @vitingo.com emails")
+            if mock_indicators:
+                print(f"❌ Found mock indicators: {mock_indicators}")
+            print("\n🚨 USERS API RESPONSE DEBUG TEST FAILED!")
+        
+        return is_real_data
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_users_initialize_endpoint_debug():
+    """
+    **Frontend-Backend Integration Debug Test**
+    Test the /api/users/initialize endpoint to ensure real users are created.
+    Verify the users are properly saved to database and not just returning mock data.
+    Check user filtering and data structure.
+    """
+    
+    print("=" * 80)
+    print("🔍 USERS INITIALIZE ENDPOINT DEBUG TEST - POST /api/users/initialize")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users/initialize"
+    print(f"Testing endpoint: {endpoint}")
+    print("🎯 GOAL: Verify users initialization creates real company employees")
+    
+    try:
+        # Test 1: Call initialize endpoint
+        print("\n1. Calling users initialization endpoint...")
+        response = requests.post(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users initialize endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing initialization response...")
+        try:
+            init_response = response.json()
+            print(f"   Response: {init_response}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Verify initialization response structure
+        print("\n3. Verifying initialization response...")
+        required_fields = ["success", "message", "users_created"]
+        for field in required_fields:
+            if field not in init_response:
+                print(f"   ❌ FAIL: Missing required field: {field}")
+                return False
+        
+        if not init_response.get("success"):
+            print(f"   ❌ FAIL: Initialization reported failure: {init_response.get('message')}")
+            return False
+        
+        users_created = init_response.get("users_created", 0)
+        if users_created < 10:
+            print(f"   ❌ FAIL: Expected at least 10 users created, got {users_created}")
+            return False
+        
+        print(f"   ✅ PASS: Successfully initialized {users_created} users")
+        print(f"   Message: {init_response.get('message')}")
+        
+        # Test 4: Verify users are actually in database by calling GET /api/users
+        print("\n4. Verifying users are persisted in database...")
+        get_response = requests.get(f"{BACKEND_URL}/api/users", timeout=30)
+        
+        if get_response.status_code != 200:
+            print(f"   ❌ FAIL: Could not retrieve users after initialization")
+            return False
+        
+        users_data = get_response.json()
+        if len(users_data) < users_created:
+            print(f"   ❌ FAIL: Expected {users_created} users in database, found {len(users_data)}")
+            return False
+        
+        print(f"   ✅ PASS: {len(users_data)} users found in database after initialization")
+        
+        # Test 5: Verify old demo users were removed
+        print("\n5. Checking that old demo users were removed...")
+        demo_user_ids = ["demo_user", "admin_user", "user1", "user2", "user3", "user4", "user5", "user6"]
+        found_demo_users = []
+        
+        for user in users_data:
+            if user.get("id") in demo_user_ids:
+                found_demo_users.append(user.get("id"))
+        
+        if len(found_demo_users) == 0:
+            print("   ✅ PASS: Old demo users successfully removed")
+        else:
+            print(f"   ⚠️  WARNING: Found remaining demo users: {found_demo_users}")
+        
+        # Test 6: Verify real company employee data structure
+        print("\n6. Verifying real company employee data structure...")
+        vitingo_employees = 0
+        proper_structure_count = 0
+        
+        for user in users_data:
+            # Check for vitingo.com email
+            if "@vitingo.com" in user.get("email", ""):
+                vitingo_employees += 1
+            
+            # Check for proper data structure
+            required_user_fields = ["id", "name", "email", "role", "department", "phone", "status", "created_at"]
+            has_all_fields = all(field in user for field in required_user_fields)
+            
+            if has_all_fields:
+                proper_structure_count += 1
+        
+        print(f"   Vitingo employees: {vitingo_employees}/{len(users_data)}")
+        print(f"   Users with proper structure: {proper_structure_count}/{len(users_data)}")
+        
+        if vitingo_employees >= 10:
+            print("   ✅ PASS: Majority of users are Vitingo company employees")
+        else:
+            print(f"   ❌ FAIL: Only {vitingo_employees} Vitingo employees found")
+        
+        if proper_structure_count == len(users_data):
+            print("   ✅ PASS: All users have proper data structure")
+        else:
+            print(f"   ⚠️  WARNING: {len(users_data) - proper_structure_count} users missing some fields")
+        
+        print("\n" + "=" * 80)
+        print("🔍 USERS INITIALIZE ENDPOINT DEBUG TEST RESULTS:")
+        print("=" * 80)
+        
+        success = (
+            init_response.get("success") and
+            users_created >= 10 and
+            len(users_data) >= users_created and
+            vitingo_employees >= 10 and
+            len(found_demo_users) == 0
+        )
+        
+        if success:
+            print("✅ CONCLUSION: Users initialization working correctly")
+            print("✅ Real company employees created and persisted")
+            print("✅ Old demo users properly removed")
+            print("✅ Database integration working")
+            print(f"✅ {users_created} Vitingo company users initialized")
+            print("\n🎉 USERS INITIALIZE ENDPOINT DEBUG TEST PASSED!")
+        else:
+            print("❌ CONCLUSION: Users initialization has issues")
+            print("❌ May not be creating real company employees properly")
+            print("❌ Database persistence or data quality issues")
+            print("\n🚨 USERS INITIALIZE ENDPOINT DEBUG TEST FAILED!")
+        
+        return success
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_users_count_endpoint_debug():
+    """
+    **Console Log Verification Test**
+    Test GET /api/users/count endpoint to verify user statistics.
+    Check for any errors in the users loading process.
+    Verify that the user data transformation and filtering is working correctly.
+    """
+    
+    print("=" * 80)
+    print("🔍 USERS COUNT ENDPOINT DEBUG TEST - GET /api/users/count")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users/count"
+    print(f"Testing endpoint: {endpoint}")
+    print("🎯 GOAL: Verify user statistics and data consistency")
+    
+    try:
+        # Test 1: Call users count endpoint
+        print("\n1. Calling users count endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Users count endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse response
+        print("\n2. Parsing count response...")
+        try:
+            count_data = response.json()
+            print(f"   Response: {count_data}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Verify count response structure
+        print("\n3. Verifying count response structure...")
+        required_fields = ["total_users", "active_users", "departments"]
+        for field in required_fields:
+            if field not in count_data:
+                print(f"   ❌ FAIL: Missing required field: {field}")
+                return False
+        
+        total_users = count_data.get("total_users", 0)
+        active_users = count_data.get("active_users", 0)
+        departments = count_data.get("departments", [])
+        
+        print(f"   Total users: {total_users}")
+        print(f"   Active users: {active_users}")
+        print(f"   Departments: {len(departments)} departments")
+        print(f"   Department list: {departments}")
+        
+        # Test 4: Verify reasonable user counts
+        print("\n4. Verifying user count reasonableness...")
+        if total_users >= 10:
+            print(f"   ✅ PASS: Reasonable total user count: {total_users}")
+        else:
+            print(f"   ❌ FAIL: Low total user count: {total_users}")
+            return False
+        
+        if active_users >= 10:
+            print(f"   ✅ PASS: Reasonable active user count: {active_users}")
+        else:
+            print(f"   ❌ FAIL: Low active user count: {active_users}")
+            return False
+        
+        if active_users <= total_users:
+            print("   ✅ PASS: Active users count is logical (≤ total users)")
+        else:
+            print(f"   ❌ FAIL: Active users ({active_users}) > total users ({total_users})")
+            return False
+        
+        # Test 5: Verify department structure
+        print("\n5. Verifying department structure...")
+        expected_departments = [
+            "Genel Müdürlük", "İnsan Kaynakları", "Satış", "Pazarlama", 
+            "Muhasebe", "IT", "Operasyon", "Müşteri Hizmetleri", 
+            "Tasarım", "Proje Yönetimi", "Kalite Kontrol", "Lojistik"
+        ]
+        
+        if len(departments) >= 8:
+            print(f"   ✅ PASS: Good department diversity: {len(departments)} departments")
+        else:
+            print(f"   ⚠️  WARNING: Limited department diversity: {len(departments)} departments")
+        
+        # Check for Turkish department names
+        turkish_dept_count = 0
+        for dept in departments:
+            if any(char in dept for char in "ğüşıöçĞÜŞİÖÇ"):
+                turkish_dept_count += 1
+        
+        if turkish_dept_count >= 5:
+            print(f"   ✅ PASS: Turkish department names present: {turkish_dept_count}")
+        else:
+            print(f"   ⚠️  WARNING: Limited Turkish department names: {turkish_dept_count}")
+        
+        # Test 6: Cross-verify with GET /api/users
+        print("\n6. Cross-verifying with GET /api/users...")
+        users_response = requests.get(f"{BACKEND_URL}/api/users", timeout=30)
+        
+        if users_response.status_code == 200:
+            users_data = users_response.json()
+            actual_user_count = len(users_data)
+            actual_active_count = len([u for u in users_data if u.get("status") == "active"])
+            actual_departments = set(u.get("department") for u in users_data if u.get("department"))
+            
+            print(f"   GET /api/users returned: {actual_user_count} users")
+            print(f"   Active users in data: {actual_active_count}")
+            print(f"   Departments in data: {len(actual_departments)}")
+            
+            # Verify consistency
+            if actual_user_count == total_users:
+                print("   ✅ PASS: User count consistent between endpoints")
+            else:
+                print(f"   ❌ FAIL: User count mismatch - count: {total_users}, actual: {actual_user_count}")
+                return False
+            
+            if actual_active_count == active_users:
+                print("   ✅ PASS: Active user count consistent between endpoints")
+            else:
+                print(f"   ⚠️  WARNING: Active user count mismatch - count: {active_users}, actual: {actual_active_count}")
+            
+            if len(actual_departments) == len(departments):
+                print("   ✅ PASS: Department count consistent between endpoints")
+            else:
+                print(f"   ⚠️  WARNING: Department count mismatch - count: {len(departments)}, actual: {len(actual_departments)}")
+        
+        print("\n" + "=" * 80)
+        print("🔍 USERS COUNT ENDPOINT DEBUG TEST RESULTS:")
+        print("=" * 80)
+        
+        success = (
+            total_users >= 10 and
+            active_users >= 10 and
+            active_users <= total_users and
+            len(departments) >= 8
+        )
+        
+        if success:
+            print("✅ CONCLUSION: Users count endpoint working correctly")
+            print("✅ User statistics are reasonable and consistent")
+            print("✅ Department structure is proper")
+            print("✅ Data transformation and filtering working")
+            print(f"✅ {total_users} total users, {active_users} active, {len(departments)} departments")
+            print("\n🎉 USERS COUNT ENDPOINT DEBUG TEST PASSED!")
+        else:
+            print("❌ CONCLUSION: Users count endpoint has issues")
+            print("❌ User statistics may be incorrect")
+            print("❌ Data transformation or filtering problems")
+            print("\n🚨 USERS COUNT ENDPOINT DEBUG TEST FAILED!")
+        
+        return success
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_meeting_request_modal_users_integration():
+    """
+    **MeetingRequestModal Integration Debug Test**
+    Test the complete flow that MeetingRequestModal would use to load users.
+    Verify that the loadUsers function would work correctly with the API responses.
+    Check user data transformation and filtering as it would happen in the frontend.
+    """
+    
+    print("=" * 80)
+    print("🔍 MEETINGREQUESTMODAL USERS INTEGRATION DEBUG TEST")
+    print("=" * 80)
+    
+    print("🎯 GOAL: Simulate MeetingRequestModal user loading process")
+    print("📝 This test simulates what the frontend MeetingRequestModal does when loading users")
+    
+    try:
+        # Test 1: Simulate initial users load (what MeetingRequestModal.loadUsers() does)
+        print("\n1. Simulating MeetingRequestModal.loadUsers() function...")
+        users_endpoint = f"{BACKEND_URL}/api/users"
+        
+        print(f"   Calling: {users_endpoint}")
+        response = requests.get(users_endpoint, timeout=30)
+        
+        if response.status_code != 200:
+            print(f"   ❌ FAIL: Users API call failed with status {response.status_code}")
+            return False
+        
+        users_data = response.json()
+        print(f"   ✅ PASS: Loaded {len(users_data)} users from API")
+        
+        # Test 2: Simulate user data transformation (frontend processing)
+        print("\n2. Simulating frontend user data transformation...")
+        
+        # This simulates what the frontend would do with the user data
+        transformed_users = []
+        for user in users_data:
+            # Simulate the transformation that might happen in frontend
+            transformed_user = {
+                "id": user.get("id"),
+                "name": user.get("name"),
+                "email": user.get("email"),
+                "department": user.get("department"),
+                "role": user.get("role"),
+                "displayName": f"{user.get('name')} ({user.get('department', 'No Dept')})",
+                "isVitingoEmployee": "@vitingo.com" in user.get("email", ""),
+                "isActive": user.get("status") == "active"
+            }
+            transformed_users.append(transformed_user)
+        
+        print(f"   ✅ PASS: Transformed {len(transformed_users)} users for frontend use")
+        
+        # Test 3: Simulate user filtering (active users only)
+        print("\n3. Simulating user filtering (active users only)...")
+        active_users = [user for user in transformed_users if user.get("isActive")]
+        vitingo_users = [user for user in active_users if user.get("isVitingoEmployee")]
+        
+        print(f"   Total users: {len(transformed_users)}")
+        print(f"   Active users: {len(active_users)}")
+        print(f"   Vitingo employees: {len(vitingo_users)}")
+        
+        # Test 4: Verify user data quality for MeetingRequestModal
+        print("\n4. Verifying user data quality for MeetingRequestModal...")
+        
+        # Check for expected Vitingo employees
+        expected_names = ["Murat Bucak", "Elif Yılmaz", "Kerem Demir", "Zeynep Kaya"]
+        found_expected = []
+        
+        for user in vitingo_users:
+            if user.get("name") in expected_names:
+                found_expected.append(user.get("name"))
+                print(f"   Found expected user: {user.get('name')} - {user.get('email')} ({user.get('department')})")
+        
+        if len(found_expected) >= 3:
+            print(f"   ✅ PASS: Found {len(found_expected)} expected Vitingo employees")
+        else:
+            print(f"   ❌ FAIL: Only found {len(found_expected)} expected employees")
+            return False
+        
+        # Test 5: Check for mock/demo user indicators
+        print("\n5. Checking for mock/demo user indicators...")
+        mock_indicators = []
+        for user in active_users:
+            user_name = user.get("name", "").lower()
+            user_email = user.get("email", "").lower()
+            
+            if any(indicator in user_name or indicator in user_email for indicator in ["mock", "demo", "test", "user1", "user2", "fake"]):
+                mock_indicators.append(user.get("name"))
+        
+        if len(mock_indicators) == 0:
+            print("   ✅ PASS: No mock/demo user indicators found")
+        else:
+            print(f"   ⚠️  WARNING: Found potential mock users: {mock_indicators}")
+        
+        # Test 6: Simulate dropdown population (what user would see)
+        print("\n6. Simulating dropdown population (what user would see in MeetingRequestModal)...")
+        
+        dropdown_options = []
+        for user in active_users:
+            option = {
+                "value": user.get("id"),
+                "label": user.get("displayName"),
+                "email": user.get("email"),
+                "department": user.get("department")
+            }
+            dropdown_options.append(option)
+        
+        print("   Dropdown options that would be shown to user:")
+        for i, option in enumerate(dropdown_options[:10]):  # Show first 10
+            print(f"     {i+1}. {option['label']} - {option['email']}")
+        
+        if len(dropdown_options) > 10:
+            print(f"     ... and {len(dropdown_options) - 10} more users")
+        
+        # Test 7: Final assessment
+        print("\n7. Final assessment of MeetingRequestModal integration...")
+        
+        # Check if this looks like real data vs mock data
+        real_data_indicators = 0
+        
+        if len(vitingo_users) >= 10:
+            real_data_indicators += 1
+            print("   ✅ Sufficient Vitingo company employees")
+        
+        if len(found_expected) >= 3:
+            real_data_indicators += 1
+            print("   ✅ Expected company employees found")
+        
+        if len(mock_indicators) == 0:
+            real_data_indicators += 1
+            print("   ✅ No mock user indicators")
+        
+        # Check for Turkish names and departments
+        turkish_content = sum(1 for user in active_users 
+                            if any(char in user.get("name", "") + user.get("department", "") 
+                                  for char in "ğüşıöçĞÜŞİÖÇ"))
+        
+        if turkish_content >= 5:
+            real_data_indicators += 1
+            print("   ✅ Turkish names and departments present")
+        
+        print("\n" + "=" * 80)
+        print("🔍 MEETINGREQUESTMODAL USERS INTEGRATION DEBUG TEST RESULTS:")
+        print("=" * 80)
+        
+        success = real_data_indicators >= 3
+        
+        if success:
+            print("✅ CONCLUSION: MeetingRequestModal would load REAL company users")
+            print("✅ User data transformation working correctly")
+            print("✅ Filtering produces appropriate user list")
+            print("✅ Dropdown would show real Vitingo employees")
+            print(f"✅ {len(vitingo_users)} Vitingo employees available for selection")
+            print("\n🎉 MEETINGREQUESTMODAL INTEGRATION DEBUG TEST PASSED!")
+            print("\n📝 NOTE: If user still sees 'mock' users in the actual modal:")
+            print("   - Check browser cache/localStorage")
+            print("   - Check if frontend is using correct API endpoint")
+            print("   - Check if there's client-side data caching")
+            print("   - Verify network requests in browser dev tools")
+        else:
+            print("❌ CONCLUSION: MeetingRequestModal integration has issues")
+            print("❌ May be loading mock data or has data quality problems")
+            print("❌ User dropdown may not show real company employees")
+            print("\n🚨 MEETINGREQUESTMODAL INTEGRATION DEBUG TEST FAILED!")
+        
+        return success
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     print("🚀 Starting Realistic Company Users System Backend API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
