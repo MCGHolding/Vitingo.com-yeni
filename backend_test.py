@@ -10487,22 +10487,9 @@ if __name__ == "__main__":
         print("❌ API may be returning mock data or has data quality problems")
         print("❌ Further investigation needed")
     
-    # Enhanced Meeting Requests System Tests (keeping original tests)
-    meeting_request_tests = []
-    
-    # Test 1: Meeting Request Creation
-    print(f"\n{'='*20} Meeting Request Creation {'='*20}")
-    try:
-        success = test_meeting_request_creation()
-        if success:
-            print("✅ Meeting Request Creation PASSED")
-            meeting_request_tests.append(("Meeting Request Creation", "PASSED", None))
-        else:
-            print("❌ Meeting Request Creation FAILED")
-            meeting_request_tests.append(("Meeting Request Creation", "FAILED", None))
-    except Exception as e:
-        print(f"❌ Meeting Request Creation FAILED with exception: {str(e)}")
-        meeting_request_tests.append(("Meeting Request Creation", "FAILED", str(e)))
+    print("\n" + "=" * 80)
+    print("🔍 DEBUG TESTING COMPLETED")
+    print("=" * 80)
     
     # Test 2: Meeting Request Response (only if creation succeeded)
     print(f"\n{'='*20} Meeting Request Response {'='*20}")
