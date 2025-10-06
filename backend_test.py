@@ -10391,12 +10391,15 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Realistic Company Users System Backend API Tests...")
+    print("🚀 Starting MeetingRequestModal Users Loading Debug Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
+    print("🎯 DEBUGGING: User reports seeing 'mock' users instead of real Vitingo company users")
+    print("📝 These tests will verify what the API is actually returning")
+    print("=" * 80)
     
-    # Realistic Company Users System Tests
-    user_tests = []
+    # MeetingRequestModal Users Debug Tests
+    debug_tests = []
     
     # Test 1: Users Initialization
     print(f"\n{'='*20} Users Initialization Test {'='*20}")
