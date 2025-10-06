@@ -8003,27 +8003,141 @@ async def get_users_count():
         logger.error(f"Error getting user count: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting user count: {str(e)}")
 
-@api_router.post("/users/initialize")
-async def initialize_company_users():
-    """Initialize the company with realistic user data"""
+@api_router.post("/users/migrate")
+async def migrate_auth_users_to_database():
+    """Migrate AuthContext users to database (one-time operation)"""
     try:
-        # Clear existing demo users first
-        await db.users.delete_many({
-            "id": {"$in": ["demo_user", "admin_user", "user1", "user2", "user3", "user4", "user5", "user6"]}
-        })
+        # AuthContext users (matching frontend)
+        auth_users = [
+            {
+                "id": "murb",
+                "name": "Murat Bucak", 
+                "email": "murat.bucak@quattrostand.com",
+                "role": "admin",
+                "department": "Genel Müdürlük",
+                "phone": "+90 532 507 5555",
+                "status": "active",
+                "username": "murb",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "tame", 
+                "name": "Tamer Erdim",
+                "email": "tamer.erdim@quattrostand.com",
+                "role": "manager",
+                "department": "Satış",
+                "phone": "+90 532 507 5556",
+                "status": "active",
+                "username": "tame",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "batu",
+                "name": "Batuhan Cücük",
+                "email": "batuhan.cucuk@quattrostand.com", 
+                "role": "user",
+                "department": "Müşteri Temsilcisi",
+                "phone": "+90 532 507 5557",
+                "status": "active",
+                "username": "batu",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "vata",
+                "name": "Vatan Dalkılıç",
+                "email": "vatan.dalkilic@quattrostand.com",
+                "role": "user", 
+                "department": "Müşteri Temsilcisi",
+                "phone": "+90 532 507 5558",
+                "status": "active",
+                "username": "vata",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "biry",
+                "name": "Birtan Yılmaz", 
+                "email": "birtan.yilmaz@quattrostand.com",
+                "role": "admin",
+                "department": "Admin",
+                "phone": "+90 532 507 5559",
+                "status": "active",
+                "username": "biry",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "beyn",
+                "name": "Beyza Nur",
+                "email": "beyza.nur@quattrostand.com",
+                "role": "user",
+                "department": "Tasarım", 
+                "phone": "+90 532 507 5560",
+                "status": "active",
+                "username": "beyn",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "niyk",
+                "name": "Niyazi Karahan",
+                "email": "niyazi.karahan@quattrostand.com",
+                "role": "user",
+                "department": "Tasarım",
+                "phone": "+90 532 507 5561",
+                "status": "active",
+                "username": "niyk",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "sukb",
+                "name": "Şükran Bucak", 
+                "email": "sukran.bucak@quattrostand.com",
+                "role": "user",
+                "department": "Muhasebe",
+                "phone": "+90 532 507 5562",
+                "status": "active",
+                "username": "sukb",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "icla",
+                "name": "İclal Aksu",
+                "email": "iclal.aksu@quattrostand.com",
+                "role": "user", 
+                "department": "Tasarım",
+                "phone": "+90 532 507 5563",
+                "status": "active",
+                "username": "icla",
+                "created_at": datetime.now(timezone.utc)
+            },
+            {
+                "id": "meha",
+                "name": "Mehmet Ağdaş",
+                "email": "info@noktafuar.com", 
+                "role": "user",
+                "department": "Üretim Müdürü",
+                "phone": "+90 532 507 5564",
+                "status": "active",
+                "username": "meha",
+                "created_at": datetime.now(timezone.utc)
+            }
+        ]
         
-        # Force recreation of users by calling get_users which will create them if they don't exist
-        users = await get_users()
+        # Clear existing users table
+        await db.users.delete_many({})
         
+        # Insert all auth users
+        result = await db.users.insert_many(auth_users)
+        
+        logger.info(f"Migrated {len(auth_users)} users from AuthContext to database")
         return {
             "success": True,
-            "message": f"Company initialized with {len(users)} employees", 
-            "users_created": len(users)
+            "message": f"Successfully migrated {len(auth_users)} users to database",
+            "users_migrated": len(auth_users),
+            "inserted_ids": [str(id) for id in result.inserted_ids]
         }
         
     except Exception as e:
-        logger.error(f"Error initializing company users: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error initializing company users: {str(e)}")
+        logger.error(f"Error migrating users: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error migrating users: {str(e)}")
 
 @api_router.get("/users/{user_id}", response_model=User)
 async def get_user(user_id: str):
