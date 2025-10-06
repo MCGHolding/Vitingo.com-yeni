@@ -904,6 +904,31 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           </div>
         </div>
       )}
+
+      {/* Meeting Details Modal */}
+      <MeetingDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => {
+          setShowDetailsModal(false);
+          setSelectedRequest(null);
+        }}
+        request={selectedRequest}
+        currentUser={currentUser}
+        onResponseSuccess={(response, message) => {
+          // Reload meeting requests to reflect changes
+          loadMeetingRequests();
+          // Show success message
+          setResponseMessage({
+            type: 'success',
+            text: message
+          });
+          
+          // Clear message after 3 seconds
+          setTimeout(() => {
+            setResponseMessage(null);
+          }, 3000);
+        }}
+      />
     </div>
   );
 };
