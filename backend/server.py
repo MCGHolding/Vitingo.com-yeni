@@ -7898,100 +7898,84 @@ async def get_users(status: str = "active"):
         # Return the actual system users (matching AuthContext)
         system_users = [
             User(
-                id="murat_bucak",
+                id="murb",
                 name="Murat Bucak", 
-                email="murat.bucak@vitingo.com",
+                email="murat.bucak@quattrostand.com",
                 role="admin",
                 department="Genel Müdürlük",
-                phone="+90 532 111 1111"
+                phone="+90 532 507 5555"
             ),
             User(
-                id="elif_yilmaz", 
-                name="Elif Yılmaz",
-                email="elif.yilmaz@vitingo.com",
+                id="tame", 
+                name="Tamer Erdim",
+                email="tamer.erdim@quattrostand.com",
                 role="manager",
-                department="İnsan Kaynakları",
-                phone="+90 532 222 2222"
-            ),
-            User(
-                id="kerem_demir",
-                name="Kerem Demir",
-                email="kerem.demir@vitingo.com", 
-                role="user",
                 department="Satış",
-                phone="+90 532 333 3333"
+                phone="+90 532 507 5556"
             ),
             User(
-                id="zeynep_kaya",
-                name="Zeynep Kaya",
-                email="zeynep.kaya@vitingo.com",
+                id="batu",
+                name="Batuhan Cücük",
+                email="batuhan.cucuk@quattrostand.com", 
+                role="user",
+                department="Müşteri Temsilcisi",
+                phone="+90 532 507 5557"
+            ),
+            User(
+                id="vata",
+                name="Vatan Dalkılıç",
+                email="vatan.dalkilic@quattrostand.com",
                 role="user", 
-                department="Pazarlama",
-                phone="+90 532 444 4444"
+                department="Müşteri Temsilcisi",
+                phone="+90 532 507 5558"
             ),
             User(
-                id="burak_ozturk",
-                name="Burak Öztürk", 
-                email="burak.ozturk@vitingo.com",
+                id="biry",
+                name="Birtan Yılmaz", 
+                email="birtan.yilmaz@quattrostand.com",
+                role="admin",
+                department="Admin",
+                phone="+90 532 507 5559"
+            ),
+            User(
+                id="beyn",
+                name="Beyza Nur",
+                email="beyza.nur@quattrostand.com",
+                role="user",
+                department="Tasarım", 
+                phone="+90 532 507 5560"
+            ),
+            User(
+                id="niyk",
+                name="Niyazi Karahan",
+                email="niyazi.karahan@quattrostand.com",
+                role="user",
+                department="Tasarım",
+                phone="+90 532 507 5561"  
+            ),
+            User(
+                id="sukb",
+                name="Şükran Bucak", 
+                email="sukran.bucak@quattrostand.com",
                 role="user",
                 department="Muhasebe",
-                phone="+90 532 555 5555"
+                phone="+90 532 507 5562"
             ),
             User(
-                id="ayse_celik",
-                name="Ayşe Çelik",
-                email="ayse.celik@vitingo.com",
-                role="user",
-                department="IT", 
-                phone="+90 532 666 6666"
-            ),
-            User(
-                id="mehmet_sahin",
-                name="Mehmet Şahin",
-                email="mehmet.sahin@vitingo.com",
-                role="manager",
-                department="Operasyon",
-                phone="+90 532 777 7777"  
-            ),
-            User(
-                id="seda_arslan",
-                name="Seda Arslan", 
-                email="seda.arslan@vitingo.com",
-                role="user",
-                department="Müşteri Hizmetleri",
-                phone="+90 532 888 8888"
-            ),
-            User(
-                id="emre_dogan",
-                name="Emre Doğan",
-                email="emre.dogan@vitingo.com",
+                id="icla",
+                name="İclal Aksu",
+                email="iclal.aksu@quattrostand.com",
                 role="user", 
                 department="Tasarım",
-                phone="+90 532 999 9999"
+                phone="+90 532 507 5563"
             ),
             User(
-                id="deniz_kurt",
-                name="Deniz Kurt",
-                email="deniz.kurt@vitingo.com", 
+                id="meha",
+                name="Mehmet Ağdaş",
+                email="info@noktafuar.com", 
                 role="user",
-                department="Proje Yönetimi",
-                phone="+90 532 101 0101"
-            ),
-            User(
-                id="cemre_ates",
-                name="Cemre Ateş",
-                email="cemre.ates@vitingo.com",
-                role="user",
-                department="Kalite Kontrol",
-                phone="+90 532 121 2121"
-            ),
-            User(
-                id="onur_yildiz",
-                name="Onur Yıldız", 
-                email="onur.yildiz@vitingo.com",
-                role="user",
-                department="Lojistik",
-                phone="+90 532 131 3131"
+                department="Üretim Müdürü",
+                phone="+90 532 507 5564"
             )
         ]
         
