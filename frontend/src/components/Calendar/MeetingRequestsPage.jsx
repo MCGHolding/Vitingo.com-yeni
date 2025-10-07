@@ -645,12 +645,14 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
             <div className="p-6 border-b">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-semibold">Yeni Toplantı Talebi</h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowCreateModal(false)}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <X className="h-6 w-6" />
-                </button>
+                </Button>
               </div>
             </div>
 
