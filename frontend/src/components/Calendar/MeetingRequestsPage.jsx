@@ -527,92 +527,99 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                 
                 <CardContent className="pt-0">
 
-                    {/* Action Buttons - Only show if user is not organizer */}
-                    {request.organizer_id !== currentUser.id && (
-                      <div>
-                        {/* Current user response status */}
-                        {request.responses && request.responses[currentUser.id] ? (
-                          <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-blue-700 font-medium">Yanıtınız:</span>
-                              {request.responses[currentUser.id].response === 'accepted' && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                  <Check className="h-4 w-4 mr-1" />
-                                  Kabul Ettiniz
-                                </span>
-                              )}
-                              {request.responses[currentUser.id].response === 'maybe' && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                                  <Clock3 className="h-4 w-4 mr-1" />
-                                  Belki Dediniz
-                                </span>
-                              )}
-                              {request.responses[currentUser.id].response === 'declined' && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                                  <X className="h-4 w-4 mr-1" />
-                                  Reddettiniz
-                                </span>
-                              )}
+                  </div>
+                  
+                  {/* Action Buttons - Only show if user is not organizer */}
+                  {request.organizer_id !== currentUser.id && (
+                    <div className="border-t pt-6 mt-6">
+                      {/* Current user response status */}
+                      {request.responses && request.responses[currentUser.id] ? (
+                        <div className="mb-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                          <div className="flex items-center space-x-3">
+                            <AlertCircle className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <p className="text-sm font-medium text-blue-900">Mevcut Yanıtınız</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                {request.responses[currentUser.id].response === 'accepted' && (
+                                  <Badge className="bg-green-100 text-green-800">
+                                    <Check className="h-3 w-3 mr-1" />
+                                    Kabul Ettiniz
+                                  </Badge>
+                                )}
+                                {request.responses[currentUser.id].response === 'maybe' && (
+                                  <Badge className="bg-yellow-100 text-yellow-800">
+                                    <Clock3 className="h-3 w-3 mr-1" />
+                                    Belki Dediniz
+                                  </Badge>
+                                )}
+                                {request.responses[currentUser.id].response === 'declined' && (
+                                  <Badge className="bg-red-100 text-red-800">
+                                    <X className="h-3 w-3 mr-1" />
+                                    Reddettiniz
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-blue-600 mt-1">
+                                Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
+                              </p>
                             </div>
-                            <p className="text-xs text-blue-600 mt-1">
-                              Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
-                            </p>
                           </div>
-                        ) : (
-                          <div className="mb-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                            <div className="flex items-center space-x-2">
-                              <Clock className="h-4 w-4 text-yellow-600" />
-                              <span className="text-sm text-yellow-800 font-medium">
-                                Bu toplantı davetine henüz yanıt vermediniz
-                              </span>
-                            </div>
-                            <p className="text-xs text-yellow-700 mt-1">
-                              Lütfen katılım durumunuzu belirtmek için aşağıdaki butonlardan birini seçin
-                            </p>
-                          </div>
-                        )}
-                        
-                        {/* Response Buttons */}
-                        <div className="flex space-x-3">
-                          <button
-                            onClick={() => handleResponse(request.id, 'accepted')}
-                            disabled={responseLoading === request.id}
-                            className="flex items-center space-x-1 px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white rounded text-sm"
-                          >
-                            {responseLoading === request.id ? (
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                            ) : (
-                              <Check className="h-3 w-3" />
-                            )}
-                            <span>Kabul</span>
-                          </button>
-                          <button
-                            onClick={() => handleResponse(request.id, 'maybe')}
-                            disabled={responseLoading === request.id}
-                            className="flex items-center space-x-1 px-3 py-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 disabled:cursor-not-allowed text-white rounded text-sm"
-                          >
-                            {responseLoading === request.id ? (
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                            ) : (
-                              <Clock3 className="h-3 w-3" />
-                            )}
-                            <span>Belki</span>
-                          </button>
-                          <button
-                            onClick={() => handleResponse(request.id, 'declined')}
-                            disabled={responseLoading === request.id}
-                            className="flex items-center space-x-1 px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-sm"
-                          >
-                            {responseLoading === request.id ? (
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                            ) : (
-                              <X className="h-3 w-3" />
-                            )}
-                            <span>Reddet</span>
-                          </button>
                         </div>
+                      ) : (
+                        <div className="mb-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                          <div className="flex items-center space-x-3">
+                            <AlertCircle className="h-5 w-5 text-amber-600" />
+                            <div>
+                              <p className="text-sm font-medium text-amber-900">Yanıt Bekleniyor</p>
+                              <p className="text-xs text-amber-700 mt-1">
+                                Bu toplantı davetine henüz yanıt vermediniz. Lütfen katılım durumunuzu belirtin.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Response Buttons */}
+                      <div className="flex space-x-3">
+                        <Button
+                          onClick={() => handleResponse(request.id, 'accepted')}
+                          disabled={responseLoading === request.id}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          {responseLoading === request.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          ) : (
+                            <Check className="h-4 w-4 mr-2" />
+                          )}
+                          Kabul Et
+                        </Button>
+                        <Button
+                          onClick={() => handleResponse(request.id, 'maybe')}
+                          disabled={responseLoading === request.id}
+                          className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                        >
+                          {responseLoading === request.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          ) : (
+                            <Clock3 className="h-4 w-4 mr-2" />
+                          )}
+                          Belki
+                        </Button>
+                        <Button
+                          onClick={() => handleResponse(request.id, 'declined')}
+                          disabled={responseLoading === request.id}
+                          className="flex-1 bg-red-600 hover:bg-red-700"
+                        >
+                          {responseLoading === request.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          ) : (
+                            <X className="h-4 w-4 mr-2" />
+                          )}
+                          Reddet
+                        </Button>
                       </div>
-                    )}
+                    </div>
+                  )}
 
                     {/* Show status if user is organizer */}
                     {request.organizer_id === currentUser.id && (
