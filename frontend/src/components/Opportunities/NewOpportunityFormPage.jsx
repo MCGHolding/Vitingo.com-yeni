@@ -187,21 +187,57 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   };
 
   // Handle status change with new status creation
-  const handleStatusChange = (value) => {
+  const handleStatusChange = async (value) => {
     if (value === 'add_new_status') {
       const newStatus = prompt('Yeni durum adını girin:');
       if (newStatus && newStatus.trim()) {
-        // Add new status to the list (in a real app, this would be saved to backend)
-        const newStatusObj = { 
-          value: newStatus.toLowerCase().replace(/\s+/g, '_'), 
-          label: newStatus.trim() 
-        };
-        setFormData(prev => ({
-          ...prev,
-          status: newStatusObj.value
-        }));
-        // Note: In production, you'd want to save this to backend and update the statuses array
-        console.log('New status created:', newStatusObj);
+        try {
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+          const response = await fetch(`${backendUrl}/api/opportunity-statuses`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              label: newStatus.trim(),
+              description: ''
+            }),
+          });
+
+          if (response.ok) {
+            const savedStatus = await response.json();
+            console.log('New status created:', savedStatus);
+            
+            // Update the dynamic statuses list
+            setDynamicStatuses(prev => [...prev, savedStatus]);
+            
+            // Set the new status as selected
+            setFormData(prev => ({
+              ...prev,
+              status: savedStatus.value
+            }));
+            
+            toast({
+              title: "Başarılı",
+              description: `"${newStatus}" durumu başarıyla eklendi`,
+              variant: "default"
+            });
+          } else {
+            const errorData = await response.json();
+            toast({
+              title: "Hata",
+              description: errorData.detail || "Durum eklenirken hata oluştu",
+              variant: "destructive"
+            });
+          }
+        } catch (error) {
+          console.error('Error creating status:', error);
+          toast({
+            title: "Hata",
+            description: "Durum eklenirken hata oluştu",
+            variant: "destructive"
+          });
+        }
       }
     } else {
       handleInputChange('status', value);
