@@ -155,7 +155,7 @@ const Dashboard = () => {
 
   // Load customers from backend API
   useEffect(() => {
-    const loadCustomers = async () => {
+    const loadCustomers = useCallback(async () => {
       try {
         // Try runtime config first, fallback to environment variables, then hardcoded
         const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
