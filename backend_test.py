@@ -11877,47 +11877,25 @@ if __name__ == "__main__":
     print("🚀 Starting Countries and Cities API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
-    print("🎯 TESTING: Countries and Cities API endpoints for frontend integration")
-    print("📝 Understanding data structure for cascading dropdown implementation")
+    print("🎯 TESTING: Countries and Cities API endpoints after CitySelect.jsx icon fix")
+    print("📝 Verifying backend APIs are still working correctly for frontend integration")
     print("=" * 80)
     
-    # Geographic API Tests
-    geo_tests = []
-    
-    # Test 1: GET /api/countries
-    print(f"\n{'='*20} Countries Endpoint Test {'='*20}")
+    # Run comprehensive countries and cities API test
     try:
-        result = test_countries_endpoint()
-        geo_tests.append(("GET /api/countries", result))
+        result = test_countries_and_cities_api_endpoints()
         if result:
-            print("✅ Countries Endpoint Test PASSED")
+            print("\n🎉 ALL COUNTRIES AND CITIES API TESTS COMPLETED SUCCESSFULLY!")
+            print("✅ Backend APIs are working correctly")
+            print("✅ No issues found that could affect NewOpportunityFormPage")
+            print("✅ Turkish cities are available for cascading dropdowns")
+            print("✅ Country/city data structure is proper")
         else:
-            print("❌ Countries Endpoint Test FAILED")
+            print("\n❌ SOME COUNTRIES AND CITIES API TESTS FAILED!")
+            print("❌ Please check the detailed output above")
     except Exception as e:
-        print(f"❌ Countries Endpoint Test ERROR: {str(e)}")
-        geo_tests.append(("GET /api/countries", False))
-    
-    # Test 2: GET /api/cities
-    print(f"\n{'='*20} Cities Endpoint Test {'='*20}")
-    try:
-        result = test_cities_endpoint()
-        geo_tests.append(("GET /api/cities", result))
-        if result:
-            print("✅ Cities Endpoint Test PASSED")
-        else:
-            print("❌ Cities Endpoint Test FAILED")
-    except Exception as e:
-        print(f"❌ Cities Endpoint Test ERROR: {str(e)}")
-        geo_tests.append(("GET /api/cities", False))
-    
-    # Test 3: GET /api/cities/{country_code}
-    print(f"\n{'='*20} Cities by Country Endpoint Test {'='*20}")
-    try:
-        result = test_cities_by_country_endpoint()
-        geo_tests.append(("GET /api/cities/{country_code}", result))
-        if result:
-            print("✅ Cities by Country Endpoint Test PASSED")
-        else:
+        print(f"\n❌ COUNTRIES AND CITIES API TESTS ERROR: {str(e)}")
+        result = False
             print("❌ Cities by Country Endpoint Test FAILED")
     except Exception as e:
         print(f"❌ Cities by Country Endpoint Test ERROR: {str(e)}")
