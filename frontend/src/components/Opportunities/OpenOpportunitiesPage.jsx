@@ -49,19 +49,39 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
       try {
         setLoading(true);
         const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        console.log('🔍 Loading opportunities from:', `${backendUrl}/api/opportunities`);
         const response = await fetch(`${backendUrl}/api/opportunities`);
         if (response.ok) {
           const allOpportunities = await response.json();
-          // Filter for open opportunities (you may need to adjust the status filtering based on your data structure)
+          console.log('✅ API Response:', allOpportunities.length, 'opportunities loaded');
+          console.log('📊 Sample opportunity:', allOpportunities[0]);
+          
+          // Filter for open opportunities
           const openOps = allOpportunities.filter(op => 
             op.status && (op.status.includes('open') || op.status.includes('active') || op.status === 'açık')
           );
-          setOpenOpportunities(openOps);
+          console.log('🎯 Filtered open opportunities:', openOps.length);
+          
+          // Map API response to frontend expected format
+          const mappedOpportunities = openOps.map(op => ({
+            ...op,
+            eventName: op.title, // Map title to eventName
+            contactPerson: op.contact_person || 'Belirtilmemiş', // Map contact_person to contactPerson
+            lastUpdate: op.updated_at || op.created_at, // Map updated_at to lastUpdate
+            statusText: `Açık - Aktif - ${op.stage === 'lead' ? 'Yeni Fırsat' : 
+                         op.stage === 'qualified' ? 'Nitelikli Fırsat' :
+                         op.stage === 'proposal' ? 'Teklif Bekleniyor' :
+                         op.stage === 'negotiation' ? 'Müzakere' : 'Değerlendiriliyor'}`,
+            tags: op.tags || [] // Ensure tags is an array
+          }));
+          
+          console.log('🔄 Mapped opportunities:', mappedOpportunities.length);
+          setOpenOpportunities(mappedOpportunities);
         } else {
-          console.error('Failed to load opportunities');
+          console.error('❌ Failed to load opportunities, status:', response.status);
         }
       } catch (error) {
-        console.error('Error loading opportunities:', error);
+        console.error('❌ Error loading opportunities:', error);
       } finally {
         setLoading(false);
       }
