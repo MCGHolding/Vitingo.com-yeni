@@ -51,6 +51,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   
   // Dynamic data states
   const [customers, setCustomers] = useState([]);
+  const [availableContacts, setAvailableContacts] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [fairs, setFairs] = useState([]);
   
   // Static options
