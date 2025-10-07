@@ -609,7 +609,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   </label>
                   <Select 
                     value={formData.stage}
-                    onValueChange={(value) => handleInputChange('stage', value)}
+                    onValueChange={handleStageChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Aşama seçin..." />
