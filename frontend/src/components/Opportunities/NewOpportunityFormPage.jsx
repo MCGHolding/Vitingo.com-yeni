@@ -1147,6 +1147,40 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   />
                 </div>
               </div>
+
+              {/* Stand Büyüklüğü */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Stand Büyüklüğü <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={formData.standSize}
+                      onChange={(e) => handleStandSizeChange(e.target.value)}
+                      placeholder="Stand büyüklüğü"
+                      maxLength="4"
+                      required
+                      className="flex-1"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                    />
+                    <Select 
+                      value={formData.standSizeUnit}
+                      onValueChange={(value) => handleInputChange('standSizeUnit', value)}
+                    >
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="m2">m²</SelectItem>
+                        <SelectItem value="ft2">ft²</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
