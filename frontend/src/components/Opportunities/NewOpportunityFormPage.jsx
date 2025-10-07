@@ -44,6 +44,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     source: '',
     description: '',
     businessType: '',
+    projectType: '',
     country: '',
     city: '',
     tradeShow: '',
