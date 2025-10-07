@@ -245,21 +245,57 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   };
 
   // Handle stage change with new stage creation
-  const handleStageChange = (value) => {
+  const handleStageChange = async (value) => {
     if (value === 'add_new_stage') {
       const newStage = prompt('Yeni aşama adını girin:');
       if (newStage && newStage.trim()) {
-        // Add new stage to the list (in a real app, this would be saved to backend)
-        const newStageObj = { 
-          value: newStage.toLowerCase().replace(/\s+/g, '_'), 
-          label: newStage.trim() 
-        };
-        setFormData(prev => ({
-          ...prev,
-          stage: newStageObj.value
-        }));
-        // Note: In production, you'd want to save this to backend and update the stages array
-        console.log('New stage created:', newStageObj);
+        try {
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+          const response = await fetch(`${backendUrl}/api/opportunity-stages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              label: newStage.trim(),
+              description: ''
+            }),
+          });
+
+          if (response.ok) {
+            const savedStage = await response.json();
+            console.log('New stage created:', savedStage);
+            
+            // Update the dynamic stages list
+            setDynamicStages(prev => [...prev, savedStage]);
+            
+            // Set the new stage as selected
+            setFormData(prev => ({
+              ...prev,
+              stage: savedStage.value
+            }));
+            
+            toast({
+              title: "Başarılı",
+              description: `"${newStage}" aşaması başarıyla eklendi`,
+              variant: "default"
+            });
+          } else {
+            const errorData = await response.json();
+            toast({
+              title: "Hata",
+              description: errorData.detail || "Aşama eklenirken hata oluştu",
+              variant: "destructive"
+            });
+          }
+        } catch (error) {
+          console.error('Error creating stage:', error);
+          toast({
+            title: "Hata",
+            description: "Aşama eklenirken hata oluştu",
+            variant: "destructive"
+          });
+        }
       }
     } else {
       handleInputChange('stage', value);
