@@ -928,23 +928,13 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Ülke
                   </label>
-                  <Select 
+                  <CountrySelect
                     value={selectedCountryCode}
-                    onValueChange={handleCountryChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Ülke seçin..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries
-                        .filter(country => country.name && country.name.trim() !== '')
-                        .map((country) => (
-                          <SelectItem key={country.code || country.iso2} value={country.code || country.iso2}>
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={handleCountryChange}
+                    countries={countries}
+                    placeholder="Ülke seçin..."
+                    searchPlaceholder="Ara..."
+                  />
                 </div>
 
                 {/* Şehir */}
@@ -952,52 +942,17 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Şehir
                   </label>
-                  <Select 
+                  <CitySelect
                     value={formData.city}
-                    onValueChange={handleCityChange}
-                    disabled={!selectedCountryCode}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={
-                        selectedCountryCode 
-                          ? (cities.length > 0 
-                              ? "Şehir seçin..." 
-                              : "Bu ülke için kayıtlı şehir bulunamadı") 
-                          : "Önce ülke seçiniz..."
-                      } />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.length > 0 ? (
-                        cities
-                          .filter(city => city.name && city.name.trim() !== '')
-                          .map((city) => (
-                            <SelectItem key={city.id} value={city.name}>
-                              {city.name}
-                            </SelectItem>
-                          ))
-                      ) : selectedCountryCode ? (
-                        <SelectItem value="no-cities" disabled>
-                          Bu ülke için kayıtlı şehir yok
-                        </SelectItem>
-                      ) : (
-                        <SelectItem value="select-country" disabled>
-                          Önce bir ülke seçin
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  
-                  {/* Manual entry option when no cities found */}
-                  {selectedCountryCode && cities.length === 0 && (
-                    <div className="mt-2">
-                      <Input
-                        value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
-                        placeholder="Şehir adını manuel olarak girin"
-                        className="text-sm"
-                      />
-                    </div>
-                  )}
+                    onChange={handleCityChange}
+                    cities={cities}
+                    countrySelected={!!selectedCountryCode}
+                    placeholder="Şehir seçin..."
+                    searchPlaceholder="Ara..."
+                    allowManualEntry={true}
+                    noCountryMessage="Önce ülke seçiniz..."
+                    noCitiesMessage="Bu ülke için kayıtlı şehir bulunamadı"
+                  />
                 </div>
               </div>
 
