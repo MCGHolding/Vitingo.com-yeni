@@ -176,7 +176,7 @@ const Dashboard = () => {
         console.error('❌ Error loading customers:', error);
         setCustomers([]);
       }
-    };
+    }, []);
 
     loadCustomers();
   }, []);
