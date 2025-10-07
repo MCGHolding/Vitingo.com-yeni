@@ -5239,6 +5239,167 @@ async def delete_opportunity(opportunity_id: str):
         logger.error(f"Error deleting opportunity {opportunity_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== OPPORTUNITY STATUS & STAGE MANAGEMENT =====================
+
+# Status and Stage Models
+class OpportunityStatus(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    value: str
+    label: str
+    description: Optional[str] = ""
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = ""
+
+class OpportunityStage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    value: str
+    label: str
+    description: Optional[str] = ""
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = ""
+
+class StatusCreate(BaseModel):
+    label: str
+    description: Optional[str] = ""
+
+class StageCreate(BaseModel):
+    label: str
+    description: Optional[str] = ""
+
+# Status Endpoints
+@api_router.get("/opportunity-statuses")
+async def get_opportunity_statuses():
+    """Get all opportunity statuses"""
+    try:
+        statuses = await db.opportunity_statuses.find({"is_active": True}).sort("created_at", 1).to_list(length=None)
+        return [OpportunityStatus(**status) for status in statuses]
+    except Exception as e:
+        logger.error(f"Error fetching opportunity statuses: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/opportunity-statuses", response_model=OpportunityStatus)
+async def create_opportunity_status(status_input: StatusCreate):
+    """Create a new opportunity status"""
+    try:
+        # Generate value from label (lowercase, replace spaces with underscores)
+        value = status_input.label.lower().replace(' ', '_').replace('ı', 'i').replace('ü', 'u').replace('ö', 'o').replace('ş', 's').replace('ğ', 'g').replace('ç', 'c')
+        
+        # Check if status with same value already exists
+        existing = await db.opportunity_statuses.find_one({"value": value, "is_active": True})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu durum zaten mevcut")
+        
+        status_data = {
+            "id": str(uuid.uuid4()),
+            "value": value,
+            "label": status_input.label,
+            "description": status_input.description,
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc),
+            "created_by": "system"  # In real app, get from authenticated user
+        }
+        
+        result = await db.opportunity_statuses.insert_one(status_data)
+        created_status = await db.opportunity_statuses.find_one({"_id": result.inserted_id})
+        
+        return OpportunityStatus(**created_status)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating opportunity status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/opportunity-statuses/{status_id}")
+async def delete_opportunity_status(status_id: str):
+    """Soft delete an opportunity status"""
+    try:
+        existing = await db.opportunity_statuses.find_one({"id": status_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Durum bulunamadı")
+        
+        # Soft delete - mark as inactive
+        await db.opportunity_statuses.update_one(
+            {"id": status_id},
+            {"$set": {"is_active": False, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        return {"message": "Durum başarıyla silindi", "id": status_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting opportunity status {status_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Stage Endpoints
+@api_router.get("/opportunity-stages")
+async def get_opportunity_stages():
+    """Get all opportunity stages"""
+    try:
+        stages = await db.opportunity_stages.find({"is_active": True}).sort("created_at", 1).to_list(length=None)
+        return [OpportunityStage(**stage) for stage in stages]
+    except Exception as e:
+        logger.error(f"Error fetching opportunity stages: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/opportunity-stages", response_model=OpportunityStage)
+async def create_opportunity_stage(stage_input: StageCreate):
+    """Create a new opportunity stage"""
+    try:
+        # Generate value from label (lowercase, replace spaces with underscores)
+        value = stage_input.label.lower().replace(' ', '_').replace('ı', 'i').replace('ü', 'u').replace('ö', 'o').replace('ş', 's').replace('ğ', 'g').replace('ç', 'c')
+        
+        # Check if stage with same value already exists
+        existing = await db.opportunity_stages.find_one({"value": value, "is_active": True})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu aşama zaten mevcut")
+        
+        stage_data = {
+            "id": str(uuid.uuid4()),
+            "value": value,
+            "label": stage_input.label,
+            "description": stage_input.description,
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc),
+            "created_by": "system"  # In real app, get from authenticated user
+        }
+        
+        result = await db.opportunity_stages.insert_one(stage_data)
+        created_stage = await db.opportunity_stages.find_one({"_id": result.inserted_id})
+        
+        return OpportunityStage(**created_stage)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating opportunity stage: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/opportunity-stages/{stage_id}")
+async def delete_opportunity_stage(stage_id: str):
+    """Soft delete an opportunity stage"""
+    try:
+        existing = await db.opportunity_stages.find_one({"id": stage_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Aşama bulunamadı")
+        
+        # Soft delete - mark as inactive
+        await db.opportunity_stages.update_one(
+            {"id": stage_id},
+            {"$set": {"is_active": False, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        return {"message": "Aşama başarıyla silindi", "id": stage_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting opportunity stage {stage_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== COLLECTION RECEIPT ENDPOINTS =====================
 
 def generate_receipt_number():
