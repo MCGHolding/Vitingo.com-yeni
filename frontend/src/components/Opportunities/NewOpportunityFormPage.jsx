@@ -187,6 +187,22 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }
   };
 
+  const loadProjectTypes = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/project-types`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Project types loaded:', data);
+        setProjectTypes(data);
+      } else {
+        console.error('Failed to load project types');
+      }
+    } catch (error) {
+      console.error('Error loading project types:', error);
+    }
+  };
+
   const loadCountries = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
