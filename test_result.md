@@ -70,7 +70,7 @@ frontend:
     working: "NA"
     file: "/app/frontend/src/components/Teklif/TeklifForm.jsx"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: true
     status_history:
       - working: "NA"
