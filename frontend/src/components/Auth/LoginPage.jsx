@@ -56,32 +56,7 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemoCredentials = async (role) => {
-    const credentials = {
-      super_admin: { username: 'murb', password: 'Murat2024!' },
-      admin: { username: 'biry', password: 'Birtan2024!' },
-      customer_rep: { username: 'tame', password: 'Tamer2024!' }
-    };
-    
-    const cred = credentials[role];
-    setFormData(prev => ({
-      ...prev,
-      username: cred.username,
-      password: cred.password
-    }));
-
-    // Auto-submit after filling credentials
-    setLoading(true);
-    setError('');
-
-    try {
-      await login(cred);
-    } catch (err) {
-      setError(err.message || 'Giriş yapılırken bir hata oluştu');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // fillDemoCredentials function removed - no longer needed without password requirement
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 flex items-center justify-center p-4">
