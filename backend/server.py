@@ -5418,6 +5418,75 @@ async def delete_opportunity_stage(stage_id: str):
         logger.error(f"Error deleting opportunity stage {stage_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== PROJECT TYPE ENDPOINTS =====================
+
+@api_router.get("/project-types")
+async def get_project_types():
+    """Get all project types"""
+    try:
+        project_types = await db.project_types.find({"is_active": True}).sort("created_at", 1).to_list(length=None)
+        return [ProjectType(**project_type) for project_type in project_types]
+    except Exception as e:
+        logger.error(f"Error fetching project types: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/project-types", response_model=ProjectType)
+async def create_project_type(project_type_input: ProjectTypeCreate):
+    """Create a new project type"""
+    try:
+        # Generate value from label (lowercase, replace spaces with underscores)
+        # Handle Turkish characters before lowercasing to avoid issues with İ -> i̇
+        value = project_type_input.label.replace('İ', 'I').replace('Ğ', 'G').replace('Ü', 'U').replace('Ş', 'S').replace('Ö', 'O').replace('Ç', 'C')
+        value = value.lower().replace(' ', '_').replace('ı', 'i').replace('ü', 'u').replace('ö', 'o').replace('ş', 's').replace('ğ', 'g').replace('ç', 'c')
+        
+        # Check if project type with same value already exists
+        existing = await db.project_types.find_one({"value": value, "is_active": True})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu proje türü zaten mevcut")
+        
+        project_type_data = {
+            "id": str(uuid.uuid4()),
+            "value": value,
+            "label": project_type_input.label,
+            "description": project_type_input.description,
+            "is_active": True,
+            "created_at": datetime.now(timezone.utc),
+            "created_by": "system"  # In real app, get from authenticated user
+        }
+        
+        result = await db.project_types.insert_one(project_type_data)
+        created_project_type = await db.project_types.find_one({"_id": result.inserted_id})
+        
+        return ProjectType(**created_project_type)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating project type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/project-types/{project_type_id}")
+async def delete_project_type(project_type_id: str):
+    """Soft delete a project type"""
+    try:
+        existing = await db.project_types.find_one({"id": project_type_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Proje türü bulunamadı")
+        
+        # Soft delete - mark as inactive
+        await db.project_types.update_one(
+            {"id": project_type_id},
+            {"$set": {"is_active": False, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        return {"message": "Proje türü başarıyla silindi", "id": project_type_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting project type {project_type_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== COLLECTION RECEIPT ENDPOINTS =====================
 
 def generate_receipt_number():
