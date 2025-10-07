@@ -146,8 +146,9 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
 
   // Handle customer selection and update available contacts
   const handleCustomerChange = (customerName) => {
-    // Find the selected customer object
+    // Find the selected customer object by contact person name or company name
     const customer = customers.find(c => 
+      (c.contactPerson || c.contact_person || '') === customerName ||
       (c.companyName || c.companyTitle || '') === customerName
     );
     
