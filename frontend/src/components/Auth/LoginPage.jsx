@@ -218,12 +218,12 @@ export default function LoginPage() {
                 
                 <button
                   type="button"
-                  onClick={() => fillDemoCredentials('customer_rep')}
+                  onClick={() => setFormData(prev => ({ ...prev, username: 'tame' }))}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
                   <div className="font-medium text-gray-900">💼 Müşteri Temsilcisi</div>
-                  <div className="text-sm text-gray-600">tame / Tamer2024!</div>
+                  <div className="text-sm text-gray-600">tame - Tamer Erdim</div>
                 </button>
               </div>
             </div>
