@@ -370,20 +370,20 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
               </CardContent>
             </Card>
           )}
-        </div>
+        </CardContent>
 
         {/* Footer */}
         <div className="p-6 border-t bg-gray-50">
           <div className="flex justify-end">
-            <button
+            <Button
+              variant="outline"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Kapat
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
