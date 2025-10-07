@@ -348,12 +348,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                           const displayName = customer.contactPerson || customer.contact_person || customer.companyName || customer.companyTitle || `Customer ${customer.id}`;
                           return (
                             <SelectItem key={customer.id} value={displayName}>
-                              <div className="flex flex-col">
-                                <span className="font-medium">{displayName}</span>
-                                <span className="text-sm text-gray-500">
-                                  {customer.companyName || customer.companyTitle}
-                                </span>
-                              </div>
+                              {displayName} - {customer.companyName || customer.companyTitle}
                             </SelectItem>
                           );
                         })}
