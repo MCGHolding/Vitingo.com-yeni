@@ -73,10 +73,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Users Initialization Test - POST /api/users/initialize"
-    - "Users Database Integration Test - GET /api/users"
-    - "Users Count and Statistics Test - GET /api/users/count"
-    - "Meeting Request Integration with Real Users Test"
+    - "TeklifForm + Button Functionality Test"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
