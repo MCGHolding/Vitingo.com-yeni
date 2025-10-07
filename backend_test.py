@@ -11610,104 +11610,107 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Customer Deletion System Tests...")
+    print("🚀 Starting Countries and Cities API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
-    print("🎯 TESTING: New customer deletion system implementation")
-    print("📝 Testing deletion vs deactivation based on related records")
+    print("🎯 TESTING: Countries and Cities API endpoints for frontend integration")
+    print("📝 Understanding data structure for cascading dropdown implementation")
     print("=" * 80)
     
-    # Customer Deletion System Tests
-    deletion_tests = []
+    # Geographic API Tests
+    geo_tests = []
     
-    # Test 1: Customer Deletion Check Endpoint
-    print(f"\n{'='*20} Customer Deletion Check Test {'='*20}")
+    # Test 1: GET /api/countries
+    print(f"\n{'='*20} Countries Endpoint Test {'='*20}")
     try:
-        result = test_customer_deletion_check_endpoint()
-        deletion_tests.append(("Customer Deletion Check", result))
+        result = test_countries_endpoint()
+        geo_tests.append(("GET /api/countries", result))
         if result:
-            print("✅ Customer Deletion Check Test PASSED")
+            print("✅ Countries Endpoint Test PASSED")
         else:
-            print("❌ Customer Deletion Check Test FAILED")
+            print("❌ Countries Endpoint Test FAILED")
     except Exception as e:
-        print(f"❌ Customer Deletion Check Test ERROR: {str(e)}")
-        deletion_tests.append(("Customer Deletion Check", False))
+        print(f"❌ Countries Endpoint Test ERROR: {str(e)}")
+        geo_tests.append(("GET /api/countries", False))
     
-    # Test 2: Customer Deletion Endpoint
-    print(f"\n{'='*20} Customer Deletion Test {'='*20}")
+    # Test 2: GET /api/cities
+    print(f"\n{'='*20} Cities Endpoint Test {'='*20}")
     try:
-        result = test_customer_deletion_endpoint()
-        deletion_tests.append(("Customer Deletion", result))
+        result = test_cities_endpoint()
+        geo_tests.append(("GET /api/cities", result))
         if result:
-            print("✅ Customer Deletion Test PASSED")
+            print("✅ Cities Endpoint Test PASSED")
         else:
-            print("❌ Customer Deletion Test FAILED")
+            print("❌ Cities Endpoint Test FAILED")
     except Exception as e:
-        print(f"❌ Customer Deletion Test ERROR: {str(e)}")
-        deletion_tests.append(("Customer Deletion", False))
+        print(f"❌ Cities Endpoint Test ERROR: {str(e)}")
+        geo_tests.append(("GET /api/cities", False))
     
-    # Test 3: Customer Deactivation Endpoint
-    print(f"\n{'='*20} Customer Deactivation Test {'='*20}")
+    # Test 3: GET /api/cities/{country_code}
+    print(f"\n{'='*20} Cities by Country Endpoint Test {'='*20}")
     try:
-        result = test_customer_deactivation_endpoint()
-        deletion_tests.append(("Customer Deactivation", result))
+        result = test_cities_by_country_endpoint()
+        geo_tests.append(("GET /api/cities/{country_code}", result))
         if result:
-            print("✅ Customer Deactivation Test PASSED")
+            print("✅ Cities by Country Endpoint Test PASSED")
         else:
-            print("❌ Customer Deactivation Test FAILED")
+            print("❌ Cities by Country Endpoint Test FAILED")
     except Exception as e:
-        print(f"❌ Customer Deactivation Test ERROR: {str(e)}")
-        deletion_tests.append(("Customer Deactivation", False))
+        print(f"❌ Cities by Country Endpoint Test ERROR: {str(e)}")
+        geo_tests.append(("GET /api/cities/{country_code}", False))
     
-    # Test 4: Business Logic Comprehensive Test
-    print(f"\n{'='*20} Business Logic Test {'='*20}")
+    # Test 4: GET /api/geo/countries/{iso2}/cities
+    print(f"\n{'='*20} Geo Countries Cities Endpoint Test {'='*20}")
     try:
-        result = test_customer_deletion_business_logic()
-        deletion_tests.append(("Business Logic", result))
+        result = test_geo_countries_cities_endpoint()
+        geo_tests.append(("GET /api/geo/countries/{iso2}/cities", result))
         if result:
-            print("✅ Business Logic Test PASSED")
+            print("✅ Geo Countries Cities Endpoint Test PASSED")
         else:
-            print("❌ Business Logic Test FAILED")
+            print("❌ Geo Countries Cities Endpoint Test FAILED")
     except Exception as e:
-        print(f"❌ Business Logic Test ERROR: {str(e)}")
-        deletion_tests.append(("Business Logic", False))
+        print(f"❌ Geo Countries Cities Endpoint Test ERROR: {str(e)}")
+        geo_tests.append(("GET /api/geo/countries/{iso2}/cities", False))
     
     # Final Results Summary
     print("\n" + "=" * 80)
-    print("🔍 CUSTOMER DELETION SYSTEM TEST RESULTS SUMMARY")
+    print("🔍 COUNTRIES AND CITIES API TEST RESULTS SUMMARY")
     print("=" * 80)
     
     passed_tests = 0
-    total_tests = len(deletion_tests)
+    total_tests = len(geo_tests)
     
-    for test_name, result in deletion_tests:
+    for test_name, result in geo_tests:
         status = "✅ PASSED" if result else "❌ FAILED"
         print(f"{test_name}: {status}")
         if result:
             passed_tests += 1
     
-    print(f"\nOverall Results: {passed_tests}/{total_tests} deletion system tests passed")
+    print(f"\nOverall Results: {passed_tests}/{total_tests} geographic API tests passed")
     
     if passed_tests == total_tests:
-        print("\n🎉 ALL CUSTOMER DELETION SYSTEM TESTS PASSED!")
-        print("✅ Customer deletion check endpoint working correctly")
-        print("✅ Customer deletion endpoint enforces business logic")
-        print("✅ Customer deactivation endpoint working as alternative")
-        print("✅ Business logic properly implemented:")
-        print("   - Customers with related records: DEACTIVATION ONLY")
-        print("   - Customers without related records: PERMANENT DELETION")
-        print("✅ Turkish error/success messages working")
-        print("✅ Proper HTTP status codes returned")
-        print("✅ Database operations working correctly")
-        print("\n📝 CONCLUSION: Customer deletion system is production-ready!")
+        print("\n🎉 ALL COUNTRIES AND CITIES API TESTS PASSED!")
+        print("✅ Countries endpoint returns proper data structure")
+        print("✅ Cities endpoint returns proper data structure")
+        print("✅ Cities by country filtering works correctly")
+        print("✅ Alternative geo endpoint with pagination works")
+        print("✅ Country linking field identified for frontend integration")
+        print("✅ Turkish countries/cities support verified")
+        print("✅ JSON responses properly formatted")
+        print("\n📝 CONCLUSION: Geographic APIs are ready for frontend integration!")
+        print("\n🔧 FRONTEND INTEGRATION RECOMMENDATIONS:")
+        print("   - Use GET /api/countries for country dropdown")
+        print("   - Use GET /api/cities/{country_code} for cascading city dropdown")
+        print("   - Alternative: Use GET /api/geo/countries/{iso2}/cities for pagination")
+        print("   - Country linking field varies by endpoint - check test results above")
     else:
-        print(f"\n⚠️  {total_tests - passed_tests} deletion system tests failed")
-        print("❌ Customer deletion system has issues")
-        print("❌ Business logic may not be properly implemented")
-        print("❌ Further investigation and fixes needed")
+        print(f"\n⚠️  {total_tests - passed_tests} geographic API tests failed")
+        print("❌ Some geographic endpoints have issues")
+        print("❌ Data structure may not be suitable for frontend integration")
+        print("❌ Further investigation needed before frontend implementation")
     
     print("\n" + "=" * 80)
-    print("🔍 CUSTOMER DELETION SYSTEM TESTING COMPLETED")
+    print("🔍 COUNTRIES AND CITIES API TESTING COMPLETED")
     print("=" * 80)
 
 def test_opportunity_statuses_get_endpoint():
