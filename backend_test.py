@@ -11083,67 +11083,67 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting MeetingRequestModal Users Loading Debug Tests...")
+    print("🚀 Starting Customer Deletion System Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
-    print("🎯 DEBUGGING: User reports seeing 'mock' users instead of real Vitingo company users")
-    print("📝 These tests will verify what the API is actually returning")
+    print("🎯 TESTING: New customer deletion system implementation")
+    print("📝 Testing deletion vs deactivation based on related records")
     print("=" * 80)
     
-    # MeetingRequestModal Users Debug Tests
-    debug_tests = []
+    # Customer Deletion System Tests
+    deletion_tests = []
     
-    # Test 1: API Response Debug Test
-    print(f"\n{'='*20} API Response Debug Test {'='*20}")
+    # Test 1: Customer Deletion Check Endpoint
+    print(f"\n{'='*20} Customer Deletion Check Test {'='*20}")
     try:
-        result = test_users_api_response_debug()
-        debug_tests.append(("API Response Debug", result))
+        result = test_customer_deletion_check_endpoint()
+        deletion_tests.append(("Customer Deletion Check", result))
         if result:
-            print("✅ API Response Debug Test PASSED")
+            print("✅ Customer Deletion Check Test PASSED")
         else:
-            print("❌ API Response Debug Test FAILED")
+            print("❌ Customer Deletion Check Test FAILED")
     except Exception as e:
-        print(f"❌ API Response Debug Test ERROR: {str(e)}")
-        debug_tests.append(("API Response Debug", False))
+        print(f"❌ Customer Deletion Check Test ERROR: {str(e)}")
+        deletion_tests.append(("Customer Deletion Check", False))
     
-    # Test 2: Frontend-Backend Integration Debug Test
-    print(f"\n{'='*20} Frontend-Backend Integration Debug Test {'='*20}")
+    # Test 2: Customer Deletion Endpoint
+    print(f"\n{'='*20} Customer Deletion Test {'='*20}")
     try:
-        result = test_users_initialize_endpoint_debug()
-        debug_tests.append(("Frontend-Backend Integration Debug", result))
+        result = test_customer_deletion_endpoint()
+        deletion_tests.append(("Customer Deletion", result))
         if result:
-            print("✅ Frontend-Backend Integration Debug Test PASSED")
+            print("✅ Customer Deletion Test PASSED")
         else:
-            print("❌ Frontend-Backend Integration Debug Test FAILED")
+            print("❌ Customer Deletion Test FAILED")
     except Exception as e:
-        print(f"❌ Frontend-Backend Integration Debug Test ERROR: {str(e)}")
-        debug_tests.append(("Frontend-Backend Integration Debug", False))
+        print(f"❌ Customer Deletion Test ERROR: {str(e)}")
+        deletion_tests.append(("Customer Deletion", False))
     
-    # Test 3: Console Log Verification Test
-    print(f"\n{'='*20} Console Log Verification Test {'='*20}")
+    # Test 3: Customer Deactivation Endpoint
+    print(f"\n{'='*20} Customer Deactivation Test {'='*20}")
     try:
-        result = test_users_count_endpoint_debug()
-        debug_tests.append(("Console Log Verification", result))
+        result = test_customer_deactivation_endpoint()
+        deletion_tests.append(("Customer Deactivation", result))
         if result:
-            print("✅ Console Log Verification Test PASSED")
+            print("✅ Customer Deactivation Test PASSED")
         else:
-            print("❌ Console Log Verification Test FAILED")
+            print("❌ Customer Deactivation Test FAILED")
     except Exception as e:
-        print(f"❌ Console Log Verification Test ERROR: {str(e)}")
-        debug_tests.append(("Console Log Verification", False))
+        print(f"❌ Customer Deactivation Test ERROR: {str(e)}")
+        deletion_tests.append(("Customer Deactivation", False))
     
-    # Test 4: MeetingRequestModal Integration Debug Test
-    print(f"\n{'='*20} MeetingRequestModal Integration Debug Test {'='*20}")
+    # Test 4: Business Logic Comprehensive Test
+    print(f"\n{'='*20} Business Logic Test {'='*20}")
     try:
-        result = test_meeting_request_modal_users_integration()
-        debug_tests.append(("MeetingRequestModal Integration Debug", result))
+        result = test_customer_deletion_business_logic()
+        deletion_tests.append(("Business Logic", result))
         if result:
-            print("✅ MeetingRequestModal Integration Debug Test PASSED")
+            print("✅ Business Logic Test PASSED")
         else:
-            print("❌ MeetingRequestModal Integration Debug Test FAILED")
+            print("❌ Business Logic Test FAILED")
     except Exception as e:
-        print(f"❌ MeetingRequestModal Integration Debug Test ERROR: {str(e)}")
-        debug_tests.append(("MeetingRequestModal Integration Debug", False))
+        print(f"❌ Business Logic Test ERROR: {str(e)}")
+        deletion_tests.append(("Business Logic", False))
     
     # Final Results Summary
     print("\n" + "=" * 80)
