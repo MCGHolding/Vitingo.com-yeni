@@ -40,6 +40,35 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('wonDate');
+  const [wonOpportunities, setWonOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load won opportunities from API
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      try {
+        setLoading(true);
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/opportunities`);
+        if (response.ok) {
+          const allOpportunities = await response.json();
+          // Filter for won opportunities
+          const wonOps = allOpportunities.filter(op => 
+            op.status && (op.status.includes('won') || op.status.includes('kazanılan') || op.status === 'won')
+          );
+          setWonOpportunities(wonOps);
+        } else {
+          console.error('Failed to load opportunities');
+        }
+      } catch (error) {
+        console.error('Error loading opportunities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOpportunities();
+  }, []);
 
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
