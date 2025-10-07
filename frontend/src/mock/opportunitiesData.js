@@ -40,10 +40,5 @@ export const lostOpportunities = [];
 // Favorite opportunities data removed - now using real API data
 export const favoriteOpportunities = [];
 
-// All opportunities (combination of all types)
-export const allOpportunities = [
-  ...openOpportunities,
-  ...wonOpportunities, 
-  ...lostOpportunities,
-  ...favoriteOpportunities
-];
+// All opportunities (combination of all types) - now empty, using real API data
+export const allOpportunities = [];
