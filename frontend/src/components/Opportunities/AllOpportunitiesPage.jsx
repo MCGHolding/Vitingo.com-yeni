@@ -68,7 +68,26 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
       
       const data = await response.json();
       console.log('✅ Opportunities loaded from API:', data.length, 'items');
-      setAllOpportunities(data);
+      console.log('📊 Sample opportunity:', data[0]);
+      
+      // Map API response to frontend expected format
+      const mappedOpportunities = data.map(op => ({
+        ...op,
+        eventName: op.title, // Map title to eventName
+        contactPerson: op.contact_person || 'Belirtilmemiş', // Map contact_person to contactPerson
+        lastUpdate: op.updated_at || op.created_at, // Map updated_at to lastUpdate
+        statusText: op.status === 'won' ? 'Kazanıldı' :
+                   op.status === 'lost' ? 'Kaybedildi' :
+                   op.status === 'negotiation' ? 'Müzakere' :
+                   `Açık - Aktif - ${op.stage === 'lead' ? 'Yeni Fırsat' : 
+                     op.stage === 'qualified' ? 'Nitelikli Fırsat' :
+                     op.stage === 'proposal' ? 'Teklif Bekleniyor' :
+                     op.stage === 'negotiation' ? 'Müzakere' : 'Değerlendiriliyor'}`,
+        tags: op.tags || [] // Ensure tags is an array
+      }));
+      
+      console.log('🔄 Mapped opportunities:', mappedOpportunities.length);
+      setAllOpportunities(mappedOpportunities);
       setError('');
     } catch (error) {
       console.error('❌ Error loading opportunities:', error);
