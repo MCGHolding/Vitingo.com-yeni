@@ -242,20 +242,7 @@ const getNavigation = (userDepartment) => {
         { name: 'Brief Talep Et', href: '/brief/request', icon: MessageSquare }
       ]
     },
-    { 
-      name: 'Teklif', 
-      href: '/teklif', 
-      icon: FileText, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Yeni Teklif', href: '/teklif/new', icon: Plus },
-        { name: 'Tüm Teklifler', href: '/teklif/all', icon: FolderOpen },
-        { name: 'Onaylanan', href: '/teklif/approved', icon: CheckCircle },
-        { name: 'Reddedilen', href: '/teklif/rejected', icon: XCircle },
-        { name: 'Bekleyen', href: '/teklif/pending', icon: Clock }
-      ]
-    },
+    // İkinci Teklif menüsü de kaldırıldı
     { 
       name: 'Raporlar', 
       href: '/reports', 
