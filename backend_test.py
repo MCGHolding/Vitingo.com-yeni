@@ -1851,25 +1851,6 @@ def test_countries_and_cities_api_endpoints():
         print("❌ SOME COUNTRIES AND CITIES API TESTS FAILED!")
         print("Please check the failed tests above for details")
         return False
-        
-        print("\n" + "=" * 80)
-        print("GET /api/countries ENDPOINT TEST RESULTS:")
-        print("=" * 80)
-        print("✅ Endpoint responds with status 200")
-        print("✅ Returns proper JSON response")
-        print("✅ Response is a list structure")
-        print("✅ Country structure validated")
-        print(f"✅ Found {len(countries)} countries in database")
-        print("\n🎉 GET /api/countries ENDPOINT TEST PASSED!")
-        
-        return True
-        
-    except requests.exceptions.RequestException as e:
-        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
-        return False
-    except Exception as e:
-        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
-        return False
 
 def test_cities_endpoint():
     """
