@@ -526,8 +526,6 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                 </CardHeader>
                 
                 <CardContent className="pt-0">
-
-                  </div>
                   
                   {/* Action Buttons - Only show if user is not organizer */}
                   {request.organizer_id !== currentUser.id && (
