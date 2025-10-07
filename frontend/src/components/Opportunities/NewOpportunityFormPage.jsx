@@ -60,6 +60,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [availableContacts, setAvailableContacts] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [fairs, setFairs] = useState([]);
+  const [dynamicStatuses, setDynamicStatuses] = useState([]);
+  const [dynamicStages, setDynamicStages] = useState([]);
   
   // Static options
   const currencies = [
