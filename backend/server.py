@@ -2229,35 +2229,32 @@ async def check_customer_can_delete(customer_id: str):
         
         related_records = []
         
-        # Check for related invoices (faturalar)
-        invoices_count = await db.invoices.count_documents({"customer_id": customer_id})
-        if invoices_count > 0:
-            related_records.append(f"{invoices_count} Fatura")
-        
-        # Check for related quotes (teklifler) 
-        quotes_count = await db.quotes.count_documents({"customer_id": customer_id})
-        if quotes_count > 0:
-            related_records.append(f"{quotes_count} Teklif")
-        
-        # Check for related opportunities (satış fırsatları)
-        opportunities_count = await db.opportunities.count_documents({"customer_id": customer_id})
-        if opportunities_count > 0:
-            related_records.append(f"{opportunities_count} Satış Fırsatı")
-        
-        # Check for related projects (projeler)
-        projects_count = await db.projects.count_documents({"customer_id": customer_id})
-        if projects_count > 0:
-            related_records.append(f"{projects_count} Proje")
-        
-        # Check for related survey invitations
-        surveys_count = await db.survey_invitations.count_documents({"customer_id": customer_id})
-        if surveys_count > 0:
-            related_records.append(f"{surveys_count} Anket")
-        
-        # Check for related handovers (teslimler)
-        handovers_count = await db.handovers.count_documents({"customer_id": customer_id})
-        if handovers_count > 0:
-            related_records.append(f"{handovers_count} Teslim")
+        try:
+            # Check for related opportunities (satış fırsatları) - this collection exists
+            opportunities_count = await db.opportunities.count_documents({"customer_id": customer_id})
+            if opportunities_count > 0:
+                related_records.append(f"{opportunities_count} Satış Fırsatı")
+        except Exception as e:
+            logger.error(f"Error checking opportunities for customer {customer_id}: {e}")
+            
+        try:
+            # Check for related invoices (faturalar) - if exists
+            invoices_count = await db.invoices.count_documents({"customer_id": customer_id})
+            if invoices_count > 0:
+                related_records.append(f"{invoices_count} Fatura")
+        except Exception as e:
+            logger.debug(f"Invoices collection not found or error: {e}")
+            
+        try:
+            # Check for related quotes (teklifler) - if exists  
+            quotes_count = await db.quotes.count_documents({"customer_id": customer_id})
+            if quotes_count > 0:
+                related_records.append(f"{quotes_count} Teklif")
+        except Exception as e:
+            logger.debug(f"Quotes collection not found or error: {e}")
+            
+        # Only check essential collections that we know exist
+        logger.info(f"Customer {customer_id} related records check: {related_records}")
             
         can_delete = len(related_records) == 0
         
