@@ -147,6 +147,38 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }
   };
 
+  const loadStatuses = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/opportunity-statuses`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Dynamic statuses loaded:', data);
+        setDynamicStatuses(data);
+      } else {
+        console.error('Failed to load statuses');
+      }
+    } catch (error) {
+      console.error('Error loading statuses:', error);
+    }
+  };
+
+  const loadStages = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/opportunity-stages`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Dynamic stages loaded:', data);
+        setDynamicStages(data);
+      } else {
+        console.error('Failed to load stages');
+      }
+    } catch (error) {
+      console.error('Error loading stages:', error);
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
