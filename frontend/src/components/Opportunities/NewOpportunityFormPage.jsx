@@ -282,6 +282,20 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }));
   };
 
+  // Handle stand size input - only numbers, max 4 digits
+  const handleStandSizeChange = (value) => {
+    // Remove any non-numeric characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    
+    // Limit to 4 digits
+    const limitedValue = numericValue.slice(0, 4);
+    
+    setFormData(prev => ({
+      ...prev,
+      standSize: limitedValue
+    }));
+  };
+
   // Handle country change and load cities
   const handleCountryChange = async (countryCode) => {
     console.log('Country changed to:', countryCode);
