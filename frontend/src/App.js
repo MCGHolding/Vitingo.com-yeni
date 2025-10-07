@@ -1032,7 +1032,10 @@ const Dashboard = () => {
       case 'all-briefs':
         return <AllBriefsPage onBackToDashboard={handleBackToDashboard} onNewBrief={handleNewBrief} />;
 
-      // Teklif cases - REMOVED
+      // Teklif cases
+      case 'new-teklif':
+        console.log('🎉 SUCCESS: Rendering TeklifForm component for currentView:', currentView);
+        return <TeklifForm onBackToDashboard={handleBackToDashboard} showToast={showToast} />;
 
       // Calendar cases
       case 'calendar':
