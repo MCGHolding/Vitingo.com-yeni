@@ -128,13 +128,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       // Here would be the API call to create the teklif
       console.log('Teklif Form Data:', formData);
       
-      if (showToast) {
-        showToast({
-          type: 'success',
-          title: 'Teklif Oluşturuldu',
-          text: 'Teklif başarıyla oluşturuldu.'
-        });
-      }
+      alert('Teklif başarıyla oluşturuldu.');
 
       // Reset form or navigate back
       onBackToDashboard();
