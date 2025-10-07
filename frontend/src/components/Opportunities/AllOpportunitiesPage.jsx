@@ -136,8 +136,8 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(opp =>
-        opp.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        opp.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opp.customer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        opp.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         opp.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
