@@ -423,6 +423,67 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }
   };
 
+  // Handle project type change with new project type creation
+  const handleProjectTypeChange = async (value) => {
+    if (value === 'add_new_project_type') {
+      const newProjectType = prompt('Yeni proje türü adını girin:');
+      if (newProjectType && newProjectType.trim()) {
+        try {
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+          const response = await fetch(`${backendUrl}/api/project-types`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              label: newProjectType.trim(),
+              description: ''
+            }),
+          });
+
+          if (response.ok) {
+            const savedProjectType = await response.json();
+            console.log('New project type created:', savedProjectType);
+            
+            // Update the project types list
+            setProjectTypes(prev => [...prev, savedProjectType]);
+            
+            // Set the new project type as selected
+            setFormData(prev => ({
+              ...prev,
+              projectType: savedProjectType.value
+            }));
+            
+            toast({
+              title: "Başarılı",
+              description: `"${newProjectType}" proje türü başarıyla eklendi`,
+              variant: "default"
+            });
+          } else {
+            const errorData = await response.json();
+            toast({
+              title: "Hata",
+              description: errorData.detail || "Proje türü eklenirken hata oluştu",
+              variant: "destructive"
+            });
+          }
+        } catch (error) {
+          console.error('Error creating project type:', error);
+          toast({
+            title: "Hata",
+            description: "Proje türü eklenirken hata oluştu",
+            variant: "destructive"
+          });
+        }
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        projectType: value
+      }));
+    }
+  };
+
   // Handle customer selection and update available contacts
   const handleCustomerChange = (customerName) => {
     // Find the selected customer object by contact person name or company name
