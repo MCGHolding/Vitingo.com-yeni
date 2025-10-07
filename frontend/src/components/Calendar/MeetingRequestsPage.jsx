@@ -508,42 +508,6 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                       })}
                       </div>
                     </div>
-
-                      {/* Organizer Info & Actions */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <span className="font-medium">Organize Eden:</span>
-                          <span>{request.organizer_name}</span>
-                          <span>•</span>
-                          <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-3">
-                          {/* Meeting Type Badge */}
-                          {request.organizer_id !== currentUser.id && (
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                              📨 Size gönderildi
-                            </Badge>
-                          )}
-                          
-                          {/* Toplantı Detayları Butonu */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedRequest(request);
-                              setShowDetailsModal(true);
-                            }}
-                          >
-                            <FileText className="h-4 w-4 mr-2" />
-                            Detaylar
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                </CardHeader>
-                
-                <CardContent className="pt-0">
                   
                   {/* Action Buttons - Only show if user is not organizer */}
                   {request.organizer_id !== currentUser.id && (
