@@ -40,6 +40,35 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
+  const [openOpportunities, setOpenOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load open opportunities from API
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      try {
+        setLoading(true);
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/opportunities`);
+        if (response.ok) {
+          const allOpportunities = await response.json();
+          // Filter for open opportunities (you may need to adjust the status filtering based on your data structure)
+          const openOps = allOpportunities.filter(op => 
+            op.status && (op.status.includes('open') || op.status.includes('active') || op.status === 'açık')
+          );
+          setOpenOpportunities(openOps);
+        } else {
+          console.error('Failed to load opportunities');
+        }
+      } catch (error) {
+        console.error('Error loading opportunities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOpportunities();
+  }, []);
 
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
