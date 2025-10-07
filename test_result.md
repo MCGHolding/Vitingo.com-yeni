@@ -84,13 +84,16 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "Implemented dynamic country/city dropdowns in NewOpportunityFormPage.jsx. Need to test: 1) Country dropdown loads from /api/countries or /api/geo/countries, 2) City dropdown loads from /api/cities/{country_code} when country is selected, 3) Cascading functionality works (country selection triggers city loading), 4) Manual city entry available when no cities found for selected country, 5) Form properly stores selected country/city values."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE IDENTIFIED: Dynamic country/city dropdown functionality is implemented correctly but BLOCKED by React Select validation error. Root cause: Backend /api/geo/countries endpoint returns countries with empty 'code' and 'iso2' values (e.g., {'code':'','name':'Almanya','iso2':'','iso3':''}), causing React Select to fail with error 'A <Select.Item /> must have a value prop that is not an empty string'. This prevents the entire NewOpportunityFormPage from rendering. ✅ BACKEND APIs WORKING: Countries API returns 100+ countries including Turkey (TR), Cities API returns 9 Turkish cities (Ankara, Antalya, Bursa, Kayseri, İstanbul, İzmir, etc.) with proper structure. ✅ IMPLEMENTATION VERIFIED: Code analysis shows correct cascading dropdown logic, proper API integration, manual city input fallback, and form value storage. ❌ FRONTEND CRASH: Form shows red error screen due to empty country codes preventing Select component rendering. SOLUTION NEEDED: Filter out countries with empty codes in frontend or fix backend data to ensure all countries have valid codes."
 
   - task: "New Sales Opportunity Form - Add New Status/Stage Feature Test"
     implemented: true
