@@ -20,6 +20,7 @@ import {
   TrendingUp,
   Plus
 } from 'lucide-react';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function NewOpportunityFormPage({ onClose, onSave }) {
   const { toast } = useToast();
