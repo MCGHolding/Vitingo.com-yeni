@@ -17,6 +17,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     sehir: '',
     ulke: '',
     sablon: '',
+    sozlesmeTarihi: '',
     vadeler: [
       { sira: 1, tip: '', ozelTarih: '', yuzde: '' }
     ],
