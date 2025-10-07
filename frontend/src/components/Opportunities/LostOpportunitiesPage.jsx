@@ -40,6 +40,35 @@ export default function LostOpportunitiesPage({ onBackToDashboard }) {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('lostDate');
+  const [lostOpportunities, setLostOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load lost opportunities from API
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      try {
+        setLoading(true);
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/opportunities`);
+        if (response.ok) {
+          const allOpportunities = await response.json();
+          // Filter for lost opportunities
+          const lostOps = allOpportunities.filter(op => 
+            op.status && (op.status.includes('lost') || op.status.includes('kaybedilen') || op.status === 'lost')
+          );
+          setLostOpportunities(lostOps);
+        } else {
+          console.error('Failed to load opportunities');
+        }
+      } catch (error) {
+        console.error('Error loading opportunities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOpportunities();
+  }, []);
 
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
