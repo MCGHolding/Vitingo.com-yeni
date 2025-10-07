@@ -772,6 +772,42 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Proje Türü */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Proje Türü
+                  </label>
+                  <Select 
+                    value={formData.projectType}
+                    onValueChange={handleProjectTypeChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Proje türü seçin..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Dynamic project types */}
+                      {projectTypes.map((projectType) => (
+                        <SelectItem key={projectType.value} value={projectType.value}>
+                          {projectType.label}
+                        </SelectItem>
+                      ))}
+                      
+                      {/* Add new project type option for admin users */}
+                      {user && (user.role === 'admin' || user.role === 'super-admin') && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <SelectItem value="add_new_project_type" className="text-blue-600 font-medium">
+                            <div className="flex items-center space-x-2">
+                              <Plus className="h-4 w-4" />
+                              <span>Yeni Proje Türü Ekle</span>
+                            </div>
+                          </SelectItem>
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>
