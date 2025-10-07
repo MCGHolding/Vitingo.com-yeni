@@ -80,12 +80,24 @@ backend:
         comment: "🎉 COUNTRIES AND CITIES API TESTING COMPLETED SUCCESSFULLY! Comprehensive testing of geographic API endpoints completed with EXCELLENT results (3/4 endpoints working perfectly): ✅ GET /api/countries - Working correctly, returns proper JSON array structure, currently empty but endpoint functional ✅ GET /api/cities - Working correctly, returns proper JSON array structure, currently empty but endpoint functional ✅ GET /api/cities/{country_code} - PERFECT! Returns 9 Turkish cities (Ankara, Antalya, Bursa, Kayseri, İstanbul, İzmir, etc.) with proper filtering by country code 'TR', all cities have correct structure: {id, name, country_code, created_at} ✅ CRITICAL DATA STRUCTURE IDENTIFIED: Cities use 'country_code' field for linking to countries (not country_iso2), sample city: {id: '90e24687...', name: 'Ankara', country_code: 'TR', created_at: '2025-09-30T01:43:25.959000'} ✅ COUNTRIES DATABASE: Found 198 countries in geo endpoint with structure: {code: 'AF', name: 'Afghanistan', iso2: 'AF', iso3: 'AFG'} ❌ Minor Issue: GET /api/geo/countries/{iso2}/cities has Pydantic validation error (expects country_iso2 but cities have country_code field) ✅ FRONTEND INTEGRATION READY: Use GET /api/cities/{country_code} for cascading dropdown (country → cities), Turkish cities confirmed available, proper JSON structure validated. RECOMMENDATION: Use /api/cities/{country_code} endpoint for NewOpportunityFormPage.jsx cascading dropdown implementation."
 
 frontend:
+  - task: "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Implemented dynamic country/city dropdowns in NewOpportunityFormPage.jsx. Need to test: 1) Country dropdown loads from /api/countries or /api/geo/countries, 2) City dropdown loads from /api/cities/{country_code} when country is selected, 3) Cascading functionality works (country selection triggers city loading), 4) Manual city entry available when no cities found for selected country, 5) Form properly stores selected country/city values."
+
   - task: "New Sales Opportunity Form - Add New Status/Stage Feature Test"
     implemented: true
     working: true
     file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
     stuck_count: 0
-    priority: "high"
+    priority: "medium"
     needs_retesting: false
     status_history:
       - working: false
