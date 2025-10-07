@@ -115,7 +115,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "TeklifForm + Button Functionality Test"
+    - "Countries and Cities API Endpoints Testing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
