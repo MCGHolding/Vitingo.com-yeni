@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import VitingoPhoneInput from '../ui/SupplierPhone';
-import { allCustomers } from '../../mock/customersData';
+// import { allCustomers } from '../../mock/customersData'; // Removed - using real API
 import { allPeople } from '../../mock/peopleData';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
