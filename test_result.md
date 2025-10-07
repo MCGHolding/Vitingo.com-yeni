@@ -68,6 +68,18 @@ backend:
         comment: "🔍 COMPREHENSIVE DEBUG TESTING COMPLETED - BACKEND IS WORKING CORRECTLY! All 4 debug tests PASSED with perfect results: ✅ API Response Debug Test: GET /api/users returns 12 REAL Vitingo company users (NOT mock data) - all users have proper @vitingo.com emails (Murat Bucak, Elif Yılmaz, Kerem Demir, etc.), realistic Turkish names and departments, no mock/demo indicators found ✅ Frontend-Backend Integration Debug Test: POST /api/users/initialize creates real company employees correctly, old demo users properly removed, database persistence verified ✅ Console Log Verification Test: GET /api/users/count returns consistent statistics (12 total/active users, 12 departments), data transformation working correctly ✅ MeetingRequestModal Integration Debug Test: Simulated frontend user loading process - would load real Vitingo employees, proper data transformation, dropdown would show real company users. CONCLUSION: Backend APIs are returning REAL company data, not mock data. If user still sees 'mock' users in MeetingRequestModal, the issue is in frontend (browser cache, localStorage, client-side caching, or network request issues in browser dev tools)."
 
 frontend:
+  - task: "New Sales Opportunity Form - Add New Status/Stage Feature Test"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to test the 'Add New Status/Stage' functionality in NewOpportunityFormPage.jsx. Features to test: 1) useToast import fixed and working, 2) Admin/Super admin role-based visibility of 'Yeni Durum Ekle' and 'Yeni Aşama Ekle' buttons, 3) Dynamic status/stage creation via backend API calls, 4) Toast notifications for success/error messages, 5) Dynamic dropdown updates after adding new status/stage."
+
   - task: "TeklifForm + Button Functionality Test"
     implemented: true
     working: "NA"
