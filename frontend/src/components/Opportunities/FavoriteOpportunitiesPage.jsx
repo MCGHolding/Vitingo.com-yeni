@@ -29,7 +29,7 @@ import {
   List,
   TrendingUp
 } from 'lucide-react';
-import { favoriteOpportunities, tagColors } from '../../mock/opportunitiesData';
+import { tagColors } from '../../mock/opportunitiesData';
 
 export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
   const { toast } = useToast();
