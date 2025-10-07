@@ -576,6 +576,17 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                           {stage.label}
                         </SelectItem>
                       ))}
+                      {isAdminOrSuperAdmin && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <SelectItem value="add_new_stage" className="text-blue-600 font-medium">
+                            <div className="flex items-center space-x-2">
+                              <Plus className="h-4 w-4" />
+                              <span>Yeni Aşama Ekle</span>
+                            </div>
+                          </SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
