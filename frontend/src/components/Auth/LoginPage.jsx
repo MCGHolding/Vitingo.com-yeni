@@ -39,8 +39,8 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.username || !formData.password) {
-      setError('Lütfen kullanıcı adı ve şifre giriniz');
+    if (!formData.username) {
+      setError('Lütfen kullanıcı adı giriniz');
       return;
     }
 
