@@ -576,7 +576,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   </label>
                   <Select 
                     value={formData.status}
-                    onValueChange={(value) => handleInputChange('status', value)}
+                    onValueChange={handleStatusChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Durum seçin..." />
