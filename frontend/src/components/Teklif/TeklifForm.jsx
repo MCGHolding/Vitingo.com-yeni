@@ -531,6 +531,18 @@ Saygılarımızla,`;
           </h3>
         </div>
         <div className="p-6 space-y-4">
+          {/* Sözleşme Tarihi */}
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <label className="block text-sm font-medium text-blue-800 mb-2">
+              Sözleşme Tarihi (Tarih hesaplaması için gerekli)
+            </label>
+            <input
+              type="date"
+              value={formData.sozlesmeTarihi}
+              onChange={(e) => setFormData(prev => ({...prev, sozlesmeTarihi: e.target.value}))}
+              className="w-48 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           {formData.vadeler.map((vade, index) => (
             <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
               <span className="font-medium text-gray-700 min-w-[80px]">
