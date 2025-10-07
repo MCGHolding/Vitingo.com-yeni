@@ -619,18 +619,17 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                     </div>
                   )}
 
-                    {/* Show status if user is organizer */}
-                    {request.organizer_id === currentUser.id && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Durum:</span>
-                        <span className={`ml-2 px-2 py-1 rounded text-xs ${getResponseColor(request.status)}`}>
-                          {request.status === 'pending' ? 'Bekliyor' : request.status}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                  {/* Show status if user is organizer */}
+                  {request.organizer_id === currentUser.id && (
+                    <div className="text-sm text-gray-600 mt-4 pt-4 border-t">
+                      <span className="font-medium">Durum:</span>
+                      <span className={`ml-2 px-2 py-1 rounded text-xs ${getResponseColor(request.status)}`}>
+                        {request.status === 'pending' ? 'Bekliyor' : request.status}
+                      </span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
