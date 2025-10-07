@@ -28,7 +28,7 @@ import {
   List,
   Zap
 } from 'lucide-react';
-import { lostOpportunities, tagColors } from '../../mock/opportunitiesData';
+import { tagColors } from '../../mock/opportunitiesData';
 
 export default function LostOpportunitiesPage({ onBackToDashboard }) {
   const { toast } = useToast();
