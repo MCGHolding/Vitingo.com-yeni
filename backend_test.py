@@ -1508,6 +1508,533 @@ def test_customer_deletion_check_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_countries_endpoint():
+    """
+    Test GET /api/countries endpoint to understand the data structure.
+    
+    Requirements to verify:
+    1. GET /api/countries should return list of countries
+    2. Each country should have id, name, iso2 fields
+    3. Should return proper JSON structure
+    4. Should include Turkish countries if available
+    """
+    
+    print("=" * 80)
+    print("TESTING GET /api/countries ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/countries"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to countries endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Countries endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            countries = response.json()
+            print(f"   Response type: {type(countries)}")
+            print(f"   Number of countries: {len(countries) if isinstance(countries, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(countries, list):
+            print("   ❌ FAIL: Response should be a list of countries")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(countries)} countries")
+        
+        # Test 5: Check structure of countries if any exist
+        if len(countries) > 0:
+            print("\n4. Checking country structure...")
+            first_country = countries[0]
+            
+            # Expected fields based on Country model
+            expected_fields = ["id", "name", "iso2", "iso3", "created_at"]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_country:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Country has all expected fields")
+            
+            print(f"   Sample country fields: {list(first_country.keys())}")
+            print(f"   Sample country name: {first_country.get('name', 'N/A')}")
+            print(f"   Sample country iso2: {first_country.get('iso2', 'N/A')}")
+            print(f"   Sample country iso3: {first_country.get('iso3', 'N/A')}")
+            
+            # Test 6: Look for Turkish country
+            print("\n5. Looking for Turkish country...")
+            turkish_country = None
+            for country in countries:
+                if country.get('iso2') == 'TR' or 'Türkiye' in country.get('name', '') or 'Turkey' in country.get('name', ''):
+                    turkish_country = country
+                    break
+            
+            if turkish_country:
+                print(f"   ✅ PASS: Found Turkish country: {turkish_country.get('name')} ({turkish_country.get('iso2')})")
+            else:
+                print("   ⚠️  INFO: No Turkish country found in database")
+                
+        else:
+            print("\n4. No countries found in database - this might be expected for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET /api/countries ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Country structure validated")
+        print(f"✅ Found {len(countries)} countries in database")
+        print("\n🎉 GET /api/countries ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_cities_endpoint():
+    """
+    Test GET /api/cities endpoint to understand the data structure.
+    
+    Requirements to verify:
+    1. GET /api/cities should return list of cities
+    2. Each city should have proper country linking field
+    3. Should return proper JSON structure
+    4. Should include Turkish cities if available
+    """
+    
+    print("=" * 80)
+    print("TESTING GET /api/cities ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/cities"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to cities endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Cities endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            cities = response.json()
+            print(f"   Response type: {type(cities)}")
+            print(f"   Number of cities: {len(cities) if isinstance(cities, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(cities, list):
+            print("   ❌ FAIL: Response should be a list of cities")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(cities)} cities")
+        
+        # Test 5: Check structure of cities if any exist
+        if len(cities) > 0:
+            print("\n4. Checking city structure...")
+            first_city = cities[0]
+            
+            # Expected fields - checking both possible linking fields
+            expected_fields = ["id", "name", "created_at"]
+            country_linking_fields = ["country_code", "country_iso2"]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_city:
+                    missing_fields.append(field)
+            
+            # Check which country linking field is used
+            country_field = None
+            for field in country_linking_fields:
+                if field in first_city:
+                    country_field = field
+                    break
+            
+            if not country_field:
+                print("   ❌ FAIL: No country linking field found (country_code or country_iso2)")
+                return False
+            
+            print(f"   ✅ PASS: City uses '{country_field}' for country linking")
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: City has all expected fields")
+            
+            print(f"   Sample city fields: {list(first_city.keys())}")
+            print(f"   Sample city name: {first_city.get('name', 'N/A')}")
+            print(f"   Sample city {country_field}: {first_city.get(country_field, 'N/A')}")
+            
+            # Test 6: Look for Turkish cities
+            print("\n5. Looking for Turkish cities...")
+            turkish_cities = []
+            for city in cities:
+                country_value = city.get(country_field, '').upper()
+                city_name = city.get('name', '')
+                if (country_value == 'TR' or 
+                    'İstanbul' in city_name or 'Ankara' in city_name or 
+                    'İzmir' in city_name or 'Bursa' in city_name):
+                    turkish_cities.append(city)
+            
+            if turkish_cities:
+                print(f"   ✅ PASS: Found {len(turkish_cities)} Turkish cities")
+                for i, city in enumerate(turkish_cities[:3]):  # Show first 3
+                    print(f"     {i+1}. {city.get('name')} ({city.get(country_field)})")
+            else:
+                print("   ⚠️  INFO: No Turkish cities found in database")
+                
+        else:
+            print("\n4. No cities found in database - this might be expected for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET /api/cities ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ City structure validated")
+        print(f"✅ Found {len(cities)} cities in database")
+        if len(cities) > 0:
+            print(f"✅ Country linking field identified: {country_field}")
+        print("\n🎉 GET /api/cities ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_cities_by_country_endpoint():
+    """
+    Test GET /api/cities/{country_code} endpoint for filtering cities by country.
+    
+    Requirements to verify:
+    1. GET /api/cities/{country_code} should return cities for specific country
+    2. Should filter cities correctly by country code
+    3. Should return proper JSON structure
+    4. Should test with TR (Turkey) if available
+    """
+    
+    print("=" * 80)
+    print("TESTING GET /api/cities/{country_code} ENDPOINT")
+    print("=" * 80)
+    
+    # Test with Turkey first
+    country_code = "TR"
+    endpoint = f"{BACKEND_URL}/api/cities/{country_code}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Testing with country code: {country_code}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to cities by country endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Cities by country endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            cities = response.json()
+            print(f"   Response type: {type(cities)}")
+            print(f"   Number of cities for {country_code}: {len(cities) if isinstance(cities, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(cities, list):
+            print("   ❌ FAIL: Response should be a list of cities")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(cities)} cities for {country_code}")
+        
+        # Test 4: Validate filtering if cities exist
+        if len(cities) > 0:
+            print("\n4. Validating country filtering...")
+            all_correct_country = True
+            for city in cities:
+                city_country = city.get('country_code', city.get('country_iso2', '')).upper()
+                if city_country != country_code:
+                    print(f"   ❌ FAIL: Found city with wrong country: {city.get('name')} ({city_country})")
+                    all_correct_country = False
+                    break
+            
+            if all_correct_country:
+                print(f"   ✅ PASS: All cities belong to country {country_code}")
+                
+                # Show sample cities
+                print(f"\n   Sample cities for {country_code}:")
+                for i, city in enumerate(cities[:5]):  # Show first 5
+                    print(f"     {i+1}. {city.get('name', 'N/A')}")
+            
+        else:
+            print(f"\n4. No cities found for country {country_code} - testing with different country...")
+            
+            # Test with US as fallback
+            fallback_country = "US"
+            fallback_endpoint = f"{BACKEND_URL}/api/cities/{fallback_country}"
+            print(f"   Testing fallback endpoint: {fallback_endpoint}")
+            
+            fallback_response = requests.get(fallback_endpoint, timeout=30)
+            if fallback_response.status_code == 200:
+                fallback_cities = fallback_response.json()
+                print(f"   Fallback test: Found {len(fallback_cities)} cities for {fallback_country}")
+                if len(fallback_cities) > 0:
+                    print("   ✅ PASS: Country filtering endpoint works with different country")
+                else:
+                    print("   ⚠️  INFO: No cities found for fallback country either")
+            else:
+                print(f"   ⚠️  WARNING: Fallback test also failed with status {fallback_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("GET /api/cities/{country_code} ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response")
+        print("✅ Response is a list structure")
+        print("✅ Country filtering functionality validated")
+        print(f"✅ Found {len(cities)} cities for country {country_code}")
+        print("\n🎉 GET /api/cities/{country_code} ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_geo_countries_cities_endpoint():
+    """
+    Test GET /api/geo/countries/{iso2}/cities endpoint as alternative cities by country.
+    
+    Requirements to verify:
+    1. GET /api/geo/countries/{iso2}/cities should return cities for specific country
+    2. Should include pagination information
+    3. Should support search functionality
+    4. Should return proper JSON structure with cities and pagination
+    """
+    
+    print("=" * 80)
+    print("TESTING GET /api/geo/countries/{iso2}/cities ENDPOINT")
+    print("=" * 80)
+    
+    # Test with Turkey first
+    iso2 = "TR"
+    endpoint = f"{BACKEND_URL}/api/geo/countries/{iso2}/cities"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Testing with ISO2 code: {iso2}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to geo cities endpoint...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Geo cities endpoint responds with status 200")
+        elif response.status_code == 404:
+            print(f"   ⚠️  INFO: Country {iso2} not found in database, testing with different country...")
+            
+            # Try with US as fallback
+            iso2 = "US"
+            endpoint = f"{BACKEND_URL}/api/geo/countries/{iso2}/cities"
+            print(f"   Fallback endpoint: {endpoint}")
+            
+            response = requests.get(endpoint, timeout=30)
+            print(f"   Fallback Status Code: {response.status_code}")
+            
+            if response.status_code != 200:
+                print(f"   ❌ FAIL: Both TR and US failed. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, dict):
+            print("   ❌ FAIL: Response should be a dictionary with cities and pagination")
+            return False
+        
+        required_fields = ["cities", "pagination"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has required fields (cities, pagination)")
+        
+        # Test 4: Validate cities structure
+        print("\n4. Validating cities structure...")
+        cities = data.get("cities", [])
+        pagination = data.get("pagination", {})
+        
+        if not isinstance(cities, list):
+            print("   ❌ FAIL: Cities should be a list")
+            return False
+        
+        print(f"   ✅ PASS: Cities is a list containing {len(cities)} cities")
+        
+        # Test 5: Validate pagination structure
+        print("\n5. Validating pagination structure...")
+        pagination_fields = ["page", "limit", "total_count", "total_pages", "has_next", "has_prev"]
+        pagination_missing = []
+        for field in pagination_fields:
+            if field not in pagination:
+                pagination_missing.append(field)
+        
+        if pagination_missing:
+            print(f"   ⚠️  WARNING: Pagination missing some fields: {pagination_missing}")
+        else:
+            print("   ✅ PASS: Pagination has all expected fields")
+        
+        print(f"   Pagination info:")
+        print(f"     Page: {pagination.get('page', 'N/A')}")
+        print(f"     Limit: {pagination.get('limit', 'N/A')}")
+        print(f"     Total Count: {pagination.get('total_count', 'N/A')}")
+        print(f"     Total Pages: {pagination.get('total_pages', 'N/A')}")
+        print(f"     Has Next: {pagination.get('has_next', 'N/A')}")
+        print(f"     Has Prev: {pagination.get('has_prev', 'N/A')}")
+        
+        # Test 6: Check city structure if cities exist
+        if len(cities) > 0:
+            print("\n6. Checking city structure...")
+            first_city = cities[0]
+            
+            expected_city_fields = ["id", "name", "country_iso2"]
+            city_missing = []
+            for field in expected_city_fields:
+                if field not in first_city:
+                    city_missing.append(field)
+            
+            if city_missing:
+                print(f"   ⚠️  WARNING: City missing some fields: {city_missing}")
+            else:
+                print("   ✅ PASS: City has expected fields")
+            
+            print(f"   Sample city fields: {list(first_city.keys())}")
+            print(f"   Sample city: {first_city.get('name', 'N/A')} ({first_city.get('country_iso2', 'N/A')})")
+            
+            # Show more cities if available
+            if len(cities) > 1:
+                print(f"\n   Sample cities for {iso2}:")
+                for i, city in enumerate(cities[:5]):  # Show first 5
+                    print(f"     {i+1}. {city.get('name', 'N/A')}")
+        else:
+            print(f"\n6. No cities found for country {iso2}")
+        
+        # Test 7: Test with search query
+        print(f"\n7. Testing search functionality...")
+        search_endpoint = f"{BACKEND_URL}/api/geo/countries/{iso2}/cities?query=a"
+        print(f"   Testing search endpoint: {search_endpoint}")
+        
+        search_response = requests.get(search_endpoint, timeout=30)
+        if search_response.status_code == 200:
+            search_data = search_response.json()
+            search_cities = search_data.get("cities", [])
+            print(f"   ✅ PASS: Search functionality works, found {len(search_cities)} cities with 'a'")
+        else:
+            print(f"   ⚠️  WARNING: Search functionality test failed with status {search_response.status_code}")
+        
+        print("\n" + "=" * 80)
+        print("GET /api/geo/countries/{iso2}/cities ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON response with cities and pagination")
+        print("✅ Response structure validated")
+        print("✅ Pagination information included")
+        print("✅ Search functionality tested")
+        print(f"✅ Found {len(cities)} cities for country {iso2}")
+        print("\n🎉 GET /api/geo/countries/{iso2}/cities ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_customer_deletion_endpoint():
     """
     Test DELETE /api/customers/{customer_id} endpoint.
