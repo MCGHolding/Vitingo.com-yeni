@@ -14,6 +14,366 @@ from datetime import datetime, timedelta
 BACKEND_URL = "https://client-portal-hub-2.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
+def test_sales_opportunities_critical_investigation():
+    """
+    URGENT: Sales Opportunity Not Appearing in List - Critical Investigation
+    
+    User created a new sales opportunity, success modal appeared, but opportunity doesn't show in "All Opportunities" list.
+    
+    Investigation Requirements:
+    1. **Check Current Opportunities**: GET /api/opportunities to see what opportunities exist in database
+    2. **Test Opportunity Creation**: Create a test opportunity to verify creation process works
+    3. **Verify Data Storage**: Confirm created opportunities are actually being saved to database
+    4. **Check API Response**: Verify GET /api/opportunities returns proper data structure
+    5. **Database Connection**: Ensure opportunities collection is working properly
+    
+    Test Scenarios:
+    1. Check how many opportunities currently exist
+    2. Create a test opportunity with realistic data
+    3. Verify the test opportunity appears in GET /api/opportunities
+    4. Check if opportunities are being saved with correct structure
+    5. Look for any backend errors during opportunity creation/retrieval
+    
+    Critical Questions:
+    - Are opportunities being saved to database correctly?
+    - Does GET /api/opportunities return the created opportunities?
+    - Is there a mismatch between creation and retrieval endpoints?
+    - Are there any backend errors in opportunity handling?
+    """
+    
+    print("=" * 100)
+    print("🚨 URGENT: SALES OPPORTUNITY NOT APPEARING IN LIST - CRITICAL INVESTIGATION 🚨")
+    print("=" * 100)
+    print("CONTEXT: User created a new sales opportunity, success modal appeared,")
+    print("but opportunity doesn't show in 'All Opportunities' list.")
+    print("This is a critical data persistence/retrieval issue preventing user from seeing their data.")
+    print("=" * 100)
+    
+    investigation_results = {
+        "current_opportunity_count": 0,
+        "opportunities_found": [],
+        "database_connection_working": False,
+        "opportunity_creation_working": False,
+        "test_opportunity_persisted": False,
+        "get_endpoint_working": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # INVESTIGATION STEP 1: Check Current Opportunities Database Status
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 1: CURRENT OPPORTUNITIES DATABASE STATUS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunities"
+    print(f"Testing endpoint: {endpoint}")
+    print("Checking how many opportunities currently exist in the database...")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Opportunities API endpoint is responding")
+            investigation_results["database_connection_working"] = True
+            investigation_results["get_endpoint_working"] = True
+            
+            try:
+                opportunities = response.json()
+                opportunity_count = len(opportunities) if isinstance(opportunities, list) else 0
+                investigation_results["current_opportunity_count"] = opportunity_count
+                investigation_results["opportunities_found"] = opportunities[:3] if opportunities else []  # Store first 3 for analysis
+                
+                print(f"📊 CRITICAL FINDING: {opportunity_count} opportunities currently in database")
+                
+                if opportunity_count == 0:
+                    print("🚨 CRITICAL ISSUE: NO OPPORTUNITIES FOUND IN DATABASE!")
+                    print("   This could explain the reported issue - all opportunity data may be missing.")
+                    investigation_results["critical_issues"].append("NO_OPPORTUNITIES_IN_DATABASE")
+                elif opportunity_count < 3:
+                    print(f"⚠️  WARNING: Only {opportunity_count} opportunities found - this seems low")
+                    investigation_results["warnings"].append(f"LOW_OPPORTUNITY_COUNT_{opportunity_count}")
+                else:
+                    print(f"ℹ️  INFO: {opportunity_count} opportunities found in database")
+                
+                # Analyze opportunity data quality
+                if opportunities:
+                    print(f"\n📋 OPPORTUNITY DATA ANALYSIS (First 3 opportunities):")
+                    for i, opportunity in enumerate(opportunities[:3], 1):
+                        title = opportunity.get("title", "N/A")
+                        customer = opportunity.get("customer", "N/A")
+                        amount = opportunity.get("amount", 0)
+                        status = opportunity.get("status", "N/A")
+                        created_at = opportunity.get("created_at", "N/A")
+                        opportunity_id = opportunity.get("id", "N/A")
+                        
+                        print(f"   {i}. {title} - Customer: {customer}")
+                        print(f"      Amount: {amount} - Status: {status}")
+                        print(f"      ID: {opportunity_id}")
+                        print(f"      Created: {created_at}")
+                        
+                        # Check for test/demo data indicators
+                        demo_indicators = ["test", "demo", "example", "sample", "mock"]
+                        is_demo = any(indicator in title.lower() for indicator in demo_indicators)
+                        if is_demo:
+                            print(f"      🔍 ANALYSIS: Appears to be demo/test data")
+                        else:
+                            print(f"      🔍 ANALYSIS: Appears to be real opportunity data")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse opportunities data: {str(e)}")
+                investigation_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Opportunities API not responding properly. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            investigation_results["critical_issues"].append(f"GET_API_ERROR_{response.status_code}")
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+    except Exception as e:
+        print(f"❌ FAIL: Unexpected error: {str(e)}")
+        investigation_results["critical_issues"].append(f"UNEXPECTED_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 2: Test Opportunity Creation and Persistence
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 2: OPPORTUNITY CREATION AND PERSISTENCE TEST")
+    print("=" * 80)
+    print("Creating a test opportunity to verify data persistence is working...")
+    
+    # Create realistic test opportunity data
+    test_opportunity_data = {
+        "title": "Test Satış Fırsatı - Veri Kaybı Araştırması",
+        "customer": "Test Müşteri A.Ş.",
+        "contact_person": "Ahmet Test",
+        "amount": 150000.0,
+        "currency": "TRY",
+        "status": "open",
+        "stage": "lead",
+        "priority": "high",
+        "close_date": "2025-03-15",
+        "source": "Web Sitesi",
+        "description": f"Test opportunity created for data persistence investigation - {datetime.now().isoformat()}",
+        "business_type": "Fuar Stand Projesi",
+        "country": "TR",
+        "city": "İstanbul",
+        "trade_show": "İstanbul Teknoloji Fuarı 2025",
+        "trade_show_dates": "2025-03-10 - 2025-03-15",
+        "expected_revenue": 150000.0,
+        "probability": 75,
+        "tags": ["TEST", "ARAŞTIRMA", "VERİ_KAYBI"]
+    }
+    
+    print(f"Test opportunity data: {test_opportunity_data['title']}")
+    print(f"Customer: {test_opportunity_data['customer']}")
+    print(f"Amount: {test_opportunity_data['amount']} {test_opportunity_data['currency']}")
+    
+    # Test opportunity creation
+    create_endpoint = f"{BACKEND_URL}/api/opportunities"
+    try:
+        create_response = requests.post(create_endpoint, json=test_opportunity_data, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Opportunity creation endpoint is working")
+            investigation_results["opportunity_creation_working"] = True
+            
+            try:
+                created_opportunity = create_response.json()
+                test_opportunity_id = created_opportunity.get("id")
+                print(f"✅ PASS: Test opportunity created successfully with ID: {test_opportunity_id}")
+                
+                # Verify all fields were saved correctly
+                print(f"\n🔍 CREATION VERIFICATION: Checking created opportunity data...")
+                for key, expected_value in test_opportunity_data.items():
+                    actual_value = created_opportunity.get(key)
+                    if actual_value == expected_value:
+                        print(f"   ✅ {key}: {actual_value}")
+                    else:
+                        print(f"   ⚠️  {key}: Expected {expected_value}, Got {actual_value}")
+                
+                # INVESTIGATION STEP 3: Verify Persistence in GET Endpoint
+                print(f"\n🔍 PERSISTENCE CHECK: Verifying test opportunity appears in GET /api/opportunities...")
+                time.sleep(2)  # Wait a moment for database write
+                
+                # Check if opportunity appears in GET /api/opportunities
+                verify_response = requests.get(endpoint, timeout=30)
+                if verify_response.status_code == 200:
+                    updated_opportunities = verify_response.json()
+                    updated_count = len(updated_opportunities) if isinstance(updated_opportunities, list) else 0
+                    
+                    print(f"📊 Updated opportunity count: {updated_count}")
+                    
+                    # Look for our test opportunity
+                    test_opportunity_found = False
+                    for opportunity in updated_opportunities:
+                        if opportunity.get("id") == test_opportunity_id:
+                            test_opportunity_found = True
+                            print("✅ PASS: Test opportunity found in GET /api/opportunities - PERSISTENCE IS WORKING!")
+                            investigation_results["test_opportunity_persisted"] = True
+                            
+                            # Verify data integrity
+                            print(f"   Title: {opportunity.get('title')}")
+                            print(f"   Customer: {opportunity.get('customer')}")
+                            print(f"   Amount: {opportunity.get('amount')} {opportunity.get('currency')}")
+                            print(f"   Status: {opportunity.get('status')}")
+                            print(f"   Created: {opportunity.get('created_at')}")
+                            break
+                    
+                    if not test_opportunity_found:
+                        print("🚨 CRITICAL ISSUE: Test opportunity NOT found in GET /api/opportunities!")
+                        print("   This indicates a serious data persistence or retrieval problem!")
+                        investigation_results["critical_issues"].append("TEST_OPPORTUNITY_NOT_IN_GET_LIST")
+                    
+                    # Check if count increased
+                    if updated_count > investigation_results["current_opportunity_count"]:
+                        print(f"✅ PASS: Opportunity count increased from {investigation_results['current_opportunity_count']} to {updated_count}")
+                    else:
+                        print(f"🚨 CRITICAL ISSUE: Opportunity count did not increase! Still {updated_count}")
+                        investigation_results["critical_issues"].append("OPPORTUNITY_COUNT_NOT_INCREASED")
+                else:
+                    print(f"❌ FAIL: GET endpoint failed during verification: {verify_response.status_code}")
+                    investigation_results["critical_issues"].append("GET_VERIFICATION_FAILED")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing created opportunity: {str(e)}")
+                investigation_results["critical_issues"].append(f"CREATE_PROCESS_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Opportunity creation failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            investigation_results["critical_issues"].append(f"CREATE_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Opportunity creation error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 4: Test API Response Structure and Filtering
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 4: API RESPONSE STRUCTURE AND FILTERING TEST")
+    print("=" * 80)
+    
+    # Test different query parameters
+    test_queries = [
+        ("", "All opportunities"),
+        ("?status=open", "Open opportunities"),
+        ("?stage=lead", "Lead stage opportunities"),
+        ("?customer=Test", "Customer filter test")
+    ]
+    
+    for query_param, description in test_queries:
+        try:
+            test_url = f"{endpoint}{query_param}"
+            print(f"\n🔍 Testing: {description}")
+            print(f"   URL: {test_url}")
+            
+            query_response = requests.get(test_url, timeout=15)
+            if query_response.status_code == 200:
+                query_data = query_response.json()
+                query_count = len(query_data) if isinstance(query_data, list) else 0
+                print(f"   ✅ Status 200 - Found {query_count} opportunities")
+                
+                # Check response structure
+                if query_count > 0:
+                    first_opp = query_data[0]
+                    required_fields = ["id", "title", "customer", "amount", "status", "created_at"]
+                    missing_fields = [field for field in required_fields if field not in first_opp]
+                    if missing_fields:
+                        print(f"   ⚠️  Missing fields in response: {missing_fields}")
+                    else:
+                        print(f"   ✅ Response structure is correct")
+            else:
+                print(f"   ❌ Query failed: {query_response.status_code}")
+                investigation_results["warnings"].append(f"QUERY_FAILED_{query_param}")
+                
+        except Exception as e:
+            print(f"   ❌ Query error: {str(e)}")
+            investigation_results["warnings"].append(f"QUERY_ERROR_{query_param}")
+    
+    # INVESTIGATION STEP 5: Backend Logs and Error Analysis
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 5: BACKEND LOGS AND ERROR ANALYSIS")
+    print("=" * 80)
+    
+    # Check if we can access backend logs
+    try:
+        print("🔍 Checking backend service logs...")
+        import subprocess
+        result = subprocess.run(['tail', '-n', '50', '/var/log/supervisor/backend.err.log'], 
+                              capture_output=True, text=True, timeout=10)
+        if result.returncode == 0 and result.stdout.strip():
+            print("📋 Recent backend error logs:")
+            print(result.stdout)
+        else:
+            print("ℹ️  No recent backend errors found in logs")
+    except Exception as e:
+        print(f"ℹ️  Could not access backend logs: {str(e)}")
+    
+    # FINAL INVESTIGATION REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL INVESTIGATION REPORT - SALES OPPORTUNITIES NOT APPEARING")
+    print("=" * 100)
+    
+    print(f"📊 CURRENT DATABASE STATUS:")
+    print(f"   • Opportunity Count: {investigation_results['current_opportunity_count']}")
+    print(f"   • Database Connection: {'✅ Working' if investigation_results['database_connection_working'] else '❌ Failed'}")
+    print(f"   • GET Endpoint: {'✅ Working' if investigation_results['get_endpoint_working'] else '❌ Failed'}")
+    print(f"   • Opportunity Creation: {'✅ Working' if investigation_results['opportunity_creation_working'] else '❌ Failed'}")
+    print(f"   • Data Persistence: {'✅ Working' if investigation_results['test_opportunity_persisted'] else '❌ Failed'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(investigation_results['critical_issues'])}")
+    for issue in investigation_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(investigation_results['warnings'])}")
+    for warning in investigation_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not investigation_results['get_endpoint_working']:
+        print("🚨 CRITICAL: GET /api/opportunities endpoint is not working!")
+        print("   RECOMMENDATION: Check backend server status and API routing")
+        
+    elif not investigation_results['opportunity_creation_working']:
+        print("🚨 CRITICAL: POST /api/opportunities endpoint is not working!")
+        print("   RECOMMENDATION: Check backend server and opportunity creation logic")
+        
+    elif not investigation_results['test_opportunity_persisted']:
+        print("🚨 CRITICAL: Opportunities are created but not appearing in GET list!")
+        print("   RECOMMENDATION: Check database query logic in GET /api/opportunities")
+        print("   RECOMMENDATION: Verify MongoDB collection name and query filters")
+        
+    elif investigation_results['current_opportunity_count'] == 0:
+        print("🚨 CRITICAL: NO OPPORTUNITIES IN DATABASE - This explains the user's issue!")
+        print("   RECOMMENDATION: Check if opportunities collection exists in MongoDB")
+        print("   RECOMMENDATION: Verify user is working in correct environment")
+        
+    else:
+        print("ℹ️  INFO: Backend APIs appear to be functioning normally")
+        print("   RECOMMENDATION: Check frontend-backend integration")
+        print("   RECOMMENDATION: Verify frontend is calling correct API endpoints")
+        print("   RECOMMENDATION: Check browser network tab for API call failures")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. Verify MongoDB opportunities collection exists and is accessible")
+    print("   2. Check backend server logs for opportunity-related errors")
+    print("   3. Test frontend API calls in browser developer tools")
+    print("   4. Verify frontend is using correct backend URL")
+    print("   5. Check if there are any CORS or authentication issues")
+    
+    # Return overall test result
+    has_critical_issues = len(investigation_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ INVESTIGATION RESULT: CRITICAL ISSUES FOUND - USER'S PROBLEM CONFIRMED")
+        return False
+    else:
+        print(f"\n✅ INVESTIGATION RESULT: BACKEND IS WORKING - ISSUE MAY BE IN FRONTEND")
+        return True
+
 def test_customer_data_loss_investigation():
     """
     CRITICAL DATA LOSS INVESTIGATION - Customer reports that a real customer they added yesterday has disappeared today.
