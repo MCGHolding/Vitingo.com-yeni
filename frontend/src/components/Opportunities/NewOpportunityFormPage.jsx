@@ -48,7 +48,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     country: '',
     city: '',
     tradeShow: '',
-    tradeShowDates: '',
+    tradeShowStartDate: '',
+    tradeShowEndDate: '',
     expectedRevenue: '',
     probability: '50',
     tags: []
