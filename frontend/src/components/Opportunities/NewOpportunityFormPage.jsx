@@ -1102,15 +1102,30 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   </Select>
                 </div>
 
-                {/* Fuar Tarihleri */}
+                {/* Başlama Tarihi */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fuar Tarihleri
+                    Başlama Tarihi
                   </label>
                   <Input
-                    value={formData.tradeShowDates}
-                    onChange={(e) => handleInputChange('tradeShowDates', e.target.value)}
-                    placeholder="Fuar tarihi aralığı"
+                    type="date"
+                    value={formData.tradeShowStartDate}
+                    onChange={(e) => handleInputChange('tradeShowStartDate', e.target.value)}
+                    placeholder="Fuar başlama tarihi"
+                  />
+                </div>
+
+                {/* Bitiş Tarihi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Bitiş Tarihi
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.tradeShowEndDate}
+                    onChange={(e) => handleInputChange('tradeShowEndDate', e.target.value)}
+                    placeholder="Fuar bitiş tarihi"
+                    min={formData.tradeShowStartDate} // Bitiş tarihi başlama tarihinden önce olamaz
                   />
                 </div>
               </div>
