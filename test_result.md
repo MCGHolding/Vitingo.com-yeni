@@ -139,8 +139,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Countries and Cities API Endpoints Testing"
-  stuck_tasks: []
+    - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+  stuck_tasks:
+    - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
   test_priority: "high_first"
 
