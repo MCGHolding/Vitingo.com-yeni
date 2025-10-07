@@ -342,31 +342,33 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
 
           {/* Organizer View - Show Response Summary */}
           {isOrganizer && (
-            <div className="border-t pt-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 mb-3">Yanıt Özeti</h4>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Yanıt Özeti</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
+                  <div className="p-4 bg-green-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
                       {Object.values(request.responses || {}).filter(r => r.response === 'accepted').length}
                     </div>
                     <div className="text-sm text-gray-600">Kabul</div>
                   </div>
-                  <div>
+                  <div className="p-4 bg-yellow-50 rounded-lg">
                     <div className="text-2xl font-bold text-yellow-600">
                       {Object.values(request.responses || {}).filter(r => r.response === 'maybe').length}
                     </div>
                     <div className="text-sm text-gray-600">Belki</div>
                   </div>
-                  <div>
+                  <div className="p-4 bg-red-50 rounded-lg">
                     <div className="text-2xl font-bold text-red-600">
                       {Object.values(request.responses || {}).filter(r => r.response === 'declined').length}
                     </div>
                     <div className="text-sm text-gray-600">Reddet</div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
         </div>
 
