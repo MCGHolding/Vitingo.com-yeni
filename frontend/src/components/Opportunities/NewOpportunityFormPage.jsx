@@ -114,12 +114,13 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     { value: 'other', label: 'Diğer' }
   ];
 
-  // Load customers, fairs, statuses, stages and countries on component mount
+  // Load customers, fairs, statuses, stages, project types and countries on component mount
   useEffect(() => {
     loadCustomers();
     loadFairs();
     loadStatuses();
     loadStages();
+    loadProjectTypes();
     loadCountries();
   }, []);
 
