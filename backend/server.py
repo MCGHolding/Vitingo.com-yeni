@@ -5352,7 +5352,9 @@ async def create_opportunity_stage(stage_input: StageCreate):
     """Create a new opportunity stage"""
     try:
         # Generate value from label (lowercase, replace spaces with underscores)
-        value = stage_input.label.lower().replace(' ', '_').replace('ı', 'i').replace('İ', 'i').replace('ü', 'u').replace('Ü', 'u').replace('ö', 'o').replace('Ö', 'o').replace('ş', 's').replace('Ş', 's').replace('ğ', 'g').replace('Ğ', 'g').replace('ç', 'c').replace('Ç', 'c')
+        # Handle Turkish characters before lowercasing to avoid issues with İ -> i̇
+        value = stage_input.label.replace('İ', 'I').replace('Ğ', 'G').replace('Ü', 'U').replace('Ş', 'S').replace('Ö', 'O').replace('Ç', 'C')
+        value = value.lower().replace(' ', '_').replace('ı', 'i').replace('ü', 'u').replace('ö', 'o').replace('ş', 's').replace('ğ', 'g').replace('ç', 'c')
         
         # Check if stage with same value already exists
         existing = await db.opportunity_stages.find_one({"value": value, "is_active": True})
