@@ -586,6 +586,64 @@ Saygılarımızla,`;
               </div>
             </div>
           ))}
+          
+          {/* Ödeme Planı Tablosu - Only show if at least one vade is selected */}
+          {formData.vadeler.some(vade => vade.tip) && (
+            <div className="mt-6">
+              <h4 className="text-md font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                <Calendar className="h-4 w-4" />
+                <span>Ödeme Planı</span>
+              </h4>
+              <div className="bg-gray-50 rounded-lg border border-gray-200">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-gray-200">
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Sıra</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Ödeme Türü</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Tarih</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Oran (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formData.vadeler
+                      .filter(vade => vade.tip)
+                      .map((vade, index) => (
+                      <tr key={index} className="border-b border-gray-100 hover:bg-white transition-colors">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {index + 1}. Ödeme
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {vade.tip}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {vade.tip === 'Özel Tarih' && vade.ozelTarih 
+                            ? new Date(vade.ozelTarih).toLocaleDateString('tr-TR')
+                            : calculatePaymentDate(vade.tip, formData.sozlesmeTarihi)
+                          }
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {vade.yuzde ? `%${vade.yuzde}` : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  {/* Total row if percentages are provided */}
+                  {formData.vadeler.some(vade => vade.yuzde) && (
+                    <tfoot>
+                      <tr className="bg-blue-50 border-t-2 border-blue-200">
+                        <td colSpan="3" className="px-4 py-3 text-sm font-semibold text-gray-800">
+                          Toplam
+                        </td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-800">
+                          %{formData.vadeler.reduce((total, vade) => total + (parseInt(vade.yuzde) || 0), 0)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
