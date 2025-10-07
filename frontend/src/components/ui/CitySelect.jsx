@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, MapPin, Input } from 'lucide-react';
+import { Search, ChevronDown, MapPin, Edit } from 'lucide-react';
 
 const CitySelect = ({ 
   value, 
