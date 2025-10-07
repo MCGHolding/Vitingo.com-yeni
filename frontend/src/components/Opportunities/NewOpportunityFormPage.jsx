@@ -144,6 +144,53 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }));
   };
 
+  // Handle customer selection and update available contacts
+  const handleCustomerChange = (customerName) => {
+    // Find the selected customer object
+    const customer = customers.find(c => 
+      (c.companyName || c.companyTitle || '') === customerName
+    );
+    
+    setSelectedCustomer(customer);
+    setFormData(prev => ({
+      ...prev,
+      customer: customerName,
+      contactPerson: '' // Reset contact person when customer changes
+    }));
+
+    // Update available contacts for this customer
+    if (customer) {
+      const contacts = [];
+      
+      // Add main contact person if exists
+      if (customer.contactPerson || customer.contact_person) {
+        contacts.push({
+          name: customer.contactPerson || customer.contact_person,
+          title: customer.contactTitle || 'Ana İletişim',
+          email: customer.email,
+          phone: customer.phone
+        });
+      }
+
+      // Add additional contacts if they exist (assuming they might be in an array)
+      if (customer.additionalContacts && Array.isArray(customer.additionalContacts)) {
+        customer.additionalContacts.forEach(contact => {
+          contacts.push({
+            name: contact.name,
+            title: contact.title || 'İletişim Kişisi',
+            email: contact.email,
+            phone: contact.phone
+          });
+        });
+      }
+
+      setAvailableContacts(contacts);
+      console.log('🔄 Available contacts for', customerName, ':', contacts);
+    } else {
+      setAvailableContacts([]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
