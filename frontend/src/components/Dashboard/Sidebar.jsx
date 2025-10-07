@@ -347,8 +347,7 @@ export default function Sidebar({
   onAllBriefs,
   onClosedBriefs,
   onPassiveBriefs,
-  // Teklif handlers  
-  onNewTeklif,
+  // Teklif handlers - REMOVED
   onRequestBrief,
   // Calendar handlers
   onCalendar,
