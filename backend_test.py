@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://smart-meet-2.preview.emergentagent.com"
+BACKEND_URL = "https://crmplus-2.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
 def test_csv_template_download_fairs():

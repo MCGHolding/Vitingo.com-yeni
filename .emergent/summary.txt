@@ -1,21 +1,27 @@
 <analysis>
-The previous AI engineer initiated work on a Calendar System, starting with Phase 1: Basic Calendar Structure. This involved backend model/API setup for  and ,  integration in , and navigation via . Debugging included resolving missing  icon imports in  and  routing issues.
+The AI engineer's work transitioned through several distinct phases. Initially, the focus was on completing the UI refactoring of the Calendar system, specifically  and , to align with the application's design language, which involved extensive debugging of JSX errors and frontend rendering issues across multiple attempts.
 
-Following user feedback, the engineer proceeded to implement an in-app chat module within the calendar, requiring WebSocket integration and  creation. Concurrently, a Meeting Requests feature was developed, including a dedicated page (), backend models/endpoints, participant selection from a database, and email notifications for accept/reject functionality. A significant challenge involved correctly loading real company users ( from ) into the participant selection, which was eventually resolved by migrating these hardcoded users into the MongoDB and updating the backend  endpoint. The latest work involves refactoring the  and  to align with the application's overall design language, using components like  and . The trajectory concludes mid-design refactoring.
+Subsequently, the user introduced issues with the Teklif Form (Offer Form), leading to attempts to fix its dynamic installment add row functionality. This period was plagued by persistent session timeouts and manual frontend testing challenges. A major shift occurred when the user requested the complete deletion of the Teklif module, followed almost immediately by a request to re-create a *new* Teklif form with specific requirements (sales opportunity and customer dropdowns).
+
+Further work involved ensuring the new Teklif form correctly fetched data from the backend APIs, which exposed inconsistencies where some pages used mock data while the new form used real API endpoints. This led to refactoring  to use live data and removing all customer mock data across the application.
+
+A significant feature implemented was a smart customer deletion modal, which required backend  functionality and complex frontend state management to prevent logout and ensure UI refresh. This involved deep debugging of React rendering issues ( scope,  prop,  side-effects).
+
+The final phase, where the trajectory concludes, focused on enhancing the Yeni Satış Fırsatı (New Sales Opportunity) form. This included refining customer and contact person dropdowns (displaying names, not emails, and single-line format), and adding role-based Add New Status/Stage functionality to the respective dropdowns, ending with a  import error.
 </analysis>
 
 <product_requirements>
-The application aims to enhance CRM capabilities through a multi-step New Brief Form with dynamic inputs, area calculation, Turkish number formatting, and a . A new Offer Form is required to streamline quotations, featuring auto-filling fields from sales opportunities, dynamic installment systems, a rich text editor for Teklif Koşulları, AI-generated Teklif Ön Yazı, multi-select services, and an integrated signature system.
+The application requires enhancing CRM capabilities and a modern calendar system. Key CRM features include a multi-step New Brief Form with dynamic inputs, area calculation, and a . An Offer Form (Teklif Form) is crucial for streamlined quotations, featuring auto-filled sales opportunity data, dynamic installment systems, a rich text editor for Teklif Koşulları, AI-generated Teklif Ön Yazı, multi-select services, and an integrated signature system.
 
-A Modern Calendar System is also a core requirement, enabling users to view personal calendars, and admins/super admins to view all. It must support meeting scheduling, invitation management (accept/reject), and an in-meeting chat module with real-time messaging, emoji, file, and image sharing, along with email and browser notifications.
+The Modern Calendar System needs to support personal and admin views, meeting scheduling with invitation management (accept/reject), an in-meeting chat module (real-time messages, emojis, file/image sharing), and email/browser notifications.
 
-So far, the basic calendar structure and a robust Meeting Requests system have been implemented, including participant selection from a database, email notifications for invitations, virtual meeting links, and a system for users to see and respond to their invitations. An in-app chat module for the calendar view has also been partially implemented.
+So far, a basic calendar structure, a robust Meeting Requests system (with participant selection, email notifications, virtual meeting links, invitation response handling), and a partially implemented in-app chat module exist. The Teklif Form was initially built, then removed, and re-introduced with specific requirements including real-time data for sales opportunities and customers, and dynamic payment installment calculations. A smart customer deletion system (deactivate if related records exist, else delete, with success modal) was also requested. Most recently, the New Sales Opportunity form required displaying only names in dropdowns and adding role-based options for Add New Status/Stage.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: React (hooks, context), , , multi-step forms, client-side routing, , , native HTML inputs, custom modals.
-- **Backend**: FastAPI (RESTful APIs, WebSockets), Pydantic for data validation, MongoDB for persistence, UUIDs for IDs.
-- **Auth**: Client-side mock authentication (via ).
+- **Frontend**: React (hooks, context, ), , , client-side routing, , , custom modals, , ,  components (Shadcn UI-like).
+- **Backend**: FastAPI (RESTful APIs, WebSockets), Pydantic, MongoDB, UUIDs for IDs.
+- **Auth**: Client-side mock authentication (), temporarily modified for password-less login.
 - **Email**: Backend email service for notifications.
 </key_technical_concepts>
 
@@ -27,75 +33,99 @@ The application uses a monorepo structure with a React frontend and a FastAPI ba
 -   ****
     -   **Importance:** Central backend API logic.
     -   **Summary of Changes:**
-        -   Added/updated Pydantic models for , , , , , .
-        -   Implemented CRUD endpoints for , , , .
-        -   Added test endpoints for sample data.
-        -   Integrated WebSocket endpoint () with  for real-time chat.
-        -   Added  endpoints for creating, retrieving, and managing meeting requests and responses.
-        -   Added  endpoints for fetching real users from MongoDB (migrated from ) and basic CRUD.
-        -   Added  endpoint to populate database with users from .
-        -   Updated  fallback logic to correctly display user names.
+        -   Added  endpoint for marking customers as inactive.
+        -   Refined  endpoint for more robust error handling and simplified related record checks to avoid issues with non-existent collections.
 -   ****
     -   **Importance:** Main frontend entry point, manages routing and  state.
     -   **Summary of Changes:**
-        -   Integrated  and  components.
-        -   Added  and  handlers for view state transitions.
-        -   Updated  to display  and .
-        -   Passed  and  handlers as props to .
+        -   Removed/re-added Teklif-related imports, handlers (), and render cases for the Teklif module's re-creation.
+        -   Removed mock data imports (, ) and fallbacks for customer loading.
+        -   Refactored  function to be defined outside  and passed as  prop to  to resolve scope and state update issues.
+        -   Added  prop to  to force re-render upon data changes.
+        -   Removed  prop from  rendering.
 -   ****
-    -   **Importance:** Manages user authentication state and hardcoded user data.
-    -   **Summary of Changes:** Contains the hardcoded list of  users that were migrated to the backend database.
+    -   **Importance:** Manages user authentication state.
+    -   **Summary of Changes:** Modified  function to temporarily remove password validation for easier testing.
 -   ****
     -   **Importance:** Provides application navigation.
     -   **Summary of Changes:**
-        -   Added Takvim and Toplantı Talepleri menu items.
-        -   Modified  to correctly invoke  and .
-        -   Resolved missing  icon imports.
+        -   Removed/re-added Teklifler menu items and associated handlers () during the Teklif module's re-creation.
+        -   Added missing  and  icon imports.
 -   ****
-    -   **Importance:** Displays the main calendar view.
-    -   **Summary of Changes:**
-        -   Integrated .
-        -   Removed Yeni Toplantı button and Toplantı Davetleri column.
-        -   Adjusted to full-width.
-        -   Integrated  and  (with dedicated buttons).
-        -   Removed invitation-related state and functions.
--   **** (New File)
-    -   **Importance:** Provides an in-app chat interface within the calendar view.
-    -   **Summary of Changes:** Initial creation. Implements basic chat UI with message input, display, and emoji picker () using native WebSockets.
--   **** (New File)
-    -   **Importance:** Displays and manages meeting requests and invitations.
-    -   **Summary of Changes:**
-        -   Initial creation. Fetches meeting requests and users from backend.
-        -   Implements participant selection with search, select all, and department grouping.
-        -   Includes tab navigation (Tüm Talepler, Gelen Davetler, Gönderdiğim Talepler).
-        -   Displays meeting details, including virtual meeting links.
-        -   Handles meeting invitation responses (Accept/Reject) and visual status.
-        -   Currently undergoing design refactoring to match application's UI library.
--   **** (New File)
-    -   **Importance:** Form for creating new meeting requests, used within  and .
-    -   **Summary of Changes:** Created as a reusable modal component based on the form in . Handles meeting details (topic, date, time, physical/virtual, address/platform, link), and participant selection from database users. Calls  on initial load.
--   **** (New File)
+    -   **Importance:** Displays and manages meeting requests.
+    -   **Summary of Changes:** Underwent significant design refactoring to use  and  components, including updates to modal buttons and header. Faced and resolved multiple JSX parsing errors.
+-   ****
     -   **Importance:** Displays detailed information about a specific meeting request.
-    -   **Summary of Changes:** Created to show comprehensive meeting details, including organizer, date, time, location/platform, participants with their response status. Will include Accept/Reject buttons for invitees. Currently undergoing design refactoring.
+    -   **Summary of Changes:** Underwent extensive design refactoring using , , and  components. Involved numerous fixes for JSX nesting and closing tag errors across multiple sections (modal structure, details grid, attendees, response sections).
 -   ****
-    -   **Importance:** Example of the application's design language for UI refactoring.
-    -   **Summary of Changes:** No direct changes in this trajectory, but used as a reference for styling.
+    -   **Importance:** User login interface.
+    -   **Summary of Changes:** Temporarily removed password input field, password validation logic, and demo credential buttons to facilitate password-free login for testing purposes.
+-   ** (Re-created and Modified)**
+    -   **Importance:** Form for creating new offer requests.
+    -   **Summary of Changes:**
+        -   Initially, attempts were made to fix its dynamic installment () row addition.
+        -   Completely deleted, then re-created.
+        -   Implemented dynamic payment plan table,  function,  to compute dates based on .
+        -   Added  field to form data and UI.
+        -   Updated  dependencies (, ) to ensure dropdowns update with fetched data.
+        -   Removed  prop handling due to external error.
+-   ****
+    -   **Importance:** Example of application's design language, previously used mock data.
+    -   **Summary of Changes:** Removed  mock data import and all fallback usages.
+-   ****
+    -   **Importance:** Displays all sales opportunities.
+    -   **Summary of Changes:** Transitioned from using mock data () to fetching real sales opportunities from . Added  for API call, loading/error states, and  definition. Updated filtering logic to match backend response ( field).
+-   ****
+    -   **Importance:** Displays and manages all customers.
+    -   **Summary of Changes:**
+        -   Removed  mock import and defined them manually.
+        -   Integrated  to handle smart customer deletion.
+        -   Updated  to use modal logic.
+        -   Receives  prop from  to update customer list after deletion without full page reload.
+        -   Removed  and  workarounds that caused logout.
+-   ** (New File)**
+    -   **Importance:** Provides a smart confirmation and action modal for customer deletion/deactivation.
+    -   **Summary of Changes:** Initial creation. Handles logic for checking related records (), then either deleting or deactivating, and showing a success message.
+-   ****
+    -   **Importance:** Manages customer prospects.
+    -   **Summary of Changes:** Removed  mock import and defined them manually.
+-   ****
+    -   **Importance:** Form for creating new sales opportunities.
+    -   **Summary of Changes:**
+        -   Added  state.
+        -   Implemented  to populate  dropdown based on selected customer.
+        -   Converted  input to a  dropdown.
+        -   Modified customer and contact person dropdowns to display only names (single line format: Name - Company).
+        -   Integrated  to get user role ().
+        -   Added Yeni Durum Ekle (Add New Status) and Yeni Aşama Ekle (Add New Stage) options to respective dropdowns, conditionally rendered for Admin/Super Admin roles.
+        -   Added  and  functions.
+-   ****
+    -   **Importance:** Previously contained mock customer data.
+    -   **Summary of Changes:** This file was completely deleted.
+
 </code_architecture>
 
 <pending_tasks>
-- Fully implement all detailed features within .
-- Complete Phase 2 of the Calendar System: Meeting Management (acceptance/rejection in , email notifications, visual status).
+- Fully implement remaining detailed features within the new  (e.g., rich text editor, AI-generated text, multi-select services, signature).
+- Complete Phase 2 of the Calendar System: Meeting Management (email notifications and visual status beyond basic accept/reject).
 - Fully implement Phase 3: Real-time Chat (Socket.io integration, right panel, emoji/file/image sharing).
-- Implement Phase 4: Advanced Features (browser notifications, sync, reporting).
-- Complete the ongoing design refactoring of  and  to align with the application's general design language.
+- Implement Phase 4: Advanced Calendar Features (browser notifications, sync, reporting).
+- Implement the eye icon feature for expense reports to view documented expenses.
+- Resolve the  TypeError in .
+- Implement backend logic for Add New Status and Add New Stage in the Sales Opportunity form.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was actively engaged in enhancing the UI/UX of the Meeting Requests feature. The user explicitly requested to make the  design more professional and aligned with the application's overall design language, as well as to include Accept and Reject buttons within the  for invitees to respond to requests.
+Immediately before this summary request, the AI engineer was actively working on implementing several enhancements for the Yeni Satış Fırsatı (New Sales Opportunity) form, as requested by the user.
 
-The engineer initiated this by analyzing existing UI patterns in  to understand the application's design language (e.g., use of ,  components). Subsequently, the engineer began refactoring  and . This involves updating various sections, including the page header, tab navigation, the list of meeting requests, individual meeting cards, meeting details, and participant displays, to use the consistent  and  components. The trajectory ends specifically as the engineer was working on updating the response buttons section within these components.
+Specifically, the following changes were being made in :
+1.  **Contact Person Display:** The contact person dropdown was modified to show only the name and not the email address.
+2.  **Role-Based Dynamic Dropdown Options:** Functionality was added to the Durum (Status) and Aşama (Stage) dropdowns. An Yeni Durum Ekle (Add New Status) option and an Yeni Aşama Ekle (Add New Stage) option were introduced at the bottom of their respective menus. These options are conditionally rendered, visible only to users with 'admin' or 'super-admin' roles, using  to determine the user's permissions.
+3.  **Handling New Options:** Placeholder functions (, ) were added to handle the selection of these new options.
+
+The last action recorded was an attempt to restart the frontend after these changes. However, a  related to  was encountered in the console, indicating a missing import or improper usage of the toast notification system within . The trajectory ends at the point of diagnosing this  error.
 </current_work>
 
 <optional_next_step>
-Continue the design refactoring of the  and  to integrate the Accept/Reject buttons and ensure consistent UI.
+Import the  hook in .
 </optional_next_step>
