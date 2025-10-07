@@ -342,12 +342,17 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                     </SelectTrigger>
                     <SelectContent>
                       {customers
-                        .filter(customer => (customer.companyName || customer.companyTitle || '').trim() !== '')
+                        .filter(customer => (customer.contactPerson || customer.contact_person || '').trim() !== '')
                         .map((customer) => {
-                          const displayName = customer.companyName || customer.companyTitle || `Customer ${customer.id}`;
+                          const displayName = customer.contactPerson || customer.contact_person || customer.companyName || customer.companyTitle || `Customer ${customer.id}`;
                           return (
                             <SelectItem key={customer.id} value={displayName}>
-                              {displayName}
+                              <div className="flex flex-col">
+                                <span className="font-medium">{displayName}</span>
+                                <span className="text-sm text-gray-500">
+                                  {customer.companyName || customer.companyTitle}
+                                </span>
+                              </div>
                             </SelectItem>
                           );
                         })}
