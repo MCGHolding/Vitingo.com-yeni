@@ -28,7 +28,7 @@ import {
   Zap,
   CheckCircle
 } from 'lucide-react';
-import { wonOpportunities, tagColors } from '../../mock/opportunitiesData';
+import { tagColors } from '../../mock/opportunitiesData';
 
 export default function WonOpportunitiesPage({ onBackToDashboard }) {
   const { toast } = useToast();
