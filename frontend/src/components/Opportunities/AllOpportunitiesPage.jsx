@@ -25,7 +25,7 @@ import {
   BarChart,
   Zap
 } from 'lucide-react';
-import { allOpportunities, tagColors } from '../../mock/opportunitiesData';
+// import { allOpportunities, tagColors } from '../../mock/opportunitiesData'; // Removed - using real API
 
 export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const { toast } = useToast();
