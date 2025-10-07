@@ -376,15 +376,14 @@ export default function NewBriefForm({ onBackToDashboard }) {
         if (response.ok) {
           const customersData = await response.json();
           setCustomers(customersData.filter(customer => customer.status === 'active'));
+          console.log('✅ Customers loaded from API:', customersData.length);
         } else {
-          console.error('Failed to fetch customers');
-          // Fallback to mock data
-          setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+          console.error('❌ Failed to fetch customers, status:', response.status);
+          setCustomers([]);
         }
       } catch (error) {
-        console.error('Error fetching customers:', error);
-        // Fallback to mock data
-        setCustomers(allCustomers.filter(customer => customer.status === 'active'));
+        console.error('❌ Error fetching customers:', error);
+        setCustomers([]);
       }
     };
 
