@@ -286,6 +286,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
 
   // Handle successful deletion/deactivation
   const handleDeleteSuccess = async () => {
+    console.log('🎉 handleDeleteSuccess called - refreshing customers...');
+    
     toast({
       title: "İşlem Tamamlandı",
       description: "Müşteri işlemi başarıyla tamamlandı.",
@@ -293,7 +295,15 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
     
     // Refresh customers list without page reload
     if (refreshCustomers) {
-      await refreshCustomers();
+      console.log('🔄 Calling refreshCustomers function...');
+      try {
+        await refreshCustomers();
+        console.log('✅ refreshCustomers completed successfully');
+      } catch (error) {
+        console.error('❌ refreshCustomers failed:', error);
+      }
+    } else {
+      console.error('❌ refreshCustomers function not available');
     }
   };
 
