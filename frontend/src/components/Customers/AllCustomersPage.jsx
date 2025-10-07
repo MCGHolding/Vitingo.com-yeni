@@ -745,6 +745,19 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
           }}
         />
       )}
+
+      {/* Delete Customer Modal */}
+      {deleteModalOpen && selectedCustomer && (
+        <DeleteCustomerModal
+          customer={selectedCustomer}
+          isOpen={deleteModalOpen}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setSelectedCustomer(null);
+          }}
+          onSuccess={handleDeleteSuccess}
+        />
+      )}
     </div>
   );
 }
