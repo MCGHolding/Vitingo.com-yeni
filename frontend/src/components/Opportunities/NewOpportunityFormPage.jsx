@@ -24,6 +24,10 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 export default function NewOpportunityFormPage({ onClose, onSave }) {
   const { toast } = useToast();
+  const { user } = useContext(AuthContext);
+  
+  // Check if user is admin or super admin
+  const isAdminOrSuperAdmin = user && (user.role === 'admin' || user.role === 'super-admin');
   
   const [formData, setFormData] = useState({
     title: '',
