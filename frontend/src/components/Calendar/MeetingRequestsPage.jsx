@@ -219,21 +219,25 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-3">
-          <Clock className="h-8 w-8 text-blue-600" />
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Toplantı Talepleri</h1>
-            <p className="text-gray-600">Gelen ve gönderilen toplantı taleplerini yönetin</p>
+      <div className="flex flex-col space-y-6 mb-8">
+        <div className="flex justify-between items-start">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-blue-100 rounded-xl">
+              <Clock className="h-8 w-8 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Toplantı Talepleri</h1>
+              <p className="text-gray-600 mt-1">Gelen ve gönderilen toplantı taleplerini yönetin</p>
+            </div>
           </div>
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Yeni Toplantı Talebi
+          </Button>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Yeni Toplantı Talebi</span>
-        </button>
       </div>
 
       {/* Response Message */}
