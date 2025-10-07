@@ -50,6 +50,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     tradeShow: '',
     tradeShowStartDate: '',
     tradeShowEndDate: '',
+    standSize: '',
+    standSizeUnit: 'm2',
     expectedRevenue: '',
     probability: '50',
     tags: []
