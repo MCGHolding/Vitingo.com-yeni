@@ -115,22 +115,7 @@ const getNavigation = (userDepartment) => {
         { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
       ]
     },
-    { 
-      name: 'Teklifler', 
-      href: '/quotes', 
-      icon: ClipboardList, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Yeni Teklif', href: '/quotes/new', icon: Plus },
-        { name: 'Tüm Teklifler', href: '/quotes/all', icon: Files },
-        { name: 'Taslak Teklifler', href: '/quotes/draft', icon: FileText },
-        { name: 'Yönetici Onayında', href: '/quotes/pending-approval', icon: Clock },
-        { name: 'Gönderilen Teklifler', href: '/quotes/sent', icon: Upload },
-        { name: 'Kazanılan Teklifler', href: '/quotes/won', icon: Trophy },
-        { name: 'Kaybedilen Teklifler', href: '/quotes/lost', icon: XCircle }
-      ]
-    },
+    // Teklifler menüsü kaldırıldı
     { 
       name: 'Fuarlar', 
       href: '/fairs', 
