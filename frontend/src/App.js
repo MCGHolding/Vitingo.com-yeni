@@ -47,7 +47,7 @@ import ExportDataPage from './components/Settings/ExportDataPage';
 import { customerStats, salesData } from './mock/data';
 import { openOpportunities } from './mock/opportunitiesData';
 import { mockUsers } from './mock/usersData';
-import { allCustomers } from './mock/customersData';
+// import { allCustomers } from './mock/customersData'; // Removed - using real API
 import { allPeople } from './mock/peopleData';
 import { mockFairs } from './mock/fairsData';
 import ModernKPICard from './components/Dashboard/ModernKPICard';
