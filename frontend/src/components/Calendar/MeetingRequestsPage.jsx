@@ -366,54 +366,71 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                         {request.subject}
                       </CardTitle>
 
-                    {/* Meeting Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      {/* Date and Time */}
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4" />
-                          <span>Tarih: {formatDate(request.date)}</span>
+                  {/* Meeting Details Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Date and Time */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Calendar className="h-4 w-4 text-blue-600" />
                         </div>
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Clock className="h-4 w-4" />
-                          <span>
-                            Saat: {formatTime(request.start_time)} - {formatTime(request.end_time)}
-                          </span>
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wide">Tarih</p>
+                          <p className="font-semibold text-gray-900">{formatDate(request.date)}</p>
                         </div>
                       </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <Clock className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wide">Saat</p>
+                          <p className="font-semibold text-gray-900">
+                            {formatTime(request.start_time)} - {formatTime(request.end_time)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                      {/* Location/Platform */}
-                      <div className="space-y-2">
-                        <div className="space-y-1">
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            {request.meeting_type === 'physical' ? (
-                              <>
-                                <MapPin className="h-4 w-4" />
-                                <span>Fiziki: {request.location}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Video className="h-4 w-4" />
-                                <span>Sanal: {request.platform}</span>
-                              </>
-                            )}
-                          </div>
-                          
-                          {/* Meeting Link - Only for virtual meetings */}
-                          {request.meeting_type === 'virtual' && request.meeting_link && (
-                            <div className="flex items-center space-x-2 text-sm">
-                              <ExternalLink className="h-4 w-4 text-blue-500" />
-                              <a
-                                href={request.meeting_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 underline hover:no-underline"
-                              >
-                                Toplantıya Katıl
-                              </a>
-                            </div>
+                    {/* Location/Platform */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg ${request.meeting_type === 'physical' ? 'bg-orange-100' : 'bg-purple-100'}`}>
+                          {request.meeting_type === 'physical' ? (
+                            <MapPin className="h-4 w-4 text-orange-600" />
+                          ) : (
+                            <Video className="h-4 w-4 text-purple-600" />
                           )}
                         </div>
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wide">
+                            {request.meeting_type === 'physical' ? 'Konum' : 'Platform'}
+                          </p>
+                          <p className="font-semibold text-gray-900">
+                            {request.meeting_type === 'physical' ? request.location : request.platform}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Meeting Link - Only for virtual meetings */}
+                      {request.meeting_type === 'virtual' && request.meeting_link && (
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <ExternalLink className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">Toplantı Linki</p>
+                            <a
+                              href={request.meeting_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                            >
+                              Toplantıya Katıl
+                            </a>
+                          </div>
+                        </div>
+                      )}
                         <div className="flex items-start space-x-2 text-sm text-gray-600">
                           <Users className="h-4 w-4 mt-0.5" />
                           <div className="flex-1">
