@@ -380,7 +380,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       {availableContacts.length > 0 ? (
                         availableContacts.map((contact, index) => (
                           <SelectItem key={index} value={contact.name}>
-                            {contact.name} - {contact.title}{contact.email ? ` (${contact.email})` : ''}
+                            {contact.name}
                           </SelectItem>
                         ))
                       ) : formData.customer ? (
