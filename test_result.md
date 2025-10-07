@@ -87,9 +87,9 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
@@ -103,6 +103,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CITY CASCADE FUNCTIONALITY NOT WORKING: After comprehensive testing of the CitySelect.jsx icon fix, discovered critical issue with city cascade functionality. ✅ ICON FIX VERIFIED: CitySelect.jsx correctly uses 'Edit' icon from lucide-react (lines 2, 133, 150) - no React compilation errors related to icons ✅ FORM LOADING: NewOpportunityFormPage loads successfully without React compilation errors ✅ COUNTRY DROPDOWN: Works perfectly - loads 195 filtered countries from /api/geo/countries, Turkey can be selected ✅ BACKEND API CONFIRMED: /api/cities/TR returns 9 Turkish cities (Ankara, İstanbul, İzmir, Antalya, Bursa, etc.) ❌ CRITICAL ISSUE: City cascade not triggering - no API call to /api/cities/TR when Turkey is selected, no console logs showing 'Country changed to: TR' or 'Cities loaded for TR', city dropdown remains in 'Önce ülke seçiniz' state ❌ MANUAL ENTRY INACCESSIBLE: Cannot test Edit icon in manual entry because city dropdown doesn't open properly due to cascade failure. The handleCountryChange function in NewOpportunityFormPage.jsx is not being called when country is selected from CountrySelect component."
+      - working: false
+        agent: "testing"
+        comment: "🔍 COMPREHENSIVE DEBUG TESTING COMPLETED - PARTIAL SUCCESS WITH CRITICAL UI ISSUE IDENTIFIED: After adding debug console logs to CountrySelect component, conducted thorough testing of country/city dropdown functionality. ✅ NAVIGATION & LOGIN: Successfully logged in with 'murb' and navigated to Satış Fırsatları → Yeni Satış Fırsatı ✅ COUNTRY SELECTION WORKING: Turkey found and selected successfully from country dropdown ✅ DEBUG CONSOLE LOGS WORKING PERFECTLY: All expected debug messages captured: 'CountrySelect: Country selected: {code: TR, name: Turkey, iso2: TR}', 'CountrySelect: Calling onChange with: TR', 'Country changed to: TR' (from handleCountryChange) ✅ CITIES DATA LOADING: Console shows 'Cities loaded for TR: [Object, Object, Object, Object, Object, Object, Object, Object, Object]' - 9 Turkish cities successfully loaded from backend API ✅ BACKEND INTEGRATION: All API calls working correctly, data structure proper, no backend issues ❌ CRITICAL UI ISSUE: Despite cities being loaded successfully (9 objects), they are NOT appearing in the city dropdown UI. City dropdown still shows 'Şehir seçin...' placeholder instead of displaying the loaded Turkish cities. This indicates a UI rendering issue in the CitySelect component where the cities data is loaded but not properly displayed in the dropdown options. The issue is NOT with the cascade functionality (which is working) but with the city dropdown UI rendering."
 
   - task: "New Sales Opportunity Form - Add New Status/Stage Feature Test"
     implemented: true
