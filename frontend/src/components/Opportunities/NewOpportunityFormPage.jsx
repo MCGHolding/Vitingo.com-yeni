@@ -67,6 +67,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountryCode, setSelectedCountryCode] = useState('');
+  const [projectTypes, setProjectTypes] = useState([]);
   
   // Static options
   const currencies = [
