@@ -575,6 +575,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         trade_show: formData.tradeShow,
         trade_show_start_date: formData.tradeShowStartDate,
         trade_show_end_date: formData.tradeShowEndDate,
+        stand_size: formData.standSize,
+        stand_size_unit: formData.standSizeUnit,
         expected_revenue: parseFloat(formData.expectedRevenue) || parseFloat(formData.amount) || 0,
         probability: parseInt(formData.probability) || 50,
         created_at: new Date().toISOString(),
