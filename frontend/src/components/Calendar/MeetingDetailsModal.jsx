@@ -172,19 +172,20 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Attendees */}
-          <div>
-            <div className="flex items-center space-x-2 mb-3">
-              <Users className="h-5 w-5 text-blue-600" />
-              <p className="font-medium text-gray-900">
-                Katılımcılar ({request.attendee_names.length} kişi)
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center space-x-2">
+                <Users className="h-5 w-5 text-blue-600" />
+                <span>Katılımcılar ({request.attendee_names.length} kişi)</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {request.attendee_names.map((name, index) => {
                 const attendeeId = request.attendee_ids[index];
                 const response = request.responses && request.responses[attendeeId];
