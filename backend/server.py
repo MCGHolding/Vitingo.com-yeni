@@ -5268,6 +5268,20 @@ class StageCreate(BaseModel):
     label: str
     description: Optional[str] = ""
 
+# Project Type Model
+class ProjectType(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    value: str
+    label: str
+    description: Optional[str] = ""
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = ""
+
+class ProjectTypeCreate(BaseModel):
+    label: str
+    description: Optional[str] = ""
+
 # Status Endpoints
 @api_router.get("/opportunity-statuses")
 async def get_opportunity_statuses():
