@@ -30,6 +30,7 @@ import {
   Trash2
 } from 'lucide-react';
 // import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
+import DeleteCustomerModal from './DeleteCustomerModal';
 
 const customerTagColors = {
   'premium': 'bg-purple-500 text-white',
