@@ -135,13 +135,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       
     } catch (error) {
       console.error('Error creating teklif:', error);
-      if (showToast) {
-        showToast({
-          type: 'error',
-          title: 'Hata',
-          text: 'Teklif oluşturulurken bir hata oluştu.'
-        });
-      }
+      alert('Teklif oluşturulurken bir hata oluştu.');
     } finally {
       setLoading(false);
     }
