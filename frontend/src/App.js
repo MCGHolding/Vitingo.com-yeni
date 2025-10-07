@@ -573,7 +573,12 @@ const Dashboard = () => {
     setCurrentView('new-brief');
   };
 
-  // Teklif handlers - REMOVED
+  // Teklif handlers
+  const handleNewTeklif = () => {
+    console.log('🎯 handleNewTeklif called - setting view to new-teklif');
+    setCurrentView('new-teklif');
+    console.log('✅ Current view set to: new-teklif');
+  };
 
   const handleCalendar = () => {
     console.log('🗓️ handleCalendar called - setting view to calendar');
