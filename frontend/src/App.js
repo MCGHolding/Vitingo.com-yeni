@@ -154,30 +154,30 @@ const Dashboard = () => {
   }, []);
 
   // Load customers from backend API
-  useEffect(() => {
-    const loadCustomers = async () => {
-      try {
-        // Try runtime config first, fallback to environment variables, then hardcoded
-        const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
-                          process.env.REACT_APP_BACKEND_URL || 
-                          'https://smart-meet-2.preview.emergentagent.com';
-        console.log('Loading customers from:', backendUrl);
-        const response = await fetch(`${backendUrl}/api/customers`);
-        
-        if (response.ok) {
-          const customersData = await response.json();
-          setCustomers(customersData);
-          console.log('✅ Customers loaded from database:', customersData.length);
-        } else {
-          console.error('❌ Failed to load customers from API, status:', response.status);
-          setCustomers([]);
-        }
-      } catch (error) {
-        console.error('❌ Error loading customers:', error);
+  const loadCustomers = async () => {
+    try {
+      // Try runtime config first, fallback to environment variables, then hardcoded
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://smart-meet-2.preview.emergentagent.com';
+      console.log('Loading customers from:', backendUrl);
+      const response = await fetch(`${backendUrl}/api/customers`);
+      
+      if (response.ok) {
+        const customersData = await response.json();
+        setCustomers(customersData);
+        console.log('✅ Customers loaded from database:', customersData.length);
+      } else {
+        console.error('❌ Failed to load customers from API, status:', response.status);
         setCustomers([]);
       }
-    };
+    } catch (error) {
+      console.error('❌ Error loading customers:', error);
+      setCustomers([]);
+    }
+  };
 
+  useEffect(() => {
     loadCustomers();
   }, []);
 
