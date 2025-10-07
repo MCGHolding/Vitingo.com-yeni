@@ -11621,64 +11621,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ COUNTRIES AND CITIES API TESTS ERROR: {str(e)}")
         result = False
-            print("❌ Cities by Country Endpoint Test FAILED")
-    except Exception as e:
-        print(f"❌ Cities by Country Endpoint Test ERROR: {str(e)}")
-        geo_tests.append(("GET /api/cities/{country_code}", False))
-    
-    # Test 4: GET /api/geo/countries/{iso2}/cities
-    print(f"\n{'='*20} Geo Countries Cities Endpoint Test {'='*20}")
-    try:
-        result = test_geo_countries_cities_endpoint()
-        geo_tests.append(("GET /api/geo/countries/{iso2}/cities", result))
-        if result:
-            print("✅ Geo Countries Cities Endpoint Test PASSED")
-        else:
-            print("❌ Geo Countries Cities Endpoint Test FAILED")
-    except Exception as e:
-        print(f"❌ Geo Countries Cities Endpoint Test ERROR: {str(e)}")
-        geo_tests.append(("GET /api/geo/countries/{iso2}/cities", False))
-    
-    # Final Results Summary
-    print("\n" + "=" * 80)
-    print("🔍 COUNTRIES AND CITIES API TEST RESULTS SUMMARY")
-    print("=" * 80)
-    
-    passed_tests = 0
-    total_tests = len(geo_tests)
-    
-    for test_name, result in geo_tests:
-        status = "✅ PASSED" if result else "❌ FAILED"
-        print(f"{test_name}: {status}")
-        if result:
-            passed_tests += 1
-    
-    print(f"\nOverall Results: {passed_tests}/{total_tests} geographic API tests passed")
-    
-    if passed_tests == total_tests:
-        print("\n🎉 ALL COUNTRIES AND CITIES API TESTS PASSED!")
-        print("✅ Countries endpoint returns proper data structure")
-        print("✅ Cities endpoint returns proper data structure")
-        print("✅ Cities by country filtering works correctly")
-        print("✅ Alternative geo endpoint with pagination works")
-        print("✅ Country linking field identified for frontend integration")
-        print("✅ Turkish countries/cities support verified")
-        print("✅ JSON responses properly formatted")
-        print("\n📝 CONCLUSION: Geographic APIs are ready for frontend integration!")
-        print("\n🔧 FRONTEND INTEGRATION RECOMMENDATIONS:")
-        print("   - Use GET /api/countries for country dropdown")
-        print("   - Use GET /api/cities/{country_code} for cascading city dropdown")
-        print("   - Alternative: Use GET /api/geo/countries/{iso2}/cities for pagination")
-        print("   - Country linking field varies by endpoint - check test results above")
-    else:
-        print(f"\n⚠️  {total_tests - passed_tests} geographic API tests failed")
-        print("❌ Some geographic endpoints have issues")
-        print("❌ Data structure may not be suitable for frontend integration")
-        print("❌ Further investigation needed before frontend implementation")
-    
-    print("\n" + "=" * 80)
-    print("🔍 COUNTRIES AND CITIES API TESTING COMPLETED")
-    print("=" * 80)
 
 def test_opportunity_statuses_get_endpoint():
     """
