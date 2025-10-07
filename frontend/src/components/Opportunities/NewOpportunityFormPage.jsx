@@ -17,7 +17,8 @@ import {
   FileText,
   CheckCircle,
   Globe,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 
 export default function NewOpportunityFormPage({ onClose, onSave }) {
