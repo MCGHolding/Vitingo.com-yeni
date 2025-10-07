@@ -62,6 +62,9 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [fairs, setFairs] = useState([]);
   const [dynamicStatuses, setDynamicStatuses] = useState([]);
   const [dynamicStages, setDynamicStages] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountryCode, setSelectedCountryCode] = useState('');
   
   // Static options
   const currencies = [
