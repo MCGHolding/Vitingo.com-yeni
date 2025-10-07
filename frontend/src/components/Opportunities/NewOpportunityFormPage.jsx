@@ -150,6 +150,50 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }));
   };
 
+  // Handle status change with new status creation
+  const handleStatusChange = (value) => {
+    if (value === 'add_new_status') {
+      const newStatus = prompt('Yeni durum adını girin:');
+      if (newStatus && newStatus.trim()) {
+        // Add new status to the list (in a real app, this would be saved to backend)
+        const newStatusObj = { 
+          value: newStatus.toLowerCase().replace(/\s+/g, '_'), 
+          label: newStatus.trim() 
+        };
+        setFormData(prev => ({
+          ...prev,
+          status: newStatusObj.value
+        }));
+        // Note: In production, you'd want to save this to backend and update the statuses array
+        console.log('New status created:', newStatusObj);
+      }
+    } else {
+      handleInputChange('status', value);
+    }
+  };
+
+  // Handle stage change with new stage creation
+  const handleStageChange = (value) => {
+    if (value === 'add_new_stage') {
+      const newStage = prompt('Yeni aşama adını girin:');
+      if (newStage && newStage.trim()) {
+        // Add new stage to the list (in a real app, this would be saved to backend)
+        const newStageObj = { 
+          value: newStage.toLowerCase().replace(/\s+/g, '_'), 
+          label: newStage.trim() 
+        };
+        setFormData(prev => ({
+          ...prev,
+          stage: newStageObj.value
+        }));
+        // Note: In production, you'd want to save this to backend and update the stages array
+        console.log('New stage created:', newStageObj);
+      }
+    } else {
+      handleInputChange('stage', value);
+    }
+  };
+
   // Handle customer selection and update available contacts
   const handleCustomerChange = (customerName) => {
     // Find the selected customer object by contact person name or company name
