@@ -127,8 +127,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Password Field */}
-              <div className="space-y-2">
+              {/* Password Field - Temporarily disabled for testing */}
+              {/* <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <Lock className="h-4 w-4 mr-2" />
                   Şifre
@@ -155,7 +155,7 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Remember Me */}
               <div className="flex items-center">
