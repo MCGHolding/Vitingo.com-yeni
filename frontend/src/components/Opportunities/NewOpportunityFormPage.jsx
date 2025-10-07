@@ -107,10 +107,12 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     { value: 'other', label: 'Diğer' }
   ];
 
-  // Load customers and fairs on component mount
+  // Load customers, fairs, statuses and stages on component mount
   useEffect(() => {
     loadCustomers();
     loadFairs();
+    loadStatuses();
+    loadStages();
   }, []);
 
   const loadCustomers = async () => {
