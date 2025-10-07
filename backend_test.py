@@ -12249,31 +12249,30 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Project Types API Tests...")
+    print("🚨 URGENT: CUSTOMER DATA LOSS INVESTIGATION")
     print(f"Backend URL: {BACKEND_URL}")
-    print("=" * 80)
-    print("🎯 TESTING: New Project Types API endpoints for NewOpportunityFormPage")
-    print("📝 Testing GET /api/project-types and POST /api/project-types with Turkish character support")
-    print("📝 Verifying data structure, duplicate prevention, and frontend integration readiness")
-    print("=" * 80)
+    print("=" * 100)
+    print("🎯 CRITICAL INVESTIGATION: Customer reports that a real customer they added yesterday has disappeared today")
+    print("📝 This is a critical data persistence issue preventing user from trusting the system with real data")
+    print("📝 Investigating database status, connection, and data persistence functionality")
+    print("=" * 100)
     
-    # Run comprehensive project types API test
+    # Run critical customer data loss investigation
     try:
-        result = test_project_types_api_endpoints()
+        result = test_customer_data_loss_investigation()
         if result:
-            print("\n🎉 ALL PROJECT TYPES API TESTS COMPLETED SUCCESSFULLY!")
-            print("✅ GET /api/project-types endpoint working correctly")
-            print("✅ POST /api/project-types endpoint working correctly")
-            print("✅ Turkish character support verified (ğüşıöç)")
-            print("✅ Data structure matches frontend expectations")
-            print("✅ Duplicate prevention working with Turkish error messages")
-            print("✅ Ready for NewOpportunityFormPage 'Proje Türü' dropdown integration")
-            print("✅ Ready for 'Yeni Proje Türü Ekle' functionality for admin/super-admin users")
+            print("\n✅ INVESTIGATION COMPLETED - NO CRITICAL ISSUES FOUND")
+            print("✅ Database connection is working")
+            print("✅ Customer creation functionality is working")
+            print("✅ Data persistence is working correctly")
+            print("📋 The reported data loss may be due to user error or environment confusion")
         else:
-            print("\n❌ SOME PROJECT TYPES API TESTS FAILED!")
-            print("❌ Please check the detailed output above")
+            print("\n🚨 INVESTIGATION COMPLETED - CRITICAL ISSUES FOUND!")
+            print("❌ Data persistence problems detected")
+            print("❌ Immediate action required to resolve customer data issues")
+            print("📋 See detailed investigation report above")
     except Exception as e:
-        print(f"\n❌ PROJECT TYPES API TESTS ERROR: {str(e)}")
+        print(f"\n❌ INVESTIGATION ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
