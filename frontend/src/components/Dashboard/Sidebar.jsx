@@ -18,6 +18,8 @@ import {
   Trophy,
   XCircle,
   Heart,
+  Edit,
+  Send,
   User,
   UserPlus,
   UserSearch,
