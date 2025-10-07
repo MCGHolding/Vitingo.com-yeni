@@ -234,33 +234,36 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                 <CardTitle className="text-lg">Yanıtınız</CardTitle>
               </CardHeader>
               <CardContent>
-              {userResponse ? (
-                <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm text-blue-700 font-medium">Mevcut Yanıtınız:</span>
-                    {userResponse.response === 'accepted' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                        <Check className="h-4 w-4 mr-1" />
-                        Kabul Ettiniz
-                      </span>
-                    )}
-                    {userResponse.response === 'maybe' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                        <Clock3 className="h-4 w-4 mr-1" />
-                        Belki Dediniz
-                      </span>
-                    )}
-                    {userResponse.response === 'declined' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                        <Ban className="h-4 w-4 mr-1" />
-                        Reddettiniz
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-blue-600">
-                    Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
-                  </p>
-                </div>
+              <div className="space-y-4">
+                {userResponse ? (
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className="text-sm text-blue-700 font-medium">Mevcut Yanıtınız:</span>
+                        {userResponse.response === 'accepted' && (
+                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                            <Check className="h-4 w-4 mr-1" />
+                            Kabul Ettiniz
+                          </Badge>
+                        )}
+                        {userResponse.response === 'maybe' && (
+                          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                            <Clock3 className="h-4 w-4 mr-1" />
+                            Belki Dediniz
+                          </Badge>
+                        )}
+                        {userResponse.response === 'declined' && (
+                          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+                            <Ban className="h-4 w-4 mr-1" />
+                            Reddettiniz
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-blue-600">
+                        Yanıtınızı değiştirmek için aşağıdaki butonları kullanabilirsiniz
+                      </p>
+                    </CardContent>
+                  </Card>
               ) : (
                 <div className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                   <div className="flex items-center space-x-2 mb-2">
