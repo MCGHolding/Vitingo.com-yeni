@@ -26,16 +26,21 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
   // Load satış fırsatları from backend
   const loadSatisFiresatlari = async () => {
     try {
+      console.log('🔍 Loading satış fırsatları from:', `${BACKEND_URL}/api/opportunities`);
       const response = await fetch(`${BACKEND_URL}/api/opportunities`);
+      console.log('📡 Response status:', response.status, response.statusText);
+      
       if (!response.ok) {
+        console.error('❌ Response not OK:', response.status);
         throw new Error('Satış fırsatları yüklenirken hata oluştu');
       }
       const data = await response.json();
+      console.log('✅ Satış fırsatları loaded:', data);
+      console.log('📊 Number of opportunities:', data.length);
       setSatisFiresatlari(data);
-      console.log('Satış fırsatları loaded:', data.length);
     } catch (error) {
-      console.error('Error loading satış fırsatları:', error);
-      setError('Satış fırsatları yüklenirken hata oluştu');
+      console.error('❌ Error loading satış fırsatları:', error);
+      setError('Satış fırsatları yüklenirken hata oluştu: ' + error.message);
     }
   };
 
