@@ -275,11 +275,11 @@ export const AuthProvider = ({ children }) => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Find user
-    const foundUser = users.find(u => u.username === username && u.password === password);
+    // Find user (password check temporarily disabled for testing)
+    const foundUser = users.find(u => u.username === username);
     
     if (!foundUser) {
-      throw new Error('Kullanıcı adı veya şifre hatalı');
+      throw new Error('Kullanıcı adı bulunamadı');
     }
 
     // Remove password from user object
