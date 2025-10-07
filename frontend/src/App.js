@@ -45,7 +45,7 @@ import CancelledProjectsPage from './components/Projects/CancelledProjectsPage';
 import ImportDataPage from './components/Settings/ImportDataPage';
 import ExportDataPage from './components/Settings/ExportDataPage';
 import { customerStats, salesData } from './mock/data';
-import { openOpportunities } from './mock/opportunitiesData';
+// Removed mock data import - now using real API data
 import { mockUsers } from './mock/usersData';
 // import { allCustomers } from './mock/customersData'; // Removed - using real API
 import { allPeople } from './mock/peopleData';
