@@ -362,11 +362,55 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     İletişim Kişisi
                   </label>
-                  <Input
+                  <Select
                     value={formData.contactPerson}
-                    onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                    placeholder="Yetkili kişi adı"
-                  />
+                    onValueChange={(value) => handleInputChange('contactPerson', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={
+                        formData.customer 
+                          ? (availableContacts.length > 0 
+                              ? "İletişim kişisi seçiniz..." 
+                              : "Bu müşteri için kayıtlı iletişim kişisi bulunamadı") 
+                          : "Önce müşteri seçiniz..."
+                      } />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableContacts.length > 0 ? (
+                        availableContacts.map((contact, index) => (
+                          <SelectItem key={index} value={contact.name}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{contact.name}</span>
+                              <span className="text-sm text-gray-500">{contact.title}</span>
+                              {contact.email && (
+                                <span className="text-xs text-gray-400">{contact.email}</span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))
+                      ) : formData.customer ? (
+                        <SelectItem value="manual" disabled>
+                          Bu müşteri için kayıtlı iletişim kişisi yok
+                        </SelectItem>
+                      ) : (
+                        <SelectItem value="select-customer" disabled>
+                          Önce bir müşteri seçin
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  
+                  {/* Manual entry option */}
+                  {formData.customer && availableContacts.length === 0 && (
+                    <div className="mt-2">
+                      <Input
+                        value={formData.contactPerson}
+                        onChange={(e) => handleInputChange('contactPerson', e.target.value)}
+                        placeholder="İletişim kişisini manuel olarak girin"
+                        className="text-sm"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Kaynak */}
