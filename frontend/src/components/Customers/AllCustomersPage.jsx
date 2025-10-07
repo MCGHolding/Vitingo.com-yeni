@@ -285,15 +285,15 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
   };
 
   // Handle successful deletion/deactivation
-  const handleDeleteSuccess = () => {
+  const handleDeleteSuccess = async () => {
     toast({
       title: "İşlem Tamamlandı",
       description: "Müşteri işlemi başarıyla tamamlandı.",
     });
-    // Call parent refresh function if available, otherwise stay on page
-    if (onBackToDashboard) {
-      // Navigate back to dashboard and it will reload customers
-      onBackToDashboard();
+    
+    // Refresh customers list without page reload
+    if (refreshCustomers) {
+      await refreshCustomers();
     }
   };
 
