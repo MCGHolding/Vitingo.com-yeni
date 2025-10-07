@@ -1324,7 +1324,8 @@ const Dashboard = () => {
         onAllBriefs={handleAllBriefs}
         onClosedBriefs={handleClosedBriefs}
         onPassiveBriefs={handlePassiveBriefs}
-        // Teklif handlers - REMOVED
+        // Teklif handlers
+        onNewTeklif={handleNewTeklif}
         onRequestBrief={handleRequestBrief}
         // Calendar handlers
         onCalendar={handleCalendar}
