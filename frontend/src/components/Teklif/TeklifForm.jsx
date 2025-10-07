@@ -85,13 +85,13 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
           }));
           setSecilenMusteri(ilgiliMusteri);
           
-          if (showToast) {
-            showToast({
-              type: 'info',
-              title: 'Müşteri Otomatik Seçildi',
-              text: `${ilgiliMusteri.company_name} otomatik olarak seçildi.`
-            });
-          }
+          // if (showToast) {
+          //   showToast({
+          //     type: 'info',
+          //     title: 'Müşteri Otomatik Seçildi',
+          //     text: `${ilgiliMusteri.company_name} otomatik olarak seçildi.`
+          //   });
+          // }
         }
       }
     } else {
