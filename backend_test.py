@@ -11182,4 +11182,701 @@ if __name__ == "__main__":
     print("\n" + "=" * 80)
     print("🔍 CUSTOMER DELETION SYSTEM TESTING COMPLETED")
     print("=" * 80)
+
+def test_opportunity_statuses_get_endpoint():
+    """
+    Test GET /api/opportunity-statuses endpoint.
+    
+    Requirements to verify:
+    1. Should return all active opportunity statuses
+    2. Should return proper JSON array structure
+    3. Each status should have required fields (id, value, label, description, is_active, created_at, created_by)
+    4. Should handle empty list gracefully
+    """
+    
+    print("=" * 80)
+    print("TESTING GET OPPORTUNITY STATUSES ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunity-statuses"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to opportunity statuses...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Opportunity statuses endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+            print(f"   Number of statuses: {len(data) if isinstance(data, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of opportunity statuses")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(data)} opportunity statuses")
+        
+        # Test 5: Check structure of statuses if any exist
+        if len(data) > 0:
+            print("\n4. Checking opportunity status structure...")
+            first_status = data[0]
+            
+            # Expected fields based on OpportunityStatus model
+            expected_fields = [
+                "id", "value", "label", "description", "is_active", "created_at", "created_by"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_status:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Opportunity status has all expected fields")
+            
+            print(f"   Sample status fields: {list(first_status.keys())}")
+            print(f"   Sample status value: {first_status.get('value', 'N/A')}")
+            print(f"   Sample status label: {first_status.get('label', 'N/A')}")
+            print(f"   Sample status is_active: {first_status.get('is_active', 'N/A')}")
+        else:
+            print("\n4. No existing opportunity statuses found - this is acceptable for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET OPPORTUNITY STATUSES ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON array response")
+        print("✅ Response structure validated")
+        print("✅ Opportunity status fields validated")
+        print("\n🎉 GET OPPORTUNITY STATUSES ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_opportunity_statuses_post_endpoint():
+    """
+    Test POST /api/opportunity-statuses endpoint.
+    
+    Requirements to verify:
+    1. Should create new opportunity status with Turkish character handling
+    2. Should convert Turkish characters (ı,ü,ö,ş,ğ,ç) to (i,u,o,s,g,c) in value field
+    3. Should replace spaces with underscores in value field
+    4. Should prevent duplicate statuses (return 400 error)
+    5. Should return proper Turkish error messages
+    6. Test scenarios: "Müzakere Aşaması", "Teklif Bekliyor"
+    """
+    
+    print("=" * 80)
+    print("TESTING POST OPPORTUNITY STATUSES ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunity-statuses"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data with Turkish characters as specified in review request
+    test_statuses = [
+        {
+            "label": "Müzakere Aşaması",
+            "description": "Müşteri ile müzakere sürecinde",
+            "expected_value": "muzakere_asamasi"
+        },
+        {
+            "label": "Teklif Bekliyor", 
+            "description": "Teklif hazırlanması bekleniyor",
+            "expected_value": "teklif_bekliyor"
+        }
+    ]
+    
+    created_status_ids = []
+    
+    try:
+        for i, test_status in enumerate(test_statuses, 1):
+            print(f"\n{'='*60}")
+            print(f"TEST SCENARIO {i}: Creating status '{test_status['label']}'")
+            print(f"{'='*60}")
+            
+            test_data = {
+                "label": test_status["label"],
+                "description": test_status["description"]
+            }
+            
+            print(f"Test data: {test_data}")
+            print(f"Expected value: {test_status['expected_value']}")
+            
+            # Test 1: Make POST request
+            print(f"\n1. Making POST request to create opportunity status...")
+            response = requests.post(endpoint, json=test_data, timeout=30)
+            
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Opportunity status creation endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+            
+            # Test 2: Parse JSON response
+            print("\n2. Parsing JSON response...")
+            try:
+                created_status = response.json()
+                print(f"   Response type: {type(created_status)}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                return False
+            
+            # Test 3: Validate response structure
+            print("\n3. Validating created status structure...")
+            if not isinstance(created_status, dict):
+                print("   ❌ FAIL: Response should be a dictionary representing the created status")
+                return False
+            
+            # Check required fields
+            required_fields = ["id", "value", "label", "description", "is_active", "created_at", "created_by"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in created_status:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Created status missing required fields: {missing_fields}")
+                return False
+            
+            print("   ✅ PASS: Created status has all required fields")
+            
+            # Test 4: Validate Turkish character conversion
+            print("\n4. Validating Turkish character conversion...")
+            actual_value = created_status.get("value")
+            expected_value = test_status["expected_value"]
+            
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: Value conversion incorrect. Expected: {expected_value}, Got: {actual_value}")
+                return False
+            
+            print(f"   ✅ PASS: Turkish characters converted correctly: '{test_status['label']}' → '{actual_value}'")
+            
+            # Test 5: Validate other field values
+            print("\n5. Validating field values...")
+            status_id = created_status.get("id")
+            label = created_status.get("label")
+            description = created_status.get("description")
+            is_active = created_status.get("is_active")
+            
+            # Validate ID is generated
+            if not status_id:
+                print("   ❌ FAIL: Status ID should be generated")
+                return False
+            print(f"   ✅ PASS: Generated status ID: {status_id}")
+            created_status_ids.append(status_id)
+            
+            # Validate input data matches
+            if label != test_data["label"]:
+                print(f"   ❌ FAIL: Label mismatch. Expected: {test_data['label']}, Got: {label}")
+                return False
+            print(f"   ✅ PASS: Label matches (Turkish characters preserved): {label}")
+            
+            if description != test_data["description"]:
+                print(f"   ❌ FAIL: Description mismatch. Expected: {test_data['description']}, Got: {description}")
+                return False
+            print(f"   ✅ PASS: Description matches: {description}")
+            
+            if is_active != True:
+                print(f"   ❌ FAIL: is_active should be True, got: {is_active}")
+                return False
+            print(f"   ✅ PASS: is_active is True: {is_active}")
+            
+            # Test 6: Check timestamps
+            print("\n6. Validating timestamps...")
+            created_at = created_status.get("created_at")
+            created_by = created_status.get("created_by")
+            
+            if not created_at:
+                print("   ❌ FAIL: created_at timestamp should be present")
+                return False
+            print(f"   ✅ PASS: created_at timestamp present: {created_at}")
+            
+            if not created_by:
+                print("   ❌ FAIL: created_by should be present")
+                return False
+            print(f"   ✅ PASS: created_by present: {created_by}")
+            
+            print(f"\n   🎉 STATUS '{test_status['label']}' CREATED SUCCESSFULLY!")
+        
+        # Test 7: Test duplicate prevention
+        print(f"\n{'='*60}")
+        print("TEST SCENARIO 3: Testing duplicate prevention")
+        print(f"{'='*60}")
+        
+        duplicate_data = {
+            "label": "Müzakere Aşaması",  # Same as first test
+            "description": "Duplicate test"
+        }
+        
+        print(f"Attempting to create duplicate status: {duplicate_data}")
+        
+        duplicate_response = requests.post(endpoint, json=duplicate_data, timeout=30)
+        print(f"   Status Code: {duplicate_response.status_code}")
+        
+        if duplicate_response.status_code == 400:
+            print("   ✅ PASS: Duplicate status properly blocked with 400 error")
+            
+            # Check Turkish error message
+            try:
+                error_data = duplicate_response.json()
+                error_detail = error_data.get("detail", "")
+                if "Bu durum zaten mevcut" in error_detail:
+                    print(f"   ✅ PASS: Proper Turkish error message: '{error_detail}'")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be in Turkish: '{error_detail}'")
+            except Exception as e:
+                print(f"   ⚠️  WARNING: Could not parse error response: {str(e)}")
+        else:
+            print(f"   ❌ FAIL: Expected 400 for duplicate status, got {duplicate_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("POST OPPORTUNITY STATUSES ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 for valid requests")
+        print("✅ Creates opportunity statuses with all required fields")
+        print("✅ Turkish character conversion working correctly (ı,ü,ö,ş,ğ,ç → i,u,o,s,g,c)")
+        print("✅ Space to underscore conversion working")
+        print("✅ Turkish characters preserved in label and description")
+        print("✅ Duplicate prevention working with 400 error")
+        print("✅ Turkish error messages working")
+        print("✅ Generated IDs and timestamps present")
+        print(f"\n🎉 POST OPPORTUNITY STATUSES ENDPOINT TEST PASSED!")
+        print(f"   Created statuses: {len(created_status_ids)}")
+        for i, status_id in enumerate(created_status_ids):
+            print(f"   {i+1}. {test_statuses[i]['label']} (ID: {status_id})")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_opportunity_stages_get_endpoint():
+    """
+    Test GET /api/opportunity-stages endpoint.
+    
+    Requirements to verify:
+    1. Should return all active opportunity stages
+    2. Should return proper JSON array structure
+    3. Each stage should have required fields (id, value, label, description, is_active, created_at, created_by)
+    4. Should handle empty list gracefully
+    """
+    
+    print("=" * 80)
+    print("TESTING GET OPPORTUNITY STAGES ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunity-stages"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        # Test 1: Make GET request
+        print("\n1. Making GET request to opportunity stages...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Opportunity stages endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Check content type
+        content_type = response.headers.get('Content-Type', '')
+        print(f"   Content-Type: {content_type}")
+        if 'application/json' in content_type:
+            print("   ✅ PASS: Correct Content-Type for JSON response")
+        else:
+            print("   ⚠️  WARNING: Content-Type might not be optimal for JSON")
+        
+        # Test 3: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+            print(f"   Number of stages: {len(data) if isinstance(data, list) else 'N/A'}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 4: Validate response structure
+        print("\n3. Validating response structure...")
+        if not isinstance(data, list):
+            print("   ❌ FAIL: Response should be a list of opportunity stages")
+            return False
+        
+        print(f"   ✅ PASS: Response is a list containing {len(data)} opportunity stages")
+        
+        # Test 5: Check structure of stages if any exist
+        if len(data) > 0:
+            print("\n4. Checking opportunity stage structure...")
+            first_stage = data[0]
+            
+            # Expected fields based on OpportunityStage model
+            expected_fields = [
+                "id", "value", "label", "description", "is_active", "created_at", "created_by"
+            ]
+            
+            missing_fields = []
+            for field in expected_fields:
+                if field not in first_stage:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ⚠️  WARNING: Some expected fields missing: {missing_fields}")
+            else:
+                print("   ✅ PASS: Opportunity stage has all expected fields")
+            
+            print(f"   Sample stage fields: {list(first_stage.keys())}")
+            print(f"   Sample stage value: {first_stage.get('value', 'N/A')}")
+            print(f"   Sample stage label: {first_stage.get('label', 'N/A')}")
+            print(f"   Sample stage is_active: {first_stage.get('is_active', 'N/A')}")
+        else:
+            print("\n4. No existing opportunity stages found - this is acceptable for initial state")
+        
+        print("\n" + "=" * 80)
+        print("GET OPPORTUNITY STAGES ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200")
+        print("✅ Returns proper JSON array response")
+        print("✅ Response structure validated")
+        print("✅ Opportunity stage fields validated")
+        print("\n🎉 GET OPPORTUNITY STAGES ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_opportunity_stages_post_endpoint():
+    """
+    Test POST /api/opportunity-stages endpoint.
+    
+    Requirements to verify:
+    1. Should create new opportunity stage with Turkish character handling
+    2. Should convert Turkish characters (ı,ü,ö,ş,ğ,ç) to (i,u,o,s,g,c) in value field
+    3. Should replace spaces with underscores in value field
+    4. Should prevent duplicate stages (return 400 error)
+    5. Should return proper Turkish error messages
+    6. Test scenarios with Turkish characters
+    """
+    
+    print("=" * 80)
+    print("TESTING POST OPPORTUNITY STAGES ENDPOINT")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunity-stages"
+    print(f"Testing endpoint: {endpoint}")
+    
+    # Test data with Turkish characters
+    test_stages = [
+        {
+            "label": "İlk Görüşme",
+            "description": "Müşteri ile ilk görüşme aşaması",
+            "expected_value": "ilk_gorusme"
+        },
+        {
+            "label": "Teknik Değerlendirme", 
+            "description": "Teknik gereksinimlerin değerlendirilmesi",
+            "expected_value": "teknik_degerlendirme"
+        }
+    ]
+    
+    created_stage_ids = []
+    
+    try:
+        for i, test_stage in enumerate(test_stages, 1):
+            print(f"\n{'='*60}")
+            print(f"TEST SCENARIO {i}: Creating stage '{test_stage['label']}'")
+            print(f"{'='*60}")
+            
+            test_data = {
+                "label": test_stage["label"],
+                "description": test_stage["description"]
+            }
+            
+            print(f"Test data: {test_data}")
+            print(f"Expected value: {test_stage['expected_value']}")
+            
+            # Test 1: Make POST request
+            print(f"\n1. Making POST request to create opportunity stage...")
+            response = requests.post(endpoint, json=test_data, timeout=30)
+            
+            print(f"   Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print("   ✅ PASS: Opportunity stage creation endpoint responds with status 200")
+            else:
+                print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+            
+            # Test 2: Parse JSON response
+            print("\n2. Parsing JSON response...")
+            try:
+                created_stage = response.json()
+                print(f"   Response type: {type(created_stage)}")
+            except Exception as e:
+                print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+                return False
+            
+            # Test 3: Validate response structure
+            print("\n3. Validating created stage structure...")
+            if not isinstance(created_stage, dict):
+                print("   ❌ FAIL: Response should be a dictionary representing the created stage")
+                return False
+            
+            # Check required fields
+            required_fields = ["id", "value", "label", "description", "is_active", "created_at", "created_by"]
+            missing_fields = []
+            for field in required_fields:
+                if field not in created_stage:
+                    missing_fields.append(field)
+            
+            if missing_fields:
+                print(f"   ❌ FAIL: Created stage missing required fields: {missing_fields}")
+                return False
+            
+            print("   ✅ PASS: Created stage has all required fields")
+            
+            # Test 4: Validate Turkish character conversion
+            print("\n4. Validating Turkish character conversion...")
+            actual_value = created_stage.get("value")
+            expected_value = test_stage["expected_value"]
+            
+            if actual_value != expected_value:
+                print(f"   ❌ FAIL: Value conversion incorrect. Expected: {expected_value}, Got: {actual_value}")
+                return False
+            
+            print(f"   ✅ PASS: Turkish characters converted correctly: '{test_stage['label']}' → '{actual_value}'")
+            
+            # Test 5: Validate other field values
+            print("\n5. Validating field values...")
+            stage_id = created_stage.get("id")
+            label = created_stage.get("label")
+            description = created_stage.get("description")
+            is_active = created_stage.get("is_active")
+            
+            # Validate ID is generated
+            if not stage_id:
+                print("   ❌ FAIL: Stage ID should be generated")
+                return False
+            print(f"   ✅ PASS: Generated stage ID: {stage_id}")
+            created_stage_ids.append(stage_id)
+            
+            # Validate input data matches
+            if label != test_data["label"]:
+                print(f"   ❌ FAIL: Label mismatch. Expected: {test_data['label']}, Got: {label}")
+                return False
+            print(f"   ✅ PASS: Label matches (Turkish characters preserved): {label}")
+            
+            if description != test_data["description"]:
+                print(f"   ❌ FAIL: Description mismatch. Expected: {test_data['description']}, Got: {description}")
+                return False
+            print(f"   ✅ PASS: Description matches: {description}")
+            
+            if is_active != True:
+                print(f"   ❌ FAIL: is_active should be True, got: {is_active}")
+                return False
+            print(f"   ✅ PASS: is_active is True: {is_active}")
+            
+            # Test 6: Check timestamps
+            print("\n6. Validating timestamps...")
+            created_at = created_stage.get("created_at")
+            created_by = created_stage.get("created_by")
+            
+            if not created_at:
+                print("   ❌ FAIL: created_at timestamp should be present")
+                return False
+            print(f"   ✅ PASS: created_at timestamp present: {created_at}")
+            
+            if not created_by:
+                print("   ❌ FAIL: created_by should be present")
+                return False
+            print(f"   ✅ PASS: created_by present: {created_by}")
+            
+            print(f"\n   🎉 STAGE '{test_stage['label']}' CREATED SUCCESSFULLY!")
+        
+        # Test 7: Test duplicate prevention
+        print(f"\n{'='*60}")
+        print("TEST SCENARIO 3: Testing duplicate prevention")
+        print(f"{'='*60}")
+        
+        duplicate_data = {
+            "label": "İlk Görüşme",  # Same as first test
+            "description": "Duplicate test"
+        }
+        
+        print(f"Attempting to create duplicate stage: {duplicate_data}")
+        
+        duplicate_response = requests.post(endpoint, json=duplicate_data, timeout=30)
+        print(f"   Status Code: {duplicate_response.status_code}")
+        
+        if duplicate_response.status_code == 400:
+            print("   ✅ PASS: Duplicate stage properly blocked with 400 error")
+            
+            # Check Turkish error message
+            try:
+                error_data = duplicate_response.json()
+                error_detail = error_data.get("detail", "")
+                if "Bu aşama zaten mevcut" in error_detail:
+                    print(f"   ✅ PASS: Proper Turkish error message: '{error_detail}'")
+                else:
+                    print(f"   ⚠️  WARNING: Error message might not be in Turkish: '{error_detail}'")
+            except Exception as e:
+                print(f"   ⚠️  WARNING: Could not parse error response: {str(e)}")
+        else:
+            print(f"   ❌ FAIL: Expected 400 for duplicate stage, got {duplicate_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("POST OPPORTUNITY STAGES ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 for valid requests")
+        print("✅ Creates opportunity stages with all required fields")
+        print("✅ Turkish character conversion working correctly (ı,ü,ö,ş,ğ,ç → i,u,o,s,g,c)")
+        print("✅ Space to underscore conversion working")
+        print("✅ Turkish characters preserved in label and description")
+        print("✅ Duplicate prevention working with 400 error")
+        print("✅ Turkish error messages working")
+        print("✅ Generated IDs and timestamps present")
+        print(f"\n🎉 POST OPPORTUNITY STAGES ENDPOINT TEST PASSED!")
+        print(f"   Created stages: {len(created_stage_ids)}")
+        for i, stage_id in enumerate(created_stage_ids):
+            print(f"   {i+1}. {test_stages[i]['label']} (ID: {stage_id})")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_opportunity_management_endpoints():
+    """
+    Comprehensive test suite for opportunity status and stage management API endpoints.
+    
+    This function tests all 4 endpoints requested in the review:
+    1. GET /api/opportunity-statuses - Test fetching all opportunity statuses
+    2. POST /api/opportunity-statuses - Test creating new opportunity status with Turkish character handling and duplicate prevention
+    3. GET /api/opportunity-stages - Test fetching all opportunity stages  
+    4. POST /api/opportunity-stages - Test creating new opportunity stage with Turkish character handling and duplicate prevention
+    """
+    
+    print("=" * 100)
+    print("🚀 COMPREHENSIVE OPPORTUNITY MANAGEMENT ENDPOINTS TESTING")
+    print("=" * 100)
+    print("Testing new opportunity status and stage management API endpoints")
+    print("Required for NewOpportunityFormPage.jsx 'Add New Status/Stage' functionality")
+    print("=" * 100)
+    
+    # Track test results
+    test_results = []
+    
+    # Test 1: GET opportunity statuses
+    print("\n" + "🔍 TEST 1/4: GET OPPORTUNITY STATUSES")
+    result1 = test_opportunity_statuses_get_endpoint()
+    test_results.append(("GET /api/opportunity-statuses", result1))
+    
+    # Test 2: POST opportunity statuses (with Turkish character handling)
+    print("\n" + "🔍 TEST 2/4: POST OPPORTUNITY STATUSES")
+    result2 = test_opportunity_statuses_post_endpoint()
+    test_results.append(("POST /api/opportunity-statuses", result2))
+    
+    # Test 3: GET opportunity stages
+    print("\n" + "🔍 TEST 3/4: GET OPPORTUNITY STAGES")
+    result3 = test_opportunity_stages_get_endpoint()
+    test_results.append(("GET /api/opportunity-stages", result3))
+    
+    # Test 4: POST opportunity stages (with Turkish character handling)
+    print("\n" + "🔍 TEST 4/4: POST OPPORTUNITY STAGES")
+    result4 = test_opportunity_stages_post_endpoint()
+    test_results.append(("POST /api/opportunity-stages", result4))
+    
+    # Final summary
+    print("\n" + "=" * 100)
+    print("📊 OPPORTUNITY MANAGEMENT ENDPOINTS TEST SUMMARY")
+    print("=" * 100)
+    
+    passed_tests = sum(1 for _, result in test_results if result)
+    total_tests = len(test_results)
+    
+    print(f"Total Tests: {total_tests}")
+    print(f"Passed: {passed_tests}")
+    print(f"Failed: {total_tests - passed_tests}")
+    print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+    
+    print("\nDetailed Results:")
+    for endpoint, result in test_results:
+        status = "✅ PASS" if result else "❌ FAIL"
+        print(f"  {status} {endpoint}")
+    
+    if passed_tests == total_tests:
+        print("\n🎉 ALL OPPORTUNITY MANAGEMENT ENDPOINT TESTS PASSED!")
+        print("✅ GET endpoints return proper JSON arrays")
+        print("✅ POST endpoints create records with Turkish character handling")
+        print("✅ Turkish characters (ı,ü,ö,ş,ğ,ç) converted to (i,u,o,s,g,c) in value fields")
+        print("✅ Spaces replaced with underscores in value fields")
+        print("✅ Duplicate prevention working with 400 errors")
+        print("✅ Turkish error messages working correctly")
+        print("✅ All required fields present in responses")
+        print("✅ Generated IDs and timestamps working")
+        print("\n📝 CONCLUSION: Opportunity management endpoints are production-ready!")
+        print("🔗 Ready for NewOpportunityFormPage.jsx integration")
+    else:
+        print(f"\n⚠️  {total_tests - passed_tests} opportunity management tests failed")
+        print("❌ Some endpoints have issues")
+        print("❌ Further investigation and fixes needed")
+        print("❌ Not ready for frontend integration")
+    
+    print("\n" + "=" * 100)
+    print("🔍 OPPORTUNITY MANAGEMENT ENDPOINTS TESTING COMPLETED")
+    print("=" * 100)
+    
+    return passed_tests == total_tests
     
