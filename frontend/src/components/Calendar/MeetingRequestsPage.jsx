@@ -257,56 +257,62 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border mb-6">
-        <div className="border-b">
-          <nav className="flex space-x-8 px-6">
+      <Card className="mb-8">
+        <CardHeader className="pb-0">
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
             <button
               onClick={() => setActiveTab('all')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
                 activeTab === 'all'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Tüm Talepler
-              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-                {counts.total}
-              </span>
+              <div className="flex items-center justify-center space-x-2">
+                <span>Tüm Talepler</span>
+                <Badge variant="secondary" className="bg-gray-200 text-gray-700">
+                  {counts.total}
+                </Badge>
+              </div>
             </button>
             <button
               onClick={() => setActiveTab('received')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
                 activeTab === 'received'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Gelen Davetler
-              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-600">
-                {counts.received}
-              </span>
-              {counts.pendingReceived > 0 && (
-                <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-600">
-                  {counts.pendingReceived} Bekliyor
-                </span>
-              )}
+              <div className="flex items-center justify-center space-x-2">
+                <span>Gelen Davetler</span>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-600">
+                  {counts.received}
+                </Badge>
+                {counts.pendingReceived > 0 && (
+                  <Badge variant="destructive" className="bg-red-100 text-red-600">
+                    {counts.pendingReceived} Bekliyor
+                  </Badge>
+                )}
+              </div>
             </button>
             <button
               onClick={() => setActiveTab('sent')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
                 activeTab === 'sent'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Gönderdiğim Talepler
-              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-600">
-                {counts.sent}
-              </span>
+              <div className="flex items-center justify-center space-x-2">
+                <span>Gönderdiğim Talepler</span>
+                <Badge variant="secondary" className="bg-green-100 text-green-600">
+                  {counts.sent}
+                </Badge>
+              </div>
             </button>
-          </nav>
-        </div>
-      </div>
+          </div>
+        </CardHeader>
+      </Card>
 
       {/* Meeting Requests List */}
       <div className="bg-white rounded-lg shadow-sm border">
