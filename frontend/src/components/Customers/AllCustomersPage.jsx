@@ -301,6 +301,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
             title: "İşlem Tamamlandı",
             description: "Müşteri işlemi başarıyla tamamlandı.",
           });
+          
+          // Force page refresh as backup if state update doesn't work
+          setTimeout(() => {
+            window.location.href = window.location.href; // This preserves the current page
+          }, 1000);
         }, 500);
         
       } catch (error) {
