@@ -290,8 +290,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [] }) 
       title: "İşlem Tamamlandı",
       description: "Müşteri işlemi başarıyla tamamlandı.",
     });
-    // Refresh the page to show updated data
-    window.location.reload();
+    // Call parent refresh function if available, otherwise stay on page
+    if (onBackToDashboard) {
+      // Navigate back to dashboard and it will reload customers
+      onBackToDashboard();
+    }
   };
 
   const handleAction = (action, customer) => {
