@@ -46,6 +46,15 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Tag colors for styling
+  const tagColors = {
+    'urgent': 'bg-red-500 text-white',
+    'high': 'bg-orange-500 text-white',
+    'medium': 'bg-yellow-500 text-white', 
+    'low': 'bg-green-500 text-white',
+    'priority': 'bg-blue-500 text-white'
+  };
+
   // Load opportunities from backend
   const loadOpportunities = async () => {
     try {
