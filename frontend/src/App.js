@@ -108,7 +108,7 @@ const Dashboard = () => {
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
-  const [opportunities, setOpportunities] = useState(openOpportunities);
+  const [opportunities, setOpportunities] = useState([]);
   const [users, setUsers] = useState(mockUsers);
   const [customers, setCustomers] = useState([]);
   // const [showNewCustomerForm, setShowNewCustomerForm] = useState(false); // Removed for page-based approach
