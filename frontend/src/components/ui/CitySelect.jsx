@@ -130,7 +130,7 @@ const CitySelect = ({
                     className="px-3 py-2 cursor-pointer flex items-center space-x-2 border-t border-gray-100 hover:bg-gray-50"
                     onClick={handleManualEntryToggle}
                   >
-                    <Input className="h-4 w-4 text-blue-600" />
+                    <Edit className="h-4 w-4 text-blue-600" />
                     <span className="text-sm text-blue-600">Manuel olarak gir</span>
                   </div>
                 )}
@@ -147,7 +147,7 @@ const CitySelect = ({
                     className="px-3 py-2 cursor-pointer flex items-center space-x-2 hover:bg-gray-50"
                     onClick={handleManualEntryToggle}
                   >
-                    <Input className="h-4 w-4 text-blue-600" />
+                    <Edit className="h-4 w-4 text-blue-600" />
                     <span className="text-sm text-blue-600">Manuel olarak gir</span>
                   </div>
                 )}
