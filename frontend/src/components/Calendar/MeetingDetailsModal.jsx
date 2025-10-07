@@ -223,12 +223,17 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                   </div>
                 );
               })}
-            </div>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* User Response Section - Only show if user is not organizer */}
           {!isOrganizer && (
-            <div className="border-t pt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Yanıtınız</CardTitle>
+              </CardHeader>
+              <CardContent>
               {userResponse ? (
                 <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center space-x-2 mb-2">
