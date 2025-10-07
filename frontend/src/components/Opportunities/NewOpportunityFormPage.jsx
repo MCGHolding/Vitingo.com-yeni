@@ -335,7 +335,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   </label>
                   <Select 
                     value={formData.customer}
-                    onValueChange={(value) => handleInputChange('customer', value)}
+                    onValueChange={handleCustomerChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Müşteri seçin..." />
