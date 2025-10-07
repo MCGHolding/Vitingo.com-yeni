@@ -280,19 +280,19 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                   </Card>
                 )}
 
-              {/* Optional Response Message */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Yanıt Mesajı (İsteğe bağlı)
-                </label>
-                <textarea
-                  value={responseMessage}
-                  onChange={(e) => setResponseMessage(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows="2"
-                  placeholder="Toplantı hakkında bir mesajınız varsa buraya yazabilirsiniz..."
-                />
-              </div>
+                {/* Optional Response Message */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Yanıt Mesajı (İsteğe bağlı)
+                  </label>
+                  <textarea
+                    value={responseMessage}
+                    onChange={(e) => setResponseMessage(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="2"
+                    placeholder="Toplantı hakkında bir mesajınız varsa buraya yazabilirsiniz..."
+                  />
+                </div>
 
               {/* Response Buttons */}
               <div className="flex space-x-3">
