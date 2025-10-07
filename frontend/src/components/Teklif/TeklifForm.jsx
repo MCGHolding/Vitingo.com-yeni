@@ -237,6 +237,37 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     }));
   };
 
+  // Calculate payment date based on vade type
+  const calculatePaymentDate = (vadeTip, sozlesmeTarihi) => {
+    if (!sozlesmeTarihi) return '';
+    
+    const baseDate = new Date(sozlesmeTarihi);
+    
+    switch (vadeTip) {
+      case 'Peşin':
+        return 'Sözleşme tarihinde';
+      case 'Kurulum İlk Günü':
+        return 'Kurulum başlangıcında';
+      case 'Fuar Teslim Günü':
+        return 'Fuar teslim günü';
+      case 'Fuar Söküm Günü':
+        return 'Fuar söküm günü';
+      case 'Teslimden 1 hafta sonra':
+        baseDate.setDate(baseDate.getDate() + 7);
+        return baseDate.toLocaleDateString('tr-TR');
+      case 'Teslimden 2 hafta sonra':
+        baseDate.setDate(baseDate.getDate() + 14);
+        return baseDate.toLocaleDateString('tr-TR');
+      case 'Teslimden 1 ay sonra':
+        baseDate.setMonth(baseDate.getMonth() + 1);
+        return baseDate.toLocaleDateString('tr-TR');
+      case 'Özel Tarih':
+        return 'Özel tarih belirlenecek';
+      default:
+        return '';
+    }
+  };
+
   // Handle vade operations
   const handleVadeEkle = () => {
     setFormData(prev => ({
