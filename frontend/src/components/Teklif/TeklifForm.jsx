@@ -47,16 +47,21 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
   // Load müşteriler from backend
   const loadMusteriler = async () => {
     try {
+      console.log('🔍 Loading müşteriler from:', `${BACKEND_URL}/api/customers`);
       const response = await fetch(`${BACKEND_URL}/api/customers`);
+      console.log('📡 Customers response status:', response.status, response.statusText);
+      
       if (!response.ok) {
+        console.error('❌ Customers response not OK:', response.status);
         throw new Error('Müşteriler yüklenirken hata oluştu');
       }
       const data = await response.json();
+      console.log('✅ Müşteriler loaded:', data);
+      console.log('📊 Number of customers:', data.length);
       setMusteriler(data);
-      console.log('Müşteriler loaded:', data.length);
     } catch (error) {
-      console.error('Error loading müşteriler:', error);
-      setError('Müşteriler yüklenirken hata oluştu');
+      console.error('❌ Error loading müşteriler:', error);
+      setError('Müşteriler yüklenirken hata oluştu: ' + error.message);
     }
   };
 
