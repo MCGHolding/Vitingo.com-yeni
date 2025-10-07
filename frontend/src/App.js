@@ -734,6 +734,7 @@ const Dashboard = () => {
         return <NewPersonFormPage onSave={savePerson} onClose={handleBackToDashboard} />;
       case 'all-customers':
         return <AllCustomersPage 
+          key={`customers-${customers.length}`}
           onBackToDashboard={handleBackToDashboard} 
           customers={customers} 
           refreshCustomers={loadCustomers}
