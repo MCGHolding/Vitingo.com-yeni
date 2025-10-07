@@ -380,13 +380,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       {availableContacts.length > 0 ? (
                         availableContacts.map((contact, index) => (
                           <SelectItem key={index} value={contact.name}>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{contact.name}</span>
-                              <span className="text-sm text-gray-500">{contact.title}</span>
-                              {contact.email && (
-                                <span className="text-xs text-gray-400">{contact.email}</span>
-                              )}
-                            </div>
+                            {contact.name} - {contact.title}{contact.email ? ` (${contact.email})` : ''}
                           </SelectItem>
                         ))
                       ) : formData.customer ? (
