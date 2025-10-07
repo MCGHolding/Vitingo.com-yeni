@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { X, Calendar, Clock, MapPin, Video, Users, FileText, Check, Clock3, Ban, ExternalLink } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
