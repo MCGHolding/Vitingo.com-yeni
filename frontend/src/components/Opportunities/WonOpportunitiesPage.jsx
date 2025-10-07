@@ -422,7 +422,7 @@ export default function WonOpportunitiesPage({ onBackToDashboard }) {
                       }`}
                     >
                       <td className="py-3 px-3">
-                        <span className="font-medium text-blue-600 text-sm">#{opportunity.id}</span>
+                        <span className="font-medium text-blue-600 text-sm">{index + 1}</span>
                       </td>
                       
                       <td className="py-3 px-3">
