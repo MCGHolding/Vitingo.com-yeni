@@ -166,11 +166,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+    - "CRITICAL Customer Data Loss Investigation"
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "critical_first"
 
 agent_communication:
   - agent: "testing"
