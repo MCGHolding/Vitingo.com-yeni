@@ -294,48 +294,50 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                   />
                 </div>
 
-              {/* Response Buttons */}
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => handleResponse('accepted')}
-                  disabled={isResponding}
-                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
-                >
-                  {isResponding ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                  <span>Kabul Et</span>
-                </button>
-                
-                <button
-                  onClick={() => handleResponse('maybe')}
-                  disabled={isResponding}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
-                >
-                  {isResponding ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  ) : (
-                    <Clock3 className="h-4 w-4" />
-                  )}
-                  <span>Belki</span>
-                </button>
-                
-                <button
-                  onClick={() => handleResponse('declined')}
-                  disabled={isResponding}
-                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md flex items-center justify-center space-x-2"
-                >
-                  {isResponding ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  ) : (
-                    <Ban className="h-4 w-4" />
-                  )}
-                  <span>Reddet</span>
-                </button>
+                {/* Response Buttons */}
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={() => handleResponse('accepted')}
+                    disabled={isResponding}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {isResponding ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Check className="h-4 w-4 mr-2" />
+                    )}
+                    Kabul Et
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleResponse('maybe')}
+                    disabled={isResponding}
+                    className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    {isResponding ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Clock3 className="h-4 w-4 mr-2" />
+                    )}
+                    Belki
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleResponse('declined')}
+                    disabled={isResponding}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    {isResponding ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Ban className="h-4 w-4 mr-2" />
+                    )}
+                    Reddet
+                  </Button>
+                </div>
               </div>
-            </div>
+            </CardContent>
+            </Card>
           )}
 
           {/* Organizer View - Show Response Summary */}
