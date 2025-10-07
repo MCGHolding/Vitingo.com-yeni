@@ -359,13 +359,31 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
           <div className="space-y-4">
             {filteredRequests.map((request) => (
               <Card key={request.id} className="hover:shadow-lg transition-shadow duration-200">
-                <CardHeader className="pb-4">
+                <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-xl text-gray-900 mb-2">
-                        {request.subject}
-                      </CardTitle>
-
+                    <CardTitle className="text-xl text-gray-900">
+                      {request.subject}
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedRequest(request);
+                        setShowDetailsModal(true);
+                      }}
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Detaylar
+                    </Button>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>Organize Eden: <strong>{request.organizer_name}</strong></span>
+                    <span className="mx-2">•</span>
+                    <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
+                  </div>
+                </CardHeader>
+                
+                <CardContent>
                   {/* Meeting Details Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     {/* Date and Time */}
