@@ -690,11 +690,25 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       <SelectValue placeholder="Durum seçin..." />
                     </SelectTrigger>
                     <SelectContent>
+                      {/* Static statuses */}
                       {statuses.map((status) => (
                         <SelectItem key={status.value} value={status.value}>
                           {status.label}
                         </SelectItem>
                       ))}
+                      
+                      {/* Dynamic statuses from backend */}
+                      {dynamicStatuses.length > 0 && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          {dynamicStatuses.map((status) => (
+                            <SelectItem key={status.id} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                      
                       {isAdminOrSuperAdmin && (
                         <>
                           <div className="border-t border-gray-200 my-1"></div>
