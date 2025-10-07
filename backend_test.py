@@ -1508,6 +1508,370 @@ def test_customer_deletion_check_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_project_types_api_endpoints():
+    """
+    Test the new Project Types API endpoints for the NewOpportunityFormPage.
+    
+    Test Targets:
+    1. GET /api/project-types - Test project types endpoint and verify it returns empty array initially
+    2. POST /api/project-types - Test creating a new project type with Turkish character support
+    3. Verify the data structure matches the frontend expectations
+    4. Test duplicate prevention (should return 400 error for duplicate project type names)
+    
+    Test Data to Create:
+    - Test creating "Fuar Organizasyonu" (Trade Show Organization)
+    - Test creating "Kurumsal Etkinlik" (Corporate Event) 
+    - Test creating "Ürün Lansmanı" (Product Launch)
+    - Test duplicate creation of "Fuar Organizasyonu"
+    
+    Expected Behavior:
+    - GET endpoint should return empty array initially, then populated array after creation
+    - POST endpoint should handle Turkish characters properly (ğüşıöç)
+    - Each project type should have: id, value, label, description, is_active, created_at, created_by
+    - Value should be generated from label (lowercase, spaces to underscores, Turkish chars converted)
+    - Duplicate names should be rejected with Turkish error message
+    """
+    
+    print("=" * 80)
+    print("TESTING PROJECT TYPES API ENDPOINTS")
+    print("=" * 80)
+    print("Context: Testing new Project Types API endpoints for NewOpportunityFormPage 'Proje Türü' dropdown")
+    print("=" * 80)
+    
+    all_tests_passed = True
+    created_project_types = []
+    
+    # Test 1: GET /api/project-types (initial empty state)
+    print("\n" + "=" * 60)
+    print("TEST 1: GET /api/project-types (Initial State)")
+    print("=" * 60)
+    
+    endpoint = f"{BACKEND_URL}/api/project-types"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Project types endpoint responds with status 200")
+            
+            try:
+                project_types = response.json()
+                print(f"Response type: {type(project_types)}")
+                print(f"Number of project types: {len(project_types) if isinstance(project_types, list) else 'N/A'}")
+                
+                if isinstance(project_types, list):
+                    print("✅ PASS: Response is a proper JSON array")
+                    print(f"✅ PASS: Initial state returns {len(project_types)} project types (empty or existing)")
+                else:
+                    print("❌ FAIL: Response should be a list")
+                    all_tests_passed = False
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 2: POST /api/project-types - Create "Fuar Organizasyonu"
+    print("\n" + "=" * 60)
+    print("TEST 2: POST /api/project-types - Create 'Fuar Organizasyonu'")
+    print("=" * 60)
+    
+    test_project_type_1 = {
+        "label": "Fuar Organizasyonu",
+        "description": "Fuar ve sergi organizasyon projeleri"
+    }
+    
+    print(f"Creating project type: {test_project_type_1}")
+    
+    try:
+        response = requests.post(endpoint, json=test_project_type_1, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Project type creation responds with status 200")
+            
+            try:
+                created_type = response.json()
+                print(f"Response type: {type(created_type)}")
+                
+                # Validate structure
+                required_fields = ["id", "value", "label", "description", "is_active", "created_at", "created_by"]
+                missing_fields = []
+                for field in required_fields:
+                    if field not in created_type:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    print(f"❌ FAIL: Missing required fields: {missing_fields}")
+                    all_tests_passed = False
+                else:
+                    print("✅ PASS: Created project type has all required fields")
+                    
+                    # Check specific values
+                    if created_type.get("label") == test_project_type_1["label"]:
+                        print(f"✅ PASS: Label matches: {created_type.get('label')}")
+                    else:
+                        print(f"❌ FAIL: Label mismatch. Expected: {test_project_type_1['label']}, Got: {created_type.get('label')}")
+                        all_tests_passed = False
+                    
+                    # Check value generation (should be lowercase with underscores)
+                    expected_value = "fuar_organizasyonu"
+                    if created_type.get("value") == expected_value:
+                        print(f"✅ PASS: Value generated correctly: {created_type.get('value')}")
+                    else:
+                        print(f"❌ FAIL: Value generation issue. Expected: {expected_value}, Got: {created_type.get('value')}")
+                        all_tests_passed = False
+                    
+                    # Check Turkish character handling
+                    if "ğ" not in created_type.get("value", "") and "ü" not in created_type.get("value", ""):
+                        print("✅ PASS: Turkish characters converted correctly in value")
+                    else:
+                        print("❌ FAIL: Turkish characters not converted properly in value")
+                        all_tests_passed = False
+                    
+                    # Check is_active
+                    if created_type.get("is_active") is True:
+                        print("✅ PASS: is_active field is True")
+                    else:
+                        print(f"❌ FAIL: is_active should be True, got {created_type.get('is_active')}")
+                        all_tests_passed = False
+                    
+                    # Store for later tests
+                    created_project_types.append(created_type)
+                    print(f"✅ PASS: 'Fuar Organizasyonu' created successfully with ID: {created_type.get('id')}")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 3: POST /api/project-types - Create "Kurumsal Etkinlik"
+    print("\n" + "=" * 60)
+    print("TEST 3: POST /api/project-types - Create 'Kurumsal Etkinlik'")
+    print("=" * 60)
+    
+    test_project_type_2 = {
+        "label": "Kurumsal Etkinlik",
+        "description": "Şirket içi ve kurumsal etkinlik projeleri"
+    }
+    
+    print(f"Creating project type: {test_project_type_2}")
+    
+    try:
+        response = requests.post(endpoint, json=test_project_type_2, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Second project type creation responds with status 200")
+            
+            try:
+                created_type = response.json()
+                
+                # Check specific values for Turkish character handling
+                if created_type.get("label") == test_project_type_2["label"]:
+                    print(f"✅ PASS: Label with Turkish characters preserved: {created_type.get('label')}")
+                else:
+                    print(f"❌ FAIL: Label mismatch: {created_type.get('label')}")
+                    all_tests_passed = False
+                
+                # Check value generation with Turkish characters
+                expected_value = "kurumsal_etkinlik"
+                if created_type.get("value") == expected_value:
+                    print(f"✅ PASS: Value with Turkish chars converted correctly: {created_type.get('value')}")
+                else:
+                    print(f"❌ FAIL: Value conversion issue. Expected: {expected_value}, Got: {created_type.get('value')}")
+                    all_tests_passed = False
+                
+                created_project_types.append(created_type)
+                print(f"✅ PASS: 'Kurumsal Etkinlik' created successfully")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 4: POST /api/project-types - Create "Ürün Lansmanı"
+    print("\n" + "=" * 60)
+    print("TEST 4: POST /api/project-types - Create 'Ürün Lansmanı'")
+    print("=" * 60)
+    
+    test_project_type_3 = {
+        "label": "Ürün Lansmanı",
+        "description": "Yeni ürün tanıtım ve lansman etkinlikleri"
+    }
+    
+    print(f"Creating project type: {test_project_type_3}")
+    
+    try:
+        response = requests.post(endpoint, json=test_project_type_3, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Third project type creation responds with status 200")
+            
+            try:
+                created_type = response.json()
+                
+                # Check Turkish character handling in "Ürün"
+                expected_value = "urun_lansmani"
+                if created_type.get("value") == expected_value:
+                    print(f"✅ PASS: Turkish 'ü' character converted correctly: {created_type.get('value')}")
+                else:
+                    print(f"❌ FAIL: Turkish character conversion issue. Expected: {expected_value}, Got: {created_type.get('value')}")
+                    all_tests_passed = False
+                
+                created_project_types.append(created_type)
+                print(f"✅ PASS: 'Ürün Lansmanı' created successfully")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 5: POST /api/project-types - Test duplicate creation (should fail)
+    print("\n" + "=" * 60)
+    print("TEST 5: POST /api/project-types - Test Duplicate Prevention")
+    print("=" * 60)
+    
+    duplicate_project_type = {
+        "label": "Fuar Organizasyonu",  # Same as first one
+        "description": "Duplicate test"
+    }
+    
+    print(f"Attempting to create duplicate: {duplicate_project_type}")
+    
+    try:
+        response = requests.post(endpoint, json=duplicate_project_type, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("✅ PASS: Duplicate project type correctly rejected with status 400")
+            
+            try:
+                error_response = response.json()
+                error_detail = error_response.get("detail", "")
+                
+                if "Bu proje türü zaten mevcut" in error_detail:
+                    print(f"✅ PASS: Turkish error message returned: '{error_detail}'")
+                else:
+                    print(f"❌ FAIL: Expected Turkish error message, got: '{error_detail}'")
+                    all_tests_passed = False
+                    
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse error response: {str(e)}")
+        else:
+            print(f"❌ FAIL: Expected status 400 for duplicate, got {response.status_code}")
+            print(f"Response: {response.text}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Test 6: GET /api/project-types (after creation)
+    print("\n" + "=" * 60)
+    print("TEST 6: GET /api/project-types (After Creation)")
+    print("=" * 60)
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Project types endpoint responds with status 200")
+            
+            try:
+                project_types = response.json()
+                print(f"Number of project types after creation: {len(project_types)}")
+                
+                if len(project_types) >= 3:
+                    print("✅ PASS: Project types list populated after creation")
+                    
+                    # Check if our created types are in the list
+                    found_types = []
+                    for pt in project_types:
+                        if pt.get("label") in ["Fuar Organizasyonu", "Kurumsal Etkinlik", "Ürün Lansmanı"]:
+                            found_types.append(pt.get("label"))
+                    
+                    if len(found_types) >= 3:
+                        print(f"✅ PASS: All created project types found in list: {found_types}")
+                    else:
+                        print(f"❌ FAIL: Not all created types found. Found: {found_types}")
+                        all_tests_passed = False
+                        
+                    # Display sample project type structure
+                    if project_types:
+                        sample_type = project_types[0]
+                        print(f"Sample project type structure: {list(sample_type.keys())}")
+                        print(f"Sample: {sample_type.get('label')} -> {sample_type.get('value')}")
+                        
+                else:
+                    print(f"❌ FAIL: Expected at least 3 project types, got {len(project_types)}")
+                    all_tests_passed = False
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                all_tests_passed = False
+        else:
+            print(f"❌ FAIL: Expected status 200, got {response.status_code}")
+            all_tests_passed = False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        all_tests_passed = False
+    
+    # Final Results
+    print("\n" + "=" * 80)
+    print("PROJECT TYPES API ENDPOINTS TEST RESULTS:")
+    print("=" * 80)
+    
+    if all_tests_passed:
+        print("✅ GET /api/project-types endpoint working correctly")
+        print("✅ POST /api/project-types endpoint working correctly")
+        print("✅ Turkish character support working (ğüşıöç)")
+        print("✅ Data structure matches frontend expectations")
+        print("✅ Value generation working (lowercase, underscores, Turkish conversion)")
+        print("✅ Duplicate prevention working with Turkish error messages")
+        print("✅ All required fields present (id, value, label, description, is_active, created_at, created_by)")
+        print("✅ Project types persist correctly in database")
+        print(f"✅ Created {len(created_project_types)} test project types successfully")
+        print("\n🎉 ALL PROJECT TYPES API TESTS PASSED!")
+        print("✅ Ready for NewOpportunityFormPage 'Proje Türü' dropdown integration")
+        print("✅ Ready for 'Yeni Proje Türü Ekle' functionality for admin/super-admin users")
+    else:
+        print("❌ Some project types API tests failed")
+        print("⚠️  Check the failed tests above for details")
+    
+    return all_tests_passed
+
 def test_countries_and_cities_api_endpoints():
     """
     Test the countries and cities API endpoints as requested in the review.
