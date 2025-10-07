@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 // import { allOpportunities, tagColors } from '../../mock/opportunitiesData'; // Removed - using real API
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,6 +40,11 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('id');
+  
+  // Real data states
+  const [allOpportunities, setAllOpportunities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
