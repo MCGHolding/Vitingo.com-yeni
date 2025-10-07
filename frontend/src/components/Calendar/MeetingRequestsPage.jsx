@@ -431,49 +431,63 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
                           </div>
                         </div>
                       )}
-                        <div className="flex items-start space-x-2 text-sm text-gray-600">
-                          <Users className="h-4 w-4 mt-0.5" />
-                          <div className="flex-1">
-                            <span>Katılımcılar:</span>
-                            <div className="mt-1 space-y-1">
-                              {request.attendee_names.map((name, index) => {
-                                const attendeeId = request.attendee_ids[index];
-                                const response = request.responses && request.responses[attendeeId];
-                                return (
-                                  <div key={attendeeId || index} className="flex items-center space-x-2">
-                                    <span className="text-gray-700">{name}</span>
-                                    {response ? (
-                                      <div className="flex items-center space-x-1">
-                                        {response.response === 'accepted' && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <Check className="h-3 w-3 mr-1" />
-                                            Kabul
-                                          </span>
-                                        )}
-                                        {response.response === 'maybe' && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            <Clock3 className="h-3 w-3 mr-1" />
-                                            Belki
-                                          </span>
-                                        )}
-                                        {response.response === 'declined' && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            <X className="h-3 w-3 mr-1" />
-                                            Reddet
-                                          </span>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                        Bekliyor
-                                      </span>
-                                    )}
-                                  </div>
-                                );
-                              })}
+                    </div>
+                  </div>
+
+                  {/* Attendees Section */}
+                  <div className="border-t pt-6">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <Users className="h-4 w-4 text-indigo-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">Katılımcılar</p>
+                        <p className="font-semibold text-gray-900">{request.attendee_names.length} Kişi Davet Edildi</p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {request.attendee_names.map((name, index) => {
+                        const attendeeId = request.attendee_ids[index];
+                        const response = request.responses && request.responses[attendeeId];
+                        return (
+                          <div key={attendeeId || index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                {name.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-medium text-gray-900 text-sm">{name}</span>
                             </div>
+                            {response ? (
+                              <div>
+                                {response.response === 'accepted' && (
+                                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                                    <Check className="h-3 w-3 mr-1" />
+                                    Kabul
+                                  </Badge>
+                                )}
+                                {response.response === 'maybe' && (
+                                  <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                                    <Clock3 className="h-3 w-3 mr-1" />
+                                    Belki
+                                  </Badge>
+                                )}
+                                {response.response === 'declined' && (
+                                  <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+                                    <X className="h-3 w-3 mr-1" />
+                                    Reddet
+                                  </Badge>
+                                )}
+                              </div>
+                            ) : (
+                              <Badge variant="secondary" className="bg-gray-200 text-gray-600">
+                                <Clock className="h-3 w-3 mr-1" />
+                                Bekliyor
+                              </Badge>
+                            )}
                           </div>
-                        </div>
+                        );
+                      })}
                       </div>
                     </div>
 
