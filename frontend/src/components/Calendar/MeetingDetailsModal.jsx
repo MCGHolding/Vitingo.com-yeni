@@ -264,19 +264,21 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                       </p>
                     </CardContent>
                   </Card>
-              ) : (
-                <div className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Clock className="h-4 w-4 text-yellow-600" />
-                    <span className="text-sm text-yellow-800 font-medium">
-                      Bu toplantı davetine henüz yanıt vermediniz
-                    </span>
-                  </div>
-                  <p className="text-xs text-yellow-700">
-                    Lütfen katılım durumunuzu belirtmek için aşağıdaki butonlardan birini seçin
-                  </p>
-                </div>
-              )}
+                ) : (
+                  <Card className="bg-yellow-50 border-yellow-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Clock className="h-4 w-4 text-yellow-600" />
+                        <span className="text-sm text-yellow-800 font-medium">
+                          Bu toplantı davetine henüz yanıt vermediniz
+                        </span>
+                      </div>
+                      <p className="text-xs text-yellow-700">
+                        Lütfen katılım durumunuzu belirtmek için aşağıdaki butonları kullanın
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
 
               {/* Optional Response Message */}
               <div className="mb-4">
