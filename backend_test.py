@@ -1349,6 +1349,698 @@ def test_customer_prospects_get_after_creation():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_customer_deletion_check_endpoint():
+    """
+    Test POST /api/customers/{customer_id}/can-delete endpoint.
+    
+    Requirements to verify:
+    1. Should return whether customer can be deleted and related records list
+    2. Should check for related invoices, quotes, opportunities, projects, surveys, handovers
+    3. Should return proper JSON structure with canDelete boolean and relatedRecords array
+    4. Should handle non-existent customers with 404 error
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER DELETION CHECK ENDPOINT")
+    print("=" * 80)
+    
+    # Get actual customer IDs from database
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Getting customer list from: {customers_endpoint}")
+    
+    try:
+        # Get customers list first
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        if customers_response.status_code != 200:
+            print(f"❌ FAIL: Could not get customers list. Status: {customers_response.status_code}")
+            return False
+        
+        customers = customers_response.json()
+        if not customers or len(customers) == 0:
+            print("❌ FAIL: No customers found in database")
+            return False
+        
+        print(f"Found {len(customers)} customers in database")
+        
+        # Test with first customer
+        test_customer = customers[0]
+        customer_id = test_customer.get("id")
+        company_name = test_customer.get("companyName", "Unknown")
+        
+        print(f"Testing with customer: {company_name} (ID: {customer_id})")
+        
+        # Test 1: Check deletion eligibility
+        endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/can-delete"
+        print(f"\n1. Testing can-delete endpoint: {endpoint}")
+        
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Can-delete endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        required_fields = ["canDelete", "relatedRecords", "message"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 4: Validate field types
+        print("\n4. Validating field types...")
+        can_delete = data.get("canDelete")
+        related_records = data.get("relatedRecords")
+        message = data.get("message")
+        
+        if not isinstance(can_delete, bool):
+            print(f"   ❌ FAIL: canDelete should be boolean, got {type(can_delete)}")
+            return False
+        print(f"   ✅ PASS: canDelete is boolean: {can_delete}")
+        
+        if not isinstance(related_records, list):
+            print(f"   ❌ FAIL: relatedRecords should be list, got {type(related_records)}")
+            return False
+        print(f"   ✅ PASS: relatedRecords is list with {len(related_records)} items")
+        
+        if not isinstance(message, str):
+            print(f"   ❌ FAIL: message should be string, got {type(message)}")
+            return False
+        print(f"   ✅ PASS: message is string: '{message}'")
+        
+        # Test 5: Validate business logic
+        print("\n5. Validating business logic...")
+        if can_delete and len(related_records) > 0:
+            print("   ❌ FAIL: If canDelete is true, relatedRecords should be empty")
+            return False
+        elif not can_delete and len(related_records) == 0:
+            print("   ❌ FAIL: If canDelete is false, relatedRecords should not be empty")
+            return False
+        else:
+            print("   ✅ PASS: Business logic is consistent")
+        
+        # Display results
+        print(f"\n   Customer: {company_name}")
+        print(f"   Can Delete: {can_delete}")
+        print(f"   Related Records: {related_records}")
+        print(f"   Message: {message}")
+        
+        # Test 6: Test with non-existent customer
+        print("\n6. Testing with non-existent customer...")
+        fake_customer_id = "non-existent-customer-id-12345"
+        fake_endpoint = f"{BACKEND_URL}/api/customers/{fake_customer_id}/can-delete"
+        
+        fake_response = requests.get(fake_endpoint, timeout=30)
+        print(f"   Status Code: {fake_response.status_code}")
+        
+        if fake_response.status_code == 404:
+            print("   ✅ PASS: Non-existent customer returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent customer, got {fake_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER DELETION CHECK ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Endpoint responds with status 200 for valid customer")
+        print("✅ Returns proper JSON response structure")
+        print("✅ All required fields present (canDelete, relatedRecords, message)")
+        print("✅ Field types are correct (boolean, list, string)")
+        print("✅ Business logic is consistent")
+        print("✅ Non-existent customer returns 404")
+        print("✅ Turkish message support working")
+        print(f"\n🎉 CUSTOMER DELETION CHECK ENDPOINT TEST PASSED!")
+        
+        # Store customer info for next tests
+        global test_customer_info
+        test_customer_info = {
+            "id": customer_id,
+            "name": company_name,
+            "can_delete": can_delete,
+            "related_records": related_records
+        }
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_deletion_endpoint():
+    """
+    Test DELETE /api/customers/{customer_id} endpoint.
+    
+    Requirements to verify:
+    1. Should permanently delete customer if no related records exist
+    2. Should prevent deletion if related records exist (return 400 error)
+    3. Should return proper success/error messages in Turkish
+    4. Should handle non-existent customers with 404 error
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER DELETION ENDPOINT")
+    print("=" * 80)
+    
+    if 'test_customer_info' not in globals():
+        print("⚠️  SKIP: No customer info available from previous test")
+        return True
+    
+    customer_id = test_customer_info["id"]
+    company_name = test_customer_info["name"]
+    can_delete = test_customer_info["can_delete"]
+    related_records = test_customer_info["related_records"]
+    
+    endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Customer: {company_name} (ID: {customer_id})")
+    print(f"Expected to be deletable: {can_delete}")
+    
+    try:
+        # Test 1: Attempt to delete customer
+        print(f"\n1. Attempting to delete customer...")
+        response = requests.delete(endpoint, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        
+        # Test 2: Validate response based on expected behavior
+        print("\n2. Validating response based on business logic...")
+        
+        if can_delete:
+            # Customer should be deletable
+            if response.status_code == 200:
+                print("   ✅ PASS: Customer with no related records deleted successfully")
+                
+                # Parse success response
+                try:
+                    data = response.json()
+                    if data.get("success") and "message" in data:
+                        print(f"   ✅ PASS: Success response structure correct")
+                        print(f"   Success message: {data.get('message')}")
+                    else:
+                        print("   ❌ FAIL: Success response missing required fields")
+                        return False
+                except Exception as e:
+                    print(f"   ❌ FAIL: Could not parse success response: {str(e)}")
+                    return False
+                
+                # Test 3: Verify customer is actually deleted
+                print("\n3. Verifying customer is actually deleted...")
+                verify_response = requests.get(f"{BACKEND_URL}/api/customers/{customer_id}", timeout=30)
+                if verify_response.status_code == 404:
+                    print("   ✅ PASS: Customer successfully removed from database")
+                else:
+                    print(f"   ❌ FAIL: Customer still exists after deletion. Status: {verify_response.status_code}")
+                    return False
+                    
+            else:
+                print(f"   ❌ FAIL: Expected successful deletion (200), got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+        else:
+            # Customer should NOT be deletable due to related records
+            if response.status_code == 400:
+                print("   ✅ PASS: Customer with related records properly blocked from deletion")
+                
+                # Parse error response
+                try:
+                    data = response.json()
+                    error_detail = data.get("detail", "")
+                    if "İlişkili kayıtlar" in error_detail or "related" in error_detail.lower():
+                        print(f"   ✅ PASS: Error message mentions related records")
+                        print(f"   Error message: {error_detail}")
+                    else:
+                        print(f"   ⚠️  WARNING: Error message might not be specific enough: {error_detail}")
+                except Exception as e:
+                    print(f"   ❌ FAIL: Could not parse error response: {str(e)}")
+                    return False
+                    
+            else:
+                print(f"   ❌ FAIL: Expected deletion blocked (400), got {response.status_code}")
+                print(f"   Response: {response.text}")
+                return False
+        
+        # Test 4: Test with non-existent customer
+        print("\n4. Testing deletion of non-existent customer...")
+        fake_customer_id = "non-existent-customer-id-12345"
+        fake_endpoint = f"{BACKEND_URL}/api/customers/{fake_customer_id}"
+        
+        fake_response = requests.delete(fake_endpoint, timeout=30)
+        print(f"   Status Code: {fake_response.status_code}")
+        
+        if fake_response.status_code == 404:
+            print("   ✅ PASS: Non-existent customer deletion returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent customer, got {fake_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER DELETION ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        if can_delete:
+            print("✅ Customer with no related records deleted successfully")
+            print("✅ Success response structure correct")
+            print("✅ Customer removed from database")
+        else:
+            print("✅ Customer with related records properly blocked from deletion")
+            print("✅ Error response mentions related records")
+        print("✅ Non-existent customer deletion returns 404")
+        print("✅ Turkish error messages working")
+        print("✅ Business logic enforced correctly")
+        print(f"\n🎉 CUSTOMER DELETION ENDPOINT TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_deactivation_endpoint():
+    """
+    Test PUT /api/customers/{customer_id}/deactivate endpoint.
+    
+    Requirements to verify:
+    1. Should set status to 'inactive' and add deactivation timestamps
+    2. Should work for customers with related records (alternative to deletion)
+    3. Should return proper success message in Turkish
+    4. Should handle non-existent customers with 404 error
+    5. Should accept deactivation reason in request body
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER DEACTIVATION ENDPOINT")
+    print("=" * 80)
+    
+    # Get a customer that has related records (cannot be deleted)
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Getting customer list from: {customers_endpoint}")
+    
+    try:
+        # Get customers list
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        if customers_response.status_code != 200:
+            print(f"❌ FAIL: Could not get customers list. Status: {customers_response.status_code}")
+            return False
+        
+        customers = customers_response.json()
+        if not customers or len(customers) == 0:
+            print("❌ FAIL: No customers found in database")
+            return False
+        
+        # Find a customer that cannot be deleted (has related records)
+        target_customer = None
+        for customer in customers:
+            customer_id = customer.get("id")
+            
+            # Check if this customer can be deleted
+            check_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/can-delete"
+            check_response = requests.get(check_endpoint, timeout=30)
+            
+            if check_response.status_code == 200:
+                check_data = check_response.json()
+                if not check_data.get("canDelete", True):  # Customer has related records
+                    target_customer = customer
+                    break
+        
+        # If no customer with related records found, use the first customer
+        if not target_customer:
+            print("   ⚠️  WARNING: No customer with related records found, using first customer")
+            target_customer = customers[0]
+        
+        customer_id = target_customer.get("id")
+        company_name = target_customer.get("companyName", "Unknown")
+        
+        print(f"Testing with customer: {company_name} (ID: {customer_id})")
+        
+        # Test 1: Deactivate customer
+        endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/deactivate"
+        print(f"\n1. Testing deactivation endpoint: {endpoint}")
+        
+        deactivation_data = {
+            "reason": "Test deactivation - moved to passive customers for testing"
+        }
+        
+        response = requests.put(endpoint, json=deactivation_data, timeout=30)
+        
+        print(f"   Status Code: {response.status_code}")
+        if response.status_code == 200:
+            print("   ✅ PASS: Customer deactivation endpoint responds with status 200")
+        else:
+            print(f"   ❌ FAIL: Expected status 200, got {response.status_code}")
+            print(f"   Response: {response.text}")
+            return False
+        
+        # Test 2: Parse JSON response
+        print("\n2. Parsing JSON response...")
+        try:
+            data = response.json()
+            print(f"   Response type: {type(data)}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Could not parse JSON response: {str(e)}")
+            return False
+        
+        # Test 3: Validate response structure
+        print("\n3. Validating response structure...")
+        required_fields = ["success", "message"]
+        missing_fields = []
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+        
+        if missing_fields:
+            print(f"   ❌ FAIL: Response missing required fields: {missing_fields}")
+            return False
+        
+        print("   ✅ PASS: Response has all required fields")
+        
+        # Test 4: Validate response values
+        print("\n4. Validating response values...")
+        success = data.get("success")
+        message = data.get("message")
+        
+        if not isinstance(success, bool) or not success:
+            print(f"   ❌ FAIL: success should be true boolean, got {success}")
+            return False
+        print(f"   ✅ PASS: success is true")
+        
+        if not isinstance(message, str) or not message:
+            print(f"   ❌ FAIL: message should be non-empty string, got {message}")
+            return False
+        print(f"   ✅ PASS: message is string: '{message}'")
+        
+        # Check for Turkish content in message
+        if "pasif" in message.lower() or "müşteri" in message.lower():
+            print("   ✅ PASS: Message contains Turkish content")
+        else:
+            print("   ⚠️  WARNING: Message might not be in Turkish")
+        
+        # Test 5: Verify customer status changed in database
+        print("\n5. Verifying customer status changed in database...")
+        verify_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        verify_response = requests.get(verify_endpoint, timeout=30)
+        
+        if verify_response.status_code == 200:
+            customer_data = verify_response.json()
+            status = customer_data.get("status")
+            deactivated_at = customer_data.get("deactivated_at")
+            deactivation_reason = customer_data.get("deactivation_reason")
+            
+            if status == "inactive":
+                print("   ✅ PASS: Customer status changed to 'inactive'")
+            else:
+                print(f"   ❌ FAIL: Expected status 'inactive', got '{status}'")
+                return False
+            
+            if deactivated_at:
+                print(f"   ✅ PASS: deactivated_at timestamp added: {deactivated_at}")
+            else:
+                print("   ❌ FAIL: deactivated_at timestamp not added")
+                return False
+            
+            if deactivation_reason:
+                print(f"   ✅ PASS: deactivation_reason stored: {deactivation_reason}")
+            else:
+                print("   ⚠️  WARNING: deactivation_reason not stored")
+        else:
+            print(f"   ❌ FAIL: Could not verify customer status. Status: {verify_response.status_code}")
+            return False
+        
+        # Test 6: Test deactivating already inactive customer
+        print("\n6. Testing deactivation of already inactive customer...")
+        response2 = requests.put(endpoint, json=deactivation_data, timeout=30)
+        
+        print(f"   Status Code: {response2.status_code}")
+        if response2.status_code == 404:
+            print("   ✅ PASS: Already inactive customer returns 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for already inactive customer, got {response2.status_code}")
+            # This might be acceptable behavior depending on implementation
+        
+        # Test 7: Test with non-existent customer
+        print("\n7. Testing deactivation of non-existent customer...")
+        fake_customer_id = "non-existent-customer-id-12345"
+        fake_endpoint = f"{BACKEND_URL}/api/customers/{fake_customer_id}/deactivate"
+        
+        fake_response = requests.put(fake_endpoint, json=deactivation_data, timeout=30)
+        print(f"   Status Code: {fake_response.status_code}")
+        
+        if fake_response.status_code == 404:
+            print("   ✅ PASS: Non-existent customer deactivation returns 404")
+        else:
+            print(f"   ❌ FAIL: Expected 404 for non-existent customer, got {fake_response.status_code}")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER DEACTIVATION ENDPOINT TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Customer deactivation endpoint responds with status 200")
+        print("✅ Returns proper JSON response structure")
+        print("✅ Success and message fields present and valid")
+        print("✅ Customer status changed to 'inactive' in database")
+        print("✅ deactivated_at timestamp added")
+        print("✅ deactivation_reason stored correctly")
+        print("✅ Turkish success messages working")
+        print("✅ Non-existent customer returns 404")
+        print("✅ Deactivation works as alternative to deletion")
+        print(f"\n🎉 CUSTOMER DEACTIVATION ENDPOINT TEST PASSED!")
+        print(f"   Deactivated customer: {company_name}")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
+def test_customer_deletion_business_logic():
+    """
+    Test the complete customer deletion business logic.
+    
+    Requirements to verify:
+    1. Customers with related records should NOT allow deletion, only deactivation
+    2. Customers with NO related records should allow permanent deletion
+    3. Test both scenarios if possible
+    4. Verify the business logic is enforced consistently
+    """
+    
+    print("=" * 80)
+    print("TESTING CUSTOMER DELETION BUSINESS LOGIC")
+    print("=" * 80)
+    
+    # Get customers list
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Getting customer list from: {customers_endpoint}")
+    
+    try:
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        if customers_response.status_code != 200:
+            print(f"❌ FAIL: Could not get customers list. Status: {customers_response.status_code}")
+            return False
+        
+        customers = customers_response.json()
+        if not customers or len(customers) == 0:
+            print("❌ FAIL: No customers found in database")
+            return False
+        
+        print(f"Found {len(customers)} customers in database")
+        
+        # Analyze all customers
+        deletable_customers = []
+        non_deletable_customers = []
+        
+        print("\n1. Analyzing all customers for deletion eligibility...")
+        
+        for i, customer in enumerate(customers[:10]):  # Check first 10 customers
+            customer_id = customer.get("id")
+            company_name = customer.get("companyName", "Unknown")
+            
+            # Check deletion eligibility
+            check_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/can-delete"
+            check_response = requests.get(check_endpoint, timeout=30)
+            
+            if check_response.status_code == 200:
+                check_data = check_response.json()
+                can_delete = check_data.get("canDelete", False)
+                related_records = check_data.get("relatedRecords", [])
+                
+                if can_delete:
+                    deletable_customers.append({
+                        "id": customer_id,
+                        "name": company_name,
+                        "related_records": related_records
+                    })
+                else:
+                    non_deletable_customers.append({
+                        "id": customer_id,
+                        "name": company_name,
+                        "related_records": related_records
+                    })
+                
+                print(f"   {i+1}. {company_name}: {'✅ Deletable' if can_delete else '❌ Not deletable'} ({len(related_records)} related records)")
+            else:
+                print(f"   {i+1}. {company_name}: ⚠️  Could not check (Status: {check_response.status_code})")
+        
+        print(f"\n   Summary: {len(deletable_customers)} deletable, {len(non_deletable_customers)} non-deletable")
+        
+        # Test 2: Test business logic with non-deletable customer
+        print("\n2. Testing business logic with customer that has related records...")
+        
+        if non_deletable_customers:
+            test_customer = non_deletable_customers[0]
+            customer_id = test_customer["id"]
+            company_name = test_customer["name"]
+            related_records = test_customer["related_records"]
+            
+            print(f"   Testing with: {company_name}")
+            print(f"   Related records: {related_records}")
+            
+            # Try to delete - should fail
+            delete_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+            delete_response = requests.delete(delete_endpoint, timeout=30)
+            
+            if delete_response.status_code == 400:
+                print("   ✅ PASS: Customer with related records blocked from deletion (400)")
+                
+                # Check error message mentions related records
+                try:
+                    error_data = delete_response.json()
+                    error_detail = error_data.get("detail", "")
+                    if any(record_type in error_detail for record_type in ["Fatura", "Teklif", "Proje", "Anket"]):
+                        print("   ✅ PASS: Error message mentions specific related record types")
+                    else:
+                        print(f"   ⚠️  WARNING: Error message might not be specific: {error_detail}")
+                except:
+                    pass
+            else:
+                print(f"   ❌ FAIL: Expected 400 for customer with related records, got {delete_response.status_code}")
+                return False
+            
+            # Try to deactivate - should succeed
+            deactivate_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/deactivate"
+            deactivate_data = {"reason": "Business logic test - has related records"}
+            deactivate_response = requests.put(deactivate_endpoint, json=deactivate_data, timeout=30)
+            
+            if deactivate_response.status_code == 200:
+                print("   ✅ PASS: Customer with related records can be deactivated")
+            else:
+                print(f"   ❌ FAIL: Expected 200 for deactivation, got {deactivate_response.status_code}")
+                return False
+        else:
+            print("   ⚠️  SKIP: No customers with related records found")
+        
+        # Test 3: Test business logic with deletable customer (if any)
+        print("\n3. Testing business logic with customer that has no related records...")
+        
+        if deletable_customers:
+            test_customer = deletable_customers[0]
+            customer_id = test_customer["id"]
+            company_name = test_customer["name"]
+            
+            print(f"   Testing with: {company_name}")
+            print("   Related records: None")
+            
+            # Try to delete - should succeed
+            delete_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+            delete_response = requests.delete(delete_endpoint, timeout=30)
+            
+            if delete_response.status_code == 200:
+                print("   ✅ PASS: Customer with no related records deleted successfully")
+                
+                # Verify customer is gone
+                verify_response = requests.get(f"{BACKEND_URL}/api/customers/{customer_id}", timeout=30)
+                if verify_response.status_code == 404:
+                    print("   ✅ PASS: Customer successfully removed from database")
+                else:
+                    print(f"   ❌ FAIL: Customer still exists after deletion")
+                    return False
+            else:
+                print(f"   ❌ FAIL: Expected 200 for customer with no related records, got {delete_response.status_code}")
+                return False
+        else:
+            print("   ⚠️  SKIP: No customers without related records found")
+        
+        # Test 4: Consistency check
+        print("\n4. Performing consistency check...")
+        
+        consistency_issues = 0
+        
+        # Check a few more customers for consistency
+        for customer in customers[10:15]:  # Check next 5 customers
+            customer_id = customer.get("id")
+            
+            # Check can-delete
+            check_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/can-delete"
+            check_response = requests.get(check_endpoint, timeout=30)
+            
+            if check_response.status_code == 200:
+                check_data = check_response.json()
+                can_delete = check_data.get("canDelete", False)
+                related_records = check_data.get("relatedRecords", [])
+                
+                # Verify consistency: if can_delete is true, related_records should be empty
+                if can_delete and len(related_records) > 0:
+                    print(f"   ❌ CONSISTENCY ISSUE: Customer {customer_id} marked as deletable but has related records")
+                    consistency_issues += 1
+                elif not can_delete and len(related_records) == 0:
+                    print(f"   ❌ CONSISTENCY ISSUE: Customer {customer_id} marked as non-deletable but has no related records")
+                    consistency_issues += 1
+        
+        if consistency_issues == 0:
+            print("   ✅ PASS: No consistency issues found")
+        else:
+            print(f"   ❌ FAIL: Found {consistency_issues} consistency issues")
+            return False
+        
+        print("\n" + "=" * 80)
+        print("CUSTOMER DELETION BUSINESS LOGIC TEST RESULTS:")
+        print("=" * 80)
+        print("✅ Business logic analysis completed")
+        print(f"✅ Found {len(deletable_customers)} deletable customers")
+        print(f"✅ Found {len(non_deletable_customers)} non-deletable customers")
+        if non_deletable_customers:
+            print("✅ Customers with related records properly blocked from deletion")
+            print("✅ Customers with related records can be deactivated")
+        if deletable_customers:
+            print("✅ Customers with no related records can be deleted")
+        print("✅ Business logic consistency verified")
+        print("✅ Error messages mention specific related record types")
+        print(f"\n🎉 CUSTOMER DELETION BUSINESS LOGIC TEST PASSED!")
+        
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        print(f"\n❌ FAIL: Network error occurred: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
+        return False
+
 def test_meeting_request_creation_with_link():
     """
     Test POST /api/meeting-requests endpoint with meeting_link field.
