@@ -30,7 +30,17 @@ import {
   Trash2,
   UserSearch
 } from 'lucide-react';
-import { customerTagColors } from '../../mock/customersData';
+// import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
+
+const customerTagColors = {
+  'premium': 'bg-purple-500 text-white',
+  'vip': 'bg-gold-500 text-white bg-yellow-500', 
+  'regular': 'bg-blue-500 text-white',
+  'new': 'bg-green-500 text-white',
+  'inactive': 'bg-gray-500 text-white',
+  'high-value': 'bg-red-500 text-white',
+  'potential': 'bg-orange-500 text-white'
+};
 import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
