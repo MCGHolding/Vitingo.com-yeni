@@ -115,7 +115,19 @@ const getNavigation = (userDepartment) => {
         { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
       ]
     },
-    // Teklifler menüsü kaldırıldı
+    { 
+      name: 'Teklifler', 
+      href: '/teklifler', 
+      icon: FileText, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Teklif', href: '/teklifler/new', icon: Plus },
+        { name: 'Tüm Teklifler', href: '/teklifler/all', icon: List },
+        { name: 'Taslak Teklifler', href: '/teklifler/draft', icon: Edit },
+        { name: 'Gönderilen Teklifler', href: '/teklifler/sent', icon: Send }
+      ]
+    },
     { 
       name: 'Fuarlar', 
       href: '/fairs', 
