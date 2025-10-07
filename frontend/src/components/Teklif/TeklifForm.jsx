@@ -119,13 +119,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     e.preventDefault();
     
     if (!formData.satisFiresatId || !formData.musteriId) {
-      if (showToast) {
-        showToast({
-          type: 'error',
-          title: 'Eksik Bilgi',
-          text: 'Lütfen satış fırsatı ve müşteri seçiniz.'
-        });
-      }
+      alert('Lütfen satış fırsatı ve müşteri seçiniz.');
       return;
     }
 
