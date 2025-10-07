@@ -11963,27 +11963,31 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting Countries and Cities API Tests...")
+    print("🚀 Starting Project Types API Tests...")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
-    print("🎯 TESTING: Countries and Cities API endpoints after CitySelect.jsx icon fix")
-    print("📝 Verifying backend APIs are still working correctly for frontend integration")
+    print("🎯 TESTING: New Project Types API endpoints for NewOpportunityFormPage")
+    print("📝 Testing GET /api/project-types and POST /api/project-types with Turkish character support")
+    print("📝 Verifying data structure, duplicate prevention, and frontend integration readiness")
     print("=" * 80)
     
-    # Run comprehensive countries and cities API test
+    # Run comprehensive project types API test
     try:
-        result = test_countries_and_cities_api_endpoints()
+        result = test_project_types_api_endpoints()
         if result:
-            print("\n🎉 ALL COUNTRIES AND CITIES API TESTS COMPLETED SUCCESSFULLY!")
-            print("✅ Backend APIs are working correctly")
-            print("✅ No issues found that could affect NewOpportunityFormPage")
-            print("✅ Turkish cities are available for cascading dropdowns")
-            print("✅ Country/city data structure is proper")
+            print("\n🎉 ALL PROJECT TYPES API TESTS COMPLETED SUCCESSFULLY!")
+            print("✅ GET /api/project-types endpoint working correctly")
+            print("✅ POST /api/project-types endpoint working correctly")
+            print("✅ Turkish character support verified (ğüşıöç)")
+            print("✅ Data structure matches frontend expectations")
+            print("✅ Duplicate prevention working with Turkish error messages")
+            print("✅ Ready for NewOpportunityFormPage 'Proje Türü' dropdown integration")
+            print("✅ Ready for 'Yeni Proje Türü Ekle' functionality for admin/super-admin users")
         else:
-            print("\n❌ SOME COUNTRIES AND CITIES API TESTS FAILED!")
+            print("\n❌ SOME PROJECT TYPES API TESTS FAILED!")
             print("❌ Please check the detailed output above")
     except Exception as e:
-        print(f"\n❌ COUNTRIES AND CITIES API TESTS ERROR: {str(e)}")
+        print(f"\n❌ PROJECT TYPES API TESTS ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
