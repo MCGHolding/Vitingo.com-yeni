@@ -12609,27 +12609,27 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚨 URGENT: CUSTOMER DATA LOSS INVESTIGATION")
+    print("🚨 URGENT: SALES OPPORTUNITY NOT APPEARING IN LIST INVESTIGATION")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 100)
-    print("🎯 CRITICAL INVESTIGATION: Customer reports that a real customer they added yesterday has disappeared today")
-    print("📝 This is a critical data persistence issue preventing user from trusting the system with real data")
-    print("📝 Investigating database status, connection, and data persistence functionality")
+    print("🎯 CRITICAL INVESTIGATION: User created a new sales opportunity, success modal appeared,")
+    print("📝 but opportunity doesn't show in 'All Opportunities' list.")
+    print("📝 Investigating opportunities database status, creation, and retrieval functionality")
     print("=" * 100)
     
-    # Run critical customer data loss investigation
+    # Run critical sales opportunities investigation
     try:
-        result = test_customer_data_loss_investigation()
+        result = test_sales_opportunities_critical_investigation()
         if result:
-            print("\n✅ INVESTIGATION COMPLETED - NO CRITICAL ISSUES FOUND")
-            print("✅ Database connection is working")
-            print("✅ Customer creation functionality is working")
-            print("✅ Data persistence is working correctly")
-            print("📋 The reported data loss may be due to user error or environment confusion")
+            print("\n✅ INVESTIGATION COMPLETED - BACKEND IS WORKING CORRECTLY")
+            print("✅ Opportunities database connection is working")
+            print("✅ Opportunity creation functionality is working")
+            print("✅ Data persistence and retrieval is working correctly")
+            print("📋 The issue may be in frontend-backend integration or user environment")
         else:
-            print("\n🚨 INVESTIGATION COMPLETED - CRITICAL ISSUES FOUND!")
-            print("❌ Data persistence problems detected")
-            print("❌ Immediate action required to resolve customer data issues")
+            print("\n🚨 INVESTIGATION COMPLETED - CRITICAL BACKEND ISSUES FOUND!")
+            print("❌ Opportunities data persistence or retrieval problems detected")
+            print("❌ Immediate action required to resolve opportunities functionality")
             print("📋 See detailed investigation report above")
     except Exception as e:
         print(f"\n❌ INVESTIGATION ERROR: {str(e)}")
