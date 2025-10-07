@@ -2336,6 +2336,42 @@ async def delete_customer(customer_id: str):
         logger.error(f"Error deleting customer {customer_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/customers/{customer_id}/deactivate")
+async def deactivate_customer(customer_id: str, request: dict):
+    """Deactivate a customer (move to passive customers)"""
+    try:
+        # Check if customer exists
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        
+        # Update customer status to inactive
+        update_data = {
+            "status": "inactive",
+            "deactivated_at": datetime.utcnow(),
+            "deactivation_reason": request.get("reason", "Moved to passive customers"),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Customer not found or already inactive")
+            
+        return {
+            "success": True, 
+            "message": f"Müşteri '{customer.get('company_name', customer_id)}' pasif müşteriler arasına alındı"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deactivating customer {customer_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Geographic API Endpoints (Removed - using newer endpoint at line 4117)
 
 @api_router.get("/geo/countries/{iso2}/cities")
