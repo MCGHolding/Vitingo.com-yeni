@@ -269,6 +269,9 @@ class Customer(BaseModel):
     taxNumber: str = ""     # Vergi Numarası
     # Tags field
     tags: List[str] = Field(default_factory=list)  # Etiketler
+    # Deactivation fields
+    deactivated_at: Optional[datetime] = None
+    deactivation_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Geographic Data Models
