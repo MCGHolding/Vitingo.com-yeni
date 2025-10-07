@@ -28,7 +28,10 @@ const CountrySelect = ({
   const selectedCountry = countries.find(c => c.code === value || c.iso2 === value);
 
   const handleSelect = (country) => {
-    onChange(country.code || country.iso2);
+    console.log('CountrySelect: Country selected:', country);
+    const countryCode = country.code || country.iso2;
+    console.log('CountrySelect: Calling onChange with:', countryCode);
+    onChange(countryCode);
     setIsOpen(false);
     setSearchTerm('');
   };
