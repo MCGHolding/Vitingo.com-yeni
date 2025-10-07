@@ -42,6 +42,35 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('priority');
+  const [favoriteOpportunities, setFavoriteOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load favorite opportunities from API
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      try {
+        setLoading(true);
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/opportunities`);
+        if (response.ok) {
+          const allOpportunities = await response.json();
+          // Filter for favorite opportunities
+          const favoriteOps = allOpportunities.filter(op => 
+            op.status && (op.status.includes('favorite') || op.status.includes('favori') || op.is_favorite === true)
+          );
+          setFavoriteOpportunities(favoriteOps);
+        } else {
+          console.error('Failed to load opportunities');
+        }
+      } catch (error) {
+        console.error('Error loading opportunities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOpportunities();
+  }, []);
 
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
