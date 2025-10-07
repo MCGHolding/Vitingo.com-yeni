@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, MapPin, Video, Users, Calendar, Plus, Check, X, Clock3, Search, ExternalLink, FileText } from 'lucide-react';
+import { Clock, MapPin, Video, Users, Calendar, Plus, Check, X, Clock3, Search, ExternalLink, FileText, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import MeetingDetailsModal from './MeetingDetailsModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
