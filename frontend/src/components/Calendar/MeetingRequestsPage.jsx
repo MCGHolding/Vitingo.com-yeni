@@ -358,13 +358,13 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
         ) : (
           <div className="space-y-4">
             {filteredRequests.map((request) => (
-              <div key={request.id} className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    {/* Meeting Subject */}
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {request.subject}
-                    </h3>
+              <Card key={request.id} className="hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-xl text-gray-900 mb-2">
+                        {request.subject}
+                      </CardTitle>
 
                     {/* Meeting Details Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
