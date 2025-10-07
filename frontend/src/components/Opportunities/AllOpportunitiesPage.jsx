@@ -46,6 +46,34 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Load opportunities from backend
+  const loadOpportunities = async () => {
+    try {
+      setLoading(true);
+      console.log('🔍 Loading opportunities from:', `${BACKEND_URL}/api/opportunities`);
+      const response = await fetch(`${BACKEND_URL}/api/opportunities`);
+      
+      if (!response.ok) {
+        throw new Error('Satış fırsatları yüklenirken hata oluştu');
+      }
+      
+      const data = await response.json();
+      console.log('✅ Opportunities loaded from API:', data.length, 'items');
+      setAllOpportunities(data);
+      setError('');
+    } catch (error) {
+      console.error('❌ Error loading opportunities:', error);
+      setError('Satış fırsatları yüklenirken hata oluştu: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load data on component mount
+  useEffect(() => {
+    loadOpportunities();
+  }, []);
+
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
