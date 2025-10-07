@@ -167,15 +167,14 @@ const Dashboard = () => {
         if (response.ok) {
           const customersData = await response.json();
           setCustomers(customersData);
-          console.log('Customers loaded from database:', customersData.length);
+          console.log('✅ Customers loaded from database:', customersData.length);
         } else {
-          console.log('Failed to load customers from API, using mock data');
-          setCustomers(allCustomers);
+          console.error('❌ Failed to load customers from API, status:', response.status);
+          setCustomers([]);
         }
       } catch (error) {
-        console.error('Error loading customers:', error);
-        console.log('Using mock data as fallback');
-        setCustomers(allCustomers);
+        console.error('❌ Error loading customers:', error);
+        setCustomers([]);
       }
     };
 
