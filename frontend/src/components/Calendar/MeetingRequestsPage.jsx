@@ -315,34 +315,48 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
       </Card>
 
       {/* Meeting Requests List */}
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="space-y-6">
         {isLoading ? (
-          <div className="flex items-center justify-center h-96">
-            <div className="text-gray-500">Toplantı talepleri yükleniyor...</div>
-          </div>
+          <Card>
+            <CardContent className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Toplantı talepleri yükleniyor...</p>
+              </div>
+            </CardContent>
+          </Card>
         ) : filteredRequests.length === 0 ? (
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <Clock className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              {activeTab === 'received' && (
-                <div>
-                  <p className="text-gray-500 mb-2">Size gönderilen toplantı daveti yok</p>
-                  <p className="text-gray-400 text-sm">Birisi size toplantı daveti gönderdiğinde burada görüntülenecek</p>
+          <Card>
+            <CardContent className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="p-4 bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <Clock className="h-10 w-10 text-gray-400" />
                 </div>
-              )}
-              {activeTab === 'sent' && (
-                <div>
-                  <p className="text-gray-500 mb-2">Henüz toplantı talebi göndermediniz</p>
-                  <p className="text-gray-400 text-sm">Yeni bir toplantı talebi oluşturmak için yukarıdaki butonu kullanın</p>
-                </div>
-              )}
-              {activeTab === 'all' && (
-                <p className="text-gray-500">Henüz toplantı talebi yok</p>
-              )}
-            </div>
-          </div>
+                {activeTab === 'received' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Gelen Davet Yok</h3>
+                    <p className="text-gray-500 mb-2">Size gönderilen toplantı daveti bulunmuyor</p>
+                    <p className="text-gray-400 text-sm">Birisi size toplantı daveti gönderdiğinde burada görüntülenecektir</p>
+                  </div>
+                )}
+                {activeTab === 'sent' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz Talep Yok</h3>
+                    <p className="text-gray-500 mb-2">Henüz toplantı talebi göndermediniz</p>
+                    <p className="text-gray-400 text-sm">Yeni bir toplantı talebi oluşturmak için yukarıdaki butonu kullanın</p>
+                  </div>
+                )}
+                {activeTab === 'all' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Toplantı Talebi Yok</h3>
+                    <p className="text-gray-500">Henüz hiç toplantı talebi bulunmuyor</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="divide-y">
+          <div className="space-y-4">
             {filteredRequests.map((request) => (
               <div key={request.id} className="p-6">
                 <div className="flex items-start justify-between">
