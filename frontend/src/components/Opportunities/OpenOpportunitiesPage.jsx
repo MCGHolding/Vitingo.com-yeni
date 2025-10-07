@@ -75,7 +75,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
 
-  // Use opportunities from props, fallback to imported data
+  // Use opportunities from props, fallback to API data
   const opportunitiesData = opportunities || openOpportunities;
 
   const getCurrencyCounts = () => {
