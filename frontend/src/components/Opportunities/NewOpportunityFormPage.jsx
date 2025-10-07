@@ -193,12 +193,15 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         if (response.ok) {
           const data = await response.json();
           console.log('Countries loaded from geo endpoint:', data);
-          // Convert geo countries format to expected format
-          const formattedCountries = data.map(country => ({
-            code: country.iso2 || country.code,
-            name: country.name,
-            iso2: country.iso2 || country.code
-          }));
+          // Convert geo countries format to expected format and filter out countries with empty codes
+          const formattedCountries = data
+            .filter(country => country.iso2 && country.iso2.trim() !== '' && country.name && country.name.trim() !== '')
+            .map(country => ({
+              code: country.iso2 || country.code,
+              name: country.name,
+              iso2: country.iso2 || country.code
+            }));
+          console.log('Filtered countries:', formattedCountries.length, 'out of', data.length);
           setCountries(formattedCountries);
           return;
         }
@@ -211,7 +214,12 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
       if (response.ok) {
         const data = await response.json();
         console.log('Countries loaded from regular endpoint:', data);
-        setCountries(data);
+        // Filter out countries with empty codes here too
+        const validCountries = data.filter(country => 
+          (country.code && country.code.trim() !== '') || 
+          (country.iso2 && country.iso2.trim() !== '')
+        );
+        setCountries(validCountries);
       } else {
         console.error('Failed to load countries from both endpoints');
       }
