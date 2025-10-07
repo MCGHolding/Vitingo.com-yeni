@@ -1,6 +1,18 @@
 user_problem_statement: "Test the TeklifForm functionality, specifically the + button in the 'Ödeme Vadesi' (Payment Terms) section. The user reports that clicking the + button does not add new payment term rows. Need to: 1. Test if the TeklifForm page loads correctly at /new-teklif view 2. Test if the handleVadeEkle function is working properly 3. Test if clicking the green + button adds new payment term rows 4. Check if there are any JavaScript errors preventing the functionality. The + button should be in the 'Ödeme Vadesi' section and should call handleVadeEkle() function which adds new vadeler array items to the form state."
 
 backend:
+  - task: "Opportunity Status Management API Test"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to test new opportunity status and stage API endpoints: GET /api/opportunity-statuses, POST /api/opportunity-statuses, GET /api/opportunity-stages, POST /api/opportunity-stages. These endpoints handle dynamic status and stage creation for the New Sales Opportunity form."
+        
   - task: "Users Initialization Test - POST /api/users/initialize"
     implemented: true
     working: true
