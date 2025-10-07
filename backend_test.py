@@ -1850,23 +1850,7 @@ def test_countries_and_cities_api_endpoints():
     else:
         print("❌ SOME COUNTRIES AND CITIES API TESTS FAILED!")
         print("Please check the failed tests above for details")
-        return False(f"   Sample country iso3: {first_country.get('iso3', 'N/A')}")
-            
-            # Test 6: Look for Turkish country
-            print("\n5. Looking for Turkish country...")
-            turkish_country = None
-            for country in countries:
-                if country.get('iso2') == 'TR' or 'Türkiye' in country.get('name', '') or 'Turkey' in country.get('name', ''):
-                    turkish_country = country
-                    break
-            
-            if turkish_country:
-                print(f"   ✅ PASS: Found Turkish country: {turkish_country.get('name')} ({turkish_country.get('iso2')})")
-            else:
-                print("   ⚠️  INFO: No Turkish country found in database")
-                
-        else:
-            print("\n4. No countries found in database - this might be expected for initial state")
+        return False
         
         print("\n" + "=" * 80)
         print("GET /api/countries ENDPOINT TEST RESULTS:")
