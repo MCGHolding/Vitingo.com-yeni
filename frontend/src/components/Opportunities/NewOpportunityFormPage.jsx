@@ -737,11 +737,25 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                       <SelectValue placeholder="Aşama seçin..." />
                     </SelectTrigger>
                     <SelectContent>
+                      {/* Static stages */}
                       {stages.map((stage) => (
                         <SelectItem key={stage.value} value={stage.value}>
                           {stage.label}
                         </SelectItem>
                       ))}
+                      
+                      {/* Dynamic stages from backend */}
+                      {dynamicStages.length > 0 && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          {dynamicStages.map((stage) => (
+                            <SelectItem key={stage.id} value={stage.value}>
+                              {stage.label}
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                      
                       {isAdminOrSuperAdmin && (
                         <>
                           <div className="border-t border-gray-200 my-1"></div>
