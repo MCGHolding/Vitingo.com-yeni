@@ -957,19 +957,19 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
               </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t">
-                <button
+                <Button
+                  variant="outline"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
                 >
                   İptal
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleCreateRequest}
                   disabled={!requestForm.subject || !requestForm.date || !requestForm.start_time || !requestForm.end_time}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-md"
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
                   Toplantı Talebi Oluştur
-                </button>
+                </Button>
               </div>
             </div>
           </div>
