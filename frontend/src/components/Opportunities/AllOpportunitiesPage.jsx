@@ -276,6 +276,38 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
     });
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Satış fırsatları yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-red-800 mb-2">Hata</h2>
+            <p className="text-red-600">{error}</p>
+            <Button
+              onClick={loadOpportunities}
+              className="mt-4 bg-red-600 hover:bg-red-700"
+            >
+              Tekrar Dene
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -286,7 +318,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
               <List className="h-8 w-8 text-purple-600" />
               <span>Tüm Satış Fırsatları</span>
             </h1>
-            <p className="text-gray-600 mt-1">Sistemdeki tüm fırsatların kapsamlı görünümü</p>
+            <p className="text-gray-600 mt-1">Sistemdeki tüm fırsatların kapsamlı görünümü ({allOpportunities.length} fırsat)</p>
           </div>
           <div className="flex items-center space-x-3">
             <Button
