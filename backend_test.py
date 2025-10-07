@@ -14,6 +14,292 @@ from datetime import datetime, timedelta
 BACKEND_URL = "https://client-portal-hub-2.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
+def test_customer_data_loss_investigation():
+    """
+    CRITICAL DATA LOSS INVESTIGATION - Customer reports that a real customer they added yesterday has disappeared today.
+    
+    Investigation Requirements:
+    1. **Current Database Status**: Check GET /api/customers to see how many customers currently exist
+    2. **Database Connection**: Verify MongoDB connection is working properly
+    3. **Data Persistence**: Check if any customers exist in the database at all
+    4. **Recent Database Activity**: Look for any signs of data loss or database issues
+    5. **Customer Creation Test**: Test creating a new customer to verify the system is saving data properly
+    
+    Critical Questions to Answer:
+    - How many customers are currently in the database?
+    - Are there any real customers (non-demo data) in the database?
+    - Is the customer creation/storage functionality working correctly?
+    - Are there any error logs indicating database connection or persistence issues?
+    
+    Test Scenario:
+    1. Check current customer count and data
+    2. Create a test customer with realistic data
+    3. Verify the test customer persists correctly
+    4. Check for any database connection errors or warnings
+    """
+    
+    print("=" * 100)
+    print("🚨 CRITICAL DATA LOSS INVESTIGATION - CUSTOMER DATA PERSISTENCE TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: User reports that a real customer they added yesterday has disappeared today.")
+    print("This is a critical data persistence issue preventing user from trusting the system.")
+    print("=" * 100)
+    
+    investigation_results = {
+        "current_customer_count": 0,
+        "customers_found": [],
+        "database_connection_working": False,
+        "customer_creation_working": False,
+        "test_customer_persisted": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # INVESTIGATION STEP 1: Check Current Database Status
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 1: CURRENT DATABASE STATUS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    print("Checking how many customers currently exist in the database...")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer API endpoint is responding")
+            investigation_results["database_connection_working"] = True
+            
+            try:
+                customers = response.json()
+                customer_count = len(customers) if isinstance(customers, list) else 0
+                investigation_results["current_customer_count"] = customer_count
+                investigation_results["customers_found"] = customers[:5] if customers else []  # Store first 5 for analysis
+                
+                print(f"📊 CRITICAL FINDING: {customer_count} customers currently in database")
+                
+                if customer_count == 0:
+                    print("🚨 CRITICAL ISSUE: NO CUSTOMERS FOUND IN DATABASE!")
+                    print("   This could explain the reported data loss - all customer data may be missing.")
+                    investigation_results["critical_issues"].append("NO_CUSTOMERS_IN_DATABASE")
+                elif customer_count < 5:
+                    print(f"⚠️  WARNING: Only {customer_count} customers found - this seems low for a production system")
+                    investigation_results["warnings"].append(f"LOW_CUSTOMER_COUNT_{customer_count}")
+                else:
+                    print(f"ℹ️  INFO: {customer_count} customers found in database")
+                
+                # Analyze customer data quality
+                if customers:
+                    print(f"\n📋 CUSTOMER DATA ANALYSIS (First 5 customers):")
+                    for i, customer in enumerate(customers[:5], 1):
+                        company_name = customer.get("companyName", "N/A")
+                        email = customer.get("email", "N/A")
+                        created_at = customer.get("created_at", "N/A")
+                        customer_id = customer.get("id", "N/A")
+                        
+                        print(f"   {i}. {company_name} ({email}) - ID: {customer_id}")
+                        print(f"      Created: {created_at}")
+                        
+                        # Check for demo/test data indicators
+                        demo_indicators = ["test", "demo", "example", "sample", "mock"]
+                        is_demo = any(indicator in company_name.lower() for indicator in demo_indicators)
+                        if is_demo:
+                            print(f"      🔍 ANALYSIS: Appears to be demo/test data")
+                        else:
+                            print(f"      🔍 ANALYSIS: Appears to be real customer data")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer data: {str(e)}")
+                investigation_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer API not responding properly. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            investigation_results["critical_issues"].append(f"API_ERROR_{response.status_code}")
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+    except Exception as e:
+        print(f"❌ FAIL: Unexpected error: {str(e)}")
+        investigation_results["critical_issues"].append(f"UNEXPECTED_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 2: Test Customer Creation and Persistence
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 2: CUSTOMER CREATION AND PERSISTENCE TEST")
+    print("=" * 80)
+    print("Creating a test customer to verify data persistence is working...")
+    
+    # Create realistic test customer data
+    test_customer_data = {
+        "companyName": "Veri Kaybı Test Şirketi A.Ş.",
+        "companyTitle": "Veri Kaybı Test Şirketi Anonim Şirketi",
+        "email": "test@verikaybittest.com",
+        "phone": "+90 212 555 0123",
+        "address": "Test Mahallesi, Veri Sokak No:1 Şişli",
+        "city": "İstanbul",
+        "country": "TR",
+        "sector": "Teknoloji",
+        "taxOffice": "Şişli Vergi Dairesi",
+        "taxNumber": "1234567890",
+        "relationshipType": "Müşteri",
+        "notes": f"Test müşteri - Veri kaybı araştırması için oluşturuldu - {datetime.now().isoformat()}"
+    }
+    
+    print(f"Test customer data: {test_customer_data['companyName']}")
+    
+    # Test customer creation
+    create_endpoint = f"{BACKEND_URL}/api/customers"
+    try:
+        create_response = requests.post(create_endpoint, json=test_customer_data, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Customer creation endpoint is working")
+            investigation_results["customer_creation_working"] = True
+            
+            try:
+                created_customer = create_response.json()
+                test_customer_id = created_customer.get("id")
+                print(f"✅ PASS: Test customer created successfully with ID: {test_customer_id}")
+                
+                # INVESTIGATION STEP 3: Verify Persistence
+                print(f"\n🔍 PERSISTENCE CHECK: Verifying test customer was saved...")
+                time.sleep(2)  # Wait a moment for database write
+                
+                # Check if customer appears in GET /api/customers
+                verify_response = requests.get(endpoint, timeout=30)
+                if verify_response.status_code == 200:
+                    updated_customers = verify_response.json()
+                    updated_count = len(updated_customers) if isinstance(updated_customers, list) else 0
+                    
+                    print(f"📊 Updated customer count: {updated_count}")
+                    
+                    # Look for our test customer
+                    test_customer_found = False
+                    for customer in updated_customers:
+                        if customer.get("id") == test_customer_id:
+                            test_customer_found = True
+                            print("✅ PASS: Test customer found in database - PERSISTENCE IS WORKING!")
+                            investigation_results["test_customer_persisted"] = True
+                            break
+                    
+                    if not test_customer_found:
+                        print("🚨 CRITICAL ISSUE: Test customer NOT found in database after creation!")
+                        print("   This indicates a serious data persistence problem!")
+                        investigation_results["critical_issues"].append("TEST_CUSTOMER_NOT_PERSISTED")
+                    
+                    # Check if count increased
+                    if updated_count > investigation_results["current_customer_count"]:
+                        print(f"✅ PASS: Customer count increased from {investigation_results['current_customer_count']} to {updated_count}")
+                    else:
+                        print(f"🚨 CRITICAL ISSUE: Customer count did not increase! Still {updated_count}")
+                        investigation_results["critical_issues"].append("CUSTOMER_COUNT_NOT_INCREASED")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing created customer: {str(e)}")
+                investigation_results["critical_issues"].append(f"CREATE_PROCESS_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer creation failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            investigation_results["critical_issues"].append(f"CREATE_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer creation error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 4: Database Connection and Health Check
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 4: DATABASE CONNECTION AND HEALTH CHECK")
+    print("=" * 80)
+    
+    # Test multiple endpoints to verify database connectivity
+    health_endpoints = [
+        ("/api/customers", "Customers"),
+        ("/api/fairs", "Fairs"),
+        ("/api/users", "Users")
+    ]
+    
+    working_endpoints = 0
+    for endpoint_path, endpoint_name in health_endpoints:
+        try:
+            health_response = requests.get(f"{BACKEND_URL}{endpoint_path}", timeout=15)
+            if health_response.status_code == 200:
+                print(f"✅ {endpoint_name} endpoint: Working")
+                working_endpoints += 1
+            else:
+                print(f"❌ {endpoint_name} endpoint: Error {health_response.status_code}")
+        except Exception as e:
+            print(f"❌ {endpoint_name} endpoint: Connection error - {str(e)}")
+    
+    if working_endpoints == len(health_endpoints):
+        print("✅ PASS: All database endpoints are responding - Database connection appears healthy")
+    else:
+        print(f"⚠️  WARNING: Only {working_endpoints}/{len(health_endpoints)} endpoints working")
+        investigation_results["warnings"].append(f"PARTIAL_DB_CONNECTIVITY_{working_endpoints}_{len(health_endpoints)}")
+    
+    # FINAL INVESTIGATION REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL INVESTIGATION REPORT - CUSTOMER DATA LOSS")
+    print("=" * 100)
+    
+    print(f"📊 CURRENT DATABASE STATUS:")
+    print(f"   • Customer Count: {investigation_results['current_customer_count']}")
+    print(f"   • Database Connection: {'✅ Working' if investigation_results['database_connection_working'] else '❌ Failed'}")
+    print(f"   • Customer Creation: {'✅ Working' if investigation_results['customer_creation_working'] else '❌ Failed'}")
+    print(f"   • Data Persistence: {'✅ Working' if investigation_results['test_customer_persisted'] else '❌ Failed'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(investigation_results['critical_issues'])}")
+    for issue in investigation_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(investigation_results['warnings'])}")
+    for warning in investigation_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if investigation_results['current_customer_count'] == 0:
+        print("🚨 CRITICAL: NO CUSTOMERS IN DATABASE - This explains the reported data loss!")
+        print("   RECOMMENDATION: Check database backup/restore procedures immediately")
+        print("   RECOMMENDATION: Investigate if database was reset or cleared")
+        
+    elif not investigation_results['test_customer_persisted']:
+        print("🚨 CRITICAL: DATA PERSISTENCE FAILURE - New customers are not being saved!")
+        print("   RECOMMENDATION: Check MongoDB connection and write permissions")
+        print("   RECOMMENDATION: Check backend logs for database errors")
+        
+    elif investigation_results['current_customer_count'] < 10:
+        print("⚠️  WARNING: Very low customer count suggests possible data loss")
+        print("   RECOMMENDATION: Compare with expected customer count from business records")
+        print("   RECOMMENDATION: Check if this is a test/development environment")
+        
+    else:
+        print("ℹ️  INFO: Database appears to be functioning normally")
+        print("   RECOMMENDATION: Check if user was working in wrong environment")
+        print("   RECOMMENDATION: Verify user's customer creation process")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. Check backend server logs for database connection errors")
+    print("   2. Verify MongoDB service is running and accessible")
+    print("   3. Check if this is the correct production environment")
+    print("   4. Review recent database maintenance or backup activities")
+    print("   5. Implement customer data backup verification procedures")
+    
+    # Return overall test result
+    has_critical_issues = len(investigation_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ INVESTIGATION RESULT: CRITICAL DATA PERSISTENCE ISSUES FOUND")
+        return False
+    else:
+        print(f"\n✅ INVESTIGATION RESULT: NO CRITICAL ISSUES - SYSTEM APPEARS FUNCTIONAL")
+        return True
+
 def test_csv_template_download_fairs():
     """
     Test the CSV template download functionality for the "fairs" category.
