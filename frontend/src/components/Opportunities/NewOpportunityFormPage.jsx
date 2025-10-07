@@ -21,7 +21,6 @@ import {
   Plus
 } from 'lucide-react';
 import { AuthContext } from '../../contexts/AuthContext';
-import { useToast } from '../ui/use-toast';
 
 export default function NewOpportunityFormPage({ onClose, onSave }) {
   const { toast } = useToast();
