@@ -288,22 +288,34 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
   const handleDeleteSuccess = async () => {
     console.log('🎉 handleDeleteSuccess called - refreshing customers...');
     
-    toast({
-      title: "İşlem Tamamlandı",
-      description: "Müşteri işlemi başarıyla tamamlandı.",
-    });
-    
     // Refresh customers list without page reload
     if (refreshCustomers) {
       console.log('🔄 Calling refreshCustomers function...');
       try {
         await refreshCustomers();
         console.log('✅ refreshCustomers completed successfully');
+        
+        // Small delay to ensure state update
+        setTimeout(() => {
+          toast({
+            title: "İşlem Tamamlandı",
+            description: "Müşteri işlemi başarıyla tamamlandı.",
+          });
+        }, 500);
+        
       } catch (error) {
         console.error('❌ refreshCustomers failed:', error);
+        toast({
+          title: "Hata",
+          description: "Liste yenilenemedi. Sayfayı yenileyin.",
+        });
       }
     } else {
       console.error('❌ refreshCustomers function not available');
+      toast({
+        title: "Hata", 
+        description: "Liste yenileme fonksiyonu bulunamadı.",
+      });
     }
   };
 
