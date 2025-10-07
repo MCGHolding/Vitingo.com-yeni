@@ -27,7 +27,7 @@ import {
   List,
   Clock
 } from 'lucide-react';
-import { openOpportunities, opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
+import { opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
 export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities }) {
   const { toast } = useToast();
