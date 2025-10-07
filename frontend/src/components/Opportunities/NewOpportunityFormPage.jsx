@@ -408,11 +408,14 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         console.log('Opportunity saved:', savedData);
 
         // Set success state with opportunity info
+        const allStages = [...stages, ...dynamicStages];
+        const selectedStage = allStages.find(s => s.value === formData.stage);
+        
         setCreatedOpportunityInfo({
           title: formData.title,
           customer: formData.customer,
           amount: `${formData.amount} ${formData.currency}`,
-          stage: stages.find(s => s.value === formData.stage)?.label || formData.stage
+          stage: selectedStage?.label || formData.stage
         });
         setShowSuccessModal(true);
       } else {
