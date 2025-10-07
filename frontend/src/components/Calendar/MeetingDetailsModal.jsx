@@ -196,29 +196,29 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                     {response ? (
                       <div className="flex items-center space-x-1">
                         {response.response === 'accepted' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                             <Check className="h-3 w-3 mr-1" />
                             Kabul
-                          </span>
+                          </Badge>
                         )}
                         {response.response === 'maybe' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
                             <Clock3 className="h-3 w-3 mr-1" />
                             Belki
-                          </span>
+                          </Badge>
                         )}
                         {response.response === 'declined' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
                             <X className="h-3 w-3 mr-1" />
                             Reddet
-                          </span>
+                          </Badge>
                         )}
                       </div>
                     ) : (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                      <Badge variant="secondary" className="bg-gray-200 text-gray-600">
                         <Clock className="h-3 w-3 mr-1" />
                         Bekliyor
-                      </span>
+                      </Badge>
                     )}
                   </div>
                 );
