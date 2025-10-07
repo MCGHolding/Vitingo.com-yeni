@@ -67,9 +67,19 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
 
   // Load data on component mount
   useEffect(() => {
+    console.log('🚀 TeklifForm useEffect triggered - loading data...');
     loadSatisFiresatlari();
     loadMusteriler();
   }, []);
+
+  // Debug: log state changes
+  useEffect(() => {
+    console.log('📊 Satış fırsatları state updated:', satisFiresatlari.length, 'items');
+  }, [satisFiresatlari]);
+
+  useEffect(() => {
+    console.log('👥 Müşteriler state updated:', musteriler.length, 'items');
+  }, [musteriler]);
 
   // Handle satış fırsatı selection
   const handleSatisFiresatChange = (satisFiresatId) => {
