@@ -64,30 +64,30 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-auto">
-        {/* Header */}
-        <div className="p-6 border-b">
+      <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-auto">
+        <CardHeader className="border-b">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">
+              <CardTitle className="text-xl flex items-center space-x-2">
                 <FileText className="h-6 w-6 text-blue-600" />
                 <span>Toplantı Detayları</span>
-              </h2>
+              </CardTitle>
               <p className="text-sm text-gray-500 mt-1">
                 {isOrganizer ? 'Organize ettiğiniz toplantı' : 'Size gönderilen toplantı daveti'}
               </p>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
               <X className="h-6 w-6" />
-            </button>
+            </Button>
           </div>
-        </div>
+        </CardHeader>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
+        <CardContent className="space-y-6">
           {/* Meeting Title */}
           <div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-2">
