@@ -89,19 +89,29 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
 
         <CardContent className="space-y-6">
           {/* Meeting Title */}
-          <div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-              {request.subject}
-            </h3>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <span>Organize Eden: <strong>{request.organizer_name}</strong></span>
-              <span>•</span>
-              <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
-            </div>
-          </div>
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="pt-6">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                {request.subject}
+              </h3>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <span>Organize Eden: <strong>{request.organizer_name}</strong></span>
+                <span>•</span>
+                <span>{new Date(request.created_at).toLocaleDateString('tr-TR')}</span>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Meeting Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center space-x-2">
+                <Calendar className="h-5 w-5 text-blue-600" />
+                <span>Toplantı Bilgileri</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Date and Time */}
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
