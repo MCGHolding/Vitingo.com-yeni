@@ -172,6 +172,7 @@ const MeetingDetailsModal = ({ isOpen, onClose, request, currentUser, onResponse
                   </div>
                 </div>
               )}
+            </div>
               </div>
             </CardContent>
           </Card>
