@@ -49,7 +49,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     iban: '',
     currency: 'TRY',
     tags: [],
-    notes: ''
+    notes: '',
+    contactPerson: ''
   });
 
   const [contacts, setContacts] = useState([]);
