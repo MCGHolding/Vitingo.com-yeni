@@ -170,52 +170,73 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
             </Card>
 
             {/* SÜREÇ BİLGİLERİ */}
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gray-50 border-b">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                  <span>Süreç Bilgileri</span>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-emerald-50/30 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-100/50">
+                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
+                    Süreç Bilgileri
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Durum</label>
-                      <div>
-                        <Badge className={`${getStatusColor(opportunity.statusText)} border px-3 py-1`}>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Durum</label>
+                      <div className="mt-2">
+                        <Badge className={`${getStatusColor(opportunity.statusText)} border-0 px-4 py-2 text-sm font-medium shadow-lg`}>
+                          <CheckCircle className="h-4 w-4 mr-2" />
                           {opportunity.statusText}
                         </Badge>
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Aşama</label>
-                      <p className="text-gray-900">{opportunity.stage || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Aşama</label>
+                      <p className="text-gray-700 text-base font-medium mt-1">{opportunity.stage || '-'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Kullanıcı Adı Soyadı</label>
-                      <div className="flex items-center space-x-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Kullanıcı Adı Soyadı</label>
+                      <div className="flex items-center space-x-3 mt-2">
+                        <Avatar className="h-10 w-10 shadow-lg border-2 border-white">
+                          <AvatarFallback className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-bold">
                             {(opportunity.contactPerson || 'NN').split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="font-medium text-gray-900">{opportunity.contactPerson || opportunity.contact_person || '-'}</p>
+                        <p className="font-bold text-gray-800 text-base">{opportunity.contactPerson || opportunity.contact_person || '-'}</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Başarı Olasılığı</label>
-                      <p className="text-gray-900">{opportunity.probability || 50}%</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Başarı Olasılığı</label>
+                      <div className="mt-2">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-1 bg-gray-200 rounded-full h-3 shadow-inner">
+                            <div 
+                              className="bg-gradient-to-r from-emerald-500 to-teal-500 h-3 rounded-full shadow-sm transition-all duration-500" 
+                              style={{width: `${opportunity.probability || 50}%`}}
+                            ></div>
+                          </div>
+                          <span className="text-lg font-bold text-emerald-600">{opportunity.probability || 50}%</span>
+                        </div>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Son Güncelleme</label>
-                      <p className="text-gray-900">{formatDate(opportunity.updated_at || opportunity.lastUpdate)}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Son Güncelleme</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <p className="text-gray-600 text-base">{formatDate(opportunity.updated_at || opportunity.lastUpdate)}</p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Oluşturulma Tarihi</label>
-                      <p className="text-gray-900">{formatDate(opportunity.created_at || opportunity.lastUpdate)}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Oluşturulma Tarihi</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <p className="text-gray-600 text-base">{formatDate(opportunity.created_at || opportunity.lastUpdate)}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
