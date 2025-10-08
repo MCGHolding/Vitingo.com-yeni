@@ -695,6 +695,7 @@ export default function OpportunityTimelinePage({
       <ActivityModal
         isOpen={activityModalOpen}
         onClose={handleActivityModalClose}
+        onSave={handleActivitySave}
         opportunityId={opportunityId}
         opportunityTitle={opportunityTitle}
       />
