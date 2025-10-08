@@ -4,6 +4,7 @@ import { Card, CardContent } from './card';
 import { Badge } from './badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
 import { useToast } from '../../hooks/use-toast';
+import PDFViewer from './PDFViewer';
 import { 
   Upload, 
   X, 
