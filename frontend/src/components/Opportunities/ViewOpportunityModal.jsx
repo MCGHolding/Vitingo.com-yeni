@@ -293,7 +293,7 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
               <CardHeader className="bg-gray-50 border-b">
                 <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
                   <Info className="h-5 w-5 text-blue-600" />
-                  <span>Detaylar</span>
+                  <span>Proje Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
