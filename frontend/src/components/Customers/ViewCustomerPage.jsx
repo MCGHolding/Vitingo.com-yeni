@@ -212,50 +212,40 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
                 <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
                   <Users className="h-6 w-6 text-purple-600" />
-                  <span>Yetkili Kişiler ({customer.contact_persons?.length || 0})</span>
+                  <span>İletişim Kişisi</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                {customer.contact_persons && customer.contact_persons.length > 0 ? (
-                  <div className="space-y-4">
-                    {customer.contact_persons.map((contact, index) => (
-                      <div key={index} className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg border hover:shadow-md transition-all duration-200">
-                        <div className="flex items-start space-x-3">
-                          <div className="p-2 bg-purple-100 rounded-lg">
-                            <User className="h-5 w-5 text-purple-600" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-bold text-gray-900 text-lg">
-                              {contact.full_name || contact.name || 'İsimsiz'}
-                            </p>
-                            {contact.mobile && (
-                              <p className="text-sm text-gray-600 flex items-center space-x-2 mt-1">
-                                <Phone className="h-4 w-4 text-green-600" />
-                                <span>{contact.mobile}</span>
-                              </p>
-                            )}
-                            {contact.email && (
-                              <p className="text-sm text-gray-600 flex items-center space-x-2 mt-1">
-                                <Mail className="h-4 w-4 text-blue-600" />
-                                <span>{contact.email}</span>
-                              </p>
-                            )}
-                            {contact.position && (
-                              <p className="text-sm text-gray-600 flex items-center space-x-2 mt-1">
-                                <Briefcase className="h-4 w-4 text-orange-600" />
-                                <span>{contact.position}</span>
-                              </p>
-                            )}
-                          </div>
-                        </div>
+                {customer.contactPerson ? (
+                  <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg border hover:shadow-md transition-all duration-200">
+                    <div className="flex items-start space-x-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <User className="h-5 w-5 text-purple-600" />
                       </div>
-                    ))}
+                      <div className="flex-1">
+                        <p className="font-bold text-gray-900 text-lg">
+                          {customer.contactPerson}
+                        </p>
+                        {customer.phone && (
+                          <p className="text-sm text-gray-600 flex items-center space-x-2 mt-1">
+                            <Phone className="h-4 w-4 text-green-600" />
+                            <span>{customer.phone}</span>
+                          </p>
+                        )}
+                        {customer.email && (
+                          <p className="text-sm text-gray-600 flex items-center space-x-2 mt-1">
+                            <Mail className="h-4 w-4 text-blue-600" />
+                            <span>{customer.email}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <Users className="h-12 w-12 mx-auto mb-3 text-gray-400" />
-                    <p className="text-base">Yetkili kişi bilgisi bulunmuyor</p>
-                    <p className="text-sm mt-1">Bu müşteri için henüz yetkili kişi eklenmemiş</p>
+                    <p className="text-base">İletişim kişisi bilgisi bulunmuyor</p>
+                    <p className="text-sm mt-1">Bu müşteri için henüz iletişim kişisi eklenmemiş</p>
                   </div>
                 )}
               </CardContent>
