@@ -461,106 +461,25 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           {/* Right Column */}
           <div className="space-y-6">
 
-            {/* Contact Persons */}
+            {/* Contact Person */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
-                    <Users className="h-5 w-5 text-purple-600" />
-                    <span>Yetkili Kişiler</span>
-                  </CardTitle>
-                  <Button
-                    onClick={addContact}
-                    size="sm"
-                    variant="outline"
-                    className="text-green-600 border-green-600 hover:bg-green-50"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Kişi Ekle
-                  </Button>
-                </div>
+                <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                  <User className="h-5 w-5 text-purple-600" />
+                  <span>İletişim Kişisi</span>
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  {contacts.map((contact, index) => (
-                    <div key={index} className="bg-gray-50 p-4 rounded-lg relative">
-                      <Button
-                        onClick={() => removeContact(index)}
-                        size="sm"
-                        variant="ghost"
-                        className="absolute top-2 right-2 text-red-600 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      
-                      <div className="space-y-3 pr-8">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Ad Soyad
-                          </label>
-                          <Input
-                            value={contact.full_name}
-                            onChange={(e) => handleContactChange(index, 'full_name', e.target.value)}
-                            placeholder="Yetkili kişinin adı"
-                            size="sm"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Telefon
-                          </label>
-                          <Input
-                            value={contact.mobile}
-                            onChange={(e) => handleContactChange(index, 'mobile', e.target.value)}
-                            placeholder="Telefon numarası"
-                            size="sm"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            E-posta
-                          </label>
-                          <Input
-                            type="email"
-                            value={contact.email}
-                            onChange={(e) => handleContactChange(index, 'email', e.target.value)}
-                            placeholder="E-posta adresi"
-                            size="sm"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Pozisyon
-                          </label>
-                          <Input
-                            value={contact.position}
-                            onChange={(e) => handleContactChange(index, 'position', e.target.value)}
-                            placeholder="İş pozisyonu"
-                            size="sm"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {contacts.length === 0 && (
-                    <div className="text-center py-6 text-gray-500">
-                      <Users className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm">Henüz yetkili kişi eklenmemiş</p>
-                      <Button
-                        onClick={addContact}
-                        size="sm"
-                        variant="outline"
-                        className="mt-2 text-green-600 border-green-600 hover:bg-green-50"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        İlk Kişiyi Ekle
-                      </Button>
-                    </div>
-                  )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    İletişim Kişisi Adı
+                  </label>
+                  <Input
+                    value={formData.contactPerson}
+                    onChange={(e) => handleInputChange('contactPerson', e.target.value)}
+                    placeholder="İletişim kişisinin adı"
+                    className="w-full"
+                  />
                 </div>
               </CardContent>
             </Card>
