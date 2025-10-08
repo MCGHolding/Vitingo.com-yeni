@@ -163,6 +163,9 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
 
   const filteredOpportunities = useMemo(() => {
     let filtered = allOpportunities;
+    
+    console.log('🔍 Starting filtering with', filtered.length, 'opportunities');
+    console.log('📊 Filter settings:', { searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter });
 
     // Search filter
     if (searchTerm) {
@@ -171,6 +174,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
         opp.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         opp.contactPerson.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      console.log('🔍 After search filter:', filtered.length);
     }
 
     // Tag search filter
