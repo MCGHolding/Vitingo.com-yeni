@@ -26,6 +26,8 @@ export default function FileUpload({
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState(null);
   const fileInputRef = useRef(null);
   const { toast } = useToast();
 
