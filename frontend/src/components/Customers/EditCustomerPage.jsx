@@ -17,6 +17,7 @@ import {
   X,
   Save,
   ArrowLeft,
+  User,
   CheckCircle,
   CreditCard,
   Trash2,
