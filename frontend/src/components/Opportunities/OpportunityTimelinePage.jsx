@@ -644,8 +644,8 @@ export default function OpportunityTimelinePage({
                     )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
