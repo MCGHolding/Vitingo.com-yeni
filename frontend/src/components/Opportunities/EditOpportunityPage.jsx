@@ -49,6 +49,9 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
   const [previewFiles, setPreviewFiles] = useState([]);
   const [previewTitle, setPreviewTitle] = useState('');
   const [previewInitialIndex, setPreviewInitialIndex] = useState(0);
+  
+  // New note modal states
+  const [newNoteModalOpen, setNewNoteModalOpen] = useState(false);
 
   useEffect(() => {
     if (opportunity) {
