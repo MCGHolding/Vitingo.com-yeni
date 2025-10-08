@@ -915,14 +915,7 @@ export default function OpportunityTimelinePage({
         </div>
       </div>
 
-      {/* Activity Modal */}
-      <ActivityModal
-        isOpen={activityModalOpen}
-        onClose={handleActivityModalClose}
-        onActivityCreated={handleActivityCreated}
-        opportunityId={opportunityId}
-        opportunityTitle={opportunityTitle}
-      />
+      {/* Activity Modal removed */}
     </div>
   );
 }
