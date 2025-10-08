@@ -211,6 +211,15 @@ const Dashboard = () => {
     setCurrentView('all-opportunities');
   };
 
+  // Avans handlers
+  const handleFinansOnayi = () => {
+    setCurrentView('finans-onayi');
+  };
+
+  const handleKapanmisAvanslar = () => {
+    setCurrentView('kapanmis-avanslar');
+  };
+
   // User Management Handlers
   const handleNewUser = () => {
     setShowNewUserForm(true);
