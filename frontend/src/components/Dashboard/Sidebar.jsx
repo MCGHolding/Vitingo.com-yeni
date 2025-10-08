@@ -476,6 +476,14 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Activity Timeline main menu
+    if (item.name === 'Aktivite Takibi' && !subItem) {
+      if (handleActivityTimeline) {
+        handleActivityTimeline();
+      }
+      return;
+    }
+    
     // Handle Customer menu actions
     if (subItem && subItem.name === 'Yeni Müşteri') {
       if (onNewCustomer) {
