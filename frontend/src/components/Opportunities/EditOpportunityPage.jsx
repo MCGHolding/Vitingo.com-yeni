@@ -39,6 +39,7 @@ import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
 import NewNoteModal from './NewNoteModal';
 import NotesHistoryModal from './NotesHistoryModal';
+import ActivityModal from './ActivityModal';
 
 export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity }) {
   const { toast } = useToast();
