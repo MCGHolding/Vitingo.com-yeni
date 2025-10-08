@@ -108,6 +108,17 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
     }
   };
 
+  const handleNewContactAdded = (newContact) => {
+    // Add new contact to the list
+    setContactPersons(prev => [...prev, newContact]);
+    
+    // Automatically select the new contact
+    handleInputChange('contact_person', newContact.name);
+    
+    // Close modal
+    setShowNewContactModal(false);
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
