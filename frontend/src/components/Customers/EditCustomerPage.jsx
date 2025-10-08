@@ -32,8 +32,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export default function EditCustomerPage({ customer, onBack, onSave }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [customerTypes, setCustomerTypes] = useState([]);
-  const [sectors, setSectors] = useState([]);
 
   const [formData, setFormData] = useState({
     company_short_name: '',
