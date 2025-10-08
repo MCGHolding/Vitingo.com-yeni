@@ -483,17 +483,19 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
             )}
 
             {/* Actions */}
-            <div className="flex items-center justify-end space-x-3 pt-6 border-t">
+            <div className="flex items-center justify-center space-x-4 pt-8">
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="px-6"
+                className="px-8 py-3 text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 rounded-xl shadow-md"
               >
+                <X className="h-4 w-4 mr-2" />
                 Kapat
               </Button>
               <Button
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-6"
+                className="px-8 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl transform hover:scale-105"
               >
+                <Sparkles className="h-4 w-4 mr-2" />
                 Düzenle
               </Button>
             </div>
