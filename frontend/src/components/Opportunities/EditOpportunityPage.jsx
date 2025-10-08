@@ -143,6 +143,29 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
     }));
   };
 
+  const handleFilePreview = (files, title, initialIndex = 0) => {
+    // Convert file IDs to preview format with sample data
+    const previewData = files.map((fileId, index) => ({
+      id: fileId,
+      name: `${title.replace(/\s+/g, '_')}_${index + 1}.pdf`, // Default to PDF, can be enhanced
+      url: `/api/files/${fileId}`, // Backend endpoint for file serving
+      size: 1024 * 1024 * 2.5, // Sample 2.5MB
+      type: 'application/pdf' // Default type, can be enhanced
+    }));
+
+    setPreviewFiles(previewData);
+    setPreviewTitle(title);
+    setPreviewInitialIndex(initialIndex);
+    setPreviewModalOpen(true);
+  };
+
+  const closePreviewModal = () => {
+    setPreviewModalOpen(false);
+    setPreviewFiles([]);
+    setPreviewTitle('');
+    setPreviewInitialIndex(0);
+  };
+
   const tagColors = {
     'ALMANYA': 'bg-red-500 text-white',
     'DÜSSELDORF': 'bg-purple-500 text-white',
