@@ -571,7 +571,6 @@ export default function OpportunityTimelinePage({
               size="sm" 
               variant="outline" 
               className="border-purple-200 text-purple-700 hover:bg-purple-50 h-9"
-              onClick={handleNewActivity}
             >
               <Plus className="h-3.5 w-3.5 mr-1.5" />
               Yeni
