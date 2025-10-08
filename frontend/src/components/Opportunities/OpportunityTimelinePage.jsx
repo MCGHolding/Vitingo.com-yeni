@@ -102,35 +102,27 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
   return (
     <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm mb-6">
       <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
-            <Activity className="h-4 w-4 text-purple-600" />
-            <span>Hızlı Aktivite Ekle</span>
-          </h3>
-        </div>
+        <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+          <Activity className="h-4 w-4 text-purple-600" />
+          <span>Aktivite Ekle</span>
+        </h3>
       </div>
 
-      {/* Activity Type Selection */}
-      {!selectedType && (
-        <div className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {Object.entries(QUICK_ACTIVITY_TYPES).map(([type, config]) => (
-              <Button
-                key={type}
-                variant="outline"
-                onClick={() => setSelectedType(type)}
-                className={`h-auto p-3 flex flex-col items-center space-y-2 ${config.borderColor} hover:${config.bgColor}`}
-              >
-                <config.icon className={`h-5 w-5 ${config.color}`} />
-                <span className="text-xs font-medium text-gray-700">{config.label}</span>
-              </Button>
-            ))}
-          </div>
+      <div className="p-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {Object.entries(QUICK_ACTIVITY_TYPES).map(([type, config]) => (
+            <Button
+              key={type}
+              variant="outline"
+              onClick={() => handleActivityTypeClick(type)}
+              className={`h-auto p-4 flex flex-col items-center space-y-2 ${config.borderColor} hover:${config.bgColor} transition-all duration-200 hover:shadow-md`}
+            >
+              <config.icon className={`h-6 w-6 ${config.color}`} />
+              <span className="text-sm font-medium text-gray-700">{config.label}</span>
+            </Button>
+          ))}
         </div>
-      )}
-
-      {/* Selected Type Form */}
-      {selectedType && renderQuickForm()}
+      </div>
     </div>
   );
 }
