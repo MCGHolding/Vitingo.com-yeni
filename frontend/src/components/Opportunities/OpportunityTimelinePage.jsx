@@ -28,7 +28,9 @@ import {
   TrendingUp,
   BarChart3,
   PieChart,
-  Plus
+  Plus,
+  FileText,
+  X
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
