@@ -133,6 +133,9 @@ const Dashboard = () => {
   
   // Opportunity edit states
   const [selectedOpportunityForEdit, setSelectedOpportunityForEdit] = useState(null);
+  
+  // Opportunity timeline states
+  const [selectedOpportunityForTimeline, setSelectedOpportunityForTimeline] = useState(null);
 
   // Load fairs from backend API
   useEffect(() => {
