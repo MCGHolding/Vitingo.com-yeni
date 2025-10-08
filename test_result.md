@@ -309,6 +309,7 @@ test_plan:
     - "JavaScript Error Fix for OpportunityTimelinePage ActivityModal"
     - "ActionMenuPopover Delete Option Removal Test"
     - "URGENT Sales Opportunities Display Issue Resolution"
+    - "Restored Detailed Activity Forms with Modal System Testing - OpportunityTimelinePage"
 
 agent_communication:
   - agent: "testing"
