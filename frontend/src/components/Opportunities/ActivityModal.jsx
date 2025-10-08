@@ -72,9 +72,11 @@ const ACTIVITY_TYPES = [
   }
 ];
 
-export default function ActivityModal({ isOpen, onClose, opportunityId, opportunityTitle }) {
+export default function ActivityModal({ isOpen, onClose, opportunityId, opportunityTitle, onActivityCreated }) {
+  const { toast } = useToast();
   const [selectedActivityType, setSelectedActivityType] = useState(null);
   const [activityData, setActivityData] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const handleActivityTypeSelect = (activityType) => {
     setSelectedActivityType(activityType);
