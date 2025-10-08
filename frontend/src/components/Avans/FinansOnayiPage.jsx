@@ -19,6 +19,8 @@ export default function FinansOnayiPage({ onBackToDashboard }) {
   const [avanslar, setAvanslar] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAvans, setSelectedAvans] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Load advances pending finance approval
   useEffect(() => {
