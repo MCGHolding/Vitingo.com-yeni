@@ -234,7 +234,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
               onClick={() => setNewNoteModalOpen(true)}
             >
               <Plus className="h-4 w-4" />
-              <span>YENİ NOT</span>
+              <span>NOT EKLE</span>
             </Button>
           </div>
         </div>
