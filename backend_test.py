@@ -1362,6 +1362,533 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_avans_system_comprehensive():
+    """
+    COMPREHENSIVE AVANS (ADVANCE) SYSTEM API TESTING
+    
+    Test the new Avans (Advance) system API endpoints that were just created.
+    This is a financial advance management system with specific workflow requirements.
+    
+    Test Targets:
+    1. GET /api/avans - Get all advances
+    2. GET /api/avans/finans-onayi - Get advances pending finance approval (finance_approved=false)
+    3. GET /api/avans/kapanmis - Get closed advances (finance_approved=true only)
+    4. POST /api/avans - Create a new advance
+    5. PUT /api/avans/{id} - Update advance (save function)
+    6. POST /api/avans/{id}/onayla - Approve advance and move to closed
+    
+    Test Workflow:
+    1. Create a test advance with realistic data
+    2. Verify advance appears in finans-onayi endpoint (not in kapanmis)
+    3. Test updating the advance (PUT request)
+    4. Test approving the advance (POST onayla)
+    5. Verify advance moves to kapanmis endpoint and disappears from finans-onayi
+    
+    Business Logic Requirements:
+    - New advances should have finance_approved=false
+    - Only finans-onayi should show non-approved advances
+    - Only kapanmis should show approved advances (finance_approved=true)
+    - Onayla endpoint should set finance_approved=true and status=closed
+    """
+    
+    print("=" * 100)
+    print("🏦 COMPREHENSIVE AVANS (ADVANCE) SYSTEM API TESTING 🏦")
+    print("=" * 100)
+    print("CONTEXT: Testing new financial advance management system with specific workflow requirements.")
+    print("This system manages employee advance requests through finance approval workflow.")
+    print("=" * 100)
+    
+    test_results = {
+        "get_all_avans": False,
+        "get_finans_onayi": False,
+        "get_kapanmis": False,
+        "create_avans": False,
+        "update_avans": False,
+        "approve_avans": False,
+        "workflow_verification": False,
+        "test_avans_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # STEP 1: Test GET /api/avans - Get all advances
+    print("\n" + "=" * 80)
+    print("STEP 1: TESTING GET ALL ADVANCES - /api/avans")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/avans"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET /api/avans endpoint responding correctly")
+            test_results["get_all_avans"] = True
+            
+            try:
+                advances = response.json()
+                advance_count = len(advances) if isinstance(advances, list) else 0
+                print(f"📊 Current advances in database: {advance_count}")
+                
+                if advance_count > 0:
+                    print(f"📋 Sample advance data (first advance):")
+                    first_advance = advances[0]
+                    print(f"   Title: {first_advance.get('title', 'N/A')}")
+                    print(f"   Employee: {first_advance.get('employee_name', 'N/A')}")
+                    print(f"   Amount: {first_advance.get('amount', 0)} {first_advance.get('currency', 'TRY')}")
+                    print(f"   Status: {first_advance.get('status', 'N/A')}")
+                    print(f"   Finance Approved: {first_advance.get('finance_approved', False)}")
+                
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse advances data: {str(e)}")
+                test_results["warnings"].append(f"GET_ALL_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: GET /api/avans failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_ALL_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing GET /api/avans: {str(e)}")
+        test_results["critical_issues"].append(f"GET_ALL_ERROR: {str(e)}")
+    
+    # STEP 2: Test GET /api/avans/finans-onayi - Get advances pending finance approval
+    print("\n" + "=" * 80)
+    print("STEP 2: TESTING GET FINANCE APPROVAL PENDING - /api/avans/finans-onayi")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/avans/finans-onayi"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET /api/avans/finans-onayi endpoint responding correctly")
+            test_results["get_finans_onayi"] = True
+            
+            try:
+                pending_advances = response.json()
+                pending_count = len(pending_advances) if isinstance(pending_advances, list) else 0
+                print(f"📊 Advances pending finance approval: {pending_count}")
+                
+                # Verify business logic: all should have finance_approved=false
+                if pending_count > 0:
+                    all_pending_correct = True
+                    for advance in pending_advances:
+                        if advance.get('finance_approved', True):  # Default True to catch errors
+                            all_pending_correct = False
+                            print(f"❌ BUSINESS LOGIC ERROR: Advance {advance.get('id')} has finance_approved=true but appears in pending list")
+                            test_results["critical_issues"].append("PENDING_LIST_CONTAINS_APPROVED")
+                    
+                    if all_pending_correct:
+                        print("✅ PASS: All advances in finans-onayi have finance_approved=false (correct business logic)")
+                
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse finans-onayi data: {str(e)}")
+                test_results["warnings"].append(f"FINANS_ONAYI_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: GET /api/avans/finans-onayi failed with status {response.status_code}")
+            test_results["critical_issues"].append(f"FINANS_ONAYI_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing GET /api/avans/finans-onayi: {str(e)}")
+        test_results["critical_issues"].append(f"FINANS_ONAYI_ERROR: {str(e)}")
+    
+    # STEP 3: Test GET /api/avans/kapanmis - Get closed advances
+    print("\n" + "=" * 80)
+    print("STEP 3: TESTING GET CLOSED ADVANCES - /api/avans/kapanmis")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/avans/kapanmis"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET /api/avans/kapanmis endpoint responding correctly")
+            test_results["get_kapanmis"] = True
+            
+            try:
+                closed_advances = response.json()
+                closed_count = len(closed_advances) if isinstance(closed_advances, list) else 0
+                print(f"📊 Closed advances: {closed_count}")
+                
+                # Verify business logic: all should have finance_approved=true
+                if closed_count > 0:
+                    all_closed_correct = True
+                    for advance in closed_advances:
+                        if not advance.get('finance_approved', False):
+                            all_closed_correct = False
+                            print(f"❌ BUSINESS LOGIC ERROR: Advance {advance.get('id')} has finance_approved=false but appears in closed list")
+                            test_results["critical_issues"].append("CLOSED_LIST_CONTAINS_UNAPPROVED")
+                    
+                    if all_closed_correct:
+                        print("✅ PASS: All advances in kapanmis have finance_approved=true (correct business logic)")
+                
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse kapanmis data: {str(e)}")
+                test_results["warnings"].append(f"KAPANMIS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: GET /api/avans/kapanmis failed with status {response.status_code}")
+            test_results["critical_issues"].append(f"KAPANMIS_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing GET /api/avans/kapanmis: {str(e)}")
+        test_results["critical_issues"].append(f"KAPANMIS_ERROR: {str(e)}")
+    
+    # STEP 4: Test POST /api/avans - Create a new advance
+    print("\n" + "=" * 80)
+    print("STEP 4: TESTING CREATE NEW ADVANCE - POST /api/avans")
+    print("=" * 80)
+    
+    # Create realistic test advance data as specified in requirements
+    test_advance_data = {
+        "title": "Proje Avansı",
+        "employee_name": "Ahmet Yılmaz",
+        "amount": 5000,
+        "currency": "TRY",
+        "department": "IT",
+        "reason": "Proje masrafları için avans talebi",
+        "description": f"Test avansı - API testi için oluşturuldu - {datetime.now().isoformat()}",
+        "project_name": "Teknoloji Projesi 2025",
+        "notes": "API test verisi"
+    }
+    
+    endpoint = f"{BACKEND_URL}/api/avans"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Creating advance: {test_advance_data['title']}")
+    print(f"Employee: {test_advance_data['employee_name']}")
+    print(f"Amount: {test_advance_data['amount']} {test_advance_data['currency']}")
+    print(f"Department: {test_advance_data['department']}")
+    print(f"Reason: {test_advance_data['reason']}")
+    
+    try:
+        response = requests.post(endpoint, json=test_advance_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: POST /api/avans advance creation successful")
+            test_results["create_avans"] = True
+            
+            try:
+                created_advance = response.json()
+                test_avans_id = created_advance.get("id")
+                test_results["test_avans_id"] = test_avans_id
+                
+                print(f"✅ PASS: Test advance created successfully with ID: {test_avans_id}")
+                
+                # Verify business logic: new advance should have finance_approved=false
+                finance_approved = created_advance.get("finance_approved", True)  # Default True to catch errors
+                status = created_advance.get("status", "unknown")
+                
+                if not finance_approved:
+                    print("✅ PASS: New advance has finance_approved=false (correct business logic)")
+                else:
+                    print("❌ BUSINESS LOGIC ERROR: New advance should have finance_approved=false")
+                    test_results["critical_issues"].append("NEW_ADVANCE_INCORRECTLY_APPROVED")
+                
+                if status == "pending":
+                    print("✅ PASS: New advance has status='pending' (correct business logic)")
+                else:
+                    print(f"⚠️  WARNING: New advance status is '{status}', expected 'pending'")
+                    test_results["warnings"].append(f"NEW_ADVANCE_STATUS_{status}")
+                
+                # Verify all fields were saved correctly
+                print(f"\n🔍 CREATION VERIFICATION: Checking created advance data...")
+                for key, expected_value in test_advance_data.items():
+                    actual_value = created_advance.get(key)
+                    if actual_value == expected_value:
+                        print(f"   ✅ {key}: {actual_value}")
+                    else:
+                        print(f"   ⚠️  {key}: Expected '{expected_value}', Got '{actual_value}'")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing created advance: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_PROCESS_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: POST /api/avans failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CREATE_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing POST /api/avans: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # STEP 5: Verify advance appears in finans-onayi (not in kapanmis)
+    if test_results["test_avans_id"]:
+        print("\n" + "=" * 80)
+        print("STEP 5: WORKFLOW VERIFICATION - ADVANCE IN FINANS-ONAYI")
+        print("=" * 80)
+        
+        print("🔍 Verifying test advance appears in finans-onayi endpoint...")
+        time.sleep(2)  # Wait for database consistency
+        
+        try:
+            # Check finans-onayi endpoint
+            finans_response = requests.get(f"{BACKEND_URL}/api/avans/finans-onayi", timeout=30)
+            if finans_response.status_code == 200:
+                finans_advances = finans_response.json()
+                found_in_finans = any(adv.get("id") == test_results["test_avans_id"] for adv in finans_advances)
+                
+                if found_in_finans:
+                    print("✅ PASS: Test advance found in finans-onayi endpoint (correct workflow)")
+                else:
+                    print("❌ FAIL: Test advance NOT found in finans-onayi endpoint")
+                    test_results["critical_issues"].append("ADVANCE_NOT_IN_FINANS_ONAYI")
+            
+            # Check kapanmis endpoint (should NOT be there)
+            kapanmis_response = requests.get(f"{BACKEND_URL}/api/avans/kapanmis", timeout=30)
+            if kapanmis_response.status_code == 200:
+                kapanmis_advances = kapanmis_response.json()
+                found_in_kapanmis = any(adv.get("id") == test_results["test_avans_id"] for adv in kapanmis_advances)
+                
+                if not found_in_kapanmis:
+                    print("✅ PASS: Test advance NOT found in kapanmis endpoint (correct workflow)")
+                else:
+                    print("❌ FAIL: Test advance incorrectly found in kapanmis endpoint")
+                    test_results["critical_issues"].append("ADVANCE_INCORRECTLY_IN_KAPANMIS")
+            
+        except Exception as e:
+            print(f"❌ FAIL: Error verifying workflow: {str(e)}")
+            test_results["critical_issues"].append(f"WORKFLOW_VERIFICATION_ERROR: {str(e)}")
+    
+    # STEP 6: Test PUT /api/avans/{id} - Update advance
+    if test_results["test_avans_id"]:
+        print("\n" + "=" * 80)
+        print("STEP 6: TESTING UPDATE ADVANCE - PUT /api/avans/{id}")
+        print("=" * 80)
+        
+        update_data = {
+            "title": "Proje Avansı - Güncellendi",
+            "amount": 6000,
+            "notes": "Tutar güncellendi - API test"
+        }
+        
+        endpoint = f"{BACKEND_URL}/api/avans/{test_results['test_avans_id']}"
+        print(f"Testing endpoint: {endpoint}")
+        print(f"Updating advance with: {update_data}")
+        
+        try:
+            response = requests.put(endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: PUT /api/avans/{id} update successful")
+                test_results["update_avans"] = True
+                
+                try:
+                    updated_advance = response.json()
+                    
+                    # Verify updates were applied
+                    for key, expected_value in update_data.items():
+                        actual_value = updated_advance.get(key)
+                        if actual_value == expected_value:
+                            print(f"   ✅ Updated {key}: {actual_value}")
+                        else:
+                            print(f"   ❌ Update failed for {key}: Expected '{expected_value}', Got '{actual_value}'")
+                            test_results["critical_issues"].append(f"UPDATE_FIELD_FAILED_{key}")
+                    
+                    # Verify finance_approved is still false after update
+                    if not updated_advance.get("finance_approved", True):
+                        print("✅ PASS: finance_approved remains false after update (correct business logic)")
+                    else:
+                        print("❌ BUSINESS LOGIC ERROR: finance_approved changed during update")
+                        test_results["critical_issues"].append("UPDATE_CHANGED_APPROVAL_STATUS")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error processing updated advance: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_PROCESS_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: PUT /api/avans/{test_results['test_avans_id']} failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing PUT /api/avans: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_ERROR: {str(e)}")
+    
+    # STEP 7: Test POST /api/avans/{id}/onayla - Approve advance
+    if test_results["test_avans_id"]:
+        print("\n" + "=" * 80)
+        print("STEP 7: TESTING APPROVE ADVANCE - POST /api/avans/{id}/onayla")
+        print("=" * 80)
+        
+        endpoint = f"{BACKEND_URL}/api/avans/{test_results['test_avans_id']}/onayla"
+        print(f"Testing endpoint: {endpoint}")
+        print("Approving advance and moving to closed status...")
+        
+        try:
+            response = requests.post(endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: POST /api/avans/{id}/onayla approval successful")
+                test_results["approve_avans"] = True
+                
+                try:
+                    approved_advance = response.json()
+                    
+                    # Verify approval business logic
+                    finance_approved = approved_advance.get("finance_approved", False)
+                    status = approved_advance.get("status", "unknown")
+                    finance_approved_at = approved_advance.get("finance_approved_at")
+                    closed_at = approved_advance.get("closed_at")
+                    
+                    if finance_approved:
+                        print("✅ PASS: finance_approved set to true after approval")
+                    else:
+                        print("❌ BUSINESS LOGIC ERROR: finance_approved should be true after approval")
+                        test_results["critical_issues"].append("APPROVAL_FINANCE_APPROVED_FALSE")
+                    
+                    if status == "closed":
+                        print("✅ PASS: status set to 'closed' after approval")
+                    else:
+                        print(f"❌ BUSINESS LOGIC ERROR: status should be 'closed' after approval, got '{status}'")
+                        test_results["critical_issues"].append(f"APPROVAL_STATUS_WRONG_{status}")
+                    
+                    if finance_approved_at:
+                        print("✅ PASS: finance_approved_at timestamp set")
+                    else:
+                        print("❌ BUSINESS LOGIC ERROR: finance_approved_at should be set after approval")
+                        test_results["critical_issues"].append("APPROVAL_TIMESTAMP_MISSING")
+                    
+                    if closed_at:
+                        print("✅ PASS: closed_at timestamp set")
+                    else:
+                        print("❌ BUSINESS LOGIC ERROR: closed_at should be set after approval")
+                        test_results["critical_issues"].append("CLOSED_TIMESTAMP_MISSING")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error processing approved advance: {str(e)}")
+                    test_results["critical_issues"].append(f"APPROVAL_PROCESS_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: POST /api/avans/{test_results['test_avans_id']}/onayla failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"APPROVAL_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing POST /api/avans/onayla: {str(e)}")
+            test_results["critical_issues"].append(f"APPROVAL_ERROR: {str(e)}")
+    
+    # STEP 8: Final Workflow Verification - Advance moved to kapanmis
+    if test_results["test_avans_id"] and test_results["approve_avans"]:
+        print("\n" + "=" * 80)
+        print("STEP 8: FINAL WORKFLOW VERIFICATION - ADVANCE MOVED TO KAPANMIS")
+        print("=" * 80)
+        
+        print("🔍 Verifying approved advance moved from finans-onayi to kapanmis...")
+        time.sleep(2)  # Wait for database consistency
+        
+        try:
+            # Check kapanmis endpoint (should be there now)
+            kapanmis_response = requests.get(f"{BACKEND_URL}/api/avans/kapanmis", timeout=30)
+            if kapanmis_response.status_code == 200:
+                kapanmis_advances = kapanmis_response.json()
+                found_in_kapanmis = any(adv.get("id") == test_results["test_avans_id"] for adv in kapanmis_advances)
+                
+                if found_in_kapanmis:
+                    print("✅ PASS: Approved advance found in kapanmis endpoint (correct workflow)")
+                else:
+                    print("❌ FAIL: Approved advance NOT found in kapanmis endpoint")
+                    test_results["critical_issues"].append("APPROVED_ADVANCE_NOT_IN_KAPANMIS")
+            
+            # Check finans-onayi endpoint (should NOT be there anymore)
+            finans_response = requests.get(f"{BACKEND_URL}/api/avans/finans-onayi", timeout=30)
+            if finans_response.status_code == 200:
+                finans_advances = finans_response.json()
+                found_in_finans = any(adv.get("id") == test_results["test_avans_id"] for adv in finans_advances)
+                
+                if not found_in_finans:
+                    print("✅ PASS: Approved advance removed from finans-onayi endpoint (correct workflow)")
+                    test_results["workflow_verification"] = True
+                else:
+                    print("❌ FAIL: Approved advance still found in finans-onayi endpoint")
+                    test_results["critical_issues"].append("APPROVED_ADVANCE_STILL_IN_FINANS_ONAYI")
+            
+        except Exception as e:
+            print(f"❌ FAIL: Error in final workflow verification: {str(e)}")
+            test_results["critical_issues"].append(f"FINAL_WORKFLOW_ERROR: {str(e)}")
+    
+    # FINAL COMPREHENSIVE REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL COMPREHENSIVE AVANS SYSTEM TEST REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • GET All Advances: {'✅ PASS' if test_results['get_all_avans'] else '❌ FAIL'}")
+    print(f"   • GET Finans Onayi: {'✅ PASS' if test_results['get_finans_onayi'] else '❌ FAIL'}")
+    print(f"   • GET Kapanmis: {'✅ PASS' if test_results['get_kapanmis'] else '❌ FAIL'}")
+    print(f"   • POST Create Advance: {'✅ PASS' if test_results['create_avans'] else '❌ FAIL'}")
+    print(f"   • PUT Update Advance: {'✅ PASS' if test_results['update_avans'] else '❌ FAIL'}")
+    print(f"   • POST Approve Advance: {'✅ PASS' if test_results['approve_avans'] else '❌ FAIL'}")
+    print(f"   • Workflow Verification: {'✅ PASS' if test_results['workflow_verification'] else '❌ FAIL'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # BUSINESS LOGIC VERIFICATION SUMMARY
+    print(f"\n📋 BUSINESS LOGIC VERIFICATION:")
+    if len(test_results['critical_issues']) == 0:
+        print("✅ PASS: All business logic requirements verified:")
+        print("   • New advances have finance_approved=false")
+        print("   • finans-onayi endpoint shows only non-approved advances")
+        print("   • kapanmis endpoint shows only approved advances")
+        print("   • onayla endpoint sets finance_approved=true and status=closed")
+        print("   • Complete workflow: create → finans-onayi → approve → kapanmis")
+    else:
+        print("❌ FAIL: Business logic issues found - see critical issues above")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n🎯 CONCLUSIONS:")
+    
+    total_tests = 7
+    passed_tests = sum([
+        test_results['get_all_avans'],
+        test_results['get_finans_onayi'], 
+        test_results['get_kapanmis'],
+        test_results['create_avans'],
+        test_results['update_avans'],
+        test_results['approve_avans'],
+        test_results['workflow_verification']
+    ])
+    
+    if passed_tests == total_tests and len(test_results['critical_issues']) == 0:
+        print("🎉 EXCELLENT: All Avans system API endpoints are working perfectly!")
+        print("   • All 6 API endpoints functional")
+        print("   • Complete workflow tested and verified")
+        print("   • Business logic requirements met")
+        print("   • Data persistence and state management working correctly")
+        print("   • Ready for production use")
+        return True
+    elif passed_tests >= 5:
+        print("⚠️  MOSTLY WORKING: Most Avans system functionality is working")
+        print("   • Core API endpoints functional")
+        print("   • Minor issues need attention")
+        print("   • Review critical issues and warnings above")
+        return len(test_results['critical_issues']) == 0
+    else:
+        print("❌ CRITICAL: Major issues with Avans system")
+        print("   • Multiple API endpoints failing")
+        print("   • Business logic not working correctly")
+        print("   • Requires immediate attention before production use")
+        return False
+
 def test_survey_retrieval_regular():
     """Test retrieving regular survey by token"""
     print("=" * 80)
