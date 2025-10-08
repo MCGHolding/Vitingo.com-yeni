@@ -97,78 +97,7 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
     }
   };
 
-  const renderQuickForm = () => {
-    const typeConfig = QUICK_ACTIVITY_TYPES[selectedType];
-    
-    return (
-      <div className="p-4 space-y-4">
-        {/* Title */}
-        <div>
-          <Input
-            placeholder={`${typeConfig.label} başlığı...`}
-            value={formData.title || ''}
-            onChange={(e) => updateFormData('title', e.target.value)}
-            className="text-sm"
-          />
-        </div>
-
-        {/* Description/Content */}
-        <div>
-          <Textarea
-            placeholder={`${typeConfig.label} açıklaması veya detayları...`}
-            value={formData.description || ''}
-            onChange={(e) => updateFormData('description', e.target.value)}
-            className="min-h-[80px] text-sm resize-none"
-          />
-        </div>
-
-        {/* Type specific fields */}
-        {selectedType === 'activity_planner' && (
-          <div>
-            <Input
-              type="datetime-local"
-              placeholder="Zamanlama..."
-              value={formData.scheduled_for || ''}
-              onChange={(e) => updateFormData('scheduled_for', e.target.value)}
-              className="text-sm"
-            />
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex items-center justify-end space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCancel}
-            disabled={saving}
-            className="h-8 px-3 text-xs"
-          >
-            <X className="h-3 w-3 mr-1" />
-            İptal
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={saving || (!formData.title?.trim() && !formData.description?.trim())}
-            size="sm"
-            className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700 text-white"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
-                Kaydediliyor...
-              </>
-            ) : (
-              <>
-                <Check className="h-3 w-3 mr-1" />
-                Kaydet
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-    );
-  };
+  // Simple component - just buttons to open detailed forms
 
   return (
     <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm mb-6">
