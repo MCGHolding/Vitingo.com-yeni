@@ -284,8 +284,12 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
   };
 
   const handleEdit = (opportunity) => {
-    setSelectedOpportunity(opportunity);
-    setEditModalOpen(true);
+    if (onEditOpportunity) {
+      onEditOpportunity(opportunity);
+    } else {
+      setSelectedOpportunity(opportunity);
+      setEditModalOpen(true);
+    }
   };
 
   const handleAction = (action, opportunity) => {
