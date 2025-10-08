@@ -5533,6 +5533,163 @@ async def delete_project_type(project_type_id: str):
         logger.error(f"Error deleting project type {project_type_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== AVANS (ADVANCE) ENDPOINTS =====================
+
+@api_router.get("/avans")
+async def get_all_avans():
+    """Get all advances"""
+    try:
+        advances = await db.advances.find().sort("created_at", -1).to_list(length=None)
+        return [Avans(**advance) for advance in advances]
+    except Exception as e:
+        logger.error(f"Error fetching advances: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/avans/finans-onayi")
+async def get_finans_onayi_avans():
+    """Get advances pending finance approval"""
+    try:
+        advances = await db.advances.find({"finance_approved": False}).sort("created_at", -1).to_list(length=None)
+        return [Avans(**advance) for advance in advances]
+    except Exception as e:
+        logger.error(f"Error fetching finance approval advances: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/avans/kapanmis")
+async def get_kapanmis_avans():
+    """Get closed advances (finance approved only)"""
+    try:
+        advances = await db.advances.find({"finance_approved": True}).sort("closed_at", -1).to_list(length=None)
+        return [Avans(**advance) for advance in advances]
+    except Exception as e:
+        logger.error(f"Error fetching closed advances: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/avans/{avans_id}")
+async def get_avans_by_id(avans_id: str):
+    """Get advance by ID"""
+    try:
+        advance = await db.advances.find_one({"id": avans_id})
+        if not advance:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        return Avans(**advance)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching advance {avans_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/avans", response_model=Avans)
+async def create_avans(avans_input: AvansCreate):
+    """Create a new advance"""
+    try:
+        avans_data = {
+            "id": str(uuid.uuid4()),
+            "title": avans_input.title,
+            "description": avans_input.description,
+            "amount": avans_input.amount,
+            "currency": avans_input.currency,
+            "employee_name": avans_input.employee_name,
+            "employee_id": avans_input.employee_id,
+            "department": avans_input.department,
+            "project_name": avans_input.project_name,
+            "reason": avans_input.reason,
+            "status": "pending",
+            "finance_approved": False,
+            "finance_approved_by": "",
+            "finance_approved_at": None,
+            "closed_at": None,
+            "notes": avans_input.notes,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+            "created_by": "system"  # In real app, get from authenticated user
+        }
+        
+        result = await db.advances.insert_one(avans_data)
+        created_avans = await db.advances.find_one({"_id": result.inserted_id})
+        
+        return Avans(**created_avans)
+        
+    except Exception as e:
+        logger.error(f"Error creating advance: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/avans/{avans_id}", response_model=Avans)
+async def update_avans(avans_id: str, avans_update: AvansUpdate):
+    """Update advance (save)"""
+    try:
+        existing = await db.advances.find_one({"id": avans_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        # Prepare update data
+        update_data = {k: v for k, v in avans_update.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        await db.advances.update_one(
+            {"id": avans_id},
+            {"$set": update_data}
+        )
+        
+        updated_avans = await db.advances.find_one({"id": avans_id})
+        return Avans(**updated_avans)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating advance {avans_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/avans/{avans_id}/onayla")
+async def onayla_avans(avans_id: str):
+    """Approve advance and move to closed advances"""
+    try:
+        existing = await db.advances.find_one({"id": avans_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        # Update advance as finance approved and closed
+        update_data = {
+            "finance_approved": True,
+            "finance_approved_by": "system",  # In real app, get from authenticated user
+            "finance_approved_at": datetime.now(timezone.utc),
+            "status": "closed",
+            "closed_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.advances.update_one(
+            {"id": avans_id},
+            {"$set": update_data}
+        )
+        
+        updated_avans = await db.advances.find_one({"id": avans_id})
+        return Avans(**updated_avans)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving advance {avans_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/avans/{avans_id}")
+async def delete_avans(avans_id: str):
+    """Delete advance"""
+    try:
+        existing = await db.advances.find_one({"id": avans_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        await db.advances.delete_one({"id": avans_id})
+        
+        return {"message": "Avans başarıyla silindi", "id": avans_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting advance {avans_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== COLLECTION RECEIPT ENDPOINTS =====================
 
 def generate_receipt_number():
