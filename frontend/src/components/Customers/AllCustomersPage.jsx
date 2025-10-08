@@ -731,21 +731,20 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
 
       {/* View Customer Modal */}
       {viewModalOpen && selectedCustomer && (
-        <ViewPersonModal
-          person={selectedCustomer}
-          isOpen={viewModalOpen}
+        <ViewCustomerModal
+          customer={selectedCustomer}
           onClose={() => {
             setViewModalOpen(false);
             setSelectedCustomer(null);
           }}
+          onEdit={handleEdit}
         />
       )}
 
       {/* Edit Customer Modal */}
       {editModalOpen && selectedCustomer && (
-        <EditPersonModal
-          person={selectedCustomer}
-          isOpen={editModalOpen}
+        <EditCustomerModal
+          customer={selectedCustomer}
           onClose={() => {
             setEditModalOpen(false);
             setSelectedCustomer(null);
