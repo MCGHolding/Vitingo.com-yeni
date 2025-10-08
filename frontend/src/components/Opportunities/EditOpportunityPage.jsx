@@ -34,7 +34,8 @@ import {
   Check,
   Plus,
   History,
-  Zap
+  Zap,
+  Activity
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
