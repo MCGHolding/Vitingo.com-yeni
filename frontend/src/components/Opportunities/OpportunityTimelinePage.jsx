@@ -635,9 +635,9 @@ export default function OpportunityTimelinePage({
                       </div>
                     ) : (
                       filteredActivities.map((activity, index) => {
-                        const typeConfig = ACTIVITY_TYPES[activity.type];
-                        const statusConfig = STATUS_CONFIG[activity.status];
-                        const priorityConfig = PRIORITY_CONFIG[activity.priority];
+                        const typeConfig = ACTIVITY_TYPES[activity.type] || ACTIVITY_TYPES.default;
+                        const statusConfig = STATUS_CONFIG[activity.status] || STATUS_CONFIG.pending;
+                        const priorityConfig = PRIORITY_CONFIG[activity.priority] || PRIORITY_CONFIG.medium;
                         
                         return (
                           <div key={activity.id} className="relative">
