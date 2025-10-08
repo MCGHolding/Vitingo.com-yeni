@@ -34,13 +34,58 @@ import {
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Quick Note Add Unit Component
-function QuickNoteAddUnit({ opportunityId, opportunityTitle, onNoteAdded }) {
+// Quick Activity Add Unit Component
+function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded }) {
   const { toast } = useToast();
-  const [noteTitle, setNoteTitle] = useState('');
-  const [noteContent, setNoteContent] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [formData, setFormData] = useState({});
   const [saving, setSaving] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  
+  // Activity types for quick add
+  const QUICK_ACTIVITY_TYPES = {
+    call_record: { 
+      label: 'Görüşme Kaydı', 
+      icon: Phone, 
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200'
+    },
+    email_management: { 
+      label: 'E-posta Yönetimi', 
+      icon: Mail, 
+      color: 'text-green-600',
+      bgColor: 'bg-green-50', 
+      borderColor: 'border-green-200'
+    },
+    activity_planner: { 
+      label: 'Aktivite Planlama', 
+      icon: Calendar, 
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      borderColor: 'border-purple-200'
+    },
+    design_upload: { 
+      label: 'Tasarım Yükle', 
+      icon: Upload, 
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-200'
+    },
+    messaging: { 
+      label: 'Mesajlaşma', 
+      icon: MessageSquare, 
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50',
+      borderColor: 'border-pink-200'
+    },
+    note: { 
+      label: 'Not Ekle', 
+      icon: FileText, 
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200'
+    }
+  };
 
   const handleSave = async () => {
     try {
