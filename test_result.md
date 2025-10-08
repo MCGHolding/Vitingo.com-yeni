@@ -327,6 +327,7 @@ test_plan:
   test_all: false
   test_priority: "high_first"
   completed_tests:
+    - "Enhanced CallRecordForm with Dynamic Contact Person Dropdown and New Contact Addition Modal Testing"
     - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
     - "User-Requested Changes Testing - GELİŞMELER Button Removal and NOT EKLE Modal to Page Conversion"
     - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
