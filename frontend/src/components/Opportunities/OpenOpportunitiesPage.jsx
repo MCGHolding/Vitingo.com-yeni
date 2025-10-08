@@ -977,7 +977,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                             variant="ghost"
                             size="sm"
                             className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                            onClick={() => handleViewOpportunity(opportunity)}
+                            onClick={() => handleViewOpportunity(opportunity, index)}
                           >
                             <Eye className="h-3.5 w-3.5" />
                           </Button>
