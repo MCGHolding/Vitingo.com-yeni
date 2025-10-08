@@ -235,6 +235,10 @@ const Dashboard = () => {
     setCurrentView('kapanmis-avanslar');
   };
 
+  const handleActivityTimeline = () => {
+    setCurrentView('activity-timeline');
+  };
+
   // User Management Handlers
   const handleNewUser = () => {
     setShowNewUserForm(true);
