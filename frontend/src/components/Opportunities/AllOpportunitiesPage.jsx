@@ -185,7 +185,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
       filtered = filtered.filter(opp => {
         switch (statusFilter) {
           case 'open':
-            return opp.status === 'open-active';
+            return opp.status === 'open-active' || opp.status === 'negotiation' || opp.status === 'active' || !['won', 'lost'].includes(opp.status);
           case 'won':
             return opp.status === 'won';
           case 'lost':
