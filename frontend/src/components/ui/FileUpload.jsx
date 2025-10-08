@@ -504,7 +504,12 @@ export default function FileUpload({
 
       {/* Preview Modal */}
       <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent 
+          className="max-w-6xl max-h-[95vh] overflow-y-auto"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
               {previewFile && getFileIcon(previewFile.type)}
