@@ -183,83 +183,111 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
     }));
   };
 
-  return (
-    <div className="bg-white/80 backdrop-blur-sm border border-green-200/50 rounded-xl shadow-sm mb-6">
-      <div className="p-4 border-b border-green-100">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
-            <FileText className="h-4 w-4 text-green-600" />
-            <span>Hızlı Not Ekle</span>
-          </h3>
-          {!expanded && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setExpanded(true)}
-              className="h-7 px-3 text-xs border-green-200 text-green-600 hover:bg-green-50"
-            >
-              <Plus className="h-3 w-3 mr-1" />
-              Not Ekle
-            </Button>
-          )}
+  const renderQuickForm = () => {
+    const typeConfig = QUICK_ACTIVITY_TYPES[selectedType];
+    
+    return (
+      <div className="p-4 space-y-4">
+        {/* Title */}
+        <div>
+          <Input
+            placeholder={`${typeConfig.label} başlığı...`}
+            value={formData.title || ''}
+            onChange={(e) => updateFormData('title', e.target.value)}
+            className="text-sm"
+          />
         </div>
-      </div>
 
-      {expanded && (
-        <div className="p-4 space-y-4">
-          {/* Note Title - Optional */}
+        {/* Description/Content */}
+        <div>
+          <Textarea
+            placeholder={`${typeConfig.label} açıklaması veya detayları...`}
+            value={formData.description || ''}
+            onChange={(e) => updateFormData('description', e.target.value)}
+            className="min-h-[80px] text-sm resize-none"
+          />
+        </div>
+
+        {/* Type specific fields */}
+        {selectedType === 'activity_planner' && (
           <div>
             <Input
-              placeholder="Not başlığı (isteğe bağlı)..."
-              value={noteTitle}
-              onChange={(e) => setNoteTitle(e.target.value)}
+              type="datetime-local"
+              placeholder="Zamanlama..."
+              value={formData.scheduled_for || ''}
+              onChange={(e) => updateFormData('scheduled_for', e.target.value)}
               className="text-sm"
             />
           </div>
+        )}
 
-          {/* Note Content */}
-          <div>
-            <Textarea
-              placeholder="Not içeriğinizi buraya yazın..."
-              value={noteContent}
-              onChange={(e) => setNoteContent(e.target.value)}
-              className="min-h-[80px] text-sm resize-none"
-            />
-          </div>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCancel}
+            disabled={saving}
+            className="h-8 px-3 text-xs"
+          >
+            <X className="h-3 w-3 mr-1" />
+            İptal
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={saving || (!formData.title?.trim() && !formData.description?.trim())}
+            size="sm"
+            className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700 text-white"
+          >
+            {saving ? (
+              <>
+                <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
+                Kaydediliyor...
+              </>
+            ) : (
+              <>
+                <Check className="h-3 w-3 mr-1" />
+                Kaydet
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              disabled={saving}
-              className="h-8 px-3 text-xs"
-            >
-              <X className="h-3 w-3 mr-1" />
-              İptal
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={saving || (!noteTitle.trim() && !noteContent.trim())}
-              size="sm"
-              className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700 text-white"
-            >
-              {saving ? (
-                <>
-                  <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
-                  Kaydediliyor...
-                </>
-              ) : (
-                <>
-                  <Check className="h-3 w-3 mr-1" />
-                  Kaydet
-                </>
-              )}
-            </Button>
+  return (
+    <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm mb-6">
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+            <Activity className="h-4 w-4 text-purple-600" />
+            <span>Hızlı Aktivite Ekle</span>
+          </h3>
+        </div>
+      </div>
+
+      {/* Activity Type Selection */}
+      {!selectedType && (
+        <div className="p-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {Object.entries(QUICK_ACTIVITY_TYPES).map(([type, config]) => (
+              <Button
+                key={type}
+                variant="outline"
+                onClick={() => setSelectedType(type)}
+                className={`h-auto p-3 flex flex-col items-center space-y-2 ${config.borderColor} hover:${config.bgColor}`}
+              >
+                <config.icon className={`h-5 w-5 ${config.color}`} />
+                <span className="text-xs font-medium text-gray-700">{config.label}</span>
+              </Button>
+            ))}
           </div>
         </div>
       )}
+
+      {/* Selected Type Form */}
+      {selectedType && renderQuickForm()}
     </div>
   );
 }
