@@ -780,6 +780,7 @@ const Dashboard = () => {
           }}
           onNewOpportunity={handleNewOpportunity}
           onActivityTimeline={handleOpportunityTimeline}
+          onNewNote={handleNewNote}
         />;
       case 'opportunity-timeline':
         return <OpportunityTimelinePage 
