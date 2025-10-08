@@ -253,8 +253,11 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
       }
     });
 
+    console.log('✅ Final filtered opportunities:', filtered.length);
+    console.log('📋 Sample filtered opportunity:', filtered[0]);
+    
     return filtered;
-  }, [searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
+  }, [allOpportunities, searchTerm, tagSearch, statusFilter, currencyFilter, amountFilter, countryFilter, dateFrom, dateTo, sortBy]);
 
   const currencyCounts = getCurrencyCounts();
   const statusCounts = getStatusCounts();
