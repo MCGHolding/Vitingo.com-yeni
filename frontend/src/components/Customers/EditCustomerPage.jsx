@@ -396,7 +396,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
               </CardContent>
             </Card>
 
-            {/* Contact Information */}
+            {/* İletişim Bilgileri */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
                 <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
@@ -405,45 +405,70 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Telefon
-                  </label>
-                  <PhoneInput
-                    country={'tr'}
-                    value={formData.phone}
-                    onChange={(value) => handleInputChange('phone', value)}
-                    inputProps={{
-                      className: 'w-full pl-12 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                    }}
-                    containerStyle={{ width: '100%' }}
-                    buttonStyle={{ border: '1px solid #d1d5db', borderRadius: '6px 0 0 6px' }}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    E-posta
-                  </label>
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="E-posta adresi"
-                    className="w-full"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Telefon *
+                    </label>
+                    <PhoneInput
+                      country={'tr'}
+                      value={formData.phone}
+                      onChange={(value) => handleInputChange('phone', value)}
+                      enableSearch={true}
+                      inputClass="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cep Telefonu *
+                    </label>
+                    <PhoneInput
+                      country={'tr'}
+                      value={formData.mobile}
+                      onChange={(value) => handleInputChange('mobile', value)}
+                      enableSearch={true}
+                      inputClass="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email *
+                    </label>
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="ornek@sirket.com"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Website
-                  </label>
-                  <Input
-                    value={formData.website}
-                    onChange={(e) => handleInputChange('website', e.target.value)}
-                    placeholder="Website URL'si"
-                    className="w-full"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vergi Dairesi
+                    </label>
+                    <Input
+                      value={formData.tax_office}
+                      onChange={(e) => handleInputChange('tax_office', e.target.value)}
+                      placeholder="Örn: Beşiktaş Vergi Dairesi"
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      VKN
+                    </label>
+                    <Input
+                      value={formData.tax_number}
+                      onChange={(e) => handleInputChange('tax_number', e.target.value)}
+                      placeholder="1234567890"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
