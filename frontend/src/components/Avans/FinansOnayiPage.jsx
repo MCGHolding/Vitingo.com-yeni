@@ -46,9 +46,45 @@ export default function FinansOnayiPage({ onBackToDashboard }) {
   };
 
   const handleIncele = (avans) => {
-    // Navigate to detail view
-    console.log('İncele avans:', avans);
-    // This will be implemented with proper navigation
+    setSelectedAvans(avans);
+    setModalOpen(true);
+  };
+
+  const handleSaveAvans = async (avansId, formData) => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}/api/avans/${avansId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save avans');
+    }
+
+    // Reload the list
+    loadFinansOnayiAvanslar();
+  };
+
+  const handleApproveAvans = async (avansId) => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+    const response = await fetch(`${backendUrl}/api/avans/${avansId}/onayla`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to approve avans');
+    }
+
+    // Reload the list
+    loadFinansOnayiAvanslar();
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedAvans(null);
   };
 
   const formatCurrency = (amount, currency) => {
