@@ -9239,6 +9239,157 @@ async def delete_opportunity_note(opportunity_id: str, note_id: str):
         logger.error(f"Error deleting opportunity note: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== OPPORTUNITY ACTIVITY ENDPOINTS =====================
+
+@api_router.get("/opportunities/{opportunity_id}/activities", response_model=List[OpportunityActivity])
+async def get_opportunity_activities(opportunity_id: str):
+    """Get all activities for a specific opportunity"""
+    try:
+        activities = await db.opportunity_activities.find({"opportunity_id": opportunity_id}).sort("created_at", -1).to_list(length=None)
+        return [OpportunityActivity(**activity) for activity in activities]
+    except Exception as e:
+        logger.error(f"Error getting opportunity activities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/opportunities/{opportunity_id}/activities", response_model=OpportunityActivity)
+async def create_opportunity_activity(opportunity_id: str, activity_input: OpportunityActivityCreate):
+    """Create a new activity for an opportunity"""
+    try:
+        # Check if opportunity exists
+        opportunity = await db.opportunities.find_one({"id": opportunity_id})
+        if not opportunity:
+            raise HTTPException(status_code=404, detail="Opportunity not found")
+        
+        activity_data = activity_input.dict()
+        activity_data.update({
+            "id": str(uuid.uuid4()),
+            "opportunity_id": opportunity_id,
+            "created_by": "Murat Bucak",  # In production, get from auth context
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        })
+        
+        # Convert datetime to string for MongoDB storage
+        if isinstance(activity_data.get('created_at'), datetime):
+            activity_data['created_at'] = activity_data['created_at'].isoformat()
+        if isinstance(activity_data.get('updated_at'), datetime):
+            activity_data['updated_at'] = activity_data['updated_at'].isoformat()
+        if isinstance(activity_data.get('scheduled_for'), datetime):
+            activity_data['scheduled_for'] = activity_data['scheduled_for'].isoformat()
+        
+        result = await db.opportunity_activities.insert_one(activity_data)
+        
+        if result.inserted_id:
+            created_activity = await db.opportunity_activities.find_one({"id": activity_data["id"]})
+            return OpportunityActivity(**created_activity)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create activity")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating opportunity activity: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/opportunities/{opportunity_id}/activities/{activity_id}", response_model=OpportunityActivity)
+async def get_opportunity_activity(opportunity_id: str, activity_id: str):
+    """Get a specific activity"""
+    try:
+        activity = await db.opportunity_activities.find_one({
+            "id": activity_id,
+            "opportunity_id": opportunity_id
+        })
+        
+        if activity:
+            return OpportunityActivity(**activity)
+        else:
+            raise HTTPException(status_code=404, detail="Activity not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting opportunity activity: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/opportunities/{opportunity_id}/activities/{activity_id}", response_model=OpportunityActivity)
+async def update_opportunity_activity(opportunity_id: str, activity_id: str, activity_input: OpportunityActivityUpdate):
+    """Update an existing opportunity activity"""
+    try:
+        update_data = {k: v for k, v in activity_input.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Convert datetime fields to strings if present
+        if update_data.get('scheduled_for') and isinstance(update_data['scheduled_for'], datetime):
+            update_data['scheduled_for'] = update_data['scheduled_for'].isoformat()
+        if update_data.get('completed_at') and isinstance(update_data['completed_at'], datetime):
+            update_data['completed_at'] = update_data['completed_at'].isoformat()
+        
+        result = await db.opportunity_activities.update_one(
+            {"id": activity_id, "opportunity_id": opportunity_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            updated_activity = await db.opportunity_activities.find_one({"id": activity_id})
+            return OpportunityActivity(**updated_activity)
+        else:
+            raise HTTPException(status_code=404, detail="Activity not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating opportunity activity: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/opportunities/{opportunity_id}/activities/{activity_id}")
+async def delete_opportunity_activity(opportunity_id: str, activity_id: str):
+    """Delete an opportunity activity"""
+    try:
+        result = await db.opportunity_activities.delete_one({
+            "id": activity_id,
+            "opportunity_id": opportunity_id
+        })
+        
+        if result.deleted_count:
+            return {"message": "Activity deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Activity not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting opportunity activity: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/opportunities/{opportunity_id}/activities/{activity_id}/status")
+async def update_activity_status(opportunity_id: str, activity_id: str, status: str):
+    """Update activity status (completed, pending, in_progress, cancelled, overdue)"""
+    try:
+        update_data = {
+            "status": status,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # If marking as completed, set completed_at timestamp
+        if status == "completed":
+            update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.opportunity_activities.update_one(
+            {"id": activity_id, "opportunity_id": opportunity_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            return {"message": f"Activity status updated to {status}"}
+        else:
+            raise HTTPException(status_code=404, detail="Activity not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating activity status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
