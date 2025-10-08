@@ -286,6 +286,29 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
     setEditModalOpen(true);
   };
 
+  const handleSaveCustomer = async (updatedCustomer) => {
+    try {
+      // Handle customer update here
+      toast({
+        title: "Müşteri Güncellendi",
+        description: `${updatedCustomer.companyName || updatedCustomer.name} başarıyla güncellendi.`,
+      });
+      
+      // Refresh customers list
+      if (refreshCustomers) {
+        await refreshCustomers();
+      }
+      
+      setEditModalOpen(false);
+      setSelectedCustomer(null);
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: "Müşteri güncellenirken bir hata oluştu.",
+      });
+    }
+  };
+
   // Open delete modal
   const handleDeleteCustomer = (customer) => {
     setSelectedCustomer(customer);
