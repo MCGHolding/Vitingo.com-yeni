@@ -665,14 +665,6 @@ export default function OpportunityTimelinePage({
               <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
               Rapor
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="border-purple-200 text-purple-700 hover:bg-purple-50 h-9"
-            >
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
-              Yeni
-            </Button>
           </div>
         </div>
       </div>
