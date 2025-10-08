@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { opportunityStatusOptions, tagColors } from '../../mock/opportunitiesData';
 
-export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities }) {
+export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities, onEditOpportunity }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
