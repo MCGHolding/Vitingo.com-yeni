@@ -551,6 +551,7 @@ export default function OpportunityTimelinePage({
             opportunityId={opportunityId}
             opportunityTitle={opportunityTitle}
             onActivityAdded={handleActivityCreated}
+            onOpenDetailedForm={handleOpenDetailedForm}
           />
         </div>
 
