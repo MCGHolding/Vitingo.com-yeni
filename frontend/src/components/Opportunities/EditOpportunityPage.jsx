@@ -260,7 +260,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
               <span>GELİŞMELER</span>
             </Button>
             <Button
-              onClick={() => setOpportunityTimelineOpen(true)}
+              onClick={() => onActivityTimeline && onActivityTimeline(formData)}
               className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 flex items-center space-x-2"
             >
               <Activity className="h-4 w-4" />
