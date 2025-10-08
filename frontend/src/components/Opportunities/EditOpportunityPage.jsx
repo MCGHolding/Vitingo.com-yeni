@@ -219,7 +219,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
               <span>Geri Dön</span>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Satış Fırsatı Düzenle</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Satış Fırsatı Bilgileri</h1>
               <p className="text-gray-600">{formData.customer} - {formData.eventName || formData.title}</p>
             </div>
           </div>
