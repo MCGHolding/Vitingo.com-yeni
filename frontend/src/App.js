@@ -243,11 +243,6 @@ const Dashboard = () => {
     setCurrentView('new-note');
   };
 
-  const handleNewNote = (opportunity) => {
-    setSelectedOpportunityForNote(opportunity);
-    setCurrentView('new-note');
-  };
-
   const handleBackFromOpportunityTimeline = () => {
     setSelectedOpportunityForTimeline(null);
     setCurrentView('edit-opportunity');
