@@ -91,60 +91,79 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
     try {
       setSaving(true);
 
-      if (!noteTitle.trim() && !noteContent.trim()) {
+      if (!formData.title?.trim() && !formData.description?.trim()) {
         toast({
           title: "Hata",
-          description: "Not başlığı veya içeriği boş olamaz.",
+          description: "Başlık veya açıklama boş olamaz.",
           variant: "destructive",
         });
         return;
       }
 
-      const notePayload = {
-        content: noteTitle ? `# ${noteTitle}\n\n${noteContent}` : noteContent,
-        category: 'general',
-        priority: 'medium',
-        tags: [],
-        metadata: {
-          title: noteTitle || 'Hızlı Not',
-          category: 'general',
-          priority: 'medium'
-        }
-      };
+      let apiPayload;
+      let endpoint;
 
-      const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/notes`, {
+      if (selectedType === 'note') {
+        // Note API endpoint
+        apiPayload = {
+          content: formData.title ? `# ${formData.title}\n\n${formData.description}` : formData.description,
+          category: 'general',
+          priority: 'medium',
+          tags: [],
+          metadata: {
+            title: formData.title || 'Hızlı Not',
+            category: 'general',
+            priority: 'medium'
+          }
+        };
+        endpoint = `${BACKEND_URL}/api/opportunities/${opportunityId}/notes`;
+      } else {
+        // Activity API endpoint
+        apiPayload = {
+          type: selectedType,
+          title: formData.title || QUICK_ACTIVITY_TYPES[selectedType].label,
+          description: formData.description || '',
+          status: formData.status || 'pending',
+          priority: formData.priority || 'medium',
+          scheduled_for: formData.scheduled_for || null,
+          data: formData
+        };
+        endpoint = `${BACKEND_URL}/api/opportunities/${opportunityId}/activities`;
+      }
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(notePayload)
+        body: JSON.stringify(apiPayload)
       });
 
       if (!response.ok) {
-        throw new Error('Not kaydedilemedi');
+        throw new Error('Kayıt işlemi başarısız');
       }
 
-      const savedNote = await response.json();
+      const saved = await response.json();
       
       // Call parent callback
-      if (onNoteAdded) {
-        onNoteAdded({
-          ...savedNote,
-          title: noteTitle || 'Hızlı Not',
-          description: noteContent
+      if (onActivityAdded) {
+        onActivityAdded({
+          ...saved,
+          type: selectedType,
+          title: formData.title || QUICK_ACTIVITY_TYPES[selectedType].label,
+          description: formData.description
         });
       }
 
       // Reset form
-      setNoteTitle('');
-      setNoteContent('');
-      setExpanded(false);
+      setFormData({});
+      setSelectedType('');
 
     } catch (error) {
-      console.error('❌ Error saving note:', error);
+      console.error('❌ Error saving:', error);
       toast({
         title: "Hata",
-        description: "Not kaydedilirken bir hata oluştu: " + error.message,
+        description: "Kaydetme işlemi sırasında hata: " + error.message,
         variant: "destructive",
       });
     } finally {
@@ -153,9 +172,15 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
   };
 
   const handleCancel = () => {
-    setNoteTitle('');
-    setNoteContent('');
-    setExpanded(false);
+    setFormData({});
+    setSelectedType('');
+  };
+
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
