@@ -209,11 +209,13 @@ const ACTIVITY_TYPES = {
 const STATUS_CONFIG = {
   completed: { label: 'Tamamlandı', icon: CheckCircle, color: 'text-green-600' },
   pending: { label: 'Bekliyor', icon: Clock, color: 'text-yellow-600' },
+  in_progress: { label: 'Devam Ediyor', icon: Clock, color: 'text-blue-600' },
   overdue: { label: 'Gecikti', icon: AlertTriangle, color: 'text-red-600' },
   cancelled: { label: 'İptal', icon: XCircle, color: 'text-gray-600' }
 };
 
 const PRIORITY_CONFIG = {
+  critical: { label: 'Kritik', color: 'text-red-700', bgColor: 'bg-red-100' },
   high: { label: 'Yüksek', color: 'text-red-600', bgColor: 'bg-red-100' },
   medium: { label: 'Orta', color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
   low: { label: 'Düşük', color: 'text-green-600', bgColor: 'bg-green-100' }
