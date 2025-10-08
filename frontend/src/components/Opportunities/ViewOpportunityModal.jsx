@@ -77,21 +77,30 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-6xl max-h-[95vh] overflow-y-auto">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold flex items-center space-x-2">
-              <FileText className="h-6 w-6" />
-              <span>Satış Fırsatı Detayları</span>
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <Card className="w-full max-w-6xl max-h-[95vh] overflow-y-auto shadow-2xl border-0 bg-white/95 backdrop-blur-md">
+        <CardHeader className="bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-white relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+          
+          <div className="flex items-center justify-between relative z-10">
+            <CardTitle className="text-2xl font-bold flex items-center space-x-3">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <Sparkles className="h-7 w-7" />
+              </div>
+              <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                Satış Fırsatı Detayları
+              </span>
             </CardTitle>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-white hover:bg-blue-600"
+              className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200 rounded-lg p-2"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </Button>
           </div>
         </CardHeader>
