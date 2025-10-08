@@ -182,10 +182,12 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
       filtered = filtered.filter(opp =>
         opp.tags.some(tag => tag.toLowerCase().includes(tagSearch.toLowerCase()))
       );
+      console.log('🏷️ After tag search filter:', filtered.length);
     }
 
     // Status filter
     if (statusFilter !== 'all') {
+      const beforeStatusFilter = filtered.length;
       filtered = filtered.filter(opp => {
         switch (statusFilter) {
           case 'open':
@@ -200,11 +202,14 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
             return true;
         }
       });
+      console.log(`📊 After status filter (${statusFilter}):`, filtered.length, 'from', beforeStatusFilter);
+      console.log('📊 Status samples:', filtered.slice(0, 3).map(o => ({ id: o.id, status: o.status, statusText: o.statusText })));
     }
 
     // Currency filter
     if (currencyFilter !== 'all') {
       filtered = filtered.filter(opp => opp.currency === currencyFilter);
+      console.log('💰 After currency filter:', filtered.length);
     }
 
     // Amount filter
@@ -218,6 +223,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
           default: return true;
         }
       });
+      console.log('💵 After amount filter:', filtered.length);
     }
 
     // Country filter
@@ -225,14 +231,17 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
       filtered = filtered.filter(opp =>
         opp.tags.some(tag => tag.toLowerCase().includes(countryFilter.toLowerCase()))
       );
+      console.log('🌍 After country filter:', filtered.length);
     }
 
     // Date range filter
     if (dateFrom) {
       filtered = filtered.filter(opp => opp.lastUpdate >= dateFrom);
+      console.log('📅 After date from filter:', filtered.length);
     }
     if (dateTo) {
       filtered = filtered.filter(opp => opp.lastUpdate <= dateTo);
+      console.log('📅 After date to filter:', filtered.length);
     }
 
     // Sort
