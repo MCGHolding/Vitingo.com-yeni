@@ -348,6 +348,17 @@ test_plan:
   current_focus: []
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+  completed_tests:
+    - "Enhanced CallRecordForm with Dynamic Contact Person Dropdown and New Contact Addition Modal Testing"
+    - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
+    - "User-Requested Changes Testing - GELİŞMELER Button Removal and NOT EKLE Modal to Page Conversion"
+    - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
+    - "JavaScript Error Fix for OpportunityTimelinePage ActivityModal"
+    - "ActionMenuPopover Delete Option Removal Test"
+    - "URGENT Sales Opportunities Display Issue Resolution"
+    - "Restored Detailed Activity Forms with Modal System Testing - OpportunityTimelinePage"
+    - "Customer Management API Endpoints Testing"
+    - "ViewCustomerPage and EditCustomerPage Integration Testing"
   test_all: false
   test_priority: "high_first"
   completed_tests:
