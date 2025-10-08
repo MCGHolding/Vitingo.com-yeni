@@ -875,6 +875,14 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
           setNewNoteModalOpen(true);
         }}
       />
+
+      {/* Activity Modal */}
+      <ActivityModal
+        isOpen={activityModalOpen}
+        onClose={() => setActivityModalOpen(false)}
+        opportunityId={formData.id}
+        opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
+      />
     </div>
   );
 }
