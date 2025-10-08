@@ -215,6 +215,16 @@ const Dashboard = () => {
     setCurrentView('all-opportunities');
   };
 
+  const handleEditOpportunity = (opportunity) => {
+    setSelectedOpportunityForEdit(opportunity);
+    setCurrentView('edit-opportunity');
+  };
+
+  const handleBackFromEditOpportunity = () => {
+    setSelectedOpportunityForEdit(null);
+    setCurrentView('all-opportunities'); // or open-opportunities depending on where user came from
+  };
+
   // Avans handlers
   const handleFinansOnayi = () => {
     setCurrentView('finans-onayi');
