@@ -70,7 +70,7 @@ export default function PDFViewer({ file, zoom = 100, className = "" }) {
           PDF yüklenirken hata oluştu
         </div>
         <Button
-          onClick={() => window.open(fileUrl, '_blank')}
+          onClick={() => window.open(file, '_blank')}
           variant="outline"
         >
           <Download className="h-4 w-4 mr-2" />
