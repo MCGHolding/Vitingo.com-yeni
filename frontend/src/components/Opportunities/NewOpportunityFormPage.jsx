@@ -585,6 +585,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         close_date: formData.closeDate,
         source: formData.source,
         description: formData.description,
+        design_files: formData.designFiles.map(f => f.id),
+        sample_files: formData.sampleFiles.map(f => f.id),
         business_type: formData.businessType,
         country: formData.country,
         city: formData.city,
