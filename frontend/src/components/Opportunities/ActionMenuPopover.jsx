@@ -18,12 +18,6 @@ export default function ActionMenuPopover({ opportunity, onAction }) {
 
   const menuItems = [
     {
-      icon: Trash2,
-      label: 'Sil',
-      action: 'delete',
-      color: 'text-red-600 hover:text-red-800 hover:bg-red-50'
-    },
-    {
       icon: Share,
       label: 'Paylaş',
       action: 'share',
