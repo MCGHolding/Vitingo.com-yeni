@@ -610,6 +610,15 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                         </div>
                       </td>
                       
+                      {/* Öngörülen */}
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-gray-900 text-sm">
+                            {formatCurrency(opportunity.amount || opportunity.dealValue || 0, opportunity.currency)}
+                          </span>
+                        </div>
+                      </td>
+                      
                       {/* Etiketler */}
                       <td className="py-3 px-3">
                         <div className="flex flex-wrap gap-1 max-w-xs">
@@ -621,15 +630,6 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                               {tag}
                             </Badge>
                           ))}
-                        </div>
-                      </td>
-                      
-                      {/* Tutar */}
-                      <td className="py-3 px-3">
-                        <div className="flex items-center space-x-1">
-                          <span className="font-semibold text-gray-900 text-sm">
-                            {formatCurrency(opportunity.amount || opportunity.dealValue || 0, opportunity.currency)}
-                          </span>
                         </div>
                       </td>
                       
