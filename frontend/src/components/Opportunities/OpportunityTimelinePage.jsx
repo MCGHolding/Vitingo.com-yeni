@@ -31,6 +31,166 @@ import {
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Quick Note Add Unit Component
+function QuickNoteAddUnit({ opportunityId, opportunityTitle, onNoteAdded }) {
+  const { toast } = useToast();
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      if (!noteTitle.trim() && !noteContent.trim()) {
+        toast({
+          title: "Hata",
+          description: "Not başlığı veya içeriği boş olamaz.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const notePayload = {
+        content: noteTitle ? `# ${noteTitle}\n\n${noteContent}` : noteContent,
+        category: 'general',
+        priority: 'medium',
+        tags: [],
+        metadata: {
+          title: noteTitle || 'Hızlı Not',
+          category: 'general',
+          priority: 'medium'
+        }
+      };
+
+      const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notePayload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Not kaydedilemedi');
+      }
+
+      const savedNote = await response.json();
+      
+      // Call parent callback
+      if (onNoteAdded) {
+        onNoteAdded({
+          ...savedNote,
+          title: noteTitle || 'Hızlı Not',
+          description: noteContent
+        });
+      }
+
+      // Reset form
+      setNoteTitle('');
+      setNoteContent('');
+      setExpanded(false);
+
+    } catch (error) {
+      console.error('❌ Error saving note:', error);
+      toast({
+        title: "Hata",
+        description: "Not kaydedilirken bir hata oluştu: " + error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setNoteTitle('');
+    setNoteContent('');
+    setExpanded(false);
+  };
+
+  return (
+    <div className="bg-white/80 backdrop-blur-sm border border-green-200/50 rounded-xl shadow-sm mb-6">
+      <div className="p-4 border-b border-green-100">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+            <FileText className="h-4 w-4 text-green-600" />
+            <span>Hızlı Not Ekle</span>
+          </h3>
+          {!expanded && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setExpanded(true)}
+              className="h-7 px-3 text-xs border-green-200 text-green-600 hover:bg-green-50"
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Not Ekle
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="p-4 space-y-4">
+          {/* Note Title - Optional */}
+          <div>
+            <Input
+              placeholder="Not başlığı (isteğe bağlı)..."
+              value={noteTitle}
+              onChange={(e) => setNoteTitle(e.target.value)}
+              className="text-sm"
+            />
+          </div>
+
+          {/* Note Content */}
+          <div>
+            <Textarea
+              placeholder="Not içeriğinizi buraya yazın..."
+              value={noteContent}
+              onChange={(e) => setNoteContent(e.target.value)}
+              className="min-h-[80px] text-sm resize-none"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCancel}
+              disabled={saving}
+              className="h-8 px-3 text-xs"
+            >
+              <X className="h-3 w-3 mr-1" />
+              İptal
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving || (!noteTitle.trim() && !noteContent.trim())}
+              size="sm"
+              className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700 text-white"
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  <Check className="h-3 w-3 mr-1" />
+                  Kaydet
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Sample activities for a specific opportunity
 const getSampleActivitiesForOpportunity = (opportunityId, opportunityTitle) => [
   {
