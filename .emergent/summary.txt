@@ -1,17 +1,17 @@
 <analysis>
-The AI engineer's trajectory commenced with fixing a UI compilation error in  (incorrect Lucide React icon import). Subsequently, substantial work focused on enhancing the New Sales Opportunity form: implementing a dynamic Proje Türü dropdown, splitting Fuar Tarihleri into distinct start/end dates, and adding a validated Stand Büyüklüğü field. Debugging efforts resolved customer data persistence concerns and opportunities not appearing in listings, revealing frontend filtering and environmental factors as root causes. All mock opportunity data was purged, integrating real API calls. Table displays across opportunity pages were refined, introducing sequential numbering, corrected headers, and reordered columns. A complete Avans (Advance) system was built from scratch, encompassing backend APIs and frontend components. Customer dropdowns were standardized to show only company names. The latest major feature involved integrating file upload capabilities with an advanced preview modal featuring zoom, pan, and PDF rendering. The final ongoing task is to comprehensively display all sales opportunity details within the .
+The AI engineer's work in this trajectory primarily focused on enhancing the UI/UX and functionality of sales opportunity and customer management. Initially, the  was modernized with new styling after resolving data loading and filtering issues in . A significant effort was dedicated to making the Activity Timeline fully functional; this involved creating backend API models and endpoints for activities in , integrating these into  and , and implementing timeline refresh. A JavaScript error related to  was debugged. Subsequently, the GELİŞMELER button and its modal were removed, and the NOT EKLE feature evolved from a modal to a full-page (), then ultimately to an inline note-adding unit within , alongside activity-specific modals. The UI layout was reorganized (filters top, menus left).  was enhanced with dynamic Contact Person dropdowns and an Add New Contact modal. Finally, customer Edit and View functionalities were updated to show full form data, with the work concluding as these customer modals were being converted to full-page views.
 </analysis>
 
 <product_requirements>
-The application is a CRM with a modern calendar system. Core CRM features include a multi-step New Brief Form, an Offer Form (Teklif Form) with auto-filled sales opportunity data, dynamic installment systems, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar system requires personal/admin views, meeting scheduling (with invitation management), an in-meeting chat, and various notifications.
+The application functions as a CRM integrated with a modern calendar system. Core CRM features include a multi-step New Brief Form, an Offer Form (Teklif Form) with auto-filled sales opportunity data, dynamic installment systems, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar system is designed for personal and admin views, meeting scheduling with invitation management, in-meeting chat, and various notifications.
 
-**Current Implementation**: A basic calendar and meeting request system are functional. The Teklif Form has been re-implemented with real-time sales opportunity and customer data, and dynamic payment installments. A smart customer deletion system (deactivate/delete) is in place. The New Sales Opportunity form has been updated to display only names in customer/contact person dropdowns and allows admin roles to dynamically Add New Status/Stage. Recent work includes dynamic country/city dropdowns, a Proje Türü dropdown with add functionality, split Fuar Tarihleri fields, a Stand Büyüklüğü input with unit selection, and a new Avans financial approval system. All mock opportunity data is removed, tables show sequential numbering and corrected headers/columns. File upload sections with advanced preview (zoom, pan, PDF) have been added. The  is being enhanced to show all opportunity details.
+**Current Implementation**: A basic calendar and meeting request system are functional. The Teklif Form has been re-implemented with real-time sales opportunity and customer data and dynamic payment installments. A smart customer deletion system is in place. The New Sales Opportunity form includes dynamic country/city dropdowns, a Proje Türü dropdown with add functionality, split Fuar Tarihleri fields, a Stand Büyüklüğü input with unit selection, and a new Avans financial approval system. All mock opportunity data is removed, and tables now display sequential numbering with corrected headers. File upload sections with advanced preview (zoom, pan, PDF) have been added. The  was enhanced to show all opportunity details, replacing UUIDs with sequential numbering and receiving a modernized appearance. A full-page Satış Fırsatı Bilgileri () was created, featuring a YENİ (NEW) button that previously opened a modal, now replaced by an integrated activity/note entry system. A full-page Activity Timeline () was developed with a modern UI, made fully functional with backend integration, allowing inline note entry and specific modals for other activity types. Dynamic contact person selection with inline adding was added to the . Customer Edit and View functionalities are transitioning from simple modals to comprehensive full-page displays.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend**: React (hooks, context), , , client-side routing, , , custom modals, Shadcn UI-like components (, , , , , ), , state management for UI (zoom, pan).
--   **Backend**: FastAPI (RESTful APIs, WebSockets), Pydantic (data models, validation), MongoDB (data storage), UUIDs.
--   **Auth**: Client-side authentication ().
+- **Frontend**: React (hooks, context), , , , custom modals, Shadcn UI-like components (Card, Button, Badge, Input, Select, Dialog, Tooltip), , client-side routing.
+- **Backend**: FastAPI (RESTful APIs), Pydantic (data models), MongoDB (data storage), UUIDs.
+- **Auth**: Client-side authentication ().
 </key_technical_concepts>
 
 <code_architecture>
@@ -21,78 +21,66 @@ The application follows a monorepo structure, featuring a React frontend and a F
 
 -   ****
     -   **Importance:** Core FastAPI backend, handles API routes and database interactions.
-    -   **Summary of Changes:** Added  and  Pydantic models with their respective CRUD endpoints. Integrated a generic  endpoint. Updated  models (, , ) to include  and  fields.
+    -   **Summary of Changes:** Added Pydantic models for  (e.g., , , , , , ) and corresponding CRUD endpoints (, etc.) to manage various activity types and their lifecycle.
+
 -   ****
-    -   **Importance:** Frontend entry, routing, and main state management for views.
-    -   **Summary of Changes:** Removed  mock data. Added imports and view handlers (, ) for the new Avans (Advance) system. Updated the  component call to pass these new handlers and added corresponding  statements for routing in .
+    -   **Importance:** Frontend entry, routing, and main state management.
+    -   **Summary of Changes:** Handled routing for  (created then removed). Integrated and then removed states and handlers for . Is currently being updated to handle routing for  and .
+
 -   ****
-    -   **Importance:** Main navigation component.
-    -   **Summary of Changes:** Integrated a new Finans menu with Avans Onayı and Kapanmış Avanslar sub-menu items. Modified  and component props to enable navigation to these new advance pages.
--   ****
-    -   **Importance:** Form for creating new sales opportunities.
-    -   **Summary of Changes:** Corrected  import. Integrated  and . Implemented dynamic Proje Türü dropdown with add functionality. Split Fuar Tarihleri into start/end dates. Added a Stand Büyüklüğü field with unit selection and validation. Adjusted customer dropdown to display only company names. Integrated two  components for Tasarım Dosyaları and Örnek Resim ve Videolar, updating  and  accordingly.
--   ** (New File)**
-    -   **Importance:** Reusable UI component for country selection.
-    -   **Summary of Changes:** Initial creation with search, icons, and dynamic data loading. Debugging console logs were added to .
--   ** (New File)**
-    -   **Importance:** Reusable UI component for city selection.
-    -   **Summary of Changes:** Initial creation. Fixed an  icon import error by replacing it with  from .
--   ****
-    -   **Importance:** Previously held mock opportunities data.
-    -   **Summary of Changes:** This file was completely deleted.
--   ****
-    -   **Importance:** Displays all sales opportunities.
-    -   **Summary of Changes:** Removed mock data usage. Implemented sequential numbering for the No. column. Updated and reordered table headers and their corresponding data (, , , , ). Added a direct delete button with a confirmation , including states and handlers. Fixed a duplicate  import.
--   ****, ****, ****, ****
-    -   **Importance:** Display filtered opportunities.
-    -   **Summary of Changes:** All were updated to remove mock data and fetch from real APIs. They now display sequential numbering for No. and have updated/reordered headers/columns similar to .  specifically received the full delete button, states, handlers, and confirmation modal implementation.
--   ****
-    -   **Importance:** Popover menu for actions on opportunities.
-    -   **Summary of Changes:** The Sil (Delete) option and its associated  icon import were removed, as direct delete buttons were added to the table rows.
--   ** (New File)**
-    -   **Importance:** Page for financial approval of advances.
-    -   **Summary of Changes:** Initial creation, displays a table of advances and integrates  for viewing individual advance details.
--   ** (New File)**
-    -   **Importance:** Page to view closed/approved advances.
-    -   **Summary of Changes:** Initial creation.
--   ** (New File)**
-    -   **Importance:** Modal to display detailed information for an advance.
-    -   **Summary of Changes:** Initial creation, designed to include Kaydet and Onayla buttons.
--   ** (New File)**
-    -   **Importance:** Reusable UI component for file uploads with advanced preview features.
-    -   **Summary of Changes:** Initial creation. Implemented file uploading, listing, and downloading. Added an eye icon for a preview modal with zoom in/out, pan, and advanced PDF viewing capabilities using . Integrated relevant states, handlers, and UI elements for these features, including zoom control icons and modal styling adjustments.
--   ** (New File)**
-    -   **Importance:** Component dedicated to rendering PDF files within the preview modal.
-    -   **Summary of Changes:** Initial creation, utilizes the  library for document display.
+    -   **Importance:** Displays all sales opportunities in a table.
+    -   **Summary of Changes:** Fixed filtering logic for  to correctly display opportunities based on their actual backend status values. Updated  and  to use the new  and  (which are being converted to pages).
+
 -   ****
     -   **Importance:** Modal for viewing comprehensive details of a sales opportunity.
-    -   **Summary of Changes:** Currently undergoing a full rewrite and expansion to display all sales opportunity details completely, including an increase in modal size.
+    -   **Summary of Changes:** Modernized its appearance, including updating tag colors to use gradients, to meet user's explicit request for a more modern, sleek design. Displays sequential opportunity numbers.
+
+-   ****
+    -   **Importance:** Full-page view for editing sales opportunity details.
+    -   **Summary of Changes:** Removed the GELİŞMELER (DEVELOPMENTS) button and its associated . The NOT EKLE (ADD NOTE) button functionality was also removed as note-taking was moved inline to .
+
+-   ****
+    -   **Importance:** Full-page view dedicated to displaying and managing the activity timeline for a specific sales opportunity.
+    -   **Summary of Changes:** Made activity creation functional by integrating with the new backend Activity APIs. Fixed a JavaScript error (, ) by updating  and adding safety checks. The Yeni (New) button no longer opens a modal; instead, an inline note-adding unit () was added, and other activity types (Call Record, Activity Planner, etc.) now open specific modals. The page's layout was reorganized to move filters to the top and create a two-column structure with menus/quick stats on the left sidebar and the timeline/activity entry section on the right.
+
+-   ****
+    -   **Importance:** Form for recording customer call details within an activity modal.
+    -   **Summary of Changes:** Enhanced the Görüşülen Kişi (Contact Person) dropdown to dynamically fetch authorized persons linked to the opportunity's customer. A new  was integrated, allowing users to add new contact persons directly from this form, with the dropdown refreshing automatically.
+
+-   ** (New File - created then removed)**
+    -   **Importance:** Temporary modal to display full customer details.
+    -   **Summary of Changes:** Created based on  but was superseded by the user's request to convert to a full-page view.
+
+-   ** (New File - created then removed)**
+    -   **Importance:** Temporary modal for editing full customer details.
+    -   **Summary of Changes:** Created based on  but was superseded by the user's request to convert to a full-page view.
+
+-   ** (New File)**
+    -   **Importance:** Full-page component for editing comprehensive customer details.
+    -   **Summary of Changes:** Created to replace the modal version as per user request (Chat Message 527).
+
+-   ** (New File)**
+    -   **Importance:** Full-page component for viewing comprehensive customer details.
+    -   **Summary of Changes:** Creation in progress to replace the modal version as per user request (Chat Message 527).
 </code_architecture>
 
 <pending_tasks>
--   Fully implement remaining detailed features within  (rich text editor, AI-generated text, multi-select services, signature).
--   Complete Phase 2 of the Calendar System: Meeting Management (email notifications, visual status).
--   Fully implement Phase 3: Real-time Chat (Socket.io integration, right panel, emoji/file/image sharing).
--   Implement Phase 4: Advanced Calendar Features (browser notifications, sync, reporting).
--   Implement the eye icon feature for expense reports to view documented expenses.
--   Complete UI styling and data rendering for dynamic country/city dropdowns (specifically, cities not appearing in UI).
--   Implement Save and Approve buttons in .
--   Update Tutar to Öngörülen and reorder Etiketler in , , .
--   Complete the display of all sales opportunity details in .
+- Fully implement remaining detailed features within  (rich text editor, AI-generated text, multi-select services, signature).
+- Complete Phase 2 of the Calendar System: Meeting Management (email notifications, visual status).
+- Fully implement Phase 3: Real-time Chat (Socket.io integration, right panel, emoji/file/image sharing).
+- Implement Phase 4: Advanced Calendar Features (browser notifications, sync, reporting).
+- Implement the eye icon feature for expense reports to view documented expenses.
+- Complete UI styling and data rendering for dynamic country/city dropdowns.
+- Implement Save and Approve buttons in .
+- Update Tutar to Öngörülen and reorder Etiketler in , , .
+- Implement field-level editing with individual edit icons on .
+- Complete the integration of  and  into  and update navigation.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was addressing the user's request to GÖZ İKONUNA BASINCA AÇILAN MODALDA SATIŞ FIRSATI GİRİLİRKN GİRİLEN TÜM DETAYLARI EKSİKSİZ GÖSTERT (In the modal opened by clicking the eye icon, show all details of the sales opportunity completely). This task specifically targeted the  component.
-
-The work involved:
-1.  **Locating  (Chat Message 667):** The engineer successfully identified the component responsible for displaying sales opportunity details.
-2.  **Updating  (Chat Message 669):** The file was edited to expand the content, aiming to include all requested details.
-3.  **Rewriting  (Chat Message 671):** A more extensive modification, described as a complete rewrite, was performed to ensure comprehensive detail display. This indicates a significant structural change to the modal's content.
-4.  **Enlarging Modal Size (Chat Message 672):** The modal's dimensions were adjusted to accommodate the expanded content.
-
-At the end of the trajectory, the modifications to  were in progress, with the modal's content being rewritten and its size adjusted. The completion and verification of displaying *all* sales opportunity details were the immediate objective.
+Immediately before this summary request, the AI engineer was in the process of fulfilling the user's latest request to convert customer View and Edit functionalities from modals to full-page components. The previous  and  (which themselves showed full customer data based on ) were being replaced. The AI engineer successfully created the  and had just initiated the creation of  at the end of the provided trajectory. This work is part of a larger effort to enhance the customer management UI, building on the recent successful implementation of dynamic contact person selection and a new contact modal in , and significant refactoring of the  for activity management.
 </current_work>
 
 <optional_next_step>
-Test the  to verify all sales opportunity details are displayed completely.
+Integrate  into  and update  to navigate to this new page.
 </optional_next_step>
