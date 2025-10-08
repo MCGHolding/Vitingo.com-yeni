@@ -93,113 +93,295 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
         </CardHeader>
 
         <CardContent className="p-6">
-          <div className="space-y-6">
-            {/* Header Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <Building2 className="h-4 w-4" />
-                    <span>Fırsat No & Müşteri</span>
-                  </label>
-                  <div className="text-lg">
-                    <span className="font-bold text-blue-600">#{opportunity.id}</span>
-                    <span className="mx-2">-</span>
-                    <span className="font-semibold text-gray-900">{opportunity.customer}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <FileText className="h-4 w-4" />
-                    <span>Etkinlik Adı</span>
-                  </label>
-                  <p className="text-lg font-medium text-gray-900">{opportunity.eventName}</p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <DollarSign className="h-4 w-4" />
-                    <span>Tutar</span>
-                  </label>
-                  <p className="text-xl font-bold text-green-600">
-                    {formatCurrency(opportunity.amount, opportunity.currency)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <Target className="h-4 w-4" />
-                    <span>Durum</span>
-                  </label>
-                  <Badge className={`${getStatusColor(opportunity.statusText)} border px-3 py-1`}>
-                    {opportunity.statusText}
-                  </Badge>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <User className="h-4 w-4" />
-                    <span>İletişim Kişisi</span>
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                        {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
+          <div className="space-y-8">
+            
+            {/* TEMEl BİLGİLER */}
+            <Card className="border border-gray-200">
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                  <Building2 className="h-5 w-5 text-blue-600" />
+                  <span>Temel Bilgiler</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
                     <div>
-                      <p className="font-medium text-gray-900">{opportunity.contactPerson}</p>
+                      <label className="text-sm font-medium text-gray-600">Fırsat No</label>
+                      <p className="text-lg font-bold text-blue-600">#{opportunity.id}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Müşteri</label>
+                      <p className="font-semibold text-gray-900">{opportunity.customer}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Satış Fırsatı Adı</label>
+                      <p className="font-medium text-gray-900">{opportunity.eventName || opportunity.title}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Fırsat Kaynağı</label>
+                      <p className="text-gray-900">{opportunity.source || '-'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Proje Türü</label>
+                      <p className="text-gray-900">{opportunity.project_type || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">İş Türü</label>
+                      <p className="text-gray-900">{opportunity.business_type || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Ülke</label>
+                      <p className="text-gray-900">{opportunity.country || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Şehir</label>
+                      <p className="text-gray-900">{opportunity.city || '-'}</p>
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div>
-                  <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>Son Güncelleme</span>
-                  </label>
-                  <p className="text-gray-900">{formatDate(opportunity.lastUpdate)}</p>
+            {/* SÜREÇ BİLGİLERİ */}
+            <Card className="border border-gray-200">
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                  <span>Süreç Bilgileri</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Durum</label>
+                      <div>
+                        <Badge className={`${getStatusColor(opportunity.statusText)} border px-3 py-1`}>
+                          {opportunity.statusText}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Aşama</label>
+                      <p className="text-gray-900">{opportunity.stage || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Kullanıcı Adı Soyadı</label>
+                      <div className="flex items-center space-x-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
+                            {(opportunity.contactPerson || 'NN').split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="font-medium text-gray-900">{opportunity.contactPerson || opportunity.contact_person || '-'}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Başarı Olasılığı</label>
+                      <p className="text-gray-900">{opportunity.probability || 50}%</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Son Güncelleme</label>
+                      <p className="text-gray-900">{formatDate(opportunity.updated_at || opportunity.lastUpdate)}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Oluşturulma Tarihi</label>
+                      <p className="text-gray-900">{formatDate(opportunity.created_at || opportunity.lastUpdate)}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Tags Section */}
+            {/* LOKASYON VE FUAR BİLGİLERİ */}
+            <Card className="border border-gray-200">
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                  <LocationIcon className="h-5 w-5 text-purple-600" />
+                  <span>Lokasyon ve Fuar Bilgileri</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Ticaret Fuarı</label>
+                      <p className="text-gray-900">{opportunity.trade_show || opportunity.tradeShow || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Başlama Tarihi</label>
+                      <p className="text-gray-900">{opportunity.trade_show_start_date ? formatDate(opportunity.trade_show_start_date) : '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Bitiş Tarihi</label>
+                      <p className="text-gray-900">{opportunity.trade_show_end_date ? formatDate(opportunity.trade_show_end_date) : '-'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Stand Büyüklüğü</label>
+                      <p className="text-gray-900">
+                        {opportunity.stand_size ? `${opportunity.stand_size} ${opportunity.stand_size_unit || 'm²'}` : '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Fuar Ülkesi</label>
+                      <p className="text-gray-900">{opportunity.country || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Fuar Şehri</label>
+                      <p className="text-gray-900">{opportunity.city || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* FİNANSAL BİLGİLER */}
+            <Card className="border border-gray-200">
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                  <DollarSign className="h-5 w-5 text-green-600" />
+                  <span>Finansal Bilgiler</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Öngörülen Gelir</label>
+                      <p className="text-xl font-bold text-green-600">
+                        {formatCurrency(opportunity.amount || opportunity.expected_revenue || 0, opportunity.currency)}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Para Birimi</label>
+                      <p className="text-gray-900">{opportunity.currency || 'TRY'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Başarı Olasılığı</label>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full" 
+                            style={{width: `${opportunity.probability || 50}%`}}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium">{opportunity.probability || 50}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">Beklenen Gelir</label>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {formatCurrency((opportunity.amount || 0) * (opportunity.probability || 50) / 100, opportunity.currency)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* DETAYLAR */}
+            <Card className="border border-gray-200">
+              <CardHeader className="bg-gray-50 border-b">
+                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                  <Info className="h-5 w-5 text-blue-600" />
+                  <span>Detaylar</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="space-y-4">
+                  {/* Açıklama */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">Açıklama ve Notlar</label>
+                    <p className="text-gray-900 mt-1 p-3 bg-gray-50 rounded-md min-h-[60px]">
+                      {opportunity.description || 'Açıklama eklenmemiş.'}
+                    </p>
+                  </div>
+
+                  {/* Dosyalar */}
+                  {((opportunity.design_files && opportunity.design_files.length > 0) || 
+                    (opportunity.sample_files && opportunity.sample_files.length > 0)) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Tasarım Dosyaları */}
+                      {opportunity.design_files && opportunity.design_files.length > 0 && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-600 mb-2 block">Tasarım Dosyaları</label>
+                          <div className="space-y-2">
+                            {opportunity.design_files.map((fileId, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                <span className="text-sm text-gray-700">Dosya {index + 1}</span>
+                                <div className="flex space-x-1">
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                    <Eye className="h-3 w-3" />
+                                  </Button>
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                    <Download className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Örnek Dosyalar */}
+                      {opportunity.sample_files && opportunity.sample_files.length > 0 && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-600 mb-2 block">Örnek Resim ve Videolar</label>
+                          <div className="space-y-2">
+                            {opportunity.sample_files.map((fileId, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                <span className="text-sm text-gray-700">Dosya {index + 1}</span>
+                                <div className="flex space-x-1">
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                    <Eye className="h-3 w-3" />
+                                  </Button>
+                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                    <Download className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* ETİKETLER */}
             {opportunity.tags && opportunity.tags.length > 0 && (
-              <div>
-                <label className="text-sm font-medium text-gray-600 flex items-center space-x-2 mb-3">
-                  <MapPin className="h-4 w-4" />
-                  <span>Etiketler</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {opportunity.tags.map((tag, index) => (
-                    <Badge
-                      key={index}
-                      className={`text-xs px-3 py-1 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+              <Card className="border border-gray-200">
+                <CardHeader className="bg-gray-50 border-b">
+                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                    <MapPin className="h-5 w-5 text-orange-600" />
+                    <span>Etiketler</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap gap-2">
+                    {opportunity.tags.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        className={`text-xs px-3 py-1 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             )}
-
-            {/* Additional Info */}
-            <div className="border-t pt-6">
-              <h4 className="text-lg font-semibold text-gray-800 mb-4">Ek Bilgiler</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-gray-600">Para Birimi:</span>
-                  <span className="ml-2 text-gray-900">{opportunity.currency}</span>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600">Kayıt Tarihi:</span>
-                  <span className="ml-2 text-gray-900">{formatDate(opportunity.lastUpdate)}</span>
-                </div>
-              </div>
-            </div>
 
             {/* Actions */}
             <div className="flex items-center justify-end space-x-3 pt-6 border-t">
