@@ -283,6 +283,10 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
+                  <label className="text-sm font-medium text-gray-600 block mb-2">Fırsat No</label>
+                  <p className="text-lg font-bold text-blue-600">{formData.displayIndex || '#' + (formData.id ? formData.id.substring(0, 8) : 'N/A')}</p>
+                </div>
+                <div>
                   <label className="text-sm font-medium text-gray-600 block mb-2">Müşteri</label>
                   {editingSections.basic ? (
                     <Input
