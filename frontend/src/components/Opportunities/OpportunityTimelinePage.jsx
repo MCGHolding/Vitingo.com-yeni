@@ -700,11 +700,96 @@ export default function OpportunityTimelinePage({
           />
         </div>
 
-        {/* Main Content Grid - 2 Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Filters Section - Full Width at Top */}
+        <div className="mb-6">
+          <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+            <div className="p-3 border-b border-gray-100">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+                <Filter className="h-4 w-4 text-gray-600" />
+                <span>Filtreler</span>
+              </h3>
+            </div>
+            <div className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    Arama
+                  </label>
+                  <div className="relative">
+                    <Input
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Aktivite ara..."
+                      className="pl-8 h-8 text-sm border-gray-200"
+                    />
+                    <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    Tip
+                  </label>
+                  <Select value={filterType} onValueChange={setFilterType}>
+                    <SelectTrigger className="h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tümü</SelectItem>
+                      {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center space-x-2">
+                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                            <span className="text-sm">{config.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    Durum
+                  </label>
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tümü</SelectItem>
+                      {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center space-x-2">
+                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                            <span className="text-sm">{config.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-end">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="border-gray-200 text-gray-600 hover:bg-gray-50 h-8 w-full"
+                  >
+                    <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+                    Rapor
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid - Left Sidebar, Right Timeline */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           
-          {/* Left Column - Timeline */}
-          <div className="lg:col-span-2">
+          {/* Left Column - Sidebar */}
+          <div className="space-y-4">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
               <div className="p-3 border-b border-gray-100">
                 <h3 className="text-sm font-semibold text-gray-900">
