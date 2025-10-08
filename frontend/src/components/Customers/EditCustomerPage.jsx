@@ -153,10 +153,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     try {
       setIsLoading(true);
 
-      if (!formData.name.trim()) {
+      if (!formData.company_short_name.trim()) {
         toast({
           title: "Eksik Bilgi",
-          description: "Müşteri adı zorunludur.",
+          description: "Firma kısa adı zorunludur.",
           variant: "destructive"
         });
         return;
