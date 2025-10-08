@@ -343,75 +343,75 @@ export default function OpportunityTimelinePage({
 
       <div className="px-4 py-4 space-y-4">
         
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-600 text-sm font-medium">Toplam Aktivite</p>
-                  <p className="text-2xl font-bold text-purple-900">{summary.total}</p>
-                </div>
-                <Activity className="h-8 w-8 text-purple-600" />
+        {/* Compact Modern Summary Cards */}
+        <div className="grid grid-cols-5 gap-3">
+          <div className="bg-white/70 backdrop-blur-sm border border-purple-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg">
+                <Activity className="h-4 w-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Toplam</p>
+                <p className="text-lg font-bold text-gray-900">{summary.total}</p>
+              </div>
+            </div>
+          </div>
 
-          <Card className="border-green-200 bg-gradient-to-r from-green-50 to-green-100">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-green-600 text-sm font-medium">Tamamlanan</p>
-                  <p className="text-2xl font-bold text-green-900">{summary.completed}</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="bg-white/70 backdrop-blur-sm border border-green-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-gradient-to-r from-green-500 to-green-600 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Tamamlanan</p>
+                <p className="text-lg font-bold text-gray-900">{summary.completed}</p>
+              </div>
+            </div>
+          </div>
 
-          <Card className="border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-yellow-600 text-sm font-medium">Bekleyen</p>
-                  <p className="text-2xl font-bold text-yellow-900">{summary.pending}</p>
-                </div>
-                <Clock className="h-8 w-8 text-yellow-600" />
+          <div className="bg-white/70 backdrop-blur-sm border border-amber-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg">
+                <Clock className="h-4 w-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Bekleyen</p>
+                <p className="text-lg font-bold text-gray-900">{summary.pending}</p>
+              </div>
+            </div>
+          </div>
 
-          <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-600 text-sm font-medium">Bu Hafta</p>
-                  <p className="text-2xl font-bold text-blue-900">
-                    {activities.filter(a => {
-                      const weekAgo = new Date();
-                      weekAgo.setDate(weekAgo.getDate() - 7);
-                      return new Date(a.created_at) > weekAgo;
-                    }).length}
-                  </p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-blue-600" />
+          <div className="bg-white/70 backdrop-blur-sm border border-blue-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                <TrendingUp className="h-4 w-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Bu Hafta</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {activities.filter(a => {
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return new Date(a.created_at) > weekAgo;
+                  }).length}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <Card className="border-indigo-200 bg-gradient-to-r from-indigo-50 to-indigo-100">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-indigo-600 text-sm font-medium">Hatırlatıcılar</p>
-                  <p className="text-2xl font-bold text-indigo-900">
-                    {activities.filter(a => a.status === 'pending' && a.scheduled_for).length}
-                  </p>
-                </div>
-                <Bell className="h-8 w-8 text-indigo-600" />
+          <div className="bg-white/70 backdrop-blur-sm border border-indigo-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg">
+                <Bell className="h-4 w-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-xs font-medium text-gray-600">Hatırlatıcı</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {activities.filter(a => a.status === 'pending' && a.scheduled_for).length}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
