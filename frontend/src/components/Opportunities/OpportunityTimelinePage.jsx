@@ -339,10 +339,10 @@ export default function OpportunityTimelinePage({
     setActivityModalOpen(true);
   };
 
-  const handleActivitySave = (newActivity) => {
-    console.log('New activity created:', newActivity);
+  const handleActivityCreated = (newActivity) => {
+    console.log('✅ New activity created:', newActivity);
     
-    // Add the new activity to the list (in real app, this would be fetched from API)
+    // Add the new activity to the list and refresh from API
     const activityWithId = {
       ...newActivity,
       id: Date.now().toString(),
@@ -355,6 +355,16 @@ export default function OpportunityTimelinePage({
     };
     
     setActivities(prev => [activityWithId, ...prev]);
+    
+    // Optionally refresh all activities from API to ensure data consistency
+    // loadActivities();
+    
+    toast({
+      title: "Başarılı",
+      description: "Yeni aktivite timeline'a eklendi.",
+      className: "bg-green-50 border-green-200 text-green-800",
+    });
+    
     setActivityModalOpen(false);
   };
 
