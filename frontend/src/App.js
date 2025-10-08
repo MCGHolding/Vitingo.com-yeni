@@ -129,6 +129,9 @@ const Dashboard = () => {
   
   // Collection states
   const [showNewCollectionForm, setShowNewCollectionForm] = useState(false);
+  
+  // Opportunity edit states
+  const [selectedOpportunityForEdit, setSelectedOpportunityForEdit] = useState(null);
 
   // Load fairs from backend API
   useEffect(() => {
