@@ -767,6 +767,12 @@ const Dashboard = () => {
           onNewOpportunity={handleNewOpportunity}
           onActivityTimeline={handleOpportunityTimeline}
         />;
+      case 'opportunity-timeline':
+        return <OpportunityTimelinePage 
+          opportunityId={selectedOpportunityForTimeline?.id}
+          opportunityTitle={selectedOpportunityForTimeline?.eventName || selectedOpportunityForTimeline?.title}
+          onBack={handleBackFromOpportunityTimeline}
+        />;
       case 'new-opportunity':
         return <NewOpportunityFormPage onSave={saveOpportunity} onClose={handleBackToDashboard} />;
       case 'new-customer':
