@@ -150,6 +150,56 @@ export default function FileUpload({
   const closePreviewModal = () => {
     setPreviewModalOpen(false);
     setPreviewFile(null);
+    // Reset zoom and pan
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setIsDragging(false);
+  };
+
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(prev * 1.2, 5)); // Max zoom 5x
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev / 1.2, 0.1)); // Min zoom 0.1x
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e) => {
+    if (zoom > 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - pan.x,
+        y: e.clientY - pan.y
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging && zoom > 1) {
+      setPan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
   };
 
   const renderPreviewContent = (file) => {
