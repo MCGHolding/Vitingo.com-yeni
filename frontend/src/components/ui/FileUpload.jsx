@@ -11,6 +11,7 @@ import {
   Video, 
   FileText,
   Download,
+  Eye,
   Loader2
 } from 'lucide-react';
 
