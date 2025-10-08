@@ -44,6 +44,11 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const [sortBy, setSortBy] = useState('id');
   const [openOpportunities, setOpenOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Delete modal states
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [opportunityToDelete, setOpportunityToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Load open opportunities from API
   useEffect(() => {
