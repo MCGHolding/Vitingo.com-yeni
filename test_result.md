@@ -190,11 +190,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "URGENT Sales Opportunities Not Appearing Investigation"
+    - "Opportunity Table Columns Structure Update Test"
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
-  test_priority: "critical_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "testing"
