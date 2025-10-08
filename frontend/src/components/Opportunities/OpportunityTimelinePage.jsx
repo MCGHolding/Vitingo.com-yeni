@@ -497,16 +497,18 @@ export default function OpportunityTimelinePage({
               </div>
               <div className="p-3 space-y-2">
                 {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
-                  <div key={key} className="flex items-center justify-between">
+                  <div key={key} className="flex items-center justify-between py-1">
                     <div className="flex items-center space-x-2">
-                      <config.icon className={`h-4 w-4 ${config.color}`} />
-                      <span className="text-sm">{config.label}</span>
+                      <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                      <span className="text-xs text-gray-700">{config.label}</span>
                     </div>
-                    <span className="text-sm font-medium">{summary.byType[key] || 0}</span>
+                    <span className="text-xs font-semibold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                      {summary.byType[key] || 0}
+                    </span>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Activities Timeline */}
