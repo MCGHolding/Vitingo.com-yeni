@@ -15,6 +15,7 @@ import {
   Filter, 
   Eye, 
   Edit, 
+  Trash2,
   MoreHorizontal,
   Calendar,
   User,
