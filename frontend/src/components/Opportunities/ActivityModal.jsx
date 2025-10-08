@@ -27,6 +27,8 @@ import ActivityPlannerForm from './activities/ActivityPlannerForm';
 import DesignUploadForm from './activities/DesignUploadForm';
 import MessagingForm from './activities/MessagingForm';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ACTIVITY_TYPES = [
   {
     id: 'call_record',
