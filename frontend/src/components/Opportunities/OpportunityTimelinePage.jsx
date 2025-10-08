@@ -851,18 +851,10 @@ export default function OpportunityTimelinePage({
           {/* Compact Modern Timeline */}
           <div className="lg:col-span-3">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
-              <div className="p-3 border-b border-gray-100 flex items-center justify-between">
+              <div className="p-3 border-b border-gray-100">
                 <h3 className="text-sm font-semibold text-gray-900">
                   Zaman Çizelgesi ({filteredActivities.length})
                 </h3>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-7 px-3 text-xs"
-                >
-                  <Plus className="h-3 w-3 mr-1.5" />
-                  Yeni Aktivite
-                </Button>
               </div>
               <div className="p-3">
                 {loading ? (
