@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { useIban } from '../../hooks/useIban';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
