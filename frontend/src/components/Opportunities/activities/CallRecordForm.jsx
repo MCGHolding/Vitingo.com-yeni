@@ -55,6 +55,59 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
   const [showNewContactModal, setShowNewContactModal] = useState(false);
   const [customerInfo, setCustomerInfo] = useState(null);
 
+  // Load opportunity and customer data on mount
+  useEffect(() => {
+    loadOpportunityData();
+  }, [opportunityId]);
+
+  const loadOpportunityData = async () => {
+    try {
+      setLoadingContacts(true);
+      
+      // Get opportunity details
+      const oppResponse = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}`);
+      if (oppResponse.ok) {
+        const opportunity = await oppResponse.json();
+        setCustomerInfo({
+          name: opportunity.customer,
+          id: opportunity.customer_id || opportunity.customer
+        });
+        
+        // Load contact persons for this customer
+        await loadContactPersons(opportunity.customer);
+      }
+    } catch (error) {
+      console.error('Error loading opportunity data:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteri bilgileri yüklenirken hata oluştu.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingContacts(false);
+    }
+  };
+
+  const loadContactPersons = async (customerName) => {
+    try {
+      // Try to get contact persons for this customer
+      const response = await fetch(`${BACKEND_URL}/api/customers`);
+      if (response.ok) {
+        const customers = await response.json();
+        const customer = customers.find(c => c.name === customerName);
+        
+        if (customer && customer.contact_persons) {
+          setContactPersons(customer.contact_persons || []);
+        } else {
+          setContactPersons([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading contact persons:', error);
+      setContactPersons([]);
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
