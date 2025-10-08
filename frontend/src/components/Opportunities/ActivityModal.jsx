@@ -154,7 +154,8 @@ export default function ActivityModal({ isOpen, onClose, opportunityId, opportun
       opportunityId,
       opportunityTitle,
       onSave: handleActivitySave,
-      onCancel: handleBackToSelection
+      onCancel: handleBackToSelection,
+      saving: saving
     };
 
     switch (selectedActivityType.id) {
