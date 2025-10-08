@@ -239,7 +239,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
             
             <Button
               onClick={handleSave}
-              disabled={isLoading || !formData.name.trim()}
+              disabled={isLoading || !formData.company_short_name.trim()}
               className="bg-white text-orange-600 hover:bg-orange-50 px-6 py-2 font-semibold rounded-lg shadow-lg"
             >
               {isLoading ? (
