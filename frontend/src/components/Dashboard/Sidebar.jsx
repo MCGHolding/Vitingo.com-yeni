@@ -119,12 +119,6 @@ const getNavigation = (userDepartment) => {
       ]
     },
     { 
-      name: 'Aktivite Takibi', 
-      href: '/activities', 
-      icon: Activity, 
-      current: false 
-    },
-    { 
       name: 'Teklifler', 
       href: '/teklifler', 
       icon: FileText, 
