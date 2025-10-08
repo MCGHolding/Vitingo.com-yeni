@@ -5,6 +5,13 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { useToast } from '../../hooks/use-toast';
+
+// Import detailed activity forms
+import CallRecordForm from './activities/CallRecordForm';
+import EmailManagementForm from './activities/EmailManagementForm';
+import ActivityPlannerForm from './activities/ActivityPlannerForm';
+import DesignUploadForm from './activities/DesignUploadForm';
+import MessagingForm from './activities/MessagingForm';
 import { 
   Activity,
   Phone, 
