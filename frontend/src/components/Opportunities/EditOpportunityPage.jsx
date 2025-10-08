@@ -33,7 +33,6 @@ import {
   Download,
   Check,
   Plus,
-  History,
   Zap,
   Activity
 } from 'lucide-react';
