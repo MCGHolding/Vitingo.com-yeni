@@ -231,15 +231,41 @@ export default function OpportunityTimelinePage({
     filterActivities();
   }, [searchTerm, filterType, filterStatus, activities]);
 
-  const loadActivities = () => {
-    setLoading(true);
-    // In real implementation, this would fetch from API
-    // For now, use sample data specific to this opportunity
-    setTimeout(() => {
+  const loadActivities = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      console.log('🔍 Loading activities for opportunity:', opportunityId);
+      
+      const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/activities`);
+      
+      if (!response.ok) {
+        throw new Error('Aktiviteler yüklenirken hata oluştu');
+      }
+      
+      const data = await response.json();
+      console.log('✅ Activities loaded from API:', data.length, 'items');
+      console.log('📊 Sample activity:', data[0]);
+      
+      // If no activities exist, show sample activities for better UX
+      if (data.length === 0) {
+        console.log('ℹ️ No activities found, showing sample data for better UX');
+        const sampleActivities = getSampleActivitiesForOpportunity(opportunityId, opportunityTitle);
+        setActivities(sampleActivities);
+      } else {
+        setActivities(data);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error loading activities:', error);
+      setError('Aktiviteler yüklenirken hata oluştu: ' + error.message);
+      
+      // Fallback to sample data on error
       const sampleActivities = getSampleActivitiesForOpportunity(opportunityId, opportunityTitle);
       setActivities(sampleActivities);
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   const filterActivities = () => {
