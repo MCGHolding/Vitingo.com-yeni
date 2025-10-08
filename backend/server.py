@@ -5282,6 +5282,52 @@ class ProjectTypeCreate(BaseModel):
     label: str
     description: Optional[str] = ""
 
+# Avans (Advance) Model
+class Avans(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = ""
+    amount: float
+    currency: str = "TRY"
+    employee_name: str
+    employee_id: Optional[str] = ""
+    department: Optional[str] = ""
+    project_name: Optional[str] = ""
+    reason: str
+    status: str = "pending"  # pending, finance_approved, closed
+    finance_approved: bool = False
+    finance_approved_by: Optional[str] = ""
+    finance_approved_at: Optional[datetime] = None
+    closed_at: Optional[datetime] = None
+    notes: Optional[str] = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = ""
+
+class AvansCreate(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    amount: float
+    currency: str = "TRY"
+    employee_name: str
+    employee_id: Optional[str] = ""
+    department: Optional[str] = ""
+    project_name: Optional[str] = ""
+    reason: str
+    notes: Optional[str] = ""
+
+class AvansUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    amount: Optional[float] = None
+    currency: Optional[str] = None
+    employee_name: Optional[str] = None
+    employee_id: Optional[str] = None
+    department: Optional[str] = None
+    project_name: Optional[str] = None
+    reason: Optional[str] = None
+    notes: Optional[str] = None
+
 # Status Endpoints
 @api_router.get("/opportunity-statuses")
 async def get_opportunity_statuses():
