@@ -514,58 +514,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
               </CardContent>
             </Card>
 
-            {/* Financial Information */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
-                <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
-                  <CreditCard className="h-5 w-5 text-emerald-600" />
-                  <span>Finansal Bilgiler</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Vergi Numarası
-                  </label>
-                  <Input
-                    value={formData.tax_number}
-                    onChange={(e) => handleInputChange('tax_number', e.target.value)}
-                    placeholder="Vergi numarası"
-                    className="w-full"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    IBAN
-                  </label>
-                  <Input
-                    value={formData.iban}
-                    onChange={(e) => handleInputChange('iban', e.target.value)}
-                    placeholder="IBAN numarası"
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Para Birimi
-                  </label>
-                  <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TRY">TRY - Türk Lirası</SelectItem>
-                      <SelectItem value="USD">USD - Dolar</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="GBP">GBP - İngiliz Sterlini</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
           </div>
 
           {/* Right Column */}
