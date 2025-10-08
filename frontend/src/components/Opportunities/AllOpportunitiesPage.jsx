@@ -535,8 +535,8 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Aşama</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Kullanıcı Adı Soyadı</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Öngörülen</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
                     <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
                   </tr>
                 </thead>
