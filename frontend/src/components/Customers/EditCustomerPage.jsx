@@ -36,21 +36,24 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [sectors, setSectors] = useState([]);
 
   const [formData, setFormData] = useState({
-    name: '',
-    customer_type: '',
-    sector: '',
-    phone: '',
-    email: '',
-    website: '',
+    company_short_name: '',
+    company_title: '',
+    customer_type_id: '',
+    specialty_id: '',
+    address: '',
     country: '',
     city: '',
-    address: '',
+    phone: '',
+    mobile: '',
+    email: '',
+    tax_office: '',
     tax_number: '',
-    iban: '',
-    currency: 'TRY',
+    services: [],
     tags: [],
     notes: '',
-    contactPerson: ''
+    contactPerson: '',
+    iban: '',
+    currency: 'TRY'
   });
 
   const [contacts, setContacts] = useState([]);
