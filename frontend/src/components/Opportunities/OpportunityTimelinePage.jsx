@@ -91,100 +91,10 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
     }
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-
-      if (!formData.title?.trim() && !formData.description?.trim()) {
-        toast({
-          title: "Hata",
-          description: "Başlık veya açıklama boş olamaz.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      let apiPayload;
-      let endpoint;
-
-      if (selectedType === 'note') {
-        // Note API endpoint
-        apiPayload = {
-          content: formData.title ? `# ${formData.title}\n\n${formData.description}` : formData.description,
-          category: 'general',
-          priority: 'medium',
-          tags: [],
-          metadata: {
-            title: formData.title || 'Hızlı Not',
-            category: 'general',
-            priority: 'medium'
-          }
-        };
-        endpoint = `${BACKEND_URL}/api/opportunities/${opportunityId}/notes`;
-      } else {
-        // Activity API endpoint
-        apiPayload = {
-          type: selectedType,
-          title: formData.title || QUICK_ACTIVITY_TYPES[selectedType].label,
-          description: formData.description || '',
-          status: formData.status || 'pending',
-          priority: formData.priority || 'medium',
-          scheduled_for: formData.scheduled_for || null,
-          data: formData
-        };
-        endpoint = `${BACKEND_URL}/api/opportunities/${opportunityId}/activities`;
-      }
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiPayload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Kayıt işlemi başarısız');
-      }
-
-      const saved = await response.json();
-      
-      // Call parent callback
-      if (onActivityAdded) {
-        onActivityAdded({
-          ...saved,
-          type: selectedType,
-          title: formData.title || QUICK_ACTIVITY_TYPES[selectedType].label,
-          description: formData.description
-        });
-      }
-
-      // Reset form
-      setFormData({});
-      setSelectedType('');
-
-    } catch (error) {
-      console.error('❌ Error saving:', error);
-      toast({
-        title: "Hata",
-        description: "Kaydetme işlemi sırasında hata: " + error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+  const handleActivityTypeClick = (activityType) => {
+    if (onOpenDetailedForm) {
+      onOpenDetailedForm(activityType);
     }
-  };
-
-  const handleCancel = () => {
-    setFormData({});
-    setSelectedType('');
-  };
-
-  const updateFormData = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   const renderQuickForm = () => {
