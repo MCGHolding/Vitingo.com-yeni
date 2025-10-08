@@ -41,6 +41,8 @@ const customerTagColors = {
   'high-value': 'bg-red-500 text-white',
   'potential': 'bg-orange-500 text-white'
 };
+import ViewCustomerModal from './ViewCustomerModal';
+import EditCustomerModal from './EditCustomerModal';
 import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
