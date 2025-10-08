@@ -168,6 +168,13 @@ const ACTIVITY_TYPES = {
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200'
   },
+  email_management: { 
+    label: 'E-posta Yönetimi', 
+    icon: Mail, 
+    color: 'text-green-600', 
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-200'
+  },
   activity_planner: { 
     label: 'Planlanan', 
     icon: Calendar, 
@@ -188,6 +195,14 @@ const ACTIVITY_TYPES = {
     color: 'text-pink-600', 
     bgColor: 'bg-pink-50',
     borderColor: 'border-pink-200'
+  },
+  // Default fallback for unknown types
+  default: { 
+    label: 'Aktivite', 
+    icon: Activity, 
+    color: 'text-gray-600', 
+    bgColor: 'bg-gray-50',
+    borderColor: 'border-gray-200'
   }
 };
 
