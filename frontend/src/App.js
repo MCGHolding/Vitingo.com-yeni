@@ -943,6 +943,8 @@ const Dashboard = () => {
 
       case 'kapanmis-avanslar':
         return <KapanmisAvanslarPage onBackToDashboard={handleBackToDashboard} />;
+      case 'activity-timeline':
+        return <ActivityTimelinePage onBack={handleBackToDashboard} />;
 
       // Expense Receipt cases
       case 'new-expense-receipt':
