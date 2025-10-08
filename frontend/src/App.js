@@ -865,6 +865,20 @@ const Dashboard = () => {
           onBackToDashboard={handleBackToDashboard} 
           customers={customers} 
           refreshCustomers={loadCustomers}
+          onViewCustomer={handleViewCustomer}
+          onEditCustomer={handleEditCustomerFromPage}
+        />;
+      case 'view-customer':
+        return <ViewCustomerPage 
+          customer={selectedCustomerForView}
+          onBack={handleBackFromViewCustomer}
+          onEdit={handleEditFromView}
+        />;
+      case 'edit-customer':
+        return <EditCustomerPage 
+          customer={selectedCustomerForEdit}
+          onBack={handleBackFromEditCustomer}
+          onSave={handleSaveCustomerFromPage}
         />;
       case 'inactive-customers':
         return <InactiveCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} />;
