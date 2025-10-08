@@ -822,6 +822,14 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
         initialIndex={previewInitialIndex}
         title={previewTitle}
       />
+
+      {/* New Note Modal */}
+      <NewNoteModal
+        isOpen={newNoteModalOpen}
+        onClose={() => setNewNoteModalOpen(false)}
+        opportunityId={formData.id}
+        opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
+      />
     </div>
   );
 }
