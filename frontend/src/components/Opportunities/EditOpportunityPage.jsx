@@ -788,6 +788,15 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
           </Card>
         )}
       </div>
+
+      {/* File Preview Modal */}
+      <FilePreviewModal
+        isOpen={previewModalOpen}
+        onClose={closePreviewModal}
+        files={previewFiles}
+        initialIndex={previewInitialIndex}
+        title={previewTitle}
+      />
     </div>
   );
 }
