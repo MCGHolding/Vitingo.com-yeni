@@ -226,7 +226,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
           <div className="flex items-center space-x-3">
             <Button
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2"
-              onClick={() => {/* Navigate to new opportunity */}}
+              onClick={onNewOpportunity}
             >
               YENİ
             </Button>
