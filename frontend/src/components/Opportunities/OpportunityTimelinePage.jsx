@@ -847,26 +847,12 @@ export default function OpportunityTimelinePage({
             </div>
           </div>
 
-          {/* Quick Note Add Unit */}
+          {/* Quick Activity Add Unit */}
           <div className="lg:col-span-4">
-            <QuickNoteAddUnit 
+            <QuickActivityAddUnit 
               opportunityId={opportunityId}
               opportunityTitle={opportunityTitle}
-              onNoteAdded={(newNote) => {
-                // Add new note as activity
-                setActivities(prev => [{
-                  ...newNote,
-                  type: 'note',
-                  status: 'completed',
-                  priority: 'medium'
-                }, ...prev]);
-                
-                toast({
-                  title: "Başarılı",
-                  description: "Not başarıyla eklendi.",
-                  className: "bg-green-50 border-green-200 text-green-800",
-                });
-              }}
+              onActivityAdded={handleActivityCreated}
             />
           </div>
 
