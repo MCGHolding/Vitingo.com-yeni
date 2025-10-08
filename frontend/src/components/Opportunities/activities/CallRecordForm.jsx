@@ -34,6 +34,8 @@ const CALL_RESULTS = [
   { value: 'callback', label: 'Geri Arama İstedi', icon: PhoneCall, color: 'text-purple-600' }
 ];
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 export default function CallRecordForm({ opportunityId, opportunityTitle, onSave, onCancel }) {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
