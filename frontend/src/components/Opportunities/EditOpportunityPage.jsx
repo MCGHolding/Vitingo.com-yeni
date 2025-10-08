@@ -670,8 +670,13 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
                           <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
                             <span className="text-sm text-gray-700">Dosya {index + 1}</span>
                             <div className="flex space-x-1">
-                              <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                <Eye className="h-3 w-3" />
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="h-6 w-6 p-0 hover:bg-blue-50"
+                                onClick={() => handleFilePreview(formData.design_files, 'Tasarım Dosyaları', index)}
+                              >
+                                <Eye className="h-3 w-3 text-blue-600" />
                               </Button>
                               <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
                                 <Download className="h-3 w-3" />
