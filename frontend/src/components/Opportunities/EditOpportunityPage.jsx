@@ -144,14 +144,26 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
   };
 
   const handleFilePreview = (files, title, initialIndex = 0) => {
-    // Convert file IDs to preview format with sample data
-    const previewData = files.map((fileId, index) => ({
-      id: fileId,
-      name: `${title.replace(/\s+/g, '_')}_${index + 1}.pdf`, // Default to PDF, can be enhanced
-      url: `/api/files/${fileId}`, // Backend endpoint for file serving
-      size: 1024 * 1024 * 2.5, // Sample 2.5MB
-      type: 'application/pdf' // Default type, can be enhanced
-    }));
+    // Convert file IDs to preview format with realistic sample data
+    const fileExtensions = ['pdf', 'jpg', 'png', 'mp4'];
+    const previewData = files.map((fileId, index) => {
+      const extension = fileExtensions[index % fileExtensions.length];
+      const isDesign = title.includes('Tasarım');
+      
+      return {
+        id: fileId,
+        name: `${title.replace(/\s+/g, '_')}_${index + 1}.${extension}`,
+        url: extension === 'pdf' 
+          ? 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' // Sample PDF
+          : extension === 'mp4'
+          ? 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4' // Sample video
+          : `https://picsum.photos/800/600?random=${index}`, // Sample image
+        size: 1024 * 1024 * (2.5 + index), // Varying sizes
+        type: extension === 'pdf' ? 'application/pdf' : 
+              extension === 'mp4' ? 'video/mp4' : 
+              `image/${extension}`
+      };
+    });
 
     setPreviewFiles(previewData);
     setPreviewTitle(title);
