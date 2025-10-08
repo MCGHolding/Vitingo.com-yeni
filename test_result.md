@@ -303,6 +303,7 @@ test_plan:
   test_all: false
   test_priority: "high_first"
   completed_tests:
+    - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
     - "User-Requested Changes Testing - GELİŞMELER Button Removal and NOT EKLE Modal to Page Conversion"
     - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
     - "JavaScript Error Fix for OpportunityTimelinePage ActivityModal"
