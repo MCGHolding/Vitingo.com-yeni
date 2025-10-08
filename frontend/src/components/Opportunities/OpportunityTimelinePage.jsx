@@ -346,7 +346,9 @@ export default function OpportunityTimelinePage({
     };
 
     Object.keys(ACTIVITY_TYPES).forEach(type => {
-      summary.byType[type] = activities.filter(a => a.type === type).length;
+      if (type !== 'default') {
+        summary.byType[type] = activities.filter(a => a.type === type).length;
+      }
     });
 
     return summary;
