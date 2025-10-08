@@ -57,9 +57,6 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
   // New note modal states
   const [newNoteModalOpen, setNewNoteModalOpen] = useState(false);
   
-  // Notes history modal states
-  const [notesHistoryModalOpen, setNotesHistoryModalOpen] = useState(false);
-  
   // Activity modal states
   const [activityModalOpen, setActivityModalOpen] = useState(false);
 
