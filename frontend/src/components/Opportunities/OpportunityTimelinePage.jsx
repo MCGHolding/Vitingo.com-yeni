@@ -525,16 +525,16 @@ export default function OpportunityTimelinePage({
               </div>
               <div className="p-3">
                 {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-600 border-t-transparent"></div>
-                    <span className="ml-2 text-gray-600">Aktiviteler yükleniyor...</span>
+                  <div className="flex items-center justify-center py-6">
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-purple-600 border-t-transparent"></div>
+                    <span className="ml-2 text-sm text-gray-600">Yükleniyor...</span>
                   </div>
                 ) : (
-                  <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                  <div className="space-y-3 max-h-[550px] overflow-y-auto">
                     {filteredActivities.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Activity className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500">Bu fırsat için aktivite bulunamadı</p>
+                      <div className="text-center py-6">
+                        <Activity className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                        <p className="text-sm text-gray-500">Aktivite bulunamadı</p>
                       </div>
                     ) : (
                       filteredActivities.map((activity, index) => {
@@ -545,20 +545,22 @@ export default function OpportunityTimelinePage({
                         return (
                           <div key={activity.id} className="relative">
                             
-                            {/* Timeline line */}
+                            {/* Sleek Timeline line */}
                             {index !== filteredActivities.length - 1 && (
-                              <div className="absolute left-6 top-12 w-0.5 h-full bg-gray-200 z-0"></div>
+                              <div className="absolute left-5 top-10 w-0.5 h-full bg-gradient-to-b from-gray-300 to-gray-100 z-0"></div>
                             )}
                             
-                            {/* Activity item */}
-                            <div className="flex space-x-4 relative z-10">
-                              {/* Icon */}
-                              <div className={`flex-shrink-0 w-12 h-12 ${typeConfig.bgColor} rounded-full flex items-center justify-center border-2 ${typeConfig.borderColor}`}>
-                                <typeConfig.icon className={`h-5 w-5 ${typeConfig.color}`} />
+                            {/* Compact Activity item */}
+                            <div className="flex space-x-3 relative z-10">
+                              {/* Modern Icon */}
+                              <div className="flex-shrink-0">
+                                <div className={`w-10 h-10 rounded-xl ${typeConfig.bgColor} border ${typeConfig.borderColor} flex items-center justify-center shadow-sm`}>
+                                  <typeConfig.icon className={`h-4 w-4 ${typeConfig.color}`} />
+                                </div>
                               </div>
                               
-                              {/* Content */}
-                              <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-lg transition-all duration-200">
+                              {/* Compact Content */}
+                              <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/70 p-3 hover:shadow-lg hover:bg-white/90 transition-all duration-200">
                                 <div className="flex items-start justify-between mb-3">
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-2 mb-1">
