@@ -18,6 +18,7 @@ import WonOpportunitiesPage from './components/Opportunities/WonOpportunitiesPag
 import LostOpportunitiesPage from './components/Opportunities/LostOpportunitiesPage';
 import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpportunitiesPage';
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
+import EditOpportunityPage from './components/Opportunities/EditOpportunityPage';
 import FinansOnayiPage from './components/Avans/FinansOnayiPage';
 import KapanmisAvanslarPage from './components/Avans/KapanmisAvanslarPage';
 import NewCustomerForm from './components/Customers/NewCustomerForm';
