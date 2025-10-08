@@ -554,9 +554,14 @@ export default function OpportunityTimelinePage({
                 <h3 className="text-sm font-semibold text-gray-900">
                   Zaman Çizelgesi ({filteredActivities.length})
                 </h3>
-                <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
-                  <Bell className="h-3 w-3 mr-1.5" />
-                  Hatırlatıcılar
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-7 px-3 text-xs"
+                  onClick={handleNewActivity}
+                >
+                  <Plus className="h-3 w-3 mr-1.5" />
+                  Yeni Aktivite
                 </Button>
               </div>
               <div className="p-3">
