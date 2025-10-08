@@ -607,6 +607,29 @@ export default function OpportunityTimelinePage({
             </div>
           </div>
 
+          {/* Quick Note Add Unit */}
+          <div className="lg:col-span-4">
+            <QuickNoteAddUnit 
+              opportunityId={opportunityId}
+              opportunityTitle={opportunityTitle}
+              onNoteAdded={(newNote) => {
+                // Add new note as activity
+                setActivities(prev => [{
+                  ...newNote,
+                  type: 'note',
+                  status: 'completed',
+                  priority: 'medium'
+                }, ...prev]);
+                
+                toast({
+                  title: "Başarılı",
+                  description: "Not başarıyla eklendi.",
+                  className: "bg-green-50 border-green-200 text-green-800",
+                });
+              }}
+            />
+          </div>
+
           {/* Compact Modern Timeline */}
           <div className="lg:col-span-3">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
