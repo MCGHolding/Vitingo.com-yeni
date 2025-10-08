@@ -252,7 +252,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
             </Button>
             <Button
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 flex items-center space-x-2"
-              onClick={() => setNewNoteModalOpen(true)}
+              onClick={() => onNewNote && onNewNote(formData)}
             >
               <Plus className="h-4 w-4" />
               <span>NOT EKLE</span>
