@@ -552,6 +552,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                         <span className="font-medium text-blue-600 text-sm">{index + 1}</span>
                       </td>
                       
+                      {/* Müşteri */}
                       <td className="py-3 px-3">
                         <TooltipProvider>
                           <Tooltip>
@@ -570,42 +571,49 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                         </TooltipProvider>
                       </td>
                       
+                      {/* Satış Fırsatı Adı */}
                       <td className="py-3 px-3">
                         <div className="font-medium text-gray-900 text-sm max-w-[140px] truncate">
-                          {opportunity.eventName}
+                          {opportunity.eventName || opportunity.title}
                         </div>
                       </td>
                       
+                      {/* Aşama */}
                       <td className="py-3 px-3">
-                        <div className="flex items-center space-x-1">
-                          <span className="font-semibold text-gray-900 text-sm">
-                            {formatCurrency(opportunity.amount || opportunity.dealValue || 0, opportunity.currency)}
-                          </span>
+                        <div className="font-medium text-gray-700 text-sm">
+                          {opportunity.stage === 'lead' ? 'Yeni Fırsat' : 
+                           opportunity.stage === 'qualified' ? 'Nitelikli' :
+                           opportunity.stage === 'proposal' ? 'Teklif' :
+                           opportunity.stage === 'negotiation' ? 'Müzakere' :
+                           opportunity.stage || 'Belirsiz'}
                         </div>
                       </td>
                       
+                      {/* Durum */}
                       <td className="py-3 px-3">
                         {getStatusBadge(opportunity.status, opportunity.statusText)}
                       </td>
                       
+                      {/* Kullanıcı Adı Soyadı */}
                       <td className="py-3 px-3">
                         <div className="flex items-center space-x-2">
                           <Avatar className="h-6 w-6">
                             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px]">
-                              {opportunity.contactPerson.split(' ').map(n => n[0]).join('')}
+                              {(opportunity.contactPerson || opportunity.contact_person || 'NN').split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="font-medium text-gray-900 text-xs max-w-[80px] truncate">
-                              {opportunity.contactPerson}
+                              {opportunity.contactPerson || opportunity.contact_person || 'Belirtilmemiş'}
                             </div>
                           </div>
                         </div>
                       </td>
                       
+                      {/* Etiketler */}
                       <td className="py-3 px-3">
                         <div className="flex flex-wrap gap-1 max-w-xs">
-                          {opportunity.tags.map((tag, tagIndex) => (
+                          {(opportunity.tags || []).map((tag, tagIndex) => (
                             <Badge
                               key={tagIndex}
                               className={`text-[9px] px-1 py-0.5 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
@@ -613,6 +621,15 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                               {tag}
                             </Badge>
                           ))}
+                        </div>
+                      </td>
+                      
+                      {/* Tutar */}
+                      <td className="py-3 px-3">
+                        <div className="flex items-center space-x-1">
+                          <span className="font-semibold text-gray-900 text-sm">
+                            {formatCurrency(opportunity.amount || opportunity.dealValue || 0, opportunity.currency)}
+                          </span>
                         </div>
                       </td>
                       
