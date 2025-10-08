@@ -214,7 +214,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ActionMenuPopover Delete Option Removal Test"
+    - "File Upload Endpoints and Opportunity Attachments Testing"
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
