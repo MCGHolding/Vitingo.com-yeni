@@ -212,6 +212,9 @@ export default function OpportunityTimelinePage({
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(false);
+  
+  // Activity modal state
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
 
   useEffect(() => {
     if (opportunityId) {
