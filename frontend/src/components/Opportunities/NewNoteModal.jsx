@@ -49,6 +49,9 @@ export default function NewNoteModal({ isOpen, onClose, opportunityId, opportuni
         });
         setNoteContent('');
         onClose();
+        if (onNoteSaved) {
+          onNoteSaved();
+        }
       } else {
         throw new Error('Note save failed');
       }
