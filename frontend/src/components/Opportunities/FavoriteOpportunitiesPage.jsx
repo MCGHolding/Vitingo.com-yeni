@@ -245,8 +245,8 @@ export default function FavoriteOpportunitiesPage({ onBackToDashboard }) {
     return new Date(dateString).toLocaleDateString('tr-TR');
   };
 
-  const handleView = (opportunity) => {
-    setSelectedOpportunity(opportunity);
+  const handleView = (opportunity, index) => {
+    setSelectedOpportunity({ ...opportunity, displayIndex: index + 1 });
     setViewModalOpen(true);
   };
 
