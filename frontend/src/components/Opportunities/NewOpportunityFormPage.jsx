@@ -8,6 +8,7 @@ import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
 import CountrySelect from '../ui/CountrySelect';
 import CitySelect from '../ui/CitySelect';
+import FileUpload from '../ui/FileUpload';
 import { 
   X,
   Target,
