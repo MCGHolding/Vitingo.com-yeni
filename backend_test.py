@@ -1362,6 +1362,480 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_customer_management_api_endpoints():
+    """
+    COMPREHENSIVE CUSTOMER MANAGEMENT API ENDPOINTS TESTING
+    
+    Test all customer-related endpoints to ensure backend is working correctly for customer pages integration.
+    
+    Test Requirements:
+    1. **GET /api/customers** - List all customers
+    2. **GET /api/customers/{customer_id}** - Get specific customer by ID  
+    3. **PUT /api/customers/{customer_id}** - Update customer information
+    4. **DELETE /api/customers/{customer_id}** - Delete customer (if implemented)
+    
+    Test Scenarios:
+    1. Retrieve customer list and verify response structure
+    2. Test updating a specific customer with new data
+    3. Verify customer data persistence after updates
+    4. Check proper error handling for non-existent customer IDs
+    5. Validate that customer contact_persons, tags, and other nested data are handled correctly
+    
+    Expected Results:
+    - All CRUD operations should work correctly
+    - Customer data should include all fields (name, email, phone, address, contact_persons, etc.)
+    - API should return proper JSON structure
+    - Error handling should be robust
+    """
+    
+    print("=" * 100)
+    print("🏢 COMPREHENSIVE CUSTOMER MANAGEMENT API ENDPOINTS TESTING 🏢")
+    print("=" * 100)
+    print("PURPOSE: Test customer-related endpoints for ViewCustomerPage and EditCustomerPage integration")
+    print("CONTEXT: Ensure backend customer APIs are working correctly before frontend testing")
+    print("=" * 100)
+    
+    test_results = {
+        "get_customers_working": False,
+        "get_customer_by_id_working": False,
+        "update_customer_working": False,
+        "delete_customer_working": False,
+        "customer_count": 0,
+        "test_customer_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET /api/customers - List All Customers
+    print("\n" + "=" * 80)
+    print("TEST 1: GET /api/customers - LIST ALL CUSTOMERS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET /api/customers endpoint responding correctly")
+            test_results["get_customers_working"] = True
+            
+            try:
+                customers = response.json()
+                customer_count = len(customers) if isinstance(customers, list) else 0
+                test_results["customer_count"] = customer_count
+                
+                print(f"📊 Found {customer_count} customers in database")
+                
+                if customer_count == 0:
+                    print("⚠️  WARNING: No customers found in database")
+                    test_results["warnings"].append("NO_CUSTOMERS_IN_DATABASE")
+                else:
+                    print("✅ PASS: Customers exist in database")
+                    
+                    # Analyze first few customers for data structure
+                    print(f"\n📋 CUSTOMER DATA STRUCTURE ANALYSIS (First 3 customers):")
+                    for i, customer in enumerate(customers[:3], 1):
+                        company_name = customer.get("companyName", "N/A")
+                        email = customer.get("email", "N/A")
+                        phone = customer.get("phone", "N/A")
+                        address = customer.get("address", "N/A")
+                        customer_id = customer.get("id", "N/A")
+                        tags = customer.get("tags", [])
+                        
+                        print(f"   {i}. {company_name}")
+                        print(f"      ID: {customer_id}")
+                        print(f"      Email: {email}")
+                        print(f"      Phone: {phone}")
+                        print(f"      Address: {address}")
+                        print(f"      Tags: {tags}")
+                        
+                        # Store first customer ID for further testing
+                        if i == 1 and customer_id != "N/A":
+                            test_results["test_customer_id"] = customer_id
+                            print(f"      🔍 Will use this customer for detailed testing")
+                        
+                        # Check required fields
+                        required_fields = ["id", "companyName"]
+                        missing_fields = [field for field in required_fields if not customer.get(field)]
+                        if missing_fields:
+                            print(f"      ⚠️  Missing required fields: {missing_fields}")
+                            test_results["warnings"].append(f"CUSTOMER_{i}_MISSING_FIELDS_{missing_fields}")
+                        else:
+                            print(f"      ✅ Required fields present")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customers JSON: {str(e)}")
+                test_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: GET /api/customers failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_CUSTOMERS_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing GET /api/customers: {str(e)}")
+        test_results["critical_issues"].append(f"GET_CUSTOMERS_ERROR: {str(e)}")
+    
+    # TEST 2: GET /api/customers/{customer_id} - Get Specific Customer
+    print("\n" + "=" * 80)
+    print("TEST 2: GET /api/customers/{customer_id} - GET SPECIFIC CUSTOMER")
+    print("=" * 80)
+    
+    if test_results["test_customer_id"]:
+        customer_id = test_results["test_customer_id"]
+        endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print(f"Using customer ID: {customer_id}")
+        
+        try:
+            response = requests.get(endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: GET /api/customers/{customer_id} endpoint working")
+                test_results["get_customer_by_id_working"] = True
+                
+                try:
+                    customer = response.json()
+                    print(f"📋 Customer Details:")
+                    print(f"   Company Name: {customer.get('companyName', 'N/A')}")
+                    print(f"   Email: {customer.get('email', 'N/A')}")
+                    print(f"   Phone: {customer.get('phone', 'N/A')}")
+                    print(f"   Address: {customer.get('address', 'N/A')}")
+                    print(f"   City: {customer.get('city', 'N/A')}")
+                    print(f"   Country: {customer.get('country', 'N/A')}")
+                    print(f"   Sector: {customer.get('sector', 'N/A')}")
+                    print(f"   Tags: {customer.get('tags', [])}")
+                    print(f"   Tax Office: {customer.get('taxOffice', 'N/A')}")
+                    print(f"   Tax Number: {customer.get('taxNumber', 'N/A')}")
+                    print(f"   Created At: {customer.get('created_at', 'N/A')}")
+                    
+                    # Verify all expected fields are present
+                    expected_fields = [
+                        "id", "companyName", "email", "phone", "address", 
+                        "city", "country", "sector", "tags", "created_at"
+                    ]
+                    missing_fields = [field for field in expected_fields if field not in customer]
+                    if missing_fields:
+                        print(f"   ⚠️  Missing expected fields: {missing_fields}")
+                        test_results["warnings"].append(f"MISSING_FIELDS_{missing_fields}")
+                    else:
+                        print(f"   ✅ All expected fields present")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse customer JSON: {str(e)}")
+                    test_results["critical_issues"].append(f"CUSTOMER_JSON_PARSE_ERROR: {str(e)}")
+                    
+            elif response.status_code == 404:
+                print("❌ FAIL: Customer not found (404)")
+                test_results["critical_issues"].append("CUSTOMER_NOT_FOUND_404")
+            else:
+                print(f"❌ FAIL: GET customer by ID failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"GET_CUSTOMER_BY_ID_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing GET /api/customers/{customer_id}: {str(e)}")
+            test_results["critical_issues"].append(f"GET_CUSTOMER_BY_ID_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No customer ID available for testing")
+        test_results["warnings"].append("NO_CUSTOMER_ID_FOR_TESTING")
+    
+    # TEST 3: PUT /api/customers/{customer_id} - Update Customer
+    print("\n" + "=" * 80)
+    print("TEST 3: PUT /api/customers/{customer_id} - UPDATE CUSTOMER")
+    print("=" * 80)
+    
+    if test_results["test_customer_id"]:
+        customer_id = test_results["test_customer_id"]
+        endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print(f"Using customer ID: {customer_id}")
+        
+        # Prepare update data with realistic Turkish business information
+        update_data = {
+            "phone": "+90 212 555 9999",
+            "address": "Güncellenmiş Adres - Test Mahallesi, Yeni Sokak No:42 Beşiktaş",
+            "notes": f"Müşteri bilgileri güncellendi - Test tarihi: {datetime.now().isoformat()}",
+            "tags": ["GÜNCEL", "TEST", "API_UPDATE"],
+            "sector": "Teknoloji ve Yazılım",
+            "website": "https://www.updated-test-company.com"
+        }
+        
+        print(f"📝 Update data:")
+        for key, value in update_data.items():
+            print(f"   {key}: {value}")
+        
+        try:
+            response = requests.put(endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: PUT /api/customers/{customer_id} endpoint working")
+                test_results["update_customer_working"] = True
+                
+                try:
+                    updated_customer = response.json()
+                    print(f"📋 Updated Customer Details:")
+                    print(f"   Company Name: {updated_customer.get('companyName', 'N/A')}")
+                    print(f"   Phone: {updated_customer.get('phone', 'N/A')}")
+                    print(f"   Address: {updated_customer.get('address', 'N/A')}")
+                    print(f"   Notes: {updated_customer.get('notes', 'N/A')}")
+                    print(f"   Tags: {updated_customer.get('tags', [])}")
+                    print(f"   Sector: {updated_customer.get('sector', 'N/A')}")
+                    print(f"   Website: {updated_customer.get('website', 'N/A')}")
+                    
+                    # Verify updates were applied
+                    update_success = True
+                    for key, expected_value in update_data.items():
+                        actual_value = updated_customer.get(key)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {key} updated correctly: {actual_value}")
+                        else:
+                            print(f"   ❌ {key} update failed: Expected {expected_value}, Got {actual_value}")
+                            update_success = False
+                    
+                    if update_success:
+                        print("✅ PASS: All fields updated successfully")
+                    else:
+                        print("❌ FAIL: Some fields were not updated correctly")
+                        test_results["critical_issues"].append("UPDATE_FIELDS_NOT_APPLIED")
+                        
+                    # TEST 3.1: Verify persistence by getting customer again
+                    print(f"\n🔍 PERSISTENCE CHECK: Verifying updates were saved...")
+                    time.sleep(1)  # Brief wait for database write
+                    
+                    verify_response = requests.get(endpoint, timeout=30)
+                    if verify_response.status_code == 200:
+                        verified_customer = verify_response.json()
+                        
+                        persistence_success = True
+                        for key, expected_value in update_data.items():
+                            actual_value = verified_customer.get(key)
+                            if actual_value == expected_value:
+                                print(f"   ✅ {key} persisted correctly")
+                            else:
+                                print(f"   ❌ {key} persistence failed: Expected {expected_value}, Got {actual_value}")
+                                persistence_success = False
+                        
+                        if persistence_success:
+                            print("✅ PASS: All updates persisted correctly in database")
+                        else:
+                            print("❌ FAIL: Some updates were not persisted")
+                            test_results["critical_issues"].append("UPDATE_PERSISTENCE_FAILED")
+                    else:
+                        print(f"❌ FAIL: Could not verify persistence: {verify_response.status_code}")
+                        test_results["warnings"].append("PERSISTENCE_CHECK_FAILED")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse updated customer JSON: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_JSON_PARSE_ERROR: {str(e)}")
+                    
+            elif response.status_code == 404:
+                print("❌ FAIL: Customer not found for update (404)")
+                test_results["critical_issues"].append("UPDATE_CUSTOMER_NOT_FOUND_404")
+            else:
+                print(f"❌ FAIL: PUT customer update failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_CUSTOMER_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing PUT /api/customers/{customer_id}: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_CUSTOMER_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No customer ID available for testing")
+        test_results["warnings"].append("NO_CUSTOMER_ID_FOR_UPDATE_TESTING")
+    
+    # TEST 4: Error Handling - Non-existent Customer ID
+    print("\n" + "=" * 80)
+    print("TEST 4: ERROR HANDLING - NON-EXISTENT CUSTOMER ID")
+    print("=" * 80)
+    
+    fake_customer_id = "non-existent-customer-id-12345"
+    endpoint = f"{BACKEND_URL}/api/customers/{fake_customer_id}"
+    print(f"Testing endpoint: {endpoint}")
+    print(f"Using fake customer ID: {fake_customer_id}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Proper 404 error for non-existent customer")
+            
+            try:
+                error_response = response.json()
+                if "detail" in error_response:
+                    print(f"   Error message: {error_response['detail']}")
+                    print("✅ PASS: Error response includes proper detail message")
+                else:
+                    print("⚠️  WARNING: Error response missing detail field")
+                    test_results["warnings"].append("ERROR_RESPONSE_MISSING_DETAIL")
+            except:
+                print("⚠️  WARNING: Could not parse error response JSON")
+                test_results["warnings"].append("ERROR_RESPONSE_NOT_JSON")
+                
+        else:
+            print(f"❌ FAIL: Expected 404 for non-existent customer, got {response.status_code}")
+            test_results["critical_issues"].append(f"WRONG_ERROR_CODE_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error testing non-existent customer: {str(e)}")
+        test_results["critical_issues"].append(f"ERROR_HANDLING_TEST_ERROR: {str(e)}")
+    
+    # TEST 5: DELETE /api/customers/{customer_id} - Delete Customer (if safe)
+    print("\n" + "=" * 80)
+    print("TEST 5: DELETE /api/customers/{customer_id} - DELETE CUSTOMER")
+    print("=" * 80)
+    
+    if test_results["test_customer_id"]:
+        customer_id = test_results["test_customer_id"]
+        
+        # First check if customer can be deleted
+        can_delete_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}/can-delete"
+        print(f"Checking if customer can be deleted: {can_delete_endpoint}")
+        
+        try:
+            can_delete_response = requests.get(can_delete_endpoint, timeout=30)
+            print(f"Can-delete Status Code: {can_delete_response.status_code}")
+            
+            if can_delete_response.status_code == 200:
+                can_delete_data = can_delete_response.json()
+                can_delete = can_delete_data.get("canDelete", False)
+                related_records = can_delete_data.get("relatedRecords", [])
+                
+                print(f"   Can Delete: {can_delete}")
+                print(f"   Related Records: {related_records}")
+                
+                if can_delete:
+                    print("✅ Customer can be safely deleted - proceeding with delete test")
+                    
+                    # Proceed with deletion
+                    delete_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+                    delete_response = requests.delete(delete_endpoint, timeout=30)
+                    print(f"Delete Status Code: {delete_response.status_code}")
+                    
+                    if delete_response.status_code == 200:
+                        print("✅ PASS: DELETE /api/customers/{customer_id} endpoint working")
+                        test_results["delete_customer_working"] = True
+                        
+                        try:
+                            delete_result = delete_response.json()
+                            print(f"   Delete result: {delete_result}")
+                            
+                            if delete_result.get("success"):
+                                print("✅ PASS: Customer deleted successfully")
+                                
+                                # Verify deletion by trying to get the customer
+                                verify_response = requests.get(f"{BACKEND_URL}/api/customers/{customer_id}", timeout=30)
+                                if verify_response.status_code == 404:
+                                    print("✅ PASS: Customer properly deleted (404 on subsequent GET)")
+                                else:
+                                    print(f"❌ FAIL: Customer still exists after deletion: {verify_response.status_code}")
+                                    test_results["critical_issues"].append("CUSTOMER_NOT_DELETED")
+                            else:
+                                print("❌ FAIL: Delete operation reported failure")
+                                test_results["critical_issues"].append("DELETE_OPERATION_FAILED")
+                                
+                        except Exception as e:
+                            print(f"❌ FAIL: Could not parse delete response: {str(e)}")
+                            test_results["critical_issues"].append(f"DELETE_RESPONSE_PARSE_ERROR: {str(e)}")
+                    else:
+                        print(f"❌ FAIL: DELETE request failed with status {delete_response.status_code}")
+                        print(f"Response: {delete_response.text}")
+                        test_results["critical_issues"].append(f"DELETE_REQUEST_FAILED_{delete_response.status_code}")
+                        
+                else:
+                    print("⚠️  SKIP: Customer has related records, cannot delete safely")
+                    print(f"   Related records: {related_records}")
+                    test_results["warnings"].append(f"CUSTOMER_HAS_RELATED_RECORDS_{related_records}")
+                    
+                    # Test that delete is properly blocked
+                    delete_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+                    delete_response = requests.delete(delete_endpoint, timeout=30)
+                    print(f"Delete Status Code (should be 400): {delete_response.status_code}")
+                    
+                    if delete_response.status_code == 400:
+                        print("✅ PASS: Delete properly blocked for customer with related records")
+                        test_results["delete_customer_working"] = True  # Working correctly by blocking
+                    else:
+                        print(f"❌ FAIL: Expected 400 for delete with related records, got {delete_response.status_code}")
+                        test_results["critical_issues"].append(f"DELETE_BLOCKING_FAILED_{delete_response.status_code}")
+            else:
+                print(f"❌ FAIL: Can-delete check failed: {can_delete_response.status_code}")
+                test_results["warnings"].append(f"CAN_DELETE_CHECK_FAILED_{can_delete_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing delete functionality: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_TEST_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No customer ID available for delete testing")
+        test_results["warnings"].append("NO_CUSTOMER_ID_FOR_DELETE_TESTING")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 CUSTOMER MANAGEMENT API ENDPOINTS TEST RESULTS SUMMARY")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS:")
+    print(f"   • GET /api/customers: {'✅ Working' if test_results['get_customers_working'] else '❌ Failed'}")
+    print(f"   • GET /api/customers/{{id}}: {'✅ Working' if test_results['get_customer_by_id_working'] else '❌ Failed'}")
+    print(f"   • PUT /api/customers/{{id}}: {'✅ Working' if test_results['update_customer_working'] else '❌ Failed'}")
+    print(f"   • DELETE /api/customers/{{id}}: {'✅ Working' if test_results['delete_customer_working'] else '❌ Failed'}")
+    print(f"   • Customer Count: {test_results['customer_count']}")
+    
+    print(f"\n🚨 CRITICAL ISSUES: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # Overall assessment
+    working_endpoints = sum([
+        test_results['get_customers_working'],
+        test_results['get_customer_by_id_working'], 
+        test_results['update_customer_working'],
+        test_results['delete_customer_working']
+    ])
+    
+    print(f"\n📋 OVERALL ASSESSMENT:")
+    print(f"   • Working Endpoints: {working_endpoints}/4")
+    
+    if len(test_results['critical_issues']) == 0:
+        if working_endpoints == 4:
+            print("✅ EXCELLENT: All customer management endpoints are working correctly!")
+            print("   Ready for ViewCustomerPage and EditCustomerPage frontend integration.")
+        elif working_endpoints >= 3:
+            print("✅ GOOD: Most customer management endpoints are working correctly.")
+            print("   Minor issues present but core functionality is available.")
+        else:
+            print("⚠️  PARTIAL: Some customer management endpoints are working.")
+            print("   May need fixes before full frontend integration.")
+    else:
+        print("❌ ISSUES FOUND: Critical problems detected in customer management APIs.")
+        print("   Recommend fixing backend issues before frontend integration.")
+    
+    print(f"\n🎯 RECOMMENDATIONS:")
+    if test_results['customer_count'] == 0:
+        print("   1. Add sample customer data for testing frontend components")
+    if not test_results['get_customers_working']:
+        print("   2. Fix GET /api/customers endpoint - critical for customer list pages")
+    if not test_results['get_customer_by_id_working']:
+        print("   3. Fix GET /api/customers/{id} endpoint - critical for ViewCustomerPage")
+    if not test_results['update_customer_working']:
+        print("   4. Fix PUT /api/customers/{id} endpoint - critical for EditCustomerPage")
+    if len(test_results['critical_issues']) == 0 and working_endpoints >= 3:
+        print("   1. Backend customer APIs are ready for frontend integration")
+        print("   2. Proceed with ViewCustomerPage and EditCustomerPage testing")
+    
+    # Return overall success
+    return len(test_results['critical_issues']) == 0 and working_endpoints >= 3
+
 def test_opportunities_api_quick_verification():
     """
     QUICK OPPORTUNITIES API VERIFICATION TEST
