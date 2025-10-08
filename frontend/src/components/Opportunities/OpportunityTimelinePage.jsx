@@ -42,11 +42,8 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Quick Activity Add Unit Component
-function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded }) {
+function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded, onOpenDetailedForm }) {
   const { toast } = useToast();
-  const [selectedType, setSelectedType] = useState('');
-  const [formData, setFormData] = useState({});
-  const [saving, setSaving] = useState(false);
   
   // Activity types for quick add
   const QUICK_ACTIVITY_TYPES = {
