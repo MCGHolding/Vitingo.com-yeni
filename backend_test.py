@@ -14342,32 +14342,40 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("📁 FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TESTING")
+    print("🎯 ACTIVITY MANAGEMENT API ENDPOINTS TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 100)
-    print("🎯 TESTING: New file upload endpoints and opportunity file attachments functionality")
-    print("📝 Testing file upload, download, delete, and opportunity integration")
-    print("📝 Verifying security validations and error handling")
+    print("🎯 TESTING: NEW Activity Management API endpoints for OpportunityTimelinePage functionality")
+    print("📝 Testing CRUD operations for activities: GET, POST, PUT, DELETE, PATCH")
+    print("📝 Testing activity types: call_record, email_management, activity_planner, design_upload, messaging")
+    print("📝 Testing status management: pending, in_progress, completed, cancelled, overdue")
+    print("📝 Verifying data structure and DateTime field handling")
     print("=" * 100)
     
-    # Run file upload and opportunity attachments testing
+    # Run Activity Management API endpoints testing
     try:
-        result = test_file_upload_and_opportunity_attachments()
+        result = test_activity_management_api_endpoints()
         if result:
-            print("\n✅ FILE UPLOAD TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
-            print("✅ File upload endpoint working with proper validation")
-            print("✅ File download endpoint working with correct headers")
-            print("✅ File delete endpoint working with proper cleanup")
-            print("✅ Opportunity file attachments integration working")
-            print("✅ Security validations working (file size, file type)")
-            print("📋 File upload and opportunity attachments system is production-ready")
+            print("\n✅ ACTIVITY MANAGEMENT API TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
+            print("✅ GET /api/opportunities/{opportunity_id}/activities - Working")
+            print("✅ POST /api/opportunities/{opportunity_id}/activities - Working")
+            print("✅ GET /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
+            print("✅ PUT /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
+            print("✅ DELETE /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
+            print("✅ PATCH /api/opportunities/{opportunity_id}/activities/{activity_id}/status - Working")
+            print("✅ All activity types supported (call_record, email_management, activity_planner, design_upload, messaging)")
+            print("✅ Status management working (pending, in_progress, completed, cancelled, overdue)")
+            print("✅ Data structure verification passed - all required fields present")
+            print("✅ DateTime fields handled correctly")
+            print("📋 Activity Management API endpoints are production-ready for OpportunityTimelinePage")
         else:
-            print("\n🚨 FILE UPLOAD TESTING COMPLETED - CRITICAL ISSUES FOUND!")
-            print("❌ File upload or opportunity attachments functionality problems detected")
-            print("❌ Immediate action required to resolve file upload system")
+            print("\n🚨 ACTIVITY MANAGEMENT API TESTING COMPLETED - CRITICAL ISSUES FOUND!")
+            print("❌ Activity Management API endpoints have problems detected")
+            print("❌ OpportunityTimelinePage functionality may be limited")
+            print("❌ Immediate action required to resolve Activity Management system")
             print("📋 See detailed test report above")
     except Exception as e:
-        print(f"\n❌ FILE UPLOAD TESTING ERROR: {str(e)}")
+        print(f"\n❌ ACTIVITY MANAGEMENT API TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
