@@ -263,21 +263,31 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
   };
 
   const handleView = (customer) => {
-    setSelectedCustomer(customer);
-    setViewModalOpen(true);
-    toast({
-      title: "Müşteri Detayları",
-      description: `${customer.companyName} detayları görüntüleniyor`,
-    });
+    if (onViewCustomer) {
+      onViewCustomer(customer);
+    } else {
+      // Fallback to modal for backwards compatibility
+      setSelectedCustomer(customer);
+      setViewModalOpen(true);
+      toast({
+        title: "Müşteri Detayları",
+        description: `${customer.companyName || customer.name} detayları görüntüleniyor`,
+      });
+    }
   };
 
   const handleEdit = (customer) => {
-    setSelectedCustomer(customer);
-    setEditModalOpen(true);
-    toast({
-      title: "Müşteri Düzenleme",
-      description: `${customer.companyName} bilgileri düzenleniyor`,
-    });
+    if (onEditCustomer) {
+      onEditCustomer(customer);
+    } else {
+      // Fallback to modal for backwards compatibility
+      setSelectedCustomer(customer);
+      setEditModalOpen(true);
+      toast({
+        title: "Müşteri Düzenleme",
+        description: `${customer.companyName || customer.name} bilgileri düzenleniyor`,
+      });
+    }
   };
 
   const handleEditCustomer = (customer) => {
