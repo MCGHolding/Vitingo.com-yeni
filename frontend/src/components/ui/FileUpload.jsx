@@ -134,6 +134,16 @@ export default function FileUpload({
     link.click();
   };
 
+  const handlePreviewFile = (file) => {
+    setPreviewFile(file);
+    setPreviewModalOpen(true);
+  };
+
+  const closePreviewModal = () => {
+    setPreviewModalOpen(false);
+    setPreviewFile(null);
+  };
+
   const getFileType = (filename) => {
     const ext = filename.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(ext)) return 'image';
