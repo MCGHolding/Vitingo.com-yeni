@@ -10,6 +10,7 @@ import {
   Calendar,
   BarChart3,
   Zap,
+  Activity,
   ChevronDown,
   ChevronRight,
   Plus,
