@@ -778,15 +778,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
             setEditModalOpen(false);
             setSelectedCustomer(null);
           }}
-          onSave={(updatedCustomer) => {
-            // Handle customer update here
-            toast({
-              title: "Müşteri Güncellendi",
-              description: `${updatedCustomer.companyName || updatedCustomer.name} başarıyla güncellendi.`,
-            });
-            setEditModalOpen(false);
-            setSelectedCustomer(null);
-          }}
+          onSave={handleSaveCustomer}
         />
       )}
 
