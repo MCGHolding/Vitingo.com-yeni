@@ -415,8 +415,9 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           };
       
       // Save directly to backend or use onSave prop
+      let savedData = null;
       if (onSave) {
-        await onSave(customerData);
+        savedData = await onSave(customerData);
       } else {
         // Direct backend save
         const response = await fetch(`${backendUrl}${endpoint}`, {
@@ -432,7 +433,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           throw new Error(errorData.detail || 'Kaydetme başarısız');
         }
 
-        const savedData = await response.json();
+        savedData = await response.json();
         console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
       }
 
