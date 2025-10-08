@@ -31,7 +31,8 @@ import {
   Info,
   Eye,
   Download,
-  Check
+  Check,
+  Plus
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
