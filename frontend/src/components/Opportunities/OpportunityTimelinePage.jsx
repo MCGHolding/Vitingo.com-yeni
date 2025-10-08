@@ -790,6 +790,77 @@ export default function OpportunityTimelinePage({
           
           {/* Left Column - Stats & Info */}
           <div className="space-y-4">
+
+            {/* Quick Stats */}
+            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+              <div className="p-3 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                  <span>Özet</span>
+                </h3>
+              </div>
+              <div className="p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Activity className="h-4 w-4 text-purple-600" />
+                    <span className="text-xs text-gray-700">Toplam Aktivite</span>
+                  </div>
+                  <span className="text-sm font-bold text-purple-600">{summary.total}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-gray-700">Tamamlanan</span>
+                  </div>
+                  <span className="text-sm font-bold text-green-600">{summary.completed}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-amber-600" />
+                    <span className="text-xs text-gray-700">Bekleyen</span>
+                  </div>
+                  <span className="text-sm font-bold text-amber-600">{summary.pending}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Bell className="h-4 w-4 text-blue-600" />
+                    <span className="text-xs text-gray-700">Hatırlatıcı</span>
+                  </div>
+                  <span className="text-sm font-bold text-blue-600">
+                    {activities.filter(a => a.status === 'pending' && a.scheduled_for).length}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Compact Activity Stats */}
+            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+              <div className="p-3 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+                  <PieChart className="h-4 w-4 text-gray-600" />
+                  <span>Dağılım</span>
+                </h3>
+              </div>
+              <div className="p-3 space-y-2">
+                {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
+                  key !== 'default' && (
+                    <div key={key} className="flex items-center justify-between py-1">
+                      <div className="flex items-center space-x-2">
+                        <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                        <span className="text-xs text-gray-700">{config.label}</span>
+                      </div>
+                      <span className="text-xs font-semibold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                        {summary.byType[key] || 0}
+                      </span>
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Timeline */}
+          <div className="lg:col-span-3">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
               <div className="p-3 border-b border-gray-100">
                 <h3 className="text-sm font-semibold text-gray-900">
@@ -920,8 +991,6 @@ export default function OpportunityTimelinePage({
               </div>
             </div>
           </div>
-
-          {/* Right Column section removed - moved to left sidebar */}
         </div>
       </div>
 
