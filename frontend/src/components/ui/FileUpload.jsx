@@ -14,6 +14,10 @@ import {
   FileText,
   Download,
   Eye,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Move,
   Loader2
 } from 'lucide-react';
 
