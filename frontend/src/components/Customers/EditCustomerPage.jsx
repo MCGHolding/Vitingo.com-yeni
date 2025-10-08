@@ -542,6 +542,73 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
               </CardContent>
             </Card>
 
+            {/* Hizmetler ve Finansal */}
+            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
+                <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                  <CreditCard className="h-5 w-5 text-emerald-600" />
+                  <span>Hizmetler ve Finansal</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hizmetler
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.services.map((service, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                      >
+                        {service}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newServices = [...formData.services];
+                            newServices.splice(index, 1);
+                            handleInputChange('services', newServices);
+                          }}
+                          className="ml-2 text-blue-600 hover:text-blue-800"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    IBAN
+                  </label>
+                  <Input
+                    value={formData.iban}
+                    onChange={(e) => handleInputChange('iban', e.target.value)}
+                    placeholder="IBAN numarası"
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Para Birimi
+                  </label>
+                  <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="TRY">TRY - Türk Lirası</SelectItem>
+                      <SelectItem value="USD">USD - Dolar</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP - İngiliz Sterlini</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Tags */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-orange-50 to-yellow-50 border-b">
