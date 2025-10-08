@@ -766,7 +766,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
             setViewModalOpen(false);
             setSelectedCustomer(null);
           }}
-          onEdit={handleEdit}
+          onEdit={handleEditCustomer}
         />
       )}
 
