@@ -233,6 +233,13 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
               <ArrowLeft className="h-4 w-4" />
               <span>Geri Dön</span>
             </Button>
+            <Button
+              onClick={() => setActivityModalOpen(true)}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center space-x-2 ml-3"
+            >
+              <Zap className="h-4 w-4" />
+              <span>YENİ AŞAMA</span>
+            </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Satış Fırsatı Bilgileri</h1>
               <p className="text-gray-600">{formData.customer} - {formData.eventName || formData.title}</p>
