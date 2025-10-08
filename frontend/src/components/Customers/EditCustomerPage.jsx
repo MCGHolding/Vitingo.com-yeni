@@ -109,22 +109,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }));
   };
 
-  const handleContactChange = (index, field, value) => {
-    const updatedContacts = [...contacts];
-    updatedContacts[index] = {
-      ...updatedContacts[index],
-      [field]: value
-    };
-    setContacts(updatedContacts);
-  };
-
-  const addContact = () => {
-    setContacts([...contacts, { full_name: '', mobile: '', email: '', position: '' }]);
-  };
-
-  const removeContact = (index) => {
-    setContacts(contacts.filter((_, i) => i !== index));
-  };
+  // Removed unused contact functions since we're using single contact person field
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
