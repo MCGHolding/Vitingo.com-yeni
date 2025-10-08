@@ -97,19 +97,29 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
 
   const loadDropdownData = async () => {
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
       // Load customer types
-      const typesResponse = await fetch(`${BACKEND_URL}/api/customer-types`);
-      if (typesResponse.ok) {
-        const types = await typesResponse.json();
-        setCustomerTypes(types);
+      const customerTypesResponse = await fetch(`${backendUrl}/api/customer-types`);
+      if (customerTypesResponse.ok) {
+        const customerTypesData = await customerTypesResponse.json();
+        setCustomerTypes(customerTypesData);
       }
-
-      // Load sectors
-      const sectorsResponse = await fetch(`${BACKEND_URL}/api/sectors`);
+      
+      // Load sectors (specialties)
+      const sectorsResponse = await fetch(`${backendUrl}/api/specialties`);
       if (sectorsResponse.ok) {
-        const sectors = await sectorsResponse.json();
-        setSectors(sectors);
+        const sectorsData = await sectorsResponse.json();
+        setSectors(sectorsData);
       }
+      
+      // Load countries
+      const countriesResponse = await fetch(`${backendUrl}/api/countries`);
+      if (countriesResponse.ok) {
+        const countriesData = await countriesResponse.json();
+        setCountries(countriesData);
+      }
+      
     } catch (error) {
       console.error('Error loading dropdown data:', error);
     }
