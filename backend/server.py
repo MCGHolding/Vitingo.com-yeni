@@ -9093,6 +9093,117 @@ async def handle_websocket_message(message_data: dict, user_id: str, user_name: 
 
 # ===================== END WEBSOCKET ENDPOINTS =====================
 
+# ===================== OPPORTUNITY NOTES MODELS =====================
+
+class OpportunityNote(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    opportunity_id: str
+    content: str
+    author: str = "Murat Bucak"  # Default author
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OpportunityNoteCreate(BaseModel):
+    content: str
+    created_at: Optional[datetime] = None
+
+class OpportunityNoteUpdate(BaseModel):
+    content: Optional[str] = None
+
+# ===================== OPPORTUNITY NOTES ENDPOINTS =====================
+
+@api_router.get("/opportunities/{opportunity_id}/notes", response_model=List[OpportunityNote])
+async def get_opportunity_notes(opportunity_id: str):
+    """Get all notes for a specific opportunity"""
+    try:
+        notes = await db.opportunity_notes.find({"opportunity_id": opportunity_id}).sort("created_at", -1).to_list(length=None)
+        return [OpportunityNote(**note) for note in notes]
+    except Exception as e:
+        logger.error(f"Error getting opportunity notes: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/opportunities/{opportunity_id}/notes", response_model=OpportunityNote)
+async def create_opportunity_note(opportunity_id: str, note_input: OpportunityNoteCreate):
+    """Create a new note for an opportunity"""
+    try:
+        # Check if opportunity exists
+        opportunity = await db.opportunities.find_one({"id": opportunity_id})
+        if not opportunity:
+            raise HTTPException(status_code=404, detail="Opportunity not found")
+        
+        note_data = note_input.dict()
+        note_data.update({
+            "id": str(uuid.uuid4()),
+            "opportunity_id": opportunity_id,
+            "author": "Murat Bucak",  # In production, get from auth context
+            "created_at": note_input.created_at or datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        })
+        
+        # Convert datetime to string for MongoDB storage
+        if isinstance(note_data.get('created_at'), datetime):
+            note_data['created_at'] = note_data['created_at'].isoformat()
+        if isinstance(note_data.get('updated_at'), datetime):
+            note_data['updated_at'] = note_data['updated_at'].isoformat()
+        
+        result = await db.opportunity_notes.insert_one(note_data)
+        
+        if result.inserted_id:
+            created_note = await db.opportunity_notes.find_one({"id": note_data["id"]})
+            return OpportunityNote(**created_note)
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create note")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating opportunity note: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/opportunities/{opportunity_id}/notes/{note_id}", response_model=OpportunityNote)
+async def update_opportunity_note(opportunity_id: str, note_id: str, note_input: OpportunityNoteUpdate):
+    """Update an existing opportunity note"""
+    try:
+        update_data = {k: v for k, v in note_input.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.opportunity_notes.update_one(
+            {"id": note_id, "opportunity_id": opportunity_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            updated_note = await db.opportunity_notes.find_one({"id": note_id})
+            return OpportunityNote(**updated_note)
+        else:
+            raise HTTPException(status_code=404, detail="Note not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating opportunity note: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/opportunities/{opportunity_id}/notes/{note_id}")
+async def delete_opportunity_note(opportunity_id: str, note_id: str):
+    """Delete an opportunity note"""
+    try:
+        result = await db.opportunity_notes.delete_one({
+            "id": note_id, 
+            "opportunity_id": opportunity_id
+        })
+        
+        if result.deleted_count:
+            return {"message": "Note deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Note not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting opportunity note: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the router in the main app
