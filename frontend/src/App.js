@@ -136,9 +136,6 @@ const Dashboard = () => {
   
   // Opportunity timeline states
   const [selectedOpportunityForTimeline, setSelectedOpportunityForTimeline] = useState(null);
-  
-  // New note page states
-  const [selectedOpportunityForNote, setSelectedOpportunityForNote] = useState(null);
 
   // Load fairs from backend API
   useEffect(() => {
