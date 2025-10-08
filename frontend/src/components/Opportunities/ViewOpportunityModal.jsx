@@ -24,7 +24,11 @@ import {
   Calendar as EventIcon,
   Info,
   Eye,
-  Download
+  Download,
+  Star,
+  CheckCircle,
+  BarChart3,
+  Sparkles
 } from 'lucide-react';
 
 export default function ViewOpportunityModal({ opportunity, onClose }) {
