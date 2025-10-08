@@ -226,9 +226,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "File Upload Endpoints and Opportunity Attachments Testing"
+    - "ViewOpportunityModal Modernization Testing"
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+    - "ViewOpportunityModal Modernization Testing"
   test_all: false
   test_priority: "high_first"
 
