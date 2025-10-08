@@ -371,6 +371,7 @@ test_plan:
     - "Restored Detailed Activity Forms with Modal System Testing - OpportunityTimelinePage"
     - "Customer Management API Endpoints Testing"
     - "ViewCustomerPage and EditCustomerPage Integration Testing"
+    - "NewCustomerForm Backend Integration Issue Testing"
   test_all: false
   test_priority: "high_first"
   completed_tests:
