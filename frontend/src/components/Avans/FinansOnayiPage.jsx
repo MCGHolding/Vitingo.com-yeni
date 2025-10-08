@@ -303,6 +303,15 @@ export default function FinansOnayiPage({ onBackToDashboard }) {
           )}
         </CardContent>
       </Card>
+
+      {/* Avans Detail Modal */}
+      <AvansDetayModal
+        avans={selectedAvans}
+        isOpen={modalOpen}
+        onClose={closeModal}
+        onSave={handleSaveAvans}
+        onApprove={handleApproveAvans}
+      />
     </div>
   );
 }
