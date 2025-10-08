@@ -20,6 +20,7 @@ import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpport
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
 import EditOpportunityPage from './components/Opportunities/EditOpportunityPage';
 import FinansOnayiPage from './components/Avans/FinansOnayiPage';
+import ActivityTimelinePage from './components/Activities/ActivityTimelinePage';
 import KapanmisAvanslarPage from './components/Avans/KapanmisAvanslarPage';
 import NewCustomerForm from './components/Customers/NewCustomerForm';
 import NewPersonFormPage from './components/Customers/NewPersonFormPage';
