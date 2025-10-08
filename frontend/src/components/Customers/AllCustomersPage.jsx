@@ -280,6 +280,12 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
     });
   };
 
+  const handleEditCustomer = (customer) => {
+    setViewModalOpen(false);
+    setSelectedCustomer(customer);
+    setEditModalOpen(true);
+  };
+
   // Open delete modal
   const handleDeleteCustomer = (customer) => {
     setSelectedCustomer(customer);
