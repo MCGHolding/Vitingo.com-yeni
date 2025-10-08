@@ -270,6 +270,18 @@ export default function FileUpload({
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="h-7 w-7 p-0 text-green-600 hover:text-green-800"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePreviewFile(file);
+                      }}
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800"
                       onClick={(e) => {
                         e.stopPropagation();
