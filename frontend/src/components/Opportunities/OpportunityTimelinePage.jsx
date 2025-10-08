@@ -832,7 +832,81 @@ export default function OpportunityTimelinePage({
         </div>
       </div>
 
-      {/* Activity Modal removed */}
+      {/* Detailed Activity Modals */}
+      {activeModal === 'call_record' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <CallRecordForm
+              opportunityId={modalData?.opportunityId}
+              opportunityTitle={modalData?.opportunityTitle}
+              onSave={handleActivityCreated}
+              onCancel={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'email_management' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <EmailManagementForm
+              opportunityId={modalData?.opportunityId}
+              opportunityTitle={modalData?.opportunityTitle}
+              onSave={handleActivityCreated}
+              onCancel={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'activity_planner' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <ActivityPlannerForm
+              opportunityId={modalData?.opportunityId}
+              opportunityTitle={modalData?.opportunityTitle}
+              onSave={handleActivityCreated}
+              onCancel={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'design_upload' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DesignUploadForm
+              opportunityId={modalData?.opportunityId}
+              opportunityTitle={modalData?.opportunityTitle}
+              onSave={handleActivityCreated}
+              onCancel={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'messaging' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <MessagingForm
+              opportunityId={modalData?.opportunityId}
+              opportunityTitle={modalData?.opportunityTitle}
+              onSave={handleActivityCreated}
+              onCancel={handleCloseModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'note' && (
+        <QuickNoteModal
+          isOpen={true}
+          opportunityId={modalData?.opportunityId}
+          opportunityTitle={modalData?.opportunityTitle}
+          onSave={handleActivityCreated}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 }
