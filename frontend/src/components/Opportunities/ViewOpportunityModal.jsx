@@ -456,21 +456,25 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
 
             {/* ETİKETLER */}
             {opportunity.tags && opportunity.tags.length > 0 && (
-              <Card className="border border-gray-200">
-                <CardHeader className="bg-gray-50 border-b">
-                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                    <MapPin className="h-5 w-5 text-orange-600" />
-                    <span>Etiketler</span>
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-orange-50/30 backdrop-blur-sm">
+                <CardHeader className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-100/50">
+                  <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                    <div className="p-2 bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl shadow-lg">
+                      <MapPin className="h-6 w-6 text-white" />
+                    </div>
+                    <span className="bg-gradient-to-r from-orange-700 to-amber-700 bg-clip-text text-transparent">
+                      Etiketler
+                    </span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
-                  <div className="flex flex-wrap gap-2">
+                <CardContent className="p-6">
+                  <div className="flex flex-wrap gap-3">
                     {opportunity.tags.map((tag, index) => (
                       <Badge
                         key={index}
-                        className={`text-xs px-3 py-1 ${tagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                        className={`text-sm px-4 py-2 font-medium shadow-lg border-0 rounded-full hover:scale-105 transition-transform duration-200 ${tagColors[tag] || 'bg-gradient-to-r from-gray-500 to-gray-600 text-white'}`}
                       >
-                        {tag}
+                        #{tag}
                       </Badge>
                     ))}
                   </div>
