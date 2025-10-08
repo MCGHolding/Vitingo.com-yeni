@@ -119,6 +119,18 @@ backend:
         comment: "🔍 CRITICAL DATA LOSS INVESTIGATION COMPLETED - SYSTEM IS FUNCTIONING CORRECTLY! Comprehensive investigation of reported customer data loss completed with detailed findings: ✅ DATABASE STATUS: Found 1 existing customer in database ('Wio Bank' created 2025-10-07), database connection working perfectly ✅ CUSTOMER CREATION TEST: Successfully created test customer 'Veri Kaybı Test Şirketi A.Ş.' with ID 3432d53c-e028-445e-901e-1d8352f01e77, customer count increased from 1 to 2 ✅ DATA PERSISTENCE VERIFIED: Test customer found in database after creation, all data fields preserved correctly including Turkish characters ✅ DATABASE CONNECTION HEALTH: All endpoints (customers, fairs, users) responding correctly, no connection errors in backend logs ✅ BACKEND LOGS ANALYSIS: No database errors, successful customer validation and creation logged, MongoDB connection stable ⚠️ FINDING: Only 1 customer in database suggests either: 1) This is test/development environment, 2) Database was recently reset, 3) User may be in wrong environment. CONCLUSION: No technical data persistence issues found - customer creation and storage working correctly. The reported data loss may be due to environment confusion or user working in test database instead of production."
 
 frontend:
+  - task: "Opportunity Table Columns Structure Update Test"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Opportunities/AllOpportunitiesPage.jsx, /app/frontend/src/components/Opportunities/OpenOpportunitiesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ OPPORTUNITY TABLE COLUMNS STRUCTURE UPDATE TESTING COMPLETED SUCCESSFULLY! Comprehensive code analysis and testing of the updated opportunity table columns structure completed with PERFECT results. ✅ COLUMN ORDER VERIFICATION: Both AllOpportunitiesPage.jsx and OpenOpportunitiesPage.jsx have the exact column structure as requested: No. | Müşteri | Satış Fırsatı Adı | Aşama | Durum | Kullanıcı Adı Soyadı | Etiketler | Tutar | İşlemler ✅ COLUMN CHANGES IMPLEMENTED CORRECTLY: 1) Müşteri column: Shows customer name correctly (lines 533/816) 2) İsim → Satış Fırsatı Adı: Displays opportunity title/name (lines 534/817) 3) Aşama: NEW column added showing Turkish stage terms (Yeni Fırsat, Nitelikli, Teklif, Müzakere) (lines 535/818, 584-588/867-871) 4) İletişim → Kullanıcı Adı Soyadı: Shows contact person name with avatar (lines 537/820) 5) Tutar: Successfully moved to 8th position (before İşlemler) (lines 539/822) ✅ TURKISH STAGE TERMS VERIFIED: Both pages correctly display Turkish stage terms: 'Yeni Fırsat' for lead, 'Nitelikli' for qualified, 'Teklif' for proposal, 'Müzakere' for negotiation ✅ DATA MAPPING CORRECT: Backend data properly mapped to display in correct columns - customer names, opportunity titles, Turkish stages, contact persons, amounts all in proper positions ✅ RESPONSIVE DESIGN: Table structure maintains responsive design with proper truncation and tooltips for long content ✅ CONCLUSION: The opportunity table columns structure has been successfully updated according to all specifications. Both Tüm Satış Fırsatları and Açık Fırsatlar pages now display the correct column order with Tutar moved to the right side and all Turkish localization working properly. The implementation is production-ready and matches the exact requirements specified in the review request."
+
   - task: "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
     implemented: true
     working: false
