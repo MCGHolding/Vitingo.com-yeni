@@ -54,6 +54,8 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     standSize: '',
     standSizeUnit: 'm2',
     expectedRevenue: '',
+    designFiles: [],
+    sampleFiles: [],
     probability: '50',
     tags: []
   });
