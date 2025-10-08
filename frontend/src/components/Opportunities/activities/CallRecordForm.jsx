@@ -387,6 +387,172 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
           )}
         </Button>
       </div>
+
+      {/* New Contact Modal */}
+      {showNewContactModal && (
+        <NewContactModal
+          customerName={customerInfo?.name}
+          onSave={handleNewContactAdded}
+          onClose={() => setShowNewContactModal(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+// New Contact Modal Component
+function NewContactModal({ customerName, onSave, onClose }) {
+  const { toast } = useToast();
+  const [contactData, setContactData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    position: ''
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      if (!contactData.name.trim()) {
+        toast({
+          title: "Eksik Bilgi",
+          description: "Kişi adı zorunludur.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // In a real implementation, you would add the contact to the customer
+      // For now, we'll just call the callback with the new contact data
+      onSave({
+        name: contactData.name,
+        phone: contactData.phone,
+        email: contactData.email,
+        position: contactData.position
+      });
+
+      toast({
+        title: "Başarılı",
+        description: "Yeni kişi başarıyla eklendi.",
+        className: "bg-green-50 border-green-200 text-green-800",
+      });
+
+      onClose();
+    } catch (error) {
+      console.error('Error saving new contact:', error);
+      toast({
+        title: "Hata",
+        description: "Kişi kaydedilirken bir hata oluştu.",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setContactData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+        <div className="p-6 border-b">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+            <UserPlus className="h-5 w-5 text-green-600" />
+            <span>Yeni Yetkili Kişi Ekle</span>
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {customerName} müşterisi için yeni yetkili kişi
+          </p>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ad Soyad *
+            </label>
+            <Input
+              value={contactData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              placeholder="Yetkili kişinin adı soyadı"
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Telefon
+            </label>
+            <Input
+              value={contactData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              placeholder="Telefon numarası"
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              E-posta
+            </label>
+            <Input
+              type="email"
+              value={contactData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder="E-posta adresi"
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Pozisyon
+            </label>
+            <Input
+              value={contactData.position}
+              onChange={(e) => handleInputChange('position', e.target.value)}
+              placeholder="Şirket pozisyonu"
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        <div className="p-6 border-t bg-gray-50 rounded-b-xl">
+          <div className="flex items-center justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={saving}
+            >
+              <X className="h-4 w-4 mr-2" />
+              İptal
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving || !contactData.name.trim()}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b border-white mr-2"></div>
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Kişiyi Ekle
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
