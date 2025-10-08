@@ -750,6 +750,7 @@ const Dashboard = () => {
             setSelectedOpportunityForEdit(null);
             setCurrentView('all-opportunities');
           }}
+          onNewOpportunity={handleNewOpportunity}
         />;
       case 'new-opportunity':
         return <NewOpportunityFormPage onSave={saveOpportunity} onClose={handleBackToDashboard} />;
