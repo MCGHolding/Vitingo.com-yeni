@@ -773,19 +773,6 @@ const Dashboard = () => {
           opportunityTitle={selectedOpportunityForTimeline?.eventName || selectedOpportunityForTimeline?.title}
           onBack={handleBackFromOpportunityTimeline}
         />;
-      case 'new-note':
-        return <NewNotePage
-          opportunity={selectedOpportunityForNote}
-          onBack={() => {
-            setSelectedOpportunityForNote(null);
-            setCurrentView('opportunity-timeline');
-          }}
-          onSave={(savedNote) => {
-            console.log('Note saved:', savedNote);
-            setSelectedOpportunityForNote(null);
-            setCurrentView('opportunity-timeline');
-          }}
-        />;
       case 'new-opportunity':
         return <NewOpportunityFormPage onSave={saveOpportunity} onClose={handleBackToDashboard} />;
       case 'new-customer':
