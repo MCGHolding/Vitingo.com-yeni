@@ -671,74 +671,20 @@ export default function OpportunityTimelinePage({
 
       <div className="px-4 py-4 space-y-4">
         
-        {/* Compact Modern Summary Cards */}
-        <div className="grid grid-cols-5 gap-3">
-          <div className="bg-white/70 backdrop-blur-sm border border-purple-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg">
-                <Activity className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-600">Toplam</p>
-                <p className="text-lg font-bold text-gray-900">{summary.total}</p>
-              </div>
-            </div>
+        {/* Action Bar */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Toplam {summary.total} aktivite - {summary.completed} tamamlandı, {summary.pending} beklemede
           </div>
-
-          <div className="bg-white/70 backdrop-blur-sm border border-green-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-r from-green-500 to-green-600 rounded-lg">
-                <CheckCircle className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-600">Tamamlanan</p>
-                <p className="text-lg font-bold text-gray-900">{summary.completed}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-sm border border-amber-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg">
-                <Clock className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-600">Bekleyen</p>
-                <p className="text-lg font-bold text-gray-900">{summary.pending}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-sm border border-blue-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
-                <TrendingUp className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-600">Bu Hafta</p>
-                <p className="text-lg font-bold text-gray-900">
-                  {activities.filter(a => {
-                    const weekAgo = new Date();
-                    weekAgo.setDate(weekAgo.getDate() - 7);
-                    return new Date(a.created_at) > weekAgo;
-                  }).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-sm border border-indigo-200/50 rounded-xl p-3 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg">
-                <Bell className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-600">Hatırlatıcı</p>
-                <p className="text-lg font-bold text-gray-900">
-                  {activities.filter(a => a.status === 'pending' && a.scheduled_for).length}
-                </p>
-              </div>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Button 
+              size="sm" 
+              variant="outline"
+              className="border-gray-200 text-gray-600 hover:bg-gray-50 h-8"
+            >
+              <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+              Rapor
+            </Button>
           </div>
         </div>
 
