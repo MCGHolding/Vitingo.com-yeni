@@ -521,41 +521,17 @@ export default function OpportunityTimelinePage({
     return summary;
   };
 
-  const handleNewActivity = () => {
-    setActivityModalOpen(true);
-  };
-
   const handleActivityCreated = (newActivity) => {
     console.log('✅ New activity created:', newActivity);
     
-    // Add the new activity to the list and refresh from API
-    const activityWithId = {
-      ...newActivity,
-      id: Date.now().toString(),
-      opportunity_id: opportunityId,
-      opportunity_title: opportunityTitle,
-      created_by: 'Murat Bucak',
-      created_at: new Date().toISOString(),
-      status: newActivity.type === 'activity_planner' ? 'pending' : 'completed',
-      priority: 'medium'
-    };
-    
-    setActivities(prev => [activityWithId, ...prev]);
-    
-    // Optionally refresh all activities from API to ensure data consistency
-    // loadActivities();
+    // Add the new activity to the list
+    setActivities(prevActivities => [newActivity, ...prevActivities]);
     
     toast({
       title: "Başarılı",
       description: "Yeni aktivite timeline'a eklendi.",
       className: "bg-green-50 border-green-200 text-green-800",
     });
-    
-    setActivityModalOpen(false);
-  };
-
-  const handleActivityModalClose = () => {
-    setActivityModalOpen(false);
   };
 
   const summary = getActivitySummary();
