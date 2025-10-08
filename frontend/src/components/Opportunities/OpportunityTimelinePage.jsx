@@ -510,6 +510,10 @@ export default function OpportunityTimelinePage({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Modal states for detailed activity forms
+  const [activeModal, setActiveModal] = useState('');
+  const [modalData, setModalData] = useState(null);
+
   useEffect(() => {
     if (opportunityId) {
       loadActivities();
