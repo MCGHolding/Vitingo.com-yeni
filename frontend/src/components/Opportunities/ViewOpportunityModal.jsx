@@ -105,53 +105,64 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
           </div>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="p-8 bg-gradient-to-br from-slate-50 to-gray-50">
           <div className="space-y-8">
             
             {/* TEMEl BİLGİLER */}
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gray-50 border-b">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                  <Building2 className="h-5 w-5 text-blue-600" />
-                  <span>Temel Bilgiler</span>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border-b border-blue-100/50">
+                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                    <Building2 className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                    Temel Bilgiler
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Fırsat No</label>
-                      <p className="text-lg font-bold text-blue-600">{opportunity.displayIndex || '#' + opportunity.id}</p>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="group">
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Fırsat No</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <div className="p-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+                          <Star className="h-4 w-4 text-white" />
+                        </div>
+                        <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          {opportunity.displayIndex || '#' + opportunity.id}
+                        </p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Müşteri</label>
-                      <p className="font-semibold text-gray-900">{opportunity.customer}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri</label>
+                      <p className="font-bold text-gray-800 text-lg mt-1">{opportunity.customer}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Satış Fırsatı Adı</label>
-                      <p className="font-medium text-gray-900">{opportunity.eventName || opportunity.title}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Satış Fırsatı Adı</label>
+                      <p className="font-semibold text-gray-700 text-base mt-1">{opportunity.eventName || opportunity.title}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Fırsat Kaynağı</label>
-                      <p className="text-gray-900">{opportunity.source || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Fırsat Kaynağı</label>
+                      <p className="text-gray-600 text-base mt-1">{opportunity.source || '-'}</p>
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Proje Türü</label>
-                      <p className="text-gray-900">{opportunity.project_type || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Proje Türü</label>
+                      <p className="text-gray-600 text-base mt-1">{opportunity.project_type || '-'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">İş Türü</label>
-                      <p className="text-gray-900">{opportunity.business_type || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">İş Türü</label>
+                      <p className="text-gray-600 text-base mt-1">{opportunity.business_type || '-'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Ülke</label>
-                      <p className="text-gray-900">{opportunity.country || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Ülke</label>
+                      <p className="text-gray-600 text-base mt-1">{opportunity.country || '-'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Şehir</label>
-                      <p className="text-gray-900">{opportunity.city || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Şehir</label>
+                      <p className="text-gray-600 text-base mt-1">{opportunity.city || '-'}</p>
                     </div>
                   </div>
                 </div>
