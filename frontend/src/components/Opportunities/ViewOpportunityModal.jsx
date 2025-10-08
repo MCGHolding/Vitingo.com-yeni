@@ -66,14 +66,14 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
   };
 
   const tagColors = {
-    'ALMANYA': 'bg-red-500 text-white',
-    'DÜSSELDORF': 'bg-purple-500 text-white',
-    'MEDICA': 'bg-teal-500 text-white',
-    'BAE': 'bg-red-500 text-white',
-    'DUBAİ': 'bg-orange-500 text-white',
-    'GULFOOD': 'bg-teal-500 text-white',
-    'TÜRKİYE': 'bg-red-500 text-white',
-    'İSTANBUL': 'bg-purple-500 text-white'
+    'ALMANYA': 'bg-gradient-to-r from-red-500 to-red-600 text-white',
+    'DÜSSELDORF': 'bg-gradient-to-r from-purple-500 to-purple-600 text-white',
+    'MEDICA': 'bg-gradient-to-r from-teal-500 to-teal-600 text-white',
+    'BAE': 'bg-gradient-to-r from-red-500 to-orange-500 text-white',
+    'DUBAİ': 'bg-gradient-to-r from-orange-500 to-amber-500 text-white',
+    'GULFOOD': 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white',
+    'TÜRKİYE': 'bg-gradient-to-r from-red-500 to-rose-600 text-white',
+    'İSTANBUL': 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white'
   };
 
   return (
