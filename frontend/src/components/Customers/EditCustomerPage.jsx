@@ -60,7 +60,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   useEffect(() => {
     if (customer) {
       setFormData({
-        name: customer.name || customer.fullName || '',
+        name: customer.companyName || customer.name || customer.fullName || '',
         customer_type: customer.customer_type || '',
         sector: customer.sector || '',
         phone: customer.phone || '',
@@ -69,7 +69,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         country: customer.country || '',
         city: customer.city || '',
         address: customer.address || '',
-        tax_number: customer.tax_number || '',
+        tax_number: customer.taxNumber || customer.tax_number || '',
         iban: customer.iban || '',
         currency: customer.currency || 'TRY',
         tags: customer.tags || [],
