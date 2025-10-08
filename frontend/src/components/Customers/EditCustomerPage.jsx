@@ -74,7 +74,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         iban: customer.iban || '',
         currency: customer.currency || 'TRY',
         tags: customer.tags || [],
-        notes: customer.notes || ''
+        notes: customer.notes || '',
+        contactPerson: customer.contactPerson || ''
       });
 
       setContacts(customer.contact_persons || []);
