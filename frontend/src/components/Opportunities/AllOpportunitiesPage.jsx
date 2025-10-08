@@ -291,7 +291,54 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
     toast({
       title: `${action} işlemi`,
       description: `${opportunity.customer} için ${action} işlemi başlatıldı.`,
+      variant: "default"
     });
+  };
+
+  const handleDelete = (opportunity) => {
+    setOpportunityToDelete(opportunity);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!opportunityToDelete) return;
+    
+    try {
+      setDeleteLoading(true);
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/opportunities/${opportunityToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove from local state
+        setAllOpportunities(prev => prev.filter(opp => opp.id !== opportunityToDelete.id));
+        
+        toast({
+          title: "Başarılı",
+          description: "Satış fırsatı başarıyla silindi",
+          variant: "default"
+        });
+      } else {
+        throw new Error('Delete failed');
+      }
+    } catch (error) {
+      console.error('Error deleting opportunity:', error);
+      toast({
+        title: "Hata",
+        description: "Satış fırsatı silinirken hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setDeleteLoading(false);
+      setDeleteModalOpen(false);
+      setOpportunityToDelete(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteModalOpen(false);
+    setOpportunityToDelete(null);
   };
 
   const exportToExcel = () => {
