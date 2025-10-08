@@ -97,8 +97,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         setCustomerTypes(customerTypesData);
       }
       
-      // Load sectors (specialties)
-      const sectorsResponse = await fetch(`${backendUrl}/api/specialties`);
+      // Load sectors
+      const sectorsResponse = await fetch(`${backendUrl}/api/sectors`);
       if (sectorsResponse.ok) {
         const sectorsData = await sectorsResponse.json();
         setSectors(sectorsData);
