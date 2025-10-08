@@ -414,18 +414,18 @@ export default function OpportunityTimelinePage({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           
-          {/* Filters Sidebar */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <Filter className="h-5 w-5" />
+          {/* Compact Filters Sidebar */}
+          <div className="space-y-3">
+            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+              <div className="p-3 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+                  <Filter className="h-4 w-4 text-gray-600" />
                   <span>Filtreler</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </h3>
+              </div>
+              <div className="p-3 space-y-3">
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-2 block">
                     Arama
