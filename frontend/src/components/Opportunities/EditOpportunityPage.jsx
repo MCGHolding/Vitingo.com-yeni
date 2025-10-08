@@ -235,6 +235,14 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
           </div>
           <div className="flex items-center space-x-3">
             <Button
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 flex items-center space-x-2"
+              onClick={() => setNotesHistoryModalOpen(true)}
+            >
+              <History className="h-4 w-4" />
+              <span>GELİŞMELER</span>
+            </Button>
+            <Button
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 flex items-center space-x-2"
               onClick={() => setNewNoteModalOpen(true)}
             >
