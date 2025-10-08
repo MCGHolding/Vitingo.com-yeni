@@ -83,6 +83,11 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
         eventName: op.title, // Map title to eventName
         contactPerson: op.contact_person || 'Belirtilmemiş', // Map contact_person to contactPerson
         lastUpdate: op.updated_at || op.created_at, // Map updated_at to lastUpdate
+        // Map backend status to frontend expected status format
+        status: op.status === 'won' ? 'won' :
+                op.status === 'lost' ? 'lost' :
+                op.status === 'negotiation' ? 'negotiation' :
+                'open-active', // Default to open-active for other statuses
         statusText: op.status === 'won' ? 'Kazanıldı' :
                    op.status === 'lost' ? 'Kaybedildi' :
                    op.status === 'negotiation' ? 'Müzakere' :
