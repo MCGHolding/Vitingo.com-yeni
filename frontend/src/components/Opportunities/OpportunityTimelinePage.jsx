@@ -597,43 +597,43 @@ export default function OpportunityTimelinePage({
                                   <span className="text-gray-400 font-medium">{getTimeAgo(activity.created_at)}</span>
                                 </div>
                                 
-                                {/* Activity specific details */}
+                                {/* Compact Activity Details */}
                                 {activity.type === 'call_record' && (
-                                  <div className="mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded border-l-4 border-blue-400">
-                                    📞 {activity.data.call_type === 'outgoing' ? 'Giden' : 'Gelen'} arama • 
-                                    ⏱️ {activity.data.duration_minutes} dakika • 
+                                  <div className="text-xs text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100/50 p-2 rounded-lg border border-blue-200/50">
+                                    📞 {activity.data.call_type === 'outgoing' ? 'Giden' : 'Gelen'} • 
+                                    ⏱️ {activity.data.duration_minutes}dk • 
                                     👤 {activity.data.contact_person}
                                   </div>
                                 )}
                                 
                                 {activity.type === 'activity_planner' && activity.scheduled_for && (
-                                  <div className="mt-3 text-xs text-purple-600 bg-purple-50 p-2 rounded border-l-4 border-purple-400 flex items-center space-x-1">
+                                  <div className="text-xs text-purple-700 bg-gradient-to-r from-purple-50 to-purple-100/50 p-2 rounded-lg border border-purple-200/50 flex items-center space-x-1">
                                     <Calendar className="h-3 w-3" />
-                                    <span>📅 Planlanan: {formatDate(activity.scheduled_for)}</span>
+                                    <span>📅 {formatDate(activity.scheduled_for)}</span>
                                     {activity.data.has_reminder && (
                                       <>
-                                        <Bell className="h-3 w-3 ml-2" />
-                                        <span>🔔 {activity.data.reminder_minutes} dk önce hatırlatıcı</span>
+                                        <Bell className="h-3 w-3 ml-1" />
+                                        <span>🔔 {activity.data.reminder_minutes}dk önce</span>
                                       </>
                                     )}
                                   </div>
                                 )}
 
                                 {activity.type === 'design_upload' && (
-                                  <div className="mt-3 text-xs text-orange-600 bg-orange-50 p-2 rounded border-l-4 border-orange-400">
-                                    🎨 Versiyon {activity.data.version} • 📁 {activity.data.files_count} dosya yüklendi
+                                  <div className="text-xs text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100/50 p-2 rounded-lg border border-orange-200/50">
+                                    🎨 {activity.data.version} • 📁 {activity.data.files_count} dosya
                                   </div>
                                 )}
 
                                 {activity.type === 'email_reply' && (
-                                  <div className="mt-3 text-xs text-green-600 bg-green-50 p-2 rounded border-l-4 border-green-400">
-                                    📧 Alıcı: {activity.data.to} • 📝 {activity.data.subject}
+                                  <div className="text-xs text-green-700 bg-gradient-to-r from-green-50 to-green-100/50 p-2 rounded-lg border border-green-200/50">
+                                    📧 {activity.data.to?.split('@')[0]} • 📝 {activity.data.subject}
                                   </div>
                                 )}
 
                                 {activity.type === 'messaging' && (
-                                  <div className="mt-3 text-xs text-pink-600 bg-pink-50 p-2 rounded border-l-4 border-pink-400">
-                                    💬 {activity.data.message_count} mesaj • Son: "{activity.data.last_message}"
+                                  <div className="text-xs text-pink-700 bg-gradient-to-r from-pink-50 to-pink-100/50 p-2 rounded-lg border border-pink-200/50">
+                                    💬 {activity.data.message_count} mesaj • "{activity.data.last_message?.slice(0, 30)}..."
                                   </div>
                                 )}
                               </div>
