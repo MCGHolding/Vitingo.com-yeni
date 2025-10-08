@@ -943,6 +943,14 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                           >
                             <Edit className="h-3.5 w-3.5" />
                           </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
+                            onClick={() => handleDelete(opportunity)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                           <ActionMenuPopover
                             opportunity={opportunity}
                             onAction={handleActionMenu}
