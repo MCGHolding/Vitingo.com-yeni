@@ -81,7 +81,7 @@ export default function PDFViewer({ file, zoom = 100, className = "" }) {
   }
 
   return (
-    <div className="pdf-viewer w-full">
+    <div className={`pdf-viewer w-full ${className}`}>
       {/* PDF Controls */}
       <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
         <div className="flex items-center space-x-2">
