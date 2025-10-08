@@ -270,8 +270,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "ActionMenuPopover Delete Option Removal Test"
+  current_focus: []
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
@@ -279,6 +278,8 @@ test_plan:
   completed_tests:
     - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
     - "JavaScript Error Fix for OpportunityTimelinePage ActivityModal"
+    - "ActionMenuPopover Delete Option Removal Test"
+    - "URGENT Sales Opportunities Display Issue Resolution"
 
 agent_communication:
   - agent: "testing"
