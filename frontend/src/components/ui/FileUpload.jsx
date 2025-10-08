@@ -145,6 +145,78 @@ export default function FileUpload({
     setPreviewFile(null);
   };
 
+  const renderPreviewContent = (file) => {
+    if (!file) return null;
+
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+    const fileUrl = `${backendUrl}/api/files/${file.id}`;
+
+    switch (file.type) {
+      case 'image':
+        return (
+          <div className="flex justify-center">
+            <img
+              src={fileUrl}
+              alt={file.original_filename}
+              className="max-w-full max-h-96 rounded-lg shadow-lg"
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+        );
+
+      case 'video':
+        return (
+          <div className="flex justify-center">
+            <video
+              controls
+              className="max-w-full max-h-96 rounded-lg shadow-lg"
+              style={{ objectFit: 'contain' }}
+            >
+              <source src={fileUrl} type={file.content_type} />
+              Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+          </div>
+        );
+
+      case 'pdf':
+        return (
+          <div className="w-full h-96">
+            <iframe
+              src={fileUrl}
+              title={file.original_filename}
+              className="w-full h-full border rounded-lg"
+            />
+          </div>
+        );
+
+      default:
+        return (
+          <div className="text-center py-8">
+            <div className="flex items-center justify-center mb-4">
+              {getFileIcon(file.type)}
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {file.original_filename}
+            </h3>
+            <div className="space-y-1 text-sm text-gray-600">
+              <p>Dosya Boyutu: {formatFileSize(file.file_size)}</p>
+              <p>Dosya Türü: {file.content_type}</p>
+              <p>Yüklenme Tarihi: {new Date(file.uploaded_at).toLocaleDateString('tr-TR')}</p>
+            </div>
+            <div className="mt-4">
+              <Button
+                onClick={() => handleDownloadFile(file.id, file.original_filename)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Dosyayı İndir
+              </Button>
+            </div>
+          </div>
+        );
+    }
+  };
+
   const getFileType = (filename) => {
     const ext = filename.split('.').pop().toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(ext)) return 'image';
