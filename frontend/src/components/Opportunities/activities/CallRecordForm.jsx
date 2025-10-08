@@ -50,6 +50,10 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
   });
 
   const [saving, setSaving] = useState(false);
+  const [contactPersons, setContactPersons] = useState([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+  const [showNewContactModal, setShowNewContactModal] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState(null);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
