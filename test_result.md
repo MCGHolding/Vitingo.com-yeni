@@ -119,6 +119,18 @@ backend:
         comment: "🔍 CRITICAL DATA LOSS INVESTIGATION COMPLETED - SYSTEM IS FUNCTIONING CORRECTLY! Comprehensive investigation of reported customer data loss completed with detailed findings: ✅ DATABASE STATUS: Found 1 existing customer in database ('Wio Bank' created 2025-10-07), database connection working perfectly ✅ CUSTOMER CREATION TEST: Successfully created test customer 'Veri Kaybı Test Şirketi A.Ş.' with ID 3432d53c-e028-445e-901e-1d8352f01e77, customer count increased from 1 to 2 ✅ DATA PERSISTENCE VERIFIED: Test customer found in database after creation, all data fields preserved correctly including Turkish characters ✅ DATABASE CONNECTION HEALTH: All endpoints (customers, fairs, users) responding correctly, no connection errors in backend logs ✅ BACKEND LOGS ANALYSIS: No database errors, successful customer validation and creation logged, MongoDB connection stable ⚠️ FINDING: Only 1 customer in database suggests either: 1) This is test/development environment, 2) Database was recently reset, 3) User may be in wrong environment. CONCLUSION: No technical data persistence issues found - customer creation and storage working correctly. The reported data loss may be due to environment confusion or user working in test database instead of production."
 
 frontend:
+  - task: "ActionMenuPopover Delete Option Removal Test"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Opportunities/ActionMenuPopover.jsx, /app/frontend/src/components/Opportunities/AllOpportunitiesPage.jsx, /app/frontend/src/components/Opportunities/OpenOpportunitiesPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed 'Sil' (Delete) option from ActionMenuPopover component. The delete option with trash icon should no longer appear in the three dots menu. Menu should now contain only: Paylaş (Share), Yorum (Comment), Etkinlik (Event), Mesaj (Message), Mail - but NOT Sil. Direct red delete button should still be available next to edit button and work with confirmation modal."
+
   - task: "Opportunity Table Columns Structure Update Test"
     implemented: true
     working: true
