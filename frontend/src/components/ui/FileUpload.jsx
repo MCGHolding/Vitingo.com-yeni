@@ -382,6 +382,40 @@ export default function FileUpload({
           </div>
         </div>
       )}
+
+      {/* Preview Modal */}
+      <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              {previewFile && getFileIcon(previewFile.type)}
+              <span>
+                {previewFile?.original_filename}
+              </span>
+              <Badge variant="secondary" className="text-xs">
+                {previewFile?.type}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="mt-4">
+            {renderPreviewContent(previewFile)}
+          </div>
+          
+          <div className="flex justify-end space-x-2 mt-4 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => previewFile && handleDownloadFile(previewFile.id, previewFile.original_filename)}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              İndir
+            </Button>
+            <Button variant="outline" onClick={closePreviewModal}>
+              Kapat
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
