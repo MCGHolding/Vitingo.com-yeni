@@ -36,7 +36,7 @@ import {
 import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
 
-export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
+export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity }) {
   const { toast } = useToast();
   const [editingSections, setEditingSections] = useState({});
   const [formData, setFormData] = useState(opportunity || {});
