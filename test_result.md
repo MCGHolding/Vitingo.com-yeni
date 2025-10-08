@@ -118,6 +118,18 @@ backend:
         agent: "testing"
         comment: "🔍 CRITICAL DATA LOSS INVESTIGATION COMPLETED - SYSTEM IS FUNCTIONING CORRECTLY! Comprehensive investigation of reported customer data loss completed with detailed findings: ✅ DATABASE STATUS: Found 1 existing customer in database ('Wio Bank' created 2025-10-07), database connection working perfectly ✅ CUSTOMER CREATION TEST: Successfully created test customer 'Veri Kaybı Test Şirketi A.Ş.' with ID 3432d53c-e028-445e-901e-1d8352f01e77, customer count increased from 1 to 2 ✅ DATA PERSISTENCE VERIFIED: Test customer found in database after creation, all data fields preserved correctly including Turkish characters ✅ DATABASE CONNECTION HEALTH: All endpoints (customers, fairs, users) responding correctly, no connection errors in backend logs ✅ BACKEND LOGS ANALYSIS: No database errors, successful customer validation and creation logged, MongoDB connection stable ⚠️ FINDING: Only 1 customer in database suggests either: 1) This is test/development environment, 2) Database was recently reset, 3) User may be in wrong environment. CONCLUSION: No technical data persistence issues found - customer creation and storage working correctly. The reported data loss may be due to environment confusion or user working in test database instead of production."
 
+  - task: "File Upload Endpoints and Opportunity Attachments Testing"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "🎉 FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TESTING COMPLETED SUCCESSFULLY! Comprehensive testing of new file upload endpoints and opportunity file attachments functionality completed with PERFECT results. All 10 test scenarios PASSED: ✅ FILE UPLOAD ENDPOINT (POST /api/upload): Successfully uploaded image (test.jpg, 70 bytes) and PDF (test.pdf, 328 bytes) files with proper validation, unique filename generation, and database record creation. All required fields present in response (id, filename, original_filename, file_size, content_type, uploaded_at) ✅ FILE SIZE VALIDATION: Properly rejected oversized file (>100MB) with 413 status code ✅ FILE TYPE VALIDATION: Properly rejected unsupported file type (.exe) with 400 status code ✅ FILE DOWNLOAD ENDPOINT (GET /api/files/{file_id}): Successfully downloaded uploaded files with correct Content-Type (image/jpeg, application/pdf) and Content-Disposition headers for attachment download ✅ FILE DOWNLOAD ERROR HANDLING: Non-existent file ID properly returns 404 error ✅ OPPORTUNITY FILE INTEGRATION: Successfully created opportunity with design_files and sample_files arrays containing uploaded file IDs, all file attachments stored correctly in opportunity record ✅ OPPORTUNITY FILE UPDATE: Successfully updated opportunity file attachments, design_files and sample_files arrays updated correctly ✅ FILE DELETE ENDPOINT (DELETE /api/files/{file_id}): Successfully deleted files from both database and filesystem, verified file removal by attempting download (404 response) ✅ FILE DELETE ERROR HANDLING: Non-existent file ID properly returns 404 error ✅ SECURITY VALIDATIONS: File size limit (100MB), file type restrictions, and error handling all working correctly. CONCLUSION: Complete file upload workflow is 100% functional and production-ready. Files can be uploaded, downloaded, deleted, and attached to opportunities with proper validation and security measures."
+
 frontend:
   - task: "ActionMenuPopover Delete Option Removal Test"
     implemented: true
