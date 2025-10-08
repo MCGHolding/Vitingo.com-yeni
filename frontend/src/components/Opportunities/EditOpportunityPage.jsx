@@ -63,6 +63,9 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
   
   // Activity modal states
   const [activityModalOpen, setActivityModalOpen] = useState(false);
+  
+  // Opportunity timeline modal states
+  const [opportunityTimelineOpen, setOpportunityTimelineOpen] = useState(false);
 
   useEffect(() => {
     if (opportunity) {
