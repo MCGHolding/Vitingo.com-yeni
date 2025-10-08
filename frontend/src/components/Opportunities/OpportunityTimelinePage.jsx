@@ -29,6 +29,8 @@ import {
   Plus
 } from 'lucide-react';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 // Sample activities for a specific opportunity
 const getSampleActivitiesForOpportunity = (opportunityId, opportunityTitle) => [
   {
