@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://client-portal-hub-2.preview.emergentagent.com"
+BACKEND_URL = "https://opportunity-manager.preview.emergentagent.com"
 
 def test_people_endpoint():
     """
