@@ -671,6 +671,24 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                             </Tooltip>
                           </TooltipProvider>
 
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
+                                  onClick={() => handleDelete(opportunity)}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Sil</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
                           <ActionMenuPopover
                             opportunity={opportunity}
                             onAction={handleAction}
