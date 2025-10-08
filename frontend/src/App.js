@@ -243,6 +243,72 @@ const Dashboard = () => {
     setCurrentView('edit-opportunity');
   };
 
+  // Customer view/edit handlers
+  const handleViewCustomer = (customer) => {
+    setSelectedCustomerForView(customer);
+    setCurrentView('view-customer');
+  };
+
+  const handleEditCustomerFromPage = (customer) => {
+    setSelectedCustomerForEdit(customer);
+    setCurrentView('edit-customer');
+  };
+
+  const handleBackFromViewCustomer = () => {
+    setSelectedCustomerForView(null);
+    setCurrentView('all-customers');
+  };
+
+  const handleBackFromEditCustomer = () => {
+    setSelectedCustomerForEdit(null);
+    setCurrentView('all-customers');
+  };
+
+  const handleSaveCustomerFromPage = async (updatedCustomer) => {
+    try {
+      // Try runtime config first, fallback to environment variables, then hardcoded
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://client-manager-91.preview.emergentagent.com';
+      console.log('Updating customer to:', backendUrl);
+      
+      const response = await fetch(`${backendUrl}/api/customers/${updatedCustomer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedCustomer)
+      });
+
+      if (response.ok) {
+        const customer = await response.json();
+        // Update customers list
+        setCustomers(prev => prev.map(c => c.id === customer.id ? customer : c));
+        console.log('Customer updated:', customer);
+        
+        // Navigate back to customers list
+        setSelectedCustomerForEdit(null);
+        setCurrentView('all-customers');
+        
+        // Reload customers to get latest data
+        loadCustomers();
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update customer:', errorData);
+        alert('Müşteri güncellenirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Error updating customer:', error);
+      alert('Müşteri güncellenirken hata oluştu: ' + error.message);
+    }
+  };
+
+  const handleEditFromView = (customer) => {
+    setSelectedCustomerForView(null);
+    setSelectedCustomerForEdit(customer);
+    setCurrentView('edit-customer');
+  };
+
   // Avans handlers
   const handleFinansOnayi = () => {
     setCurrentView('finans-onayi');
