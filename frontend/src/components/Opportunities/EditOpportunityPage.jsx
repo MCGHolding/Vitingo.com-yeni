@@ -33,7 +33,8 @@ import {
   Download,
   Check,
   Plus,
-  History
+  History,
+  Zap
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
