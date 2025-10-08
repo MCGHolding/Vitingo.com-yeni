@@ -87,13 +87,64 @@ export default function ActivityModal({ isOpen, onClose, opportunityId, opportun
     setActivityData(null);
   };
 
-  const handleActivitySave = (data) => {
-    setActivityData(data);
-    console.log('Activity saved:', data);
-    // Here you would typically save to backend
-    onClose();
-    setSelectedActivityType(null);
-    setActivityData(null);
+  const handleActivitySave = async (data) => {
+    try {
+      setSaving(true);
+      console.log('💾 Saving activity:', data);
+      
+      const activityPayload = {
+        type: selectedActivityType.id,
+        title: data.title || selectedActivityType.title,
+        description: data.description || data.summary || '',
+        status: data.status || 'pending',
+        priority: data.priority || 'medium',
+        scheduled_for: data.scheduled_for || null,
+        data: data
+      };
+      
+      console.log('🔄 Activity payload:', activityPayload);
+      
+      const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/activities`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(activityPayload)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Aktivite kaydedilemedi');
+      }
+      
+      const savedActivity = await response.json();
+      console.log('✅ Activity saved successfully:', savedActivity);
+      
+      toast({
+        title: "Başarılı",
+        description: "Aktivite başarıyla kaydedildi.",
+        className: "bg-green-50 border-green-200 text-green-800",
+      });
+      
+      // Call parent callback to refresh timeline
+      if (onActivityCreated) {
+        onActivityCreated(savedActivity);
+      }
+      
+      // Close modal and reset state
+      onClose();
+      setSelectedActivityType(null);
+      setActivityData(null);
+      
+    } catch (error) {
+      console.error('❌ Error saving activity:', error);
+      toast({
+        title: "Hata",
+        description: "Aktivite kaydedilirken bir hata oluştu: " + error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const renderActivityForm = () => {
