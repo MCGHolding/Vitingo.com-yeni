@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
-export default function NewNoteModal({ isOpen, onClose, opportunityId, opportunityTitle }) {
+export default function NewNoteModal({ isOpen, onClose, opportunityId, opportunityTitle, onNoteSaved }) {
   const { toast } = useToast();
   const [noteContent, setNoteContent] = useState('');
   const [saving, setSaving] = useState(false);
