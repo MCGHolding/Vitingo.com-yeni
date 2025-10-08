@@ -511,21 +511,19 @@ export default function OpportunityTimelinePage({
             </div>
           </div>
 
-          {/* Activities Timeline */}
+          {/* Compact Modern Timeline */}
           <div className="lg:col-span-3">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">
-                    Aktivite Zaman Çizelgesi ({filteredActivities.length})
-                  </CardTitle>
-                  <Button variant="outline" size="sm">
-                    <Bell className="h-4 w-4 mr-2" />
-                    Hatırlatıcılar
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
+            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+              <div className="p-3 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Zaman Çizelgesi ({filteredActivities.length})
+                </h3>
+                <Button variant="outline" size="sm" className="h-7 px-3 text-xs">
+                  <Bell className="h-3 w-3 mr-1.5" />
+                  Hatırlatıcılar
+                </Button>
+              </div>
+              <div className="p-3">
                 {loading ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-600 border-t-transparent"></div>
