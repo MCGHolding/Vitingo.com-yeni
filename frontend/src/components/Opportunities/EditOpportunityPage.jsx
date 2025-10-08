@@ -895,6 +895,14 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
         opportunityId={formData.id}
         opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
       />
+
+      {/* Opportunity Timeline Modal */}
+      <OpportunityTimelineModal
+        isOpen={opportunityTimelineOpen}
+        onClose={() => setOpportunityTimelineOpen(false)}
+        opportunityId={formData.id}
+        opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
+      />
     </div>
   );
 }
