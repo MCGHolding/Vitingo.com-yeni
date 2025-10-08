@@ -469,6 +469,24 @@ export default function OpportunityTimelinePage({
       description: "Yeni aktivite timeline'a eklendi.",
       className: "bg-green-50 border-green-200 text-green-800",
     });
+
+    // Close modal
+    setActiveModal('');
+    setModalData(null);
+  };
+
+  const handleOpenDetailedForm = (activityType) => {
+    setActiveModal(activityType);
+    setModalData({
+      opportunityId,
+      opportunityTitle,
+      activityType
+    });
+  };
+
+  const handleCloseModal = () => {
+    setActiveModal('');
+    setModalData(null);
   };
 
   const summary = getActivitySummary();
