@@ -224,9 +224,12 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className="px-3 py-1 text-sm">
-              Fırsat No: {formData.displayIndex || formData.id}
-            </Badge>
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2"
+              onClick={() => {/* Navigate to new opportunity */}}
+            >
+              YENİ
+            </Button>
           </div>
         </div>
       </div>
