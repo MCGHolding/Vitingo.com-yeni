@@ -310,45 +310,59 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
             </Card>
 
             {/* FİNANSAL BİLGİLER */}
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gray-50 border-b">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <span>Finansal Bilgiler</span>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-emerald-50/30 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 border-b border-emerald-100/50">
+                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl shadow-lg">
+                    <DollarSign className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent">
+                    Finansal Bilgiler
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Öngörülen Gelir</label>
-                      <p className="text-xl font-bold text-green-600">
-                        {formatCurrency(opportunity.amount || opportunity.expected_revenue || 0, opportunity.currency)}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Para Birimi</label>
-                      <p className="text-gray-900">{opportunity.currency || 'TRY'}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">Başarı Olasılığı</label>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex-1 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-600 h-2 rounded-full" 
-                            style={{width: `${opportunity.probability || 50}%`}}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium">{opportunity.probability || 50}%</span>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-5 rounded-2xl border border-emerald-100">
+                      <label className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Öngörülen Gelir</label>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <BarChart3 className="h-5 w-5 text-emerald-500" />
+                        <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                          {formatCurrency(opportunity.amount || opportunity.expected_revenue || 0, opportunity.currency)}
+                        </p>
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Beklenen Gelir</label>
-                      <p className="text-lg font-semibold text-gray-900">
-                        {formatCurrency((opportunity.amount || 0) * (opportunity.probability || 50) / 100, opportunity.currency)}
-                      </p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Para Birimi</label>
+                      <p className="text-gray-700 text-base font-medium mt-1">{opportunity.currency || 'TRY'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Başarı Olasılığı</label>
+                      <div className="mt-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-1 bg-gray-200 rounded-full h-4 shadow-inner">
+                            <div 
+                              className="bg-gradient-to-r from-emerald-500 to-green-500 h-4 rounded-full shadow-sm transition-all duration-500 relative" 
+                              style={{width: `${opportunity.probability || 50}%`}}
+                            >
+                              <div className="absolute right-0 top-0 h-4 w-4 bg-white rounded-full shadow-md transform translate-x-1/2"></div>
+                            </div>
+                          </div>
+                          <span className="text-xl font-bold text-emerald-600">{opportunity.probability || 50}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border border-blue-100">
+                      <label className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Beklenen Gelir</label>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Target className="h-5 w-5 text-blue-500" />
+                        <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                          {formatCurrency((opportunity.amount || 0) * (opportunity.probability || 50) / 100, opportunity.currency)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
