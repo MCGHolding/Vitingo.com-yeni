@@ -765,6 +765,7 @@ const Dashboard = () => {
             setCurrentView('all-opportunities');
           }}
           onNewOpportunity={handleNewOpportunity}
+          onActivityTimeline={handleOpportunityTimeline}
         />;
       case 'new-opportunity':
         return <NewOpportunityFormPage onSave={saveOpportunity} onClose={handleBackToDashboard} />;
