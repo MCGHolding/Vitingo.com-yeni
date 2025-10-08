@@ -732,7 +732,7 @@ const Dashboard = () => {
     console.log('🔍 renderContent called with currentView:', currentView);
     switch (currentView) {
       case 'open-opportunities':
-        return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} />;
+        return <OpenOpportunitiesPage onBackToDashboard={handleBackToDashboard} opportunities={opportunities} onEditOpportunity={handleEditOpportunity} />;
       case 'won-opportunities':
         return <WonOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'lost-opportunities':
