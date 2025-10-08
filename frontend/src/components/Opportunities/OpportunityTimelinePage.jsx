@@ -83,11 +83,11 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
       borderColor: 'border-pink-200'
     },
     note: { 
-      label: 'Not Ekle', 
+      label: 'Hızlı Not', 
       icon: FileText, 
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      color: 'text-teal-600',
+      bgColor: 'bg-teal-50',
+      borderColor: 'border-teal-200'
     }
   };
 
