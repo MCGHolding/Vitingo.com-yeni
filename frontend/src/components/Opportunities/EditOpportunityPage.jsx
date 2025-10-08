@@ -42,7 +42,7 @@ import FilePreviewModal from '../ui/FilePreviewModal';
 import NewNoteModal from './NewNoteModal';
 import ActivityModal from './ActivityModal';
 
-export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity, onActivityTimeline }) {
+export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity, onActivityTimeline, onNewNote }) {
   const { toast } = useToast();
   const [editingSections, setEditingSections] = useState({});
   const [formData, setFormData] = useState(opportunity || {});
