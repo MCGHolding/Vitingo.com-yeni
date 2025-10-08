@@ -272,6 +272,7 @@ test_plan:
   test_priority: "high_first"
   completed_tests:
     - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
+    - "JavaScript Error Fix for OpportunityTimelinePage ActivityModal"
 
 agent_communication:
   - agent: "testing"
