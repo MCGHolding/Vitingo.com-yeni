@@ -2132,18 +2132,29 @@ async def get_survey_analytics(customer_id: str = None):
 async def create_customer(customer_data: dict):
     """Create a new customer"""
     try:
+        logger.info(f"Received customer data: {customer_data}")
+        logger.info(f"Customer data keys: {list(customer_data.keys())}")
+        
+        # Remove contacts field if present (not part of Customer model)
+        if 'contacts' in customer_data:
+            logger.info(f"Removing contacts field: {customer_data['contacts']}")
+            customer_data.pop('contacts')
+        
         # Convert dict to Customer model
         customer = Customer(**customer_data)
         customer_dict = customer.dict()
         
+        logger.info(f"Customer model created successfully: {customer.companyName}")
+        
         # Insert to MongoDB
         await db.customers.insert_one(customer_dict)
         
-        logger.info(f"Customer created: {customer.id}")
+        logger.info(f"Customer created in database: {customer.id}")
         return customer
         
     except Exception as e:
         logger.error(f"Error creating customer: {str(e)}")
+        logger.error(f"Customer data that caused error: {customer_data}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/customers", response_model=List[Customer])
