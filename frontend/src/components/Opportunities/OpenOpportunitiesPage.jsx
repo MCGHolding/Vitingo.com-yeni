@@ -334,8 +334,8 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   const currencyCounts = getCurrencyCounts();
 
   // Action handlers
-  const handleViewOpportunity = (opportunity) => {
-    setSelectedOpportunity(opportunity);
+  const handleViewOpportunity = (opportunity, index) => {
+    setSelectedOpportunity({ ...opportunity, displayIndex: index + 1 });
     setViewModalOpen(true);
   };
 
