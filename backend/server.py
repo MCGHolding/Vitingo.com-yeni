@@ -5124,6 +5124,8 @@ class OpportunityUpdate(BaseModel):
     expected_revenue: Optional[float] = None
     probability: Optional[int] = None
     tags: Optional[List[str]] = None
+    design_files: Optional[List[str]] = None
+    sample_files: Optional[List[str]] = None
 
 # Opportunity API Endpoints
 @api_router.post("/opportunities", response_model=Opportunity)
