@@ -229,6 +229,18 @@ const getNavigation = (userDepartment) => {
       ]
     },
     { 
+      name: 'Avanslar', 
+      href: '/avanslar', 
+      icon: CreditCard, 
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Yeni Avans', href: '/avanslar/yeni', icon: Plus },
+        { name: 'Finans Onayı', href: '/avanslar/finans-onayi', icon: CheckCircle },
+        { name: 'Kapanmış Avanslar', href: '/avanslar/kapanmis', icon: FileCheck }
+      ]
+    },
+    { 
       name: 'Gider Makbuzu', 
       href: '/accounting/expense-receipts', 
       icon: Wallet, 
