@@ -186,7 +186,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Vergi Numarası</label>
-                    <p className="text-base text-gray-700 mt-1 font-mono">{customer.tax_number || '-'}</p>
+                    <p className="text-base text-gray-700 mt-1 font-mono">{customer.taxNumber || customer.tax_number || '-'}</p>
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">IBAN</label>
