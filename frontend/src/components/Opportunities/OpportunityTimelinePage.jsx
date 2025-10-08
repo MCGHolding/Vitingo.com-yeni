@@ -427,7 +427,7 @@ export default function OpportunityTimelinePage({
               </div>
               <div className="p-3 space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
                     Arama
                   </label>
                   <div className="relative">
@@ -435,18 +435,18 @@ export default function OpportunityTimelinePage({
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Aktivite ara..."
-                      className="pl-10"
+                      className="pl-8 h-8 text-sm border-gray-200"
                     />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Aktivite Tipi
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+                    Tip
                   </label>
                   <Select value={filterType} onValueChange={setFilterType}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -454,8 +454,8 @@ export default function OpportunityTimelinePage({
                       {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
                         <SelectItem key={key} value={key}>
                           <div className="flex items-center space-x-2">
-                            <config.icon className={`h-4 w-4 ${config.color}`} />
-                            <span>{config.label}</span>
+                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                            <span className="text-sm">{config.label}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -464,11 +464,11 @@ export default function OpportunityTimelinePage({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
                     Durum
                   </label>
                   <Select value={filterStatus} onValueChange={setFilterStatus}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-8 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -476,26 +476,26 @@ export default function OpportunityTimelinePage({
                       {Object.entries(STATUS_CONFIG).map(([key, config]) => (
                         <SelectItem key={key} value={key}>
                           <div className="flex items-center space-x-2">
-                            <config.icon className={`h-4 w-4 ${config.color}`} />
-                            <span>{config.label}</span>
+                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
+                            <span className="text-sm">{config.label}</span>
                           </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Activity Type Statistics */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <PieChart className="h-5 w-5" />
-                  <span>Aktivite Dağılımı</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            {/* Compact Activity Stats */}
+            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
+              <div className="p-3 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
+                  <PieChart className="h-4 w-4 text-gray-600" />
+                  <span>Dağılım</span>
+                </h3>
+              </div>
+              <div className="p-3 space-y-2">
                 {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
                   <div key={key} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
