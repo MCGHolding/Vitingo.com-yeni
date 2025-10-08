@@ -303,43 +303,45 @@ export default function OpportunityTimelinePage({
   const summary = getActivitySummary();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      {/* Compact Modern Header */}
+      <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200/50 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <Button
               variant="outline"
               onClick={onBack}
-              className="flex items-center space-x-2"
+              className="h-9 px-3 text-sm border-gray-300 hover:bg-gray-50"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Satış Fırsatına Dön</span>
+              <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+              <span>Geri</span>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-                <Activity className="h-8 w-8 text-purple-600" />
+              <h1 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
+                <div className="p-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg">
+                  <Activity className="h-5 w-5 text-white" />
+                </div>
                 <span>Aktivite Timeline</span>
               </h1>
-              <p className="text-gray-600">{opportunityTitle}</p>
+              <p className="text-sm text-gray-600 truncate max-w-md">{opportunityTitle}</p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Rapor Al
+          <div className="flex items-center space-x-2">
+            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 h-9">
+              <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
+              Rapor
             </Button>
-            <Button variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Yeni Aktivite
+            <Button size="sm" variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 h-9">
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              Yeni
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-4 py-4 space-y-4">
         
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
