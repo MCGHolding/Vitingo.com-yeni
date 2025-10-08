@@ -1362,6 +1362,262 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_opportunities_api_quick_verification():
+    """
+    QUICK OPPORTUNITIES API VERIFICATION TEST
+    
+    Test the opportunities API to verify backend is working and opportunities exist.
+    
+    Test Requirements:
+    1. **GET /api/opportunities** - Check if opportunities exist in the backend
+    2. **Count of opportunities** - Verify how many opportunities are currently in the database
+    3. **Sample opportunity data** - Check the structure and content of opportunities
+    4. **API response format** - Verify the response is properly formatted JSON
+    
+    Expected Results:
+    - Backend should have opportunities in the database
+    - GET /api/opportunities should return a proper JSON array
+    - Each opportunity should have required fields (id, customer, title, status, etc.)
+    
+    This is to verify if the issue is in the backend (no data) or frontend (filtering/display issue).
+    """
+    
+    print("=" * 100)
+    print("🔍 QUICK OPPORTUNITIES API VERIFICATION TEST 🔍")
+    print("=" * 100)
+    print("PURPOSE: Verify backend opportunities API is working and data exists")
+    print("CONTEXT: Check if issue is in backend (no data) or frontend (filtering/display)")
+    print("=" * 100)
+    
+    test_results = {
+        "api_responding": False,
+        "opportunity_count": 0,
+        "opportunities_found": [],
+        "response_format_valid": False,
+        "required_fields_present": False,
+        "sample_data_quality": "unknown"
+    }
+    
+    # TEST 1: GET /api/opportunities - Check API Response
+    print("\n" + "=" * 80)
+    print("TEST 1: GET /api/opportunities - API RESPONSE CHECK")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/opportunities"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        print("Making request to opportunities API...")
+        response = requests.get(endpoint, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Opportunities API is responding correctly")
+            test_results["api_responding"] = True
+            
+            # TEST 2: Parse JSON Response
+            print("\n" + "=" * 80)
+            print("TEST 2: JSON RESPONSE FORMAT VERIFICATION")
+            print("=" * 80)
+            
+            try:
+                opportunities = response.json()
+                print(f"Response type: {type(opportunities)}")
+                
+                if isinstance(opportunities, list):
+                    print("✅ PASS: Response is a proper JSON array")
+                    test_results["response_format_valid"] = True
+                    
+                    # TEST 3: Count Opportunities
+                    print("\n" + "=" * 80)
+                    print("TEST 3: OPPORTUNITY COUNT VERIFICATION")
+                    print("=" * 80)
+                    
+                    opportunity_count = len(opportunities)
+                    test_results["opportunity_count"] = opportunity_count
+                    test_results["opportunities_found"] = opportunities[:3]  # Store first 3 for analysis
+                    
+                    print(f"📊 OPPORTUNITIES COUNT: {opportunity_count}")
+                    
+                    if opportunity_count == 0:
+                        print("🚨 CRITICAL: NO OPPORTUNITIES FOUND IN DATABASE!")
+                        print("   This explains the frontend issue - no data to display")
+                        test_results["sample_data_quality"] = "no_data"
+                    elif opportunity_count > 0:
+                        print(f"✅ PASS: Found {opportunity_count} opportunities in database")
+                        
+                        # TEST 4: Sample Opportunity Data Structure
+                        print("\n" + "=" * 80)
+                        print("TEST 4: SAMPLE OPPORTUNITY DATA STRUCTURE")
+                        print("=" * 80)
+                        
+                        print(f"Analyzing first {min(3, opportunity_count)} opportunities:")
+                        
+                        required_fields = ["id", "title", "customer", "amount", "status", "created_at"]
+                        all_fields_present = True
+                        
+                        for i, opportunity in enumerate(opportunities[:3], 1):
+                            print(f"\n   OPPORTUNITY {i}:")
+                            
+                            # Check required fields
+                            missing_fields = []
+                            for field in required_fields:
+                                if field in opportunity:
+                                    value = opportunity.get(field)
+                                    print(f"     ✅ {field}: {value}")
+                                else:
+                                    missing_fields.append(field)
+                                    print(f"     ❌ {field}: MISSING")
+                            
+                            if missing_fields:
+                                print(f"     ⚠️  Missing fields: {missing_fields}")
+                                all_fields_present = False
+                            else:
+                                print(f"     ✅ All required fields present")
+                            
+                            # Additional field analysis
+                            opportunity_id = opportunity.get("id", "N/A")
+                            title = opportunity.get("title", "N/A")
+                            customer = opportunity.get("customer", "N/A")
+                            amount = opportunity.get("amount", 0)
+                            status = opportunity.get("status", "N/A")
+                            created_at = opportunity.get("created_at", "N/A")
+                            
+                            print(f"     📋 Summary: '{title}' - {customer} - {amount} - {status}")
+                            
+                            # Check for test/demo data
+                            demo_indicators = ["test", "demo", "example", "sample", "mock"]
+                            is_demo = any(indicator in str(title).lower() for indicator in demo_indicators)
+                            if is_demo:
+                                print(f"     🔍 Data Type: Appears to be test/demo data")
+                            else:
+                                print(f"     🔍 Data Type: Appears to be real opportunity data")
+                        
+                        test_results["required_fields_present"] = all_fields_present
+                        
+                        if all_fields_present:
+                            print("\n✅ PASS: All opportunities have required fields")
+                            test_results["sample_data_quality"] = "good"
+                        else:
+                            print("\n⚠️  WARNING: Some opportunities missing required fields")
+                            test_results["sample_data_quality"] = "incomplete"
+                        
+                        # TEST 5: API Response Format Details
+                        print("\n" + "=" * 80)
+                        print("TEST 5: API RESPONSE FORMAT DETAILS")
+                        print("=" * 80)
+                        
+                        # Check response headers
+                        content_type = response.headers.get('Content-Type', '')
+                        print(f"Content-Type: {content_type}")
+                        
+                        if 'application/json' in content_type:
+                            print("✅ PASS: Correct Content-Type for JSON response")
+                        else:
+                            print("⚠️  WARNING: Content-Type might not be optimal for JSON")
+                        
+                        # Check response size
+                        response_size = len(response.text)
+                        print(f"Response Size: {response_size} characters")
+                        
+                        if response_size > 0:
+                            print("✅ PASS: Response contains data")
+                        else:
+                            print("❌ FAIL: Empty response")
+                    
+                else:
+                    print("❌ FAIL: Response is not a JSON array")
+                    print(f"Response type: {type(opportunities)}")
+                    test_results["response_format_valid"] = False
+                    
+            except json.JSONDecodeError as e:
+                print(f"❌ FAIL: Could not parse JSON response: {str(e)}")
+                print(f"Response content: {response.text[:500]}...")
+                test_results["response_format_valid"] = False
+                
+        else:
+            print(f"❌ FAIL: API not responding properly. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["api_responding"] = False
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        test_results["api_responding"] = False
+    except Exception as e:
+        print(f"❌ FAIL: Unexpected error: {str(e)}")
+        test_results["api_responding"] = False
+    
+    # FINAL TEST SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 OPPORTUNITIES API VERIFICATION SUMMARY")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS:")
+    print(f"   • API Responding: {'✅ YES' if test_results['api_responding'] else '❌ NO'}")
+    print(f"   • Response Format Valid: {'✅ YES' if test_results['response_format_valid'] else '❌ NO'}")
+    print(f"   • Opportunity Count: {test_results['opportunity_count']}")
+    print(f"   • Required Fields Present: {'✅ YES' if test_results['required_fields_present'] else '❌ NO'}")
+    print(f"   • Data Quality: {test_results['sample_data_quality'].upper()}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['api_responding']:
+        print("🚨 CRITICAL: Backend opportunities API is not working!")
+        print("   ISSUE LOCATION: Backend API endpoint failure")
+        print("   RECOMMENDATION: Check backend server status and API routing")
+        
+    elif not test_results['response_format_valid']:
+        print("🚨 CRITICAL: API response format is invalid!")
+        print("   ISSUE LOCATION: Backend API response formatting")
+        print("   RECOMMENDATION: Check backend API response serialization")
+        
+    elif test_results['opportunity_count'] == 0:
+        print("🚨 CRITICAL: NO OPPORTUNITIES IN DATABASE!")
+        print("   ISSUE LOCATION: Backend database - no opportunity data")
+        print("   RECOMMENDATION: Check if opportunities collection exists and has data")
+        print("   FRONTEND IMPACT: This explains why frontend shows 'No opportunities found'")
+        
+    elif not test_results['required_fields_present']:
+        print("⚠️  WARNING: Some opportunities missing required fields")
+        print("   ISSUE LOCATION: Backend data structure inconsistency")
+        print("   RECOMMENDATION: Check opportunity data model and database schema")
+        
+    else:
+        print("✅ SUCCESS: Backend opportunities API is working correctly!")
+        print(f"   OPPORTUNITIES FOUND: {test_results['opportunity_count']} opportunities in database")
+        print("   DATA STRUCTURE: All required fields present")
+        print("   API FORMAT: Proper JSON response format")
+        print("   CONCLUSION: Issue is likely in frontend filtering/display logic, not backend")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if test_results['opportunity_count'] == 0:
+        print("   1. Check MongoDB opportunities collection")
+        print("   2. Verify database connection and data persistence")
+        print("   3. Check if this is the correct environment (dev/prod)")
+    elif test_results['opportunity_count'] > 0:
+        print("   1. Check frontend API calls in browser network tab")
+        print("   2. Verify frontend filtering logic in AllOpportunitiesPage")
+        print("   3. Check for JavaScript errors in browser console")
+        print("   4. Verify frontend is using correct backend URL")
+    
+    # Return overall test result
+    overall_success = (
+        test_results['api_responding'] and 
+        test_results['response_format_valid'] and 
+        test_results['opportunity_count'] > 0 and
+        test_results['required_fields_present']
+    )
+    
+    if overall_success:
+        print(f"\n✅ OVERALL RESULT: BACKEND OPPORTUNITIES API IS WORKING CORRECTLY")
+        print(f"   Backend has {test_results['opportunity_count']} opportunities with proper structure")
+        return True
+    else:
+        print(f"\n❌ OVERALL RESULT: BACKEND OPPORTUNITIES API HAS ISSUES")
+        return False
+
 def test_activity_management_api_endpoints():
     """
     COMPREHENSIVE ACTIVITY MANAGEMENT API ENDPOINTS TESTING
