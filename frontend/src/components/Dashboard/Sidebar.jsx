@@ -372,6 +372,8 @@ export default function Sidebar({
   // Avans handlers
   onFinansOnayi,
   onKapanmisAvanslar,
+  // Activity handlers
+  handleActivityTimeline,
   // Brief handlers
   onNewBrief,
   onAllBriefs,
