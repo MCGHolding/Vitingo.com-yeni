@@ -46,6 +46,11 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Delete modal states
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [opportunityToDelete, setOpportunityToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Tag colors for styling
   const tagColors = {
