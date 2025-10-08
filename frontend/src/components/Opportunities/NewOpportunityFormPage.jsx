@@ -1220,6 +1220,30 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   className="resize-vertical"
                 />
               </div>
+
+              {/* Tasarım Dosyaları */}
+              <div className="pt-4 border-t border-gray-200">
+                <FileUpload
+                  label="Tasarım Dosyaları"
+                  description="Tasarım dosyalarını, görselleri, PDF'leri ve video dosyalarını ekleyebilirsiniz"
+                  files={formData.designFiles}
+                  onFilesChange={(files) => handleInputChange('designFiles', files)}
+                  maxFiles={10}
+                  acceptedTypes="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                />
+              </div>
+
+              {/* Örnek Resim ve Videolar */}
+              <div className="pt-4 border-t border-gray-200">
+                <FileUpload
+                  label="Örnek Resim ve Videolar"
+                  description="Örnek görselleri, referans videolarını ve ilgili belgeleri ekleyebilirsiniz"
+                  files={formData.sampleFiles}
+                  onFilesChange={(files) => handleInputChange('sampleFiles', files)}
+                  maxFiles={10}
+                  acceptedTypes="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                />
+              </div>
             </CardContent>
           </Card>
         
