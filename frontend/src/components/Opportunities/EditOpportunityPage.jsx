@@ -572,7 +572,7 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
                 <Info className="h-5 w-5 text-blue-600" />
-                <span>Detaylar</span>
+                <span>Proje Bilgileri</span>
               </CardTitle>
               <div className="flex items-center space-x-2">
                 {editingSections.details ? (
