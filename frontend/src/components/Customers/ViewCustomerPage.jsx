@@ -56,7 +56,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                   <h1 className="text-3xl font-bold">Müşteri Detayları</h1>
                 </div>
                 <p className="mt-2 text-blue-100">
-                  {customer.name || customer.fullName} - Müşteri bilgilerini görüntüle
+                  {customer.companyName || customer.name || customer.fullName} - Müşteri bilgilerini görüntüle
                 </p>
               </div>
             </div>
