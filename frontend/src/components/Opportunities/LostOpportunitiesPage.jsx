@@ -525,7 +525,7 @@ export default function LostOpportunitiesPage({ onBackToDashboard }) {
                                   variant="ghost"
                                   size="sm"
                                   className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                                  onClick={() => handleView(opportunity)}
+                                  onClick={() => handleView(opportunity, index)}
                                 >
                                   <Eye className="h-3 w-3" />
                                 </Button>
