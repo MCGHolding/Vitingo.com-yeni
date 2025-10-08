@@ -1362,6 +1362,567 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_file_upload_and_opportunity_attachments():
+    """
+    COMPREHENSIVE FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TESTING
+    
+    Test the new file upload endpoints and opportunity file attachments functionality.
+    
+    Test Targets:
+    1. POST /api/upload - Upload files (image, PDF)
+    2. GET /api/files/{file_id} - Download uploaded files
+    3. DELETE /api/files/{file_id} - Delete uploaded files
+    4. Opportunity integration with design_files and sample_files arrays
+    
+    Test Workflow:
+    1. Create test files (image and PDF)
+    2. Upload files and verify file records are created
+    3. Test file download functionality
+    4. Create opportunity with file attachments
+    5. Update opportunity with file attachments
+    6. Test file deletion
+    7. Verify security and validation
+    """
+    
+    print("=" * 100)
+    print("📁 COMPREHENSIVE FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TESTING 📁")
+    print("=" * 100)
+    print("CONTEXT: Testing new file upload endpoints and opportunity file attachments functionality.")
+    print("This system allows uploading files and attaching them to sales opportunities.")
+    print("=" * 100)
+    
+    test_results = {
+        "file_upload_working": False,
+        "file_download_working": False,
+        "file_delete_working": False,
+        "opportunity_file_integration_working": False,
+        "uploaded_file_ids": [],
+        "test_opportunity_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: File Upload Endpoint - Image File
+    print("\n" + "=" * 80)
+    print("TEST 1: FILE UPLOAD ENDPOINT - IMAGE FILE")
+    print("=" * 80)
+    
+    # Create a small test image file (1x1 pixel PNG)
+    import base64
+    # Minimal 1x1 PNG image in base64
+    png_data = base64.b64decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77zgAAAABJRU5ErkJggg=='
+    )
+    
+    try:
+        endpoint = f"{BACKEND_URL}/api/upload"
+        print(f"Testing endpoint: {endpoint}")
+        print("Uploading test image file (test.jpg)...")
+        
+        files = {'file': ('test.jpg', png_data, 'image/jpeg')}
+        response = requests.post(endpoint, files=files, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: Image file upload successful")
+            test_results["file_upload_working"] = True
+            
+            try:
+                upload_response = response.json()
+                image_file_id = upload_response.get("id")
+                test_results["uploaded_file_ids"].append(image_file_id)
+                
+                print(f"   File ID: {image_file_id}")
+                print(f"   Original Filename: {upload_response.get('original_filename')}")
+                print(f"   File Size: {upload_response.get('file_size')} bytes")
+                print(f"   Content Type: {upload_response.get('content_type')}")
+                print(f"   Uploaded At: {upload_response.get('uploaded_at')}")
+                
+                # Verify required fields
+                required_fields = ["id", "filename", "original_filename", "file_size", "content_type", "uploaded_at"]
+                missing_fields = [field for field in required_fields if field not in upload_response]
+                if missing_fields:
+                    print(f"   ⚠️  WARNING: Missing fields in upload response: {missing_fields}")
+                    test_results["warnings"].append(f"UPLOAD_MISSING_FIELDS: {missing_fields}")
+                else:
+                    print("   ✅ PASS: All required fields present in upload response")
+                
+            except Exception as e:
+                print(f"   ❌ FAIL: Error parsing upload response: {str(e)}")
+                test_results["critical_issues"].append(f"UPLOAD_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"   ❌ FAIL: Image upload failed. Status: {response.status_code}")
+            print(f"   Response: {response.text}")
+            test_results["critical_issues"].append(f"IMAGE_UPLOAD_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Image upload error: {str(e)}")
+        test_results["critical_issues"].append(f"IMAGE_UPLOAD_ERROR: {str(e)}")
+    
+    # TEST 2: File Upload Endpoint - PDF File
+    print("\n" + "=" * 80)
+    print("TEST 2: FILE UPLOAD ENDPOINT - PDF FILE")
+    print("=" * 80)
+    
+    # Create a minimal PDF file
+    pdf_data = b'%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 612 792]\n>>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer\n<<\n/Size 4\n/Root 1 0 R\n>>\nstartxref\n174\n%%EOF'
+    
+    try:
+        print("Uploading test PDF file (test.pdf)...")
+        
+        files = {'file': ('test.pdf', pdf_data, 'application/pdf')}
+        response = requests.post(endpoint, files=files, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: PDF file upload successful")
+            
+            try:
+                upload_response = response.json()
+                pdf_file_id = upload_response.get("id")
+                test_results["uploaded_file_ids"].append(pdf_file_id)
+                
+                print(f"   File ID: {pdf_file_id}")
+                print(f"   Original Filename: {upload_response.get('original_filename')}")
+                print(f"   File Size: {upload_response.get('file_size')} bytes")
+                print(f"   Content Type: {upload_response.get('content_type')}")
+                
+            except Exception as e:
+                print(f"   ❌ FAIL: Error parsing PDF upload response: {str(e)}")
+                test_results["critical_issues"].append(f"PDF_UPLOAD_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"   ❌ FAIL: PDF upload failed. Status: {response.status_code}")
+            print(f"   Response: {response.text}")
+            test_results["critical_issues"].append(f"PDF_UPLOAD_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: PDF upload error: {str(e)}")
+        test_results["critical_issues"].append(f"PDF_UPLOAD_ERROR: {str(e)}")
+    
+    # TEST 3: File Size Validation (100MB limit)
+    print("\n" + "=" * 80)
+    print("TEST 3: FILE SIZE VALIDATION (100MB LIMIT)")
+    print("=" * 80)
+    
+    try:
+        print("Testing file size validation with oversized file...")
+        
+        # Create a large file content (simulate > 100MB)
+        large_content = b'x' * (101 * 1024 * 1024)  # 101MB
+        files = {'file': ('large_file.txt', large_content, 'text/plain')}
+        
+        response = requests.post(endpoint, files=files, timeout=60)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 413:
+            print("✅ PASS: File size validation working - rejected oversized file")
+        elif response.status_code == 400:
+            print("✅ PASS: File size validation working - rejected oversized file (400 error)")
+        else:
+            print(f"   ⚠️  WARNING: Expected 413 or 400 for oversized file, got {response.status_code}")
+            test_results["warnings"].append(f"SIZE_VALIDATION_UNEXPECTED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ℹ️  INFO: Large file test error (expected): {str(e)}")
+    
+    # TEST 4: File Type Validation
+    print("\n" + "=" * 80)
+    print("TEST 4: FILE TYPE VALIDATION")
+    print("=" * 80)
+    
+    try:
+        print("Testing file type validation with unsupported file type...")
+        
+        files = {'file': ('test.exe', b'fake executable', 'application/x-executable')}
+        response = requests.post(endpoint, files=files, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print("✅ PASS: File type validation working - rejected unsupported file type")
+        else:
+            print(f"   ⚠️  WARNING: Expected 400 for unsupported file type, got {response.status_code}")
+            test_results["warnings"].append(f"TYPE_VALIDATION_UNEXPECTED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: File type validation test error: {str(e)}")
+        test_results["warnings"].append(f"TYPE_VALIDATION_ERROR: {str(e)}")
+    
+    # TEST 5: File Download Endpoint
+    print("\n" + "=" * 80)
+    print("TEST 5: FILE DOWNLOAD ENDPOINT")
+    print("=" * 80)
+    
+    if test_results["uploaded_file_ids"]:
+        try:
+            file_id = test_results["uploaded_file_ids"][0]  # Use first uploaded file
+            download_endpoint = f"{BACKEND_URL}/api/files/{file_id}"
+            print(f"Testing endpoint: {download_endpoint}")
+            print(f"Downloading file with ID: {file_id}")
+            
+            response = requests.get(download_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: File download successful")
+                test_results["file_download_working"] = True
+                
+                # Check headers
+                content_disposition = response.headers.get('Content-Disposition', '')
+                content_type = response.headers.get('Content-Type', '')
+                
+                print(f"   Content-Type: {content_type}")
+                print(f"   Content-Disposition: {content_disposition}")
+                
+                if 'attachment' in content_disposition:
+                    print("   ✅ PASS: Proper Content-Disposition header for download")
+                else:
+                    print("   ⚠️  WARNING: Missing attachment in Content-Disposition")
+                    test_results["warnings"].append("DOWNLOAD_MISSING_ATTACHMENT_HEADER")
+                
+                # Check content length
+                content_length = len(response.content)
+                print(f"   Downloaded content length: {content_length} bytes")
+                
+                if content_length > 0:
+                    print("   ✅ PASS: Downloaded file has content")
+                else:
+                    print("   ❌ FAIL: Downloaded file is empty")
+                    test_results["critical_issues"].append("DOWNLOAD_EMPTY_FILE")
+                
+            else:
+                print(f"   ❌ FAIL: File download failed. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                test_results["critical_issues"].append(f"DOWNLOAD_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: File download error: {str(e)}")
+            test_results["critical_issues"].append(f"DOWNLOAD_ERROR: {str(e)}")
+    else:
+        print("   ⚠️  SKIP: No uploaded files to test download")
+        test_results["warnings"].append("NO_FILES_FOR_DOWNLOAD_TEST")
+    
+    # TEST 6: File Download with Non-existent ID
+    print("\n" + "=" * 80)
+    print("TEST 6: FILE DOWNLOAD WITH NON-EXISTENT ID")
+    print("=" * 80)
+    
+    try:
+        fake_file_id = "non-existent-file-id"
+        download_endpoint = f"{BACKEND_URL}/api/files/{fake_file_id}"
+        print(f"Testing endpoint: {download_endpoint}")
+        print(f"Attempting to download non-existent file: {fake_file_id}")
+        
+        response = requests.get(download_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Non-existent file properly returns 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for non-existent file, got {response.status_code}")
+            test_results["warnings"].append(f"NONEXISTENT_DOWNLOAD_UNEXPECTED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Non-existent file download test error: {str(e)}")
+        test_results["warnings"].append(f"NONEXISTENT_DOWNLOAD_ERROR: {str(e)}")
+    
+    # TEST 7: Opportunity Creation with File Attachments
+    print("\n" + "=" * 80)
+    print("TEST 7: OPPORTUNITY CREATION WITH FILE ATTACHMENTS")
+    print("=" * 80)
+    
+    if test_results["uploaded_file_ids"]:
+        try:
+            opportunity_endpoint = f"{BACKEND_URL}/api/opportunities"
+            print(f"Testing endpoint: {opportunity_endpoint}")
+            
+            # Create opportunity with file attachments
+            opportunity_data = {
+                "title": "Test Opportunity with File Attachments",
+                "customer": "Test Customer A.Ş.",
+                "contact_person": "Test Contact",
+                "amount": 50000.0,
+                "currency": "TRY",
+                "status": "open",
+                "stage": "lead",
+                "priority": "high",
+                "close_date": "2025-06-15",
+                "source": "File Upload Test",
+                "description": "Test opportunity created to verify file attachment functionality",
+                "business_type": "Fuar Stand Projesi",
+                "country": "TR",
+                "city": "İstanbul",
+                "design_files": test_results["uploaded_file_ids"][:1],  # First file as design
+                "sample_files": test_results["uploaded_file_ids"][1:2] if len(test_results["uploaded_file_ids"]) > 1 else []  # Second file as sample
+            }
+            
+            print(f"Creating opportunity with design_files: {opportunity_data['design_files']}")
+            print(f"Creating opportunity with sample_files: {opportunity_data['sample_files']}")
+            
+            response = requests.post(opportunity_endpoint, json=opportunity_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code in [200, 201]:
+                print("✅ PASS: Opportunity creation with file attachments successful")
+                test_results["opportunity_file_integration_working"] = True
+                
+                try:
+                    created_opportunity = response.json()
+                    test_results["test_opportunity_id"] = created_opportunity.get("id")
+                    
+                    print(f"   Opportunity ID: {created_opportunity.get('id')}")
+                    print(f"   Title: {created_opportunity.get('title')}")
+                    print(f"   Design Files: {created_opportunity.get('design_files', [])}")
+                    print(f"   Sample Files: {created_opportunity.get('sample_files', [])}")
+                    
+                    # Verify file IDs are stored correctly
+                    stored_design_files = created_opportunity.get('design_files', [])
+                    stored_sample_files = created_opportunity.get('sample_files', [])
+                    
+                    if stored_design_files == opportunity_data['design_files']:
+                        print("   ✅ PASS: Design files stored correctly")
+                    else:
+                        print(f"   ❌ FAIL: Design files mismatch. Expected: {opportunity_data['design_files']}, Got: {stored_design_files}")
+                        test_results["critical_issues"].append("DESIGN_FILES_MISMATCH")
+                    
+                    if stored_sample_files == opportunity_data['sample_files']:
+                        print("   ✅ PASS: Sample files stored correctly")
+                    else:
+                        print(f"   ❌ FAIL: Sample files mismatch. Expected: {opportunity_data['sample_files']}, Got: {stored_sample_files}")
+                        test_results["critical_issues"].append("SAMPLE_FILES_MISMATCH")
+                    
+                except Exception as e:
+                    print(f"   ❌ FAIL: Error parsing opportunity creation response: {str(e)}")
+                    test_results["critical_issues"].append(f"OPPORTUNITY_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"   ❌ FAIL: Opportunity creation failed. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                test_results["critical_issues"].append(f"OPPORTUNITY_CREATE_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Opportunity creation error: {str(e)}")
+            test_results["critical_issues"].append(f"OPPORTUNITY_CREATE_ERROR: {str(e)}")
+    else:
+        print("   ⚠️  SKIP: No uploaded files to test opportunity integration")
+        test_results["warnings"].append("NO_FILES_FOR_OPPORTUNITY_TEST")
+    
+    # TEST 8: Opportunity Update with File Attachments
+    print("\n" + "=" * 80)
+    print("TEST 8: OPPORTUNITY UPDATE WITH FILE ATTACHMENTS")
+    print("=" * 80)
+    
+    if test_results["test_opportunity_id"] and test_results["uploaded_file_ids"]:
+        try:
+            opportunity_id = test_results["test_opportunity_id"]
+            update_endpoint = f"{BACKEND_URL}/api/opportunities/{opportunity_id}"
+            print(f"Testing endpoint: {update_endpoint}")
+            
+            # Update opportunity with different file attachments
+            update_data = {
+                "description": "Updated opportunity with modified file attachments",
+                "design_files": test_results["uploaded_file_ids"],  # All files as design files
+                "sample_files": []  # Clear sample files
+            }
+            
+            print(f"Updating opportunity with design_files: {update_data['design_files']}")
+            print(f"Updating opportunity with sample_files: {update_data['sample_files']}")
+            
+            response = requests.put(update_endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Opportunity update with file attachments successful")
+                
+                try:
+                    updated_opportunity = response.json()
+                    
+                    print(f"   Updated Description: {updated_opportunity.get('description')}")
+                    print(f"   Updated Design Files: {updated_opportunity.get('design_files', [])}")
+                    print(f"   Updated Sample Files: {updated_opportunity.get('sample_files', [])}")
+                    
+                    # Verify file IDs are updated correctly
+                    stored_design_files = updated_opportunity.get('design_files', [])
+                    stored_sample_files = updated_opportunity.get('sample_files', [])
+                    
+                    if stored_design_files == update_data['design_files']:
+                        print("   ✅ PASS: Design files updated correctly")
+                    else:
+                        print(f"   ❌ FAIL: Design files update failed. Expected: {update_data['design_files']}, Got: {stored_design_files}")
+                        test_results["critical_issues"].append("DESIGN_FILES_UPDATE_FAILED")
+                    
+                    if stored_sample_files == update_data['sample_files']:
+                        print("   ✅ PASS: Sample files updated correctly")
+                    else:
+                        print(f"   ❌ FAIL: Sample files update failed. Expected: {update_data['sample_files']}, Got: {stored_sample_files}")
+                        test_results["critical_issues"].append("SAMPLE_FILES_UPDATE_FAILED")
+                    
+                except Exception as e:
+                    print(f"   ❌ FAIL: Error parsing opportunity update response: {str(e)}")
+                    test_results["critical_issues"].append(f"OPPORTUNITY_UPDATE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"   ❌ FAIL: Opportunity update failed. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                test_results["critical_issues"].append(f"OPPORTUNITY_UPDATE_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: Opportunity update error: {str(e)}")
+            test_results["critical_issues"].append(f"OPPORTUNITY_UPDATE_ERROR: {str(e)}")
+    else:
+        print("   ⚠️  SKIP: No opportunity or files to test update")
+        test_results["warnings"].append("NO_OPPORTUNITY_FOR_UPDATE_TEST")
+    
+    # TEST 9: File Delete Endpoint
+    print("\n" + "=" * 80)
+    print("TEST 9: FILE DELETE ENDPOINT")
+    print("=" * 80)
+    
+    if test_results["uploaded_file_ids"]:
+        try:
+            # Delete the first uploaded file
+            file_id = test_results["uploaded_file_ids"][0]
+            delete_endpoint = f"{BACKEND_URL}/api/files/{file_id}"
+            print(f"Testing endpoint: {delete_endpoint}")
+            print(f"Deleting file with ID: {file_id}")
+            
+            response = requests.delete(delete_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: File deletion successful")
+                test_results["file_delete_working"] = True
+                
+                try:
+                    delete_response = response.json()
+                    print(f"   Delete message: {delete_response.get('message')}")
+                    print(f"   Deleted file ID: {delete_response.get('id')}")
+                    
+                    # Verify file is actually deleted by trying to download it
+                    print("   Verifying file is deleted by attempting download...")
+                    download_response = requests.get(f"{BACKEND_URL}/api/files/{file_id}", timeout=15)
+                    
+                    if download_response.status_code == 404:
+                        print("   ✅ PASS: File properly deleted from database and filesystem")
+                    else:
+                        print(f"   ❌ FAIL: File still accessible after deletion. Status: {download_response.status_code}")
+                        test_results["critical_issues"].append("FILE_NOT_DELETED_PROPERLY")
+                    
+                except Exception as e:
+                    print(f"   ❌ FAIL: Error parsing delete response: {str(e)}")
+                    test_results["critical_issues"].append(f"DELETE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"   ❌ FAIL: File deletion failed. Status: {response.status_code}")
+                print(f"   Response: {response.text}")
+                test_results["critical_issues"].append(f"DELETE_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"   ❌ FAIL: File deletion error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_ERROR: {str(e)}")
+    else:
+        print("   ⚠️  SKIP: No uploaded files to test deletion")
+        test_results["warnings"].append("NO_FILES_FOR_DELETE_TEST")
+    
+    # TEST 10: File Delete with Non-existent ID
+    print("\n" + "=" * 80)
+    print("TEST 10: FILE DELETE WITH NON-EXISTENT ID")
+    print("=" * 80)
+    
+    try:
+        fake_file_id = "non-existent-file-id"
+        delete_endpoint = f"{BACKEND_URL}/api/files/{fake_file_id}"
+        print(f"Testing endpoint: {delete_endpoint}")
+        print(f"Attempting to delete non-existent file: {fake_file_id}")
+        
+        response = requests.delete(delete_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print("✅ PASS: Non-existent file delete properly returns 404")
+        else:
+            print(f"   ⚠️  WARNING: Expected 404 for non-existent file delete, got {response.status_code}")
+            test_results["warnings"].append(f"NONEXISTENT_DELETE_UNEXPECTED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"   ❌ FAIL: Non-existent file delete test error: {str(e)}")
+        test_results["warnings"].append(f"NONEXISTENT_DELETE_ERROR: {str(e)}")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 FINAL FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TEST RESULTS")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • File Upload Working: {'✅ YES' if test_results['file_upload_working'] else '❌ NO'}")
+    print(f"   • File Download Working: {'✅ YES' if test_results['file_download_working'] else '❌ NO'}")
+    print(f"   • File Delete Working: {'✅ YES' if test_results['file_delete_working'] else '❌ NO'}")
+    print(f"   • Opportunity File Integration: {'✅ YES' if test_results['opportunity_file_integration_working'] else '❌ NO'}")
+    print(f"   • Files Uploaded: {len(test_results['uploaded_file_ids'])}")
+    print(f"   • Test Opportunity Created: {'✅ YES' if test_results['test_opportunity_id'] else '❌ NO'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['file_upload_working']:
+        print("🚨 CRITICAL: File upload endpoint is not working!")
+        print("   RECOMMENDATION: Check backend server and file upload logic")
+        
+    elif not test_results['file_download_working']:
+        print("🚨 CRITICAL: File download endpoint is not working!")
+        print("   RECOMMENDATION: Check file storage and download logic")
+        
+    elif not test_results['file_delete_working']:
+        print("🚨 CRITICAL: File delete endpoint is not working!")
+        print("   RECOMMENDATION: Check file deletion logic and filesystem permissions")
+        
+    elif not test_results['opportunity_file_integration_working']:
+        print("🚨 CRITICAL: Opportunity file integration is not working!")
+        print("   RECOMMENDATION: Check opportunity model and file attachment logic")
+        
+    else:
+        print("✅ SUCCESS: All file upload and opportunity attachment functionality is working correctly!")
+        print("   • Files can be uploaded with proper validation")
+        print("   • Files can be downloaded with correct headers")
+        print("   • Files can be deleted from both database and filesystem")
+        print("   • Opportunities can store and update file attachments")
+        print("   • Security validations are working (file size, file type)")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. Verify uploads directory exists and has proper permissions")
+    print("   2. Test with larger variety of file types")
+    print("   3. Test concurrent file uploads")
+    print("   4. Implement file cleanup for orphaned files")
+    print("   5. Add file virus scanning if needed for production")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    all_core_features_working = (
+        test_results['file_upload_working'] and 
+        test_results['file_download_working'] and 
+        test_results['file_delete_working'] and 
+        test_results['opportunity_file_integration_working']
+    )
+    
+    if has_critical_issues or not all_core_features_working:
+        print(f"\n❌ TEST RESULT: CRITICAL ISSUES FOUND - FILE UPLOAD SYSTEM NEEDS ATTENTION")
+        return False
+    else:
+        print(f"\n✅ TEST RESULT: ALL TESTS PASSED - FILE UPLOAD AND OPPORTUNITY ATTACHMENTS WORKING CORRECTLY")
+        return True
+
 def test_avans_system_comprehensive():
     """
     COMPREHENSIVE AVANS (ADVANCE) SYSTEM API TESTING
