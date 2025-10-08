@@ -531,11 +531,12 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">No.</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Müşteri</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İsim</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Satış Fırsatı Adı</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Aşama</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Durum</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">İletişim</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Kullanıcı Adı Soyadı</th>
                     <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Etiketler</th>
+                    <th className="text-left py-2 px-3 font-medium text-gray-600 text-xs">Tutar</th>
                     <th className="text-center py-2 px-3 font-medium text-gray-600 text-xs">İşlemler</th>
                   </tr>
                 </thead>
