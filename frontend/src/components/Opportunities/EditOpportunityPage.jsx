@@ -41,6 +41,12 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave }) {
   const [editingSections, setEditingSections] = useState({});
   const [formData, setFormData] = useState(opportunity || {});
   const [loading, setLoading] = useState(false);
+  
+  // File preview modal states
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewFiles, setPreviewFiles] = useState([]);
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewInitialIndex, setPreviewInitialIndex] = useState(0);
 
   useEffect(() => {
     if (opportunity) {
