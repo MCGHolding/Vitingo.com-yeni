@@ -229,10 +229,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ViewOpportunityModal Modernization Testing"
+    - "ActionMenuPopover Delete Option Removal Test"
   stuck_tasks:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
-    - "ViewOpportunityModal Modernization Testing"
   test_all: false
   test_priority: "high_first"
 
