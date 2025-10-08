@@ -44,7 +44,7 @@ import NotesHistoryModal from './NotesHistoryModal';
 import ActivityModal from './ActivityModal';
 import OpportunityTimelineModal from './OpportunityTimelineModal';
 
-export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity }) {
+export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity, onActivityTimeline }) {
   const { toast } = useToast();
   const [editingSections, setEditingSections] = useState({});
   const [formData, setFormData] = useState(opportunity || {});
