@@ -370,21 +370,29 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
             </Card>
 
             {/* DETAYLAR */}
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gray-50 border-b">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                  <Info className="h-5 w-5 text-blue-600" />
-                  <span>Proje Bilgileri</span>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-b border-blue-100/50">
+                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl shadow-lg">
+                    <Info className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent">
+                    Proje Bilgileri
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-4">
+              <CardContent className="p-6">
+                <div className="space-y-6">
                   {/* Açıklama */}
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Açıklama ve Notlar</label>
-                    <p className="text-gray-900 mt-1 p-3 bg-gray-50 rounded-md min-h-[60px]">
-                      {opportunity.description || 'Açıklama eklenmemiş.'}
-                    </p>
+                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 block">Açıklama ve Notlar</label>
+                    <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-xl p-4 min-h-[80px] shadow-inner">
+                      <p className="text-gray-700 text-base leading-relaxed">
+                        {opportunity.description || (
+                          <span className="italic text-gray-500">Açıklama eklenmemiş.</span>
+                        )}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Dosyalar */}
@@ -393,18 +401,21 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Tasarım Dosyaları */}
                       {opportunity.design_files && opportunity.design_files.length > 0 && (
-                        <div>
-                          <label className="text-sm font-medium text-gray-600 mb-2 block">Tasarım Dosyaları</label>
-                          <div className="space-y-2">
+                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-5 rounded-xl border border-purple-100">
+                          <div className="flex items-center space-x-2 mb-4">
+                            <FileText className="h-5 w-5 text-purple-600" />
+                            <label className="text-sm font-semibold text-purple-700 uppercase tracking-wide">Tasarım Dosyaları</label>
+                          </div>
+                          <div className="space-y-3">
                             {opportunity.design_files.map((fileId, index) => (
-                              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                                <span className="text-sm text-gray-700">Dosya {index + 1}</span>
-                                <div className="flex space-x-1">
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                    <Eye className="h-3 w-3" />
+                              <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-purple-100 hover:shadow-md transition-all duration-200">
+                                <span className="text-sm font-medium text-gray-700">Dosya {index + 1}</span>
+                                <div className="flex space-x-2">
+                                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-purple-100 rounded-full">
+                                    <Eye className="h-4 w-4 text-purple-600" />
                                   </Button>
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                    <Download className="h-3 w-3" />
+                                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-purple-100 rounded-full">
+                                    <Download className="h-4 w-4 text-purple-600" />
                                   </Button>
                                 </div>
                               </div>
@@ -415,18 +426,21 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
 
                       {/* Örnek Dosyalar */}
                       {opportunity.sample_files && opportunity.sample_files.length > 0 && (
-                        <div>
-                          <label className="text-sm font-medium text-gray-600 mb-2 block">Örnek Resim ve Videolar</label>
-                          <div className="space-y-2">
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border border-orange-100">
+                          <div className="flex items-center space-x-2 mb-4">
+                            <Package className="h-5 w-5 text-orange-600" />
+                            <label className="text-sm font-semibold text-orange-700 uppercase tracking-wide">Örnek Resim ve Videolar</label>
+                          </div>
+                          <div className="space-y-3">
                             {opportunity.sample_files.map((fileId, index) => (
-                              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                                <span className="text-sm text-gray-700">Dosya {index + 1}</span>
-                                <div className="flex space-x-1">
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                    <Eye className="h-3 w-3" />
+                              <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-orange-100 hover:shadow-md transition-all duration-200">
+                                <span className="text-sm font-medium text-gray-700">Dosya {index + 1}</span>
+                                <div className="flex space-x-2">
+                                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-orange-100 rounded-full">
+                                    <Eye className="h-4 w-4 text-orange-600" />
                                   </Button>
-                                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                    <Download className="h-3 w-3" />
+                                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-orange-100 rounded-full">
+                                    <Download className="h-4 w-4 text-orange-600" />
                                   </Button>
                                 </div>
                               </div>
