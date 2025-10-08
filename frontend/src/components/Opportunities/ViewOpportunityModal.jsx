@@ -108,7 +108,7 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
                   <div className="space-y-3">
                     <div>
                       <label className="text-sm font-medium text-gray-600">Fırsat No</label>
-                      <p className="text-lg font-bold text-blue-600">#{opportunity.id}</p>
+                      <p className="text-lg font-bold text-blue-600">{opportunity.displayIndex || '#' + opportunity.id}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Müşteri</label>
