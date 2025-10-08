@@ -57,6 +57,12 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   });
 
   const [contacts, setContacts] = useState([]);
+  
+  // Dropdown data
+  const [customerTypes, setCustomerTypes] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
   const [newTag, setNewTag] = useState('');
   const { isValidIban, formatIban } = useIban();
 
