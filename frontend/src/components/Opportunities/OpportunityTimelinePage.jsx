@@ -742,114 +742,20 @@ export default function OpportunityTimelinePage({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Quick Activity Add Unit - Full Width */}
+        <div className="mb-6">
+          <QuickActivityAddUnit 
+            opportunityId={opportunityId}
+            opportunityTitle={opportunityTitle}
+            onActivityAdded={handleActivityCreated}
+          />
+        </div>
+
+        {/* Main Content Grid - 2 Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Compact Filters Sidebar */}
-          <div className="space-y-3">
-            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
-              <div className="p-3 border-b border-gray-100">
-                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
-                  <Filter className="h-4 w-4 text-gray-600" />
-                  <span>Filtreler</span>
-                </h3>
-              </div>
-              <div className="p-3 space-y-3">
-                <div>
-                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                    Arama
-                  </label>
-                  <div className="relative">
-                    <Input
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Aktivite ara..."
-                      className="pl-8 h-8 text-sm border-gray-200"
-                    />
-                    <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                    Tip
-                  </label>
-                  <Select value={filterType} onValueChange={setFilterType}>
-                    <SelectTrigger className="h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tümü</SelectItem>
-                      {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
-                        <SelectItem key={key} value={key}>
-                          <div className="flex items-center space-x-2">
-                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
-                            <span className="text-sm">{config.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-medium text-gray-700 mb-1.5 block">
-                    Durum
-                  </label>
-                  <Select value={filterStatus} onValueChange={setFilterStatus}>
-                    <SelectTrigger className="h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tümü</SelectItem>
-                      {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                        <SelectItem key={key} value={key}>
-                          <div className="flex items-center space-x-2">
-                            <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
-                            <span className="text-sm">{config.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Compact Activity Stats */}
-            <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
-              <div className="p-3 border-b border-gray-100">
-                <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
-                  <PieChart className="h-4 w-4 text-gray-600" />
-                  <span>Dağılım</span>
-                </h3>
-              </div>
-              <div className="p-3 space-y-2">
-                {Object.entries(ACTIVITY_TYPES).map(([key, config]) => (
-                  <div key={key} className="flex items-center justify-between py-1">
-                    <div className="flex items-center space-x-2">
-                      <config.icon className={`h-3.5 w-3.5 ${config.color}`} />
-                      <span className="text-xs text-gray-700">{config.label}</span>
-                    </div>
-                    <span className="text-xs font-semibold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-                      {summary.byType[key] || 0}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Activity Add Unit */}
-          <div className="lg:col-span-4">
-            <QuickActivityAddUnit 
-              opportunityId={opportunityId}
-              opportunityTitle={opportunityTitle}
-              onActivityAdded={handleActivityCreated}
-            />
-          </div>
-
-          {/* Compact Modern Timeline */}
-          <div className="lg:col-span-3">
+          {/* Left Column - Timeline */}
+          <div className="lg:col-span-2">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
               <div className="p-3 border-b border-gray-100">
                 <h3 className="text-sm font-semibold text-gray-900">
