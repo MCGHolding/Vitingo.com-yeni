@@ -843,6 +843,18 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
         opportunityId={formData.id}
         opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
       />
+
+      {/* Notes History Modal */}
+      <NotesHistoryModal
+        isOpen={notesHistoryModalOpen}
+        onClose={() => setNotesHistoryModalOpen(false)}
+        opportunityId={formData.id}
+        opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
+        onAddNew={() => {
+          setNotesHistoryModalOpen(false);
+          setNewNoteModalOpen(true);
+        }}
+      />
     </div>
   );
 }
