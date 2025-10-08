@@ -9110,6 +9110,41 @@ class OpportunityNoteCreate(BaseModel):
 class OpportunityNoteUpdate(BaseModel):
     content: Optional[str] = None
 
+# ===================== OPPORTUNITY ACTIVITY MODELS =====================
+
+class OpportunityActivity(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    opportunity_id: str
+    type: str  # call_record, email_management, activity_planner, design_upload, messaging
+    title: str
+    description: str
+    status: str = "pending"  # pending, in_progress, completed, cancelled, overdue
+    priority: str = "medium"  # low, medium, high, critical
+    created_by: str = "Murat Bucak"  # Default author
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    scheduled_for: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    data: Optional[Dict[str, Any]] = {}  # Type-specific data
+
+class OpportunityActivityCreate(BaseModel):
+    type: str
+    title: str
+    description: str
+    status: str = "pending"
+    priority: str = "medium"
+    scheduled_for: Optional[datetime] = None
+    data: Optional[Dict[str, Any]] = {}
+
+class OpportunityActivityUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    scheduled_for: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    data: Optional[Dict[str, Any]] = None
+
 # ===================== OPPORTUNITY NOTES ENDPOINTS =====================
 
 @api_router.get("/opportunities/{opportunity_id}/notes", response_model=List[OpportunityNote])
