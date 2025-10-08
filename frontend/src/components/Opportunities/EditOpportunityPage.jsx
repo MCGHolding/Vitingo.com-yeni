@@ -842,6 +842,14 @@ export default function EditOpportunityPage({ opportunity, onBack, onSave, onNew
         onClose={() => setNewNoteModalOpen(false)}
         opportunityId={formData.id}
         opportunityTitle={formData.eventName || formData.title || 'Satış Fırsatı'}
+        onNoteSaved={() => {
+          // Refresh notes in history modal if it's open
+          if (notesHistoryModalOpen) {
+            // This will trigger a re-render of NotesHistoryModal
+            setNotesHistoryModalOpen(false);
+            setTimeout(() => setNotesHistoryModalOpen(true), 100);
+          }
+        }}
       />
 
       {/* Notes History Modal */}
