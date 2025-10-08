@@ -3,7 +3,6 @@ import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { 
   MoreHorizontal,
-  Trash2,
   Share,
   MessageCircle,
   Calendar,
