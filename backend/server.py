@@ -5690,6 +5690,122 @@ async def delete_avans(avans_id: str):
         logger.error(f"Error deleting advance {avans_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== FILE UPLOAD ENDPOINTS =====================
+
+import shutil
+from pathlib import Path
+
+# Create uploads directory if it doesn't exist
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """Upload a file (images, PDFs, videos, etc.)"""
+    try:
+        # Check file size (limit to 100MB)
+        if file.size and file.size > 100 * 1024 * 1024:  # 100MB
+            raise HTTPException(status_code=413, detail="Dosya boyutu çok büyük (maksimum 100MB)")
+        
+        # Check file type
+        allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg',  # Images
+                            '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',  # Documents
+                            '.mp4', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.webm',    # Videos
+                            '.mp3', '.wav', '.m4a', '.flac', '.aac'}                    # Audio
+        
+        file_extension = Path(file.filename).suffix.lower() if file.filename else ''
+        if file_extension not in allowed_extensions:
+            raise HTTPException(status_code=400, detail="Desteklenmeyen dosya türü")
+        
+        # Generate unique filename
+        unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+        file_path = UPLOAD_DIR / unique_filename
+        
+        # Save the file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Create file record in database
+        file_record = {
+            "id": str(uuid.uuid4()),
+            "filename": unique_filename,
+            "original_filename": file.filename,
+            "file_path": str(file_path),
+            "file_size": file.size,
+            "content_type": file.content_type,
+            "uploaded_at": datetime.now(timezone.utc),
+            "uploaded_by": "system"  # In real app, get from authenticated user
+        }
+        
+        await db.uploaded_files.insert_one(file_record)
+        
+        return {
+            "id": file_record["id"],
+            "filename": unique_filename,
+            "original_filename": file.filename,
+            "file_size": file.size,
+            "content_type": file.content_type,
+            "uploaded_at": file_record["uploaded_at"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya yükleme hatası: {str(e)}")
+
+@api_router.get("/files/{file_id}")
+async def download_file(file_id: str):
+    """Download a file by ID"""
+    try:
+        file_record = await db.uploaded_files.find_one({"id": file_id})
+        if not file_record:
+            raise HTTPException(status_code=404, detail="Dosya bulunamadı")
+        
+        file_path = Path(file_record["file_path"])
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Dosya sistemde bulunamadı")
+        
+        def iterfile():
+            with open(file_path, "rb") as file_like:
+                yield from file_like
+        
+        return StreamingResponse(
+            iterfile(),
+            media_type=file_record.get("content_type", "application/octet-stream"),
+            headers={"Content-Disposition": f"attachment; filename={file_record['original_filename']}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading file {file_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Dosya indirme hatası")
+
+@api_router.delete("/files/{file_id}")
+async def delete_file(file_id: str):
+    """Delete a file by ID"""
+    try:
+        file_record = await db.uploaded_files.find_one({"id": file_id})
+        if not file_record:
+            raise HTTPException(status_code=404, detail="Dosya bulunamadı")
+        
+        # Delete from filesystem
+        file_path = Path(file_record["file_path"])
+        if file_path.exists():
+            file_path.unlink()
+        
+        # Delete from database
+        await db.uploaded_files.delete_one({"id": file_id})
+        
+        return {"message": "Dosya başarıyla silindi", "id": file_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting file {file_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Dosya silme hatası")
+
 # ===================== COLLECTION RECEIPT ENDPOINTS =====================
 
 def generate_receipt_number():
