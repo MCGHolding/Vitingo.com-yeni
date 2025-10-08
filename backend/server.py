@@ -5101,6 +5101,8 @@ class OpportunityCreate(BaseModel):
     expected_revenue: Optional[float] = None
     probability: int = 50
     tags: List[str] = Field(default_factory=list)
+    design_files: List[str] = Field(default_factory=list)
+    sample_files: List[str] = Field(default_factory=list)
 
 class OpportunityUpdate(BaseModel):
     title: Optional[str] = None
