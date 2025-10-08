@@ -163,7 +163,7 @@ export default function PDFViewer({ file, zoom = 100, className = "" }) {
         )}
         
         <Document
-          file={fileUrl}
+          file={file}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
           loading={null}
