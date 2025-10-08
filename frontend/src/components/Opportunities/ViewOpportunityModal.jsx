@@ -12,7 +12,19 @@ import {
   FileText,
   Target,
   Globe,
-  Building2
+  Building2,
+  Briefcase,
+  TrendingUp,
+  Clock,
+  Percent,
+  Phone,
+  Mail,
+  MapPin as LocationIcon,
+  Package,
+  Calendar as EventIcon,
+  Info,
+  Eye,
+  Download
 } from 'lucide-react';
 
 export default function ViewOpportunityModal({ opportunity, onClose }) {
