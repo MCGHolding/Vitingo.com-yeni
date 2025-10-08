@@ -41,6 +41,151 @@ import {
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Quick Note Modal Component
+function QuickNoteModal({ isOpen, opportunityId, opportunityTitle, onSave, onClose }) {
+  const { toast } = useToast();
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      if (!noteTitle.trim() && !noteContent.trim()) {
+        toast({
+          title: "Hata",
+          description: "Not başlığı veya içeriği boş olamaz.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const notePayload = {
+        content: noteTitle ? `# ${noteTitle}\n\n${noteContent}` : noteContent,
+        category: 'general',
+        priority: 'medium',
+        tags: [],
+        metadata: {
+          title: noteTitle || 'Hızlı Not',
+          category: 'general',
+          priority: 'medium'
+        }
+      };
+
+      const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notePayload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Not kaydedilemedi');
+      }
+
+      const savedNote = await response.json();
+      
+      // Call parent callback
+      if (onSave) {
+        onSave({
+          ...savedNote,
+          type: 'note',
+          title: noteTitle || 'Hızlı Not',
+          description: noteContent
+        });
+      }
+
+      // Reset and close
+      setNoteTitle('');
+      setNoteContent('');
+      onClose();
+
+    } catch (error) {
+      console.error('❌ Error saving note:', error);
+      toast({
+        title: "Hata",
+        description: "Not kaydedilirken bir hata oluştu: " + error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+        <div className="p-6 border-b">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+            <FileText className="h-5 w-5 text-teal-600" />
+            <span>Hızlı Not Ekle</span>
+          </h3>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Not Başlığı (isteğe bağlı)
+            </label>
+            <Input
+              value={noteTitle}
+              onChange={(e) => setNoteTitle(e.target.value)}
+              placeholder="Not başlığını giriniz..."
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Not İçeriği
+            </label>
+            <Textarea
+              value={noteContent}
+              onChange={(e) => setNoteContent(e.target.value)}
+              placeholder="Not içeriğinizi buraya yazın..."
+              className="min-h-[120px] resize-none"
+            />
+          </div>
+        </div>
+
+        <div className="p-6 border-t bg-gray-50 rounded-b-xl">
+          <div className="flex items-center justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={saving}
+            >
+              <X className="h-4 w-4 mr-2" />
+              İptal
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving || (!noteTitle.trim() && !noteContent.trim())}
+              className="bg-teal-600 hover:bg-teal-700"
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b border-white mr-2"></div>
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Kaydet
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Quick Activity Add Unit Component
 function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded, onOpenDetailedForm }) {
   const { toast } = useToast();
