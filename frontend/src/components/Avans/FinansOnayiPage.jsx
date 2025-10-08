@@ -4,6 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useToast } from '../../hooks/use-toast';
+import AvansDetayModal from './AvansDetayModal';
 import { 
   Search, 
   Eye,
