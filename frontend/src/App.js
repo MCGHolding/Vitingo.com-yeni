@@ -19,6 +19,7 @@ import LostOpportunitiesPage from './components/Opportunities/LostOpportunitiesP
 import FavoriteOpportunitiesPage from './components/Opportunities/FavoriteOpportunitiesPage';
 import AllOpportunitiesPage from './components/Opportunities/AllOpportunitiesPage';
 import EditOpportunityPage from './components/Opportunities/EditOpportunityPage';
+import OpportunityTimelinePage from './components/Opportunities/OpportunityTimelinePage';
 import FinansOnayiPage from './components/Avans/FinansOnayiPage';
 import KapanmisAvanslarPage from './components/Avans/KapanmisAvanslarPage';
 import NewCustomerForm from './components/Customers/NewCustomerForm';
