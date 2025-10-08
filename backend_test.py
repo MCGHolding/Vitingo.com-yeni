@@ -13697,30 +13697,32 @@ def test_meeting_request_modal_users_integration():
         return False
 
 if __name__ == "__main__":
-    print("🚨 URGENT: SALES OPPORTUNITY NOT APPEARING IN LIST INVESTIGATION")
+    print("📁 FILE UPLOAD AND OPPORTUNITY ATTACHMENTS TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 100)
-    print("🎯 CRITICAL INVESTIGATION: User created a new sales opportunity, success modal appeared,")
-    print("📝 but opportunity doesn't show in 'All Opportunities' list.")
-    print("📝 Investigating opportunities database status, creation, and retrieval functionality")
+    print("🎯 TESTING: New file upload endpoints and opportunity file attachments functionality")
+    print("📝 Testing file upload, download, delete, and opportunity integration")
+    print("📝 Verifying security validations and error handling")
     print("=" * 100)
     
-    # Run critical sales opportunities investigation
+    # Run file upload and opportunity attachments testing
     try:
-        result = test_sales_opportunities_critical_investigation()
+        result = test_file_upload_and_opportunity_attachments()
         if result:
-            print("\n✅ INVESTIGATION COMPLETED - BACKEND IS WORKING CORRECTLY")
-            print("✅ Opportunities database connection is working")
-            print("✅ Opportunity creation functionality is working")
-            print("✅ Data persistence and retrieval is working correctly")
-            print("📋 The issue may be in frontend-backend integration or user environment")
+            print("\n✅ FILE UPLOAD TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
+            print("✅ File upload endpoint working with proper validation")
+            print("✅ File download endpoint working with correct headers")
+            print("✅ File delete endpoint working with proper cleanup")
+            print("✅ Opportunity file attachments integration working")
+            print("✅ Security validations working (file size, file type)")
+            print("📋 File upload and opportunity attachments system is production-ready")
         else:
-            print("\n🚨 INVESTIGATION COMPLETED - CRITICAL BACKEND ISSUES FOUND!")
-            print("❌ Opportunities data persistence or retrieval problems detected")
-            print("❌ Immediate action required to resolve opportunities functionality")
-            print("📋 See detailed investigation report above")
+            print("\n🚨 FILE UPLOAD TESTING COMPLETED - CRITICAL ISSUES FOUND!")
+            print("❌ File upload or opportunity attachments functionality problems detected")
+            print("❌ Immediate action required to resolve file upload system")
+            print("📋 See detailed test report above")
     except Exception as e:
-        print(f"\n❌ INVESTIGATION ERROR: {str(e)}")
+        print(f"\n❌ FILE UPLOAD TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
