@@ -788,7 +788,7 @@ export default function OpportunityTimelinePage({
         {/* Main Content Grid - Left Sidebar, Right Timeline */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           
-          {/* Left Column - Sidebar */}
+          {/* Left Column - Stats & Info */}
           <div className="space-y-4">
             <div className="bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm">
               <div className="p-3 border-b border-gray-100">
