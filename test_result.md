@@ -258,6 +258,8 @@ test_plan:
     - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
   test_all: false
   test_priority: "high_first"
+  completed_tests:
+    - "Activity Management System Testing - ActivityModal and OpportunityTimelinePage Integration"
 
 agent_communication:
   - agent: "testing"
