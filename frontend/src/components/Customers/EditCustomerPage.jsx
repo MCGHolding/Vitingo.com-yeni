@@ -83,8 +83,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         iban: customer.iban || '',
         currency: customer.currency || 'TRY'
       });
-
-      setContacts(customer.contact_persons || []);
     }
     loadDropdownData();
   }, [customer]);
