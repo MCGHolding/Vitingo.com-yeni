@@ -259,15 +259,36 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   Görüşülen Kişi
                 </label>
-                <div className="relative">
-                  <Input
-                    value={formData.contact_person}
-                    onChange={(e) => handleInputChange('contact_person', e.target.value)}
-                    placeholder="Görüşülen kişinin adı"
-                    className="pl-10"
-                  />
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                </div>
+                <Select value={formData.contact_person} onValueChange={(value) => {
+                  if (value === 'add_new') {
+                    setShowNewContactModal(true);
+                  } else {
+                    handleInputChange('contact_person', value);
+                  }
+                }}>
+                  <SelectTrigger className={loadingContacts ? 'opacity-50' : ''}>
+                    <SelectValue placeholder={loadingContacts ? "Yükleniyor..." : "Görüşülen kişiyi seçin"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {contactPersons.map((person, index) => (
+                      <SelectItem key={index} value={person.name || person}>
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-blue-600" />
+                          <span>{person.name || person}</span>
+                          {person.phone && (
+                            <span className="text-xs text-gray-500">({person.phone})</span>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="add_new">
+                      <div className="flex items-center space-x-2 text-green-600">
+                        <UserPlus className="h-4 w-4" />
+                        <span>Yeni Kişi Ekle</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
