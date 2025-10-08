@@ -210,7 +210,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <h1 className="text-3xl font-bold">Müşteri Düzenle</h1>
                 </div>
                 <p className="mt-2 text-orange-100">
-                  {customer?.name || customer?.fullName} - Müşteri bilgilerini düzenleyin
+                  {customer?.companyName || customer?.name || customer?.fullName} - Müşteri bilgilerini düzenleyin
                 </p>
               </div>
             </div>
