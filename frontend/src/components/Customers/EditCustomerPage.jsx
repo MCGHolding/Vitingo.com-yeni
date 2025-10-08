@@ -64,21 +64,24 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   useEffect(() => {
     if (customer) {
       setFormData({
-        name: customer.companyName || customer.name || customer.fullName || '',
-        customer_type: customer.customer_type || '',
-        sector: customer.sector || '',
-        phone: customer.phone || '',
-        email: customer.email || '',
-        website: customer.website || '',
+        company_short_name: customer.companyName || '',
+        company_title: customer.companyTitle || '',
+        customer_type_id: customer.relationshipType || 'customer',
+        specialty_id: customer.sector || '',
+        address: customer.address || '',
         country: customer.country || '',
         city: customer.city || '',
-        address: customer.address || '',
-        tax_number: customer.taxNumber || customer.tax_number || '',
-        iban: customer.iban || '',
-        currency: customer.currency || 'TRY',
+        phone: customer.phone || '',
+        mobile: customer.phone || '', // Backend'de mobile ayrı field yok, phone'u kullan
+        email: customer.email || '',
+        tax_office: customer.taxOffice || '',
+        tax_number: customer.taxNumber || '',
+        services: customer.services || [],
         tags: customer.tags || [],
         notes: customer.notes || '',
-        contactPerson: customer.contactPerson || ''
+        contactPerson: customer.contactPerson || '',
+        iban: customer.iban || '',
+        currency: customer.currency || 'TRY'
       });
 
       setContacts(customer.contact_persons || []);
