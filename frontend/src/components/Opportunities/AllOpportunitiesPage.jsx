@@ -31,7 +31,7 @@ import {
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-export default function AllOpportunitiesPage({ onBackToDashboard }) {
+export default function AllOpportunitiesPage({ onBackToDashboard, opportunities, onEditOpportunity }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
