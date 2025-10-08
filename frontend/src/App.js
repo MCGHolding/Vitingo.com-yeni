@@ -907,6 +907,13 @@ const Dashboard = () => {
       case 'all-suppliers':
         return <AllSuppliersPage onBackToDashboard={handleBackToDashboard} onNewSupplier={handleNewSupplier} />;
 
+      // Avans cases
+      case 'finans-onayi':
+        return <FinansOnayiPage onBackToDashboard={handleBackToDashboard} />;
+
+      case 'kapanmis-avanslar':
+        return <KapanmisAvanslarPage onBackToDashboard={handleBackToDashboard} />;
+
       // Expense Receipt cases
       case 'new-expense-receipt':
         return <NewExpenseReceiptForm onBackToDashboard={handleBackToDashboard} />;
