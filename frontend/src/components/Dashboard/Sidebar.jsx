@@ -878,6 +878,21 @@ export default function Sidebar({
       return;
     }
 
+    // Handle Avans menu actions
+    if (subItem && subItem.name === 'Finans Onayı') {
+      if (onFinansOnayi) {
+        onFinansOnayi();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Kapanmış Avanslar') {
+      if (onKapanmisAvanslar) {
+        onKapanmisAvanslar();
+      }
+      return;
+    }
+
     // Handle Expense Receipt menu actions
     if (subItem && subItem.name === 'Yeni Gider Makbuzu') {
       if (onNewExpenseReceipt) {
