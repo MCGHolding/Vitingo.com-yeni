@@ -265,61 +265,133 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           {/* Left Column */}
           <div className="space-y-6">
             
-            {/* Basic Information */}
+            {/* Müşteri Türü ve Sektör */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                 <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
                   <Building2 className="h-5 w-5 text-blue-600" />
-                  <span>Temel Bilgiler</span>
+                  <span>Müşteri Türü ve Sektör</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Müşteri Türü *
+                    </label>
+                    <Select value={formData.customer_type_id} onValueChange={(value) => handleInputChange('customer_type_id', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Müşteri türü seçin..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customerTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sektör *
+                    </label>
+                    <Select value={formData.specialty_id} onValueChange={(value) => handleInputChange('specialty_id', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sektör seçin..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sectors.map((sector) => (
+                          <SelectItem key={sector.value} value={sector.value}>
+                            {sector.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Firma Bilgileri */}
+            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+                <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                  <Building2 className="h-5 w-5 text-green-600" />
+                  <span>Firma Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Müşteri Adı *
-                  </label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="Müşteri adını giriniz"
-                    className="w-full"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Müşteri Türü
-                  </label>
-                  <Select value={formData.customer_type} onValueChange={(value) => handleInputChange('customer_type', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Müşteri türü seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {customerTypes.map((type, index) => (
-                        <SelectItem key={index} value={type.name || type}>
-                          {type.name || type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Firma Kısa Adı *
+                    </label>
+                    <Input
+                      value={formData.company_short_name}
+                      onChange={(e) => handleInputChange('company_short_name', e.target.value)}
+                      placeholder="Örn: ABC Ltd"
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Firma Ünvanı *
+                    </label>
+                    <Input
+                      value={formData.company_title}
+                      onChange={(e) => handleInputChange('company_title', e.target.value)}
+                      placeholder="Örn: ABC Lojistik Limited Şirketi"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sektör
+                    Adres *
                   </label>
-                  <Select value={formData.sector} onValueChange={(value) => handleInputChange('sector', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sektör seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sectors.map((sector, index) => (
-                        <SelectItem key={index} value={sector.name || sector}>
-                          {sector.name || sector}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <textarea
+                    value={formData.address}
+                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    placeholder="Firma adresi..."
+                    className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Ülke *
+                    </label>
+                    <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Ülke seçiniz..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem key={country.iso2} value={country.name}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="inline w-4 h-4 mr-1" />
+                      Şehir *
+                    </label>
+                    <Input
+                      value={formData.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      placeholder="Şehir adı"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
