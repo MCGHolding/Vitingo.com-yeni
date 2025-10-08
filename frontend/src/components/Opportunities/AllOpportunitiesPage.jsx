@@ -718,7 +718,7 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
                                   variant="ghost"
                                   size="sm"
                                   className="h-7 w-7 p-0 text-green-600 hover:text-green-800 hover:bg-green-50"
-                                  onClick={() => handleEdit(opportunity)}
+                                  onClick={() => handleEdit(opportunity, index)}
                                 >
                                   <Edit className="h-3 w-3" />
                                 </Button>
