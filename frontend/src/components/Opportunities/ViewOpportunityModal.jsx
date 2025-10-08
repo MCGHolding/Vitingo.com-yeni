@@ -244,43 +244,65 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
             </Card>
 
             {/* LOKASYON VE FUAR BİLGİLERİ */}
-            <Card className="border border-gray-200">
-              <CardHeader className="bg-gray-50 border-b">
-                <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                  <LocationIcon className="h-5 w-5 text-purple-600" />
-                  <span>Lokasyon ve Fuar Bilgileri</span>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-purple-50/30 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-purple-500/10 to-violet-500/10 border-b border-purple-100/50">
+                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-purple-500 to-violet-600 rounded-xl shadow-lg">
+                    <LocationIcon className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-purple-700 to-violet-700 bg-clip-text text-transparent">
+                    Lokasyon ve Fuar Bilgileri
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Ticaret Fuarı</label>
-                      <p className="text-gray-900">{opportunity.trade_show || opportunity.tradeShow || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Ticaret Fuarı</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <EventIcon className="h-4 w-4 text-purple-500" />
+                        <p className="text-gray-700 text-base font-medium">{opportunity.trade_show || opportunity.tradeShow || '-'}</p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Başlama Tarihi</label>
-                      <p className="text-gray-900">{opportunity.trade_show_start_date ? formatDate(opportunity.trade_show_start_date) : '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Başlama Tarihi</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Calendar className="h-4 w-4 text-green-500" />
+                        <p className="text-gray-600 text-base">{opportunity.trade_show_start_date ? formatDate(opportunity.trade_show_start_date) : '-'}</p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Bitiş Tarihi</label>
-                      <p className="text-gray-900">{opportunity.trade_show_end_date ? formatDate(opportunity.trade_show_end_date) : '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Bitiş Tarihi</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Calendar className="h-4 w-4 text-red-500" />
+                        <p className="text-gray-600 text-base">{opportunity.trade_show_end_date ? formatDate(opportunity.trade_show_end_date) : '-'}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Stand Büyüklüğü</label>
-                      <p className="text-gray-900">
-                        {opportunity.stand_size ? `${opportunity.stand_size} ${opportunity.stand_size_unit || 'm²'}` : '-'}
-                      </p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Stand Büyüklüğü</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Package className="h-4 w-4 text-blue-500" />
+                        <p className="text-gray-600 text-base font-medium">
+                          {opportunity.stand_size ? `${opportunity.stand_size} ${opportunity.stand_size_unit || 'm²'}` : '-'}
+                        </p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Fuar Ülkesi</label>
-                      <p className="text-gray-900">{opportunity.country || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Fuar Ülkesi</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Globe className="h-4 w-4 text-orange-500" />
+                        <p className="text-gray-600 text-base">{opportunity.country || '-'}</p>
+                      </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Fuar Şehri</label>
-                      <p className="text-gray-900">{opportunity.city || '-'}</p>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Fuar Şehri</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <MapPin className="h-4 w-4 text-indigo-500" />
+                        <p className="text-gray-600 text-base">{opportunity.city || '-'}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
