@@ -339,9 +339,13 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
     setViewModalOpen(true);
   };
 
-  const handleEditOpportunity = (opportunity) => {
-    setSelectedOpportunity(opportunity);
-    setEditModalOpen(true);
+  const handleEditOpportunity = (opportunity, index) => {
+    if (onEditOpportunity) {
+      onEditOpportunity({ ...opportunity, displayIndex: index + 1 });
+    } else {
+      setSelectedOpportunity(opportunity);
+      setEditModalOpen(true);
+    }
   };
 
   const handleUpdateOpportunity = (updatedOpportunity) => {
