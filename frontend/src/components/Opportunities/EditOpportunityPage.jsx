@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import FilePreviewModal from '../ui/FilePreviewModal';
+import NewNoteModal from './NewNoteModal';
 
 export default function EditOpportunityPage({ opportunity, onBack, onSave, onNewOpportunity }) {
   const { toast } = useToast();
