@@ -22,6 +22,11 @@ export default function PDFViewer({ file, zoom = 100, className = "" }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Update scale when zoom prop changes
+  React.useEffect(() => {
+    setScale(zoom / 100);
+  }, [zoom]);
+
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
     setLoading(false);
