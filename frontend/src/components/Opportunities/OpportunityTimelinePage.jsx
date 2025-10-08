@@ -209,12 +209,14 @@ export default function OpportunityTimelinePage({
   opportunityId, 
   opportunityTitle 
 }) {
+  const { toast } = useToast();
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   
   // Activity modal state
   const [activityModalOpen, setActivityModalOpen] = useState(false);
