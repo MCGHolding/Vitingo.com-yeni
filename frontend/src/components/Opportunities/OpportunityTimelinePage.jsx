@@ -304,6 +304,33 @@ export default function OpportunityTimelinePage({
     return summary;
   };
 
+  const handleNewActivity = () => {
+    setActivityModalOpen(true);
+  };
+
+  const handleActivitySave = (newActivity) => {
+    console.log('New activity created:', newActivity);
+    
+    // Add the new activity to the list (in real app, this would be fetched from API)
+    const activityWithId = {
+      ...newActivity,
+      id: Date.now().toString(),
+      opportunity_id: opportunityId,
+      opportunity_title: opportunityTitle,
+      created_by: 'Murat Bucak',
+      created_at: new Date().toISOString(),
+      status: newActivity.type === 'activity_planner' ? 'pending' : 'completed',
+      priority: 'medium'
+    };
+    
+    setActivities(prev => [activityWithId, ...prev]);
+    setActivityModalOpen(false);
+  };
+
+  const handleActivityModalClose = () => {
+    setActivityModalOpen(false);
+  };
+
   const summary = getActivitySummary();
 
   return (
