@@ -166,21 +166,23 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
 
       const updatedCustomer = {
         id: customer.id,
-        companyName: formData.name,
+        companyName: formData.company_short_name,
+        companyTitle: formData.company_title,
+        relationshipType: formData.customer_type_id || 'customer',
         contactPerson: formData.contactPerson,
         phone: formData.phone,
         email: formData.email,
-        website: formData.website,
+        address: formData.address,
         country: formData.country,
         city: formData.city,
-        address: formData.address,
-        sector: formData.sector,
+        sector: formData.specialty_id,
+        taxOffice: formData.tax_office,
         taxNumber: formData.tax_number,
         iban: formData.iban,
         currency: formData.currency,
         tags: formData.tags,
         notes: formData.notes,
-        relationshipType: formData.customer_type || 'customer'
+        services: formData.services || []
       };
 
       console.log('Updating customer:', updatedCustomer);
