@@ -216,13 +216,73 @@ export default function FileUpload({
     switch (file.type) {
       case 'image':
         return (
-          <div className="flex justify-center">
-            <img
-              src={fileUrl}
-              alt={file.original_filename}
-              className="max-w-full max-h-96 rounded-lg shadow-lg"
-              style={{ objectFit: 'contain' }}
-            />
+          <div className="space-y-4">
+            {/* Zoom Controls for Images */}
+            <div className="flex items-center justify-center space-x-2 p-2 bg-gray-50 rounded-lg">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleZoomOut}
+                disabled={zoom <= 0.1}
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              
+              <span className="text-sm px-2 min-w-[60px] text-center">
+                {Math.round(zoom * 100)}%
+              </span>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleZoomIn}
+                disabled={zoom >= 5}
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResetZoom}
+              >
+                <RotateCw className="h-4 w-4" />
+                Reset
+              </Button>
+              
+              {zoom > 1 && (
+                <div className="text-xs text-gray-600 flex items-center">
+                  <Move className="h-3 w-3 mr-1" />
+                  Sürükleyerek kaydırın
+                </div>
+              )}
+            </div>
+
+            {/* Image Preview */}
+            <div 
+              className="flex justify-center overflow-hidden rounded-lg border bg-gray-50"
+              style={{ height: '500px' }}
+              onWheel={handleWheel}
+            >
+              <img
+                src={fileUrl}
+                alt={file.original_filename}
+                className={`rounded-lg shadow-lg transition-transform origin-center ${
+                  zoom > 1 ? 'cursor-move' : 'cursor-default'
+                }`}
+                style={{ 
+                  transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+                  objectFit: 'contain',
+                  maxHeight: '500px',
+                  maxWidth: '100%'
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                draggable={false}
+              />
+            </div>
           </div>
         );
 
@@ -242,13 +302,10 @@ export default function FileUpload({
 
       case 'pdf':
         return (
-          <div className="w-full h-96">
-            <iframe
-              src={fileUrl}
-              title={file.original_filename}
-              className="w-full h-full border rounded-lg"
-            />
-          </div>
+          <PDFViewer 
+            fileUrl={fileUrl} 
+            filename={file.original_filename}
+          />
         );
 
       default:
