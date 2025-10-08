@@ -1334,6 +1334,9 @@ const Dashboard = () => {
         // Supplier handlers  
         onNewSupplier={handleNewSupplier}
         onAllSuppliers={handleAllSuppliers}
+        // Avans handlers
+        onFinansOnayi={handleFinansOnayi}
+        onKapanmisAvanslar={handleKapanmisAvanslar}
         // Brief handlers
         onNewBrief={handleNewBrief}
         onAllBriefs={handleAllBriefs}
