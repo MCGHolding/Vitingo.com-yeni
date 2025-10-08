@@ -74,7 +74,7 @@ export default function ViewOpportunityModal({ opportunity, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-6xl max-h-[95vh] overflow-y-auto">
         <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-bold flex items-center space-x-2">
