@@ -424,10 +424,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            ...customerData,
-            contacts: contacts.filter(contact => contact.full_name.trim())
-          })
+          body: JSON.stringify(customerData)
         });
 
         if (!response.ok) {
