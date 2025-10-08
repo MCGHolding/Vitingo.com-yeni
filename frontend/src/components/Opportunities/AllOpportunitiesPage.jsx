@@ -799,6 +799,42 @@ export default function AllOpportunitiesPage({ onBackToDashboard }) {
           }}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Satış Fırsatını Sil</DialogTitle>
+            <DialogDescription>
+              {opportunityToDelete && (
+                <>
+                  <strong>{opportunityToDelete.customer}</strong> müşterisine ait 
+                  <strong> {opportunityToDelete.title || opportunityToDelete.eventName}</strong> 
+                  satış fırsatını silmek istediğinizden emin misiniz?
+                  <br /><br />
+                  Bu işlem geri alınamaz.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={cancelDelete}
+              disabled={deleteLoading}
+            >
+              İptal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? 'Siliniyor...' : 'Sil'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
