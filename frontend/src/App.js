@@ -1376,6 +1376,7 @@ const Dashboard = () => {
         // Avans handlers
         onFinansOnayi={handleFinansOnayi}
         onKapanmisAvanslar={handleKapanmisAvanslar}
+        handleActivityTimeline={handleActivityTimeline}
         // Brief handlers
         onNewBrief={handleNewBrief}
         onAllBriefs={handleAllBriefs}
