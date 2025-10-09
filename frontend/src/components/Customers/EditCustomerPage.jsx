@@ -964,11 +964,19 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <Textarea
+                <EditableField
+                  label="Müşteri Notları"
                   value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
+                  fieldName="notes"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="textarea"
                   placeholder="Müşteri hakkında notlarınız..."
-                  className="w-full min-h-[120px]"
                 />
               </CardContent>
             </Card>
