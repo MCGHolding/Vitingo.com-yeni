@@ -459,21 +459,11 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
             </div>
             
             <Button
-              onClick={handleSave}
-              disabled={isLoading || !formData.company_short_name.trim()}
+              onClick={onBack}
               className="bg-white text-orange-600 hover:bg-orange-50 px-6 py-2 font-semibold rounded-lg shadow-lg"
             >
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2"></div>
-                  Güncelleniyor...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Güncelle
-                </>
-              )}
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Geri Dön
             </Button>
           </div>
         </div>
