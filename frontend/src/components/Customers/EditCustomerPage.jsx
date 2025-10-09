@@ -634,71 +634,85 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <span>İletişim Bilgileri</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Telefon *
-                    </label>
-                    <PhoneInput
-                      country={'tr'}
-                      value={formData.phone}
-                      onChange={(value) => handleInputChange('phone', value)}
-                      enableSearch={true}
-                      inputClass="w-full"
-                    />
-                  </div>
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <EditableField
+                    label="Telefon"
+                    value={formData.phone}
+                    fieldName="phone"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="phone"
+                    placeholder="+90 212 555 1234"
+                    isRequired={true}
+                  />
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cep Telefonu *
-                    </label>
-                    <PhoneInput
-                      country={'tr'}
-                      value={formData.mobile}
-                      onChange={(value) => handleInputChange('mobile', value)}
-                      enableSearch={true}
-                      inputClass="w-full"
-                    />
-                  </div>
+                  <EditableField
+                    label="Cep Telefonu"
+                    value={formData.mobile}
+                    fieldName="mobile"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="phone"
+                    placeholder="+90 532 123 4567"
+                    isRequired={true}
+                  />
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <Input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="ornek@sirket.com"
-                      className="w-full"
-                    />
-                  </div>
+                  <EditableField
+                    label="Email"
+                    value={formData.email}
+                    fieldName="email"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="email"
+                    placeholder="ornek@sirket.com"
+                    isRequired={true}
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Vergi Dairesi
-                    </label>
-                    <Input
-                      value={formData.tax_office}
-                      onChange={(e) => handleInputChange('tax_office', e.target.value)}
-                      placeholder="Örn: Beşiktaş Vergi Dairesi"
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      VKN
-                    </label>
-                    <Input
-                      value={formData.tax_number}
-                      onChange={(e) => handleInputChange('tax_number', e.target.value)}
-                      placeholder="1234567890"
-                      className="w-full"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Vergi Dairesi"
+                    value={formData.tax_office}
+                    fieldName="tax_office"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Örn: Beşiktaş Vergi Dairesi"
+                  />
+                  
+                  <EditableField
+                    label="VKN"
+                    value={formData.tax_number}
+                    fieldName="tax_number"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="1234567890"
+                  />
                 </div>
               </CardContent>
             </Card>
