@@ -541,76 +541,87 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <span>Firma Bilgileri</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Firma Kısa Adı *
-                    </label>
-                    <Input
-                      value={formData.company_short_name}
-                      onChange={(e) => handleInputChange('company_short_name', e.target.value)}
-                      placeholder="Örn: ABC Ltd"
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Firma Ünvanı *
-                    </label>
-                    <Input
-                      value={formData.company_title}
-                      onChange={(e) => handleInputChange('company_title', e.target.value)}
-                      placeholder="Örn: ABC Lojistik Limited Şirketi"
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adres *
-                  </label>
-                  <textarea
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder="Firma adresi..."
-                    className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Firma Kısa Adı"
+                    value={formData.company_short_name}
+                    fieldName="company_short_name"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Örn: ABC Ltd"
+                    isRequired={true}
+                  />
+                  
+                  <EditableField
+                    label="Firma Ünvanı"
+                    value={formData.company_title}
+                    fieldName="company_title"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Örn: ABC Lojistik Limited Şirketi"
+                    isRequired={true}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <MapPin className="inline w-4 h-4 mr-1" />
-                      Ülke *
-                    </label>
-                    <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Ülke seçiniz..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country.iso2} value={country.name}>
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <EditableField
+                  label="Adres"
+                  value={formData.address}
+                  fieldName="address"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="textarea"
+                  placeholder="Firma adresi..."
+                  isRequired={true}
+                />
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <MapPin className="inline w-4 h-4 mr-1" />
-                      Şehir *
-                    </label>
-                    <Input
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      placeholder="Şehir adı"
-                      className="w-full"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Ülke"
+                    value={formData.country}
+                    fieldName="country"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="select"
+                    placeholder="Ülke seçiniz..."
+                    isRequired={true}
+                    countries={countries}
+                  />
+
+                  <EditableField
+                    label="Şehir"
+                    value={formData.city}
+                    fieldName="city"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Şehir adı"
+                    isRequired={true}
+                  />
                 </div>
               </CardContent>
             </Card>
