@@ -770,26 +770,42 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           {/* Right Column */}
           <div className="space-y-6">
 
-            {/* Contact Person */}
+            {/* İletişim Kişisi Detayları */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
                 <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
                   <User className="h-5 w-5 text-purple-600" />
-                  <span>İletişim Kişisi</span>
+                  <span>İletişim Kişisi Detayları</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    İletişim Kişisi Adı
-                  </label>
-                  <Input
-                    value={formData.contactPerson}
-                    onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                    placeholder="İletişim kişisinin adı"
-                    className="w-full"
-                  />
-                </div>
+              <CardContent className="p-6 space-y-4">
+                <EditableField
+                  label="İletişim Kişisi Adı"
+                  value={formData.contactPerson}
+                  fieldName="contactPerson"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="İletişim kişisinin adı"
+                />
+
+                <EditableField
+                  label="Pozisyon"
+                  value={formData.contact_position}
+                  fieldName="contact_position"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="İş pozisyonu"
+                />
               </CardContent>
             </Card>
 
