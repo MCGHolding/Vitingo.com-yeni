@@ -140,7 +140,79 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }));
   };
 
-  // Removed unused contact functions since we're using single contact person field
+  // Field-level editing functions
+  const startEdit = (fieldName) => {
+    setEditingField(fieldName);
+    setTempValue(formData[fieldName] || '');
+  };
+
+  const cancelEdit = () => {
+    setEditingField(null);
+    setTempValue('');
+  };
+
+  const saveField = async (fieldName) => {
+    try {
+      setIsLoading(true);
+      
+      // Update formData
+      const updatedFormData = { ...formData, [fieldName]: tempValue };
+      setFormData(updatedFormData);
+      
+      // Prepare data for backend
+      const updatedCustomer = {
+        id: customer.id,
+        companyName: updatedFormData.company_short_name,
+        companyTitle: updatedFormData.company_title,
+        relationshipType: updatedFormData.customer_type_id || 'customer',
+        contactPerson: updatedFormData.contactPerson,
+        phone: updatedFormData.phone,
+        email: updatedFormData.email,
+        address: updatedFormData.address,
+        country: updatedFormData.country,
+        city: updatedFormData.city,
+        sector: updatedFormData.specialty_id,
+        taxOffice: updatedFormData.tax_office,
+        taxNumber: updatedFormData.tax_number,
+        iban: updatedFormData.iban,
+        currency: updatedFormData.currency,
+        tags: updatedFormData.tags,
+        notes: updatedFormData.notes,
+        services: updatedFormData.services || []
+      };
+
+      if (onSave) {
+        await onSave(updatedCustomer);
+      }
+      
+      setEditingField(null);
+      setTempValue('');
+      
+      toast({
+        title: "Başarılı",
+        description: "Alan güncellendi",
+        variant: "default"
+      });
+      
+    } catch (error) {
+      console.error('Error saving field:', error);
+      toast({
+        title: "Hata",
+        description: "Güncelleme sırasında hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFieldKeyPress = (e, fieldName) => {
+    if (e.key === 'Enter') {
+      saveField(fieldName);
+    } else if (e.key === 'Escape') {
+      cancelEdit();
+    }
+  };
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
