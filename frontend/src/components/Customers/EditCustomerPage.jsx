@@ -28,6 +28,132 @@ import "react-phone-input-2/lib/style.css";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Editable Field Component
+const EditableField = ({ 
+  label, 
+  value, 
+  fieldName, 
+  editingField, 
+  startEdit, 
+  cancelEdit, 
+  saveField, 
+  tempValue, 
+  setTempValue, 
+  handleFieldKeyPress,
+  type = 'text',
+  placeholder = '',
+  isRequired = false,
+  options = null, // For select fields
+  customerTypes = [],
+  sectors = [],
+  countries = []
+}) => {
+  const isEditing = editingField === fieldName;
+  
+  return (
+    <div className="group">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        {label} {isRequired && <span className="text-red-500">*</span>}
+      </label>
+      <div className="flex items-center space-x-2">
+        {isEditing ? (
+          <div className="flex-1 flex items-center space-x-2">
+            {type === 'select' ? (
+              <Select value={tempValue} onValueChange={setTempValue}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                  {fieldName === 'customer_type_id' && customerTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+                  {fieldName === 'specialty_id' && sectors.map((sector) => (
+                    <SelectItem key={sector.value} value={sector.value}>
+                      {sector.name}
+                    </SelectItem>
+                  ))}
+                  {fieldName === 'country' && countries.map((country) => (
+                    <SelectItem key={country.name} value={country.name}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                  {fieldName === 'currency' && (
+                    <>
+                      <SelectItem value="TRY">TRY - Türk Lirası</SelectItem>
+                      <SelectItem value="USD">USD - Dolar</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP - İngiliz Sterlini</SelectItem>
+                    </>
+                  )}
+                </SelectContent>
+              </Select>
+            ) : type === 'textarea' ? (
+              <textarea
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                onKeyDown={(e) => handleFieldKeyPress(e, fieldName)}
+                placeholder={placeholder}
+                className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none h-20"
+              />
+            ) : type === 'phone' ? (
+              <PhoneInput
+                country={'tr'}
+                value={tempValue}
+                onChange={setTempValue}
+                enableSearch={true}
+                inputClass="flex-1"
+              />
+            ) : (
+              <Input
+                type={type}
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                onKeyDown={(e) => handleFieldKeyPress(e, fieldName)}
+                placeholder={placeholder}
+                className="flex-1"
+              />
+            )}
+            <Button size="sm" onClick={() => saveField(fieldName)} className="text-green-600 hover:bg-green-50">
+              <CheckCircle className="h-4 w-4" />
+            </Button>
+            <Button size="sm" variant="ghost" onClick={cancelEdit} className="text-red-600 hover:bg-red-50">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex-1 flex items-center justify-between p-2 bg-gray-50 rounded-md group-hover:bg-gray-100 transition-colors">
+            <span className="text-gray-900">
+              {type === 'select' ? (
+                // Show label for select fields
+                fieldName === 'customer_type_id' ? customerTypes.find(t => t.value === value)?.name || value :
+                fieldName === 'specialty_id' ? sectors.find(s => s.value === value)?.name || value :
+                fieldName === 'currency' ? (
+                  value === 'TRY' ? 'TRY - Türk Lirası' :
+                  value === 'USD' ? 'USD - Dolar' :
+                  value === 'EUR' ? 'EUR - Euro' :
+                  value === 'GBP' ? 'GBP - İngiliz Sterlini' : value
+                ) : value
+              ) : (
+                value || <span className="text-gray-400 italic">Henüz girilmemiş</span>
+              )}
+            </span>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => startEdit(fieldName)}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 hover:bg-blue-50"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function EditCustomerPage({ customer, onBack, onSave }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
