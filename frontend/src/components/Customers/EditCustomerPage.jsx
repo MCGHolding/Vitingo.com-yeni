@@ -495,42 +495,40 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Müşteri Türü *
-                    </label>
-                    <Select value={formData.customer_type_id} onValueChange={(value) => handleInputChange('customer_type_id', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Müşteri türü seçin..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {customerTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Müşteri Türü"
+                    value={formData.customer_type_id}
+                    fieldName="customer_type_id"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="select"
+                    placeholder="Müşteri türü seçin..."
+                    isRequired={true}
+                    customerTypes={customerTypes}
+                  />
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Sektör *
-                    </label>
-                    <Select value={formData.specialty_id} onValueChange={(value) => handleInputChange('specialty_id', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sektör seçin..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sectors.map((sector) => (
-                          <SelectItem key={sector.value} value={sector.value}>
-                            {sector.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <EditableField
+                    label="Sektör"
+                    value={formData.specialty_id}
+                    fieldName="specialty_id"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="select"
+                    placeholder="Sektör seçin..."
+                    isRequired={true}
+                    sectors={sectors}
+                  />
                 </div>
               </CardContent>
             </Card>
