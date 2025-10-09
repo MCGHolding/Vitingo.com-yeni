@@ -88,7 +88,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         country: customer.country || '',
         city: customer.city || '',
         phone: customer.phone || '',
-        mobile: customer.phone || '', // Backend'de mobile ayrı field yok, phone'u kullan
+        mobile: customer.mobile || customer.phone || '',
         email: customer.email || '',
         tax_office: customer.taxOffice || '',
         tax_number: customer.taxNumber || '',
@@ -97,7 +97,20 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         notes: customer.notes || '',
         contactPerson: customer.contactPerson || '',
         iban: customer.iban || '',
-        currency: customer.currency || 'TRY'
+        currency: customer.currency || 'TRY',
+        // Contact person details - expand if available
+        contact_full_name: customer.contactPerson || '',
+        contact_mobile: customer.contactMobile || customer.phone || '',
+        contact_email: customer.contactEmail || customer.email || '',
+        contact_position: customer.contactPosition || '',
+        contact_address: customer.contactAddress || customer.address || '',
+        contact_country: customer.contactCountry || customer.country || '',
+        contact_city: customer.contactCity || customer.city || '',
+        // Bank details
+        bank_name: customer.bankName || '',
+        bank_branch: customer.bankBranch || '',
+        account_holder_name: customer.accountHolderName || customer.companyName || '',
+        swift_code: customer.swiftCode || ''
       });
     }
     loadDropdownData();
