@@ -32,6 +32,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Field-level editing states
+  const [editingField, setEditingField] = useState(null);
+  const [tempValue, setTempValue] = useState('');
+
   const [formData, setFormData] = useState({
     company_short_name: '',
     company_title: '',
@@ -50,7 +54,20 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     notes: '',
     contactPerson: '',
     iban: '',
-    currency: 'TRY'
+    currency: 'TRY',
+    // Contact person details
+    contact_full_name: '',
+    contact_mobile: '',
+    contact_email: '',
+    contact_position: '',
+    contact_address: '',
+    contact_country: '',
+    contact_city: '',
+    // Bank details
+    bank_name: '',
+    bank_branch: '',
+    account_holder_name: '',
+    swift_code: ''
   });
 
   // Dropdown data
