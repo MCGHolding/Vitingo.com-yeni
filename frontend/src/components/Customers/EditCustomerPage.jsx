@@ -822,7 +822,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hizmetler
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
                     {formData.services.map((service, index) => (
                       <span
                         key={index}
@@ -843,36 +843,67 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                       </span>
                     ))}
                   </div>
+                  {formData.services.length === 0 && (
+                    <p className="text-gray-400 italic text-sm">Henüz hizmet eklenmemiş</p>
+                  )}
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    IBAN
-                  </label>
-                  <Input
-                    value={formData.iban}
-                    onChange={(e) => handleInputChange('iban', e.target.value)}
-                    placeholder="IBAN numarası"
-                    className="w-full"
-                  />
-                </div>
+                <EditableField
+                  label="IBAN"
+                  value={formData.iban}
+                  fieldName="iban"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="TR00 0000 0000 0000 0000 0000 00"
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Para Birimi
-                  </label>
-                  <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="TRY">TRY - Türk Lirası</SelectItem>
-                      <SelectItem value="USD">USD - Dolar</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="GBP">GBP - İngiliz Sterlini</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <EditableField
+                  label="Para Birimi"
+                  value={formData.currency}
+                  fieldName="currency"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="select"
+                  placeholder="Para birimi seçin"
+                />
+
+                <EditableField
+                  label="Banka Adı"
+                  value={formData.bank_name}
+                  fieldName="bank_name"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="Banka adı"
+                />
+
+                <EditableField
+                  label="Şube"
+                  value={formData.bank_branch}
+                  fieldName="bank_branch"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="Şube adı"
+                />
               </CardContent>
             </Card>
 
