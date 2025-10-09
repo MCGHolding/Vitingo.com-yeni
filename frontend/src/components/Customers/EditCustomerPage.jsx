@@ -370,66 +370,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      setIsLoading(true);
-
-      if (!formData.company_short_name.trim()) {
-        toast({
-          title: "Eksik Bilgi",
-          description: "Firma kısa adı zorunludur.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const updatedCustomer = {
-        id: customer.id,
-        companyName: formData.company_short_name,
-        companyTitle: formData.company_title,
-        relationshipType: formData.customer_type_id || 'customer',
-        contactPerson: formData.contactPerson,
-        phone: formData.phone,
-        email: formData.email,
-        address: formData.address,
-        country: formData.country,
-        city: formData.city,
-        sector: formData.specialty_id,
-        taxOffice: formData.tax_office,
-        taxNumber: formData.tax_number,
-        iban: formData.iban,
-        currency: formData.currency,
-        tags: formData.tags,
-        notes: formData.notes,
-        services: formData.services || []
-      };
-
-      console.log('Updating customer:', updatedCustomer);
-
-      toast({
-        title: "Başarılı",
-        description: "Müşteri bilgileri başarıyla güncellendi.",
-        className: "bg-green-50 border-green-200 text-green-800",
-      });
-
-      if (onSave) {
-        onSave(updatedCustomer);
-      }
-
-      if (onBack) {
-        onBack();
-      }
-    } catch (error) {
-      console.error('Error updating customer:', error);
-      toast({
-        title: "Hata",
-        description: "Müşteri güncellenirken bir hata oluştu.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // handleSave function removed - now using field-level editing with saveField function
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50">
