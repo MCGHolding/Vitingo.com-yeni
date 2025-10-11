@@ -35,6 +35,23 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('vitingo_user');
         localStorage.removeItem('vitingo_admin_session');
       }
+    } else {
+      // TEMPORARY: Auto-login as murb for testing (NO PASSWORD REQUIRED)
+      console.log('🔓 TEMPORARY AUTO-LOGIN: Logging in as murb without password');
+      const autoLoginUser = {
+        id: 1,
+        username: 'murb',
+        fullName: 'Murat Bucak',
+        email: 'murat.bucak@quattrostand.com',
+        role: 'super-admin',
+        department: 'Süper Admin',
+        avatar: null,
+        permissions: ['all'],
+        loginTime: new Date().toISOString(),
+        lastActivity: new Date().toISOString()
+      };
+      setUser(autoLoginUser);
+      localStorage.setItem('vitingo_user', JSON.stringify(autoLoginUser));
     }
 
     // Save users data to localStorage for other components to use
