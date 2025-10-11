@@ -17835,24 +17835,24 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 URGENT DEBUG: CUSTOMER UPDATE JSON PARSING ERROR INVESTIGATION")
+    print("🚨 CRITICAL: DEBUG KAYGUSUZLAR CUSTOMER DATA MAPPING ISSUES")
     print(f"Backend URL: {BACKEND_URL}")
     
-    # Run the customer update JSON parsing debug test
+    # Run the Kaygusuzlar customer data mapping investigation
     try:
-        result = test_customer_update_json_parsing_debug()
+        result = test_kaygusuzlar_customer_data_mapping_investigation()
         if result:
-            print("\n✅ CUSTOMER UPDATE JSON PARSING DEBUG COMPLETED - NO CRITICAL ISSUES FOUND")
-            print("✅ Backend appears to be returning valid JSON responses")
-            print("✅ Response headers are correct")
-            print("✅ Customer update endpoint is working properly")
-            print("📋 Issue may be in frontend JSON parsing or browser-specific behavior")
+            print("\n✅ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION COMPLETED - NO CRITICAL ISSUES FOUND")
+            print("✅ Customer data appears to be stored correctly")
+            print("✅ Field mappings are working properly")
+            print("✅ Customer Types and Sectors APIs are functional")
+            print("📋 Issue may be in frontend field mapping or display logic")
         else:
-            print("\n❌ CUSTOMER UPDATE JSON PARSING DEBUG FAILED")
-            print("❌ Critical JSON parsing issues found in backend")
-            print("📋 Review the test output above for specific issues")
+            print("\n❌ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION FAILED")
+            print("❌ Critical data mapping issues found")
+            print("📋 Review the test output above for specific field mapping problems")
     except Exception as e:
-        print(f"\n❌ CUSTOMER UPDATE JSON PARSING DEBUG ERROR: {str(e)}")
+        print(f"\n❌ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
