@@ -203,40 +203,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [countries, setCountries] = useState([]);
   const [newTag, setNewTag] = useState('');
 
-  // Helper function to map customer relationship type to customer type value
-  const mapRelationshipTypeToCustomerType = (relationshipType) => {
-    const mapping = {
-      'Potansiyel Müşteri': 'yeni_musteri',
-      'customer': 'mevcut_musteri',
-      'Mevcut Müşteri': 'mevcut_musteri',
-      'Yeni Müşteri': 'yeni_musteri',
-      'VIP Müşteri': 'vip_musteri',
-      'Firma': 'firma',
-      'Ajans': 'ajans',
-      'Dernek veya Vakıf': 'dernek_vakif',
-      'Devlet Kurumu': 'devlet_kurumu',
-      'Holding Şirketi': 'holding_sirketi',
-      'Vakıf Şirketi': 'vakif_sirketi'
-    };
-    
-    return mapping[relationshipType] || relationshipType;
-  };
-
-  // Helper function to map sector name to sector value
-  const mapSectorNameToValue = (sectorName, sectorsData) => {
-    if (!sectorName || !sectorsData) return sectorName;
-    
-    // First try to find by exact name match
-    const exactMatch = sectorsData.find(s => s.name === sectorName);
-    if (exactMatch) return exactMatch.value;
-    
-    // Then try to find by value match
-    const valueMatch = sectorsData.find(s => s.value === sectorName);
-    if (valueMatch) return valueMatch.value;
-    
-    // If no match found, return original value
-    return sectorName;
-  };
+  // Helper functions replaced by customer.mapper
 
   // Initialize form with customer data using mapper
   useEffect(() => {
