@@ -271,7 +271,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         swift_code: customer.swiftCode || ''
       });
       
-      console.log('Form data initialized with customer_type_id:', customer.relationshipType || 'customer');
+      console.log('Form data initialized with customer_type_id:', mappedCustomerType || 'mevcut_musteri');
       console.log('Form data initialized with specialty_id:', customer.sector || '');
     }
     loadDropdownData();
