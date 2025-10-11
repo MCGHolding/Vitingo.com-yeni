@@ -1304,42 +1304,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           </CardContent>
         </Card>
 
-        {/* Sektör */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Building2 className="h-5 w-5" />
-              <span>Sektör</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sektör <span className="text-red-500">*</span>
-              </label>
-              <div className="flex space-x-2">
-                <div className="flex-1">
-                  <SearchableSelect
-                    options={(sectors || []).map(sector => ({ value: sector.id, label: sector.name }))}
-                    value={formData.sector_id}
-                    onValueChange={(value) => handleInputChange('sector_id', value)}
-                    placeholder="Sektör seçin..."
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAddSectorModal(true)}
-                  className="px-3"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Notlar */}
         <Card>
           <CardHeader>
