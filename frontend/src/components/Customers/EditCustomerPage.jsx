@@ -123,7 +123,7 @@ const EditableField = ({
             </Button>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-between p-2 bg-gray-50 rounded-md group-hover:bg-gray-100 transition-colors">
+          <div className="flex-1 flex items-center justify-between p-2 bg-gray-50 rounded-md group-hover:bg-gray-100 transition-colors duration-200">
             <span className="text-gray-900">
               {type === 'select' ? (
                 // Show label for select fields
