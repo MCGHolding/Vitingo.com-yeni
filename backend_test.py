@@ -1362,6 +1362,426 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_customer_prospects_delete_functionality():
+    """
+    CUSTOMER PROSPECTS DELETE FUNCTIONALITY TESTING
+    
+    **Objective**: Test the newly implemented DELETE endpoint for customer prospects to ensure it works correctly.
+    
+    **Test Requirements**:
+    1. **Get Existing Prospects**: 
+       - Call GET /api/customer-prospects
+       - Verify prospects exist in database
+       - Select a test prospect for deletion
+    
+    2. **Delete Prospect Test**:
+       - Call DELETE /api/customer-prospects/{prospect_id} with a valid prospect ID
+       - Verify response returns 200 status code
+       - Verify response includes success message "Müşteri adayı başarıyla silindi"
+       - Verify response includes the deleted prospect_id
+    
+    3. **Verification After Delete**:
+       - Call GET /api/customer-prospects again
+       - Verify the deleted prospect no longer appears in the list
+       - Verify prospect count decreased by 1
+    
+    4. **Error Scenarios**:
+       - Test DELETE with non-existent prospect ID
+       - Verify returns 404 status with error message "Müşteri adayı bulunamadı"
+    
+    **Success Criteria**:
+    - DELETE endpoint successfully removes prospect from database
+    - Proper success response with Turkish message
+    - Prospect no longer retrievable after deletion
+    - 404 error handling works correctly for non-existent prospects
+    - Database integrity maintained after deletion
+    
+    **Expected Result**: The DELETE endpoint should work exactly like the customer deletion endpoint, providing a clean and reliable way to remove customer prospects from the system.
+    """
+    
+    print("=" * 100)
+    print("🗑️  CUSTOMER PROSPECTS DELETE FUNCTIONALITY TESTING 🗑️")
+    print("=" * 100)
+    print("OBJECTIVE: Test the newly implemented DELETE endpoint for customer prospects")
+    print("to ensure it works correctly and maintains database integrity.")
+    print("=" * 100)
+    
+    test_results = {
+        "initial_prospect_count": 0,
+        "prospects_found": [],
+        "get_endpoint_working": False,
+        "test_prospect_created": False,
+        "test_prospect_id": None,
+        "delete_endpoint_working": False,
+        "prospect_deleted_successfully": False,
+        "final_prospect_count": 0,
+        "count_decreased_correctly": False,
+        "error_handling_working": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST STEP 1: Get Existing Prospects
+    print("\n" + "=" * 80)
+    print("TEST STEP 1: GET EXISTING CUSTOMER PROSPECTS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    print(f"Testing endpoint: {endpoint}")
+    print("Checking existing customer prospects in database...")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer prospects API endpoint is responding")
+            test_results["get_endpoint_working"] = True
+            
+            try:
+                prospects = response.json()
+                prospect_count = len(prospects) if isinstance(prospects, list) else 0
+                test_results["initial_prospect_count"] = prospect_count
+                test_results["prospects_found"] = prospects[:3] if prospects else []  # Store first 3 for analysis
+                
+                print(f"📊 CURRENT STATUS: {prospect_count} customer prospects found in database")
+                
+                if prospect_count == 0:
+                    print("ℹ️  INFO: No existing prospects found - will create a test prospect for deletion testing")
+                else:
+                    print(f"ℹ️  INFO: Found {prospect_count} existing prospects")
+                    # Show first few prospects for reference
+                    for i, prospect in enumerate(prospects[:3], 1):
+                        company_name = prospect.get("company_short_name", "N/A")
+                        prospect_id = prospect.get("id", "N/A")
+                        print(f"   {i}. {company_name} (ID: {prospect_id})")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse prospects data: {str(e)}")
+                test_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer prospects API not responding properly. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_API_ERROR_{response.status_code}")
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        test_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+    except Exception as e:
+        print(f"❌ FAIL: Unexpected error: {str(e)}")
+        test_results["critical_issues"].append(f"UNEXPECTED_ERROR: {str(e)}")
+    
+    # TEST STEP 2: Create Test Prospect if Needed
+    print("\n" + "=" * 80)
+    print("TEST STEP 2: CREATE TEST PROSPECT FOR DELETION TESTING")
+    print("=" * 80)
+    
+    # Create a test prospect for deletion testing
+    test_prospect_data = {
+        "company_short_name": "Test Müşteri Adayı DELETE Testi",
+        "company_title": "Test Müşteri Adayı DELETE Testi A.Ş.",
+        "customer_type_id": "firma",
+        "specialty_id": "teknoloji",
+        "email": "delete-test@testprospect.com",
+        "phone": "+90 212 555 9999",
+        "mobile": "+90 532 555 9999",
+        "address": "DELETE Test Mahallesi, Test Sokak No:999",
+        "city": "İstanbul",
+        "country": "TR",
+        "sector": "Teknoloji",
+        "notes": f"Test prospect created for DELETE functionality testing - {datetime.now().isoformat()}",
+        "is_candidate": True,
+        "services": ["DELETE Test Service"],
+        "tags": ["DELETE_TEST", "TEMPORARY"]
+    }
+    
+    print(f"Creating test prospect: {test_prospect_data['company_short_name']}")
+    
+    # Create test prospect
+    create_endpoint = f"{BACKEND_URL}/api/customer-prospects"
+    try:
+        create_response = requests.post(create_endpoint, json=test_prospect_data, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Test prospect creation endpoint is working")
+            test_results["test_prospect_created"] = True
+            
+            try:
+                created_prospect = create_response.json()
+                test_prospect_id = created_prospect.get("id")
+                test_results["test_prospect_id"] = test_prospect_id
+                print(f"✅ PASS: Test prospect created successfully with ID: {test_prospect_id}")
+                
+                # Verify creation by checking updated count
+                verify_response = requests.get(endpoint, timeout=30)
+                if verify_response.status_code == 200:
+                    updated_prospects = verify_response.json()
+                    updated_count = len(updated_prospects) if isinstance(updated_prospects, list) else 0
+                    print(f"📊 Updated prospect count after creation: {updated_count}")
+                    
+                    if updated_count > test_results["initial_prospect_count"]:
+                        print(f"✅ PASS: Prospect count increased from {test_results['initial_prospect_count']} to {updated_count}")
+                    else:
+                        print(f"⚠️  WARNING: Prospect count did not increase as expected")
+                        test_results["warnings"].append("PROSPECT_COUNT_NOT_INCREASED_AFTER_CREATE")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing created prospect: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_PROCESS_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Test prospect creation failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            test_results["critical_issues"].append(f"CREATE_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Test prospect creation error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # TEST STEP 3: Delete Prospect Test
+    print("\n" + "=" * 80)
+    print("TEST STEP 3: DELETE PROSPECT FUNCTIONALITY TEST")
+    print("=" * 80)
+    
+    if test_results["test_prospect_id"]:
+        delete_endpoint = f"{BACKEND_URL}/api/customer-prospects/{test_results['test_prospect_id']}"
+        print(f"Testing DELETE endpoint: {delete_endpoint}")
+        print(f"Deleting test prospect with ID: {test_results['test_prospect_id']}")
+        
+        try:
+            delete_response = requests.delete(delete_endpoint, timeout=30)
+            print(f"Delete Status Code: {delete_response.status_code}")
+            
+            if delete_response.status_code == 200:
+                print("✅ PASS: DELETE endpoint responds with status 200")
+                test_results["delete_endpoint_working"] = True
+                
+                try:
+                    delete_data = delete_response.json()
+                    print(f"Delete Response: {delete_data}")
+                    
+                    # Verify response structure
+                    expected_fields = ["success", "message", "prospect_id"]
+                    missing_fields = [field for field in expected_fields if field not in delete_data]
+                    
+                    if missing_fields:
+                        print(f"⚠️  WARNING: Missing fields in delete response: {missing_fields}")
+                        test_results["warnings"].append(f"MISSING_DELETE_RESPONSE_FIELDS: {missing_fields}")
+                    else:
+                        print("✅ PASS: Delete response has all expected fields")
+                    
+                    # Check success status
+                    if delete_data.get("success") == True:
+                        print("✅ PASS: Delete response indicates success")
+                        test_results["prospect_deleted_successfully"] = True
+                    else:
+                        print("❌ FAIL: Delete response does not indicate success")
+                        test_results["critical_issues"].append("DELETE_SUCCESS_FALSE")
+                    
+                    # Check Turkish success message
+                    expected_message = "Müşteri adayı başarıyla silindi"
+                    actual_message = delete_data.get("message", "")
+                    if expected_message in actual_message:
+                        print(f"✅ PASS: Correct Turkish success message: '{actual_message}'")
+                    else:
+                        print(f"⚠️  WARNING: Unexpected success message: '{actual_message}'")
+                        test_results["warnings"].append(f"UNEXPECTED_SUCCESS_MESSAGE: {actual_message}")
+                    
+                    # Check prospect_id in response
+                    returned_id = delete_data.get("prospect_id")
+                    if returned_id == test_results["test_prospect_id"]:
+                        print(f"✅ PASS: Correct prospect_id returned in response: {returned_id}")
+                    else:
+                        print(f"⚠️  WARNING: Prospect ID mismatch. Expected: {test_results['test_prospect_id']}, Got: {returned_id}")
+                        test_results["warnings"].append("PROSPECT_ID_MISMATCH_IN_RESPONSE")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing delete response: {str(e)}")
+                    test_results["critical_issues"].append(f"DELETE_RESPONSE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: DELETE endpoint failed. Status: {delete_response.status_code}")
+                print(f"Response: {delete_response.text}")
+                test_results["critical_issues"].append(f"DELETE_FAILED_{delete_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: DELETE request error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_REQUEST_ERROR: {str(e)}")
+    else:
+        print("❌ FAIL: Cannot test DELETE - no test prospect ID available")
+        test_results["critical_issues"].append("NO_TEST_PROSPECT_FOR_DELETE")
+    
+    # TEST STEP 4: Verification After Delete
+    print("\n" + "=" * 80)
+    print("TEST STEP 4: VERIFICATION AFTER DELETE")
+    print("=" * 80)
+    
+    if test_results["prospect_deleted_successfully"]:
+        print("Verifying that the deleted prospect no longer appears in the database...")
+        
+        try:
+            # Wait a moment for database consistency
+            time.sleep(2)
+            
+            verify_response = requests.get(endpoint, timeout=30)
+            if verify_response.status_code == 200:
+                final_prospects = verify_response.json()
+                final_count = len(final_prospects) if isinstance(final_prospects, list) else 0
+                test_results["final_prospect_count"] = final_count
+                
+                print(f"📊 Final prospect count after deletion: {final_count}")
+                
+                # Check if count decreased
+                expected_count = test_results["initial_prospect_count"]  # Should be same as initial since we created and deleted one
+                if final_count == expected_count:
+                    print(f"✅ PASS: Prospect count correctly returned to initial count ({expected_count})")
+                    test_results["count_decreased_correctly"] = True
+                else:
+                    print(f"⚠️  WARNING: Prospect count mismatch. Expected: {expected_count}, Got: {final_count}")
+                    test_results["warnings"].append(f"COUNT_MISMATCH_AFTER_DELETE: expected_{expected_count}_got_{final_count}")
+                
+                # Verify the deleted prospect is not in the list
+                deleted_prospect_found = False
+                for prospect in final_prospects:
+                    if prospect.get("id") == test_results["test_prospect_id"]:
+                        deleted_prospect_found = True
+                        break
+                
+                if not deleted_prospect_found:
+                    print("✅ PASS: Deleted prospect no longer appears in the prospects list")
+                else:
+                    print("❌ FAIL: Deleted prospect still appears in the prospects list!")
+                    test_results["critical_issues"].append("DELETED_PROSPECT_STILL_EXISTS")
+                
+            else:
+                print(f"❌ FAIL: Verification GET request failed: {verify_response.status_code}")
+                test_results["critical_issues"].append("VERIFICATION_GET_FAILED")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Verification error: {str(e)}")
+            test_results["critical_issues"].append(f"VERIFICATION_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIPPING: Cannot verify deletion - delete operation was not successful")
+    
+    # TEST STEP 5: Error Scenarios - Non-existent Prospect ID
+    print("\n" + "=" * 80)
+    print("TEST STEP 5: ERROR SCENARIOS - NON-EXISTENT PROSPECT ID")
+    print("=" * 80)
+    
+    fake_prospect_id = "non-existent-prospect-id-12345"
+    error_test_endpoint = f"{BACKEND_URL}/api/customer-prospects/{fake_prospect_id}"
+    print(f"Testing DELETE with non-existent ID: {error_test_endpoint}")
+    
+    try:
+        error_response = requests.delete(error_test_endpoint, timeout=30)
+        print(f"Error Test Status Code: {error_response.status_code}")
+        
+        if error_response.status_code == 404:
+            print("✅ PASS: DELETE with non-existent ID returns 404 Not Found")
+            test_results["error_handling_working"] = True
+            
+            try:
+                error_data = error_response.json()
+                error_message = error_data.get("detail", "")
+                expected_error_message = "Müşteri adayı bulunamadı"
+                
+                if expected_error_message in error_message:
+                    print(f"✅ PASS: Correct Turkish error message: '{error_message}'")
+                else:
+                    print(f"⚠️  WARNING: Unexpected error message: '{error_message}'")
+                    test_results["warnings"].append(f"UNEXPECTED_ERROR_MESSAGE: {error_message}")
+                    
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse error response: {str(e)}")
+                test_results["warnings"].append("ERROR_RESPONSE_PARSE_ISSUE")
+                
+        else:
+            print(f"⚠️  WARNING: Expected 404 for non-existent ID, got {error_response.status_code}")
+            test_results["warnings"].append(f"UNEXPECTED_ERROR_STATUS_{error_response.status_code}")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error testing non-existent ID: {str(e)}")
+        test_results["warnings"].append(f"ERROR_TEST_EXCEPTION: {str(e)}")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL TEST REPORT - CUSTOMER PROSPECTS DELETE FUNCTIONALITY")
+    print("=" * 100)
+    
+    print(f"📊 TEST STATISTICS:")
+    print(f"   • Initial Prospect Count: {test_results['initial_prospect_count']}")
+    print(f"   • Final Prospect Count: {test_results['final_prospect_count']}")
+    print(f"   • Test Prospect Created: {'✅ Yes' if test_results['test_prospect_created'] else '❌ No'}")
+    print(f"   • Test Prospect ID: {test_results['test_prospect_id']}")
+    print(f"   • GET Endpoint Working: {'✅ Yes' if test_results['get_endpoint_working'] else '❌ No'}")
+    print(f"   • DELETE Endpoint Working: {'✅ Yes' if test_results['delete_endpoint_working'] else '❌ No'}")
+    print(f"   • Prospect Deleted Successfully: {'✅ Yes' if test_results['prospect_deleted_successfully'] else '❌ No'}")
+    print(f"   • Count Decreased Correctly: {'✅ Yes' if test_results['count_decreased_correctly'] else '❌ No'}")
+    print(f"   • Error Handling Working: {'✅ Yes' if test_results['error_handling_working'] else '❌ No'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['get_endpoint_working']:
+        print("🚨 CRITICAL: GET /api/customer-prospects endpoint is not working!")
+        print("   RECOMMENDATION: Check backend server status and API routing")
+        
+    elif not test_results['test_prospect_created']:
+        print("🚨 CRITICAL: Cannot create test prospects for deletion testing!")
+        print("   RECOMMENDATION: Check POST /api/customer-prospects endpoint")
+        
+    elif not test_results['delete_endpoint_working']:
+        print("🚨 CRITICAL: DELETE /api/customer-prospects/{id} endpoint is not working!")
+        print("   RECOMMENDATION: Check backend DELETE endpoint implementation")
+        
+    elif not test_results['prospect_deleted_successfully']:
+        print("🚨 CRITICAL: DELETE operation does not complete successfully!")
+        print("   RECOMMENDATION: Check database deletion logic and response handling")
+        
+    elif test_results['critical_issues']:
+        print("🚨 CRITICAL: Multiple issues found with DELETE functionality!")
+        print("   RECOMMENDATION: Review all critical issues and fix systematically")
+        
+    else:
+        print("✅ SUCCESS: Customer prospects DELETE functionality is working correctly!")
+        print("   • DELETE endpoint successfully removes prospects from database")
+        print("   • Proper success response with Turkish message")
+        print("   • Prospects no longer retrievable after deletion")
+        print("   • 404 error handling works correctly for non-existent prospects")
+        print("   • Database integrity maintained after deletion")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if test_results['critical_issues']:
+        print("   1. Fix all critical issues identified in the test")
+        print("   2. Re-run this test to verify fixes")
+        print("   3. Test DELETE functionality in the frontend UI")
+        print("   4. Verify user permissions for DELETE operations")
+    else:
+        print("   1. Test DELETE functionality in the frontend UI")
+        print("   2. Verify user permissions and confirmation dialogs")
+        print("   3. Test bulk deletion if implemented")
+        print("   4. Add DELETE functionality to other prospect management features")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ TEST RESULT: CRITICAL ISSUES FOUND - DELETE FUNCTIONALITY NOT WORKING PROPERLY")
+        return False
+    else:
+        print(f"\n✅ TEST RESULT: ALL TESTS PASSED - DELETE FUNCTIONALITY IS WORKING CORRECTLY")
+        return True
+
 def test_contact_person_fields_verification():
     """
     CONTACT PERSON FIELDS VERIFICATION FOR NEWLY CREATED CUSTOMERS
