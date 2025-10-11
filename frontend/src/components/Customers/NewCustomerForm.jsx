@@ -1270,7 +1270,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {contact.tags.map((tag, tagIndex) => (
+                    {(contact.tags || []).map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
                         className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
