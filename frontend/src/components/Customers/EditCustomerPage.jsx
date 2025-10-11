@@ -418,6 +418,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         taxNumber: updatedFormData.tax_number,
         iban: updatedFormData.iban,
         currency: updatedFormData.currency,
+        bankName: updatedFormData.bank_name,
+        bankBranch: updatedFormData.bank_branch,
+        accountHolderName: updatedFormData.account_holder_name,
+        swiftCode: updatedFormData.swift_code,
         tags: updatedFormData.tags,
         notes: updatedFormData.notes,
         services: updatedFormData.services || []
