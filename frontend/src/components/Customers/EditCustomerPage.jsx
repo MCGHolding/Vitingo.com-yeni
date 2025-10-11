@@ -395,37 +395,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       const updatedFormData = { ...formData, [fieldName]: processedValue };
       setFormData(updatedFormData);
       
-      // Prepare data for backend
+      // Prepare data for backend using mapper
       const updatedCustomer = {
         id: customer.id,
-        companyName: updatedFormData.company_short_name,
-        companyTitle: updatedFormData.company_title,
-        relationshipType: updatedFormData.customer_type_id || 'customer',
-        contactPerson: updatedFormData.contactPerson,
-        mobile: updatedFormData.mobile,
-        email: updatedFormData.email,
-        taxOffice: updatedFormData.tax_office,
-        taxNumber: updatedFormData.tax_number,
-        address: updatedFormData.address,
-        country: updatedFormData.country,
-        city: updatedFormData.city,
-        // Contact person details
-        contactMobile: updatedFormData.contact_mobile,
-        contactEmail: updatedFormData.contact_email,
-        contactPosition: updatedFormData.contact_position,
-        contactAddress: updatedFormData.contact_address,
-        contactCountry: updatedFormData.contact_country,
-        contactCity: updatedFormData.contact_city,
-        // Bank information
-        iban: updatedFormData.iban,
-        currency: updatedFormData.currency,
-        bankName: updatedFormData.bank_name,
-        bankBranch: updatedFormData.bank_branch,
-        accountHolderName: updatedFormData.account_holder_name,
-        swiftCode: updatedFormData.swift_code,
-        tags: updatedFormData.tags,
-        notes: updatedFormData.notes,
-        services: updatedFormData.services || []
+        ...formToDb(updatedFormData)
       };
 
       if (onSave) {
