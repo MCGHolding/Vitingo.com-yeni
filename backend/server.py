@@ -2250,6 +2250,15 @@ async def get_customer(customer_id: str):
 async def update_customer(customer_id: str, customer_data: dict):
     """Update a customer"""
     try:
+        # Validate bank information if provided
+        if 'iban' in customer_data and customer_data['iban']:
+            if not validate_iban(customer_data['iban']):
+                raise HTTPException(status_code=400, detail="Geçersiz IBAN formatı")
+        
+        if 'swiftCode' in customer_data and customer_data['swiftCode']:
+            if not validate_swift_code(customer_data['swiftCode']):
+                raise HTTPException(status_code=400, detail="Geçersiz Swift kodu formatı")
+        
         # Update in MongoDB
         result = await db.customers.update_one(
             {"id": customer_id},
