@@ -1110,7 +1110,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {contacts.map((contact, contactIndex) => (
+            {(contacts || []).map((contact, contactIndex) => (
               <div key={contactIndex} className="border rounded-lg p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-gray-900">Yetkili Kişi {contactIndex + 1}</h4>
