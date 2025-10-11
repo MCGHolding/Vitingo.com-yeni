@@ -408,14 +408,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       if (onSave) {
         savedData = await onSave(customerData);
       } else {
-        // Direct backend save
-        const response = await fetch(`${backendUrl}${endpoint}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(customerData)
-        });
+        // POST customer data using safe JSON parsing
 
         // Use safe JSON parsing for customer creation
         savedData = await postCustomer(customerData);
