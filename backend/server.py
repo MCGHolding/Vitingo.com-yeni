@@ -2218,7 +2218,7 @@ async def get_customers():
     customers = await db.customers.find().to_list(length=None)
     return JSONResponse(content=customers)
 
-@api_router.get("/customers/{customer_id}", response_model=Customer)
+@api_router.get("/customers/{customer_id}")
 async def get_customer(customer_id: str):
     """Get a specific customer"""
     try:
@@ -2227,7 +2227,7 @@ async def get_customer(customer_id: str):
         if not customer:
             raise HTTPException(status_code=404, detail="Customer not found")
             
-        return Customer(**customer)
+        return JSONResponse(content={"customer": customer})
         
     except HTTPException:
         raise
