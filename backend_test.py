@@ -1367,38 +1367,42 @@ def test_customer_bank_payment_information():
     CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING
     
     BACKGROUND:
-    The EditCustomerPage has been updated to include new bank payment information fields:
-    - Hesap Sahibi (account_holder_name)  
-    - IBAN (iban)
-    - Banka Adı (bank_name)
-    - Şube (bank_branch) 
-    - Swift Kodu (swift_code)
-    - Ülke (contact_country for bank)
+    Main agent has just added bank payment fields to the Customer Pydantic model in server.py:
+    - iban: str = ""
+    - bankName: str = ""  
+    - bankBranch: str = ""
+    - accountHolderName: str = ""
+    - swiftCode: str = ""
+    - contactCountry: str = ""
+    - services: List[str] = Field(default_factory=list)
 
-    The frontend now sends these fields in the customer update API call:
-    - bankName: updatedFormData.bank_name
-    - bankBranch: updatedFormData.bank_branch  
-    - accountHolderName: updatedFormData.account_holder_name
-    - swiftCode: updatedFormData.swift_code
+    Also added validation functions:
+    - validate_iban(): Validates Turkish (TR + 24 digits) and international IBAN formats
+    - validate_swift_code(): Validates Swift code format (8-11 characters)
+
+    Updated endpoints:
+    - POST /api/customers: Now validates IBAN and Swift code on creation
+    - PUT /api/customers/{id}: Now validates IBAN and Swift code on update
 
     TESTING REQUIREMENTS:
-    1. **Customer Data Structure Verification:** GET /api/customers to check current customer data structure
-    2. **API Update Support Test:** Test PUT /api/customers/{id} with bank information fields
-    3. **Data Persistence Test:** Update a customer with bank information and verify persistence
-    4. **Field Validation Test:** Test IBAN format validation if implemented
-    5. **Backend Response Format:** Verify API returns bank fields in customer data
+    1. **Customer Model Validation:** Verify Customer model now includes all new bank fields
+    2. **IBAN Validation Testing:** Test valid Turkish IBAN, valid international IBAN, invalid IBAN formats
+    3. **Swift Code Validation Testing:** Test valid Swift codes, invalid Swift formats
+    4. **Customer Creation with Bank Info:** POST /api/customers with complete bank information
+    5. **Customer Update with Bank Info:** PUT /api/customers/{id} with bank information updates
+    6. **Data Persistence Verification:** Create customer with bank info, then retrieve to confirm persistence
 
     EXPECTED BEHAVIOR:
-    - Customer API should accept and store all bank payment fields
-    - Bank information should persist in database
-    - API should return bank data for frontend display
-    - Field updates should work with existing field-level editing system
+    - All bank payment fields should be included in API responses
+    - IBAN and Swift validation should work with Turkish error messages
+    - Field-level editing should work with new bank fields
+    - Empty values should be allowed for optional bank fields
     """
     
     print("=" * 100)
     print("🏦 CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING 🏦")
     print("=" * 100)
-    print("BACKGROUND: EditCustomerPage updated to include new bank payment information fields")
+    print("BACKGROUND: Testing UPDATED Customer model and API with bank payment information fields")
     print("Testing backend support for bank payment fields in customer data structure and API")
     print("=" * 100)
     
