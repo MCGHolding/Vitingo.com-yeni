@@ -867,36 +867,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hizmetler
-                  </label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.services.map((service, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
-                      >
-                        {service}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newServices = [...formData.services];
-                            newServices.splice(index, 1);
-                            handleInputChange('services', newServices);
-                          }}
-                          className="ml-2 text-blue-600 hover:text-blue-800"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  {formData.services.length === 0 && (
-                    <p className="text-gray-400 italic text-sm">Henüz hizmet eklenmemiş</p>
-                  )}
-                </div>
-                
+                {/* Hizmetler artık Firma Bilgileri bölümünde EditableField olarak yer alıyor */}
                 <EditableField
                   label="IBAN"
                   value={formData.iban}
