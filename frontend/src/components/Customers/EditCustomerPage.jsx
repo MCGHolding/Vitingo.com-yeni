@@ -202,6 +202,31 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [countries, setCountries] = useState([]);
   const [newTag, setNewTag] = useState('');
 
+  // Helper function to map customer relationship type to customer type value
+  const mapRelationshipTypeToCustomerType = (relationshipType) => {
+    const mapping = {
+      'Potansiyel Müşteri': 'yeni_musteri',
+      'customer': 'mevcut_musteri',
+      'Mevcut Müşteri': 'mevcut_musteri',
+      'Yeni Müşteri': 'yeni_musteri',
+      'VIP Müşteri': 'vip_musteri',
+      'Firma': 'firma',
+      'Ajans': 'ajans',
+      'Dernek veya Vakıf': 'dernek_vakif',
+      'Devlet Kurumu': 'devlet_kurumu',
+      'Holding Şirketi': 'holding_sirketi',
+      'Vakıf Şirketi': 'vakif_sirketi'
+    };
+    
+    return mapping[relationshipType] || relationshipType;
+  };
+
+  // Helper function to map sector name to sector value
+  const mapSectorNameToValue = (sectorName) => {
+    // For sectors, we'll find it from the loaded sectors data
+    return sectorName;
+  };
+
   // Initialize form with customer data
   useEffect(() => {
     if (customer) {
@@ -209,10 +234,13 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       console.log('Customer relationshipType:', customer.relationshipType);
       console.log('Customer sector:', customer.sector);
       
+      const mappedCustomerType = mapRelationshipTypeToCustomerType(customer.relationshipType);
+      console.log('Mapped customer type:', customer.relationshipType, '->', mappedCustomerType);
+      
       setFormData({
         company_short_name: customer.companyName || '',
         company_title: customer.companyTitle || '',
-        customer_type_id: customer.relationshipType || 'customer',
+        customer_type_id: mappedCustomerType || 'mevcut_musteri',
         specialty_id: customer.sector || '',
         address: customer.address || '',
         country: customer.country || '',
