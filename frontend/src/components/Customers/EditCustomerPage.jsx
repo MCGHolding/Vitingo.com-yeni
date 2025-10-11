@@ -123,7 +123,7 @@ const EditableField = ({
             </Button>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-between p-2 bg-gray-50 rounded-md group-hover:bg-gray-100 transition-colors duration-200">
+          <div className="flex-1 flex items-center justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors duration-200">
             <span className="text-gray-900">
               {type === 'select' ? (
                 // Show label for select fields
@@ -143,7 +143,7 @@ const EditableField = ({
               size="sm"
               variant="ghost"
               onClick={() => startEdit(fieldName)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-blue-600 group-hover:bg-blue-50"
+              className="ml-2 text-blue-600 hover:bg-blue-50 transition-all duration-200"
             >
               <Edit className="h-4 w-4" />
             </Button>
