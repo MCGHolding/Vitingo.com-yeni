@@ -289,6 +289,19 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         const customerTypesData = await customerTypesResponse.json();
         console.log('Customer types loaded:', customerTypesData);
         setCustomerTypes(customerTypesData);
+        
+        // Verify customer type mapping for current customer
+        if (customer && customer.relationshipType) {
+          const mappedValue = mapRelationshipTypeToCustomerType(customer.relationshipType);
+          const customerTypeFound = customerTypesData.find(ct => ct.value === mappedValue);
+          console.log('Customer type mapping verification:');
+          console.log('Original relationshipType:', customer.relationshipType);
+          console.log('Mapped value:', mappedValue);
+          console.log('Found in API:', !!customerTypeFound);
+          if (customerTypeFound) {
+            console.log('Customer type found:', customerTypeFound);
+          }
+        }
       } else {
         console.error('Failed to load customer types:', customerTypesResponse.status);
       }
