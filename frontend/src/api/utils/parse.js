@@ -19,28 +19,20 @@ export async function parseJsonSafe(res) {
   }
 }
 
-export async function getCustomer(id) {
+// müşteri getir
+export async function apiGetCustomer(id) {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
   const res = await fetch(`${backendUrl}/api/customers/${id}`, {
     credentials: "include",
-    headers: { 
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
+    headers: { "Accept": "application/json" },
   });
-  if (!res.ok) {
-    const errorBody = await parseJsonSafe(res).catch(() => null);
-    throw new Error(`GET /customers/${id} failed (${res.status}): ${errorBody ? JSON.stringify(errorBody) : 'Unknown error'}`);
-  }
-  return await parseJsonSafe(res);
+  if (!res.ok) throw new Error(`GET /customers/${id} ${res.status}`);
+  return await parseJsonSafe(res); // { customer: ... }
 }
 
-export async function patchCustomer(id, payload) {
+// müşteri patch
+export async function apiPatchCustomer(id, payload) {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-  
-  console.log('PATCH Customer payload:', payload);
-  console.log('PATCH Customer JSON:', JSON.stringify(payload, null, 2));
-  
   const res = await fetch(`${backendUrl}/api/customers/${id}`, {
     method: "PATCH",
     credentials: "include",
@@ -51,26 +43,18 @@ export async function patchCustomer(id, payload) {
     body: JSON.stringify(payload),
   });
 
-  console.log('PATCH Response status:', res.status);
-  console.log('PATCH Response headers:', [...res.headers.entries()]);
-
-  // Bazı backend'ler 204 döndürebilir; bunu normal kabul ediyoruz
-  if (res.status === 204) return null;
-
+  if (res.status === 204) return null; // gövde yoksa normal
   if (!res.ok) {
-    // JSON olmayan hata gövdesi burada yakalanır
-    const errBody = await parseJsonSafe(res).catch(() => null);
-    throw new Error(`PATCH failed (${res.status}) ${errBody ? JSON.stringify(errBody) : "Unknown error"}`);
+    // JSON olmayan hata gövdesini yutma; logla
+    await parseJsonSafe(res).catch(() => null);
+    throw new Error(`PATCH /customers/${id} ${res.status}`);
   }
-  return await parseJsonSafe(res);
+  return await parseJsonSafe(res); // { customer, auditId } vb.
 }
 
-export async function postCustomer(payload) {
+// müşteri oluştur
+export async function apiPostCustomer(payload) {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-  
-  console.log('POST Customer payload:', payload);
-  console.log('POST Customer JSON:', JSON.stringify(payload, null, 2));
-  
   const res = await fetch(`${backendUrl}/api/customers`, {
     method: "POST",
     credentials: "include",
@@ -81,12 +65,9 @@ export async function postCustomer(payload) {
     body: JSON.stringify(payload),
   });
 
-  console.log('POST Response status:', res.status);
-  console.log('POST Response headers:', [...res.headers.entries()]);
-
   if (!res.ok) {
-    const errBody = await parseJsonSafe(res).catch(() => null);
-    throw new Error(`POST failed (${res.status}) ${errBody ? JSON.stringify(errBody) : "Unknown error"}`);
+    await parseJsonSafe(res).catch(() => null);
+    throw new Error(`POST /customers ${res.status}`);
   }
   return await parseJsonSafe(res);
 }
