@@ -15996,40 +15996,40 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🎯 ACTIVITY MANAGEMENT API ENDPOINTS TESTING")
+    print("🔍 CUSTOMER DROPDOWN DATA APIs TESTING FOR EDITCUSTOMERPAGE")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 100)
-    print("🎯 TESTING: NEW Activity Management API endpoints for OpportunityTimelinePage functionality")
-    print("📝 Testing CRUD operations for activities: GET, POST, PUT, DELETE, PATCH")
-    print("📝 Testing activity types: call_record, email_management, activity_planner, design_upload, messaging")
-    print("📝 Testing status management: pending, in_progress, completed, cancelled, overdue")
-    print("📝 Verifying data structure and DateTime field handling")
+    print("🎯 TESTING: Customer dropdown data APIs to debug reported issues")
+    print("📝 USER REPORTED ISSUES:")
+    print("   1. Customer types and sectors are not loading properly in EditCustomerPage dropdown")
+    print("   2. Selected values are not being pulled from database correctly")
+    print("📝 TESTING REQUIREMENTS:")
+    print("   1. Customer Types API Test: GET /api/customer-types")
+    print("   2. Sectors API Test: GET /api/sectors")
+    print("   3. Sample Customer Data Test: GET /api/customers")
+    print("   4. Data Mapping Verification")
+    print("   5. API Response Format Check")
     print("=" * 100)
     
-    # Run Activity Management API endpoints testing
+    # Run Customer Dropdown Data APIs testing
     try:
-        result = test_activity_management_api_endpoints()
+        result = test_customer_dropdown_data_apis()
         if result:
-            print("\n✅ ACTIVITY MANAGEMENT API TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
-            print("✅ GET /api/opportunities/{opportunity_id}/activities - Working")
-            print("✅ POST /api/opportunities/{opportunity_id}/activities - Working")
-            print("✅ GET /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
-            print("✅ PUT /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
-            print("✅ DELETE /api/opportunities/{opportunity_id}/activities/{activity_id} - Working")
-            print("✅ PATCH /api/opportunities/{opportunity_id}/activities/{activity_id}/status - Working")
-            print("✅ All activity types supported (call_record, email_management, activity_planner, design_upload, messaging)")
-            print("✅ Status management working (pending, in_progress, completed, cancelled, overdue)")
-            print("✅ Data structure verification passed - all required fields present")
-            print("✅ DateTime fields handled correctly")
-            print("📋 Activity Management API endpoints are production-ready for OpportunityTimelinePage")
+            print("\n✅ CUSTOMER DROPDOWN DATA APIs TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
+            print("✅ GET /api/customer-types - Working and returning valid Turkish customer types")
+            print("✅ GET /api/sectors - Working and returning valid Turkish business sectors")
+            print("✅ GET /api/customers - Working and returning customer data with proper field mapping")
+            print("✅ Data mapping verification passed - customer relationshipType and sector values exist in dropdown APIs")
+            print("✅ API response format verification passed - all required fields present")
+            print("📋 Backend APIs are working correctly - if frontend dropdowns still not working, check frontend integration")
         else:
-            print("\n🚨 ACTIVITY MANAGEMENT API TESTING COMPLETED - CRITICAL ISSUES FOUND!")
-            print("❌ Activity Management API endpoints have problems detected")
-            print("❌ OpportunityTimelinePage functionality may be limited")
-            print("❌ Immediate action required to resolve Activity Management system")
-            print("📋 See detailed test report above")
+            print("\n🚨 CUSTOMER DROPDOWN DATA APIs TESTING COMPLETED - CRITICAL ISSUES FOUND!")
+            print("❌ Customer dropdown APIs have problems that explain the reported issues")
+            print("❌ EditCustomerPage dropdown functionality is affected by backend problems")
+            print("❌ Immediate action required to resolve customer dropdown data issues")
+            print("📋 See detailed test report above for specific problems and recommendations")
     except Exception as e:
-        print(f"\n❌ ACTIVITY MANAGEMENT API TESTING ERROR: {str(e)}")
+        print(f"\n❌ CUSTOMER DROPDOWN DATA APIs TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
