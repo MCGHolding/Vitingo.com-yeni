@@ -205,6 +205,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Initialize form with customer data
   useEffect(() => {
     if (customer) {
+      console.log('Customer data received:', customer);
+      console.log('Customer relationshipType:', customer.relationshipType);
+      console.log('Customer sector:', customer.sector);
+      
       setFormData({
         company_short_name: customer.companyName || '',
         company_title: customer.companyTitle || '',
@@ -238,6 +242,9 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         account_holder_name: customer.accountHolderName || customer.companyName || '',
         swift_code: customer.swiftCode || ''
       });
+      
+      console.log('Form data initialized with customer_type_id:', customer.relationshipType || 'customer');
+      console.log('Form data initialized with specialty_id:', customer.sector || '');
     }
     loadDropdownData();
   }, [customer]);
