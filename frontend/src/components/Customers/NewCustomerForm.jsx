@@ -611,7 +611,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
                 <div className="flex space-x-2">
                   <div className="flex-1">
                     <SearchableSelect
-                      options={customerTypes.map(type => ({ value: type.value, label: type.name }))}
+                      options={(customerTypes || []).map(type => ({ value: type.value, label: type.name }))}
                       value={formData.customer_type_id}
                       onValueChange={(value) => handleInputChange('customer_type_id', value)}
                       placeholder="Müşteri türü seçin..."
