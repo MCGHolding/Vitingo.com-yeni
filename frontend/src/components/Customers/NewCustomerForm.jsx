@@ -188,6 +188,16 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
 
   // Test verisi doldurma fonksiyonu - TEST İÇİN, DAHA SONRA KALDIRILACAK
   const fillTestData = () => {
+    // Check if data is loaded
+    if (!customerTypes || !sectors || customerTypes.length === 0 || sectors.length === 0) {
+      toast({
+        title: "Hata",
+        description: "Müşteri türleri ve sektörler henüz yüklenmedi. Lütfen birkaç saniye bekleyin.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const testCompanyNames = [
       'Teknoloji Çözümleri A.Ş.',
       'İnovasyon Medya Ltd.',
@@ -197,13 +207,12 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       'Mobil Uygulama Geliştiricileri'
     ];
     
-    const testSectors = ['teknoloji', 'bankacilik', 'gida_icecek', 'otomotiv', 'saglik', 'egitim'];
-    const testCustomerTypes = ['ajans', 'mevcut_musteri', 'yeni_musteri', 'firma'];
     const testServices = ['Web Tasarım', 'Mobil Uygulama', 'SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'Grafik Tasarım'];
     
     const randomCompanyName = testCompanyNames[Math.floor(Math.random() * testCompanyNames.length)];
-    const randomSector = testSectors[Math.floor(Math.random() * testSectors.length)];
-    const randomCustomerType = testCustomerTypes[Math.floor(Math.random() * testCustomerTypes.length)];
+    // Use actual loaded data for sectors and customer types
+    const randomSector = sectors[Math.floor(Math.random() * sectors.length)]?.value || 'teknoloji';
+    const randomCustomerType = customerTypes[Math.floor(Math.random() * customerTypes.length)]?.value || 'mevcut_musteri';
     const randomServices = testServices.slice(0, Math.floor(Math.random() * 3) + 1);
     
     const testData = {
