@@ -2242,11 +2242,9 @@ async def create_customer(customer_data: dict):
 async def get_customers():
     """Get all customers"""
     customers = await db.customers.find().to_list(length=None)
-    # Convert ObjectId to string for JSON serialization
-    for customer in customers:
-        if '_id' in customer:
-            customer['_id'] = str(customer['_id'])
-    return JSONResponse(content=customers)
+    # Serialize all documents properly
+    serialized_customers = [serialize_document(customer) for customer in customers]
+    return JSONResponse(content=serialized_customers)
 
 @api_router.get("/customers/{customer_id}")
 async def get_customer(customer_id: str):
