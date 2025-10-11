@@ -858,12 +858,12 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
               </CardContent>
             </Card>
 
-            {/* Hizmetler ve Finansal */}
+            {/* Banka Ödeme Bilgileri */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
                 <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
                   <CreditCard className="h-5 w-5 text-emerald-600" />
-                  <span>Hizmetler ve Finansal</span>
+                  <span>Banka Ödeme Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
