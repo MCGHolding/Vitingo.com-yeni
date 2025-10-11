@@ -1362,6 +1362,507 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_newcustomerform_data_mapping_fixes():
+    """
+    Test NewCustomerForm data mapping fixes with new test customer creation
+    
+    BACKGROUND:
+    Fixed critical data mapping issues in NewCustomerForm.jsx:
+    1. Changed relationshipType from hardcoded "customer" to baseCustomerData.customer_type_id
+    2. Fixed sector mapping to use actual sector_id instead of "Bilinmiyor" fallback
+    3. Added missing fields: services, bank info, contact person fields
+
+    TESTING REQUIREMENTS:
+    1. **Create Test Customer with All Data:**
+       - POST /api/customers with complete customer data including:
+         - relationshipType: "ajans" (matching Ajans customer type)
+         - sector: "bankacilik" (matching Bankacılık sector)
+         - services: ["test service", "deneme"]
+         - Bank info: bankName, bankBranch, accountHolderName, swiftCode, iban
+         - Contact person: contactMobile, contactEmail, contactPosition, contactAddress, contactCountry, contactCity
+
+    2. **Verify Data Persistence:**
+       - GET the created customer back
+       - Confirm all fields stored correctly
+       - Verify relationshipType is "ajans" not "customer"
+       - Verify sector is "bankacilik" not "Bilinmiyor"
+       - Verify services array contains all provided services
+       - Verify all bank and contact fields are preserved
+
+    3. **Test Customer Type and Sector APIs:**
+       - GET /api/customer-types to verify "ajans" value exists
+       - GET /api/sectors to verify "bankacilik" value exists
+       - Confirm mapping between display names and values
+
+    4. **Compare with Kaygusuzlar Issue:**
+       - Verify the new test customer doesn't have the same data loss issues
+       - Confirm proper field mapping is working
+
+    EXPECTED RESULT:
+    New customer should be created with all correct data, no data loss, proper relationshipType 
+    and sector values that match EditCustomerPage expectations.
+    """
+    
+    print("=" * 100)
+    print("🔧 TESTING NEWCUSTOMERFORM DATA MAPPING FIXES 🔧")
+    print("=" * 100)
+    print("CONTEXT: Testing fixes for critical data mapping issues in NewCustomerForm.jsx")
+    print("where relationshipType, sector, services, bank info, and contact person fields")
+    print("were not being properly mapped and stored in the database.")
+    print("=" * 100)
+    
+    test_results = {
+        "customer_types_api_working": False,
+        "sectors_api_working": False,
+        "ajans_customer_type_exists": False,
+        "bankacilik_sector_exists": False,
+        "test_customer_created": False,
+        "test_customer_id": None,
+        "data_persistence_verified": False,
+        "relationship_type_correct": False,
+        "sector_correct": False,
+        "services_preserved": False,
+        "bank_info_preserved": False,
+        "contact_info_preserved": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: Verify Customer Types API and "ajans" value exists
+    print("\n" + "=" * 80)
+    print("TEST 1: CUSTOMER TYPES API AND 'AJANS' VALUE VERIFICATION")
+    print("=" * 80)
+    
+    customer_types_endpoint = f"{BACKEND_URL}/api/customer-types"
+    print(f"Testing endpoint: {customer_types_endpoint}")
+    
+    try:
+        response = requests.get(customer_types_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer types API endpoint is responding")
+            test_results["customer_types_api_working"] = True
+            
+            try:
+                customer_types = response.json()
+                print(f"📊 Found {len(customer_types)} customer types")
+                
+                # Look for "ajans" value
+                ajans_found = False
+                for customer_type in customer_types:
+                    if customer_type.get("value") == "ajans":
+                        ajans_found = True
+                        print(f"✅ PASS: Found 'ajans' customer type: {customer_type.get('name')}")
+                        test_results["ajans_customer_type_exists"] = True
+                        break
+                
+                if not ajans_found:
+                    print("❌ FAIL: 'ajans' customer type not found in API response")
+                    test_results["critical_issues"].append("AJANS_CUSTOMER_TYPE_MISSING")
+                    
+                # Display all customer types for reference
+                print("\n📋 Available customer types:")
+                for ct in customer_types[:10]:  # Show first 10
+                    print(f"   • {ct.get('name')} (value: {ct.get('value')})")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer types data: {str(e)}")
+                test_results["critical_issues"].append(f"CUSTOMER_TYPES_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer types API error. Status: {response.status_code}")
+            test_results["critical_issues"].append(f"CUSTOMER_TYPES_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer types API request error: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMER_TYPES_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: Verify Sectors API and "bankacilik" value exists
+    print("\n" + "=" * 80)
+    print("TEST 2: SECTORS API AND 'BANKACILIK' VALUE VERIFICATION")
+    print("=" * 80)
+    
+    sectors_endpoint = f"{BACKEND_URL}/api/sectors"
+    print(f"Testing endpoint: {sectors_endpoint}")
+    
+    try:
+        response = requests.get(sectors_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Sectors API endpoint is responding")
+            test_results["sectors_api_working"] = True
+            
+            try:
+                sectors = response.json()
+                print(f"📊 Found {len(sectors)} sectors")
+                
+                # Look for "bankacilik" value
+                bankacilik_found = False
+                for sector in sectors:
+                    if sector.get("value") == "bankacilik":
+                        bankacilik_found = True
+                        print(f"✅ PASS: Found 'bankacilik' sector: {sector.get('name')}")
+                        test_results["bankacilik_sector_exists"] = True
+                        break
+                
+                if not bankacilik_found:
+                    print("❌ FAIL: 'bankacilik' sector not found in API response")
+                    test_results["critical_issues"].append("BANKACILIK_SECTOR_MISSING")
+                    
+                # Display some sectors for reference
+                print("\n📋 Available sectors (first 10):")
+                for sector in sectors[:10]:
+                    print(f"   • {sector.get('name')} (value: {sector.get('value')})")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse sectors data: {str(e)}")
+                test_results["critical_issues"].append(f"SECTORS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Sectors API error. Status: {response.status_code}")
+            test_results["critical_issues"].append(f"SECTORS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Sectors API request error: {str(e)}")
+        test_results["critical_issues"].append(f"SECTORS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Create Test Customer with Complete Data
+    print("\n" + "=" * 80)
+    print("TEST 3: CREATE TEST CUSTOMER WITH COMPLETE DATA MAPPING")
+    print("=" * 80)
+    
+    # Create comprehensive test customer data with all fixed fields
+    test_customer_data = {
+        "companyName": "NewCustomerForm Test Şirketi A.Ş.",
+        "companyTitle": "NewCustomerForm Test Şirketi Anonim Şirketi",
+        "relationshipType": "ajans",  # Fixed: using actual value instead of "customer"
+        "sector": "bankacilik",  # Fixed: using actual value instead of "Bilinmiyor"
+        "email": "test@newcustomerformtest.com",
+        "phone": "+90 212 555 9999",
+        "address": "Test Mahallesi, NewCustomerForm Sokak No:123 Beşiktaş",
+        "city": "İstanbul",
+        "country": "TR",
+        "taxOffice": "Beşiktaş Vergi Dairesi",
+        "taxNumber": "9876543210",
+        "notes": f"NewCustomerForm data mapping test - Created: {datetime.now().isoformat()}",
+        
+        # Fixed: Services array (was missing)
+        "services": ["test service", "deneme"],
+        
+        # Fixed: Bank information fields (were missing)
+        "bankName": "Test Bankası A.Ş.",
+        "bankBranch": "Beşiktaş Şubesi",
+        "accountHolderName": "NewCustomerForm Test Şirketi A.Ş.",
+        "swiftCode": "TESTTR33",
+        "iban": "TR33 0001 2345 6789 0123 4567 89",
+        
+        # Fixed: Contact person fields (were missing)
+        "contactMobile": "+90 532 999 8877",
+        "contactEmail": "contact@newcustomerformtest.com",
+        "contactPosition": "Genel Müdür",
+        "contactAddress": "Test Mahallesi, İletişim Sokak No:456",
+        "contactCountry": "Türkiye",
+        "contactCity": "İstanbul"
+    }
+    
+    print(f"Creating test customer: {test_customer_data['companyName']}")
+    print(f"RelationshipType: {test_customer_data['relationshipType']} (should be 'ajans')")
+    print(f"Sector: {test_customer_data['sector']} (should be 'bankacilik')")
+    print(f"Services: {test_customer_data['services']}")
+    print(f"Bank Name: {test_customer_data['bankName']}")
+    print(f"Contact Mobile: {test_customer_data['contactMobile']}")
+    
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    try:
+        create_response = requests.post(customers_endpoint, json=test_customer_data, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Test customer creation endpoint is working")
+            test_results["test_customer_created"] = True
+            
+            try:
+                created_customer = create_response.json()
+                test_customer_id = created_customer.get("id")
+                test_results["test_customer_id"] = test_customer_id
+                print(f"✅ PASS: Test customer created successfully with ID: {test_customer_id}")
+                
+                # Verify creation response contains expected data
+                print(f"\n🔍 CREATION RESPONSE VERIFICATION:")
+                print(f"   Company Name: {created_customer.get('companyName')}")
+                print(f"   Relationship Type: {created_customer.get('relationshipType')}")
+                print(f"   Sector: {created_customer.get('sector')}")
+                print(f"   Services: {created_customer.get('services')}")
+                print(f"   Bank Name: {created_customer.get('bankName')}")
+                print(f"   Contact Mobile: {created_customer.get('contactMobile')}")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing created customer: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_PROCESS_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer creation failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            test_results["critical_issues"].append(f"CREATE_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer creation error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # TEST 4: Verify Data Persistence - GET the created customer back
+    if test_results["test_customer_created"] and test_results["test_customer_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 4: VERIFY DATA PERSISTENCE - GET CREATED CUSTOMER")
+        print("=" * 80)
+        
+        time.sleep(2)  # Wait for database write
+        
+        try:
+            # Get all customers and find our test customer
+            get_response = requests.get(customers_endpoint, timeout=30)
+            if get_response.status_code == 200:
+                customers = get_response.json()
+                
+                # Find our test customer
+                test_customer_found = None
+                for customer in customers:
+                    if customer.get("id") == test_results["test_customer_id"]:
+                        test_customer_found = customer
+                        break
+                
+                if test_customer_found:
+                    print("✅ PASS: Test customer found in database - PERSISTENCE IS WORKING!")
+                    test_results["data_persistence_verified"] = True
+                    
+                    print(f"\n🔍 DETAILED DATA PERSISTENCE VERIFICATION:")
+                    
+                    # TEST 4.1: Verify relationshipType is correct
+                    stored_relationship_type = test_customer_found.get("relationshipType")
+                    print(f"   Relationship Type: '{stored_relationship_type}' (expected: 'ajans')")
+                    if stored_relationship_type == "ajans":
+                        print("   ✅ PASS: RelationshipType correctly stored as 'ajans' (not 'customer')")
+                        test_results["relationship_type_correct"] = True
+                    else:
+                        print(f"   ❌ FAIL: RelationshipType is '{stored_relationship_type}', expected 'ajans'")
+                        test_results["critical_issues"].append(f"WRONG_RELATIONSHIP_TYPE_{stored_relationship_type}")
+                    
+                    # TEST 4.2: Verify sector is correct
+                    stored_sector = test_customer_found.get("sector")
+                    print(f"   Sector: '{stored_sector}' (expected: 'bankacilik')")
+                    if stored_sector == "bankacilik":
+                        print("   ✅ PASS: Sector correctly stored as 'bankacilik' (not 'Bilinmiyor')")
+                        test_results["sector_correct"] = True
+                    else:
+                        print(f"   ❌ FAIL: Sector is '{stored_sector}', expected 'bankacilik'")
+                        test_results["critical_issues"].append(f"WRONG_SECTOR_{stored_sector}")
+                    
+                    # TEST 4.3: Verify services array is preserved
+                    stored_services = test_customer_found.get("services", [])
+                    print(f"   Services: {stored_services} (expected: ['test service', 'deneme'])")
+                    if isinstance(stored_services, list) and len(stored_services) >= 2:
+                        if "test service" in stored_services and "deneme" in stored_services:
+                            print("   ✅ PASS: Services array correctly preserved with all values")
+                            test_results["services_preserved"] = True
+                        else:
+                            print("   ❌ FAIL: Services array missing expected values")
+                            test_results["critical_issues"].append("SERVICES_VALUES_MISSING")
+                    else:
+                        print(f"   ❌ FAIL: Services array not properly stored: {stored_services}")
+                        test_results["critical_issues"].append("SERVICES_ARRAY_MISSING")
+                    
+                    # TEST 4.4: Verify bank information is preserved
+                    bank_fields = ["bankName", "bankBranch", "accountHolderName", "swiftCode", "iban"]
+                    bank_info_complete = True
+                    print(f"   Bank Information:")
+                    for field in bank_fields:
+                        stored_value = test_customer_found.get(field, "")
+                        expected_value = test_customer_data.get(field, "")
+                        print(f"     {field}: '{stored_value}' (expected: '{expected_value}')")
+                        if not stored_value or stored_value != expected_value:
+                            bank_info_complete = False
+                    
+                    if bank_info_complete:
+                        print("   ✅ PASS: All bank information fields correctly preserved")
+                        test_results["bank_info_preserved"] = True
+                    else:
+                        print("   ❌ FAIL: Bank information fields not properly preserved")
+                        test_results["critical_issues"].append("BANK_INFO_NOT_PRESERVED")
+                    
+                    # TEST 4.5: Verify contact person information is preserved
+                    contact_fields = ["contactMobile", "contactEmail", "contactPosition", "contactAddress", "contactCountry", "contactCity"]
+                    contact_info_complete = True
+                    print(f"   Contact Person Information:")
+                    for field in contact_fields:
+                        stored_value = test_customer_found.get(field, "")
+                        expected_value = test_customer_data.get(field, "")
+                        print(f"     {field}: '{stored_value}' (expected: '{expected_value}')")
+                        if not stored_value or stored_value != expected_value:
+                            contact_info_complete = False
+                    
+                    if contact_info_complete:
+                        print("   ✅ PASS: All contact person fields correctly preserved")
+                        test_results["contact_info_preserved"] = True
+                    else:
+                        print("   ❌ FAIL: Contact person fields not properly preserved")
+                        test_results["critical_issues"].append("CONTACT_INFO_NOT_PRESERVED")
+                        
+                else:
+                    print("❌ FAIL: Test customer not found in database after creation!")
+                    test_results["critical_issues"].append("TEST_CUSTOMER_NOT_FOUND")
+                    
+            else:
+                print(f"❌ FAIL: Could not retrieve customers. Status: {get_response.status_code}")
+                test_results["critical_issues"].append(f"GET_CUSTOMERS_FAILED_{get_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error verifying data persistence: {str(e)}")
+            test_results["critical_issues"].append(f"PERSISTENCE_CHECK_ERROR: {str(e)}")
+    
+    # TEST 5: Compare with Kaygusuzlar Issue
+    print("\n" + "=" * 80)
+    print("TEST 5: COMPARE WITH KAYGUSUZLAR ISSUE - VERIFY FIXES WORK")
+    print("=" * 80)
+    
+    if test_results["data_persistence_verified"]:
+        issues_resolved = 0
+        total_issues = 5
+        
+        print("🔍 Comparing new test customer with Kaygusuzlar data loss issues:")
+        
+        if test_results["relationship_type_correct"]:
+            print("   ✅ FIXED: RelationshipType correctly stored as 'ajans' (Kaygusuzlar had 'customer')")
+            issues_resolved += 1
+        else:
+            print("   ❌ NOT FIXED: RelationshipType still has mapping issues")
+        
+        if test_results["sector_correct"]:
+            print("   ✅ FIXED: Sector correctly stored as 'bankacilik' (Kaygusuzlar had 'Bilinmiyor')")
+            issues_resolved += 1
+        else:
+            print("   ❌ NOT FIXED: Sector still has mapping issues")
+        
+        if test_results["services_preserved"]:
+            print("   ✅ FIXED: Services array preserved (Kaygusuzlar had empty array)")
+            issues_resolved += 1
+        else:
+            print("   ❌ NOT FIXED: Services array still not preserved")
+        
+        if test_results["bank_info_preserved"]:
+            print("   ✅ FIXED: Bank information preserved (Kaygusuzlar had empty fields)")
+            issues_resolved += 1
+        else:
+            print("   ❌ NOT FIXED: Bank information still not preserved")
+        
+        if test_results["contact_info_preserved"]:
+            print("   ✅ FIXED: Contact person info preserved (Kaygusuzlar had empty fields)")
+            issues_resolved += 1
+        else:
+            print("   ❌ NOT FIXED: Contact person info still not preserved")
+        
+        print(f"\n📊 FIXES VERIFICATION: {issues_resolved}/{total_issues} issues resolved")
+        
+        if issues_resolved == total_issues:
+            print("🎉 EXCELLENT: All NewCustomerForm data mapping issues have been fixed!")
+        elif issues_resolved >= 3:
+            print("✅ GOOD: Most NewCustomerForm data mapping issues have been fixed")
+        else:
+            print("⚠️  WARNING: Several NewCustomerForm data mapping issues still exist")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL TEST REPORT - NEWCUSTOMERFORM DATA MAPPING FIXES")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Customer Types API: {'✅ Working' if test_results['customer_types_api_working'] else '❌ Failed'}")
+    print(f"   • Sectors API: {'✅ Working' if test_results['sectors_api_working'] else '❌ Failed'}")
+    print(f"   • 'ajans' Customer Type: {'✅ Found' if test_results['ajans_customer_type_exists'] else '❌ Missing'}")
+    print(f"   • 'bankacilik' Sector: {'✅ Found' if test_results['bankacilik_sector_exists'] else '❌ Missing'}")
+    print(f"   • Test Customer Created: {'✅ Success' if test_results['test_customer_created'] else '❌ Failed'}")
+    print(f"   • Data Persistence: {'✅ Verified' if test_results['data_persistence_verified'] else '❌ Failed'}")
+    print(f"   • RelationshipType Fix: {'✅ Working' if test_results['relationship_type_correct'] else '❌ Failed'}")
+    print(f"   • Sector Fix: {'✅ Working' if test_results['sector_correct'] else '❌ Failed'}")
+    print(f"   • Services Preservation: {'✅ Working' if test_results['services_preserved'] else '❌ Failed'}")
+    print(f"   • Bank Info Preservation: {'✅ Working' if test_results['bank_info_preserved'] else '❌ Failed'}")
+    print(f"   • Contact Info Preservation: {'✅ Working' if test_results['contact_info_preserved'] else '❌ Failed'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['customer_types_api_working'] or not test_results['sectors_api_working']:
+        print("🚨 CRITICAL: Customer Types or Sectors API not working - cannot test data mapping")
+        
+    elif not test_results['ajans_customer_type_exists'] or not test_results['bankacilik_sector_exists']:
+        print("🚨 CRITICAL: Required customer type 'ajans' or sector 'bankacilik' missing from API")
+        
+    elif not test_results['test_customer_created']:
+        print("🚨 CRITICAL: Could not create test customer - backend customer creation failing")
+        
+    elif not test_results['data_persistence_verified']:
+        print("🚨 CRITICAL: Test customer not persisted - database storage issues")
+        
+    else:
+        # Count successful fixes
+        fixes_working = sum([
+            test_results['relationship_type_correct'],
+            test_results['sector_correct'],
+            test_results['services_preserved'],
+            test_results['bank_info_preserved'],
+            test_results['contact_info_preserved']
+        ])
+        
+        if fixes_working == 5:
+            print("🎉 EXCELLENT: All NewCustomerForm data mapping fixes are working correctly!")
+            print("   The critical data integrity issues have been completely resolved.")
+        elif fixes_working >= 3:
+            print("✅ GOOD: Most NewCustomerForm data mapping fixes are working")
+            print("   Significant improvement over the Kaygusuzlar data loss issues.")
+        else:
+            print("⚠️  WARNING: Several NewCustomerForm data mapping issues still exist")
+            print("   Additional fixes may be needed to fully resolve data integrity problems.")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if len(test_results['critical_issues']) > 0:
+        print("   1. Address critical issues identified in the test")
+        print("   2. Verify NewCustomerForm frontend is sending correct field values")
+        print("   3. Check backend customer creation endpoint field mapping")
+        print("   4. Test with EditCustomerPage to ensure data displays correctly")
+    else:
+        print("   1. Test NewCustomerForm fixes with EditCustomerPage integration")
+        print("   2. Verify frontend dropdown selections map to correct backend values")
+        print("   3. Test with real user workflow to ensure end-to-end functionality")
+        print("   4. Monitor for any remaining data integrity issues")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    all_fixes_working = all([
+        test_results['relationship_type_correct'],
+        test_results['sector_correct'],
+        test_results['services_preserved'],
+        test_results['bank_info_preserved'],
+        test_results['contact_info_preserved']
+    ])
+    
+    if has_critical_issues:
+        print(f"\n❌ TEST RESULT: CRITICAL ISSUES FOUND - FIXES NOT FULLY WORKING")
+        return False
+    elif all_fixes_working:
+        print(f"\n✅ TEST RESULT: ALL NEWCUSTOMERFORM DATA MAPPING FIXES WORKING CORRECTLY")
+        return True
+    else:
+        print(f"\n⚠️  TEST RESULT: PARTIAL SUCCESS - SOME FIXES WORKING, SOME NEED ATTENTION")
+        return False
+
 def test_kaygusuzlar_customer_data_mapping_investigation():
     """
     CRITICAL: Debug "Kaygusuzlar" customer data mapping issues
