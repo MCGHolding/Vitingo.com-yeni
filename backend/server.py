@@ -2259,7 +2259,7 @@ async def update_customer(customer_id: str, customer_data: dict):
             
         # Get updated customer
         updated_customer = await db.customers.find_one({"id": customer_id})
-        return Customer(**updated_customer)
+        return JSONResponse(content={"customer": updated_customer})
         
     except HTTPException:
         raise
