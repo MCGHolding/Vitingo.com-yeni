@@ -44,6 +44,7 @@ const customerTagColors = {
 import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
+import DeleteProspectModal from './DeleteProspectModal';
 
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ prospect, onAction }) => {
