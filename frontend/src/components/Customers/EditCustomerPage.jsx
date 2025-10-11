@@ -417,12 +417,12 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           {/* Left Column */}
           <div className="space-y-6">
             
-            {/* Müşteri Türü ve Sektör */}
+            {/* Müşteri Bilgileri */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                 <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
                   <Building2 className="h-5 w-5 text-blue-600" />
-                  <span>Müşteri Türü ve Sektör</span>
+                  <span>Müşteri Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
