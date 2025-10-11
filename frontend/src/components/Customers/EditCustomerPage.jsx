@@ -867,7 +867,20 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                {/* Hizmetler artık Firma Bilgileri bölümünde EditableField olarak yer alıyor */}
+                <EditableField
+                  label="Hesap Sahibi"
+                  value={formData.account_holder_name}
+                  fieldName="account_holder_name"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="Hesap sahibinin adı soyadı"
+                />
+
                 <EditableField
                   label="IBAN"
                   value={formData.iban}
@@ -880,21 +893,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   setTempValue={setTempValue}
                   handleFieldKeyPress={handleFieldKeyPress}
                   placeholder="TR00 0000 0000 0000 0000 0000 00"
-                />
-
-                <EditableField
-                  label="Para Birimi"
-                  value={formData.currency}
-                  fieldName="currency"
-                  editingField={editingField}
-                  startEdit={startEdit}
-                  cancelEdit={cancelEdit}
-                  saveField={saveField}
-                  tempValue={tempValue}
-                  setTempValue={setTempValue}
-                  handleFieldKeyPress={handleFieldKeyPress}
-                  type="select"
-                  placeholder="Para birimi seçin"
                 />
 
                 <EditableField
@@ -923,6 +921,36 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   setTempValue={setTempValue}
                   handleFieldKeyPress={handleFieldKeyPress}
                   placeholder="Şube adı"
+                />
+
+                <EditableField
+                  label="Swift Kodu"
+                  value={formData.swift_code}
+                  fieldName="swift_code"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  placeholder="SWIFT/BIC kodu"
+                />
+
+                <EditableField
+                  label="Ülke"
+                  value={formData.contact_country}
+                  fieldName="contact_country"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="select"
+                  placeholder="Banka ülkesi seçiniz..."
+                  countries={countries}
                 />
               </CardContent>
             </Card>
