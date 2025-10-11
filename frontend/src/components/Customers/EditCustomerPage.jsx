@@ -324,12 +324,18 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         console.log('Sectors loaded:', sectorsData);
         setSectors(sectorsData);
         
-        // Verify sector mapping for current customer
+        // Verify sector mapping for current customer and update form data
         if (customer && customer.sector) {
-          const sectorFound = sectorsData.find(s => s.name === customer.sector || s.value === customer.sector);
-          console.log('Sector mapping verification - Customer sector:', customer.sector, 'Found in API:', !!sectorFound);
+          const mappedSectorValue = mapSectorNameToValue(customer.sector, sectorsData);
+          const sectorFound = sectorsData.find(s => s.name === customer.sector || s.value === customer.sector || s.value === mappedSectorValue);
+          console.log('Sector mapping verification - Customer sector:', customer.sector, 'Mapped value:', mappedSectorValue, 'Found in API:', !!sectorFound);
           if (sectorFound) {
             console.log('Sector found:', sectorFound);
+            // Update form data with correct sector value
+            setFormData(prev => ({
+              ...prev,
+              specialty_id: sectorFound.value
+            }));
           }
         }
       } else {
