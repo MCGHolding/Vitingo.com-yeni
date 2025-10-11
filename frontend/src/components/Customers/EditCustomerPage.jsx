@@ -373,7 +373,12 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Field-level editing functions
   const startEdit = (fieldName) => {
     setEditingField(fieldName);
-    setTempValue(formData[fieldName] || '');
+    // Special handling for services array field
+    if (fieldName === 'services') {
+      setTempValue(formData.services ? formData.services.join(', ') : '');
+    } else {
+      setTempValue(formData[fieldName] || '');
+    }
   };
 
   const cancelEdit = () => {
