@@ -399,7 +399,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             // Convert to Customer model format (camelCase)
             companyName: baseCustomerData.company_short_name,
             companyTitle: baseCustomerData.company_title,
-            relationshipType: "customer",
+            relationshipType: baseCustomerData.customer_type_id || "mevcut_musteri", // Use actual selected customer type
             contactPerson: contacts[0]?.full_name || '',
             phone: baseCustomerData.phone,
             email: baseCustomerData.email,
@@ -407,11 +407,24 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             address: baseCustomerData.address,
             country: baseCustomerData.country,
             city: baseCustomerData.city,
-            sector: getSectorName(baseCustomerData.sector_id), // Convert sector_id to sector name
+            sector: getSectorName(baseCustomerData.sector_id) || baseCustomerData.sector_id, // Use sector name or ID
             notes: baseCustomerData.notes,
             taxOffice: baseCustomerData.tax_office,
             taxNumber: baseCustomerData.tax_number,
-            tags: baseCustomerData.tags || []
+            tags: baseCustomerData.tags || [],
+            services: baseCustomerData.services || [], // Add services field
+            // Add all the missing bank and contact fields
+            iban: baseCustomerData.iban || '',
+            bankName: baseCustomerData.bank_name || '',
+            bankBranch: baseCustomerData.bank_branch || '',
+            accountHolderName: baseCustomerData.account_holder_name || '',
+            swiftCode: baseCustomerData.swift_code || '',
+            contactMobile: baseCustomerData.contact_mobile || '',
+            contactEmail: baseCustomerData.contact_email || '',
+            contactPosition: baseCustomerData.contact_position || '',
+            contactAddress: baseCustomerData.contact_address || '',
+            contactCountry: baseCustomerData.contact_country || '',
+            contactCity: baseCustomerData.contact_city || ''
           };
       
       // Save directly to backend or use onSave prop
