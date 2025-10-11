@@ -158,7 +158,9 @@ const EditSupplierModal = ({ supplier, onClose, onSave }) => {
   const handleAddContactTag = (contactIndex) => {
     if (currentContactTag.trim()) {
       const updatedContacts = [...contacts];
-      updatedContacts[contactIndex].tags = [...updatedContacts[contactIndex].tags, currentContactTag.trim()];
+      // Ensure tags is always an array
+      const currentTags = Array.isArray(updatedContacts[contactIndex].tags) ? updatedContacts[contactIndex].tags : [];
+      updatedContacts[contactIndex].tags = [...currentTags, currentContactTag.trim()];
       setContacts(updatedContacts);
       setCurrentContactTag('');
     }
@@ -166,7 +168,9 @@ const EditSupplierModal = ({ supplier, onClose, onSave }) => {
 
   const handleRemoveContactTag = (contactIndex, tagIndex) => {
     const updatedContacts = [...contacts];
-    updatedContacts[contactIndex].tags = updatedContacts[contactIndex].tags.filter((_, i) => i !== tagIndex);
+    // Ensure tags is always an array
+    const currentTags = Array.isArray(updatedContacts[contactIndex].tags) ? updatedContacts[contactIndex].tags : [];
+    updatedContacts[contactIndex].tags = currentTags.filter((_, i) => i !== tagIndex);
     setContacts(updatedContacts);
   };
 
