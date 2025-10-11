@@ -210,7 +210,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       company_short_name: randomCompanyName.replace(' A.Ş.', '').replace(' Ltd.', ''),
       company_title: randomCompanyName,
       customer_type_id: randomCustomerType,
-      sector_id: randomSector,
+      specialty_id: randomSector,
       phone: '+90 212 555 ' + Math.floor(Math.random() * 9000 + 1000),
       mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
       email: 'info@' + randomCompanyName.toLowerCase()
