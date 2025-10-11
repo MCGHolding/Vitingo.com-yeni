@@ -122,6 +122,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState(null);
 
   // Load customer prospects from backend
