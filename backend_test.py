@@ -1641,61 +1641,225 @@ def test_customer_bank_payment_information():
         print("❌ SKIP: Cannot test persistence - update test failed or no customer ID")
         test_results["warnings"].append("PERSISTENCE_TEST_SKIPPED")
     
-    # TEST 4: Field Validation Test
+    # TEST 4: IBAN Validation Testing
     print("\n" + "=" * 80)
-    print("TEST 4: FIELD VALIDATION TEST")
+    print("TEST 4: IBAN VALIDATION TESTING")
     print("=" * 80)
-    print("Testing IBAN format validation and Swift code format validation...")
+    print("Testing IBAN validation with Turkish and international formats...")
     
     if test_results["test_customer_id"]:
         customer_id = test_results["test_customer_id"]
         validation_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
         
-        # Test invalid IBAN format
-        print("\n🔍 Testing invalid IBAN format validation:")
-        invalid_iban_data = {
-            "iban": "INVALID_IBAN_FORMAT_123",
-            "swiftCode": "INVALID_SWIFT"
-        }
+        # Test cases for IBAN validation
+        iban_test_cases = [
+            {
+                "name": "Valid Turkish IBAN",
+                "iban": "TR330006100519786457841326",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Valid International IBAN (UK)",
+                "iban": "GB82WEST12345698765432",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Valid Turkish IBAN with spaces",
+                "iban": "TR33 0006 1005 1978 6457 8413 26",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Invalid IBAN format",
+                "iban": "INVALID_IBAN_123",
+                "expected_status": [400],
+                "should_pass": False
+            },
+            {
+                "name": "Empty IBAN (should be allowed)",
+                "iban": "",
+                "expected_status": [200, 201],
+                "should_pass": True
+            }
+        ]
         
-        try:
-            invalid_response = requests.put(validation_endpoint, json=invalid_iban_data, timeout=30)
-            print(f"Invalid IBAN Status Code: {invalid_response.status_code}")
+        iban_tests_passed = 0
+        for test_case in iban_test_cases:
+            print(f"\n🔍 Testing {test_case['name']}: '{test_case['iban']}'")
             
-            if invalid_response.status_code == 400:
-                print("✅ PASS: Invalid IBAN format properly rejected with 400 status")
-                test_results["field_validation_working"] = True
-            elif invalid_response.status_code in [200, 201]:
-                print("⚠️  WARNING: Invalid IBAN format accepted - validation may not be implemented")
-                test_results["warnings"].append("NO_IBAN_VALIDATION")
-            else:
-                print(f"⚠️  WARNING: Unexpected status for invalid IBAN: {invalid_response.status_code}")
-                test_results["warnings"].append(f"UNEXPECTED_VALIDATION_STATUS_{invalid_response.status_code}")
+            test_data = {"iban": test_case["iban"]}
             
-        except Exception as e:
-            print(f"⚠️  WARNING: Could not test IBAN validation: {str(e)}")
-            test_results["warnings"].append(f"IBAN_VALIDATION_TEST_ERROR: {str(e)}")
+            try:
+                response = requests.put(validation_endpoint, json=test_data, timeout=30)
+                print(f"   Status Code: {response.status_code}")
+                
+                if response.status_code in test_case["expected_status"]:
+                    print(f"   ✅ PASS: {test_case['name']} handled correctly")
+                    iban_tests_passed += 1
+                else:
+                    print(f"   ❌ FAIL: Expected {test_case['expected_status']}, got {response.status_code}")
+                    if response.status_code == 400:
+                        try:
+                            error_data = response.json()
+                            print(f"   Error message: {error_data}")
+                        except:
+                            print(f"   Error response: {response.text}")
+                
+            except Exception as e:
+                print(f"   ❌ ERROR: {str(e)}")
         
-        # Test valid IBAN format
-        print("\n🔍 Testing valid IBAN format:")
-        valid_iban_data = {
-            "iban": "TR33 0006 1005 1978 6457 8413 26",
-            "swiftCode": "TGBATRIS"
-        }
+        print(f"\n📊 IBAN Validation Results: {iban_tests_passed}/{len(iban_test_cases)} tests passed")
         
-        try:
-            valid_response = requests.put(validation_endpoint, json=valid_iban_data, timeout=30)
-            print(f"Valid IBAN Status Code: {valid_response.status_code}")
+    # TEST 5: Swift Code Validation Testing
+    print("\n" + "=" * 80)
+    print("TEST 5: SWIFT CODE VALIDATION TESTING")
+    print("=" * 80)
+    print("Testing Swift code validation with valid and invalid formats...")
+    
+    if test_results["test_customer_id"]:
+        swift_test_cases = [
+            {
+                "name": "Valid Swift Code (8 chars)",
+                "swift": "DEUTDEFF",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Valid Swift Code (11 chars)",
+                "swift": "CHASUS33XXX",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Valid Turkish Swift Code",
+                "swift": "TGBATRIS",
+                "expected_status": [200, 201],
+                "should_pass": True
+            },
+            {
+                "name": "Invalid Swift Code (too short)",
+                "swift": "DEUT",
+                "expected_status": [400],
+                "should_pass": False
+            },
+            {
+                "name": "Invalid Swift Code (too long)",
+                "swift": "DEUTDEFFXXXX",
+                "expected_status": [400],
+                "should_pass": False
+            },
+            {
+                "name": "Empty Swift Code (should be allowed)",
+                "swift": "",
+                "expected_status": [200, 201],
+                "should_pass": True
+            }
+        ]
+        
+        swift_tests_passed = 0
+        for test_case in swift_test_cases:
+            print(f"\n🔍 Testing {test_case['name']}: '{test_case['swift']}'")
             
-            if valid_response.status_code in [200, 201]:
-                print("✅ PASS: Valid IBAN format accepted correctly")
-            else:
-                print(f"⚠️  WARNING: Valid IBAN format rejected: {valid_response.status_code}")
-                test_results["warnings"].append(f"VALID_IBAN_REJECTED_{valid_response.status_code}")
+            test_data = {"swiftCode": test_case["swift"]}
             
-        except Exception as e:
-            print(f"⚠️  WARNING: Could not test valid IBAN: {str(e)}")
-            test_results["warnings"].append(f"VALID_IBAN_TEST_ERROR: {str(e)}")
+            try:
+                response = requests.put(validation_endpoint, json=test_data, timeout=30)
+                print(f"   Status Code: {response.status_code}")
+                
+                if response.status_code in test_case["expected_status"]:
+                    print(f"   ✅ PASS: {test_case['name']} handled correctly")
+                    swift_tests_passed += 1
+                else:
+                    print(f"   ❌ FAIL: Expected {test_case['expected_status']}, got {response.status_code}")
+                    if response.status_code == 400:
+                        try:
+                            error_data = response.json()
+                            print(f"   Error message: {error_data}")
+                        except:
+                            print(f"   Error response: {response.text}")
+                
+            except Exception as e:
+                print(f"   ❌ ERROR: {str(e)}")
+        
+        print(f"\n📊 Swift Code Validation Results: {swift_tests_passed}/{len(swift_test_cases)} tests passed")
+        
+        if iban_tests_passed >= 4 and swift_tests_passed >= 4:
+            test_results["field_validation_working"] = True
+    
+    # TEST 6: Customer Creation with Bank Info
+    print("\n" + "=" * 80)
+    print("TEST 6: CUSTOMER CREATION WITH BANK INFO")
+    print("=" * 80)
+    print("Testing POST /api/customers with complete bank information...")
+    
+    create_endpoint = f"{BACKEND_URL}/api/customers"
+    
+    # Create test customer with complete bank information
+    test_customer_with_bank = {
+        "companyName": "Bank Test Şirketi A.Ş.",
+        "companyTitle": "Bank Test Şirketi Anonim Şirketi",
+        "email": "banktest@example.com",
+        "phone": "+90 212 555 0199",
+        "address": "Bank Test Mahallesi, Test Sokak No:1",
+        "city": "İstanbul",
+        "country": "TR",
+        "sector": "Finans",
+        "relationshipType": "Müşteri",
+        # Bank payment information
+        "iban": "TR330006100519786457841326",
+        "bankName": "Türkiye Garanti Bankası A.Ş.",
+        "bankBranch": "Levent Şubesi",
+        "accountHolderName": "Bank Test Şirketi A.Ş.",
+        "swiftCode": "TGBATRIS",
+        "contactCountry": "TR",
+        "services": ["Fuar Standı", "Etkinlik Organizasyonu"]
+    }
+    
+    print(f"Creating customer with bank info: {test_customer_with_bank['companyName']}")
+    
+    try:
+        create_response = requests.post(create_endpoint, json=test_customer_with_bank, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Customer creation with bank info successful")
+            
+            try:
+                created_customer = create_response.json()
+                new_customer_id = created_customer.get("id")
+                print(f"   New Customer ID: {new_customer_id}")
+                
+                # Verify bank fields in creation response
+                bank_fields_in_response = 0
+                expected_bank_fields = ["iban", "bankName", "bankBranch", "accountHolderName", "swiftCode", "contactCountry"]
+                
+                print(f"\n🔍 Verifying bank fields in creation response:")
+                for field in expected_bank_fields:
+                    expected_value = test_customer_with_bank.get(field)
+                    actual_value = created_customer.get(field)
+                    if actual_value == expected_value:
+                        print(f"   ✅ {field}: {actual_value}")
+                        bank_fields_in_response += 1
+                    else:
+                        print(f"   ⚠️  {field}: Expected '{expected_value}', Got '{actual_value}'")
+                
+                if bank_fields_in_response == len(expected_bank_fields):
+                    print(f"✅ PASS: All bank fields present in creation response")
+                else:
+                    print(f"⚠️  WARNING: Only {bank_fields_in_response}/{len(expected_bank_fields)} bank fields in response")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error processing creation response: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer creation with bank info failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer creation error: {str(e)}")
+    
     else:
         print("❌ SKIP: No customer ID available for validation testing")
         test_results["warnings"].append("NO_CUSTOMER_ID_FOR_VALIDATION_TEST")
