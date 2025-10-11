@@ -332,7 +332,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       // Update backend API using safe JSON parsing
       try {
         const payload = formToDb(updatedFormData);
-        const result = await patchCustomer(customer.id, payload);
+        const result = await apiPatchCustomer(customer.id, payload);
         
         if (result) {
           // Update form data with returned customer data if available
