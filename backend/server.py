@@ -2212,37 +2212,11 @@ async def create_customer(customer_data: dict):
         logger.error(f"Customer data that caused error: {customer_data}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/customers", response_model=List[Customer])
+@api_router.get("/customers")
 async def get_customers():
     """Get all customers"""
-    try:
-        customers = await db.customers.find().to_list(length=None)
-        logger.info(f"Found {len(customers)} customers in database")
-        
-        # Debug first customer
-        if customers:
-            logger.info(f"First customer keys: {list(customers[0].keys())}")
-        
-        validated_customers = []
-        for i, customer in enumerate(customers):
-            try:
-                # Remove MongoDB _id field
-                customer_dict = {k: v for k, v in customer.items() if k != '_id'}
-                logger.info(f"Validating customer {i+1}: {customer_dict.get('companyName', 'Unknown')}")
-                validated_customers.append(Customer(**customer_dict))
-            except Exception as validation_error:
-                logger.error(f"Customer {i+1} validation error: {validation_error}")
-                logger.error(f"Customer {i+1} keys: {list(customer.keys())}")
-                logger.error(f"CompanyName present: {'companyName' in customer}")
-                # Try to identify the specific issue
-                break  # Stop at first error
-                
-        logger.info(f"Successfully validated {len(validated_customers)} customers")
-        return validated_customers
-        
-    except Exception as e:
-        logger.error(f"Error getting customers: {str(e)}")
-        return []
+    customers = await db.customers.find().to_list(length=None)
+    return JSONResponse(content=customers)
 
 @api_router.get("/customers/{customer_id}", response_model=Customer)
 async def get_customer(customer_id: str):
