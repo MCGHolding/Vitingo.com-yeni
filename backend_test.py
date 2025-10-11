@@ -1362,6 +1362,354 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_quattro_111_customer_data_mapping_investigation():
+    """
+    URGENT: Debug specific customer data mapping issue - customer "QUATTRO 111" fields missing in EditCustomerPage
+    
+    CRITICAL ISSUE: User filled ALL fields in NewCustomerForm but EditCustomerPage shows contact person fields as "Henüz girilmemiş" (Not yet entered). This is a data mapping failure.
+    
+    SPECIFIC CUSTOMER TO DEBUG:
+    - Company: "QUATTRO 111" / "Teknoloji Çözümler A.Ş."
+    - Customer Type: "Yeni Müşteri" 
+    - Sector: "elektrik_elektronik"
+    
+    MISSING FIELDS IN EDIT PAGE:
+    - İletişim Kişisi Pozisyonu (Contact Position)
+    - Cep Telefonu (Contact Mobile)  
+    - Email (Contact Email)
+    - İletişim Adresi (Contact Address)
+    - Ülke (Contact Country)
+    - Şehir (Contact City)
+    
+    URGENT INVESTIGATION NEEDED:
+    1. Find QUATTRO 111 Customer in Database
+    2. Verify Contact Person Fields in Database
+    3. Check Data Storage Pattern
+    4. Backend Field Mapping Verification
+    """
+    
+    print("=" * 100)
+    print("🚨 URGENT: QUATTRO 111 CUSTOMER DATA MAPPING INVESTIGATION 🚨")
+    print("=" * 100)
+    print("CRITICAL ISSUE: User filled ALL fields in NewCustomerForm but EditCustomerPage")
+    print("shows contact person fields as 'Henüz girilmemiş' (Not yet entered).")
+    print("This is a data mapping failure for customer QUATTRO 111.")
+    print("=" * 100)
+    
+    investigation_results = {
+        "quattro_customer_found": False,
+        "customer_data": None,
+        "contact_fields_present": False,
+        "missing_contact_fields": [],
+        "field_mapping_issues": [],
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # INVESTIGATION STEP 1: Find QUATTRO 111 Customer in Database
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 1: FIND QUATTRO 111 CUSTOMER IN DATABASE")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    print("Searching for customer with companyName 'QUATTRO 111' or company_short_name 'QUATTRO 111'...")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer API endpoint is responding")
+            
+            try:
+                customers = response.json()
+                customer_count = len(customers) if isinstance(customers, list) else 0
+                print(f"📊 Total customers in database: {customer_count}")
+                
+                # Search for QUATTRO 111 customer
+                quattro_customer = None
+                search_terms = ["QUATTRO 111", "quattro 111", "Quattro 111", "QUATTRO", "Teknoloji Çözümler"]
+                
+                print(f"\n🔍 Searching for QUATTRO 111 customer using search terms: {search_terms}")
+                
+                for customer in customers:
+                    company_name = customer.get("companyName", "").lower()
+                    company_title = customer.get("companyTitle", "").lower()
+                    
+                    # Check if any search term matches
+                    for term in search_terms:
+                        if term.lower() in company_name or term.lower() in company_title:
+                            quattro_customer = customer
+                            print(f"✅ FOUND: QUATTRO 111 customer found!")
+                            print(f"   Company Name: {customer.get('companyName', 'N/A')}")
+                            print(f"   Company Title: {customer.get('companyTitle', 'N/A')}")
+                            print(f"   Customer ID: {customer.get('id', 'N/A')}")
+                            print(f"   Created: {customer.get('created_at', 'N/A')}")
+                            investigation_results["quattro_customer_found"] = True
+                            investigation_results["customer_data"] = customer
+                            break
+                    
+                    if quattro_customer:
+                        break
+                
+                if not quattro_customer:
+                    print("🚨 CRITICAL ISSUE: QUATTRO 111 customer NOT FOUND in database!")
+                    print("   This could indicate:")
+                    print("   1. Customer was not saved properly during creation")
+                    print("   2. Customer data was lost or deleted")
+                    print("   3. Customer is stored with different name/identifier")
+                    investigation_results["critical_issues"].append("QUATTRO_CUSTOMER_NOT_FOUND")
+                    
+                    # Show all customers for debugging
+                    print(f"\n📋 All customers in database for debugging:")
+                    for i, customer in enumerate(customers[:10], 1):  # Show first 10
+                        print(f"   {i}. {customer.get('companyName', 'N/A')} - ID: {customer.get('id', 'N/A')}")
+                    
+                    return False
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer data: {str(e)}")
+                investigation_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                return False
+                
+        else:
+            print(f"❌ FAIL: Customer API not responding properly. Status: {response.status_code}")
+            investigation_results["critical_issues"].append(f"API_ERROR_{response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+        return False
+    
+    # INVESTIGATION STEP 2: Verify Contact Person Fields in Database
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 2: VERIFY CONTACT PERSON FIELDS IN DATABASE")
+    print("=" * 80)
+    
+    if quattro_customer:
+        print("🔍 Analyzing QUATTRO 111 customer data structure...")
+        print("Checking for contact person fields that should be present...")
+        
+        # Expected contact person fields
+        expected_contact_fields = {
+            "contactMobile": "İletişim Kişisi Cep Telefonu",
+            "contactEmail": "İletişim Kişisi Email", 
+            "contactPosition": "İletişim Kişisi Pozisyonu",
+            "contactAddress": "İletişim Kişisi Adresi",
+            "contactCountry": "İletişim Kişisi Ülkesi",
+            "contactCity": "İletişim Kişisi Şehri"
+        }
+        
+        print(f"\n📋 COMPLETE CUSTOMER DATA STRUCTURE:")
+        print(json.dumps(quattro_customer, indent=2, ensure_ascii=False))
+        
+        print(f"\n🔍 CONTACT PERSON FIELDS ANALYSIS:")
+        missing_fields = []
+        empty_fields = []
+        present_fields = []
+        
+        for field_key, field_description in expected_contact_fields.items():
+            field_value = quattro_customer.get(field_key)
+            
+            if field_key not in quattro_customer:
+                missing_fields.append(field_key)
+                print(f"   ❌ MISSING: {field_description} ({field_key}) - Field not present in database")
+            elif not field_value or field_value.strip() == "":
+                empty_fields.append(field_key)
+                print(f"   ⚠️  EMPTY: {field_description} ({field_key}) - Field present but empty: '{field_value}'")
+            else:
+                present_fields.append(field_key)
+                print(f"   ✅ PRESENT: {field_description} ({field_key}) - Value: '{field_value}'")
+        
+        investigation_results["missing_contact_fields"] = missing_fields + empty_fields
+        
+        if missing_fields:
+            print(f"\n🚨 CRITICAL ISSUE: {len(missing_fields)} contact fields are MISSING from database:")
+            for field in missing_fields:
+                print(f"   • {expected_contact_fields[field]} ({field})")
+            investigation_results["critical_issues"].append(f"MISSING_CONTACT_FIELDS: {missing_fields}")
+        
+        if empty_fields:
+            print(f"\n⚠️  WARNING: {len(empty_fields)} contact fields are EMPTY in database:")
+            for field in empty_fields:
+                print(f"   • {expected_contact_fields[field]} ({field})")
+            investigation_results["warnings"].append(f"EMPTY_CONTACT_FIELDS: {empty_fields}")
+        
+        if present_fields:
+            print(f"\n✅ SUCCESS: {len(present_fields)} contact fields have data:")
+            for field in present_fields:
+                print(f"   • {expected_contact_fields[field]} ({field})")
+            investigation_results["contact_fields_present"] = True
+        
+        # Check other important fields
+        print(f"\n🔍 OTHER IMPORTANT FIELDS ANALYSIS:")
+        other_fields = {
+            "relationshipType": "Customer Type",
+            "sector": "Sector", 
+            "services": "Services",
+            "bankName": "Bank Name",
+            "iban": "IBAN"
+        }
+        
+        for field_key, field_description in other_fields.items():
+            field_value = quattro_customer.get(field_key)
+            if field_value:
+                print(f"   ✅ {field_description}: '{field_value}'")
+            else:
+                print(f"   ⚠️  {field_description}: Empty or missing")
+    
+    # INVESTIGATION STEP 3: Check Data Storage Pattern
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 3: CHECK DATA STORAGE PATTERN")
+    print("=" * 80)
+    
+    if quattro_customer:
+        print("🔍 Analyzing data storage patterns and field naming conventions...")
+        
+        # Check for alternative field names
+        alternative_fields = {
+            "mobile": "contactMobile",
+            "email": "contactEmail", 
+            "position": "contactPosition",
+            "contact_mobile": "contactMobile",
+            "contact_email": "contactEmail",
+            "contact_position": "contactPosition"
+        }
+        
+        print(f"\n📋 CHECKING FOR ALTERNATIVE FIELD NAMES:")
+        for alt_field, expected_field in alternative_fields.items():
+            if alt_field in quattro_customer:
+                value = quattro_customer.get(alt_field)
+                print(f"   🔍 FOUND ALTERNATIVE: '{alt_field}' = '{value}' (should be '{expected_field}')")
+                investigation_results["field_mapping_issues"].append(f"ALTERNATIVE_FIELD: {alt_field} -> {expected_field}")
+        
+        # Check for nested contact data
+        print(f"\n📋 CHECKING FOR NESTED CONTACT DATA:")
+        if "contacts" in quattro_customer:
+            contacts = quattro_customer.get("contacts")
+            print(f"   🔍 FOUND CONTACTS ARRAY: {contacts}")
+            investigation_results["field_mapping_issues"].append("NESTED_CONTACTS_FOUND")
+        
+        if "contactPerson" in quattro_customer:
+            contact_person = quattro_customer.get("contactPerson")
+            print(f"   🔍 FOUND CONTACT PERSON: {contact_person}")
+        
+        # Check field naming patterns
+        print(f"\n📋 ALL FIELD NAMES IN CUSTOMER DATA:")
+        all_fields = list(quattro_customer.keys())
+        contact_related_fields = [field for field in all_fields if 'contact' in field.lower()]
+        
+        print(f"   Total fields: {len(all_fields)}")
+        print(f"   Contact-related fields: {contact_related_fields}")
+        
+        if not contact_related_fields:
+            print("   🚨 CRITICAL: NO contact-related fields found at all!")
+            investigation_results["critical_issues"].append("NO_CONTACT_FIELDS_FOUND")
+    
+    # INVESTIGATION STEP 4: Backend Field Mapping Verification
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 4: BACKEND FIELD MAPPING VERIFICATION")
+    print("=" * 80)
+    
+    if quattro_customer:
+        customer_id = quattro_customer.get("id")
+        print(f"🔍 Testing individual customer retrieval for ID: {customer_id}")
+        
+        # Test individual customer GET
+        individual_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        try:
+            individual_response = requests.get(individual_endpoint, timeout=30)
+            print(f"Individual GET Status: {individual_response.status_code}")
+            
+            if individual_response.status_code == 200:
+                individual_customer = individual_response.json()
+                print("✅ PASS: Individual customer retrieval working")
+                
+                # Compare with list data
+                print(f"\n🔍 COMPARING LIST vs INDIVIDUAL CUSTOMER DATA:")
+                
+                for field in expected_contact_fields.keys():
+                    list_value = quattro_customer.get(field)
+                    individual_value = individual_customer.get(field)
+                    
+                    if list_value != individual_value:
+                        print(f"   ⚠️  MISMATCH: {field}")
+                        print(f"      List API: '{list_value}'")
+                        print(f"      Individual API: '{individual_value}'")
+                        investigation_results["field_mapping_issues"].append(f"API_MISMATCH: {field}")
+                    else:
+                        print(f"   ✅ MATCH: {field} = '{list_value}'")
+                
+            else:
+                print(f"❌ FAIL: Individual customer retrieval failed: {individual_response.status_code}")
+                investigation_results["critical_issues"].append("INDIVIDUAL_GET_FAILED")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error testing individual customer GET: {str(e)}")
+            investigation_results["critical_issues"].append(f"INDIVIDUAL_GET_ERROR: {str(e)}")
+    
+    # FINAL INVESTIGATION REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL INVESTIGATION REPORT - QUATTRO 111 DATA MAPPING")
+    print("=" * 100)
+    
+    print(f"📊 INVESTIGATION SUMMARY:")
+    print(f"   • QUATTRO Customer Found: {'✅ Yes' if investigation_results['quattro_customer_found'] else '❌ No'}")
+    print(f"   • Contact Fields Present: {'✅ Yes' if investigation_results['contact_fields_present'] else '❌ No'}")
+    print(f"   • Missing Contact Fields: {len(investigation_results['missing_contact_fields'])}")
+    print(f"   • Field Mapping Issues: {len(investigation_results['field_mapping_issues'])}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(investigation_results['critical_issues'])}")
+    for issue in investigation_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(investigation_results['warnings'])}")
+    for warning in investigation_results['warnings']:
+        print(f"   • {warning}")
+    
+    print(f"\n🔧 FIELD MAPPING ISSUES: {len(investigation_results['field_mapping_issues'])}")
+    for issue in investigation_results['field_mapping_issues']:
+        print(f"   • {issue}")
+    
+    # ROOT CAUSE ANALYSIS
+    print(f"\n📋 ROOT CAUSE ANALYSIS:")
+    
+    if not investigation_results['quattro_customer_found']:
+        print("🚨 CRITICAL: QUATTRO 111 customer not found in database!")
+        print("   RECOMMENDATION: Check if customer creation failed or data was lost")
+        
+    elif investigation_results['missing_contact_fields']:
+        print("🚨 CRITICAL: Contact person fields are missing or empty in database!")
+        print("   ROOT CAUSE: Data mapping failure between NewCustomerForm and backend storage")
+        print("   RECOMMENDATION: Check NewCustomerForm field mapping and POST /api/customers implementation")
+        
+    elif investigation_results['field_mapping_issues']:
+        print("⚠️  WARNING: Field mapping inconsistencies detected")
+        print("   RECOMMENDATION: Verify field name consistency between frontend and backend")
+        
+    else:
+        print("ℹ️  INFO: Contact fields appear to be present in database")
+        print("   RECOMMENDATION: Check EditCustomerPage field mapping and display logic")
+    
+    print(f"\n🎯 IMMEDIATE ACTION ITEMS:")
+    print("   1. Verify QUATTRO 111 customer exists with correct contact data")
+    print("   2. Check NewCustomerForm → backend field mapping for contact fields")
+    print("   3. Verify serialize_document() includes all contact person fields")
+    print("   4. Test EditCustomerPage field initialization from API response")
+    print("   5. Check for field name mismatches (contactMobile vs contact_mobile)")
+    
+    # Return overall test result
+    has_critical_issues = len(investigation_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ INVESTIGATION RESULT: CRITICAL DATA MAPPING ISSUES CONFIRMED")
+        return False
+    else:
+        print(f"\n✅ INVESTIGATION RESULT: NO CRITICAL ISSUES - CONTACT DATA APPEARS INTACT")
+        return True
+
 def test_customer_mapper_system():
     """
     Test the new Customer Mapper system implementation
