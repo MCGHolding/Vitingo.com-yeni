@@ -777,54 +777,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
               </CardContent>
             </Card>
 
-            {/* Address Information */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b">
-                <CardTitle className="text-lg font-bold text-gray-800 flex items-center space-x-2">
-                  <MapPin className="h-5 w-5 text-red-600" />
-                  <span>Adres Bilgileri</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ülke
-                    </label>
-                    <Input
-                      value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
-                      placeholder="Ülke"
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Şehir
-                    </label>
-                    <Input
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      placeholder="Şehir"
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adres
-                  </label>
-                  <Textarea
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder="Detaylı adres bilgisi"
-                    className="w-full min-h-[80px]"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
           </div>
 
           {/* Right Column */}
