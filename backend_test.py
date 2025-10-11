@@ -1362,6 +1362,343 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_customer_update_json_parsing_debug():
+    """
+    URGENT DEBUG: Customer Update JSON Parsing Error Investigation
+    
+    CRITICAL ISSUE: User experiencing "Unexpected non-whitespace character after JSON at position 4 (line 1 column 5)" 
+    when saving customer data in EditCustomerPage.
+    
+    INVESTIGATION REQUIREMENTS:
+    1. **Test Customer Update Endpoint:** Test PUT /api/customers/{id} with customer data similar to EditCustomerPage
+    2. **Response Format Verification:** Verify PUT /api/customers/{id} returns proper JSON response
+    3. **Error Simulation:** Try to reproduce the error by sending invalid data
+    4. **Specific Test Case:** Test updating customer with comprehensive data including new fields
+    5. **Check Backend Response Format:** Ensure backend always returns JSON, even for errors
+    
+    DEBUGGING FOCUS:
+    - Check response headers are application/json
+    - Test response can be parsed as valid JSON
+    - Check for any BOM, whitespace, or extra characters in response
+    - Test what happens when validation fails - does it return JSON or HTML?
+    """
+    
+    print("=" * 100)
+    print("🚨 URGENT DEBUG: CUSTOMER UPDATE JSON PARSING ERROR INVESTIGATION 🚨")
+    print("=" * 100)
+    print("CONTEXT: User experiencing 'Unexpected non-whitespace character after JSON at position 4'")
+    print("when saving customer data in EditCustomerPage. This suggests frontend is receiving")
+    print("non-JSON response when it expects JSON.")
+    print("=" * 100)
+    
+    debug_results = {
+        "customers_available": False,
+        "test_customer_id": None,
+        "update_endpoint_working": False,
+        "response_is_json": False,
+        "response_headers_correct": False,
+        "validation_errors_return_json": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # STEP 1: Get existing customers to test with
+    print("\n" + "=" * 80)
+    print("STEP 1: GETTING EXISTING CUSTOMERS FOR UPDATE TESTING")
+    print("=" * 80)
+    
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {customers_endpoint}")
+    
+    try:
+        response = requests.get(customers_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            customers = response.json()
+            if customers and len(customers) > 0:
+                debug_results["customers_available"] = True
+                test_customer = customers[0]
+                debug_results["test_customer_id"] = test_customer.get("id")
+                
+                print(f"✅ PASS: Found {len(customers)} customers in database")
+                print(f"📋 Using test customer: {test_customer.get('companyName', 'N/A')} (ID: {debug_results['test_customer_id']})")
+            else:
+                print("❌ FAIL: No customers found in database - cannot test update endpoint")
+                debug_results["critical_issues"].append("NO_CUSTOMERS_FOR_TESTING")
+                return False
+        else:
+            print(f"❌ FAIL: Could not retrieve customers. Status: {response.status_code}")
+            debug_results["critical_issues"].append(f"GET_CUSTOMERS_FAILED_{response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error retrieving customers: {str(e)}")
+        debug_results["critical_issues"].append(f"GET_CUSTOMERS_ERROR: {str(e)}")
+        return False
+    
+    # STEP 2: Test Customer Update with Comprehensive Data (Similar to EditCustomerPage)
+    print("\n" + "=" * 80)
+    print("STEP 2: TESTING CUSTOMER UPDATE WITH COMPREHENSIVE DATA")
+    print("=" * 80)
+    
+    # Create comprehensive customer update data similar to what EditCustomerPage sends
+    update_data = {
+        "companyName": "Test Company Updated",
+        "companyTitle": "Test Company Ltd. Updated",
+        "relationshipType": "customer", 
+        "contactPerson": "John Doe Updated",
+        "phone": "+90 532 123 4567",
+        "email": "updated@test.com",
+        "address": "Updated Address, Test Street No:123",
+        "country": "TR",
+        "city": "İstanbul",
+        "sector": "Teknoloji",
+        "notes": "Updated notes for JSON parsing debug test",
+        # New contact person fields that might be causing issues
+        "contactMobile": "+90 532 123 4567", 
+        "contactEmail": "john@test.com",
+        "contactPosition": "Manager",
+        "contactAddress": "Test Address",
+        "contactCountry": "TR",
+        "contactCity": "Istanbul",
+        # Bank information fields
+        "bankName": "Test Bank",
+        "bankBranch": "Test Branch", 
+        "accountHolderName": "Test Account",
+        "swiftCode": "TESTTR33",
+        "iban": "TR330006100519786457841326"
+    }
+    
+    update_endpoint = f"{BACKEND_URL}/api/customers/{debug_results['test_customer_id']}"
+    print(f"Testing endpoint: {update_endpoint}")
+    print(f"Update data fields: {list(update_data.keys())}")
+    
+    try:
+        print("\n🔍 MAKING UPDATE REQUEST...")
+        response = requests.put(update_endpoint, json=update_data, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Headers: {dict(response.headers)}")
+        
+        # STEP 3: Check Response Headers
+        print("\n" + "=" * 80)
+        print("STEP 3: RESPONSE HEADERS VERIFICATION")
+        print("=" * 80)
+        
+        content_type = response.headers.get('Content-Type', '')
+        print(f"Content-Type: {content_type}")
+        
+        if 'application/json' in content_type:
+            print("✅ PASS: Response has correct Content-Type: application/json")
+            debug_results["response_headers_correct"] = True
+        else:
+            print(f"❌ CRITICAL ISSUE: Response Content-Type is NOT application/json: {content_type}")
+            print("   This could cause JSON parsing errors in frontend!")
+            debug_results["critical_issues"].append(f"WRONG_CONTENT_TYPE: {content_type}")
+        
+        # STEP 4: Check Response Body and JSON Parsing
+        print("\n" + "=" * 80)
+        print("STEP 4: RESPONSE BODY AND JSON PARSING VERIFICATION")
+        print("=" * 80)
+        
+        response_text = response.text
+        print(f"Response Length: {len(response_text)} characters")
+        print(f"Response Preview (first 200 chars): {response_text[:200]}")
+        
+        # Check for BOM or extra characters at start
+        if response_text.startswith('\ufeff'):
+            print("❌ CRITICAL ISSUE: Response starts with BOM (Byte Order Mark)")
+            debug_results["critical_issues"].append("RESPONSE_HAS_BOM")
+        elif response_text.startswith(' ') or response_text.startswith('\t') or response_text.startswith('\n'):
+            print("❌ CRITICAL ISSUE: Response starts with whitespace characters")
+            debug_results["critical_issues"].append("RESPONSE_STARTS_WITH_WHITESPACE")
+        elif not response_text.startswith('{') and not response_text.startswith('['):
+            print(f"❌ CRITICAL ISSUE: Response does not start with JSON character. Starts with: '{response_text[:10]}'")
+            debug_results["critical_issues"].append(f"RESPONSE_NOT_JSON_START: {response_text[:10]}")
+        else:
+            print("✅ PASS: Response starts correctly (no BOM, no leading whitespace)")
+        
+        # Try to parse JSON
+        try:
+            json_data = response.json()
+            print("✅ PASS: Response can be parsed as valid JSON")
+            debug_results["response_is_json"] = True
+            
+            if response.status_code in [200, 201]:
+                print("✅ PASS: Customer update successful with valid JSON response")
+                debug_results["update_endpoint_working"] = True
+                
+                # Check if response contains expected customer data
+                if isinstance(json_data, dict) and 'id' in json_data:
+                    print("✅ PASS: Response contains customer data with ID")
+                    print(f"   Updated customer ID: {json_data.get('id')}")
+                    print(f"   Updated company name: {json_data.get('companyName', 'N/A')}")
+                else:
+                    print("⚠️  WARNING: Response JSON structure might be unexpected")
+                    debug_results["warnings"].append("UNEXPECTED_RESPONSE_STRUCTURE")
+            else:
+                print(f"⚠️  WARNING: Update returned non-success status {response.status_code} but valid JSON")
+                if 'error' in json_data or 'message' in json_data:
+                    print(f"   Error message: {json_data.get('error') or json_data.get('message')}")
+                
+        except json.JSONDecodeError as e:
+            print(f"❌ CRITICAL ISSUE: Response cannot be parsed as JSON!")
+            print(f"   JSON Error: {str(e)}")
+            print(f"   Error position matches user report: position {e.pos}")
+            debug_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+            
+            # Analyze the specific error position
+            if e.pos < len(response_text):
+                problem_char = response_text[e.pos]
+                print(f"   Character at error position {e.pos}: '{problem_char}' (ASCII: {ord(problem_char)})")
+                context_start = max(0, e.pos - 10)
+                context_end = min(len(response_text), e.pos + 10)
+                print(f"   Context around error: '{response_text[context_start:context_end]}'")
+        
+        except Exception as e:
+            print(f"❌ CRITICAL ISSUE: Unexpected error parsing response: {str(e)}")
+            debug_results["critical_issues"].append(f"PARSE_ERROR: {str(e)}")
+        
+    except requests.exceptions.RequestException as e:
+        print(f"❌ FAIL: Network error during update request: {str(e)}")
+        debug_results["critical_issues"].append(f"NETWORK_ERROR: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"❌ FAIL: Unexpected error during update request: {str(e)}")
+        debug_results["critical_issues"].append(f"UPDATE_ERROR: {str(e)}")
+        return False
+    
+    # STEP 5: Test Error Scenarios (Invalid Data)
+    print("\n" + "=" * 80)
+    print("STEP 5: TESTING ERROR SCENARIOS AND VALIDATION FAILURES")
+    print("=" * 80)
+    
+    # Test with invalid data to see if errors return JSON
+    invalid_data_tests = [
+        ({}, "Empty data"),
+        ({"invalid_field": "test"}, "Invalid field only"),
+        ({"companyName": ""}, "Empty required field"),
+        ({"email": "invalid-email"}, "Invalid email format")
+    ]
+    
+    for invalid_data, test_description in invalid_data_tests:
+        print(f"\n🔍 Testing: {test_description}")
+        try:
+            error_response = requests.put(update_endpoint, json=invalid_data, timeout=15)
+            print(f"   Status Code: {error_response.status_code}")
+            
+            error_content_type = error_response.headers.get('Content-Type', '')
+            print(f"   Content-Type: {error_content_type}")
+            
+            if 'application/json' in error_content_type:
+                try:
+                    error_json = error_response.json()
+                    print(f"   ✅ PASS: Error response is valid JSON")
+                    debug_results["validation_errors_return_json"] = True
+                except:
+                    print(f"   ❌ FAIL: Error response claims JSON but cannot be parsed")
+                    debug_results["critical_issues"].append(f"ERROR_RESPONSE_NOT_JSON_{test_description}")
+            else:
+                print(f"   ❌ CRITICAL ISSUE: Error response is not JSON: {error_content_type}")
+                print(f"   Error response preview: {error_response.text[:100]}")
+                debug_results["critical_issues"].append(f"ERROR_RESPONSE_NOT_JSON_{test_description}")
+                
+        except Exception as e:
+            print(f"   ⚠️  Could not test error scenario: {str(e)}")
+    
+    # STEP 6: Test with Non-Existent Customer ID
+    print("\n" + "=" * 80)
+    print("STEP 6: TESTING WITH NON-EXISTENT CUSTOMER ID")
+    print("=" * 80)
+    
+    fake_id = "non-existent-customer-id-12345"
+    fake_endpoint = f"{BACKEND_URL}/api/customers/{fake_id}"
+    print(f"Testing endpoint: {fake_endpoint}")
+    
+    try:
+        fake_response = requests.put(fake_endpoint, json=update_data, timeout=15)
+        print(f"Status Code: {fake_response.status_code}")
+        
+        fake_content_type = fake_response.headers.get('Content-Type', '')
+        print(f"Content-Type: {fake_content_type}")
+        
+        if fake_response.status_code == 404:
+            if 'application/json' in fake_content_type:
+                try:
+                    fake_json = fake_response.json()
+                    print("✅ PASS: 404 error returns valid JSON")
+                except:
+                    print("❌ CRITICAL ISSUE: 404 error claims JSON but cannot be parsed")
+                    debug_results["critical_issues"].append("404_ERROR_NOT_JSON")
+            else:
+                print(f"❌ CRITICAL ISSUE: 404 error does not return JSON: {fake_content_type}")
+                debug_results["critical_issues"].append("404_ERROR_NOT_JSON_CONTENT_TYPE")
+        else:
+            print(f"⚠️  WARNING: Expected 404 for non-existent customer, got {fake_response.status_code}")
+            
+    except Exception as e:
+        print(f"⚠️  Could not test non-existent customer scenario: {str(e)}")
+    
+    # FINAL REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL DEBUG REPORT - CUSTOMER UPDATE JSON PARSING ERROR")
+    print("=" * 100)
+    
+    print(f"📊 DEBUG RESULTS:")
+    print(f"   • Customers Available: {'✅ Yes' if debug_results['customers_available'] else '❌ No'}")
+    print(f"   • Update Endpoint Working: {'✅ Yes' if debug_results['update_endpoint_working'] else '❌ No'}")
+    print(f"   • Response is Valid JSON: {'✅ Yes' if debug_results['response_is_json'] else '❌ No'}")
+    print(f"   • Response Headers Correct: {'✅ Yes' if debug_results['response_headers_correct'] else '❌ No'}")
+    print(f"   • Validation Errors Return JSON: {'✅ Yes' if debug_results['validation_errors_return_json'] else '❌ No'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(debug_results['critical_issues'])}")
+    for issue in debug_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(debug_results['warnings'])}")
+    for warning in debug_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not debug_results['response_headers_correct']:
+        print("🚨 CRITICAL: Backend is not returning proper JSON Content-Type headers!")
+        print("   RECOMMENDATION: Fix backend to always return 'application/json' Content-Type")
+        
+    elif not debug_results['response_is_json']:
+        print("🚨 CRITICAL: Backend response cannot be parsed as JSON!")
+        print("   RECOMMENDATION: Check for BOM, extra whitespace, or HTML error pages")
+        print("   RECOMMENDATION: Ensure all error responses return valid JSON")
+        
+    elif not debug_results['validation_errors_return_json']:
+        print("🚨 CRITICAL: Validation errors are not returning JSON responses!")
+        print("   RECOMMENDATION: Update error handling to always return JSON format")
+        
+    else:
+        print("ℹ️  INFO: Backend appears to be returning valid JSON responses")
+        print("   RECOMMENDATION: Check frontend JSON parsing logic")
+        print("   RECOMMENDATION: Check browser network tab for actual response content")
+        print("   RECOMMENDATION: Verify frontend is not modifying response before parsing")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. Check backend error handling - ensure all responses return JSON")
+    print("   2. Verify FastAPI response serialization is working correctly")
+    print("   3. Check for any middleware that might be modifying responses")
+    print("   4. Test with browser developer tools to see actual response")
+    print("   5. Check if issue occurs with specific data or all customer updates")
+    
+    # Return overall test result
+    has_critical_issues = len(debug_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ DEBUG RESULT: CRITICAL JSON PARSING ISSUES FOUND")
+        return False
+    else:
+        print(f"\n✅ DEBUG RESULT: NO CRITICAL ISSUES - BACKEND JSON RESPONSES APPEAR CORRECT")
+        return True
+
 def test_customer_contact_person_fields():
     """
     CUSTOMER CONTACT PERSON FIELDS TESTING
