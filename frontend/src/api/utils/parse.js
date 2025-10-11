@@ -1,26 +1,21 @@
-// api/utils/parse.js
+// src/api/utils/parse.js
 export async function parseJsonSafe(res) {
-  // 204 No Content ise JSON parse etmeye çalışma
-  if (res.status === 204) return null;
-
+  if (res.status === 204) return null;                 // No Content
   const text = await res.text();
 
-  // Tamamen boş body ise null döndür
-  if (!text || !text.trim()) return null;
+  if (!text || !text.trim()) return null;              // boş body
 
-  // UTF-8 BOM ve Angular JSON-hijacking prefix'lerini temizle
+  // BOM ve Angular JSON-hijack prefix temizliği
   const cleaned = text
-    .replace(/^\uFEFF/, '')          // BOM
-    .replace(/^\)\]\}',?\s*/, '');   // )]}',
+    .replace(/^\uFEFF/, '')         // UTF-8 BOM
+    .replace(/^\)\]\}',?\s*/, '');  // )]}',
 
   try {
     return JSON.parse(cleaned);
   } catch (e) {
-    // Tanı koymayı kolaylaştırmak için ilk 200 karakteri logla
+    // Teşhis için ilk 200 karakteri logla
     console.error("Non-JSON response:", cleaned.slice(0, 200));
-    console.error("Response status:", res.status);
-    console.error("Response headers:", [...res.headers.entries()]);
-    throw new Error(`Non-JSON response (${res.status}): ${cleaned.slice(0, 120)}`);
+    throw new Error(`Non-JSON response (${res.status})`);
   }
 }
 
