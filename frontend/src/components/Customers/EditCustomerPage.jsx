@@ -246,33 +246,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }
     loadDropdownData();
   }, [customer]);
-        tax_number: customer.taxNumber || '',
-        services: customer.services || [],
-        tags: customer.tags || [],
-        notes: customer.notes || '',
-        contactPerson: customer.contactPerson || '',
-        iban: customer.iban || '',
-        currency: customer.currency || 'TRY',
-        // Contact person details - expand if available
-        contact_full_name: customer.contactPerson || '',
-        contact_mobile: customer.contactMobile || customer.phone || '',
-        contact_email: customer.contactEmail || customer.email || '',
-        contact_position: customer.contactPosition || '',
-        contact_address: customer.contactAddress || customer.address || '',
-        contact_country: customer.contactCountry || customer.country || '',
-        contact_city: customer.contactCity || customer.city || '',
-        // Bank details
-        bank_name: customer.bankName || '',
-        bank_branch: customer.bankBranch || '',
-        account_holder_name: customer.accountHolderName || customer.companyName || '',
-        swift_code: customer.swiftCode || ''
-      });
-      
-      console.log('Form data initialized with customer_type_id:', mappedCustomerType || 'mevcut_musteri');
-      console.log('Form data initialized with specialty_id:', customer.sector || '');
-    }
-    loadDropdownData();
-  }, [customer]);
 
   const loadDropdownData = async () => {
     try {
