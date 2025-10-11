@@ -2180,6 +2180,15 @@ async def create_customer(customer_data: dict):
             logger.info(f"Removing contacts field: {customer_data['contacts']}")
             customer_data.pop('contacts')
         
+        # Validate bank information if provided
+        if 'iban' in customer_data and customer_data['iban']:
+            if not validate_iban(customer_data['iban']):
+                raise HTTPException(status_code=400, detail="Geçersiz IBAN formatı")
+        
+        if 'swiftCode' in customer_data and customer_data['swiftCode']:
+            if not validate_swift_code(customer_data['swiftCode']):
+                raise HTTPException(status_code=400, detail="Geçersiz Swift kodu formatı")
+        
         # Convert dict to Customer model
         customer = Customer(**customer_data)
         customer_dict = customer.dict()
