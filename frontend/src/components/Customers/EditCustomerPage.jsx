@@ -329,14 +329,24 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       const updatedFormData = { ...formData, [fieldName]: processedValue };
       setFormData(updatedFormData);
       
-      // Prepare data for backend using mapper
-      const updatedCustomer = {
-        id: customer.id,
-        ...formToDb(updatedFormData)
-      };
-
-      if (onSave) {
-        await onSave(updatedCustomer);
+      // Update backend API using safe JSON parsing
+      try {
+        const payload = formToDb(updatedFormData);
+        const result = await patchCustomer(customer.id, payload);
+        
+        if (result) {
+          // Update form data with returned customer data if available
+          const updatedCustomer = result.customer || result;
+          if (onSave) {
+            onSave(updatedCustomer);
+          }
+        }
+        
+        console.log('Customer field updated successfully');
+        
+      } catch (error) {
+        console.error('Field update error:', error);
+        throw error; // Re-throw to be caught by outer try-catch
       }
       
       setEditingField(null);
