@@ -254,13 +254,8 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
         });
         break;
       case 'delete':
-        if (window.confirm(`${prospect.company_short_name} silinsin mi?`)) {
-          toast({
-            title: "Silindi",
-            description: `${prospect.company_short_name} başarıyla silindi`,
-          });
-          // TODO: Implement delete functionality
-        }
+        setSelectedProspect(prospect);
+        setDeleteModalOpen(true);
         break;
       default:
         break;
