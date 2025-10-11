@@ -644,7 +644,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
               {/* Sektör */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sektör *
+                  Sektör
                 </label>
                 <div className="flex space-x-2">
                   <div className="flex-1">
