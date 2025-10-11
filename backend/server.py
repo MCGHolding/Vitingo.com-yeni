@@ -45,6 +45,36 @@ import base64
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Validation functions for bank information
+def validate_iban(iban: str) -> bool:
+    """Validate IBAN format (Turkish IBAN: TR + 2 digits + 4 bank code + 1 check + 16 account number)"""
+    if not iban:
+        return True  # Allow empty IBAN
+    
+    # Remove spaces and convert to uppercase
+    iban = iban.replace(" ", "").upper()
+    
+    # Turkish IBAN format: TR followed by 24 digits
+    turkish_iban_pattern = r'^TR\d{24}$'
+    
+    if re.match(turkish_iban_pattern, iban):
+        return True
+    
+    # General IBAN format (2 letters + 2 digits + up to 30 alphanumeric)
+    general_iban_pattern = r'^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$'
+    return bool(re.match(general_iban_pattern, iban))
+
+def validate_swift_code(swift: str) -> bool:
+    """Validate Swift code format (8-11 characters: 4 bank + 2 country + 2 location + optional 3 branch)"""
+    if not swift:
+        return True  # Allow empty Swift code
+    
+    swift = swift.replace(" ", "").upper()
+    
+    # Swift code format: 8-11 alphanumeric characters
+    swift_pattern = r'^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$'
+    return bool(re.match(swift_pattern, swift))
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
