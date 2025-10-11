@@ -310,6 +310,11 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           console.log('Found in API:', !!customerTypeFound);
           if (customerTypeFound) {
             console.log('Customer type found:', customerTypeFound);
+            // Update form data with correct customer type value
+            setFormData(prev => ({
+              ...prev,
+              customer_type_id: customerTypeFound.value
+            }));
           }
         }
       } else {
