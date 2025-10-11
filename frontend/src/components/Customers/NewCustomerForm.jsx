@@ -428,13 +428,38 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           body: JSON.stringify(customerData)
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response headers:', [...response.headers.entries()]);
+
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Kaydetme başarısız');
+          // Get response text first for error responses
+          const responseText = await response.text();
+          console.log('Error response text:', responseText);
+          
+          try {
+            const errorData = JSON.parse(responseText);
+            throw new Error(errorData.detail || 'Kaydetme başarısız');
+          } catch (jsonError) {
+            console.error('Error response not JSON:', responseText);
+            throw new Error(responseText || 'Kaydetme başarısız');
+          }
         }
 
-        savedData = await response.json();
-        console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
+        // Get response text first to debug JSON parsing issues
+        const responseText = await response.text();
+        console.log('Success response text:', responseText);
+        console.log('Response text length:', responseText.length);
+        console.log('First 50 chars:', responseText.substring(0, 50));
+        console.log('Last 50 chars:', responseText.substring(Math.max(0, responseText.length - 50)));
+        
+        try {
+          savedData = JSON.parse(responseText);
+          console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
+        } catch (jsonError) {
+          console.error('JSON parsing error:', jsonError);
+          console.error('Failed to parse response as JSON:', responseText);
+          throw new Error('Müşteri kaydedilirken hata oluştu: ' + jsonError.message);
+        }
       }
 
       // Set success state with customer info
