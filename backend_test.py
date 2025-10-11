@@ -1362,6 +1362,461 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_customer_dropdown_data_apis():
+    """
+    CUSTOMER DROPDOWN DATA APIs TESTING FOR EDITCUSTOMERPAGE
+    
+    USER REPORTED ISSUES:
+    1. Customer types and sectors are not loading properly in EditCustomerPage dropdown
+    2. Selected values are not being pulled from database correctly
+
+    TESTING REQUIREMENTS:
+    1. **Customer Types API Test:** GET /api/customer-types
+    2. **Sectors API Test:** GET /api/sectors  
+    3. **Sample Customer Data Test:** GET /api/customers
+    4. **Data Mapping Verification:** Verify field mappings
+    5. **API Response Format Check:** Ensure proper structure
+
+    EXPECTED BEHAVIOR:
+    - Customer types should include options like "Bireysel", "Müşteri Adayı", etc.
+    - Sectors should include various business sectors
+    - Customer data should have matching relationshipType and sector values
+    - Frontend should be able to find and display the selected values
+    """
+    
+    print("=" * 100)
+    print("🔍 CUSTOMER DROPDOWN DATA APIs TESTING FOR EDITCUSTOMERPAGE 🔍")
+    print("=" * 100)
+    print("USER REPORTED ISSUES:")
+    print("1. Customer types and sectors are not loading properly in EditCustomerPage dropdown")
+    print("2. Selected values are not being pulled from database correctly")
+    print("=" * 100)
+    
+    test_results = {
+        "customer_types_api_working": False,
+        "sectors_api_working": False,
+        "customers_api_working": False,
+        "customer_types_data_valid": False,
+        "sectors_data_valid": False,
+        "data_mapping_valid": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: Customer Types API Test
+    print("\n" + "=" * 80)
+    print("TEST 1: CUSTOMER TYPES API TEST - GET /api/customer-types")
+    print("=" * 80)
+    
+    customer_types_endpoint = f"{BACKEND_URL}/api/customer-types"
+    print(f"Testing endpoint: {customer_types_endpoint}")
+    
+    try:
+        response = requests.get(customer_types_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer types API endpoint is responding")
+            test_results["customer_types_api_working"] = True
+            
+            try:
+                customer_types = response.json()
+                print(f"Response type: {type(customer_types)}")
+                
+                if isinstance(customer_types, list):
+                    print(f"✅ PASS: Response is a list with {len(customer_types)} customer types")
+                    
+                    if len(customer_types) > 0:
+                        print("\n📋 CUSTOMER TYPES DATA ANALYSIS:")
+                        for i, ct in enumerate(customer_types, 1):
+                            name = ct.get("name", "N/A")
+                            value = ct.get("value", "N/A")
+                            ct_id = ct.get("id", "N/A")
+                            print(f"   {i}. Name: '{name}' | Value: '{value}' | ID: {ct_id}")
+                            
+                            # Check required fields
+                            required_fields = ["name", "value"]
+                            missing_fields = [field for field in required_fields if field not in ct or not ct[field]]
+                            if missing_fields:
+                                print(f"      ❌ Missing required fields: {missing_fields}")
+                                test_results["warnings"].append(f"CUSTOMER_TYPE_{i}_MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                        
+                        # Check for Turkish names
+                        turkish_names = [ct.get("name", "") for ct in customer_types]
+                        print(f"\n🔍 TURKISH NAMES VERIFICATION:")
+                        print(f"   Found customer type names: {turkish_names}")
+                        
+                        # Check for expected Turkish customer types
+                        expected_types = ["Firma", "Ajans", "Devlet Kurumu", "Dernek"]
+                        found_expected = []
+                        for expected in expected_types:
+                            for ct_name in turkish_names:
+                                if expected.lower() in ct_name.lower():
+                                    found_expected.append(expected)
+                                    break
+                        
+                        if found_expected:
+                            print(f"   ✅ PASS: Found expected Turkish customer types: {found_expected}")
+                            test_results["customer_types_data_valid"] = True
+                        else:
+                            print(f"   ⚠️  WARNING: No expected Turkish customer types found")
+                            test_results["warnings"].append("NO_EXPECTED_TURKISH_CUSTOMER_TYPES")
+                        
+                    else:
+                        print("❌ FAIL: No customer types found in response")
+                        test_results["critical_issues"].append("NO_CUSTOMER_TYPES_DATA")
+                        
+                else:
+                    print("❌ FAIL: Response is not a list")
+                    test_results["critical_issues"].append("CUSTOMER_TYPES_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer types JSON: {str(e)}")
+                test_results["critical_issues"].append(f"CUSTOMER_TYPES_JSON_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer types API error. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CUSTOMER_TYPES_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer types API request error: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMER_TYPES_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: Sectors API Test
+    print("\n" + "=" * 80)
+    print("TEST 2: SECTORS API TEST - GET /api/sectors")
+    print("=" * 80)
+    
+    sectors_endpoint = f"{BACKEND_URL}/api/sectors"
+    print(f"Testing endpoint: {sectors_endpoint}")
+    
+    try:
+        response = requests.get(sectors_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Sectors API endpoint is responding")
+            test_results["sectors_api_working"] = True
+            
+            try:
+                sectors = response.json()
+                print(f"Response type: {type(sectors)}")
+                
+                if isinstance(sectors, list):
+                    print(f"✅ PASS: Response is a list with {len(sectors)} sectors")
+                    
+                    if len(sectors) > 0:
+                        print(f"\n📋 SECTORS DATA ANALYSIS (First 10 sectors):")
+                        for i, sector in enumerate(sectors[:10], 1):
+                            name = sector.get("name", "N/A")
+                            value = sector.get("value", "N/A")
+                            sector_id = sector.get("id", "N/A")
+                            print(f"   {i}. Name: '{name}' | Value: '{value}' | ID: {sector_id}")
+                            
+                            # Check required fields
+                            required_fields = ["name", "value"]
+                            missing_fields = [field for field in required_fields if field not in sector or not sector[field]]
+                            if missing_fields:
+                                print(f"      ❌ Missing required fields: {missing_fields}")
+                                test_results["warnings"].append(f"SECTOR_{i}_MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                        
+                        if len(sectors) > 10:
+                            print(f"   ... and {len(sectors) - 10} more sectors")
+                        
+                        # Check for Turkish sector names
+                        sector_names = [sector.get("name", "") for sector in sectors]
+                        print(f"\n🔍 TURKISH SECTOR NAMES VERIFICATION:")
+                        
+                        # Check for expected Turkish sectors
+                        expected_sectors = ["Bankacılık", "Bilgi Teknolojileri", "Otomotiv", "Tekstil", "Turizm"]
+                        found_expected_sectors = []
+                        for expected in expected_sectors:
+                            for sector_name in sector_names:
+                                if expected.lower() in sector_name.lower():
+                                    found_expected_sectors.append(expected)
+                                    break
+                        
+                        if found_expected_sectors:
+                            print(f"   ✅ PASS: Found expected Turkish sectors: {found_expected_sectors}")
+                            test_results["sectors_data_valid"] = True
+                        else:
+                            print(f"   ⚠️  WARNING: No expected Turkish sectors found")
+                            test_results["warnings"].append("NO_EXPECTED_TURKISH_SECTORS")
+                        
+                        print(f"   Sample sector names: {sector_names[:5]}")
+                        
+                    else:
+                        print("❌ FAIL: No sectors found in response")
+                        test_results["critical_issues"].append("NO_SECTORS_DATA")
+                        
+                else:
+                    print("❌ FAIL: Response is not a list")
+                    test_results["critical_issues"].append("SECTORS_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse sectors JSON: {str(e)}")
+                test_results["critical_issues"].append(f"SECTORS_JSON_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Sectors API error. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"SECTORS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Sectors API request error: {str(e)}")
+        test_results["critical_issues"].append(f"SECTORS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Sample Customer Data Test
+    print("\n" + "=" * 80)
+    print("TEST 3: SAMPLE CUSTOMER DATA TEST - GET /api/customers")
+    print("=" * 80)
+    
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {customers_endpoint}")
+    
+    try:
+        response = requests.get(customers_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customers API endpoint is responding")
+            test_results["customers_api_working"] = True
+            
+            try:
+                customers = response.json()
+                print(f"Response type: {type(customers)}")
+                
+                if isinstance(customers, list):
+                    print(f"✅ PASS: Response is a list with {len(customers)} customers")
+                    
+                    if len(customers) > 0:
+                        print(f"\n📋 CUSTOMER DATA ANALYSIS (First 3 customers):")
+                        
+                        sample_customer = None
+                        for i, customer in enumerate(customers[:3], 1):
+                            company_name = customer.get("companyName", "N/A")
+                            relationship_type = customer.get("relationshipType", "N/A")
+                            sector = customer.get("sector", "N/A")
+                            customer_id = customer.get("id", "N/A")
+                            
+                            print(f"   {i}. Company: '{company_name}' | ID: {customer_id}")
+                            print(f"      relationshipType: '{relationship_type}'")
+                            print(f"      sector: '{sector}'")
+                            
+                            # Store first customer for mapping verification
+                            if i == 1:
+                                sample_customer = customer
+                            
+                            # Check for required dropdown fields
+                            dropdown_fields = ["relationshipType", "sector"]
+                            for field in dropdown_fields:
+                                value = customer.get(field, "")
+                                if value and value != "N/A":
+                                    print(f"      ✅ {field} has value: '{value}'")
+                                else:
+                                    print(f"      ⚠️  {field} is empty or missing")
+                        
+                        # TEST 4: Data Mapping Verification
+                        print(f"\n" + "=" * 80)
+                        print("TEST 4: DATA MAPPING VERIFICATION")
+                        print("=" * 80)
+                        
+                        if sample_customer and test_results["customer_types_api_working"] and test_results["sectors_api_working"]:
+                            print("🔍 Verifying data mapping between customer data and dropdown APIs...")
+                            
+                            # Get fresh data for mapping verification
+                            customer_relationship_type = sample_customer.get("relationshipType", "")
+                            customer_sector = sample_customer.get("sector", "")
+                            
+                            print(f"Sample customer relationshipType: '{customer_relationship_type}'")
+                            print(f"Sample customer sector: '{customer_sector}'")
+                            
+                            # Check if customer relationshipType exists in customer-types API
+                            if customer_relationship_type:
+                                ct_response = requests.get(customer_types_endpoint, timeout=15)
+                                if ct_response.status_code == 200:
+                                    customer_types_data = ct_response.json()
+                                    ct_values = [ct.get("value", "") for ct in customer_types_data]
+                                    ct_names = [ct.get("name", "") for ct in customer_types_data]
+                                    
+                                    if customer_relationship_type in ct_values or customer_relationship_type in ct_names:
+                                        print(f"   ✅ PASS: Customer relationshipType '{customer_relationship_type}' found in customer-types API")
+                                    else:
+                                        print(f"   ❌ FAIL: Customer relationshipType '{customer_relationship_type}' NOT found in customer-types API")
+                                        print(f"      Available values: {ct_values}")
+                                        print(f"      Available names: {ct_names}")
+                                        test_results["critical_issues"].append("RELATIONSHIP_TYPE_MAPPING_MISMATCH")
+                            
+                            # Check if customer sector exists in sectors API
+                            if customer_sector:
+                                sectors_response = requests.get(sectors_endpoint, timeout=15)
+                                if sectors_response.status_code == 200:
+                                    sectors_data = sectors_response.json()
+                                    sector_values = [s.get("value", "") for s in sectors_data]
+                                    sector_names = [s.get("name", "") for s in sectors_data]
+                                    
+                                    if customer_sector in sector_values or customer_sector in sector_names:
+                                        print(f"   ✅ PASS: Customer sector '{customer_sector}' found in sectors API")
+                                        test_results["data_mapping_valid"] = True
+                                    else:
+                                        print(f"   ❌ FAIL: Customer sector '{customer_sector}' NOT found in sectors API")
+                                        print(f"      Available values: {sector_values[:10]}...")  # Show first 10
+                                        print(f"      Available names: {sector_names[:10]}...")   # Show first 10
+                                        test_results["critical_issues"].append("SECTOR_MAPPING_MISMATCH")
+                        
+                    else:
+                        print("❌ FAIL: No customers found in response")
+                        test_results["critical_issues"].append("NO_CUSTOMERS_DATA")
+                        
+                else:
+                    print("❌ FAIL: Response is not a list")
+                    test_results["critical_issues"].append("CUSTOMERS_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customers JSON: {str(e)}")
+                test_results["critical_issues"].append(f"CUSTOMERS_JSON_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customers API error. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CUSTOMERS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customers API request error: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMERS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 5: API Response Format Check
+    print(f"\n" + "=" * 80)
+    print("TEST 5: API RESPONSE FORMAT CHECK")
+    print("=" * 80)
+    
+    print("🔍 Verifying API response formats match frontend expectations...")
+    
+    # Check customer-types format
+    if test_results["customer_types_api_working"]:
+        try:
+            ct_response = requests.get(customer_types_endpoint, timeout=15)
+            if ct_response.status_code == 200:
+                ct_data = ct_response.json()
+                if ct_data and len(ct_data) > 0:
+                    sample_ct = ct_data[0]
+                    required_ct_fields = ["value", "name"]
+                    missing_ct_fields = [field for field in required_ct_fields if field not in sample_ct]
+                    
+                    if not missing_ct_fields:
+                        print("   ✅ PASS: Customer-types API has required fields (value, name)")
+                    else:
+                        print(f"   ❌ FAIL: Customer-types API missing fields: {missing_ct_fields}")
+                        test_results["critical_issues"].append(f"CUSTOMER_TYPES_MISSING_FIELDS_{missing_ct_fields}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Error checking customer-types format: {str(e)}")
+    
+    # Check sectors format
+    if test_results["sectors_api_working"]:
+        try:
+            sectors_response = requests.get(sectors_endpoint, timeout=15)
+            if sectors_response.status_code == 200:
+                sectors_data = sectors_response.json()
+                if sectors_data and len(sectors_data) > 0:
+                    sample_sector = sectors_data[0]
+                    required_sector_fields = ["value", "name"]
+                    missing_sector_fields = [field for field in required_sector_fields if field not in sample_sector]
+                    
+                    if not missing_sector_fields:
+                        print("   ✅ PASS: Sectors API has required fields (value, name)")
+                    else:
+                        print(f"   ❌ FAIL: Sectors API missing fields: {missing_sector_fields}")
+                        test_results["critical_issues"].append(f"SECTORS_MISSING_FIELDS_{missing_sector_fields}")
+        except Exception as e:
+            print(f"   ❌ FAIL: Error checking sectors format: {str(e)}")
+    
+    # FINAL REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL CUSTOMER DROPDOWN APIs TEST REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Customer Types API: {'✅ Working' if test_results['customer_types_api_working'] else '❌ Failed'}")
+    print(f"   • Sectors API: {'✅ Working' if test_results['sectors_api_working'] else '❌ Failed'}")
+    print(f"   • Customers API: {'✅ Working' if test_results['customers_api_working'] else '❌ Failed'}")
+    print(f"   • Customer Types Data Valid: {'✅ Yes' if test_results['customer_types_data_valid'] else '❌ No'}")
+    print(f"   • Sectors Data Valid: {'✅ Yes' if test_results['sectors_data_valid'] else '❌ No'}")
+    print(f"   • Data Mapping Valid: {'✅ Yes' if test_results['data_mapping_valid'] else '❌ No'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['customer_types_api_working']:
+        print("🚨 CRITICAL: Customer Types API (/api/customer-types) is not working!")
+        print("   RECOMMENDATION: Check backend server and customer-types endpoint implementation")
+        
+    elif not test_results['sectors_api_working']:
+        print("🚨 CRITICAL: Sectors API (/api/sectors) is not working!")
+        print("   RECOMMENDATION: Check backend server and sectors endpoint implementation")
+        
+    elif not test_results['customers_api_working']:
+        print("🚨 CRITICAL: Customers API (/api/customers) is not working!")
+        print("   RECOMMENDATION: Check backend server and customers endpoint implementation")
+        
+    elif not test_results['customer_types_data_valid']:
+        print("🚨 CRITICAL: Customer Types API returns invalid or empty data!")
+        print("   RECOMMENDATION: Check customer_types collection in MongoDB")
+        print("   RECOMMENDATION: Verify default customer types are being created")
+        
+    elif not test_results['sectors_data_valid']:
+        print("🚨 CRITICAL: Sectors API returns invalid or empty data!")
+        print("   RECOMMENDATION: Check sectors collection in MongoDB")
+        print("   RECOMMENDATION: Verify default sectors are being created")
+        
+    elif not test_results['data_mapping_valid']:
+        print("🚨 CRITICAL: Data mapping mismatch between customer data and dropdown APIs!")
+        print("   RECOMMENDATION: Check field mapping in EditCustomerPage (relationshipType ↔ customer_type_id)")
+        print("   RECOMMENDATION: Check field mapping in EditCustomerPage (sector ↔ specialty_id)")
+        print("   RECOMMENDATION: Ensure customer data uses values that exist in dropdown APIs")
+        
+    else:
+        print("✅ SUCCESS: All customer dropdown APIs are working correctly!")
+        print("   RECOMMENDATION: The backend APIs are functioning properly")
+        print("   RECOMMENDATION: If frontend dropdowns still not working, check:")
+        print("     - Frontend API calls and error handling")
+        print("     - Browser network tab for failed requests")
+        print("     - JavaScript console for errors")
+        print("     - Frontend field mapping logic")
+    
+    print(f"\n🎯 NEXT STEPS FOR EDITCUSTOMERPAGE DROPDOWN ISSUES:")
+    print("   1. Verify frontend is calling correct API endpoints (/api/customer-types, /api/sectors)")
+    print("   2. Check frontend error handling for API failures")
+    print("   3. Verify field mapping: customer.relationshipType ↔ customer_type_id dropdown")
+    print("   4. Verify field mapping: customer.sector ↔ specialty_id dropdown")
+    print("   5. Check browser developer tools for network errors")
+    print("   6. Ensure frontend uses 'value' field for form values and 'name' field for display")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    all_apis_working = (test_results['customer_types_api_working'] and 
+                       test_results['sectors_api_working'] and 
+                       test_results['customers_api_working'])
+    
+    if has_critical_issues or not all_apis_working:
+        print(f"\n❌ CUSTOMER DROPDOWN APIs TEST RESULT: CRITICAL ISSUES FOUND")
+        return False
+    else:
+        print(f"\n✅ CUSTOMER DROPDOWN APIs TEST RESULT: ALL TESTS PASSED")
+        return True
+
 def test_customer_management_api_endpoints():
     """
     COMPREHENSIVE CUSTOMER MANAGEMENT API ENDPOINTS TESTING
