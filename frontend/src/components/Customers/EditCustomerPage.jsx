@@ -51,7 +51,7 @@ const EditableField = ({
   const isEditing = editingField === fieldName;
   
   return (
-    <div className="group">
+    <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
         {label} {isRequired && <span className="text-red-500">*</span>}
       </label>
