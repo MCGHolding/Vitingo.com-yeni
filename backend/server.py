@@ -302,13 +302,19 @@ class Customer(BaseModel):
     tags: List[str] = Field(default_factory=list)  # Etiketler
     # Services field
     services: List[str] = Field(default_factory=list)  # Hizmetler
+    # Contact person details
+    contactMobile: str = ""  # İletişim Kişisi Cep Telefonu
+    contactEmail: str = ""  # İletişim Kişisi Email
+    contactPosition: str = ""  # İletişim Kişisi Pozisyonu
+    contactAddress: str = ""  # İletişim Kişisi Adresi
+    contactCountry: str = ""  # İletişim Kişisi Ülkesi
+    contactCity: str = ""  # İletişim Kişisi Şehri
     # Bank payment information fields
     iban: str = ""  # IBAN
     bankName: str = ""  # Banka Adı
     bankBranch: str = ""  # Şube
     accountHolderName: str = ""  # Hesap Sahibi
     swiftCode: str = ""  # Swift Kodu
-    contactCountry: str = ""  # Banka Ülkesi
     # Deactivation fields
     deactivated_at: Optional[datetime] = None
     deactivation_reason: Optional[str] = None
