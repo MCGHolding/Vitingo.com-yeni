@@ -111,6 +111,23 @@ const Dashboard = () => {
   useActivityTracker();
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // ResizeObserver cleanup to prevent loop errors
+  useEffect(() => {
+    const handleResizeError = (e) => {
+      if (e.message && e.message.includes('ResizeObserver loop completed')) {
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    window.addEventListener('error', handleResizeError);
+    
+    return () => {
+      window.removeEventListener('error', handleResizeError);
+    };
+  }, []);
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
