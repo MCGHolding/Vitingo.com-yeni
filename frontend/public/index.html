@@ -25,6 +25,26 @@
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        
+        <!-- Global ResizeObserver error suppression -->
+        <script>
+          // Suppress ResizeObserver loop errors (common in React apps)
+          window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('ResizeObserver loop completed')) {
+              e.stopPropagation();
+              e.preventDefault();
+              return false;
+            }
+          });
+          
+          // Also suppress unhandled promise rejections related to ResizeObserver
+          window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && e.reason.message.includes('ResizeObserver')) {
+              e.preventDefault();
+              return false;
+            }
+          });
+        </script>
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
