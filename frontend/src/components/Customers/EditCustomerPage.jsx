@@ -241,11 +241,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Initialize form with customer data using mapper
   useEffect(() => {
     if (customer) {
-      // Import mapper functions
-      import('/app/frontend/src/models/customer.mapper.js').then(mapper => {
-        const mappedFormData = mapper.dbToForm(customer);
-        setFormData(mappedFormData);
-      });
+      const mappedFormData = dbToForm(customer);
+      setFormData(mappedFormData);
     }
     loadDropdownData();
   }, [customer]);
