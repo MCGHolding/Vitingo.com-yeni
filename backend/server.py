@@ -2289,10 +2289,12 @@ async def update_customer(customer_id: str, customer_data: dict):
             
         # Get updated customer
         updated_customer = await db.customers.find_one({"id": customer_id})
-        # Convert ObjectId to string for JSON serialization
-        if updated_customer and '_id' in updated_customer:
-            updated_customer['_id'] = str(updated_customer['_id'])
-        return JSONResponse(content={"customer": updated_customer})
+        # Serialize document properly
+        if updated_customer:
+            serialized_customer = serialize_document(updated_customer)
+            return JSONResponse(content={"customer": serialized_customer})
+        else:
+            raise HTTPException(status_code=404, detail="Customer not found after update")
         
     except HTTPException:
         raise
