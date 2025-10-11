@@ -247,6 +247,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         .replace(/[^a-z0-9]/g, '')
         .substring(0, 15) + '.com',
       position: 'Genel Müdür',
+      tags: [],
       address: testData.address,
       country: 'TR',
       city: 'İstanbul'
