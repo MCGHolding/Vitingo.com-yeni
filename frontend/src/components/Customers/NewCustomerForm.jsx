@@ -411,7 +411,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         // POST customer data using safe JSON parsing
 
         // Use safe JSON parsing for customer creation
-        savedData = await postCustomer(customerData);
+        savedData = await apiPostCustomer(customerData);
         console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
       }
 
