@@ -390,8 +390,15 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     try {
       setIsLoading(true);
       
+      // Special handling for services array field
+      let processedValue = tempValue;
+      if (fieldName === 'services') {
+        // Convert comma-separated string to array and trim whitespace
+        processedValue = tempValue ? tempValue.split(',').map(service => service.trim()).filter(service => service.length > 0) : [];
+      }
+      
       // Update formData
-      const updatedFormData = { ...formData, [fieldName]: tempValue };
+      const updatedFormData = { ...formData, [fieldName]: processedValue };
       setFormData(updatedFormData);
       
       // Prepare data for backend
