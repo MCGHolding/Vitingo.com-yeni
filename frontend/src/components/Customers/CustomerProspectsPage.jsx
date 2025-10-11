@@ -649,6 +649,25 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
           onClose={() => setEmailModalOpen(false)}
         />
       )}
+
+      {/* Delete Prospect Modal */}
+      {deleteModalOpen && selectedProspect && (
+        <DeleteProspectModal 
+          prospect={selectedProspect}
+          isOpen={deleteModalOpen}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setSelectedProspect(null);
+          }}
+          onSuccess={() => {
+            loadCustomerProspects(); // Reload prospects list
+            toast({
+              title: "Başarılı",
+              description: `${selectedProspect.company_short_name} başarıyla silindi`,
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
