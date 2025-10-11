@@ -282,22 +282,47 @@ const Dashboard = () => {
         body: JSON.stringify(updatedCustomer)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', [...response.headers.entries()]);
+      
       if (response.ok) {
-        const customer = await response.json();
-        // Update customers list
-        setCustomers(prev => prev.map(c => c.id === customer.id ? customer : c));
-        console.log('Customer updated:', customer);
+        // Get response text first to debug JSON parsing issues
+        const responseText = await response.text();
+        console.log('Raw response text:', responseText);
+        console.log('Response text length:', responseText.length);
+        console.log('First 50 chars:', responseText.substring(0, 50));
+        console.log('Last 50 chars:', responseText.substring(Math.max(0, responseText.length - 50)));
         
-        // Navigate back to customers list
-        setSelectedCustomerForEdit(null);
-        setCurrentView('all-customers');
-        
-        // Reload customers to get latest data
-        loadCustomers();
+        try {
+          const customer = JSON.parse(responseText);
+          // Update customers list
+          setCustomers(prev => prev.map(c => c.id === customer.id ? customer : c));
+          console.log('Customer updated:', customer);
+          
+          // Navigate back to customers list
+          setSelectedCustomerForEdit(null);
+          setCurrentView('all-customers');
+          
+          // Reload customers to get latest data
+          loadCustomers();
+        } catch (jsonError) {
+          console.error('JSON parsing error:', jsonError);
+          console.error('Failed to parse response as JSON:', responseText);
+          alert('Müşteri kaydedilirken hata oluştu: ' + jsonError.message);
+        }
       } else {
-        const errorData = await response.json();
-        console.error('Failed to update customer:', errorData);
-        alert('Müşteri güncellenirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
+        // Get response text first for error responses too
+        const responseText = await response.text();
+        console.log('Error response text:', responseText);
+        
+        try {
+          const errorData = JSON.parse(responseText);
+          console.error('Failed to update customer:', errorData);
+          alert('Müşteri güncellenirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
+        } catch (jsonError) {
+          console.error('Error response not JSON:', responseText);
+          alert('Müşteri güncellenirken hata oluştu: ' + responseText || 'Bilinmeyen hata');
+        }
       }
     } catch (error) {
       console.error('Error updating customer:', error);
