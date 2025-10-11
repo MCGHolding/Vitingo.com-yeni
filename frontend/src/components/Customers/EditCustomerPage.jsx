@@ -300,6 +300,15 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         const sectorsData = await sectorsResponse.json();
         console.log('Sectors loaded:', sectorsData);
         setSectors(sectorsData);
+        
+        // Verify sector mapping for current customer
+        if (customer && customer.sector) {
+          const sectorFound = sectorsData.find(s => s.name === customer.sector || s.value === customer.sector);
+          console.log('Sector mapping verification - Customer sector:', customer.sector, 'Found in API:', !!sectorFound);
+          if (sectorFound) {
+            console.log('Sector found:', sectorFound);
+          }
+        }
       } else {
         console.error('Failed to load sectors:', sectorsResponse.status);
       }
