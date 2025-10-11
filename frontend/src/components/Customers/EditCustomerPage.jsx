@@ -143,7 +143,7 @@ const EditableField = ({
               size="sm"
               variant="ghost"
               onClick={() => startEdit(fieldName)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 hover:bg-blue-50"
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-blue-600 group-hover:bg-blue-50"
             >
               <Edit className="h-4 w-4" />
             </Button>
