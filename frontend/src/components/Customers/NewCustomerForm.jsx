@@ -299,7 +299,9 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
   const handleAddContactTag = (contactIndex) => {
     if (currentContactTag.trim()) {
       const updatedContacts = [...contacts];
-      updatedContacts[contactIndex].tags = [...updatedContacts[contactIndex].tags, currentContactTag.trim()];
+      // Ensure tags is always an array
+      const currentTags = Array.isArray(updatedContacts[contactIndex].tags) ? updatedContacts[contactIndex].tags : [];
+      updatedContacts[contactIndex].tags = [...currentTags, currentContactTag.trim()];
       setContacts(updatedContacts);
       setCurrentContactTag('');
     }
