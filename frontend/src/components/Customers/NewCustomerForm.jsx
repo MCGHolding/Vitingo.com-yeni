@@ -186,6 +186,73 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
     }));
   };
 
+  // Test verisi doldurma fonksiyonu - TEST İÇİN, DAHA SONRA KALDIRILACAK
+  const fillTestData = () => {
+    const testCompanyNames = [
+      'Teknoloji Çözümleri A.Ş.',
+      'İnovasyon Medya Ltd.',
+      'Dijital Pazarlama Ajansı',
+      'Yaratıcı Tasarım Studio',
+      'E-Ticaret Uzmanları A.Ş.',
+      'Mobil Uygulama Geliştiricileri'
+    ];
+    
+    const testSectors = ['teknoloji', 'bankacilik', 'gida_icecek', 'otomotiv', 'saglik', 'egitim'];
+    const testCustomerTypes = ['ajans', 'mevcut_musteri', 'yeni_musteri', 'firma'];
+    const testServices = ['Web Tasarım', 'Mobil Uygulama', 'SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'Grafik Tasarım'];
+    
+    const randomCompanyName = testCompanyNames[Math.floor(Math.random() * testCompanyNames.length)];
+    const randomSector = testSectors[Math.floor(Math.random() * testSectors.length)];
+    const randomCustomerType = testCustomerTypes[Math.floor(Math.random() * testCustomerTypes.length)];
+    const randomServices = testServices.slice(0, Math.floor(Math.random() * 3) + 1);
+    
+    const testData = {
+      company_short_name: randomCompanyName.replace(' A.Ş.', '').replace(' Ltd.', ''),
+      company_title: randomCompanyName,
+      customer_type_id: randomCustomerType,
+      sector_id: randomSector,
+      phone: '+90 212 555 ' + Math.floor(Math.random() * 9000 + 1000),
+      mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
+      email: 'info@' + randomCompanyName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .substring(0, 15) + '.com',
+      address: `${Math.floor(Math.random() * 200) + 1} Sok. No:${Math.floor(Math.random() * 50) + 1} Beşiktaş/İstanbul`,
+      country: 'TR',
+      city: 'İstanbul',
+      tax_office: 'Beşiktaş Vergi Dairesi',
+      tax_number: '1' + Math.floor(Math.random() * 900000000 + 100000000),
+      services: randomServices,
+      iban: 'TR33 0006 1005 1978 6457 8413 26',
+      bank_name: 'Ziraat Bankası',
+      bank_branch: 'Beşiktaş Şubesi',
+      account_holder_name: randomCompanyName,
+      swift_code: 'TCZBTR2A',
+      notes: 'Test müşterisi - otomatik doldurulmuş veriler'
+    };
+
+    // Contacts için test verisi
+    const testContacts = [{
+      full_name: 'Ahmet Test Kişisi',
+      mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
+      email: 'ahmet@' + randomCompanyName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .substring(0, 15) + '.com',
+      position: 'Genel Müdür',
+      address: testData.address,
+      country: 'TR',
+      city: 'İstanbul'
+    }];
+
+    setFormData(testData);
+    setContacts(testContacts);
+    
+    toast({
+      title: "Test Verisi Dolduruldu",
+      description: `${randomCompanyName} test verileri ile form dolduruldu`,
+      variant: "default"
+    });
+  };
+
   const handleAddService = () => {
     if (currentService.trim()) {
       setFormData(prev => ({
