@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Union, Any
 import uuid
 import re
-import json
 from bson import ObjectId
 # Debug environment variables
 print(f"DEBUG: SENDGRID_API_KEY exists: {'SENDGRID_API_KEY' in os.environ}")
