@@ -520,9 +520,22 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           <div className="p-2 bg-blue-100 rounded-lg">
             <Building2 className="h-6 w-6 text-blue-600" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Yeni Müşteri</h1>
-            <p className="text-gray-600">Müşteri bilgilerini girin ve yetkili kişileri ekleyin</p>
+          <div className="bg-white flex justify-between items-start">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Yeni Müşteri</h1>
+              <p className="text-gray-600">Müşteri bilgilerini girin ve yetkili kişileri ekleyin</p>
+            </div>
+            {/* TEST BUTONU - DAHA SONRA KALDIRILACAK */}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={fillTestData}
+              className="bg-yellow-50 border-yellow-300 text-yellow-800 hover:bg-yellow-100 flex items-center space-x-2"
+            >
+              <span>🧪</span>
+              <span>Test Verisi Doldur</span>
+            </Button>
           </div>
         </div>
         {onClose && (
