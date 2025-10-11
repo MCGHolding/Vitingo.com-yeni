@@ -76,6 +76,31 @@ def validate_swift_code(swift: str) -> bool:
     swift_pattern = r'^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$'
     return bool(re.match(swift_pattern, swift))
 
+def serialize_document(doc):
+    """Convert MongoDB document to JSON-serializable format"""
+    if isinstance(doc, dict):
+        result = {}
+        for key, value in doc.items():
+            if isinstance(value, ObjectId):
+                result[key] = str(value)
+            elif isinstance(value, datetime):
+                result[key] = value.isoformat()
+            elif isinstance(value, dict):
+                result[key] = serialize_document(value)
+            elif isinstance(value, list):
+                result[key] = [serialize_document(item) if isinstance(item, (dict, ObjectId, datetime)) else item for item in value]
+            else:
+                result[key] = value
+        return result
+    elif isinstance(doc, list):
+        return [serialize_document(item) if isinstance(item, (dict, ObjectId, datetime)) else item for item in doc]
+    elif isinstance(doc, ObjectId):
+        return str(doc)
+    elif isinstance(doc, datetime):
+        return doc.isoformat()
+    else:
+        return doc
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
