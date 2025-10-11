@@ -22,7 +22,7 @@ import {
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useIban } from '../../hooks/useIban';
-import { formToDb, getEmptyForm } from '../models/customer.mapper';
+import { formToDb, getEmptyForm } from '../../models/customer.mapper';
 
 import CountrySelect from '../geo/CountrySelect';
 import CitySelect from '../geo/CitySelect';
