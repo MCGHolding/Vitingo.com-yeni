@@ -237,21 +237,17 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     return sectorName;
   };
 
-  // Initialize form with customer data
+  // Initialize form with customer data using mapper
   useEffect(() => {
     if (customer) {
-      console.log('Customer data received:', customer);
-      console.log('Customer relationshipType:', customer.relationshipType);
-      console.log('Customer sector:', customer.sector);
-      
-      const mappedCustomerType = mapRelationshipTypeToCustomerType(customer.relationshipType);
-      console.log('Mapped customer type:', customer.relationshipType, '->', mappedCustomerType);
-      
-      setFormData({
-        company_short_name: customer.companyName || '',
-        company_title: customer.companyTitle || '',
-        customer_type_id: mappedCustomerType || 'mevcut_musteri',
-        specialty_id: customer.sector || '',
+      // Import mapper functions
+      import('/app/frontend/src/models/customer.mapper.js').then(mapper => {
+        const mappedFormData = mapper.dbToForm(customer);
+        setFormData(mappedFormData);
+      });
+    }
+    loadDropdownData();
+  }, [customer]);
         address: customer.address || '',
         country: customer.country || '',
         city: customer.city || '',
