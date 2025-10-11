@@ -17454,44 +17454,24 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🏦 CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING")
+    print("🚨 URGENT DEBUG: CUSTOMER UPDATE JSON PARSING ERROR INVESTIGATION")
     print(f"Backend URL: {BACKEND_URL}")
-    print("=" * 100)
-    print("🎯 TESTING: Customer bank payment information fields in backend database and API")
-    print("📝 BACKGROUND:")
-    print("   EditCustomerPage has been updated to include new bank payment information fields:")
-    print("   - Hesap Sahibi (account_holder_name)")
-    print("   - IBAN (iban)")
-    print("   - Banka Adı (bank_name)")
-    print("   - Şube (bank_branch)")
-    print("   - Swift Kodu (swift_code)")
-    print("   - Ülke (contact_country for bank)")
-    print("📝 TESTING REQUIREMENTS:")
-    print("   1. Customer Data Structure Verification")
-    print("   2. API Update Support Test")
-    print("   3. Data Persistence Test")
-    print("   4. Field Validation Test")
-    print("   5. Backend Response Format")
-    print("=" * 100)
     
-    # Run Customer Bank Payment Information testing
+    # Run the customer update JSON parsing debug test
     try:
-        result = test_customer_bank_payment_information()
+        result = test_customer_update_json_parsing_debug()
         if result:
-            print("\n✅ CUSTOMER BANK PAYMENT INFORMATION TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
-            print("✅ Customer API accepts and stores all bank payment fields")
-            print("✅ Bank information persists correctly in database")
-            print("✅ API returns bank data for frontend display")
-            print("✅ Field updates work with existing field-level editing system")
-            print("📋 Backend is ready for EditCustomerPage Banka Ödeme Bilgileri functionality")
+            print("\n✅ CUSTOMER UPDATE JSON PARSING DEBUG COMPLETED - NO CRITICAL ISSUES FOUND")
+            print("✅ Backend appears to be returning valid JSON responses")
+            print("✅ Response headers are correct")
+            print("✅ Customer update endpoint is working properly")
+            print("📋 Issue may be in frontend JSON parsing or browser-specific behavior")
         else:
-            print("\n🚨 CUSTOMER BANK PAYMENT INFORMATION TESTING COMPLETED - CRITICAL ISSUES FOUND!")
-            print("❌ Backend does not properly support bank payment information fields")
-            print("❌ EditCustomerPage Banka Ödeme Bilgileri functionality will not work correctly")
-            print("❌ Immediate action required to implement bank payment field support")
-            print("📋 See detailed test report above for specific problems and recommendations")
+            print("\n❌ CUSTOMER UPDATE JSON PARSING DEBUG FAILED")
+            print("❌ Critical JSON parsing issues found in backend")
+            print("📋 Review the test output above for specific issues")
     except Exception as e:
-        print(f"\n❌ CUSTOMER BANK PAYMENT INFORMATION TESTING ERROR: {str(e)}")
+        print(f"\n❌ CUSTOMER UPDATE JSON PARSING DEBUG ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
