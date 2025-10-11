@@ -473,10 +473,17 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             ...baseCustomerData,
             sector: getSectorName(baseCustomerData.sector_id), // Convert sector_id to sector name
           }
-        : // Use mapper to convert form data to DB format
+        : // Use mapper to convert form data to DB format including contact person details
           formToDb({
             ...baseCustomerData,
             contactPerson: contacts[0]?.full_name || '',
+            // Contact person details from contacts array
+            contact_mobile: contacts[0]?.mobile || '',
+            contact_email: contacts[0]?.email || '', 
+            contact_position: contacts[0]?.position || '',
+            contact_address: contacts[0]?.address || '',
+            contact_country: contacts[0]?.country || '',
+            contact_city: contacts[0]?.city || '',
           });
       
       // Save directly to backend or use onSave prop
