@@ -1362,6 +1362,387 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_kaygusuzlar_customer_data_mapping_investigation():
+    """
+    CRITICAL: Debug "Kaygusuzlar" customer data mapping issues
+    
+    ISSUE: User created "Kaygusuzlar" customer with specific data but EditCustomerPage shows wrong values:
+    - Form: Selected "Ajans" + "Bankacılık" → Edit shows "Mevcut Müşteri" + "Bilinmiyor"  
+    - Form: Services "deneme" → Edit shows "Henüz girilmemiş"
+    - Form: Bank info filled → Edit shows mostly empty (except company name)
+    - Form: Contact person info filled → Edit shows company info instead
+    
+    URGENT INVESTIGATION NEEDED:
+    1. **Find Kaygusuzlar Customer Data:** GET /api/customers to find customer with companyName "Kaygusuzlar"  
+    2. **Check Customer Creation Data:** Verify what data NewCustomerForm sent to POST /api/customers
+    3. **Verify Field Mapping Issues:** Check if relationshipType field has "Ajans" vs coded value
+    4. **Data Structure Analysis:** Check exact database document structure for Kaygusuzlar
+    """
+    
+    print("=" * 100)
+    print("🚨 CRITICAL: DEBUG KAYGUSUZLAR CUSTOMER DATA MAPPING ISSUES 🚨")
+    print("=" * 100)
+    print("CONTEXT: User created 'Kaygusuzlar' customer with specific data but EditCustomerPage")
+    print("shows completely different values than what was entered in the form.")
+    print("This is a critical data integrity issue affecting customer data reliability.")
+    print("=" * 100)
+    
+    investigation_results = {
+        "kaygusuzlar_customer_found": False,
+        "kaygusuzlar_customer_data": None,
+        "relationship_type_mapping_issue": False,
+        "sector_mapping_issue": False,
+        "services_field_issue": False,
+        "bank_info_issue": False,
+        "contact_person_issue": False,
+        "customer_types_api_working": False,
+        "sectors_api_working": False,
+        "critical_issues": [],
+        "field_mapping_problems": []
+    }
+    
+    # INVESTIGATION STEP 1: Find Kaygusuzlar Customer Data
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 1: FIND KAYGUSUZLAR CUSTOMER DATA")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    print("Searching for customer with companyName 'Kaygusuzlar'...")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customers API endpoint is responding")
+            
+            try:
+                customers = response.json()
+                customer_count = len(customers) if isinstance(customers, list) else 0
+                print(f"📊 Total customers in database: {customer_count}")
+                
+                # Search for Kaygusuzlar customer
+                kaygusuzlar_customer = None
+                for customer in customers:
+                    company_name = customer.get("companyName", "").lower()
+                    if "kaygusuzlar" in company_name:
+                        kaygusuzlar_customer = customer
+                        investigation_results["kaygusuzlar_customer_found"] = True
+                        investigation_results["kaygusuzlar_customer_data"] = customer
+                        break
+                
+                if kaygusuzlar_customer:
+                    print("✅ CRITICAL FINDING: Kaygusuzlar customer found in database!")
+                    print(f"   Customer ID: {kaygusuzlar_customer.get('id')}")
+                    print(f"   Company Name: {kaygusuzlar_customer.get('companyName')}")
+                    print(f"   Relationship Type: {kaygusuzlar_customer.get('relationshipType')}")
+                    print(f"   Sector: {kaygusuzlar_customer.get('sector')}")
+                    print(f"   Services: {kaygusuzlar_customer.get('services', [])}")
+                    print(f"   Created At: {kaygusuzlar_customer.get('created_at')}")
+                    
+                    # Analyze stored data vs expected data
+                    print(f"\n🔍 DETAILED DATA ANALYSIS:")
+                    print(f"   📋 RELATIONSHIP TYPE ANALYSIS:")
+                    stored_relationship = kaygusuzlar_customer.get('relationshipType', '')
+                    print(f"      Stored Value: '{stored_relationship}'")
+                    if stored_relationship == "Ajans":
+                        print("      ✅ PASS: Relationship type matches expected 'Ajans'")
+                    elif stored_relationship == "Mevcut Müşteri":
+                        print("      🚨 CRITICAL ISSUE: Shows 'Mevcut Müşteri' instead of 'Ajans'!")
+                        investigation_results["relationship_type_mapping_issue"] = True
+                        investigation_results["critical_issues"].append("RELATIONSHIP_TYPE_MISMATCH")
+                    else:
+                        print(f"      ⚠️  WARNING: Unexpected relationship type: '{stored_relationship}'")
+                        investigation_results["field_mapping_problems"].append(f"UNEXPECTED_RELATIONSHIP_TYPE_{stored_relationship}")
+                    
+                    print(f"\n   📋 SECTOR ANALYSIS:")
+                    stored_sector = kaygusuzlar_customer.get('sector', '')
+                    print(f"      Stored Value: '{stored_sector}'")
+                    if stored_sector == "Bankacılık":
+                        print("      ✅ PASS: Sector matches expected 'Bankacılık'")
+                    elif stored_sector == "Bilinmiyor" or stored_sector == "":
+                        print("      🚨 CRITICAL ISSUE: Shows 'Bilinmiyor' instead of 'Bankacılık'!")
+                        investigation_results["sector_mapping_issue"] = True
+                        investigation_results["critical_issues"].append("SECTOR_MISMATCH")
+                    else:
+                        print(f"      ⚠️  WARNING: Unexpected sector: '{stored_sector}'")
+                        investigation_results["field_mapping_problems"].append(f"UNEXPECTED_SECTOR_{stored_sector}")
+                    
+                    print(f"\n   📋 SERVICES ANALYSIS:")
+                    stored_services = kaygusuzlar_customer.get('services', [])
+                    print(f"      Stored Value: {stored_services}")
+                    if isinstance(stored_services, list) and "deneme" in stored_services:
+                        print("      ✅ PASS: Services contains expected 'deneme'")
+                    elif not stored_services or stored_services == []:
+                        print("      🚨 CRITICAL ISSUE: Services field is empty instead of containing 'deneme'!")
+                        investigation_results["services_field_issue"] = True
+                        investigation_results["critical_issues"].append("SERVICES_FIELD_EMPTY")
+                    else:
+                        print(f"      ⚠️  WARNING: Services field has unexpected value: {stored_services}")
+                        investigation_results["field_mapping_problems"].append(f"UNEXPECTED_SERVICES_{stored_services}")
+                    
+                    print(f"\n   📋 BANK INFORMATION ANALYSIS:")
+                    bank_fields = ['bankName', 'bankBranch', 'accountHolderName', 'swiftCode', 'iban']
+                    bank_info_filled = 0
+                    for field in bank_fields:
+                        value = kaygusuzlar_customer.get(field, '')
+                        print(f"      {field}: '{value}'")
+                        if value and value.strip():
+                            bank_info_filled += 1
+                    
+                    if bank_info_filled == 0:
+                        print("      🚨 CRITICAL ISSUE: All bank fields are empty!")
+                        investigation_results["bank_info_issue"] = True
+                        investigation_results["critical_issues"].append("BANK_INFO_MISSING")
+                    elif bank_info_filled < len(bank_fields):
+                        print(f"      ⚠️  WARNING: Only {bank_info_filled}/{len(bank_fields)} bank fields filled")
+                        investigation_results["field_mapping_problems"].append(f"PARTIAL_BANK_INFO_{bank_info_filled}")
+                    else:
+                        print(f"      ✅ PASS: All bank fields are filled")
+                    
+                    print(f"\n   📋 CONTACT PERSON ANALYSIS:")
+                    contact_fields = ['contactMobile', 'contactEmail', 'contactPosition', 'contactAddress', 'contactCountry', 'contactCity']
+                    contact_info_filled = 0
+                    for field in contact_fields:
+                        value = kaygusuzlar_customer.get(field, '')
+                        print(f"      {field}: '{value}'")
+                        if value and value.strip():
+                            contact_info_filled += 1
+                    
+                    if contact_info_filled == 0:
+                        print("      🚨 CRITICAL ISSUE: All contact person fields are empty!")
+                        investigation_results["contact_person_issue"] = True
+                        investigation_results["critical_issues"].append("CONTACT_PERSON_INFO_MISSING")
+                    elif contact_info_filled < len(contact_fields):
+                        print(f"      ⚠️  WARNING: Only {contact_info_filled}/{len(contact_fields)} contact fields filled")
+                        investigation_results["field_mapping_problems"].append(f"PARTIAL_CONTACT_INFO_{contact_info_filled}")
+                    else:
+                        print(f"      ✅ PASS: All contact person fields are filled")
+                        
+                else:
+                    print("🚨 CRITICAL ISSUE: Kaygusuzlar customer NOT found in database!")
+                    print("   This could mean:")
+                    print("   1. Customer was not actually saved to database")
+                    print("   2. Customer name was stored differently")
+                    print("   3. Database connection or query issue")
+                    investigation_results["critical_issues"].append("KAYGUSUZLAR_CUSTOMER_NOT_FOUND")
+                    
+                    # Show all customer names for debugging
+                    print(f"\n📋 ALL CUSTOMER NAMES IN DATABASE (for debugging):")
+                    for i, customer in enumerate(customers[:10], 1):  # Show first 10
+                        print(f"   {i}. {customer.get('companyName', 'N/A')}")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customers data: {str(e)}")
+                investigation_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customers API not responding properly. Status: {response.status_code}")
+            investigation_results["critical_issues"].append(f"API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 2: Check Customer Types API for Field Mapping
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 2: CUSTOMER TYPES API FIELD MAPPING ANALYSIS")
+    print("=" * 80)
+    
+    customer_types_endpoint = f"{BACKEND_URL}/api/customer-types"
+    print(f"Testing endpoint: {customer_types_endpoint}")
+    print("Checking available customer types and their values...")
+    
+    try:
+        response = requests.get(customer_types_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer Types API endpoint is responding")
+            investigation_results["customer_types_api_working"] = True
+            
+            try:
+                customer_types = response.json()
+                print(f"📊 Available customer types: {len(customer_types)}")
+                
+                print(f"\n🔍 CUSTOMER TYPES ANALYSIS:")
+                ajans_found = False
+                mevcut_musteri_found = False
+                
+                for customer_type in customer_types:
+                    name = customer_type.get('name', '')
+                    value = customer_type.get('value', '')
+                    print(f"   • Name: '{name}' → Value: '{value}'")
+                    
+                    if name == "Ajans":
+                        ajans_found = True
+                        print(f"     ✅ 'Ajans' customer type found with value: '{value}'")
+                    elif name == "Mevcut Müşteri":
+                        mevcut_musteri_found = True
+                        print(f"     ✅ 'Mevcut Müşteri' customer type found with value: '{value}'")
+                
+                if ajans_found and mevcut_musteri_found:
+                    print(f"\n📋 FIELD MAPPING ANALYSIS:")
+                    if investigation_results["kaygusuzlar_customer_found"]:
+                        stored_value = investigation_results["kaygusuzlar_customer_data"].get('relationshipType', '')
+                        print(f"   Kaygusuzlar stored relationshipType: '{stored_value}'")
+                        
+                        if stored_value == "Ajans":
+                            print("   ✅ PASS: Stored value matches display name 'Ajans'")
+                        elif stored_value in [ct.get('value') for ct in customer_types if ct.get('name') == 'Ajans']:
+                            print("   ⚠️  INFO: Stored value matches coded value for 'Ajans'")
+                        elif stored_value == "Mevcut Müşteri":
+                            print("   🚨 CRITICAL: Stored as 'Mevcut Müşteri' instead of 'Ajans'!")
+                        else:
+                            print(f"   🚨 CRITICAL: Stored value '{stored_value}' doesn't match any expected values!")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer types data: {str(e)}")
+                investigation_results["critical_issues"].append(f"CUSTOMER_TYPES_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer Types API not responding. Status: {response.status_code}")
+            investigation_results["critical_issues"].append(f"CUSTOMER_TYPES_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer Types API error: {str(e)}")
+        investigation_results["critical_issues"].append(f"CUSTOMER_TYPES_CONNECTION_ERROR: {str(e)}")
+    
+    # INVESTIGATION STEP 3: Check Sectors API for Field Mapping
+    print("\n" + "=" * 80)
+    print("INVESTIGATION STEP 3: SECTORS API FIELD MAPPING ANALYSIS")
+    print("=" * 80)
+    
+    sectors_endpoint = f"{BACKEND_URL}/api/sectors"
+    print(f"Testing endpoint: {sectors_endpoint}")
+    print("Checking available sectors and their values...")
+    
+    try:
+        response = requests.get(sectors_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Sectors API endpoint is responding")
+            investigation_results["sectors_api_working"] = True
+            
+            try:
+                sectors = response.json()
+                print(f"📊 Available sectors: {len(sectors)}")
+                
+                print(f"\n🔍 SECTORS ANALYSIS:")
+                bankacilik_found = False
+                
+                for sector in sectors:
+                    name = sector.get('name', '')
+                    value = sector.get('value', '')
+                    if name == "Bankacılık":
+                        bankacilik_found = True
+                        print(f"   ✅ 'Bankacılık' sector found with value: '{value}'")
+                        break
+                
+                if bankacilik_found:
+                    print(f"\n📋 SECTOR FIELD MAPPING ANALYSIS:")
+                    if investigation_results["kaygusuzlar_customer_found"]:
+                        stored_sector = investigation_results["kaygusuzlar_customer_data"].get('sector', '')
+                        print(f"   Kaygusuzlar stored sector: '{stored_sector}'")
+                        
+                        if stored_sector == "Bankacılık":
+                            print("   ✅ PASS: Stored sector matches expected 'Bankacılık'")
+                        elif stored_sector in [s.get('value') for s in sectors if s.get('name') == 'Bankacılık']:
+                            print("   ⚠️  INFO: Stored sector matches coded value for 'Bankacılık'")
+                        else:
+                            print(f"   🚨 CRITICAL: Stored sector '{stored_sector}' doesn't match 'Bankacılık'!")
+                else:
+                    print("   ❌ FAIL: 'Bankacılık' sector not found in sectors API")
+                    investigation_results["critical_issues"].append("BANKACILIK_SECTOR_NOT_FOUND")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse sectors data: {str(e)}")
+                investigation_results["critical_issues"].append(f"SECTORS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Sectors API not responding. Status: {response.status_code}")
+            investigation_results["critical_issues"].append(f"SECTORS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Sectors API error: {str(e)}")
+        investigation_results["critical_issues"].append(f"SECTORS_CONNECTION_ERROR: {str(e)}")
+    
+    # FINAL INVESTIGATION REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL INVESTIGATION REPORT - KAYGUSUZLAR CUSTOMER DATA MAPPING")
+    print("=" * 100)
+    
+    print(f"📊 INVESTIGATION SUMMARY:")
+    print(f"   • Kaygusuzlar Customer Found: {'✅ Yes' if investigation_results['kaygusuzlar_customer_found'] else '❌ No'}")
+    print(f"   • Customer Types API Working: {'✅ Yes' if investigation_results['customer_types_api_working'] else '❌ No'}")
+    print(f"   • Sectors API Working: {'✅ Yes' if investigation_results['sectors_api_working'] else '❌ No'}")
+    print(f"   • Relationship Type Issue: {'🚨 Yes' if investigation_results['relationship_type_mapping_issue'] else '✅ No'}")
+    print(f"   • Sector Mapping Issue: {'🚨 Yes' if investigation_results['sector_mapping_issue'] else '✅ No'}")
+    print(f"   • Services Field Issue: {'🚨 Yes' if investigation_results['services_field_issue'] else '✅ No'}")
+    print(f"   • Bank Info Issue: {'🚨 Yes' if investigation_results['bank_info_issue'] else '✅ No'}")
+    print(f"   • Contact Person Issue: {'🚨 Yes' if investigation_results['contact_person_issue'] else '✅ No'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(investigation_results['critical_issues'])}")
+    for issue in investigation_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  FIELD MAPPING PROBLEMS: {len(investigation_results['field_mapping_problems'])}")
+    for problem in investigation_results['field_mapping_problems']:
+        print(f"   • {problem}")
+    
+    # ROOT CAUSE ANALYSIS AND RECOMMENDATIONS
+    print(f"\n📋 ROOT CAUSE ANALYSIS:")
+    
+    if not investigation_results['kaygusuzlar_customer_found']:
+        print("🚨 PRIMARY ISSUE: Kaygusuzlar customer not found in database")
+        print("   POSSIBLE CAUSES:")
+        print("   1. Customer creation failed silently")
+        print("   2. Customer name stored with different spelling/case")
+        print("   3. Database rollback or data loss occurred")
+        print("   RECOMMENDATION: Check backend logs for customer creation errors")
+        
+    elif investigation_results['relationship_type_mapping_issue']:
+        print("🚨 PRIMARY ISSUE: Relationship type field mapping problem")
+        print("   STORED: 'Mevcut Müşteri' | EXPECTED: 'Ajans'")
+        print("   POSSIBLE CAUSES:")
+        print("   1. Frontend sending wrong value to backend")
+        print("   2. Backend not mapping display names to correct values")
+        print("   3. Default value being applied instead of selected value")
+        print("   RECOMMENDATION: Check NewCustomerForm field mapping logic")
+        
+    elif investigation_results['sector_mapping_issue']:
+        print("🚨 PRIMARY ISSUE: Sector field mapping problem")
+        print("   STORED: 'Bilinmiyor' or empty | EXPECTED: 'Bankacılık'")
+        print("   POSSIBLE CAUSES:")
+        print("   1. Sector dropdown not sending selected value")
+        print("   2. Backend validation rejecting sector value")
+        print("   3. Field name mismatch between frontend and backend")
+        print("   RECOMMENDATION: Check sector field mapping in customer creation")
+    
+    else:
+        print("ℹ️  INFO: Main field mappings appear correct")
+        print("   RECOMMENDATION: Check individual field issues identified above")
+    
+    print(f"\n🎯 IMMEDIATE ACTION ITEMS:")
+    print("   1. Verify NewCustomerForm sends correct relationshipType value for 'Ajans'")
+    print("   2. Check if backend properly maps 'Ajans' display name to database value")
+    print("   3. Verify sector dropdown sends 'Bankacılık' value correctly")
+    print("   4. Test services array field is properly saved and retrieved")
+    print("   5. Check bank information fields are being saved during customer creation")
+    print("   6. Verify contact person fields are properly mapped and saved")
+    
+    # Return overall test result
+    has_critical_issues = len(investigation_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ INVESTIGATION RESULT: CRITICAL DATA MAPPING ISSUES CONFIRMED")
+        return False
+    else:
+        print(f"\n✅ INVESTIGATION RESULT: NO CRITICAL MAPPING ISSUES FOUND")
+        return True
+
 def test_customer_update_json_parsing_debug():
     """
     URGENT DEBUG: Customer Update JSON Parsing Error Investigation
