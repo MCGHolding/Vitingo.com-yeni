@@ -843,7 +843,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   tempValue={tempValue}
                   setTempValue={setTempValue}
                   handleFieldKeyPress={handleFieldKeyPress}
-                  placeholder="İletişim kişisinin adı"
+                  placeholder="İletişim kişisinin tam adı"
+                  isRequired={true}
                 />
 
                 <EditableField
@@ -857,8 +858,87 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   tempValue={tempValue}
                   setTempValue={setTempValue}
                   handleFieldKeyPress={handleFieldKeyPress}
-                  placeholder="İş pozisyonu"
+                  placeholder="İş pozisyonu (Örn: Genel Müdür, İK Uzmanı)"
                 />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Cep Telefonu"
+                    value={formData.contact_mobile}
+                    fieldName="contact_mobile"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="tel"
+                    placeholder="+90 555 123 45 67"
+                  />
+
+                  <EditableField
+                    label="Email"
+                    value={formData.contact_email}
+                    fieldName="contact_email"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="email"
+                    placeholder="kisi@firma.com"
+                  />
+                </div>
+
+                <EditableField
+                  label="İletişim Adresi"
+                  value={formData.contact_address}
+                  fieldName="contact_address"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="textarea"
+                  placeholder="İletişim kişisinin detay adresi"
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Ülke"
+                    value={formData.contact_country}
+                    fieldName="contact_country"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="select"
+                    placeholder="Ülke seçiniz..."
+                    countries={countries}
+                  />
+
+                  <EditableField
+                    label="Şehir"
+                    value={formData.contact_city}
+                    fieldName="contact_city"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Şehir adı"
+                  />
+                </div>
               </CardContent>
             </Card>
 
