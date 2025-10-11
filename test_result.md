@@ -2776,10 +2776,7 @@ agent_communication:
 
 test_plan:
   current_focus: 
-    - "Meeting Request Creation Test"
-    - "Meeting Request Retrieval Test"
-    - "Meeting Request Response Test"
-    - "Meeting Request Database Integration Test"
+    - "EXPANDED İletişim Kişisi Detayları Section Testing in EditCustomerPage"
   stuck_tasks: 
     - "AI Generation OpenAI Integration Issue"
   test_all: false
