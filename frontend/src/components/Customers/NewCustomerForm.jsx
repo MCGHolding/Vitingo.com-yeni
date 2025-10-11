@@ -637,7 +637,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
                 <div className="flex space-x-2">
                   <div className="flex-1">
                     <SearchableSelect
-                      options={sectors.map(sector => ({ value: sector.value, label: sector.name }))}
+                      options={(sectors || []).map(sector => ({ value: sector.value, label: sector.name }))}
                       value={formData.specialty_id}
                       onValueChange={(value) => handleInputChange('specialty_id', value)}
                       placeholder="Sektör seçin..."
