@@ -1362,6 +1362,361 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_contact_person_fields_verification():
+    """
+    CONTACT PERSON FIELDS VERIFICATION FOR NEWLY CREATED CUSTOMERS
+    
+    **Objective**: Verify that contact person details entered in NewCustomerForm are correctly saved to the database and can be retrieved for display in EditCustomerPage.
+    
+    **Test Requirements**:
+    1. Create a NEW test customer with COMPLETE contact person details using POST /api/customers
+    2. Verify ALL 6 contact person fields are saved correctly in database:
+       - contactMobile (e.g., "+90 532 111 2233")
+       - contactEmail (e.g., "contact@newtest.com")
+       - contactPosition (e.g., "İletişim Müdürü")
+       - contactAddress (e.g., "Atatürk Caddesi No:123")
+       - contactCountry (e.g., "TR")
+       - contactCity (e.g., "İstanbul")
+    3. Retrieve the created customer using GET /api/customers/{id}
+    4. Confirm all contact person fields are present and correctly populated in the response
+    5. Verify the customer appears in the general GET /api/customers list with contact data
+    
+    **Success Criteria**:
+    - Customer creation returns 200/201 with proper response including customer ID
+    - All 6 contact person fields are present in the created customer record
+    - GET /api/customers/{id} returns the customer with all contact details intact
+    - Contact fields match the input data exactly (no data loss or corruption)
+    - Customer appears in GET /api/customers list with contact data
+    """
+    
+    print("=" * 100)
+    print("🔍 CONTACT PERSON FIELDS VERIFICATION FOR NEWLY CREATED CUSTOMERS 🔍")
+    print("=" * 100)
+    print("OBJECTIVE: Verify that contact person details entered in NewCustomerForm")
+    print("are correctly saved to the database and can be retrieved for display in EditCustomerPage.")
+    print("=" * 100)
+    
+    test_results = {
+        "customer_creation_success": False,
+        "customer_id": None,
+        "contact_fields_saved": False,
+        "contact_fields_retrieved": False,
+        "contact_fields_in_list": False,
+        "data_integrity_verified": False,
+        "missing_fields": [],
+        "field_mismatches": [],
+        "critical_issues": []
+    }
+    
+    # Test customer data with COMPLETE contact person details
+    test_customer_data = {
+        "companyName": "Contact Person Verification Test Ltd.",
+        "companyTitle": "Contact Person Test Company Full Title",
+        "relationshipType": "firma",
+        "sector": "bilgi_teknolojileri",
+        "phone": "+90 212 555 6677",
+        "email": "info@contactverification.com",
+        "address": "Test Mahallesi, Test Sokak No:99",
+        "country": "TR",
+        "city": "Ankara",
+        "taxNumber": "1234567890",
+        "taxOffice": "Ankara Vergi Dairesi",
+        "services": ["Web Development", "Mobile Apps"],
+        # CRITICAL: Contact person fields to verify
+        "contactMobile": "+90 532 111 2233",
+        "contactEmail": "contact@newtest.com",
+        "contactPosition": "İletişim Müdürü",
+        "contactAddress": "Atatürk Caddesi No:123",
+        "contactCountry": "TR",
+        "contactCity": "İstanbul",
+        # Bank information
+        "bankName": "İş Bankası",
+        "bankBranch": "Kızılay Şubesi",
+        "accountHolderName": "Contact Person Verification Test Ltd.",
+        "iban": "TR33 0006 4000 0011 1234 5678 90",
+        "swiftCode": "ISBKTRIS"
+    }
+    
+    # STEP 1: Create customer with complete contact person details
+    print("\n" + "=" * 80)
+    print("STEP 1: CREATE CUSTOMER WITH COMPLETE CONTACT PERSON DETAILS")
+    print("=" * 80)
+    
+    create_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {create_endpoint}")
+    print(f"Customer: {test_customer_data['companyName']}")
+    print(f"Contact Person Details:")
+    print(f"  • Mobile: {test_customer_data['contactMobile']}")
+    print(f"  • Email: {test_customer_data['contactEmail']}")
+    print(f"  • Position: {test_customer_data['contactPosition']}")
+    print(f"  • Address: {test_customer_data['contactAddress']}")
+    print(f"  • Country: {test_customer_data['contactCountry']}")
+    print(f"  • City: {test_customer_data['contactCity']}")
+    
+    try:
+        create_response = requests.post(create_endpoint, json=test_customer_data, timeout=30)
+        print(f"\nCreate Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Customer creation endpoint responded successfully")
+            test_results["customer_creation_success"] = True
+            
+            try:
+                created_customer = create_response.json()
+                customer_id = created_customer.get("id")
+                test_results["customer_id"] = customer_id
+                
+                if customer_id:
+                    print(f"✅ PASS: Customer created with ID: {customer_id}")
+                    
+                    # Verify contact fields in creation response
+                    contact_fields = ["contactMobile", "contactEmail", "contactPosition", "contactAddress", "contactCountry", "contactCity"]
+                    missing_in_response = []
+                    mismatched_in_response = []
+                    
+                    print(f"\n🔍 VERIFYING CONTACT FIELDS IN CREATION RESPONSE:")
+                    for field in contact_fields:
+                        expected_value = test_customer_data[field]
+                        actual_value = created_customer.get(field)
+                        
+                        if actual_value is None:
+                            missing_in_response.append(field)
+                            print(f"   ❌ {field}: MISSING (expected: {expected_value})")
+                        elif actual_value != expected_value:
+                            mismatched_in_response.append(f"{field}: expected '{expected_value}', got '{actual_value}'")
+                            print(f"   ⚠️  {field}: MISMATCH (expected: {expected_value}, got: {actual_value})")
+                        else:
+                            print(f"   ✅ {field}: {actual_value}")
+                    
+                    if not missing_in_response and not mismatched_in_response:
+                        print("✅ PASS: All contact fields present and correct in creation response")
+                        test_results["contact_fields_saved"] = True
+                    else:
+                        test_results["missing_fields"].extend(missing_in_response)
+                        test_results["field_mismatches"].extend(mismatched_in_response)
+                        test_results["critical_issues"].append("CONTACT_FIELDS_NOT_SAVED_CORRECTLY")
+                        
+                else:
+                    print("❌ FAIL: No customer ID returned in creation response")
+                    test_results["critical_issues"].append("NO_CUSTOMER_ID_RETURNED")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing creation response: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_RESPONSE_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer creation failed. Status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            test_results["critical_issues"].append(f"CUSTOMER_CREATION_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer creation error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_ERROR: {str(e)}")
+    
+    # STEP 2: Retrieve customer by ID and verify contact fields
+    if test_results["customer_id"]:
+        print("\n" + "=" * 80)
+        print("STEP 2: RETRIEVE CUSTOMER BY ID AND VERIFY CONTACT FIELDS")
+        print("=" * 80)
+        
+        get_by_id_endpoint = f"{BACKEND_URL}/api/customers/{test_results['customer_id']}"
+        print(f"Testing endpoint: {get_by_id_endpoint}")
+        
+        try:
+            get_response = requests.get(get_by_id_endpoint, timeout=30)
+            print(f"Get Status Code: {get_response.status_code}")
+            
+            if get_response.status_code == 200:
+                print("✅ PASS: Customer retrieval by ID successful")
+                
+                try:
+                    retrieved_customer = get_response.json()
+                    
+                    # Verify all contact fields are present and correct
+                    contact_fields = ["contactMobile", "contactEmail", "contactPosition", "contactAddress", "contactCountry", "contactCity"]
+                    missing_in_retrieval = []
+                    mismatched_in_retrieval = []
+                    
+                    print(f"\n🔍 VERIFYING CONTACT FIELDS IN RETRIEVAL RESPONSE:")
+                    for field in contact_fields:
+                        expected_value = test_customer_data[field]
+                        actual_value = retrieved_customer.get(field)
+                        
+                        if actual_value is None or actual_value == "":
+                            missing_in_retrieval.append(field)
+                            print(f"   ❌ {field}: MISSING/EMPTY (expected: {expected_value})")
+                        elif actual_value != expected_value:
+                            mismatched_in_retrieval.append(f"{field}: expected '{expected_value}', got '{actual_value}'")
+                            print(f"   ⚠️  {field}: MISMATCH (expected: {expected_value}, got: {actual_value})")
+                        else:
+                            print(f"   ✅ {field}: {actual_value}")
+                    
+                    if not missing_in_retrieval and not mismatched_in_retrieval:
+                        print("✅ PASS: All contact fields present and correct in retrieval response")
+                        test_results["contact_fields_retrieved"] = True
+                    else:
+                        test_results["missing_fields"].extend(missing_in_retrieval)
+                        test_results["field_mismatches"].extend(mismatched_in_retrieval)
+                        test_results["critical_issues"].append("CONTACT_FIELDS_NOT_RETRIEVED_CORRECTLY")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing retrieval response: {str(e)}")
+                    test_results["critical_issues"].append(f"RETRIEVAL_RESPONSE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: Customer retrieval failed. Status: {get_response.status_code}")
+                print(f"Response: {get_response.text}")
+                test_results["critical_issues"].append(f"CUSTOMER_RETRIEVAL_FAILED_{get_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Customer retrieval error: {str(e)}")
+            test_results["critical_issues"].append(f"RETRIEVAL_ERROR: {str(e)}")
+    
+    # STEP 3: Verify customer appears in general list with contact data
+    print("\n" + "=" * 80)
+    print("STEP 3: VERIFY CUSTOMER APPEARS IN GENERAL LIST WITH CONTACT DATA")
+    print("=" * 80)
+    
+    list_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {list_endpoint}")
+    
+    try:
+        list_response = requests.get(list_endpoint, timeout=30)
+        print(f"List Status Code: {list_response.status_code}")
+        
+        if list_response.status_code == 200:
+            print("✅ PASS: Customer list endpoint successful")
+            
+            try:
+                customers_list = list_response.json()
+                
+                # Find our test customer in the list
+                test_customer_found = False
+                for customer in customers_list:
+                    if customer.get("id") == test_results["customer_id"]:
+                        test_customer_found = True
+                        print(f"✅ PASS: Test customer found in customers list")
+                        
+                        # Verify contact fields in list response
+                        contact_fields = ["contactMobile", "contactEmail", "contactPosition", "contactAddress", "contactCountry", "contactCity"]
+                        missing_in_list = []
+                        mismatched_in_list = []
+                        
+                        print(f"\n🔍 VERIFYING CONTACT FIELDS IN LIST RESPONSE:")
+                        for field in contact_fields:
+                            expected_value = test_customer_data[field]
+                            actual_value = customer.get(field)
+                            
+                            if actual_value is None or actual_value == "":
+                                missing_in_list.append(field)
+                                print(f"   ❌ {field}: MISSING/EMPTY (expected: {expected_value})")
+                            elif actual_value != expected_value:
+                                mismatched_in_list.append(f"{field}: expected '{expected_value}', got '{actual_value}'")
+                                print(f"   ⚠️  {field}: MISMATCH (expected: {expected_value}, got: {actual_value})")
+                            else:
+                                print(f"   ✅ {field}: {actual_value}")
+                        
+                        if not missing_in_list and not mismatched_in_list:
+                            print("✅ PASS: All contact fields present and correct in list response")
+                            test_results["contact_fields_in_list"] = True
+                        else:
+                            test_results["missing_fields"].extend(missing_in_list)
+                            test_results["field_mismatches"].extend(mismatched_in_list)
+                            test_results["critical_issues"].append("CONTACT_FIELDS_NOT_IN_LIST_CORRECTLY")
+                        
+                        break
+                
+                if not test_customer_found:
+                    print("❌ FAIL: Test customer not found in customers list")
+                    test_results["critical_issues"].append("CUSTOMER_NOT_IN_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing list response: {str(e)}")
+                test_results["critical_issues"].append(f"LIST_RESPONSE_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer list failed. Status: {list_response.status_code}")
+            print(f"Response: {list_response.text}")
+            test_results["critical_issues"].append(f"CUSTOMER_LIST_FAILED_{list_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customer list error: {str(e)}")
+        test_results["critical_issues"].append(f"LIST_ERROR: {str(e)}")
+    
+    # STEP 4: Data integrity verification
+    if test_results["contact_fields_saved"] and test_results["contact_fields_retrieved"] and test_results["contact_fields_in_list"]:
+        test_results["data_integrity_verified"] = True
+    
+    # FINAL REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL CONTACT PERSON FIELDS VERIFICATION REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Customer Creation: {'✅ SUCCESS' if test_results['customer_creation_success'] else '❌ FAILED'}")
+    print(f"   • Contact Fields Saved: {'✅ SUCCESS' if test_results['contact_fields_saved'] else '❌ FAILED'}")
+    print(f"   • Contact Fields Retrieved: {'✅ SUCCESS' if test_results['contact_fields_retrieved'] else '❌ FAILED'}")
+    print(f"   • Contact Fields in List: {'✅ SUCCESS' if test_results['contact_fields_in_list'] else '❌ FAILED'}")
+    print(f"   • Data Integrity: {'✅ VERIFIED' if test_results['data_integrity_verified'] else '❌ FAILED'}")
+    
+    if test_results["customer_id"]:
+        print(f"   • Test Customer ID: {test_results['customer_id']}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    if test_results["missing_fields"]:
+        print(f"\n❌ MISSING CONTACT FIELDS: {len(set(test_results['missing_fields']))}")
+        for field in set(test_results['missing_fields']):
+            print(f"   • {field}")
+    
+    if test_results["field_mismatches"]:
+        print(f"\n⚠️  FIELD MISMATCHES: {len(test_results['field_mismatches'])}")
+        for mismatch in test_results['field_mismatches']:
+            print(f"   • {mismatch}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if test_results["data_integrity_verified"]:
+        print("✅ SUCCESS: Contact person fields verification PASSED!")
+        print("   All 6 contact person fields are correctly saved, retrieved, and displayed.")
+        print("   NewCustomerForm → Database → EditCustomerPage workflow is working correctly.")
+        print("   The QUATTRO 111 issue should be resolved with proper contact field handling.")
+        
+    elif not test_results["customer_creation_success"]:
+        print("🚨 CRITICAL: Customer creation is failing!")
+        print("   RECOMMENDATION: Check backend API and database connectivity")
+        
+    elif not test_results["contact_fields_saved"]:
+        print("🚨 CRITICAL: Contact person fields are not being saved during customer creation!")
+        print("   RECOMMENDATION: Check NewCustomerForm field mapping and POST /api/customers implementation")
+        
+    elif not test_results["contact_fields_retrieved"]:
+        print("🚨 CRITICAL: Contact person fields are not being retrieved correctly!")
+        print("   RECOMMENDATION: Check GET /api/customers/{id} implementation and database serialization")
+        
+    else:
+        print("⚠️  WARNING: Partial contact person fields functionality issues detected")
+        print("   RECOMMENDATION: Review specific field mapping and data persistence logic")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. If test passed: Contact person fields are working correctly")
+    print("   2. If test failed: Fix identified field mapping and persistence issues")
+    print("   3. Verify EditCustomerPage displays contact fields correctly")
+    print("   4. Test with real user data to confirm resolution")
+    
+    # Return overall test result
+    overall_success = test_results["data_integrity_verified"] and len(test_results["critical_issues"]) == 0
+    
+    if overall_success:
+        print(f"\n✅ CONTACT PERSON FIELDS VERIFICATION: SUCCESS")
+        return True
+    else:
+        print(f"\n❌ CONTACT PERSON FIELDS VERIFICATION: FAILED")
+        return False
+
 def test_quattro_111_customer_data_mapping_investigation():
     """
     URGENT: Debug specific customer data mapping issue - customer "QUATTRO 111" fields missing in EditCustomerPage
