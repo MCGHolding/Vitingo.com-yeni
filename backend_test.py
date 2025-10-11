@@ -16455,40 +16455,44 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🔍 CUSTOMER DROPDOWN DATA APIs TESTING FOR EDITCUSTOMERPAGE")
+    print("🏦 CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 100)
-    print("🎯 TESTING: Customer dropdown data APIs to debug reported issues")
-    print("📝 USER REPORTED ISSUES:")
-    print("   1. Customer types and sectors are not loading properly in EditCustomerPage dropdown")
-    print("   2. Selected values are not being pulled from database correctly")
+    print("🎯 TESTING: Customer bank payment information fields in backend database and API")
+    print("📝 BACKGROUND:")
+    print("   EditCustomerPage has been updated to include new bank payment information fields:")
+    print("   - Hesap Sahibi (account_holder_name)")
+    print("   - IBAN (iban)")
+    print("   - Banka Adı (bank_name)")
+    print("   - Şube (bank_branch)")
+    print("   - Swift Kodu (swift_code)")
+    print("   - Ülke (contact_country for bank)")
     print("📝 TESTING REQUIREMENTS:")
-    print("   1. Customer Types API Test: GET /api/customer-types")
-    print("   2. Sectors API Test: GET /api/sectors")
-    print("   3. Sample Customer Data Test: GET /api/customers")
-    print("   4. Data Mapping Verification")
-    print("   5. API Response Format Check")
+    print("   1. Customer Data Structure Verification")
+    print("   2. API Update Support Test")
+    print("   3. Data Persistence Test")
+    print("   4. Field Validation Test")
+    print("   5. Backend Response Format")
     print("=" * 100)
     
-    # Run Customer Dropdown Data APIs testing
+    # Run Customer Bank Payment Information testing
     try:
-        result = test_customer_dropdown_data_apis()
+        result = test_customer_bank_payment_information()
         if result:
-            print("\n✅ CUSTOMER DROPDOWN DATA APIs TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
-            print("✅ GET /api/customer-types - Working and returning valid Turkish customer types")
-            print("✅ GET /api/sectors - Working and returning valid Turkish business sectors")
-            print("✅ GET /api/customers - Working and returning customer data with proper field mapping")
-            print("✅ Data mapping verification passed - customer relationshipType and sector values exist in dropdown APIs")
-            print("✅ API response format verification passed - all required fields present")
-            print("📋 Backend APIs are working correctly - if frontend dropdowns still not working, check frontend integration")
+            print("\n✅ CUSTOMER BANK PAYMENT INFORMATION TESTING COMPLETED - ALL FUNCTIONALITY WORKING CORRECTLY")
+            print("✅ Customer API accepts and stores all bank payment fields")
+            print("✅ Bank information persists correctly in database")
+            print("✅ API returns bank data for frontend display")
+            print("✅ Field updates work with existing field-level editing system")
+            print("📋 Backend is ready for EditCustomerPage Banka Ödeme Bilgileri functionality")
         else:
-            print("\n🚨 CUSTOMER DROPDOWN DATA APIs TESTING COMPLETED - CRITICAL ISSUES FOUND!")
-            print("❌ Customer dropdown APIs have problems that explain the reported issues")
-            print("❌ EditCustomerPage dropdown functionality is affected by backend problems")
-            print("❌ Immediate action required to resolve customer dropdown data issues")
+            print("\n🚨 CUSTOMER BANK PAYMENT INFORMATION TESTING COMPLETED - CRITICAL ISSUES FOUND!")
+            print("❌ Backend does not properly support bank payment information fields")
+            print("❌ EditCustomerPage Banka Ödeme Bilgileri functionality will not work correctly")
+            print("❌ Immediate action required to implement bank payment field support")
             print("📋 See detailed test report above for specific problems and recommendations")
     except Exception as e:
-        print(f"\n❌ CUSTOMER DROPDOWN DATA APIs TESTING ERROR: {str(e)}")
+        print(f"\n❌ CUSTOMER BANK PAYMENT INFORMATION TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
