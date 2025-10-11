@@ -2235,7 +2235,7 @@ async def get_customer(customer_id: str):
         logger.error(f"Error getting customer {customer_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/customers/{customer_id}", response_model=Customer)
+@api_router.put("/customers/{customer_id}")
 async def update_customer(customer_id: str, customer_data: dict):
     """Update a customer"""
     try:
