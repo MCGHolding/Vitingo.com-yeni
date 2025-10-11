@@ -1362,6 +1362,465 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_customer_bank_payment_information():
+    """
+    CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING
+    
+    BACKGROUND:
+    The EditCustomerPage has been updated to include new bank payment information fields:
+    - Hesap Sahibi (account_holder_name)  
+    - IBAN (iban)
+    - Banka Adı (bank_name)
+    - Şube (bank_branch) 
+    - Swift Kodu (swift_code)
+    - Ülke (contact_country for bank)
+
+    The frontend now sends these fields in the customer update API call:
+    - bankName: updatedFormData.bank_name
+    - bankBranch: updatedFormData.bank_branch  
+    - accountHolderName: updatedFormData.account_holder_name
+    - swiftCode: updatedFormData.swift_code
+
+    TESTING REQUIREMENTS:
+    1. **Customer Data Structure Verification:** GET /api/customers to check current customer data structure
+    2. **API Update Support Test:** Test PUT /api/customers/{id} with bank information fields
+    3. **Data Persistence Test:** Update a customer with bank information and verify persistence
+    4. **Field Validation Test:** Test IBAN format validation if implemented
+    5. **Backend Response Format:** Verify API returns bank fields in customer data
+
+    EXPECTED BEHAVIOR:
+    - Customer API should accept and store all bank payment fields
+    - Bank information should persist in database
+    - API should return bank data for frontend display
+    - Field updates should work with existing field-level editing system
+    """
+    
+    print("=" * 100)
+    print("🏦 CUSTOMER BANK PAYMENT INFORMATION FIELDS TESTING 🏦")
+    print("=" * 100)
+    print("BACKGROUND: EditCustomerPage updated to include new bank payment information fields")
+    print("Testing backend support for bank payment fields in customer data structure and API")
+    print("=" * 100)
+    
+    test_results = {
+        "customers_api_working": False,
+        "bank_fields_exist": False,
+        "bank_update_working": False,
+        "bank_persistence_working": False,
+        "bank_response_format_correct": False,
+        "field_validation_working": False,
+        "critical_issues": [],
+        "warnings": [],
+        "bank_fields_found": [],
+        "test_customer_id": None
+    }
+    
+    # TEST 1: Customer Data Structure Verification
+    print("\n" + "=" * 80)
+    print("TEST 1: CUSTOMER DATA STRUCTURE VERIFICATION")
+    print("=" * 80)
+    print("Checking current customer data structure for bank payment fields...")
+    
+    endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customer API endpoint is responding")
+            test_results["customers_api_working"] = True
+            
+            try:
+                customers = response.json()
+                customer_count = len(customers) if isinstance(customers, list) else 0
+                print(f"📊 Found {customer_count} customers in database")
+                
+                if customer_count == 0:
+                    print("⚠️  WARNING: No customers found in database for bank field testing")
+                    test_results["warnings"].append("NO_CUSTOMERS_FOR_TESTING")
+                else:
+                    # Check first customer for bank fields
+                    first_customer = customers[0]
+                    test_results["test_customer_id"] = first_customer.get("id")
+                    
+                    print(f"\n🔍 ANALYZING CUSTOMER DATA STRUCTURE (Customer: {first_customer.get('companyName', 'N/A')})")
+                    
+                    # Expected bank fields based on the review request
+                    expected_bank_fields = [
+                        "bankName",           # bank_name
+                        "bankBranch",         # bank_branch  
+                        "accountHolderName",  # account_holder_name
+                        "swiftCode",          # swift_code
+                        "iban",               # iban
+                        "contactCountry"      # contact_country for bank
+                    ]
+                    
+                    # Alternative field names that might be used
+                    alternative_bank_fields = [
+                        "bank_name",
+                        "bank_branch", 
+                        "account_holder_name",
+                        "swift_code",
+                        "contact_country"
+                    ]
+                    
+                    all_possible_fields = expected_bank_fields + alternative_bank_fields
+                    
+                    found_bank_fields = []
+                    missing_bank_fields = []
+                    
+                    print("   Checking for bank payment fields:")
+                    for field in all_possible_fields:
+                        if field in first_customer:
+                            field_value = first_customer.get(field)
+                            found_bank_fields.append(field)
+                            test_results["bank_fields_found"].append(field)
+                            print(f"   ✅ {field}: {field_value if field_value else '(empty)'}")
+                        else:
+                            missing_bank_fields.append(field)
+                    
+                    if found_bank_fields:
+                        print(f"\n✅ PASS: Found {len(found_bank_fields)} bank-related fields in customer data")
+                        test_results["bank_fields_exist"] = True
+                    else:
+                        print(f"\n❌ FAIL: No bank payment fields found in customer data structure")
+                        test_results["critical_issues"].append("NO_BANK_FIELDS_IN_CUSTOMER_DATA")
+                    
+                    print(f"\n📋 COMPLETE CUSTOMER DATA STRUCTURE:")
+                    customer_fields = list(first_customer.keys())
+                    for i, field in enumerate(customer_fields, 1):
+                        field_value = first_customer.get(field)
+                        field_type = type(field_value).__name__
+                        print(f"   {i:2d}. {field} ({field_type}): {str(field_value)[:50]}{'...' if len(str(field_value)) > 50 else ''}")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customer data: {str(e)}")
+                test_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customer API not responding properly. Status: {response.status_code}")
+            test_results["critical_issues"].append(f"API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network/Connection error: {str(e)}")
+        test_results["critical_issues"].append(f"CONNECTION_ERROR: {str(e)}")
+    
+    # TEST 2: API Update Support Test
+    print("\n" + "=" * 80)
+    print("TEST 2: API UPDATE SUPPORT TEST WITH BANK INFORMATION FIELDS")
+    print("=" * 80)
+    print("Testing PUT /api/customers/{id} with bank payment information fields...")
+    
+    if test_results["test_customer_id"]:
+        customer_id = test_results["test_customer_id"]
+        update_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        
+        # Test bank payment data
+        bank_payment_data = {
+            "bankName": "Garanti BBVA",
+            "bankBranch": "Maslak Şubesi", 
+            "accountHolderName": "Test Şirketi A.Ş.",
+            "swiftCode": "TGBATRIS",
+            "iban": "TR64 0006 2000 1234 0006 2987 36",
+            "contactCountry": "TR"
+        }
+        
+        print(f"Testing customer ID: {customer_id}")
+        print(f"Bank payment data to update:")
+        for field, value in bank_payment_data.items():
+            print(f"   {field}: {value}")
+        
+        try:
+            update_response = requests.put(update_endpoint, json=bank_payment_data, timeout=30)
+            print(f"Update Status Code: {update_response.status_code}")
+            
+            if update_response.status_code in [200, 201]:
+                print("✅ PASS: Customer update endpoint accepts bank payment fields")
+                test_results["bank_update_working"] = True
+                
+                try:
+                    updated_customer = update_response.json()
+                    
+                    print(f"\n🔍 VERIFYING UPDATED BANK FIELDS IN RESPONSE:")
+                    bank_fields_updated = 0
+                    for field, expected_value in bank_payment_data.items():
+                        actual_value = updated_customer.get(field)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {field}: {actual_value}")
+                            bank_fields_updated += 1
+                        else:
+                            print(f"   ⚠️  {field}: Expected '{expected_value}', Got '{actual_value}'")
+                    
+                    if bank_fields_updated == len(bank_payment_data):
+                        print(f"✅ PASS: All {bank_fields_updated} bank fields updated correctly in response")
+                        test_results["bank_response_format_correct"] = True
+                    else:
+                        print(f"⚠️  WARNING: Only {bank_fields_updated}/{len(bank_payment_data)} bank fields updated correctly")
+                        test_results["warnings"].append(f"PARTIAL_BANK_UPDATE_{bank_fields_updated}_{len(bank_payment_data)}")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error processing update response: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_RESPONSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: Customer update failed. Status: {update_response.status_code}")
+                print(f"Response: {update_response.text}")
+                test_results["critical_issues"].append(f"UPDATE_FAILED_{update_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Customer update error: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_ERROR: {str(e)}")
+    else:
+        print("❌ SKIP: No customer ID available for update testing")
+        test_results["warnings"].append("NO_CUSTOMER_ID_FOR_UPDATE_TEST")
+    
+    # TEST 3: Data Persistence Test
+    print("\n" + "=" * 80)
+    print("TEST 3: DATA PERSISTENCE TEST")
+    print("=" * 80)
+    print("Verifying bank information persists correctly in database...")
+    
+    if test_results["test_customer_id"] and test_results["bank_update_working"]:
+        customer_id = test_results["test_customer_id"]
+        verify_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        
+        print(f"Re-fetching customer data to verify persistence...")
+        time.sleep(2)  # Wait for database write
+        
+        try:
+            verify_response = requests.get(verify_endpoint, timeout=30)
+            print(f"Verification Status Code: {verify_response.status_code}")
+            
+            if verify_response.status_code == 200:
+                try:
+                    persisted_customer = verify_response.json()
+                    
+                    print(f"\n🔍 VERIFYING BANK FIELD PERSISTENCE:")
+                    expected_bank_data = {
+                        "bankName": "Garanti BBVA",
+                        "bankBranch": "Maslak Şubesi", 
+                        "accountHolderName": "Test Şirketi A.Ş.",
+                        "swiftCode": "TGBATRIS",
+                        "iban": "TR64 0006 2000 1234 0006 2987 36",
+                        "contactCountry": "TR"
+                    }
+                    
+                    persisted_fields = 0
+                    for field, expected_value in expected_bank_data.items():
+                        actual_value = persisted_customer.get(field)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {field}: {actual_value} (PERSISTED)")
+                            persisted_fields += 1
+                        else:
+                            print(f"   ❌ {field}: Expected '{expected_value}', Got '{actual_value}' (NOT PERSISTED)")
+                    
+                    if persisted_fields == len(expected_bank_data):
+                        print(f"✅ PASS: All {persisted_fields} bank fields persisted correctly in database")
+                        test_results["bank_persistence_working"] = True
+                    else:
+                        print(f"❌ FAIL: Only {persisted_fields}/{len(expected_bank_data)} bank fields persisted correctly")
+                        test_results["critical_issues"].append(f"BANK_PERSISTENCE_FAILURE_{persisted_fields}_{len(expected_bank_data)}")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing persistence verification: {str(e)}")
+                    test_results["critical_issues"].append(f"PERSISTENCE_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Could not verify persistence. Status: {verify_response.status_code}")
+                test_results["critical_issues"].append(f"PERSISTENCE_VERIFY_FAILED_{verify_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Persistence verification error: {str(e)}")
+            test_results["critical_issues"].append(f"PERSISTENCE_ERROR: {str(e)}")
+    else:
+        print("❌ SKIP: Cannot test persistence - update test failed or no customer ID")
+        test_results["warnings"].append("PERSISTENCE_TEST_SKIPPED")
+    
+    # TEST 4: Field Validation Test
+    print("\n" + "=" * 80)
+    print("TEST 4: FIELD VALIDATION TEST")
+    print("=" * 80)
+    print("Testing IBAN format validation and Swift code format validation...")
+    
+    if test_results["test_customer_id"]:
+        customer_id = test_results["test_customer_id"]
+        validation_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+        
+        # Test invalid IBAN format
+        print("\n🔍 Testing invalid IBAN format validation:")
+        invalid_iban_data = {
+            "iban": "INVALID_IBAN_FORMAT_123",
+            "swiftCode": "INVALID_SWIFT"
+        }
+        
+        try:
+            invalid_response = requests.put(validation_endpoint, json=invalid_iban_data, timeout=30)
+            print(f"Invalid IBAN Status Code: {invalid_response.status_code}")
+            
+            if invalid_response.status_code == 400:
+                print("✅ PASS: Invalid IBAN format properly rejected with 400 status")
+                test_results["field_validation_working"] = True
+            elif invalid_response.status_code in [200, 201]:
+                print("⚠️  WARNING: Invalid IBAN format accepted - validation may not be implemented")
+                test_results["warnings"].append("NO_IBAN_VALIDATION")
+            else:
+                print(f"⚠️  WARNING: Unexpected status for invalid IBAN: {invalid_response.status_code}")
+                test_results["warnings"].append(f"UNEXPECTED_VALIDATION_STATUS_{invalid_response.status_code}")
+            
+        except Exception as e:
+            print(f"⚠️  WARNING: Could not test IBAN validation: {str(e)}")
+            test_results["warnings"].append(f"IBAN_VALIDATION_TEST_ERROR: {str(e)}")
+        
+        # Test valid IBAN format
+        print("\n🔍 Testing valid IBAN format:")
+        valid_iban_data = {
+            "iban": "TR33 0006 1005 1978 6457 8413 26",
+            "swiftCode": "TGBATRIS"
+        }
+        
+        try:
+            valid_response = requests.put(validation_endpoint, json=valid_iban_data, timeout=30)
+            print(f"Valid IBAN Status Code: {valid_response.status_code}")
+            
+            if valid_response.status_code in [200, 201]:
+                print("✅ PASS: Valid IBAN format accepted correctly")
+            else:
+                print(f"⚠️  WARNING: Valid IBAN format rejected: {valid_response.status_code}")
+                test_results["warnings"].append(f"VALID_IBAN_REJECTED_{valid_response.status_code}")
+            
+        except Exception as e:
+            print(f"⚠️  WARNING: Could not test valid IBAN: {str(e)}")
+            test_results["warnings"].append(f"VALID_IBAN_TEST_ERROR: {str(e)}")
+    else:
+        print("❌ SKIP: No customer ID available for validation testing")
+        test_results["warnings"].append("NO_CUSTOMER_ID_FOR_VALIDATION_TEST")
+    
+    # TEST 5: Backend Response Format Test
+    print("\n" + "=" * 80)
+    print("TEST 5: BACKEND RESPONSE FORMAT TEST")
+    print("=" * 80)
+    print("Verifying API returns bank fields in customer data with correct field names...")
+    
+    if test_results["customers_api_working"]:
+        try:
+            response = requests.get(f"{BACKEND_URL}/api/customers", timeout=30)
+            if response.status_code == 200:
+                customers = response.json()
+                if customers:
+                    sample_customer = customers[0]
+                    
+                    print(f"\n🔍 CHECKING RESPONSE FORMAT FOR FRONTEND COMPATIBILITY:")
+                    
+                    # Check if field names match frontend expectations
+                    frontend_expected_fields = {
+                        "bankName": "bank_name",
+                        "bankBranch": "bank_branch", 
+                        "accountHolderName": "account_holder_name",
+                        "swiftCode": "swift_code",
+                        "iban": "iban",
+                        "contactCountry": "contact_country"
+                    }
+                    
+                    format_issues = []
+                    format_correct = 0
+                    
+                    for frontend_field, backend_field in frontend_expected_fields.items():
+                        if frontend_field in sample_customer:
+                            print(f"   ✅ {frontend_field}: Found (frontend compatible)")
+                            format_correct += 1
+                        elif backend_field in sample_customer:
+                            print(f"   ⚠️  {backend_field}: Found but needs frontend mapping")
+                            format_issues.append(f"FIELD_MAPPING_NEEDED_{backend_field}_TO_{frontend_field}")
+                        else:
+                            print(f"   ❌ {frontend_field}/{backend_field}: Not found")
+                            format_issues.append(f"MISSING_FIELD_{frontend_field}")
+                    
+                    if format_correct == len(frontend_expected_fields):
+                        print(f"✅ PASS: All bank fields use frontend-compatible field names")
+                        test_results["bank_response_format_correct"] = True
+                    elif format_correct > 0:
+                        print(f"⚠️  WARNING: {format_correct}/{len(frontend_expected_fields)} fields use correct format")
+                        test_results["warnings"].extend(format_issues)
+                    else:
+                        print(f"❌ FAIL: No bank fields use frontend-compatible format")
+                        test_results["critical_issues"].extend(format_issues)
+                        
+        except Exception as e:
+            print(f"❌ FAIL: Response format test error: {str(e)}")
+            test_results["critical_issues"].append(f"RESPONSE_FORMAT_ERROR: {str(e)}")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL CUSTOMER BANK PAYMENT INFORMATION TEST REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Customer API Working: {'✅ Yes' if test_results['customers_api_working'] else '❌ No'}")
+    print(f"   • Bank Fields Exist: {'✅ Yes' if test_results['bank_fields_exist'] else '❌ No'}")
+    print(f"   • Bank Update Working: {'✅ Yes' if test_results['bank_update_working'] else '❌ No'}")
+    print(f"   • Bank Persistence Working: {'✅ Yes' if test_results['bank_persistence_working'] else '❌ No'}")
+    print(f"   • Response Format Correct: {'✅ Yes' if test_results['bank_response_format_correct'] else '❌ No'}")
+    print(f"   • Field Validation Working: {'✅ Yes' if test_results['field_validation_working'] else '⚠️  Partial'}")
+    
+    if test_results["bank_fields_found"]:
+        print(f"\n📋 BANK FIELDS FOUND IN CUSTOMER DATA:")
+        for field in test_results["bank_fields_found"]:
+            print(f"   • {field}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    if not test_results['customers_api_working']:
+        print("🚨 CRITICAL: Customer API is not working - cannot test bank payment functionality")
+        print("   RECOMMENDATION: Fix customer API endpoint first")
+        
+    elif not test_results['bank_fields_exist']:
+        print("🚨 CRITICAL: No bank payment fields found in customer data structure")
+        print("   RECOMMENDATION: Add bank payment fields to Customer model in backend")
+        print("   RECOMMENDATION: Update customer database schema to include bank fields")
+        
+    elif not test_results['bank_update_working']:
+        print("🚨 CRITICAL: Customer update API does not accept bank payment fields")
+        print("   RECOMMENDATION: Update PUT /api/customers/{id} endpoint to accept bank fields")
+        print("   RECOMMENDATION: Verify Pydantic models include bank payment fields")
+        
+    elif not test_results['bank_persistence_working']:
+        print("🚨 CRITICAL: Bank payment fields are not persisting in database")
+        print("   RECOMMENDATION: Check database write operations for bank fields")
+        print("   RECOMMENDATION: Verify MongoDB schema supports bank payment fields")
+        
+    else:
+        print("✅ SUCCESS: Bank payment functionality appears to be working correctly")
+        print("   RECOMMENDATION: Proceed with frontend integration testing")
+        if test_results['warnings']:
+            print("   RECOMMENDATION: Address warnings for optimal functionality")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    print("   1. Ensure Customer model includes all required bank payment fields")
+    print("   2. Verify PUT /api/customers/{id} accepts and stores bank fields")
+    print("   3. Test frontend-backend integration with EditCustomerPage")
+    print("   4. Implement IBAN and Swift code validation if not present")
+    print("   5. Verify field-level editing system works with bank fields")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ OVERALL RESULT: CRITICAL ISSUES FOUND - BANK PAYMENT FUNCTIONALITY NOT READY")
+        return False
+    else:
+        print(f"\n✅ OVERALL RESULT: BANK PAYMENT FUNCTIONALITY IS WORKING CORRECTLY")
+        return True
+
 def test_customer_dropdown_data_apis():
     """
     CUSTOMER DROPDOWN DATA APIs TESTING FOR EDITCUSTOMERPAGE
