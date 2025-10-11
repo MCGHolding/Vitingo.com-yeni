@@ -1,47 +1,46 @@
 <analysis>
-The AI engineer's work in this trajectory systematically enhanced the customer management module, focusing on UI/UX and data integrity. The initial phase involved transitioning customer View and Edit functionalities from modals to dedicated full-page components (, ). This required updating routing in  and modifying  for page navigation.
+The AI engineer's work primarily focused on enhancing the customer management module, addressing UI/UX, data integrity, and system stability. Initially, a transition from modal-based View and Edit customer functionalities to dedicated full-page components was completed, updating routing and navigation. A significant effort was dedicated to reconciling data mapping inconsistencies between backend and frontend, particularly for customer attributes and dropdowns. Field-level editing was implemented in , initially facing CSS  issues that were resolved by simplifying the icon display logic.
 
-A significant portion of the work addressed critical data mapping inconsistencies. The AI meticulously reconciled field names between the backend (e.g., , single  string) and frontend components (, , ) which initially expected different formats (e.g., ,  array). Debugging involved inspecting backend logs,  tests, and frontend code to ensure accurate data flow and display. A missing  icon import in  caused a  and was promptly resolved.
-
-The  was rectified to send data in a format compatible with the backend, specifically by removing the incompatible  array from its payload. An incorrect API endpoint call for sectors ( instead of ) in  was also fixed. The  was then comprehensively refactored to mirror 's fields, ensuring all customer data was accurately displayed and editable. The final task was implementing field-level editing in , introducing an  component and converting all relevant fields to this new, granular editing mechanism, replacing the global save.
+Critical JSON parsing errors were debugged, revealing issues with hardcoded URLs and incorrect  usage. This led to the adoption of a robust  utility and backend standardization using  to ensure consistent data communication. Serialization problems for MongoDB  and  objects were also addressed in the backend. Several data mapping discrepancies reported by the user for newly created customers (customer type, sector, services, contact person, bank details) were systematically identified and resolved by integrating a comprehensive  for UI-to-DB data transformation. A test data fill button was added to  to aid in development. The final task addressed a persistent issue where contact person details were not being saved from  to the database, which was fixed by correcting data passing to the mapper.
 </analysis>
 
 <product_requirements>
-The application is a CRM with a modern calendar system. Key CRM features include a multi-step New Brief Form, an Offer Form () with real-time data, dynamic installment systems, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar supports personal/admin views, meeting scheduling with invitations and in-meeting chat.
+The application functions as a CRM with an advanced calendar system. Core CRM capabilities include a multi-step New Brief Form, an Offer Form () with real-time data, dynamic installment plans, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar offers personal/admin views, meeting scheduling with invitations, and in-meeting chat.
 
 **Current Implementation**:
-A basic calendar and meeting system are functional.  uses real-time sales opportunity and customer data, with dynamic payment installments. A smart customer deletion system exists. The New Sales Opportunity form includes dynamic country/city dropdowns, Proje Türü (Project Type) with add functionality, split Fuar Tarihleri (Fair Dates), Stand Büyüklüğü (Stand Size) with unit selection, and an Avans (Advance) financial approval system. Mock opportunity data has been removed, tables show sequential numbering with corrected headers. File upload sections with advanced preview are implemented.  was enhanced with all opportunity details, sequential numbering, and a modernized appearance. A full-page Satış Fırsatı Bilgileri () was created, featuring an integrated activity/note entry system. A full-page Activity Timeline () was developed with a modern UI, fully functional with backend integration, allowing inline note entry and specific modals for other activity types. Dynamic contact person selection with inline adding was added to . The customer Edit and View functionalities are currently being transitioned from modals to comprehensive full-page displays, with field-level editing recently implemented for customer editing.
+A foundational calendar and meeting system is operational. The  leverages real-time sales opportunity and customer data, featuring dynamic payment installments. A smart customer deletion mechanism is in place. The New Sales Opportunity form incorporates dynamic country/city dropdowns, Proje Türü (Project Type) with add functionality, split Fuar Tarihleri (Fair Dates), Stand Büyüklüğü (Stand Size) with unit selection, and an Avans (Advance) financial approval workflow. Mock opportunity data has been removed, and tables display sequential numbering with corrected headers. Advanced file upload sections with preview functionality are implemented.  was enhanced. A full-page Satış Fırsatı Bilgileri () was created with integrated activity/note entry. A Activity Timeline () with a modern UI and backend integration was developed, allowing inline note entry. Dynamic contact person selection with inline adding was added to . Customer Edit and View functionalities have been transitioned to full-page displays with field-level editing.
+Further, Müşteri Türü ve Sektör section was renamed to Müşteri Bilgileri, Tax Office, VKN, Services are now editable fields, Banka Ödeme Bilgileri section was added, and contact person details are editable. Robust data mapping, safe JSON parsing, and backend serialization for / are integrated. An auto-fill test button was added to the new customer form.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: React (hooks, context), client-side routing, custom modals, Shadcn UI-like components (Card, Button, Badge, Input, Select, Dialog, Tooltip), , , .
-- **Backend**: FastAPI (RESTful APIs), Pydantic (data models), MongoDB (data storage), UUIDs.
+- **Frontend**: React (hooks, context, Router), Shadcn UI-like components, Tailwind CSS,  component, custom JSON parsing (), data mappers ().
+- **Backend**: FastAPI (RESTful APIs, ), Pydantic (data models, custom validation), MongoDB (data storage, / serialization).
 - **Auth**: Client-side authentication ().
 </key_technical_concepts>
 
 <code_architecture>
-The application follows a monorepo structure, with a React frontend and a FastAPI backend.
+The application uses a monorepo structure with a React frontend and a FastAPI backend.
 
 
 
 -   ****
     -   **Importance:** Core FastAPI backend, handles API routes and database interactions.
-    -   **Summary of Changes:** Added Pydantic models for  and corresponding CRUD endpoints. Debugging prints were temporarily added to inspect customer data on POST. Confirmed existence of  endpoint for dropdown data.
+    -   **Summary of Changes:** Pydantic  model updated for bank and contact person details. IBAN/SWIFT validation added. All customer endpoints (, ) modified to use  and a custom JSON encoder for  and  serialization.
 -   ****
     -   **Importance:** Frontend entry, routing, and main state management.
-    -   **Summary of Changes:** Updated to handle routing for  and  to transition from modals to full-page views.
--   ****
-    -   **Importance:** Displays all sales opportunities in a table.
-    -   **Summary of Changes:** Updated  and  functions to use React Router navigation to  and  respectively, replacing modal-based interactions.
+    -   **Summary of Changes:** Updated routing. Included global  cleanup and error handling for stability.
 -   ****
     -   **Importance:** Form for creating new customer records.
-    -   **Summary of Changes:** Corrected data payload sent to the backend; specifically, removed the  array which was incompatible with the backend's  string field. Fixed a variable scope issue with .
--   ** (New File)**
-    -   **Importance:** Full-page component for viewing comprehensive customer details.
-    -   **Summary of Changes:** Created as a replacement for . Extensively modified to correctly map and display customer data fields (, , , ) from the backend, aligning with 's data collection.
--   ** (New File)**
+    -   **Summary of Changes:** Integrated  and safe API helpers. Added a Test Verisi Doldur button with auto-fill logic. Robust checks added for dropdown data to prevent  errors. Crucially, fixed the passing of contact person details to the mapper for database saving.
+-   ****
     -   **Importance:** Full-page component for editing comprehensive customer details.
-    -   **Summary of Changes:** Created as a replacement for . Initially had field mapping issues and a missing  icon import. Was heavily refactored to align its form structure and data mapping with , including , , , , , , , , , , , , , and . The contact person input was simplified to a single field. Corrected API call for sectors from  to . Finally, it was transformed to support field-level editing, replacing the global save mechanism with individual edit icons and an  component for each input.
+    -   **Summary of Changes:** Refactored for field-level editing (). CSS  issues resolved. Renamed Müşteri Türü ve Sektör to Müşteri Bilgileri. Tax Office, VKN, Services moved to Firma Bilgileri. Hizmetler ve Finansal renamed to Banka Ödeme Bilgileri with new bank fields. Contact person details were expanded and made editable. Integrated  and safe API helpers.
+-   ** (New File)**
+    -   **Importance:** Centralized data mapping logic between UI forms and backend DB schema.
+    -   **Summary of Changes:** Created to provide ,  dictionaries, / types,  (DB to UI),  (UI to DB), and  for partial updates.
+-   ** (New File)**
+    -   **Importance:** Provides a robust and safe utility for parsing JSON API responses.
+    -   **Summary of Changes:** Created to implement , handling , empty bodies, BOM, and JSON-hijacking prefixes for resilient API communication.
 </code_architecture>
 
 <pending_tasks>
@@ -50,25 +49,22 @@ The application follows a monorepo structure, with a React frontend and a FastAP
 - Fully implement Phase 3: Real-time Chat (Socket.io integration, right panel, emoji/file/image sharing).
 - Implement Phase 4: Advanced Calendar Features (browser notifications, sync, reporting).
 - Implement the eye icon feature for expense reports to view documented expenses.
-- Complete UI styling and data rendering for dynamic country/city dropdowns (already partially done).
+- Complete UI styling and data rendering for dynamic country/city dropdowns.
 - Implement Save and Approve buttons in .
 - Update Tutar to Öngörülen and reorder Etiketler in , , .
+- Address the React key duplication warning for the Takvim component.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was engaged in implementing field-level editing for the  component. This was a direct response to a user's request for more granular editing functionality, where each field would have an individual edit icon, becoming editable only upon click.
+Immediately before this summary request, the AI engineer was addressing a critical data integrity issue where contact person details entered in the  were not being correctly saved to the database and, consequently, were not pre-filling when viewing the customer in .
 
-The work involved:
-1.  **Re-confirming  fields:** To ensure  covers all necessary data points.
-2.  **Refactoring :** To integrate the new field-level editing system.
-3.  **Adding new state and functions:** For managing edit modes (, ) and handling field-specific changes and saves (, ).
-4.  **Creating  component:** A reusable component designed to wrap existing input fields, providing the edit icon, toggle functionality, and conditional rendering of the input/display state.
-5.  **Applying :** Replacing static displays and previous input components across all sections of , including basic information, company details, contact information, right-column data (IBAN, Services, Tags, Notes).
-6.  **Removing global save:** The old  function was removed, as saving is now intended to occur at the individual field level.
+The issue was traced to , where the  data, though collected, was not being properly passed to the  mapper function for serialization and transmission to the backend. This resulted in the contact-related fields in the  sub-document of the customer record being empty in the database.
 
-This implementation effectively transforms the  to a more interactive and user-friendly interface for customer data modification.
+The  file was modified to ensure that all  fields (e.g., , , , , , , ) are correctly included in the  object before it is passed to the  function. This ensures that the mapper receives the complete contact information, which is then transformed into the backend's  schema and saved.
+
+A new customer was successfully created using the updated , and logs confirmed that the contact person details were saved.
 </current_work>
 
 <optional_next_step>
-Test the newly implemented field-level editing in  to ensure all fields are editable and save correctly.
+Verify the contact person details for the newly saved customer are correctly pre-filled on .
 </optional_next_step>
