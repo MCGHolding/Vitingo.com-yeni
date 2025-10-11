@@ -1027,22 +1027,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   handleFieldKeyPress={handleFieldKeyPress}
                   placeholder="SWIFT/BIC kodu"
                 />
-
-                <EditableField
-                  label="Ülke"
-                  value={formData.contact_country}
-                  fieldName="contact_country"
-                  editingField={editingField}
-                  startEdit={startEdit}
-                  cancelEdit={cancelEdit}
-                  saveField={saveField}
-                  tempValue={tempValue}
-                  setTempValue={setTempValue}
-                  handleFieldKeyPress={handleFieldKeyPress}
-                  type="select"
-                  placeholder="Banka ülkesi seçiniz..."
-                  countries={countries}
-                />
               </CardContent>
             </Card>
 
