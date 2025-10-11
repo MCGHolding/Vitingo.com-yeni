@@ -2257,7 +2257,7 @@ async def get_customer(customer_id: str):
         
         # Serialize document properly
         serialized_customer = serialize_document(customer)
-        return JSONResponse(content={"customer": serialized_customer})
+        return JSONResponse(content=serialized_customer)
         
     except HTTPException:
         raise
