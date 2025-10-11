@@ -269,6 +269,15 @@ class Customer(BaseModel):
     taxNumber: str = ""     # Vergi Numarası
     # Tags field
     tags: List[str] = Field(default_factory=list)  # Etiketler
+    # Services field
+    services: List[str] = Field(default_factory=list)  # Hizmetler
+    # Bank payment information fields
+    iban: str = ""  # IBAN
+    bankName: str = ""  # Banka Adı
+    bankBranch: str = ""  # Şube
+    accountHolderName: str = ""  # Hesap Sahibi
+    swiftCode: str = ""  # Swift Kodu
+    contactCountry: str = ""  # Banka Ülkesi
     # Deactivation fields
     deactivated_at: Optional[datetime] = None
     deactivation_reason: Optional[str] = None
