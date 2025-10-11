@@ -9,6 +9,7 @@ from datetime import datetime, timezone, timedelta, date
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Union, Any
 import uuid
+import re
 # Debug environment variables
 print(f"DEBUG: SENDGRID_API_KEY exists: {'SENDGRID_API_KEY' in os.environ}")
 print(f"DEBUG: SENDGRID_API_KEY value: {os.environ.get('SENDGRID_API_KEY', 'NOT_FOUND')[:20]}...")
