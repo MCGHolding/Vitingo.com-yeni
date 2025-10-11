@@ -246,13 +246,6 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }
     loadDropdownData();
   }, [customer]);
-        address: customer.address || '',
-        country: customer.country || '',
-        city: customer.city || '',
-        phone: customer.phone || '',
-        mobile: customer.mobile || customer.phone || '',
-        email: customer.email || '',
-        tax_office: customer.taxOffice || '',
         tax_number: customer.taxNumber || '',
         services: customer.services || [],
         tags: customer.tags || [],
