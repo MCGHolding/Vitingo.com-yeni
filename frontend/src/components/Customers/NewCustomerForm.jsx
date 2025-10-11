@@ -425,13 +425,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Enhanced validation - more required fields
+    // Enhanced validation - more required fields (sector_id is now optional)
     const requiredFieldsValid = isIndividualCustomer 
-      ? formData.customer_type_id && formData.specialty_id && formData.sector_id && 
+      ? formData.customer_type_id && formData.specialty_id && 
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
         contacts[0]?.address && contacts[0]?.country && contacts[0]?.city  // Contact location info required
       : formData.company_short_name && formData.company_title && formData.customer_type_id && 
-        formData.specialty_id && formData.sector_id && formData.email && formData.phone && 
+        formData.specialty_id && formData.email && formData.phone && 
         formData.mobile && formData.country && formData.city && formData.address &&  // Company basic info required + address
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
         contacts[0]?.address && contacts[0]?.country && contacts[0]?.city; // Contact person + location required
@@ -440,7 +440,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       toast({
         title: "Hata",
         description: isIndividualCustomer 
-          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, sektör, yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)"
+          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)"
           : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres, ülke, şehir), iletişim bilgileri ve yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)",
         variant: "destructive"
       });
