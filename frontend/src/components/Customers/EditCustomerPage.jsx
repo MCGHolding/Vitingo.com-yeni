@@ -645,6 +645,51 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                     isRequired={true}
                   />
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <EditableField
+                    label="Vergi Dairesi"
+                    value={formData.tax_office}
+                    fieldName="tax_office"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="Örn: Beşiktaş Vergi Dairesi"
+                  />
+                  
+                  <EditableField
+                    label="VKN"
+                    value={formData.tax_number}
+                    fieldName="tax_number"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    placeholder="1234567890"
+                  />
+                </div>
+
+                <EditableField
+                  label="Hizmetler"
+                  value={formData.services.join(', ')}
+                  fieldName="services"
+                  editingField={editingField}
+                  startEdit={startEdit}
+                  cancelEdit={cancelEdit}
+                  saveField={saveField}
+                  tempValue={tempValue}
+                  setTempValue={setTempValue}
+                  handleFieldKeyPress={handleFieldKeyPress}
+                  type="textarea"
+                  placeholder="Hizmetleri virgül ile ayırarak giriniz (Örn: Web Tasarım, Fuar Organizasyonu, Grafik Tasarım)"
+                />
               </CardContent>
             </Card>
 
