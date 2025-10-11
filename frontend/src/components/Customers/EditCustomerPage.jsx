@@ -245,26 +245,39 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const loadDropdownData = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      console.log('Loading dropdown data from:', backendUrl);
       
       // Load customer types
+      console.log('Fetching customer types...');
       const customerTypesResponse = await fetch(`${backendUrl}/api/customer-types`);
       if (customerTypesResponse.ok) {
         const customerTypesData = await customerTypesResponse.json();
+        console.log('Customer types loaded:', customerTypesData);
         setCustomerTypes(customerTypesData);
+      } else {
+        console.error('Failed to load customer types:', customerTypesResponse.status);
       }
       
       // Load sectors
+      console.log('Fetching sectors...');
       const sectorsResponse = await fetch(`${backendUrl}/api/sectors`);
       if (sectorsResponse.ok) {
         const sectorsData = await sectorsResponse.json();
+        console.log('Sectors loaded:', sectorsData);
         setSectors(sectorsData);
+      } else {
+        console.error('Failed to load sectors:', sectorsResponse.status);
       }
       
       // Load countries
+      console.log('Fetching countries...');
       const countriesResponse = await fetch(`${backendUrl}/api/countries`);
       if (countriesResponse.ok) {
         const countriesData = await countriesResponse.json();
+        console.log('Countries loaded:', countriesData);
         setCountries(countriesData);
+      } else {
+        console.error('Failed to load countries:', countriesResponse.status);
       }
       
     } catch (error) {
