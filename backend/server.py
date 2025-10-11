@@ -2978,6 +2978,35 @@ async def get_customer_prospects():
         logger.error(f"Error getting customer prospects: {str(e)}")
         return []
 
+@api_router.delete("/customer-prospects/{prospect_id}")
+async def delete_customer_prospect(prospect_id: str):
+    """Delete a customer prospect"""
+    try:
+        # Check if prospect exists
+        prospect = await db.customer_prospects.find_one({"id": prospect_id})
+        if not prospect:
+            raise HTTPException(status_code=404, detail="Müşteri adayı bulunamadı")
+        
+        # Delete the prospect
+        result = await db.customer_prospects.delete_one({"id": prospect_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=500, detail="Müşteri adayı silinemedi")
+        
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": "Müşteri adayı başarıyla silindi",
+                "prospect_id": prospect_id
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting customer prospect: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Müşteri adayı silinirken hata oluştu: {str(e)}")
+
 # ===================== END CUSTOMER PROSPECTS ENDPOINTS =====================
 
 # ===================== CUSTOMER TYPES ENDPOINTS =====================
