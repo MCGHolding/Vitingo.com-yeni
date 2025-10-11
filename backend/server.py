@@ -2230,6 +2230,10 @@ async def get_customer(customer_id: str):
         
         if not customer:
             raise HTTPException(status_code=404, detail="Customer not found")
+        
+        # Convert ObjectId to string for JSON serialization
+        if '_id' in customer:
+            customer['_id'] = str(customer['_id'])
             
         return JSONResponse(content={"customer": customer})
         
