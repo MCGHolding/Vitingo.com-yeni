@@ -222,8 +222,18 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   };
 
   // Helper function to map sector name to sector value
-  const mapSectorNameToValue = (sectorName) => {
-    // For sectors, we'll find it from the loaded sectors data
+  const mapSectorNameToValue = (sectorName, sectorsData) => {
+    if (!sectorName || !sectorsData) return sectorName;
+    
+    // First try to find by exact name match
+    const exactMatch = sectorsData.find(s => s.name === sectorName);
+    if (exactMatch) return exactMatch.value;
+    
+    // Then try to find by value match
+    const valueMatch = sectorsData.find(s => s.value === sectorName);
+    if (valueMatch) return valueMatch.value;
+    
+    // If no match found, return original value
     return sectorName;
   };
 
