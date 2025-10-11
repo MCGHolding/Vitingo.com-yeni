@@ -851,7 +851,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {formData.services.map((service, index) => (
+                {(formData.services || []).map((service, index) => (
                   <span
                     key={index}
                     className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
