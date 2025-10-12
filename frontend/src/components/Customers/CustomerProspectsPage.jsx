@@ -208,8 +208,8 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(prospect =>
-        prospect.company_short_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        prospect.company_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        prospect.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        prospect.companyTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         prospect.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (prospect.sector && prospect.sector.toLowerCase().includes(searchTerm.toLowerCase()))
       );
