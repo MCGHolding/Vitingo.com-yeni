@@ -771,6 +771,9 @@ const Dashboard = () => {
   const handleBackToDashboard = (targetView = 'dashboard') => {
     console.log('🔄 handleBackToDashboard called with targetView:', targetView);
     setCurrentView(targetView);
+    
+    // Scroll to top when navigating to new page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const closeUserManagementModal = () => {
