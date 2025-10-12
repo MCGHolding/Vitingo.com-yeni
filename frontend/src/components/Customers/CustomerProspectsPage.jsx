@@ -755,6 +755,22 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
           }}
         />
       )}
+
+      {/* Convert to Customer Modal */}
+      {convertModalOpen && selectedProspect && (
+        <ConvertToCustomerModal 
+          isOpen={convertModalOpen}
+          prospectData={selectedProspect}
+          onClose={(route) => {
+            setConvertModalOpen(false);
+            setSelectedProspect(null);
+            // Navigate to customers page
+            if (onBackToDashboard) {
+              onBackToDashboard(route);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
