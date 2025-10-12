@@ -1362,6 +1362,417 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_convert_prospect_to_customer_endpoint():
+    """
+    CRITICAL: Test Convert Prospect to Customer Endpoint
+    
+    **Objective**: Test the PATCH /api/customers/{id}/convert-to-customer endpoint to verify it properly converts a prospect to a customer.
+    
+    **Setup**:
+    1. Get a customer with isProspect: true from database
+    2. If none exists, create one for testing
+    
+    **Test Flow**:
+    1. **Create Test Prospect** (if needed):
+       - POST /api/customers with isProspect: true
+       - Verify creation successful
+    
+    2. **Convert Prospect to Customer**:
+       - PATCH /api/customers/{id}/convert-to-customer
+       - Expected: 200 status
+       - Expected response: {"success": true, "message": "...", "isProspect": false}
+    
+    3. **Verify Conversion**:
+       - GET /api/customers/{id}
+       - Verify isProspect: false
+       - Verify companyName unchanged
+    
+    4. **Verify in Lists**:
+       - GET /api/customers
+       - Filter by isProspect: false - should include converted customer
+       - Filter by isProspect: true - should NOT include converted customer
+    
+    **Success Criteria**:
+    - ✅ Endpoint returns 200
+    - ✅ Database updated (isProspect: false)
+    - ✅ Customer appears in customers list
+    - ✅ Customer does NOT appear in prospects list
+    - ✅ No data loss (companyName, email, etc. intact)
+    
+    **This is URGENT - user is frustrated!**
+    """
+    
+    print("=" * 100)
+    print("🚨 CRITICAL: CONVERT PROSPECT TO CUSTOMER ENDPOINT TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: User needs to convert prospects to customers but the functionality is not working.")
+    print("This is a critical business process that must work correctly.")
+    print("=" * 100)
+    
+    test_results = {
+        "prospect_found_or_created": False,
+        "conversion_successful": False,
+        "database_updated": False,
+        "appears_in_customers": False,
+        "removed_from_prospects": False,
+        "data_integrity_maintained": False,
+        "test_prospect_id": None,
+        "original_company_name": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # STEP 1: Find or Create Test Prospect
+    print("\n" + "=" * 80)
+    print("STEP 1: FIND OR CREATE TEST PROSPECT")
+    print("=" * 80)
+    
+    customers_endpoint = f"{BACKEND_URL}/api/customers"
+    print(f"Checking for existing prospects at: {customers_endpoint}")
+    
+    try:
+        # Get all customers to find prospects
+        response = requests.get(customers_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            customers = response.json()
+            print(f"Found {len(customers)} total customers in database")
+            
+            # Look for existing prospects
+            prospects = [c for c in customers if c.get("isProspect", False) == True]
+            print(f"Found {len(prospects)} existing prospects")
+            
+            if prospects:
+                # Use existing prospect
+                test_prospect = prospects[0]
+                test_results["test_prospect_id"] = test_prospect.get("id")
+                test_results["original_company_name"] = test_prospect.get("companyName")
+                test_results["prospect_found_or_created"] = True
+                
+                print(f"✅ USING EXISTING PROSPECT:")
+                print(f"   ID: {test_prospect.get('id')}")
+                print(f"   Company: {test_prospect.get('companyName')}")
+                print(f"   Email: {test_prospect.get('email')}")
+                print(f"   isProspect: {test_prospect.get('isProspect')}")
+                
+            else:
+                # Create new prospect for testing
+                print("No existing prospects found. Creating test prospect...")
+                
+                test_prospect_data = {
+                    "companyName": "Test Prospect Conversion Ltd.",
+                    "companyTitle": "Test Prospect Conversion Limited Şirketi",
+                    "email": "test@prospectconversion.com",
+                    "phone": "+90 212 555 9999",
+                    "address": "Test Conversion Mahallesi, Prospect Sokak No:1",
+                    "city": "İstanbul",
+                    "country": "TR",
+                    "sector": "Teknoloji",
+                    "relationshipType": "Potansiyel Müşteri",
+                    "isProspect": True,  # CRITICAL: Mark as prospect
+                    "notes": f"Test prospect for conversion testing - {datetime.now().isoformat()}"
+                }
+                
+                print(f"Creating test prospect: {test_prospect_data['companyName']}")
+                
+                create_response = requests.post(customers_endpoint, json=test_prospect_data, timeout=30)
+                print(f"Create Status Code: {create_response.status_code}")
+                
+                if create_response.status_code in [200, 201]:
+                    created_prospect = create_response.json()
+                    test_results["test_prospect_id"] = created_prospect.get("id")
+                    test_results["original_company_name"] = created_prospect.get("companyName")
+                    test_results["prospect_found_or_created"] = True
+                    
+                    print(f"✅ CREATED TEST PROSPECT:")
+                    print(f"   ID: {created_prospect.get('id')}")
+                    print(f"   Company: {created_prospect.get('companyName')}")
+                    print(f"   isProspect: {created_prospect.get('isProspect')}")
+                    
+                    # Verify it was created as prospect
+                    if not created_prospect.get("isProspect", False):
+                        print("❌ CRITICAL: Created customer is not marked as prospect!")
+                        test_results["critical_issues"].append("CREATED_CUSTOMER_NOT_PROSPECT")
+                        return False
+                        
+                else:
+                    print(f"❌ FAIL: Could not create test prospect. Status: {create_response.status_code}")
+                    print(f"Response: {create_response.text}")
+                    test_results["critical_issues"].append("PROSPECT_CREATION_FAILED")
+                    return False
+        else:
+            print(f"❌ FAIL: Could not retrieve customers. Status: {response.status_code}")
+            test_results["critical_issues"].append("CUSTOMERS_API_FAILED")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error in prospect setup: {str(e)}")
+        test_results["critical_issues"].append(f"PROSPECT_SETUP_ERROR: {str(e)}")
+        return False
+    
+    if not test_results["prospect_found_or_created"]:
+        print("❌ FAIL: Could not find or create test prospect")
+        return False
+    
+    # STEP 2: Convert Prospect to Customer
+    print("\n" + "=" * 80)
+    print("STEP 2: CONVERT PROSPECT TO CUSTOMER")
+    print("=" * 80)
+    
+    prospect_id = test_results["test_prospect_id"]
+    convert_endpoint = f"{BACKEND_URL}/api/customers/{prospect_id}/convert-to-customer"
+    print(f"Converting prospect using endpoint: {convert_endpoint}")
+    print(f"Prospect ID: {prospect_id}")
+    print(f"Original Company: {test_results['original_company_name']}")
+    
+    try:
+        convert_response = requests.patch(convert_endpoint, timeout=30)
+        print(f"Convert Status Code: {convert_response.status_code}")
+        
+        if convert_response.status_code == 200:
+            print("✅ PASS: Convert endpoint returned 200 status")
+            
+            try:
+                convert_data = convert_response.json()
+                print(f"Convert Response: {convert_data}")
+                
+                # Verify response structure
+                required_fields = ["success", "message", "isProspect", "customer_id"]
+                missing_fields = [field for field in required_fields if field not in convert_data]
+                
+                if missing_fields:
+                    print(f"❌ FAIL: Missing required fields in response: {missing_fields}")
+                    test_results["critical_issues"].append(f"MISSING_RESPONSE_FIELDS: {missing_fields}")
+                else:
+                    print("✅ PASS: Response has all required fields")
+                
+                # Verify success status
+                if convert_data.get("success") == True:
+                    print("✅ PASS: Conversion reported as successful")
+                    test_results["conversion_successful"] = True
+                else:
+                    print("❌ FAIL: Conversion not reported as successful")
+                    test_results["critical_issues"].append("CONVERSION_NOT_SUCCESSFUL")
+                
+                # Verify isProspect is now false
+                if convert_data.get("isProspect") == False:
+                    print("✅ PASS: Response shows isProspect: false")
+                else:
+                    print(f"❌ FAIL: Expected isProspect: false, got: {convert_data.get('isProspect')}")
+                    test_results["critical_issues"].append("ISPROSPECT_NOT_FALSE")
+                
+                # Verify customer_id matches
+                if convert_data.get("customer_id") == prospect_id:
+                    print("✅ PASS: Customer ID matches in response")
+                else:
+                    print(f"❌ FAIL: Customer ID mismatch. Expected: {prospect_id}, Got: {convert_data.get('customer_id')}")
+                    test_results["critical_issues"].append("CUSTOMER_ID_MISMATCH")
+                
+                # Check message
+                message = convert_data.get("message", "")
+                if message and "başarıyla" in message and "çevrildi" in message:
+                    print(f"✅ PASS: Success message in Turkish: {message}")
+                else:
+                    print(f"⚠️  WARNING: Unexpected message format: {message}")
+                    test_results["warnings"].append("UNEXPECTED_MESSAGE_FORMAT")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing convert response: {str(e)}")
+                test_results["critical_issues"].append(f"CONVERT_RESPONSE_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Convert endpoint failed. Status: {convert_response.status_code}")
+            print(f"Response: {convert_response.text}")
+            test_results["critical_issues"].append(f"CONVERT_ENDPOINT_FAILED_{convert_response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error calling convert endpoint: {str(e)}")
+        test_results["critical_issues"].append(f"CONVERT_ENDPOINT_ERROR: {str(e)}")
+        return False
+    
+    # STEP 3: Verify Database Update
+    print("\n" + "=" * 80)
+    print("STEP 3: VERIFY DATABASE UPDATE")
+    print("=" * 80)
+    
+    individual_customer_endpoint = f"{BACKEND_URL}/api/customers/{prospect_id}"
+    print(f"Verifying database update at: {individual_customer_endpoint}")
+    
+    try:
+        # Wait a moment for database update
+        import time
+        time.sleep(1)
+        
+        verify_response = requests.get(individual_customer_endpoint, timeout=30)
+        print(f"Verify Status Code: {verify_response.status_code}")
+        
+        if verify_response.status_code == 200:
+            updated_customer = verify_response.json()
+            print(f"Updated customer data retrieved")
+            
+            # Check isProspect field
+            is_prospect = updated_customer.get("isProspect")
+            print(f"isProspect value in database: {is_prospect}")
+            
+            if is_prospect == False:
+                print("✅ PASS: Database shows isProspect: false")
+                test_results["database_updated"] = True
+            else:
+                print(f"❌ FAIL: Database still shows isProspect: {is_prospect}")
+                test_results["critical_issues"].append(f"DATABASE_NOT_UPDATED_isProspect_{is_prospect}")
+            
+            # Verify data integrity - company name should be unchanged
+            current_company_name = updated_customer.get("companyName")
+            if current_company_name == test_results["original_company_name"]:
+                print(f"✅ PASS: Company name preserved: {current_company_name}")
+                test_results["data_integrity_maintained"] = True
+            else:
+                print(f"❌ FAIL: Company name changed! Original: {test_results['original_company_name']}, Current: {current_company_name}")
+                test_results["critical_issues"].append("COMPANY_NAME_CHANGED")
+            
+            # Check other important fields
+            important_fields = ["email", "phone", "address", "city", "country", "sector"]
+            print(f"\n🔍 DATA INTEGRITY CHECK:")
+            for field in important_fields:
+                value = updated_customer.get(field, "")
+                if value:
+                    print(f"   {field}: {value} ✅")
+                else:
+                    print(f"   {field}: (empty) ⚠️")
+            
+        else:
+            print(f"❌ FAIL: Could not retrieve updated customer. Status: {verify_response.status_code}")
+            test_results["critical_issues"].append("CUSTOMER_RETRIEVAL_FAILED")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error verifying database update: {str(e)}")
+        test_results["critical_issues"].append(f"DATABASE_VERIFY_ERROR: {str(e)}")
+    
+    # STEP 4: Verify Customer Appears in Customers List (isProspect: false)
+    print("\n" + "=" * 80)
+    print("STEP 4: VERIFY CUSTOMER APPEARS IN CUSTOMERS LIST")
+    print("=" * 80)
+    
+    try:
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        if customers_response.status_code == 200:
+            all_customers = customers_response.json()
+            
+            # Filter customers (isProspect: false or null)
+            regular_customers = [c for c in all_customers if not c.get("isProspect", False)]
+            print(f"Found {len(regular_customers)} regular customers")
+            
+            # Look for our converted customer
+            converted_customer_found = False
+            for customer in regular_customers:
+                if customer.get("id") == prospect_id:
+                    converted_customer_found = True
+                    print(f"✅ PASS: Converted customer found in customers list")
+                    print(f"   Company: {customer.get('companyName')}")
+                    print(f"   isProspect: {customer.get('isProspect')}")
+                    test_results["appears_in_customers"] = True
+                    break
+            
+            if not converted_customer_found:
+                print(f"❌ FAIL: Converted customer NOT found in customers list")
+                test_results["critical_issues"].append("NOT_IN_CUSTOMERS_LIST")
+                
+        else:
+            print(f"❌ FAIL: Could not retrieve customers list. Status: {customers_response.status_code}")
+            test_results["critical_issues"].append("CUSTOMERS_LIST_FAILED")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error checking customers list: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMERS_LIST_ERROR: {str(e)}")
+    
+    # STEP 5: Verify Customer Does NOT Appear in Prospects List (isProspect: true)
+    print("\n" + "=" * 80)
+    print("STEP 5: VERIFY CUSTOMER REMOVED FROM PROSPECTS LIST")
+    print("=" * 80)
+    
+    try:
+        customers_response = requests.get(customers_endpoint, timeout=30)
+        if customers_response.status_code == 200:
+            all_customers = customers_response.json()
+            
+            # Filter prospects (isProspect: true)
+            prospects = [c for c in all_customers if c.get("isProspect", False) == True]
+            print(f"Found {len(prospects)} current prospects")
+            
+            # Make sure our converted customer is NOT in prospects
+            converted_in_prospects = False
+            for prospect in prospects:
+                if prospect.get("id") == prospect_id:
+                    converted_in_prospects = True
+                    print(f"❌ FAIL: Converted customer still appears in prospects list!")
+                    print(f"   Company: {prospect.get('companyName')}")
+                    print(f"   isProspect: {prospect.get('isProspect')}")
+                    test_results["critical_issues"].append("STILL_IN_PROSPECTS_LIST")
+                    break
+            
+            if not converted_in_prospects:
+                print(f"✅ PASS: Converted customer correctly removed from prospects list")
+                test_results["removed_from_prospects"] = True
+                
+        else:
+            print(f"❌ FAIL: Could not retrieve customers for prospects check. Status: {customers_response.status_code}")
+            test_results["critical_issues"].append("PROSPECTS_CHECK_FAILED")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error checking prospects list: {str(e)}")
+        test_results["critical_issues"].append(f"PROSPECTS_CHECK_ERROR: {str(e)}")
+    
+    # FINAL RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 CONVERT PROSPECT TO CUSTOMER - FINAL TEST RESULTS")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Prospect Found/Created: {'✅' if test_results['prospect_found_or_created'] else '❌'}")
+    print(f"   • Conversion Successful: {'✅' if test_results['conversion_successful'] else '❌'}")
+    print(f"   • Database Updated: {'✅' if test_results['database_updated'] else '❌'}")
+    print(f"   • Appears in Customers: {'✅' if test_results['appears_in_customers'] else '❌'}")
+    print(f"   • Removed from Prospects: {'✅' if test_results['removed_from_prospects'] else '❌'}")
+    print(f"   • Data Integrity Maintained: {'✅' if test_results['data_integrity_maintained'] else '❌'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # SUCCESS CRITERIA CHECK
+    success_criteria = [
+        test_results['conversion_successful'],
+        test_results['database_updated'],
+        test_results['appears_in_customers'],
+        test_results['removed_from_prospects'],
+        test_results['data_integrity_maintained']
+    ]
+    
+    all_criteria_met = all(success_criteria)
+    criteria_met_count = sum(success_criteria)
+    
+    print(f"\n📋 SUCCESS CRITERIA: {criteria_met_count}/5 MET")
+    print(f"   ✅ Endpoint returns 200: {'✅' if test_results['conversion_successful'] else '❌'}")
+    print(f"   ✅ Database updated (isProspect: false): {'✅' if test_results['database_updated'] else '❌'}")
+    print(f"   ✅ Customer appears in customers list: {'✅' if test_results['appears_in_customers'] else '❌'}")
+    print(f"   ✅ Customer does NOT appear in prospects list: {'✅' if test_results['removed_from_prospects'] else '❌'}")
+    print(f"   ✅ No data loss (companyName, email, etc. intact): {'✅' if test_results['data_integrity_maintained'] else '❌'}")
+    
+    if all_criteria_met:
+        print(f"\n🎉 SUCCESS: CONVERT PROSPECT TO CUSTOMER ENDPOINT IS WORKING PERFECTLY!")
+        print(f"   All 5 success criteria met. The user's conversion functionality is working correctly.")
+        return True
+    else:
+        print(f"\n❌ FAILURE: CONVERT PROSPECT TO CUSTOMER ENDPOINT HAS ISSUES!")
+        print(f"   Only {criteria_met_count}/5 success criteria met. Critical issues need to be resolved.")
+        return False
+
 def test_customer_prospect_field_implementation():
     """
     CUSTOMER PROSPECT FIELD (isProspect) TESTING
