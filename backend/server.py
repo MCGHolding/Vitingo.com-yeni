@@ -2424,6 +2424,43 @@ async def delete_customer(customer_id: str):
         logger.error(f"Error deleting customer {customer_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.patch("/customers/{customer_id}/toggle-favorite")
+async def toggle_customer_favorite(customer_id: str):
+    """Toggle customer favorite status"""
+    try:
+        # Find customer
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Toggle isFavorite field
+        current_favorite = customer.get("isFavorite", False)
+        new_favorite = not current_favorite
+        
+        # Update in database
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$set": {"isFavorite": new_favorite}}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Müşteri güncellenemedi")
+        
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": f"Müşteri {'favorilere eklendi' if new_favorite else 'favorilerden çıkarıldı'}",
+                "isFavorite": new_favorite,
+                "customer_id": customer_id
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error toggling customer favorite: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Favori durumu güncellenirken hata oluştu: {str(e)}")
+
 @api_router.put("/customers/{customer_id}/deactivate")
 async def deactivate_customer(customer_id: str, request: dict):
     """Deactivate a customer (move to passive customers)"""
