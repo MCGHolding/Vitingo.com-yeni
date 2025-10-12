@@ -295,27 +295,43 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   };
 
   const confirmConvertToCustomer = async () => {
+    console.log('🔄 Starting conversion for:', selectedProspect?.companyName, 'ID:', selectedProspect?.id);
+    
     // Close confirmation modal
     setConfirmConvertModalOpen(false);
 
     try {
-      const response = await fetch(`${backendUrl}/api/customers/${selectedProspect.id}/convert-to-customer`, {
-        method: 'PATCH'
+      const url = `${backendUrl}/api/customers/${selectedProspect.id}/convert-to-customer`;
+      console.log('🌐 Making PATCH request to:', url);
+      
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
+      console.log('📡 Response status:', response.status);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ Backend error:', errorData);
         throw new Error(errorData.detail || 'Müşteriye çevirme işlemi başarısız');
       }
+
+      const data = await response.json();
+      console.log('✅ Success response:', data);
 
       // Show success modal
       setConvertModalOpen(true);
 
       // Reload prospects list (will remove converted one)
-      loadCustomerProspects();
+      console.log('🔄 Reloading prospects list...');
+      await loadCustomerProspects();
+      console.log('✅ Prospects list reloaded');
 
     } catch (error) {
-      console.error('Error converting to customer:', error);
+      console.error('❌ Error converting to customer:', error);
       toast({
         title: "Hata",
         description: error.message || "Müşteriye çevirme işlemi sırasında hata oluştu",
