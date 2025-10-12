@@ -1362,41 +1362,49 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
-def test_customer_prospects_delete_functionality():
+def test_customer_prospect_field_implementation():
     """
-    CUSTOMER PROSPECTS DELETE FUNCTIONALITY TESTING
+    CUSTOMER PROSPECT FIELD (isProspect) TESTING
     
-    **Objective**: Test the newly implemented DELETE endpoint for customer prospects to ensure it works correctly.
+    **Context**: We implemented a new `isProspect` boolean field in the Customer model to mark customers as prospects. 
+    The frontend sends `isProspect: true` for customer prospects, and CustomerProspectsPage should filter and display 
+    only customers with `isProspect: true`.
+    
+    **Changes Made**:
+    1. Added `isProspect: bool = False` field to Customer Pydantic model in backend
+    2. Updated NewCustomerForm to send `isProspect` field when "Müşteri Aday" checkbox is checked
+    3. Updated CustomerProspectsPage to filter customers by `isProspect: true`
     
     **Test Requirements**:
-    1. **Get Existing Prospects**: 
-       - Call GET /api/customer-prospects
-       - Verify prospects exist in database
-       - Select a test prospect for deletion
+    1. **Create Customer Prospect Test**:
+       - POST /api/customers with test data including `isProspect: true`
+       - Verify customer is created successfully with 200/201 status
+       - Verify response includes `isProspect` field
+       - Verify `isProspect` is set to `true` in response
     
-    2. **Delete Prospect Test**:
-       - Call DELETE /api/customer-prospects/{prospect_id} with a valid prospect ID
-       - Verify response returns 200 status code
-       - Verify response includes success message "Müşteri adayı başarıyla silindi"
-       - Verify response includes the deleted prospect_id
+    2. **Retrieve and Filter Test**:
+       - GET /api/customers to retrieve all customers
+       - Count customers with `isProspect: true`
+       - Count customers with `isProspect: false` or null
+       - Verify filtering works correctly
     
-    3. **Verification After Delete**:
-       - Call GET /api/customer-prospects again
-       - Verify the deleted prospect no longer appears in the list
-       - Verify prospect count decreased by 1
+    3. **Create Regular Customer Test**:
+       - POST /api/customers with test data WITHOUT `isProspect` or `isProspect: false`
+       - Verify customer is created with `isProspect: false` (default)
     
-    4. **Error Scenarios**:
-       - Test DELETE with non-existent prospect ID
-       - Verify returns 404 status with error message "Müşteri adayı bulunamadı"
+    4. **Data Integrity Test**:
+       - Verify newly created prospect has `isProspect: true`
+       - Verify regular customer has `isProspect: false`
+       - Verify existing customers have `isProspect` field (should be false by default)
     
     **Success Criteria**:
-    - DELETE endpoint successfully removes prospect from database
-    - Proper success response with Turkish message
-    - Prospect no longer retrievable after deletion
-    - 404 error handling works correctly for non-existent prospects
-    - Database integrity maintained after deletion
+    - ✅ Customer with `isProspect: true` is created successfully
+    - ✅ `isProspect` field is properly saved and returned in API responses
+    - ✅ Filtering by `isProspect: true` works correctly
+    - ✅ Default value for `isProspect` is `false` for regular customers
+    - ✅ All existing customers have `isProspect` field (backward compatibility)
     
-    **Expected Result**: The DELETE endpoint should work exactly like the customer deletion endpoint, providing a clean and reliable way to remove customer prospects from the system.
+    **Expected Result**: The backend should properly handle the `isProspect` field, allowing the frontend to distinguish between regular customers and customer prospects.
     """
     
     print("=" * 100)
