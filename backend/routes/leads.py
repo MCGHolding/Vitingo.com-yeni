@@ -52,7 +52,8 @@ class Lead(BaseModel):
 # Dependency to get database
 async def get_db():
     client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
-    db = client['vitingo_crm']
+    db_name = os.environ.get('DB_NAME', 'test_database')
+    db = client[db_name]
     return db
 
 # Helper function to serialize document
