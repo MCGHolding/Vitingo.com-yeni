@@ -496,9 +496,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             contact_city: contacts[0]?.city || '',
           });
       
-      // DEBUG: Log mapped data
-      console.log('🔍 DEBUG customerData after mapper:', JSON.stringify(customerData, null, 2));
-      
       // Save directly to backend or use onSave prop
       let savedData = null;
       if (onSave) {
