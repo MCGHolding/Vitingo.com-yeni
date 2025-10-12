@@ -299,7 +299,8 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
     setConfirmConvertModalOpen(false);
 
     try {
-      const url = `${backendUrl}/api/customers/${selectedProspect.id}/convert-to-customer`;
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const url = `${backendUrl}/api/leads/${selectedProspect.id}/convert`;
       console.log('🌐 Making PATCH request to:', url);
       
       const response = await fetch(url, {
@@ -323,10 +324,10 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       // Show success modal
       setConvertModalOpen(true);
 
-      // Reload prospects list (will remove converted one)
-      console.log('🔄 Reloading prospects list...');
+      // Reload prospects list (will remove converted one since status is now 'converted')
+      console.log('🔄 Reloading leads list...');
       await loadCustomerProspects();
-      console.log('✅ Prospects list reloaded');
+      console.log('✅ Leads list reloaded');
 
     } catch (error) {
       console.error('❌ Error converting to customer:', error);
