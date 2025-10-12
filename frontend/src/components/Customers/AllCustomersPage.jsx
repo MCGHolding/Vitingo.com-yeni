@@ -119,7 +119,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
       {isOpen && (
         <div 
           ref={popoverRef}
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] animate-in fade-in-0 zoom-in-95"
+          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] max-h-[300px] overflow-y-auto animate-in fade-in-0 zoom-in-95"
         >
           {menuItems.map((item, index) => (
             <button
