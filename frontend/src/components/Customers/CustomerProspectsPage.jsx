@@ -713,7 +713,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
             loadCustomerProspects(); // Reload prospects list
             toast({
               title: "Başarılı",
-              description: `${selectedProspect.companyName} başarıyla silindi`,
+              description: `${selectedProspect.companyName || selectedProspect.companyTitle || 'Müşteri adayı'} başarıyla silindi`,
             });
           }}
         />
