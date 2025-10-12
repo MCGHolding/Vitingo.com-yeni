@@ -284,6 +284,42 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
     setSortBy('companyName');
   };
 
+  const handleConvertToCustomer = async (prospect) => {
+    // Confirmation
+    if (!window.confirm(`${prospect.companyName} müşteri adayından müşteriye çevrilsin mi?\n\nBu işlem sonrasında artık "Tüm Müşteriler" listesinde görünecek ve "Müşteri Adayları" listesinden çıkacaktır.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendUrl}/api/customers/${prospect.id}/convert-to-customer`, {
+        method: 'PATCH'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Müşteriye çevirme işlemi başarısız');
+      }
+
+      const data = await response.json();
+
+      // Reload prospects list
+      loadCustomerProspects();
+
+      toast({
+        title: "Başarılı!",
+        description: data.message,
+      });
+
+    } catch (error) {
+      console.error('Error converting to customer:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Müşteriye çevirme işlemi sırasında hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleAction = (action, prospect) => {
     switch (action) {
       case 'convert':
