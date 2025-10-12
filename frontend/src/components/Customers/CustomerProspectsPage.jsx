@@ -536,7 +536,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
                               <div className="space-y-1">
                                 <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[160px] truncate flex items-center space-x-2">
                                   <Building className="h-3 w-3 text-gray-400" />
-                                  <span>{prospect.company_short_name || prospect.company_title}</span>
+                                  <span>{prospect.companyName || prospect.companyTitle}</span>
                                 </div>
                                 <div className="text-xs text-gray-500 max-w-[160px] truncate flex items-center space-x-1">
                                   <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
