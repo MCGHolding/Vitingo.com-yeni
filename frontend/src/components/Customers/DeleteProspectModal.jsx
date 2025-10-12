@@ -15,7 +15,8 @@ const DeleteProspectModal = ({ prospect, isOpen, onClose, onSuccess }) => {
       setLoading(true);
       setError('');
 
-      const response = await fetch(`${BACKEND_URL}/api/customer-prospects/${prospect.id}`, {
+      // Use /api/customers endpoint since prospects are now stored there with isProspect: true
+      const response = await fetch(`${BACKEND_URL}/api/customers/${prospect.id}`, {
         method: 'DELETE'
       });
 
