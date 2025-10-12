@@ -115,13 +115,29 @@ const Dashboard = () => {
   // ResizeObserver cleanup to prevent loop errors
   useEffect(() => {
     const handleResizeError = (e) => {
-      if (e.message && e.message.includes('ResizeObserver loop completed')) {
-        e.stopPropagation();
-        e.preventDefault();
-        return false;
+      if (e.message && e.message.includes('ResizeObserver')) {
+        e.stopImmediatePropagation();
+        return true;
       }
     };
 
+    // Suppress ResizeObserver errors globally
+    const debounceResizeObserver = () => {
+      const ro = window.ResizeObserver;
+      if (ro) {
+        window.ResizeObserver = class extends ro {
+          constructor(callback) {
+            super((entries, observer) => {
+              window.requestAnimationFrame(() => {
+                callback(entries, observer);
+              });
+            });
+          }
+        };
+      }
+    };
+
+    debounceResizeObserver();
     window.addEventListener('error', handleResizeError);
     
     return () => {
