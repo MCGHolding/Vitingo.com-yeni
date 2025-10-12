@@ -472,13 +472,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           }
         : formData;
 
-      // DEBUG: Check is_candidate value
-      console.log('🔍 DEBUG formData.is_candidate:', formData.is_candidate);
-      console.log('🔍 DEBUG baseCustomerData.is_candidate:', baseCustomerData.is_candidate);
-
       // Determine which endpoint to use based on is_candidate checkbox
       const endpoint = formData.is_candidate ? '/api/customer-prospects' : '/api/customers';
-      console.log('🔍 DEBUG endpoint:', endpoint);
       
       // Format data according to endpoint requirements
       const customerData = formData.is_candidate 
