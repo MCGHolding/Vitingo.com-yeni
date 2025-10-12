@@ -37,6 +37,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [savedCustomerData, setSavedCustomerData] = useState(null);
   const [createdCustomerInfo, setCreatedCustomerInfo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [specialties, setSpecialties] = useState([]);
