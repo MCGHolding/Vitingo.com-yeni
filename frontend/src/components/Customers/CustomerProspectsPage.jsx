@@ -546,7 +546,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
                             </TooltipTrigger>
                             <TooltipContent>
                               <div className="max-w-xs">
-                                <p className="font-medium">{prospect.company_title || prospect.company_short_name}</p>
+                                <p className="font-medium">{prospect.companyTitle || prospect.companyName}</p>
                                 <p className="text-xs text-gray-300 mt-1">Email: {prospect.email || 'N/A'}</p>
                               </div>
                             </TooltipContent>
