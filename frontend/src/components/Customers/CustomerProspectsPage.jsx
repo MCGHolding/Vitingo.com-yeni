@@ -762,7 +762,20 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
         />
       )}
 
-      {/* Convert to Customer Modal */}
+      {/* Confirm Convert Modal */}
+      {confirmConvertModalOpen && selectedProspect && (
+        <ConfirmConvertModal 
+          isOpen={confirmConvertModalOpen}
+          prospectData={selectedProspect}
+          onClose={() => {
+            setConfirmConvertModalOpen(false);
+            setSelectedProspect(null);
+          }}
+          onConfirm={confirmConvertToCustomer}
+        />
+      )}
+
+      {/* Convert to Customer Success Modal */}
       {convertModalOpen && selectedProspect && (
         <ConvertToCustomerModal 
           isOpen={convertModalOpen}
