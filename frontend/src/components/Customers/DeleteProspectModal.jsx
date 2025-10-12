@@ -158,7 +158,7 @@ const DeleteProspectModal = ({ prospect, isOpen, onClose, onSuccess }) => {
                     Müşteri Adayı Başarıyla Silindi
                   </h3>
                   <p className="text-gray-600">
-                    <strong>{prospect?.companyName}</strong> kalıcı olarak sistemden kaldırıldı.
+                    <strong>{prospect?.companyName || prospect?.companyTitle || 'Müşteri Adayı'}</strong> kalıcı olarak sistemden kaldırıldı.
                   </p>
                 </div>
               </div>
