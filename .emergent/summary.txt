@@ -1,21 +1,18 @@
 <analysis>
-The AI engineer's work primarily focused on enhancing the customer management module, addressing UI/UX, data integrity, and system stability. Initially, a transition from modal-based View and Edit customer functionalities to dedicated full-page components was completed, updating routing and navigation. A significant effort was dedicated to reconciling data mapping inconsistencies between backend and frontend, particularly for customer attributes and dropdowns. Field-level editing was implemented in , initially facing CSS  issues that were resolved by simplifying the icon display logic.
-
-Critical JSON parsing errors were debugged, revealing issues with hardcoded URLs and incorrect  usage. This led to the adoption of a robust  utility and backend standardization using  to ensure consistent data communication. Serialization problems for MongoDB  and  objects were also addressed in the backend. Several data mapping discrepancies reported by the user for newly created customers (customer type, sector, services, contact person, bank details) were systematically identified and resolved by integrating a comprehensive  for UI-to-DB data transformation. A test data fill button was added to  to aid in development. The final task addressed a persistent issue where contact person details were not being saved from  to the database, which was fixed by correcting data passing to the mapper.
+The AI engineer's trajectory shows a comprehensive effort in enhancing the CRM application, particularly around customer and customer prospect management. Initial efforts focused on fixing critical data integrity issues in , including  details and  array initialization, extending these fixes to supplier forms. A significant portion of the work involved refining the distinction between customers and prospects, which necessitated new backend endpoints for deletion and conversion, along with extensive frontend logic for filtering, display, and interaction (e.g., dedicated delete modals, correct listing). UI/UX improvements addressed action menu overflows using React Portals and dynamic positioning, and enhanced the customer creation success flow with dedicated modals and category-specific navigation. The Favorite Customer system was also fully implemented. The latest ongoing task, converting a prospect to a customer, is currently being debugged, with the backend confirmed functional and the issue identified as a frontend logic breakdown.
 </analysis>
 
 <product_requirements>
-The application functions as a CRM with an advanced calendar system. Core CRM capabilities include a multi-step New Brief Form, an Offer Form () with real-time data, dynamic installment plans, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar offers personal/admin views, meeting scheduling with invitations, and in-meeting chat.
+The application functions as a CRM with an advanced calendar system. Core CRM capabilities include a multi-step New Brief Form, an Offer Form (), dynamic installment plans, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar offers personal/admin views, meeting scheduling with invitations, and in-meeting chat.
 
 **Current Implementation**:
-A foundational calendar and meeting system is operational. The  leverages real-time sales opportunity and customer data, featuring dynamic payment installments. A smart customer deletion mechanism is in place. The New Sales Opportunity form incorporates dynamic country/city dropdowns, Proje Türü (Project Type) with add functionality, split Fuar Tarihleri (Fair Dates), Stand Büyüklüğü (Stand Size) with unit selection, and an Avans (Advance) financial approval workflow. Mock opportunity data has been removed, and tables display sequential numbering with corrected headers. Advanced file upload sections with preview functionality are implemented.  was enhanced. A full-page Satış Fırsatı Bilgileri () was created with integrated activity/note entry. A Activity Timeline () with a modern UI and backend integration was developed, allowing inline note entry. Dynamic contact person selection with inline adding was added to . Customer Edit and View functionalities have been transitioned to full-page displays with field-level editing.
-Further, Müşteri Türü ve Sektör section was renamed to Müşteri Bilgileri, Tax Office, VKN, Services are now editable fields, Banka Ödeme Bilgileri section was added, and contact person details are editable. Robust data mapping, safe JSON parsing, and backend serialization for / are integrated. An auto-fill test button was added to the new customer form.
+A foundational calendar and meeting system is operational. The  leverages real-time sales opportunity and customer data, featuring dynamic payment installments. A smart customer deletion mechanism is in place. The New Sales Opportunity form incorporates dynamic country/city dropdowns, Proje Türü with add functionality, split Fuar Tarihleri, Stand Büyüklüğü, and an Avans financial approval workflow.  was enhanced. A full-page Satış Fırsatı Bilgileri () was created with integrated activity/note entry, and an Activity Timeline () was developed. Customer Edit and View functionalities are full-page displays with field-level editing. Müşteri Türü ve Sektör section was renamed to Müşteri Bilgileri, Tax Office, VKN, Services are editable, Banka Ödeme Bilgileri section was added, and contact person details are editable. Robust data mapping (), safe JSON parsing (), and backend serialization for / are integrated. An auto-fill test button was added to the new customer form. Contact person details saving,  array handling for customer/supplier contacts, dedicated Müşteri Adayı (Customer Prospect) delete flow, menu overflow, modal positioning fixes, Favorite Customer system, and an enhanced customer creation success modal with category-specific navigation have been implemented. The Müşteriye Çevir (Convert Prospect to Customer) flow is partially implemented and being debugged.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: React (hooks, context, Router), Shadcn UI-like components, Tailwind CSS,  component, custom JSON parsing (), data mappers ().
-- **Backend**: FastAPI (RESTful APIs, ), Pydantic (data models, custom validation), MongoDB (data storage, / serialization).
-- **Auth**: Client-side authentication ().
+- **Frontend**: React (hooks, context, Router, Portals, , ), Shadcn UI-like components, Tailwind CSS, , custom JSON parsing (), data mappers ().
+- **Backend**: FastAPI (RESTful APIs, ), Pydantic (data models, custom validation), MongoDB (data storage, / serialization, UUIDs).
+- **Auth**: Client-side authentication (), temporary login bypass.
 </key_technical_concepts>
 
 <code_architecture>
@@ -25,46 +22,72 @@ The application uses a monorepo structure with a React frontend and a FastAPI ba
 
 -   ****
     -   **Importance:** Core FastAPI backend, handles API routes and database interactions.
-    -   **Summary of Changes:** Pydantic  model updated for bank and contact person details. IBAN/SWIFT validation added. All customer endpoints (, ) modified to use  and a custom JSON encoder for  and  serialization.
+    -   **Summary of Changes:**  Pydantic model now includes  and . New endpoints:  for deleting prospects and  for marking customers as favorite. Added  to convert a prospect to a regular customer.
 -   ****
     -   **Importance:** Frontend entry, routing, and main state management.
-    -   **Summary of Changes:** Updated routing. Included global  cleanup and error handling for stability.
+    -   **Summary of Changes:**  function updated for dynamic navigation.  added for page top scroll. A robust  error handler was implemented.
 -   ****
-    -   **Importance:** Form for creating new customer records.
-    -   **Summary of Changes:** Integrated  and safe API helpers. Added a Test Verisi Doldur button with auto-fill logic. Robust checks added for dropdown data to prevent  errors. Crucially, fixed the passing of contact person details to the mapper for database saving.
+    -   **Importance:** Manages user authentication state.
+    -   **Summary of Changes:** Modified for temporary auto-login of a  user.
 -   ****
-    -   **Importance:** Full-page component for editing comprehensive customer details.
-    -   **Summary of Changes:** Refactored for field-level editing (). CSS  issues resolved. Renamed Müşteri Türü ve Sektör to Müşteri Bilgileri. Tax Office, VKN, Services moved to Firma Bilgileri. Hizmetler ve Finansal renamed to Banka Ödeme Bilgileri with new bank fields. Contact person details were expanded and made editable. Integrated  and safe API helpers.
--   ** (New File)**
-    -   **Importance:** Centralized data mapping logic between UI forms and backend DB schema.
-    -   **Summary of Changes:** Created to provide ,  dictionaries, / types,  (DB to UI),  (UI to DB), and  for partial updates.
--   ** (New File)**
+    -   **Importance:** Form for creating new customer records (including prospects).
+    -   **Summary of Changes:** Fixed  details passing to mapper. Corrected  array initialization for contacts. The Sektör field validation was made optional, and a duplicate UI section was removed. Refactored success flow using .  is correctly mapped to .
+-   ****
+    -   **Importance:** Displays and manages customer prospects.
+    -   **Summary of Changes:** Fetches and displays customers with . Implemented delete flow using .  refactored with React Portals for correct layering and /. Integrated  and .
+-   ****
+    -   **Importance:** Displays all regular customers.
+    -   **Summary of Changes:** Filters to display only customers with .  updated for  toggle and includes /.
+-   ****
+    -   **Importance:** Displays favorite customers.
+    -   **Summary of Changes:** Filters and displays only customers with .
+-   ****
+    -   **Importance:** Application's main navigation menu.
+    -   **Summary of Changes:** Tüm Müşteriler label renamed to Müşteriler.
+-   ****
+    -   **Importance:** Centralized data mapping logic.
+    -   **Summary of Changes:** Updated to correctly map  from form to .
+-   ****
     -   **Importance:** Provides a robust and safe utility for parsing JSON API responses.
-    -   **Summary of Changes:** Created to implement , handling , empty bodies, BOM, and JSON-hijacking prefixes for resilient API communication.
+    -   **Summary of Changes:**  function modified to remove  to resolve CORS errors.
+-   ** (New File)**
+    -   **Importance:** Specific modal for deleting customer prospects.
+    -   **Summary of Changes:** Created. Calls  and uses  for display. Its  was adjusted.
+-   ** (New File)**
+    -   **Importance:** Generic success modal for customer/prospect creation.
+    -   **Summary of Changes:** Created to provide a structured success message with navigation.
+-   ** (New File)**
+    -   **Importance:** Success modal for prospect conversion.
+    -   **Summary of Changes:** Created to show a success message after conversion.
+-   ** (New File)**
+    -   **Importance:** Confirmation modal for converting prospects.
+    -   **Summary of Changes:** Created to replace .
+-   ****
+    -   **Importance:** Form for creating new supplier records.
+    -   **Summary of Changes:**  array initialization for contacts was corrected.
+-   ****
+    -   **Importance:** Modal for editing supplier details.
+    -   **Summary of Changes:**  array handling for contacts was corrected.
 </code_architecture>
 
 <pending_tasks>
-- Fully implement remaining detailed features within  (rich text editor, AI-generated text, multi-select services, signature).
-- Complete Phase 2 of the Calendar System: Meeting Management (email notifications, visual status).
-- Fully implement Phase 3: Real-time Chat (Socket.io integration, right panel, emoji/file/image sharing).
-- Implement Phase 4: Advanced Calendar Features (browser notifications, sync, reporting).
-- Implement the eye icon feature for expense reports to view documented expenses.
-- Complete UI styling and data rendering for dynamic country/city dropdowns.
-- Implement Save and Approve buttons in .
-- Update Tutar to Öngörülen and reorder Etiketler in , , .
-- Address the React key duplication warning for the Takvim component.
+- Complete  features (rich text, AI text, multi-select, signature).
+- Finish Calendar System Phases 2-4 (meeting, chat, advanced features).
+- Implement eye icon for expense reports.
+- Refine dynamic country/city dropdowns UI/data.
+- Add Save/Approve buttons in .
+- Adjust labels/order in  pages.
+- Fix React key warning for Takvim.
+- Create Kurallar menu under Dökümanlar with Müşteri Kayıt Kuralları.
+- Resolve Müşteriye Çevir (Convert Prospect to Customer) status update and list movement.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was addressing a critical data integrity issue where contact person details entered in the  were not being correctly saved to the database and, consequently, were not pre-filling when viewing the customer in .
+Immediately before this summary, the AI engineer was actively debugging the Müşteriye Çevir (Convert Prospect to Customer) functionality within . The user reported that while the confirmation and success modals (, ) now appear correctly, the prospect is **not being transferred** (i.e., its status is not changing, it's not being removed from the prospect list, and it's not appearing in the regular customer list after conversion).
 
-The issue was traced to , where the  data, though collected, was not being properly passed to the  mapper function for serialization and transmission to the backend. This resulted in the contact-related fields in the  sub-document of the customer record being empty in the database.
-
-The  file was modified to ensure that all  fields (e.g., , , , , , , ) are correctly included in the  object before it is passed to the  function. This ensures that the mapper receives the complete contact information, which is then transformed into the backend's  schema and saved.
-
-A new customer was successfully created using the updated , and logs confirmed that the contact person details were saved.
+The backend endpoint () has been verified as functional by the backend testing agent. The issue has been identified by the  as residing in the frontend's conversion logic, specifically where the request chain breaks, preventing the final status update and navigation. Debug logs were just added to the frontend  to pinpoint the exact failure point.
 </current_work>
 
 <optional_next_step>
-Verify the contact person details for the newly saved customer are correctly pre-filled on .
+Continue debugging the frontend conversion logic to ensure the prospect's status update and correct list movement.
 </optional_next_step>
