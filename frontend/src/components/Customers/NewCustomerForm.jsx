@@ -1404,6 +1404,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         onClose={(route) => {
           setShowSuccessModal(false);
           
+          // Call onSave callback if provided (for parent component integration)
+          if (onSave && savedCustomerData?.savedData) {
+            onSave(savedCustomerData.savedData);
+          }
+          
           // Eğer faturadan geliyorsak ve müşteri eklendiyse, fatura sayfasına dön
           if (returnToInvoice && onCustomerAdded && savedCustomerData?.customerId) {
             onCustomerAdded(savedCustomerData.customerId, savedCustomerData.companyName);
