@@ -325,6 +325,40 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
     setDeleteModalOpen(true);
   };
 
+  const handleToggleFavorite = async (customer) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/customers/${customer.id}/toggle-favorite`, {
+        method: 'PATCH'
+      });
+
+      if (!response.ok) {
+        throw new Error('Favori durumu güncellenemedi');
+      }
+
+      const data = await response.json();
+      
+      // Update local state
+      setCustomers(prevCustomers => 
+        prevCustomers.map(c => 
+          c.id === customer.id ? { ...c, isFavorite: data.isFavorite } : c
+        )
+      );
+
+      toast({
+        title: data.isFavorite ? "Favorilere Eklendi" : "Favorilerden Çıkarıldı",
+        description: data.message,
+      });
+
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        title: "Hata",
+        description: "Favori durumu güncellenirken bir hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Handle successful deletion/deactivation
   const handleDeleteSuccess = async () => {
     console.log('🎉 handleDeleteSuccess called - refreshing customers...');
