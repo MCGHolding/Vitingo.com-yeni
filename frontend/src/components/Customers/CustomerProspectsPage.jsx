@@ -194,9 +194,14 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       console.log('Loading leads from /api/leads endpoint');
       const response = await fetch(`${backendUrl}/api/leads`);
       if (response.ok) {
-        const prospectData = await response.json();
-        console.log('Leads loaded successfully:', prospectData.length, 'leads found');
-        setProspects(prospectData);
+        const allLeads = await response.json();
+        console.log('All leads loaded:', allLeads.length);
+        
+        // Filter out converted leads - only show active prospects
+        const activeProspects = allLeads.filter(lead => lead.status !== 'converted');
+        console.log('Active prospects (excluding converted):', activeProspects.length);
+        
+        setProspects(activeProspects);
       } else {
         console.error('Failed to load leads, status:', response.status);
         throw new Error('Failed to load leads');
