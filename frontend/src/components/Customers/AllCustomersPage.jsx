@@ -372,6 +372,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
       return;
     }
 
+    if (action === 'favorite') {
+      handleToggleFavorite(customer);
+      return;
+    }
+
     const actionMessages = {
       message: {
         title: "Mesaj Gönder",
