@@ -57,7 +57,6 @@ export async function apiPostCustomer(payload) {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
   const res = await fetch(`${backendUrl}/api/customers`, {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",
