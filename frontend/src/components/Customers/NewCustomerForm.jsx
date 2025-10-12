@@ -472,29 +472,22 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           }
         : formData;
 
-      // Determine which endpoint to use based on is_candidate checkbox
-      const endpoint = formData.is_candidate ? '/api/customer-prospects' : '/api/customers';
+      // Always use /api/customers endpoint with mapper for both customers and prospects
+      const endpoint = '/api/customers';
       
-      // Format data according to endpoint requirements
-      const customerData = formData.is_candidate 
-        ? {
-            // Customer prospects use snake_case and different field structure
-            ...baseCustomerData,
-            sector: getSectorName(baseCustomerData.sector_id), // Convert sector_id to sector name
-          }
-        : // Use mapper to convert form data to DB format including contact person details
-          formToDb({
-            ...baseCustomerData,
-            isProspect: baseCustomerData.is_candidate || false, // Add isProspect field
-            contactPerson: contacts[0]?.full_name || '',
-            // Contact person details from contacts array
-            contact_mobile: contacts[0]?.mobile || '',
-            contact_email: contacts[0]?.email || '', 
-            contact_position: contacts[0]?.position || '',
-            contact_address: contacts[0]?.address || '',
-            contact_country: contacts[0]?.country || '',
-            contact_city: contacts[0]?.city || '',
-          });
+      // Use mapper to convert form data to DB format including contact person details
+      const customerData = formToDb({
+        ...baseCustomerData,
+        isProspect: baseCustomerData.is_candidate || false, // Add isProspect field
+        contactPerson: contacts[0]?.full_name || '',
+        // Contact person details from contacts array
+        contact_mobile: contacts[0]?.mobile || '',
+        contact_email: contacts[0]?.email || '', 
+        contact_position: contacts[0]?.position || '',
+        contact_address: contacts[0]?.address || '',
+        contact_country: contacts[0]?.country || '',
+        contact_city: contacts[0]?.city || '',
+      });
       
       // Save directly to backend or use onSave prop
       let savedData = null;
