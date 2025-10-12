@@ -39,7 +39,8 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
 
   // Calculate favorite customers whenever customers or invoices change
   useEffect(() => {
-    const favorites = getFavoriteCustomers(customers, invoices);
+    // Filter customers with isFavorite: true
+    const favorites = customers.filter(customer => customer.isFavorite === true);
     setFavoriteCustomers(favorites);
   }, [customers, invoices]);
 
