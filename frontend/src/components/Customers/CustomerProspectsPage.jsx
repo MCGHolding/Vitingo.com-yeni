@@ -281,7 +281,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       case 'favorite':
         toast({
           title: "Favorilere Ekle",
-          description: `${prospect.company_short_name} favorilere eklendi`,
+          description: `${prospect.companyName} favorilere eklendi`,
         });
         break;
       case 'delete':
