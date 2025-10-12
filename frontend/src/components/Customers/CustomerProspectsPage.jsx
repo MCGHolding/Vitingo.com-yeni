@@ -287,11 +287,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const handleAction = (action, prospect) => {
     switch (action) {
       case 'convert':
-        toast({
-          title: "Müşteriye Çevir",
-          description: `${prospect.companyName} müşteriye çevrilecek...`,
-        });
-        // TODO: Implement convert to customer functionality
+        handleConvertToCustomer(prospect);
         break;
       case 'message':
         toast({
