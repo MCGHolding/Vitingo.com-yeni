@@ -333,6 +333,13 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
       console.log('🔄 Reloading leads list...');
       await loadCustomerProspects();
       console.log('✅ Leads list reloaded');
+      
+      // IMPORTANT: Refresh customers list so the new customer appears in Müşteriler page
+      if (refreshCustomers) {
+        console.log('🔄 Refreshing customers list...');
+        await refreshCustomers();
+        console.log('✅ Customers list refreshed');
+      }
 
     } catch (error) {
       console.error('❌ Error converting to customer:', error);
