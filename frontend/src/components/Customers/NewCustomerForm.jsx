@@ -504,13 +504,16 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       }
 
       // Set success state with customer data for modal
-      setSavedCustomerData({
+      const customerDataForModal = {
         companyName: baseCustomerData.company_short_name || baseCustomerData.company_title,
         isProspect: formData.is_candidate || false,
         customerId: savedData?.id
-      });
+      };
       
+      console.log('🎉 Setting success modal data:', customerDataForModal);
+      setSavedCustomerData(customerDataForModal);
       setShowSuccessModal(true);
+      console.log('🎉 Success modal should now be visible');
 
       // Faturadan geliyorsak kullanıcının "Tamam" butonuna tıklamasını bekle
 
