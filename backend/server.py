@@ -2461,6 +2461,43 @@ async def toggle_customer_favorite(customer_id: str):
         logger.error(f"Error toggling customer favorite: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Favori durumu güncellenirken hata oluştu: {str(e)}")
 
+@api_router.patch("/customers/{customer_id}/convert-to-customer")
+async def convert_prospect_to_customer(customer_id: str):
+    """Convert a customer prospect to regular customer"""
+    try:
+        # Find customer prospect
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri adayı bulunamadı")
+        
+        # Check if already a customer
+        if not customer.get("isProspect", False):
+            raise HTTPException(status_code=400, detail="Bu zaten bir müşteri, müşteri adayı değil")
+        
+        # Convert to customer by setting isProspect to false
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$set": {"isProspect": False}}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Müşteri güncellenemedi")
+        
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": f"'{customer.get('companyName', 'Müşteri')}' başarıyla müşteriye çevrildi",
+                "isProspect": False,
+                "customer_id": customer_id
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error converting prospect to customer: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Müşteriye çevirme işlemi sırasında hata oluştu: {str(e)}")
+
 @api_router.put("/customers/{customer_id}/deactivate")
 async def deactivate_customer(customer_id: str, request: dict):
     """Deactivate a customer (move to passive customers)"""
