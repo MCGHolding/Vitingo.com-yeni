@@ -694,7 +694,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
             loadCustomerProspects(); // Reload prospects list
             toast({
               title: "Başarılı",
-              description: `${selectedProspect.company_short_name} başarıyla silindi`,
+              description: `${selectedProspect.companyName} başarıyla silindi`,
             });
           }}
         />
