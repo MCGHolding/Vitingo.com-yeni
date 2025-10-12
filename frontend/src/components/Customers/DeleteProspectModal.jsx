@@ -69,7 +69,7 @@ const DeleteProspectModal = ({ prospect, isOpen, onClose, onSuccess }) => {
                   <div className="flex items-center space-x-3">
                     <Building className="h-8 w-8 text-blue-500" />
                     <div>
-                      <h3 className="font-semibold text-gray-900">{prospect?.company_short_name}</h3>
+                      <h3 className="font-semibold text-gray-900">{prospect?.companyName}</h3>
                       {prospect?.email && (
                         <p className="text-sm text-gray-600">{prospect.email}</p>
                       )}
