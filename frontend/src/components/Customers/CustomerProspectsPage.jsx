@@ -236,11 +236,11 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'companyName':
-          return (a.company_short_name || '').localeCompare(b.company_short_name || '');
+          return (a.companyName || '').localeCompare(b.companyName || '');
         case 'createdAt':
           return new Date(b.created_at || 0) - new Date(a.created_at || 0);
         default:
-          return (a.company_short_name || '').localeCompare(b.company_short_name || '');
+          return (a.companyName || '').localeCompare(b.companyName || '');
       }
     });
 
