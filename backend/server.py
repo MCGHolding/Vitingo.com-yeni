@@ -341,6 +341,8 @@ class Customer(BaseModel):
     bankBranch: str = ""  # Şube
     accountHolderName: str = ""  # Hesap Sahibi
     swiftCode: str = ""  # Swift Kodu
+    # Prospect field
+    isProspect: bool = False  # Müşteri Adayı mı?
     # Deactivation fields
     deactivated_at: Optional[datetime] = None
     deactivation_reason: Optional[str] = None
