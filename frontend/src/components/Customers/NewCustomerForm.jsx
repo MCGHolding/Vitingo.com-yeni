@@ -491,23 +491,19 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         contact_city: contacts[0]?.city || '',
       });
       
-      // Save directly to backend or use onSave prop
+      // Always save to backend first (do NOT call onSave yet - wait for modal)
       let savedData = null;
-      if (onSave) {
-        savedData = await onSave(customerData);
-      } else {
-        // POST customer data using safe JSON parsing
-
-        // Use safe JSON parsing for customer creation
-        savedData = await apiPostCustomer(customerData);
-        console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
-      }
+      
+      // Use safe JSON parsing for customer creation
+      savedData = await apiPostCustomer(customerData);
+      console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
 
       // Set success state with customer data for modal
       const customerDataForModal = {
         companyName: baseCustomerData.company_short_name || baseCustomerData.company_title,
         isProspect: formData.is_candidate || false,
-        customerId: savedData?.id
+        customerId: savedData?.id,
+        savedData: savedData // Store for later use
       };
       
       console.log('🎉 Setting success modal data:', customerDataForModal);
@@ -515,7 +511,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       setShowSuccessModal(true);
       console.log('🎉 Success modal should now be visible');
 
-      // Faturadan geliyorsak kullanıcının "Tamam" butonuna tıklamasını bekle
+      // DO NOT redirect or call callbacks here - wait for modal to be dismissed
 
     } catch (error) {
       console.error('Error creating customer:', error);
