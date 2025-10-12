@@ -264,14 +264,14 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       case 'convert':
         toast({
           title: "Müşteriye Çevir",
-          description: `${prospect.company_short_name} müşteriye çevrilecek...`,
+          description: `${prospect.companyName} müşteriye çevrilecek...`,
         });
         // TODO: Implement convert to customer functionality
         break;
       case 'message':
         toast({
           title: "Mesaj Gönder",
-          description: `${prospect.company_short_name} ile mesaj başlatılacak...`,
+          description: `${prospect.companyName} ile mesaj başlatılacak...`,
         });
         break;
       case 'email':
