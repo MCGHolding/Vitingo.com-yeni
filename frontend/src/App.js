@@ -769,6 +769,7 @@ const Dashboard = () => {
   };
 
   const handleBackToDashboard = (targetView = 'dashboard') => {
+    console.log('🔄 handleBackToDashboard called with targetView:', targetView);
     setCurrentView(targetView);
   };
 
