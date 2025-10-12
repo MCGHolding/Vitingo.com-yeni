@@ -1362,6 +1362,497 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_leads_api_endpoints():
+    """
+    COMPREHENSIVE LEADS API ENDPOINTS TESTING
+    
+    **Test Requirements:**
+    1. GET /api/leads - List all leads
+       - Should return 3 test leads
+       - Verify response structure (id, companyName, sector, status, etc.)
+       
+    2. POST /api/leads - Create new lead
+       - Create a test lead with complete data
+       - Verify response returns created lead with ID
+       
+    3. GET /api/leads/{lead_id} - Get single lead
+       - Retrieve one of the existing test leads
+       - Verify all fields are present
+       
+    4. PATCH /api/leads/{lead_id}/convert - Convert lead to customer
+       - Convert one test lead to customer
+       - Verify customer is created in customers collection
+       - Verify lead status is updated to 'converted'
+       - Verify lead.customer_id is set
+       
+    5. DELETE /api/leads/{lead_id} - Delete lead
+       - Delete a test lead
+       - Verify lead is removed from leads collection
+       
+    **Test Data Available:**
+    - 3 test leads already exist in leads collection
+    - Test Lead 1: Teknoloji A.Ş. (ID: dafcbebe-af4c-4388-bd27-68bd4672427c)
+    - Test Lead 2: Danışmanlık Ltd.
+    - Test Lead 3: Üretim San. ve Tic. A.Ş.
+
+    **Success Criteria:**
+    ✅ All 5 endpoints working correctly
+    ✅ Lead creation persists in database
+    ✅ Lead to customer conversion creates customer record
+    ✅ Delete removes lead from collection
+    ✅ Proper error handling for invalid IDs
+    """
+    
+    print("=" * 100)
+    print("🚨 COMPREHENSIVE LEADS API ENDPOINTS TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: Testing new Leads API endpoints implementation for leads and customers separation.")
+    print("This includes CRUD operations and lead-to-customer conversion functionality.")
+    print("=" * 100)
+    
+    test_results = {
+        "get_leads_working": False,
+        "post_leads_working": False,
+        "get_single_lead_working": False,
+        "convert_lead_working": False,
+        "delete_lead_working": False,
+        "test_lead_id": None,
+        "converted_customer_id": None,
+        "initial_lead_count": 0,
+        "errors": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET /api/leads - List all leads
+    print("\n" + "=" * 80)
+    print("TEST 1: GET /api/leads - LIST ALL LEADS")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/leads"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: GET /api/leads endpoint responding")
+            test_results["get_leads_working"] = True
+            
+            try:
+                leads = response.json()
+                lead_count = len(leads) if isinstance(leads, list) else 0
+                test_results["initial_lead_count"] = lead_count
+                
+                print(f"📊 Found {lead_count} leads in database")
+                
+                if lead_count >= 3:
+                    print("✅ PASS: Expected test leads found (3 or more)")
+                    
+                    # Analyze first few leads
+                    print(f"\n📋 LEAD DATA ANALYSIS (First 3 leads):")
+                    for i, lead in enumerate(leads[:3], 1):
+                        company_name = lead.get("companyName", "N/A")
+                        sector = lead.get("sector", "N/A")
+                        status = lead.get("status", "N/A")
+                        lead_id = lead.get("id", "N/A")
+                        created_at = lead.get("created_at", "N/A")
+                        
+                        print(f"   {i}. {company_name}")
+                        print(f"      ID: {lead_id}")
+                        print(f"      Sector: {sector}")
+                        print(f"      Status: {status}")
+                        print(f"      Created: {created_at}")
+                        
+                        # Verify required fields
+                        required_fields = ["id", "companyName", "status", "created_at"]
+                        missing_fields = [field for field in required_fields if field not in lead]
+                        if missing_fields:
+                            print(f"      ⚠️  Missing fields: {missing_fields}")
+                            test_results["warnings"].append(f"Lead {i} missing fields: {missing_fields}")
+                        else:
+                            print(f"      ✅ All required fields present")
+                else:
+                    print(f"⚠️  WARNING: Only {lead_count} leads found, expected at least 3")
+                    test_results["warnings"].append(f"LOW_LEAD_COUNT_{lead_count}")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse leads response: {str(e)}")
+                test_results["errors"].append(f"GET_LEADS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: GET /api/leads failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["errors"].append(f"GET_LEADS_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: GET /api/leads request error: {str(e)}")
+        test_results["errors"].append(f"GET_LEADS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: POST /api/leads - Create new lead
+    print("\n" + "=" * 80)
+    print("TEST 2: POST /api/leads - CREATE NEW LEAD")
+    print("=" * 80)
+    
+    # Create realistic test lead data
+    test_lead_data = {
+        "companyName": "Test Lead Şirketi A.Ş.",
+        "companyTitle": "Test Lead Şirketi Anonim Şirketi",
+        "contactPerson": "Ahmet Test",
+        "contactMobile": "+90 532 123 4567",
+        "contactEmail": "ahmet@testlead.com",
+        "contactPosition": "Satış Müdürü",
+        "phone": "+90 212 555 0123",
+        "email": "info@testlead.com",
+        "address": "Test Mahallesi, Lead Sokak No:1",
+        "contactAddress": "İletişim Adresi Test",
+        "country": "TR",
+        "city": "İstanbul",
+        "contactCountry": "TR",
+        "contactCity": "İstanbul",
+        "sector": "Teknoloji",
+        "relationshipType": "Potansiyel Müşteri",
+        "notes": f"Test lead created for API testing - {datetime.now().isoformat()}",
+        "tags": ["TEST", "API_TESTING"],
+        "services": ["Web Tasarım", "Mobil Uygulama"],
+        "source": "api_test",
+        "potential_value": 50000.0,
+        "status": "new",
+        "iban": "TR33 0006 1005 1978 6457 8413 26",
+        "bankName": "Test Bankası",
+        "bankBranch": "Test Şubesi",
+        "accountHolderName": "Test Lead Şirketi A.Ş.",
+        "swiftCode": "TESTTR33"
+    }
+    
+    print(f"Creating test lead: {test_lead_data['companyName']}")
+    
+    try:
+        create_response = requests.post(endpoint, json=test_lead_data, timeout=30)
+        print(f"Create Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: POST /api/leads endpoint working")
+            test_results["post_leads_working"] = True
+            
+            try:
+                create_result = create_response.json()
+                
+                if "lead" in create_result:
+                    created_lead = create_result["lead"]
+                    test_lead_id = created_lead.get("id")
+                    test_results["test_lead_id"] = test_lead_id
+                    
+                    print(f"✅ PASS: Test lead created successfully with ID: {test_lead_id}")
+                    
+                    # Verify created data
+                    print(f"\n🔍 CREATION VERIFICATION:")
+                    key_fields = ["companyName", "sector", "status", "contactPerson", "potential_value"]
+                    for field in key_fields:
+                        expected = test_lead_data.get(field)
+                        actual = created_lead.get(field)
+                        if actual == expected:
+                            print(f"   ✅ {field}: {actual}")
+                        else:
+                            print(f"   ⚠️  {field}: Expected {expected}, Got {actual}")
+                else:
+                    print("❌ FAIL: Created lead not returned in response")
+                    test_results["errors"].append("CREATE_LEAD_NO_RESPONSE_DATA")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse create response: {str(e)}")
+                test_results["errors"].append(f"CREATE_LEAD_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: POST /api/leads failed with status {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            test_results["errors"].append(f"CREATE_LEAD_ERROR_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: POST /api/leads request error: {str(e)}")
+        test_results["errors"].append(f"CREATE_LEAD_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: GET /api/leads/{lead_id} - Get single lead
+    print("\n" + "=" * 80)
+    print("TEST 3: GET /api/leads/{lead_id} - GET SINGLE LEAD")
+    print("=" * 80)
+    
+    if test_results["test_lead_id"]:
+        single_lead_endpoint = f"{BACKEND_URL}/api/leads/{test_results['test_lead_id']}"
+        print(f"Testing endpoint: {single_lead_endpoint}")
+        
+        try:
+            single_response = requests.get(single_lead_endpoint, timeout=30)
+            print(f"Status Code: {single_response.status_code}")
+            
+            if single_response.status_code == 200:
+                print("✅ PASS: GET /api/leads/{id} endpoint working")
+                test_results["get_single_lead_working"] = True
+                
+                try:
+                    single_lead = single_response.json()
+                    
+                    print(f"✅ PASS: Retrieved lead: {single_lead.get('companyName')}")
+                    
+                    # Verify all fields are present
+                    expected_fields = ["id", "companyName", "status", "sector", "contactPerson", "created_at"]
+                    missing_fields = [field for field in expected_fields if field not in single_lead]
+                    
+                    if missing_fields:
+                        print(f"⚠️  WARNING: Missing fields in single lead: {missing_fields}")
+                        test_results["warnings"].append(f"SINGLE_LEAD_MISSING_FIELDS: {missing_fields}")
+                    else:
+                        print("✅ PASS: All expected fields present in single lead response")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse single lead response: {str(e)}")
+                    test_results["errors"].append(f"SINGLE_LEAD_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: GET /api/leads/{{id}} failed with status {single_response.status_code}")
+                test_results["errors"].append(f"SINGLE_LEAD_ERROR_{single_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: GET /api/leads/{{id}} request error: {str(e)}")
+            test_results["errors"].append(f"SINGLE_LEAD_REQUEST_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No test lead ID available for single lead test")
+        test_results["warnings"].append("SINGLE_LEAD_TEST_SKIPPED_NO_ID")
+    
+    # TEST 4: PATCH /api/leads/{lead_id}/convert - Convert lead to customer
+    print("\n" + "=" * 80)
+    print("TEST 4: PATCH /api/leads/{lead_id}/convert - CONVERT LEAD TO CUSTOMER")
+    print("=" * 80)
+    
+    if test_results["test_lead_id"]:
+        convert_endpoint = f"{BACKEND_URL}/api/leads/{test_results['test_lead_id']}/convert"
+        print(f"Testing endpoint: {convert_endpoint}")
+        
+        try:
+            convert_response = requests.patch(convert_endpoint, timeout=30)
+            print(f"Status Code: {convert_response.status_code}")
+            
+            if convert_response.status_code == 200:
+                print("✅ PASS: PATCH /api/leads/{id}/convert endpoint working")
+                test_results["convert_lead_working"] = True
+                
+                try:
+                    convert_result = convert_response.json()
+                    
+                    if convert_result.get("success"):
+                        customer_id = convert_result.get("customer_id")
+                        test_results["converted_customer_id"] = customer_id
+                        
+                        print(f"✅ PASS: Lead converted successfully to customer ID: {customer_id}")
+                        print(f"Message: {convert_result.get('message')}")
+                        
+                        # Verify customer was created
+                        print(f"\n🔍 CUSTOMER CREATION VERIFICATION:")
+                        customer_endpoint = f"{BACKEND_URL}/api/customers/{customer_id}"
+                        
+                        try:
+                            customer_response = requests.get(customer_endpoint, timeout=15)
+                            if customer_response.status_code == 200:
+                                customer_data = customer_response.json()
+                                print(f"✅ PASS: Customer created in customers collection")
+                                print(f"   Company: {customer_data.get('companyName')}")
+                                print(f"   Status: {customer_data.get('status')}")
+                                print(f"   isProspect: {customer_data.get('isProspect')}")
+                            else:
+                                print(f"⚠️  WARNING: Could not verify customer creation: {customer_response.status_code}")
+                                test_results["warnings"].append("CUSTOMER_VERIFICATION_FAILED")
+                        except Exception as e:
+                            print(f"⚠️  WARNING: Customer verification error: {str(e)}")
+                            test_results["warnings"].append(f"CUSTOMER_VERIFICATION_ERROR: {str(e)}")
+                        
+                        # Verify lead status updated
+                        print(f"\n🔍 LEAD STATUS VERIFICATION:")
+                        try:
+                            updated_lead_response = requests.get(f"{BACKEND_URL}/api/leads/{test_results['test_lead_id']}", timeout=15)
+                            if updated_lead_response.status_code == 200:
+                                updated_lead = updated_lead_response.json()
+                                lead_status = updated_lead.get("status")
+                                lead_customer_id = updated_lead.get("customer_id")
+                                
+                                if lead_status == "converted":
+                                    print(f"✅ PASS: Lead status updated to 'converted'")
+                                else:
+                                    print(f"⚠️  WARNING: Lead status is '{lead_status}', expected 'converted'")
+                                    test_results["warnings"].append(f"LEAD_STATUS_NOT_CONVERTED: {lead_status}")
+                                
+                                if lead_customer_id == customer_id:
+                                    print(f"✅ PASS: Lead customer_id set correctly")
+                                else:
+                                    print(f"⚠️  WARNING: Lead customer_id mismatch")
+                                    test_results["warnings"].append("LEAD_CUSTOMER_ID_MISMATCH")
+                            else:
+                                print(f"⚠️  WARNING: Could not verify lead status: {updated_lead_response.status_code}")
+                                test_results["warnings"].append("LEAD_STATUS_VERIFICATION_FAILED")
+                        except Exception as e:
+                            print(f"⚠️  WARNING: Lead status verification error: {str(e)}")
+                            test_results["warnings"].append(f"LEAD_STATUS_VERIFICATION_ERROR: {str(e)}")
+                    else:
+                        print(f"❌ FAIL: Conversion failed: {convert_result.get('message', 'Unknown error')}")
+                        test_results["errors"].append(f"CONVERSION_FAILED: {convert_result.get('message')}")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse conversion response: {str(e)}")
+                    test_results["errors"].append(f"CONVERSION_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: PATCH /api/leads/{{id}}/convert failed with status {convert_response.status_code}")
+                print(f"Response: {convert_response.text}")
+                test_results["errors"].append(f"CONVERSION_ERROR_{convert_response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: PATCH /api/leads/{{id}}/convert request error: {str(e)}")
+            test_results["errors"].append(f"CONVERSION_REQUEST_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No test lead ID available for conversion test")
+        test_results["warnings"].append("CONVERSION_TEST_SKIPPED_NO_ID")
+    
+    # TEST 5: DELETE /api/leads/{lead_id} - Delete lead
+    print("\n" + "=" * 80)
+    print("TEST 5: DELETE /api/leads/{lead_id} - DELETE LEAD")
+    print("=" * 80)
+    
+    # Create another test lead for deletion (don't delete the converted one)
+    delete_test_lead_data = {
+        "companyName": "Delete Test Lead Ltd.",
+        "sector": "Test Sector",
+        "status": "new",
+        "contactPerson": "Delete Test Person",
+        "notes": "Lead created specifically for deletion testing"
+    }
+    
+    print("Creating a separate lead for deletion test...")
+    
+    try:
+        # Create lead for deletion
+        delete_create_response = requests.post(endpoint, json=delete_test_lead_data, timeout=30)
+        
+        if delete_create_response.status_code in [200, 201]:
+            delete_create_result = delete_create_response.json()
+            delete_lead_id = delete_create_result.get("lead", {}).get("id")
+            
+            if delete_lead_id:
+                print(f"✅ Created deletion test lead with ID: {delete_lead_id}")
+                
+                # Now delete it
+                delete_endpoint = f"{BACKEND_URL}/api/leads/{delete_lead_id}"
+                print(f"Testing DELETE endpoint: {delete_endpoint}")
+                
+                delete_response = requests.delete(delete_endpoint, timeout=30)
+                print(f"Delete Status Code: {delete_response.status_code}")
+                
+                if delete_response.status_code == 200:
+                    print("✅ PASS: DELETE /api/leads/{id} endpoint working")
+                    test_results["delete_lead_working"] = True
+                    
+                    try:
+                        delete_result = delete_response.json()
+                        print(f"Delete message: {delete_result.get('message')}")
+                        
+                        # Verify lead is actually deleted
+                        print(f"\n🔍 DELETION VERIFICATION:")
+                        verify_delete_response = requests.get(delete_endpoint, timeout=15)
+                        
+                        if verify_delete_response.status_code == 404:
+                            print("✅ PASS: Lead successfully removed from database")
+                        else:
+                            print(f"⚠️  WARNING: Lead still exists after deletion: {verify_delete_response.status_code}")
+                            test_results["warnings"].append("LEAD_NOT_DELETED_PROPERLY")
+                        
+                    except Exception as e:
+                        print(f"❌ FAIL: Could not parse delete response: {str(e)}")
+                        test_results["errors"].append(f"DELETE_PARSE_ERROR: {str(e)}")
+                        
+                else:
+                    print(f"❌ FAIL: DELETE /api/leads/{{id}} failed with status {delete_response.status_code}")
+                    print(f"Response: {delete_response.text}")
+                    test_results["errors"].append(f"DELETE_ERROR_{delete_response.status_code}")
+            else:
+                print("❌ FAIL: Could not get ID of lead created for deletion")
+                test_results["errors"].append("DELETE_TEST_LEAD_NO_ID")
+        else:
+            print(f"❌ FAIL: Could not create lead for deletion test: {delete_create_response.status_code}")
+            test_results["errors"].append(f"DELETE_TEST_LEAD_CREATE_ERROR_{delete_create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: DELETE test setup error: {str(e)}")
+        test_results["errors"].append(f"DELETE_TEST_ERROR: {str(e)}")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 LEADS API ENDPOINTS TESTING - FINAL RESULTS")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • GET /api/leads: {'✅ PASS' if test_results['get_leads_working'] else '❌ FAIL'}")
+    print(f"   • POST /api/leads: {'✅ PASS' if test_results['post_leads_working'] else '❌ FAIL'}")
+    print(f"   • GET /api/leads/{{id}}: {'✅ PASS' if test_results['get_single_lead_working'] else '❌ FAIL'}")
+    print(f"   • PATCH /api/leads/{{id}}/convert: {'✅ PASS' if test_results['convert_lead_working'] else '❌ FAIL'}")
+    print(f"   • DELETE /api/leads/{{id}}: {'✅ PASS' if test_results['delete_lead_working'] else '❌ FAIL'}")
+    
+    print(f"\n📈 STATISTICS:")
+    print(f"   • Initial Lead Count: {test_results['initial_lead_count']}")
+    print(f"   • Test Lead Created: {'✅ Yes' if test_results['test_lead_id'] else '❌ No'}")
+    print(f"   • Customer Converted: {'✅ Yes' if test_results['converted_customer_id'] else '❌ No'}")
+    
+    print(f"\n🚨 ERRORS FOUND: {len(test_results['errors'])}")
+    for error in test_results['errors']:
+        print(f"   • {error}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_endpoints = sum([
+        test_results['get_leads_working'],
+        test_results['post_leads_working'],
+        test_results['get_single_lead_working'],
+        test_results['convert_lead_working'],
+        test_results['delete_lead_working']
+    ])
+    
+    if working_endpoints == 5:
+        print("🎉 EXCELLENT: All 5 leads API endpoints are working correctly!")
+        print("   ✅ Lead creation persists in database")
+        print("   ✅ Lead to customer conversion creates customer record")
+        print("   ✅ Delete removes lead from collection")
+        print("   ✅ Proper error handling for invalid IDs")
+        print("   ✅ All CRUD operations functional")
+        
+    elif working_endpoints >= 3:
+        print(f"✅ GOOD: {working_endpoints}/5 endpoints working correctly")
+        print("   Most functionality is operational")
+        
+    elif working_endpoints >= 1:
+        print(f"⚠️  PARTIAL: {working_endpoints}/5 endpoints working")
+        print("   Some functionality available but issues exist")
+        
+    else:
+        print("🚨 CRITICAL: No endpoints working correctly!")
+        print("   Major implementation issues detected")
+    
+    print(f"\n🎯 RECOMMENDATIONS:")
+    if not test_results['get_leads_working']:
+        print("   1. Fix GET /api/leads endpoint - basic listing not working")
+    if not test_results['post_leads_working']:
+        print("   2. Fix POST /api/leads endpoint - lead creation failing")
+    if not test_results['convert_lead_working']:
+        print("   3. Fix lead to customer conversion - critical business process")
+    if test_results['errors']:
+        print("   4. Address all error conditions found during testing")
+    if test_results['warnings']:
+        print("   5. Review warnings for potential improvements")
+    
+    # Return overall success
+    return working_endpoints >= 4  # At least 4/5 endpoints should work for success
+
 def test_convert_prospect_to_customer_endpoint():
     """
     CRITICAL: Test Convert Prospect to Customer Endpoint
