@@ -768,8 +768,8 @@ const Dashboard = () => {
     setCurrentView('request-brief');
   };
 
-  const handleBackToDashboard = () => {
-    setCurrentView('dashboard');
+  const handleBackToDashboard = (targetView = 'dashboard') => {
+    setCurrentView(targetView);
   };
 
   const closeUserManagementModal = () => {
