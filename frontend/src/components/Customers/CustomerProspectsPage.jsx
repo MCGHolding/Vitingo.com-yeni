@@ -178,6 +178,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [confirmConvertModalOpen, setConfirmConvertModalOpen] = useState(false);
   const [convertModalOpen, setConvertModalOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState(null);
 
