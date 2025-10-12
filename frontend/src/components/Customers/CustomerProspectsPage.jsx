@@ -50,6 +50,7 @@ import DeleteProspectModal from './DeleteProspectModal';
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ prospect, onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -69,6 +70,16 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
   const togglePopover = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!isOpen && buttonRef.current) {
+      // Calculate position relative to button
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 4, // 4px gap
+        left: rect.right - 140 // Align right edge (140px is menu width)
+      });
+    }
+    
     setIsOpen(!isOpen);
   };
 
@@ -94,7 +105,7 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
   }, [isOpen]);
 
   return (
-    <div className="relative">
+    <>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -114,10 +125,16 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
         </Tooltip>
       </TooltipProvider>
 
-      {isOpen && (
+      {isOpen && createPortal(
         <div 
           ref={popoverRef}
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] animate-in fade-in-0 zoom-in-95"
+          style={{
+            position: 'fixed',
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+            zIndex: 9999
+          }}
+          className="bg-white border border-gray-200 rounded-lg shadow-lg min-w-[140px] animate-in fade-in-0 zoom-in-95"
         >
           {menuItems.map((item, index) => (
             <button
@@ -131,9 +148,10 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
               <span>{item.label}</span>
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 };
 
