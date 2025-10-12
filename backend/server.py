@@ -9586,8 +9586,11 @@ async def update_activity_status(opportunity_id: str, activity_id: str, status: 
 
 # ===================== MAIN APP SETUP =====================
 
-# Include the router in the main app
+# Include the API router in the main app
 app.include_router(api_router)
+
+# Include lead routes
+app.include_router(leads_router.router)
 
 app.add_middleware(
     CORSMiddleware,
