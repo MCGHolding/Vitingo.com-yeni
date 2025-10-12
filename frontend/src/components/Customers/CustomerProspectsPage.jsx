@@ -140,7 +140,7 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
             left: `${position.left}px`,
             zIndex: 9999
           }}
-          className="bg-white border border-gray-200 rounded-lg shadow-lg min-w-[140px] animate-in fade-in-0 zoom-in-95"
+          className="bg-white border border-gray-200 rounded-lg shadow-lg min-w-[140px] max-h-[300px] overflow-y-auto animate-in fade-in-0 zoom-in-95"
         >
           {menuItems.map((item, index) => (
             <button
