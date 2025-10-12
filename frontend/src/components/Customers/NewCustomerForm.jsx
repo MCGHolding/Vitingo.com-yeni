@@ -481,6 +481,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         : // Use mapper to convert form data to DB format including contact person details
           formToDb({
             ...baseCustomerData,
+            isProspect: baseCustomerData.is_candidate || false, // Add isProspect field
             contactPerson: contacts[0]?.full_name || '',
             // Contact person details from contacts array
             contact_mobile: contacts[0]?.mobile || '',
