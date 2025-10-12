@@ -343,6 +343,8 @@ class Customer(BaseModel):
     swiftCode: str = ""  # Swift Kodu
     # Prospect field
     isProspect: bool = False  # Müşteri Adayı mı?
+    # Favorite field
+    isFavorite: bool = False  # Favori müşteri mi?
     # Deactivation fields
     deactivated_at: Optional[datetime] = None
     deactivation_reason: Optional[str] = None
