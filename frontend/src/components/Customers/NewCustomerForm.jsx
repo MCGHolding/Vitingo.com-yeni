@@ -474,13 +474,15 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           }
         : formData;
 
-      // Always use /api/customers endpoint with mapper for both customers and prospects
-      const endpoint = '/api/customers';
+      // Determine endpoint: /api/leads for prospects, /api/customers for regular customers
+      const isProspect = baseCustomerData.is_candidate || false;
+      const endpoint = isProspect ? '/api/leads' : '/api/customers';
+      
+      console.log(`Creating ${isProspect ? 'lead' : 'customer'} via ${endpoint}`);
       
       // Use mapper to convert form data to DB format including contact person details
-      const customerData = formToDb({
+      const dataToSave = formToDb({
         ...baseCustomerData,
-        isProspect: baseCustomerData.is_candidate || false, // Add isProspect field
         contactPerson: contacts[0]?.full_name || '',
         // Contact person details from contacts array
         contact_mobile: contacts[0]?.mobile || '',
@@ -494,9 +496,30 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       // Always save to backend first (do NOT call onSave yet - wait for modal)
       let savedData = null;
       
-      // Use safe JSON parsing for customer creation
-      savedData = await apiPostCustomer(customerData);
-      console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
+      // Post to appropriate endpoint
+      if (isProspect) {
+        // Create lead
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dataToSave)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Lead oluşturulamadı');
+        }
+        
+        const result = await response.json();
+        savedData = result.lead || result;
+      } else {
+        // Create customer using existing API function
+        savedData = await apiPostCustomer(dataToSave);
+      }
+      
+      console.log(`${isProspect ? 'Lead' : 'Customer'} saved:`, savedData);
 
       // Set success state with customer data for modal
       const customerDataForModal = {
