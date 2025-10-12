@@ -46,6 +46,9 @@ import base64
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Import lead routes
+from routes import leads as leads_router
+
 # Validation functions for bank information
 def validate_iban(iban: str) -> bool:
     """Validate IBAN format (Turkish IBAN: TR + 2 digits + 4 bank code + 1 check + 16 account number)"""
