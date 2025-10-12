@@ -288,14 +288,18 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
     setSortBy('companyName');
   };
 
-  const handleConvertToCustomer = async (prospect) => {
-    // Confirmation
-    if (!window.confirm(`${prospect.companyName} müşteri adayından müşteriye çevrilsin mi?\n\nBu işlem sonrasında artık "Müşteriler" listesinde görünecek ve "Müşteri Adayları" listesinden çıkacaktır.`)) {
-      return;
-    }
+  const handleConvertToCustomer = (prospect) => {
+    // Show confirmation modal
+    setSelectedProspect(prospect);
+    setConfirmConvertModalOpen(true);
+  };
+
+  const confirmConvertToCustomer = async () => {
+    // Close confirmation modal
+    setConfirmConvertModalOpen(false);
 
     try {
-      const response = await fetch(`${backendUrl}/api/customers/${prospect.id}/convert-to-customer`, {
+      const response = await fetch(`${backendUrl}/api/customers/${selectedProspect.id}/convert-to-customer`, {
         method: 'PATCH'
       });
 
@@ -305,7 +309,6 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       }
 
       // Show success modal
-      setSelectedProspect(prospect);
       setConvertModalOpen(true);
 
       // Reload prospects list (will remove converted one)
@@ -318,6 +321,7 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
         description: error.message || "Müşteriye çevirme işlemi sırasında hata oluştu",
         variant: "destructive"
       });
+      setSelectedProspect(null);
     }
   };
 
