@@ -46,6 +46,7 @@ import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
 import DeleteProspectModal from './DeleteProspectModal';
+import ConvertToCustomerModal from './ConvertToCustomerModal';
 
 // ActionMenuPopover Component
 const ActionMenuPopover = ({ prospect, onAction }) => {
