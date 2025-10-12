@@ -503,21 +503,14 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         console.log(`${formData.is_candidate ? 'Customer prospect' : 'Customer'} saved:`, savedData);
       }
 
-      // Set success state with customer info
-      const customerInfo = {
-        company_name: baseCustomerData.company_short_name,
-        is_candidate: formData.is_candidate,
-        customer_id: savedData?.id // Backend'den gelen müşteri ID'si
-      };
-      
-      setCreatedCustomerInfo(customerInfo);
-      setShowSuccessModal(true);
-
-      toast({
-        title: "Başarılı",
-        description: "Müşteri başarıyla oluşturuldu",
-        variant: "default"
+      // Set success state with customer data for modal
+      setSavedCustomerData({
+        companyName: baseCustomerData.company_short_name || baseCustomerData.company_title,
+        isProspect: formData.is_candidate || false,
+        customerId: savedData?.id
       });
+      
+      setShowSuccessModal(true);
 
       // Faturadan geliyorsak kullanıcının "Tamam" butonuna tıklamasını bekle
 
