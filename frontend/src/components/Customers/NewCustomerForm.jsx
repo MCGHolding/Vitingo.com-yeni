@@ -1405,19 +1405,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
           console.log('🎯 Modal onClose called with route:', route);
           setShowSuccessModal(false);
           
-          // Call onSave callback if provided (for parent component integration)
-          if (onSave && savedCustomerData?.savedData) {
-            console.log('📞 Calling onSave callback');
-            onSave(savedCustomerData.savedData);
-          }
-          
           // Eğer faturadan geliyorsak ve müşteri eklendiyse, fatura sayfasına dön
           if (returnToInvoice && onCustomerAdded && savedCustomerData?.customerId) {
             console.log('🔙 Returning to invoice');
             onCustomerAdded(savedCustomerData.customerId, savedCustomerData.companyName);
           } else {
-            // Normal durumda ilgili sayfaya yönlendir
-            console.log('🚀 Calling onClose with route:', route);
+            // Normal durumda ilgili sayfaya yönlendir - DO NOT call onSave here, it might redirect
+            console.log('🚀 Navigating to route:', route);
             onClose(route);
           }
         }}
