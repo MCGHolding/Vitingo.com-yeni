@@ -18,20 +18,20 @@ const DeleteProspectModal = ({ prospect, isOpen, onClose, onSuccess }) => {
       setLoading(true);
       setError('');
 
-      // Use /api/customers endpoint since prospects are now stored there with isProspect: true
-      const response = await fetch(`${BACKEND_URL}/api/customers/${prospect.id}`, {
+      // Use /api/leads endpoint since prospects are now in leads collection
+      const response = await fetch(`${BACKEND_URL}/api/leads/${prospect.id}`, {
         method: 'DELETE'
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Müşteri adayı silinirken hata oluştu');
+        throw new Error(errorData.detail || 'Lead silinirken hata oluştu');
       }
 
       setStep('success');
 
     } catch (error) {
-      console.error('Error deleting prospect:', error);
+      console.error('Error deleting lead:', error);
       setError(error.message);
     } finally {
       setLoading(false);
