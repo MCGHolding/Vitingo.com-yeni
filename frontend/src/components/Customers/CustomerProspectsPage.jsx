@@ -190,21 +190,19 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const loadCustomerProspects = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      // Load prospects from customers collection with isProspect: true filter
-      console.log('Loading prospects from customers with isProspect=true filter');
-      const response = await fetch(`${backendUrl}/api/customers`);
+      // Load leads from dedicated leads collection
+      console.log('Loading leads from /api/leads endpoint');
+      const response = await fetch(`${backendUrl}/api/leads`);
       if (response.ok) {
-        const data = await response.json();
-        // Filter only customers with isProspect: true
-        const prospectData = data.filter(customer => customer.isProspect === true);
-        console.log('Prospects loaded successfully:', prospectData.length, 'prospects found');
+        const prospectData = await response.json();
+        console.log('Leads loaded successfully:', prospectData.length, 'leads found');
         setProspects(prospectData);
       } else {
-        console.error('Failed to load prospects, status:', response.status);
-        throw new Error('Failed to load customer prospects');
+        console.error('Failed to load leads, status:', response.status);
+        throw new Error('Failed to load leads');
       }
     } catch (error) {
-      console.error('Error loading customer prospects:', error);
+      console.error('Error loading leads:', error);
       toast({
         title: "Hata",
         description: "Müşteri adayları yüklenirken hata oluştu",
