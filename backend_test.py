@@ -20889,24 +20889,26 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 CRITICAL: DEBUG KAYGUSUZLAR CUSTOMER DATA MAPPING ISSUES")
+    print("🚨 COMPREHENSIVE LEADS API ENDPOINTS TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     
-    # Run the Kaygusuzlar customer data mapping investigation
+    # Run the leads API testing
     try:
-        result = test_kaygusuzlar_customer_data_mapping_investigation()
+        result = test_leads_api_endpoints()
         if result:
-            print("\n✅ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION COMPLETED - NO CRITICAL ISSUES FOUND")
-            print("✅ Customer data appears to be stored correctly")
-            print("✅ Field mappings are working properly")
-            print("✅ Customer Types and Sectors APIs are functional")
-            print("📋 Issue may be in frontend field mapping or display logic")
+            print("\n✅ LEADS API ENDPOINTS TESTING COMPLETED SUCCESSFULLY")
+            print("✅ All critical endpoints working correctly")
+            print("✅ Lead creation persists in database")
+            print("✅ Lead to customer conversion creates customer record")
+            print("✅ Delete removes lead from collection")
+            print("✅ Proper error handling for invalid IDs")
+            print("📋 Review the test output above for detailed analysis")
         else:
-            print("\n❌ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION FAILED")
-            print("❌ Critical data mapping issues found")
-            print("📋 Review the test output above for specific field mapping problems")
+            print("\n❌ LEADS API ENDPOINTS TESTING FAILED")
+            print("❌ Critical endpoint issues found")
+            print("📋 Review the test output above for specific problems")
     except Exception as e:
-        print(f"\n❌ KAYGUSUZLAR CUSTOMER DATA MAPPING INVESTIGATION ERROR: {str(e)}")
+        print(f"\n❌ LEADS API ENDPOINTS TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
