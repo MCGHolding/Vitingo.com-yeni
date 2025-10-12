@@ -166,8 +166,10 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
       const response = await fetch(`${backendUrl}/api/customers`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Prospects loaded successfully:', data);
-        setProspects(data);
+        // Filter only customers with isProspect: true
+        const prospectData = data.filter(customer => customer.isProspect === true);
+        console.log('Prospects loaded successfully:', prospectData.length, 'prospects found');
+        setProspects(prospectData);
       } else {
         console.error('Failed to load prospects, status:', response.status);
         throw new Error('Failed to load customer prospects');
