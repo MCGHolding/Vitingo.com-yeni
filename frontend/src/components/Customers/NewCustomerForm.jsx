@@ -253,7 +253,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       city: 'İstanbul'
     }];
 
-    setFormData(testData);
+    // Preserve is_candidate value when filling test data
+    setFormData(prev => ({
+      ...prev,
+      ...testData
+    }));
     setContacts(testContacts);
     
     toast({
