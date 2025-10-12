@@ -161,8 +161,9 @@ export default function CustomerProspectsPage({ onBackToDashboard }) {
   const loadCustomerProspects = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      console.log('Loading prospects from:', `${backendUrl}/api/customer-prospects`);
-      const response = await fetch(`${backendUrl}/api/customer-prospects`);
+      // Load prospects from customers collection with isProspect: true filter
+      console.log('Loading prospects from customers with isProspect=true filter');
+      const response = await fetch(`${backendUrl}/api/customers`);
       if (response.ok) {
         const data = await response.json();
         console.log('Prospects loaded successfully:', data);
