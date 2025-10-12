@@ -10,6 +10,9 @@ const DeleteProspectModal = ({ prospect, isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Debug: Log prospect data
+  console.log('DeleteProspectModal prospect:', prospect);
+
   const handleConfirmDelete = async () => {
     try {
       setLoading(true);
