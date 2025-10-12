@@ -74,8 +74,14 @@ const ActionMenuPopover = ({ prospect, onAction }) => {
     if (!isOpen && buttonRef.current) {
       // Calculate position relative to button
       const rect = buttonRef.current.getBoundingClientRect();
+      const menuHeight = 250; // Approximate menu height (5 items * 50px)
+      const viewportHeight = window.innerHeight;
+      
+      // Check if menu fits below the button
+      const fitsBelow = rect.bottom + menuHeight + 4 <= viewportHeight;
+      
       setPosition({
-        top: rect.bottom + 4, // 4px gap
+        top: fitsBelow ? rect.bottom + 4 : rect.top - menuHeight - 4, // Open up if doesn't fit below
         left: rect.right - 140 // Align right edge (140px is menu width)
       });
     }
