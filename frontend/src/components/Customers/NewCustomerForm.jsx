@@ -483,6 +483,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
             ...baseCustomerData,
             isProspect: baseCustomerData.is_candidate || false, // Add isProspect field
             contactPerson: contacts[0]?.full_name || '',
+            // DEBUG: Log to verify isProspect value
+            ...(console.log('DEBUG isProspect:', baseCustomerData.is_candidate, '→', baseCustomerData.is_candidate || false) || {}),
             // Contact person details from contacts array
             contact_mobile: contacts[0]?.mobile || '',
             contact_email: contacts[0]?.email || '', 
