@@ -331,7 +331,9 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
 
   const handleToggleFavorite = async (customer) => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
       
       const response = await fetch(`${backendUrl}/api/customers/${customer.id}/toggle-favorite`, {
         method: 'PATCH',
