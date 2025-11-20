@@ -306,7 +306,9 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
     setConfirmConvertModalOpen(false);
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
       const url = `${backendUrl}/api/leads/${selectedProspect.id}/convert`;
       console.log('🌐 Making PATCH request to:', url);
       
