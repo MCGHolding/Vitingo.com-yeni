@@ -30,6 +30,7 @@ import AllPeoplePage from './components/Customers/AllPeoplePage';
 import AllCustomersPage from './components/Customers/AllCustomersPage';
 import InactiveCustomersPage from './components/Customers/InactiveCustomersPage';
 import FavoriteCustomersPage from './components/Customers/FavoriteCustomersPage';
+import PassiveCustomersPage from './components/Customers/PassiveCustomersPage';
 import CustomerProspectsPage from './components/Customers/CustomerProspectsPage';
 import ViewCustomerPage from './components/Customers/ViewCustomerPage';
 import EditCustomerPage from './components/Customers/EditCustomerPage';
