@@ -190,8 +190,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
 
   // Test verisi doldurma fonksiyonu - TEST İÇİN, DAHA SONRA KALDIRILACAK
   const fillTestData = () => {
+    console.log('🧪 fillTestData called');
+    console.log('  customerTypes:', customerTypes?.length || 0);
+    console.log('  sectors:', sectors?.length || 0);
+    
     // Check if data is loaded
     if (!customerTypes || !sectors || customerTypes.length === 0 || sectors.length === 0) {
+      console.log('❌ Data not loaded yet');
       toast({
         title: "Hata",
         description: "Müşteri türleri ve sektörler henüz yüklenmedi. Lütfen birkaç saniye bekleyin.",
@@ -199,6 +204,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
       });
       return;
     }
+    
+    console.log('✅ Data loaded, filling test data...');
 
     const testCompanyNames = [
       'Teknoloji Çözümleri A.Ş.',
