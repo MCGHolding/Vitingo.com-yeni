@@ -351,10 +351,12 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
                         <h3 className="text-lg font-semibold text-gray-900">
                           {customer.companyName}
                         </h3>
-                        <Badge className={customer.statusInfo.color}>
-                          <Star className="h-3 w-3 mr-1" />
-                          {customer.statusInfo.label}
-                        </Badge>
+                        {customer.statusInfo && (
+                          <Badge className={customer.statusInfo.color}>
+                            <Star className="h-3 w-3 mr-1" />
+                            {customer.statusInfo.label}
+                          </Badge>
+                        )}
                         {index < 3 && (
                           <Badge className="bg-yellow-100 text-yellow-700">
                             Top {index + 1}
