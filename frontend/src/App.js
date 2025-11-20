@@ -918,6 +918,7 @@ const Dashboard = () => {
               onClose={handleBackToDashboard}
               returnToInvoice={sessionStorage.getItem('returnToInvoiceAfterCustomer') === 'true'}
               onCustomerAdded={handleCustomerAdded}
+              refreshCustomers={loadCustomers}
             />
           </div>
         );
