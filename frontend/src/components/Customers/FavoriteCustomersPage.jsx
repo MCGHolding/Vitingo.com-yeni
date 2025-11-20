@@ -382,13 +382,15 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
                       </div>
 
                       {/* Status description */}
-                      <div className="mt-3 text-xs text-gray-500 bg-green-50 px-3 py-2 rounded">
-                        <Star className="h-3 w-3 inline mr-1 text-green-500" />
-                        {customer.statusInfo.description}
-                        {customer.statusInfo.invoicesLastYear >= 6 && (
-                          <span className="text-green-600 font-medium"> • Süper aktif müşteri!</span>
-                        )}
-                      </div>
+                      {customer.statusInfo && (
+                        <div className="mt-3 text-xs text-gray-500 bg-green-50 px-3 py-2 rounded">
+                          <Star className="h-3 w-3 inline mr-1 text-green-500" />
+                          {customer.statusInfo.description}
+                          {customer.statusInfo.invoicesLastYear >= 6 && (
+                            <span className="text-green-600 font-medium"> • Süper aktif müşteri!</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                   
