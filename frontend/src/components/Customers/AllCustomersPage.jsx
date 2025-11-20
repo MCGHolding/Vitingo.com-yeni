@@ -175,8 +175,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
   };
 
   const filteredCustomers = useMemo(() => {
-    // Filter out prospects - only show regular customers (isProspect: false or undefined)
-    let filtered = customers.filter(customer => !customer.isProspect);
+    // Filter out prospects and passive customers - only show active regular customers
+    let filtered = customers.filter(customer => 
+      !customer.isProspect && 
+      customer.status !== 'passive'
+    );
 
     // Search filter
     if (searchTerm) {
