@@ -71,13 +71,13 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'invoicesLastYear':
-          return b.statusInfo.invoicesLastYear - a.statusInfo.invoicesLastYear;
+          return (b.statusInfo?.invoicesLastYear || 0) - (a.statusInfo?.invoicesLastYear || 0);
         case 'companyName':
           return a.companyName.localeCompare(b.companyName, 'tr');
         case 'totalRevenue':
           return (b.totalRevenue || 0) - (a.totalRevenue || 0);
         default:
-          return b.statusInfo.invoicesLastYear - a.statusInfo.invoicesLastYear;
+          return (b.statusInfo?.invoicesLastYear || 0) - (a.statusInfo?.invoicesLastYear || 0);
       }
     });
 
