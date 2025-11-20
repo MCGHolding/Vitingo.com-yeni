@@ -2464,6 +2464,43 @@ async def toggle_customer_favorite(customer_id: str):
         logger.error(f"Error toggling customer favorite: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Favori durumu güncellenirken hata oluştu: {str(e)}")
 
+@api_router.patch("/customers/{customer_id}/toggle-status")
+async def toggle_customer_status(customer_id: str):
+    """Toggle customer status between active and passive"""
+    try:
+        # Find customer
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Toggle status field between 'active' and 'passive'
+        current_status = customer.get("status", "active")
+        new_status = "passive" if current_status == "active" else "active"
+        
+        # Update in database
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$set": {"status": new_status, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Müşteri güncellenemedi")
+        
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": f"Müşteri {'pasife alındı' if new_status == 'passive' else 'aktif hale getirildi'}",
+                "status": new_status,
+                "customer_id": customer_id
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error toggling customer status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Müşteri durumu güncellenirken hata oluştu: {str(e)}")
+
 @api_router.patch("/customers/{customer_id}/convert-to-customer")
 async def convert_prospect_to_customer(customer_id: str):
     """Convert a customer prospect to regular customer"""
