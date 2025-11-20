@@ -725,7 +725,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                       <td className="py-3 px-3">
                         <div className="text-center">
                           <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                            {customer.totalProjects || Math.floor(Math.random() * 15) + 1}
+                            {customer.totalProjects || 0}
                           </span>
                           <div className="text-xs text-gray-500 mt-1">
                             proje
