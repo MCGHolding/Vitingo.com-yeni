@@ -328,34 +328,86 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
 
   const handleToggleFavorite = async (customer) => {
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
       const response = await fetch(`${backendUrl}/api/customers/${customer.id}/toggle-favorite`, {
-        method: 'PATCH'
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Favori durumu güncellenemedi');
+        throw new Error('Failed to toggle favorite status');
       }
 
       const data = await response.json();
       
-      // Update local state
-      setCustomers(prevCustomers => 
-        prevCustomers.map(c => 
-          c.id === customer.id ? { ...c, isFavorite: data.isFavorite } : c
-        )
-      );
-
       toast({
         title: data.isFavorite ? "Favorilere Eklendi" : "Favorilerden Çıkarıldı",
         description: data.message,
       });
 
+      // Refresh the customers list
+      if (typeof refreshCustomers === 'function') {
+        console.log('✅ Calling refreshCustomers after favorite toggle');
+        await refreshCustomers();
+      } else {
+        console.error('❌ refreshCustomers function not available');
+        toast({
+          title: "Hata", 
+          description: "Liste yenileme fonksiyonu bulunamadı.",
+        });
+      }
     } catch (error) {
       console.error('Error toggling favorite:', error);
       toast({
         title: "Hata",
         description: "Favori durumu güncellenirken bir hata oluştu",
-        variant: "destructive"
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleToggleStatus = async (customer) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      const response = await fetch(`${backendUrl}/api/customers/${customer.id}/toggle-status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to toggle customer status');
+      }
+
+      const data = await response.json();
+      
+      toast({
+        title: data.status === 'passive' ? "Müşteri Pasife Alındı" : "Müşteri Aktif Hale Getirildi",
+        description: data.message,
+      });
+
+      // Refresh the customers list to remove passive customer from active list
+      if (typeof refreshCustomers === 'function') {
+        console.log('✅ Calling refreshCustomers after status toggle');
+        await refreshCustomers();
+      } else {
+        console.error('❌ refreshCustomers function not available');
+        toast({
+          title: "Hata", 
+          description: "Liste yenileme fonksiyonu bulunamadı.",
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling customer status:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteri durumu güncellenirken bir hata oluştu",
+        variant: "destructive",
       });
     }
   };
