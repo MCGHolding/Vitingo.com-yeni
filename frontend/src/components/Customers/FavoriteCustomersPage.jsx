@@ -209,7 +209,7 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
                 <p className="text-sm font-medium text-gray-600">Ortalama Fatura</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {favoriteCustomers.length > 0 
-                    ? Math.round(favoriteCustomers.reduce((sum, c) => sum + c.statusInfo.invoicesLastYear, 0) / favoriteCustomers.length)
+                    ? Math.round(favoriteCustomers.reduce((sum, c) => sum + (c.statusInfo?.invoicesLastYear || 0), 0) / favoriteCustomers.length)
                     : 0
                   }
                 </p>
