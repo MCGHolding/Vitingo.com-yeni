@@ -372,12 +372,12 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
                         
                         <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4" />
-                          <span>Son fatura: {formatDate(customer.statusInfo.lastInvoiceDate)}</span>
+                          <span>Son fatura: {formatDate(customer.statusInfo?.lastInvoiceDate)}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
                           <FileText className="h-4 w-4" />
-                          <span>{customer.statusInfo.invoiceCount} toplam fatura</span>
+                          <span>{customer.statusInfo?.invoiceCount || 0} toplam fatura</span>
                         </div>
                       </div>
 
