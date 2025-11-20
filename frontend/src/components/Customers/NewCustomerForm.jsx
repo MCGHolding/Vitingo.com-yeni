@@ -33,7 +33,7 @@ import AddCountryModal from './AddCountryModal';
 import AddCityModal from './AddCityModal';
 import CustomerSuccessModal from './CustomerSuccessModal';
 
-const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) => {
+const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, refreshCustomers }) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
