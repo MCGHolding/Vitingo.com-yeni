@@ -949,7 +949,7 @@ const Dashboard = () => {
       case 'inactive-customers':
         return <PassiveCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} refreshCustomers={loadCustomers} />;
       case 'favorite-customers':
-        return <FavoriteCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} />;
+        return <FavoriteCustomersPage customers={customers} onBackToDashboard={handleBackToDashboard} refreshCustomers={loadCustomers} />;
       case 'customer-prospects':
         return <CustomerProspectsPage onBackToDashboard={handleBackToDashboard} refreshCustomers={loadCustomers} />;
       case 'all-people':
