@@ -22,7 +22,7 @@ import {
   Award
 } from 'lucide-react';
 
-export default function FavoriteCustomersPage({ customers = [], onBackToDashboard }) {
+export default function FavoriteCustomersPage({ customers = [], onBackToDashboard, refreshCustomers }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sectorFilter, setSectorFilter] = useState('all');
