@@ -189,7 +189,9 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
 
   const loadCustomerProspects = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
       // Load leads from dedicated leads collection
       console.log('Loading leads from /api/leads endpoint');
       const response = await fetch(`${backendUrl}/api/leads`);
