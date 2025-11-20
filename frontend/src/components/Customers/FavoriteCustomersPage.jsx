@@ -99,6 +99,49 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
       .slice(0, 2) || 'MŞ';
   };
 
+  const handleRemoveFromFavorites = async (customer) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      const response = await fetch(`${backendUrl}/api/customers/${customer.id}/toggle-favorite`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove from favorites');
+      }
+
+      const data = await response.json();
+      
+      toast({
+        title: "Favorilerden Çıkarıldı",
+        description: `${customer.companyName} favorilerden çıkarıldı`,
+      });
+
+      // Refresh the customers list
+      if (typeof refreshCustomers === 'function') {
+        console.log('✅ Calling refreshCustomers after removing from favorites');
+        await refreshCustomers();
+      } else {
+        console.error('❌ refreshCustomers function not available');
+        toast({
+          title: "Hata", 
+          description: "Liste yenileme fonksiyonu bulunamadı.",
+        });
+      }
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      toast({
+        title: "Hata",
+        description: "Favorilerden çıkarma işlemi sırasında bir hata oluştu",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
