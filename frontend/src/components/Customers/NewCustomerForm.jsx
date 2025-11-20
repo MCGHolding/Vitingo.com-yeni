@@ -1435,10 +1435,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
           console.log('🎯 Modal onClose called with route:', route);
           setShowSuccessModal(false);
           
-          // Call onSave to refresh customer list if provided
-          if (onSave && savedCustomerData?.savedData) {
-            console.log('🔄 Calling onSave to refresh customer list');
-            await onSave(savedCustomerData.savedData);
+          // IMPORTANT: Refresh customers list so new customer appears in Müşteriler page
+          if (refreshCustomers && !savedCustomerData?.isProspect) {
+            console.log('🔄 Refreshing customers list...');
+            await refreshCustomers();
+            console.log('✅ Customers list refreshed');
           }
           
           // Eğer faturadan geliyorsak ve müşteri eklendiyse, fatura sayfasına dön
