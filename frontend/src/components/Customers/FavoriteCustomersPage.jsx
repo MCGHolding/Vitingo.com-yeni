@@ -389,6 +389,15 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
                   </div>
                   
                   <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleRemoveFromFavorites(customer)}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                    >
+                      <Heart className="h-4 w-4 mr-1 fill-current" />
+                      Favoriden Çıkar
+                    </Button>
                     <Button size="sm" variant="outline">
                       <Eye className="h-4 w-4" />
                     </Button>
