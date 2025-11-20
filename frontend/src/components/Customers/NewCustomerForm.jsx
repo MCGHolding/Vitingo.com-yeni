@@ -1431,16 +1431,22 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded }) 
         isOpen={showSuccessModal}
         customerData={savedCustomerData}
         isProspect={savedCustomerData?.isProspect}
-        onClose={(route) => {
+        onClose={async (route) => {
           console.log('🎯 Modal onClose called with route:', route);
           setShowSuccessModal(false);
+          
+          // Call onSave to refresh customer list if provided
+          if (onSave && savedCustomerData?.savedData) {
+            console.log('🔄 Calling onSave to refresh customer list');
+            await onSave(savedCustomerData.savedData);
+          }
           
           // Eğer faturadan geliyorsak ve müşteri eklendiyse, fatura sayfasına dön
           if (returnToInvoice && onCustomerAdded && savedCustomerData?.customerId) {
             console.log('🔙 Returning to invoice');
             onCustomerAdded(savedCustomerData.customerId, savedCustomerData.companyName);
           } else {
-            // Normal durumda ilgili sayfaya yönlendir - DO NOT call onSave here, it might redirect
+            // Normal durumda ilgili sayfaya yönlendir
             console.log('🚀 Navigating to route:', route);
             onClose(route);
           }
