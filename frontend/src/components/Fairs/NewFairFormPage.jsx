@@ -193,6 +193,27 @@ export default function NewFairFormPage({ onClose }) {
     { value: '12', label: 'Aralık' }
   ];
 
+  // Test data generator with realistic information
+  const fillTestData = () => {
+    const testData = {
+      name: 'Euroshop 2025',
+      city: 'Düsseldorf',
+      country: 'Almanya',
+      startDate: '2025-03-15',
+      endDate: '2025-03-19',
+      sector: 'Teknoloji',
+      cycle: 'yearly',
+      fairMonth: '03'
+    };
+    
+    setFormData(testData);
+    
+    toast({
+      title: "Test Verileri Yüklendi",
+      description: "Form test verileriyle dolduruldu.",
+    });
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
