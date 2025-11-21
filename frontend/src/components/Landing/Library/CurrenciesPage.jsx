@@ -19,9 +19,10 @@ const CurrenciesPage = () => {
     try {
       const response = await fetch(`${backendUrl}/api/library/currencies`);
       const data = await response.json();
-      setCurrencies(data);
+      setCurrencies(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading currencies:', error);
+      setCurrencies([]);
     } finally {
       setLoading(false);
     }
