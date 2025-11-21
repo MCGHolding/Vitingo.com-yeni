@@ -76,8 +76,22 @@ const GetStartedPage = () => {
   const selectedPlanData = plans.find(p => p.id === selectedPlan);
   const calculateTotal = () => {
     if (selectedPlanData.id === 'trial') return 0;
-    const price = isYearly ? selectedPlanData.yearlyPrice : selectedPlanData.price;
-    return price;
+    if (isYearly) {
+      // Yıllık: (Aylık fiyat × 12) × 0.80 (%20 indirim)
+      const yearlyTotal = selectedPlanData.price * 12 * 0.80;
+      return yearlyTotal.toFixed(2);
+    }
+    return selectedPlanData.price;
+  };
+  
+  const getMonthlyEquivalent = () => {
+    if (selectedPlanData.id === 'trial') return 0;
+    if (isYearly) {
+      // Yıllık tutarın aylık karşılığı
+      const yearlyTotal = selectedPlanData.price * 12 * 0.80;
+      return (yearlyTotal / 12).toFixed(2);
+    }
+    return selectedPlanData.price;
   };
 
   const handleSubmit = (e) => {
