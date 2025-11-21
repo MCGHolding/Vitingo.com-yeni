@@ -1627,6 +1627,10 @@ function App() {
               element={<UltraAdminPage />} 
             />
             <Route 
+              path="/login" 
+              element={<LoginPage />} 
+            />
+            <Route 
               path="/" 
               element={
                 <ProtectedRoute>
