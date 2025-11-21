@@ -704,6 +704,223 @@ async def delete_fair(fair_id: str):
         logger.error(f"Error deleting fair: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting fair: {str(e)}")
 
+
+# ============== LIBRARY ENDPOINTS ==============
+
+# Countries Endpoints
+@api_router.get("/library/countries", response_model=List[Country])
+async def get_countries():
+    """Get all countries"""
+    try:
+        countries = await db.countries.find().sort("name", 1).to_list(1000)
+        return [Country(**country) for country in countries]
+    except Exception as e:
+        logger.error(f"Error getting countries: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/countries", response_model=Country)
+async def create_country(country: Country):
+    """Create a new country"""
+    try:
+        country_dict = country.dict()
+        await db.countries.insert_one(country_dict)
+        return country
+    except Exception as e:
+        logger.error(f"Error creating country: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/countries/{country_id}", response_model=Country)
+async def update_country(country_id: str, country: Country):
+    """Update a country"""
+    try:
+        result = await db.countries.update_one(
+            {"id": country_id},
+            {"$set": country.dict()}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Country not found")
+        return country
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating country: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/countries/{country_id}")
+async def delete_country(country_id: str):
+    """Delete a country"""
+    try:
+        result = await db.countries.delete_one({"id": country_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Country not found")
+        return {"message": "Country deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting country: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Cities Endpoints
+@api_router.get("/library/cities", response_model=List[City])
+async def get_cities():
+    """Get all cities"""
+    try:
+        cities = await db.cities.find().sort("name", 1).to_list(1000)
+        return [City(**city) for city in cities]
+    except Exception as e:
+        logger.error(f"Error getting cities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/cities", response_model=City)
+async def create_city(city: City):
+    """Create a new city"""
+    try:
+        city_dict = city.dict()
+        await db.cities.insert_one(city_dict)
+        return city
+    except Exception as e:
+        logger.error(f"Error creating city: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/cities/{city_id}", response_model=City)
+async def update_city(city_id: str, city: City):
+    """Update a city"""
+    try:
+        result = await db.cities.update_one(
+            {"id": city_id},
+            {"$set": city.dict()}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="City not found")
+        return city
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating city: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/cities/{city_id}")
+async def delete_city(city_id: str):
+    """Delete a city"""
+    try:
+        result = await db.cities.delete_one({"id": city_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="City not found")
+        return {"message": "City deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting city: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Currencies Endpoints
+@api_router.get("/library/currencies", response_model=List[Currency])
+async def get_currencies():
+    """Get all currencies"""
+    try:
+        currencies = await db.currencies.find().sort("code", 1).to_list(1000)
+        return [Currency(**currency) for currency in currencies]
+    except Exception as e:
+        logger.error(f"Error getting currencies: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/currencies", response_model=Currency)
+async def create_currency(currency: Currency):
+    """Create a new currency"""
+    try:
+        currency_dict = currency.dict()
+        await db.currencies.insert_one(currency_dict)
+        return currency
+    except Exception as e:
+        logger.error(f"Error creating currency: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/currencies/{currency_id}", response_model=Currency)
+async def update_currency(currency_id: str, currency: Currency):
+    """Update a currency"""
+    try:
+        result = await db.currencies.update_one(
+            {"id": currency_id},
+            {"$set": currency.dict()}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Currency not found")
+        return currency
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating currency: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/currencies/{currency_id}")
+async def delete_currency(currency_id: str):
+    """Delete a currency"""
+    try:
+        result = await db.currencies.delete_one({"id": currency_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Currency not found")
+        return {"message": "Currency deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting currency: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Fair Centers Endpoints
+@api_router.get("/library/fair-centers", response_model=List[FairCenter])
+async def get_fair_centers():
+    """Get all fair centers"""
+    try:
+        fair_centers = await db.fair_centers.find().sort("name", 1).to_list(1000)
+        return [FairCenter(**center) for center in fair_centers]
+    except Exception as e:
+        logger.error(f"Error getting fair centers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/fair-centers", response_model=FairCenter)
+async def create_fair_center(center: FairCenter):
+    """Create a new fair center"""
+    try:
+        center_dict = center.dict()
+        await db.fair_centers.insert_one(center_dict)
+        return center
+    except Exception as e:
+        logger.error(f"Error creating fair center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/fair-centers/{center_id}", response_model=FairCenter)
+async def update_fair_center(center_id: str, center: FairCenter):
+    """Update a fair center"""
+    try:
+        result = await db.fair_centers.update_one(
+            {"id": center_id},
+            {"$set": center.dict()}
+        )
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Fair center not found")
+        return center
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating fair center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/fair-centers/{center_id}")
+async def delete_fair_center(center_id: str):
+    """Delete a fair center"""
+    try:
+        result = await db.fair_centers.delete_one({"id": center_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Fair center not found")
+        return {"message": "Fair center deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting fair center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============== END LIBRARY ENDPOINTS ==============
+
 # Import Data Endpoints
 async def parse_csv_content(file_content: str, category: str):
     """Parse CSV content based on category"""
