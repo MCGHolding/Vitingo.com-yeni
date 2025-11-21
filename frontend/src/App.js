@@ -1617,6 +1617,10 @@ function App() {
               element={<LandingPage />} 
             />
             <Route 
+              path="/get-started" 
+              element={<GetStartedPage />} 
+            />
+            <Route 
               path="/" 
               element={
                 <ProtectedRoute>
