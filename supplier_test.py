@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://customer-convert-fix.preview.emergentagent.com"
+BACKEND_URL = "https://crmmigration.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None

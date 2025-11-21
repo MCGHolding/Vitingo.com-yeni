@@ -1,93 +1,89 @@
 <analysis>
-The AI engineer's trajectory shows a comprehensive effort in enhancing the CRM application, particularly around customer and customer prospect management. Initial efforts focused on fixing critical data integrity issues in , including  details and  array initialization, extending these fixes to supplier forms. A significant portion of the work involved refining the distinction between customers and prospects, which necessitated new backend endpoints for deletion and conversion, along with extensive frontend logic for filtering, display, and interaction (e.g., dedicated delete modals, correct listing). UI/UX improvements addressed action menu overflows using React Portals and dynamic positioning, and enhanced the customer creation success flow with dedicated modals and category-specific navigation. The Favorite Customer system was also fully implemented. The latest ongoing task, converting a prospect to a customer, is currently being debugged, with the backend confirmed functional and the issue identified as a frontend logic breakdown.
+The trajectory details a significant evolution of a CRM application, starting with a fundamental architectural refactoring. The initial task was to separate Customer Prospects from Customers, which involved moving from a single  collection with an  boolean flag to two distinct collections:  and . This required creating new backend models and API endpoints (), a data migration script, and extensively modifying the frontend to use the new endpoints for creating, listing, deleting, and converting leads.
+
+A substantial portion of the work involved debugging the Convert Lead to Customer flow. This debugging journey uncovered several critical issues:
+1.  A hardcoded database name in a new route file () caused converted customers to be saved to a different database than the one the main application was reading from.
+2.  After fixing the database issue, the frontend lists didn't update automatically. This was resolved by implementing a state-refresh pattern, passing a  callback function from the root  component down to child components that perform data mutations.
+3.  Multiple UI bugs were identified and fixed, including a critical performance issue caused by using  in a render method, which led to flickering numbers on hover.
+
+Following the core refactoring, new features were added, such as managing customer statuses (passive, favorite) and creating a new Projects module with a complex form. The latest work was on the All Fairs page, fixing data display issues, before the user requested a new, large-scale feature: a SaaS landing page and an Ultra Admin panel. The user's primary language is Turkish. The next agent must respond in Turkish.
 </analysis>
 
 <product_requirements>
-The application functions as a CRM with an advanced calendar system. Core CRM capabilities include a multi-step New Brief Form, an Offer Form (), dynamic installment plans, rich text editing, AI-generated text, multi-select services, and integrated signatures. The calendar offers personal/admin views, meeting scheduling with invitations, and in-meeting chat.
+The product is a comprehensive CRM application designed to manage the entire customer lifecycle, from lead generation to project management.
 
-**Current Implementation**:
-A foundational calendar and meeting system is operational. The  leverages real-time sales opportunity and customer data, featuring dynamic payment installments. A smart customer deletion mechanism is in place. The New Sales Opportunity form incorporates dynamic country/city dropdowns, Proje Türü with add functionality, split Fuar Tarihleri, Stand Büyüklüğü, and an Avans financial approval workflow.  was enhanced. A full-page Satış Fırsatı Bilgileri () was created with integrated activity/note entry, and an Activity Timeline () was developed. Customer Edit and View functionalities are full-page displays with field-level editing. Müşteri Türü ve Sektör section was renamed to Müşteri Bilgileri, Tax Office, VKN, Services are editable, Banka Ödeme Bilgileri section was added, and contact person details are editable. Robust data mapping (), safe JSON parsing (), and backend serialization for / are integrated. An auto-fill test button was added to the new customer form. Contact person details saving,  array handling for customer/supplier contacts, dedicated Müşteri Adayı (Customer Prospect) delete flow, menu overflow, modal positioning fixes, Favorite Customer system, and an enhanced customer creation success modal with category-specific navigation have been implemented. The Müşteriye Çevir (Convert Prospect to Customer) flow is partially implemented and being debugged.
+**Core Functionality Implemented:**
+*   **Lead vs. Customer Segregation:** The system distinctly separates Müşteri Adayları (Leads) from Müşteriler (Customers) into separate database collections and manages them through dedicated UI sections.
+*   **Lead-to-Customer Conversion:** A complete workflow allows users to convert a lead into a customer. This action updates the lead's status and creates a new entry in the customers' database. The UI automatically refreshes to reflect this change.
+*   **Customer Management:** Users can create, view, and list customers. A system for managing customer status (e.g., active, passive) and marking them as favorite has been implemented, with dedicated pages for filtering these views.
+*   **Project Inception:** A new Projects module has been initiated. This includes a New Project form with advanced features like customer selection, dynamic fair selection (with an add new fair modal), and a complex, dynamic payment terms builder.
+*   **Fairs Management:** A page to list all fairs, with custom columns showing associated city, country, and the number of customers.
+
+**Pending High-Level Requests:**
+*   A full-featured SaaS landing page, similar to .
+*   An Ultra Admin panel for high-level system management.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: React (hooks, context, Router, Portals, , ), Shadcn UI-like components, Tailwind CSS, , custom JSON parsing (), data mappers ().
-- **Backend**: FastAPI (RESTful APIs, ), Pydantic (data models, custom validation), MongoDB (data storage, / serialization, UUIDs).
-- **Auth**: Client-side authentication (), temporary login bypass.
+*   **Frontend**: React (Hooks: , , ), React Router, Prop-based state management (passing  callback for list re-fetching), Tailwind CSS.
+*   **Backend**: FastAPI (Pydantic models, APIRouter), MongoDB (using Motor async driver).
+*   **Architecture**: Monorepo structure. Key architectural decision was refactoring from a single  collection with an  flag to separate  and  collections to improve data segregation and scalability. UUIDs are used for IDs.
+*   **Environment**: Vite build tool for frontend, with environment variables () being critical for API communication.
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a monorepo structure with a React frontend and a FastAPI backend.
+The application is a monorepo with a React frontend and a FastAPI backend.
 
 
 
--   ****
-    -   **Importance:** Core FastAPI backend, handles API routes and database interactions.
-    -   **Summary of Changes:**  Pydantic model now includes  and . New endpoints:  for deleting prospects and  for marking customers as favorite. Added  to convert a prospect to a regular customer.
--   ****
-    -   **Importance:** Frontend entry, routing, and main state management.
-    -   **Summary of Changes:**  function updated for dynamic navigation.  added for page top scroll. A robust  error handler was implemented.
--   ****
-    -   **Importance:** Manages user authentication state.
-    -   **Summary of Changes:** Modified for temporary auto-login of a  user.
--   ****
-    -   **Importance:** Form for creating new customer records (including prospects).
-    -   **Summary of Changes:** Fixed  details passing to mapper. Corrected  array initialization for contacts. The Sektör field validation was made optional, and a duplicate UI section was removed. Refactored success flow using .  is correctly mapped to .
--   ****
-    -   **Importance:** Displays and manages customer prospects.
-    -   **Summary of Changes:** Fetches and displays customers with . Implemented delete flow using .  refactored with React Portals for correct layering and /. Integrated  and .
--   ****
-    -   **Importance:** Displays all regular customers.
-    -   **Summary of Changes:** Filters to display only customers with .  updated for  toggle and includes /.
--   ****
-    -   **Importance:** Displays favorite customers.
-    -   **Summary of Changes:** Filters and displays only customers with .
--   ****
-    -   **Importance:** Application's main navigation menu.
-    -   **Summary of Changes:** Tüm Müşteriler label renamed to Müşteriler.
--   ****
-    -   **Importance:** Centralized data mapping logic.
-    -   **Summary of Changes:** Updated to correctly map  from form to .
--   ****
-    -   **Importance:** Provides a robust and safe utility for parsing JSON API responses.
-    -   **Summary of Changes:**  function modified to remove  to resolve CORS errors.
--   ** (New File)**
-    -   **Importance:** Specific modal for deleting customer prospects.
-    -   **Summary of Changes:** Created. Calls  and uses  for display. Its  was adjusted.
--   ** (New File)**
-    -   **Importance:** Generic success modal for customer/prospect creation.
-    -   **Summary of Changes:** Created to provide a structured success message with navigation.
--   ** (New File)**
-    -   **Importance:** Success modal for prospect conversion.
-    -   **Summary of Changes:** Created to show a success message after conversion.
--   ** (New File)**
-    -   **Importance:** Confirmation modal for converting prospects.
-    -   **Summary of Changes:** Created to replace .
--   ****
-    -   **Importance:** Form for creating new supplier records.
-    -   **Summary of Changes:**  array initialization for contacts was corrected.
--   ****
-    -   **Importance:** Modal for editing supplier details.
-    -   **Summary of Changes:**  array handling for contacts was corrected.
+*   ** (New File)**
+    *   **Importance**: Encapsulates all backend logic for leads (create, list, delete, convert). This separates concerns from the main .
+    *   **Changes**: Created to handle the new  collection. A critical bug was fixed here where a database name was hardcoded, causing data inconsistency. It now correctly uses the database from the environment configuration.
+
+*   ****
+    *   **Importance**: The main FastAPI application file. It defines all primary API routes and models.
+    *   **Changes**: Updated to include routers from  and . New endpoints were added to manage customer status () and to fetch fairs with associated customer counts.
+
+*   ****
+    *   **Importance**: The root component that manages main application state (like the master list of customers) and routing.
+    *   **Changes**: The  function was created to fetch all customers. This function is passed down as a  prop to child components, enabling them to trigger a global state refresh after data mutations (e.g., after creating a customer or converting a lead). Routes for new pages like  and  were added.
+
+*   ****
+    *   **Importance**: The UI for managing leads.
+    *   **Changes**: Completely refactored to fetch data from  instead of . The convert functionality was updated to call the new conversion endpoint and then trigger the  prop to update the main customer list automatically. A filter was added to hide leads with .
+
+*   ****
+    *   **Importance**: The UI for listing active customers.
+    *   **Changes**: A critical bug was fixed by removing  from the render logic, which caused flickering numbers. Logic was added to implement the Set to Passive feature by calling the new backend endpoint and triggering a list refresh. A filter was added to only show customers with .
+
+*   ****
+    *   **Importance**: The UI for listing all fairs and their associated data.
+    *   **Changes**: This file was heavily modified to replace the old implementation. It now fetches data from a new backend endpoint () and displays columns for Şehir (City), Ülke (Country), and Müşteri (Customer count) as requested by the user. The current work is focused on fixing a bug in this file where City/Country data is not displaying correctly.
+
+*   ** (New File)**
+    *   **Importance**: A new, complex form for creating projects, central to the new Projects module.
+    *   **Changes**: Created from scratch based on detailed user requirements. It features a layout consistent with , includes child components like , and fetches and displays a list of customers for selection.
 </code_architecture>
 
 <pending_tasks>
-- Complete  features (rich text, AI text, multi-select, signature).
-- Finish Calendar System Phases 2-4 (meeting, chat, advanced features).
-- Implement eye icon for expense reports.
-- Refine dynamic country/city dropdowns UI/data.
-- Add Save/Approve buttons in .
-- Adjust labels/order in  pages.
-- Fix React key warning for Takvim.
-- Create Kurallar menu under Dökümanlar with Müşteri Kayıt Kuralları.
-- Resolve Müşteriye Çevir (Convert Prospect to Customer) status update and list movement.
+- **High-Level Features:**
+  - Build a new SaaS landing page for Vitingo CRM, inspired by .
+  - Develop an Ultra Admin panel for system administration.
+- **Fairs Page Enhancements:**
+  - Implement filters for city, country, and month on the All Fairs page.
+  - Add a search bar to the All Fairs page.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer was actively debugging the Müşteriye Çevir (Convert Prospect to Customer) functionality within . The user reported that while the confirmation and success modals (, ) now appear correctly, the prospect is **not being transferred** (i.e., its status is not changing, it's not being removed from the prospect list, and it's not appearing in the regular customer list after conversion).
+The immediate focus is on debugging the **Tüm Fuarlar (All Fairs) page** located at .
 
-The backend endpoint () has been verified as functional by the backend testing agent. The issue has been identified by the  as residing in the frontend's conversion logic, specifically where the request chain breaks, preventing the final status update and navigation. Debug logs were just added to the frontend  to pinpoint the exact failure point.
+The user reported two issues:
+1.  **Missing Data:** For a fair named Euroshop, the Şehir (City) and Ülke (Country) columns were showing as -, even though the data was entered. The backend API response () confirms that the city and country data is being sent. The bug lies in the frontend rendering logic within .
+2.  **Missing Functionality:** The user requested filters (city, country, month) and a search bar for this page.
+
+The previous engineer's last action was to modify  to correctly reference  and  instead of  and . A  was also added to inspect the  data object in the browser to diagnose why the values weren't rendering. The user then interrupted with a request to build a new landing page, and the engineer correctly decided to resolve the current bug first.
 </current_work>
 
 <optional_next_step>
-Continue debugging the frontend conversion logic to ensure the prospect's status update and correct list movement.
+Fix the data display bug on the All Fairs page () by inspecting the console logs to see why  and  are not rendering, and then implement the necessary correction.
 </optional_next_step>
