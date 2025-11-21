@@ -134,7 +134,7 @@ class StatusCheckCreate(BaseModel):
     client_name: str
 
 # Library Models
-class Country(BaseModel):
+class LibraryCountry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     code: Optional[str] = ""
@@ -142,7 +142,7 @@ class Country(BaseModel):
     class Config:
         extra = "ignore"  # Ignore _id from MongoDB
     
-class City(BaseModel):
+class LibraryCity(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     country: str
@@ -150,7 +150,7 @@ class City(BaseModel):
     class Config:
         extra = "ignore"
     
-class Currency(BaseModel):
+class LibraryCurrency(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     code: str
     name: str
@@ -159,7 +159,7 @@ class Currency(BaseModel):
     class Config:
         extra = "ignore"
     
-class FairCenter(BaseModel):
+class LibraryFairCenter(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     city: str
