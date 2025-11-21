@@ -127,6 +127,9 @@ const CurrenciesPage = () => {
           <tbody className="divide-y">
             {currencies.map((currency) => (
               <tr key={currency.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-2xl">
+                  {currency.flag || '🏳️'}
+                </td>
                 <td className="px-6 py-4 font-mono font-semibold">
                   {editingId === currency.id ? (
                     <input
