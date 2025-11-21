@@ -117,6 +117,7 @@ const CurrenciesPage = () => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
+              <th className="px-6 py-4 text-left text-sm font-semibold">Bayrak</th>
               <th className="px-6 py-4 text-left text-sm font-semibold">Kod</th>
               <th className="px-6 py-4 text-left text-sm font-semibold">Para Birimi Adı</th>
               <th className="px-6 py-4 text-left text-sm font-semibold">Sembol</th>
