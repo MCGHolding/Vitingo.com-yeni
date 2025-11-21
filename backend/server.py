@@ -773,7 +773,7 @@ async def delete_country(country_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Cities Endpoints
-@api_router.get("/library/cities", response_model=List[City])
+@api_router.get("/library/cities", response_model=List[LibraryCity])
 async def get_cities():
     """Get all cities"""
     try:
@@ -3655,7 +3655,7 @@ async def create_city(city_data: CityCreate):
         logger.error(f"Error creating city: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/cities", response_model=List[City])
+@api_router.get("/cities", response_model=List[LibraryCity])
 async def get_cities():
     """Get all cities"""
     try:
@@ -3666,7 +3666,7 @@ async def get_cities():
         logger.error(f"Error getting cities: {str(e)}")
         return []
 
-@api_router.get("/cities/{country_code}", response_model=List[City])
+@api_router.get("/cities/{country_code}", response_model=List[LibraryCity])
 async def get_cities_by_country(country_code: str):
     """Get cities by country code"""
     try:
