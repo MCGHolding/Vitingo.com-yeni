@@ -33,9 +33,11 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
       
       if (response.ok) {
         const fairsData = await response.json();
+        console.log('RAW fairsData:', fairsData.slice(0, 2)); // Debug first 2 fairs
         const validFairs = fairsData.filter(fair => fair.name && fair.name.trim() !== '');
         setFairs(validFairs);
         console.log('Fairs loaded:', validFairs.length);
+        console.log('Sample fair:', validFairs[0]); // Debug structure
       } else {
         console.error('Failed to load fairs');
         setFairs(initialFairs || []);
