@@ -19,11 +19,14 @@ export default function NewProjectForm({ onClose, onSave }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fairs, setFairs] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [showAddFairModal, setShowAddFairModal] = useState(false);
   const [cityEditable, setCityEditable] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
+    customerId: '',
+    customerName: '',
     fairId: '',
     fairStartDate: '',
     fairEndDate: '',
