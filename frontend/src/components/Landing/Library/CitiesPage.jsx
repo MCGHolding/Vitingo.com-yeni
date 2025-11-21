@@ -24,10 +24,12 @@ const CitiesPage = () => {
       ]);
       const citiesData = await citiesRes.json();
       const countriesData = await countriesRes.json();
-      setCities(citiesData);
-      setCountries(countriesData);
+      setCities(Array.isArray(citiesData) ? citiesData : []);
+      setCountries(Array.isArray(countriesData) ? countriesData : []);
     } catch (error) {
       console.error('Error loading data:', error);
+      setCities([]);
+      setCountries([]);
     } finally {
       setLoading(false);
     }
