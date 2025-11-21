@@ -26,7 +26,7 @@ const Navbar = () => {
     { name: 'Özellikler', id: 'features' },
     { name: 'Fiyatlar', id: 'pricing' },
     { name: 'Giriş Yap', href: '/' },
-    { name: 'Ultra Admin', href: '#' }
+    { name: 'Ultra Admin', href: '/ultra-admin' }
   ];
 
   return (
