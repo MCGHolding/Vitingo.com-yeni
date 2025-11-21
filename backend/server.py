@@ -936,6 +936,8 @@ async def delete_fair_center(center_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Error deleting fair center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Phone Codes Endpoints
 @api_router.get("/library/phone-codes", response_model=List[LibraryPhoneCode])
