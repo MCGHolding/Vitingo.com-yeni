@@ -100,6 +100,7 @@ import TeklifForm from './components/Teklif/TeklifForm';
 import NewCustomerPage from './pages/NewCustomerPage';
 import Header from './components/Dashboard/Header';
 import LandingPage from './components/Landing/LandingPage';
+import GetStartedPage from './components/Landing/GetStartedPage';
 import { 
   Users, 
   TrendingUp, 
