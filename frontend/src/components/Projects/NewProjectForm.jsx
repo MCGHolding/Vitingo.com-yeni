@@ -216,6 +216,40 @@ export default function NewProjectForm({ onClose, onSave }) {
               />
             </div>
 
+            {/* Customer Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Müşteri <span className="text-red-500">*</span>
+              </label>
+              <Select 
+                value={formData.customerId} 
+                onValueChange={(customerId) => {
+                  const selectedCustomer = customers.find(c => c.id === customerId);
+                  setFormData({ 
+                    ...formData, 
+                    customerId: customerId,
+                    customerName: selectedCustomer?.companyName || ''
+                  });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Müşteri seçin..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {customers.map(customer => (
+                    <SelectItem key={customer.id} value={customer.id}>
+                      {customer.companyName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {customers.length === 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Henüz müşteri eklenmemiş. Önce müşteri ekleyin.
+                </p>
+              )}
+            </div>
+
             {/* Fair Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
