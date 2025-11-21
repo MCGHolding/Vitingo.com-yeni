@@ -216,65 +216,68 @@ export default function NewProjectForm({ onClose, onSave }) {
               />
             </div>
 
-            {/* Customer Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Müşteri <span className="text-red-500">*</span>
-              </label>
-              <Select 
-                value={formData.customerId} 
-                onValueChange={(customerId) => {
-                  const selectedCustomer = customers.find(c => c.id === customerId);
-                  setFormData({ 
-                    ...formData, 
-                    customerId: customerId,
-                    customerName: selectedCustomer?.companyName || ''
-                  });
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Müşteri seçin..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {customers.map(customer => (
-                    <SelectItem key={customer.id} value={customer.id}>
-                      {customer.companyName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {customers.length === 0 && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Henüz müşteri eklenmemiş. Önce müşteri ekleyin.
-                </p>
-              )}
-            </div>
+            {/* Customer and Fair Selection - Same Row */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Customer Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Müşteri <span className="text-red-500">*</span>
+                </label>
+                <Select 
+                  value={formData.customerId} 
+                  onValueChange={(customerId) => {
+                    const selectedCustomer = customers.find(c => c.id === customerId);
+                    setFormData({ 
+                      ...formData, 
+                      customerId: customerId,
+                      customerName: selectedCustomer?.companyName || ''
+                    });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Müşteri seçin..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map(customer => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.companyName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {customers.length === 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Henüz müşteri eklenmemiş.
+                  </p>
+                )}
+              </div>
 
-            {/* Fair Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fuar Adı <span className="text-red-500">*</span>
-              </label>
-              <Select value={formData.fairId} onValueChange={handleFairChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Fuar seçin..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {fairs.map(f => (
-                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-                  ))}
-                  <div className="border-t mt-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddFairModal(true)}
-                      className="w-full px-2 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Yeni Fuar Ekle
-                    </button>
-                  </div>
-                </SelectContent>
-              </Select>
+              {/* Fair Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fuar Adı <span className="text-red-500">*</span>
+                </label>
+                <Select value={formData.fairId} onValueChange={handleFairChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Fuar seçin..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fairs.map(f => (
+                      <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                    ))}
+                    <div className="border-t mt-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddFairModal(true)}
+                        className="w-full px-2 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Yeni Fuar Ekle
+                      </button>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Fair Dates */}
