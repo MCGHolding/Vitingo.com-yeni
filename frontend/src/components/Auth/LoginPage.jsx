@@ -48,7 +48,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await login({ username: formData.username, password: '' });
+      await login({ username: formData.username, password: formData.password });
     } catch (err) {
       setError(err.message);
     } finally {
