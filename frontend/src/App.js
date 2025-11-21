@@ -1622,6 +1622,10 @@ function App() {
               element={<GetStartedPage />} 
             />
             <Route 
+              path="/ultra-admin" 
+              element={<UltraAdminPage />} 
+            />
+            <Route 
               path="/" 
               element={
                 <ProtectedRoute>
