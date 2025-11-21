@@ -720,18 +720,18 @@ async def delete_fair(fair_id: str):
 # ============== LIBRARY ENDPOINTS ==============
 
 # Countries Endpoints
-@api_router.get("/library/countries", response_model=List[Country])
+@api_router.get("/library/countries", response_model=List[LibraryCountry])
 async def get_countries():
     """Get all countries"""
     try:
         countries = await db.countries.find().sort("name", 1).to_list(1000)
-        return [Country(**country) for country in countries]
+        return [LibraryCountry(**country) for country in countries]
     except Exception as e:
         logger.error(f"Error getting countries: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/library/countries", response_model=Country)
-async def create_country(country: Country):
+@api_router.post("/library/countries", response_model=LibraryCountry)
+async def create_country(country: LibraryCountry):
     """Create a new country"""
     try:
         country_dict = country.dict()
@@ -741,8 +741,8 @@ async def create_country(country: Country):
         logger.error(f"Error creating country: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/library/countries/{country_id}", response_model=Country)
-async def update_country(country_id: str, country: Country):
+@api_router.put("/library/countries/{country_id}", response_model=LibraryCountry)
+async def update_country(country_id: str, country: LibraryCountry):
     """Update a country"""
     try:
         result = await db.countries.update_one(
