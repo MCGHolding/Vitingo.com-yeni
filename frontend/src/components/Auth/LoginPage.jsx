@@ -103,36 +103,6 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Password Field - Optional for development */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Şifre <span className="text-xs text-gray-400 ml-1">(isteğe bağlı)</span>
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    placeholder="Şifrenizi giriniz (isteğe bağlı)"
-                    className="h-12 pr-12"
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                    disabled={loading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
               {/* Remember Me */}
               <div className="flex items-center">
                 <input
