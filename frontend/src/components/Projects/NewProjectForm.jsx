@@ -101,10 +101,10 @@ export default function NewProjectForm({ onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.fairId) {
+    if (!formData.name || !formData.customerId || !formData.fairId) {
       toast({
         title: "Eksik Bilgi",
-        description: "Proje adı ve fuar seçimi zorunludur",
+        description: "Proje adı, müşteri ve fuar seçimi zorunludur",
         variant: "destructive"
       });
       return;
