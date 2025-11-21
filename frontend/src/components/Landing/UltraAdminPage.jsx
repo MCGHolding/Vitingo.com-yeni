@@ -15,7 +15,8 @@ import {
   ChevronRight,
   LogOut,
   Menu,
-  X
+  X,
+  BookOpen
 } from 'lucide-react';
 
 const menuItems = [
