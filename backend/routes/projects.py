@@ -247,16 +247,30 @@ async def delete_project(
 async def get_fairs(
     db = Depends(get_db)
 ):
-    """Get all fairs"""
+    """Get all fairs with project counts"""
     try:
         fairs_collection = db["fairs"]
+        projects_collection = db["projects"]
         
         # Get fairs sorted by name
         fairs_cursor = fairs_collection.find({}).sort("name", 1)
         fairs = await fairs_cursor.to_list(length=None)
         
-        # Serialize
-        serialized_fairs = [serialize_document(fair) for fair in fairs]
+        # Serialize and add project counts
+        serialized_fairs = []
+        for fair in fairs:
+            serialized_fair = serialize_document(fair)
+            
+            # Count projects for this fair
+            project_count = await projects_collection.count_documents({"fairId": fair["id"]})
+            serialized_fair["projectCount"] = project_count
+            
+            # Count unique customers for this fair
+            projects_with_fair = await projects_collection.find({"fairId": fair["id"]}).to_list(length=None)
+            unique_customers = len(set([p.get("customerId") for p in projects_with_fair if p.get("customerId")]))
+            serialized_fair["customerCount"] = unique_customers
+            
+            serialized_fairs.append(serialized_fair)
         
         return JSONResponse(content=serialized_fairs)
     except Exception as e:
