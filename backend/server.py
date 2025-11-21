@@ -169,6 +169,14 @@ class LibraryFairCenter(BaseModel):
     class Config:
         extra = "ignore"
 
+class LibraryPhoneCode(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    country: str
+    code: str
+    
+    class Config:
+        extra = "ignore"
+
 # Fair Models
 class Fair(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
