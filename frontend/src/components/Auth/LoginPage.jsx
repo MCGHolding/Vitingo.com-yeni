@@ -44,6 +44,11 @@ export default function LoginPage() {
       return;
     }
 
+    if (!formData.password) {
+      setError('Lütfen şifre giriniz');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
