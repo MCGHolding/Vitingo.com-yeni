@@ -155,6 +155,7 @@ class LibraryCurrency(BaseModel):
     code: str
     name: str
     symbol: str
+    flag: Optional[str] = ""
     
     class Config:
         extra = "ignore"
