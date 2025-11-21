@@ -363,12 +363,25 @@ export default function NewFairFormPage({ onClose }) {
               <p className="text-gray-600">Fuar bilgilerini girin ve kaydedin</p>
             </div>
           </div>
-          {onClose && (
-            <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Geri Dön</span>
+          <div className="flex items-center gap-3">
+            <Button 
+              type="button"
+              onClick={fillTestData}
+              variant="outline"
+              className="flex items-center space-x-2 border-2 border-purple-500 text-purple-600 hover:bg-purple-50"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Test Verisi Doldur</span>
             </Button>
-          )}
+            {onClose && (
+              <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span>Geri Dön</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
