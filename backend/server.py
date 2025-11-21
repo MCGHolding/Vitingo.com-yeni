@@ -137,7 +137,10 @@ class StatusCheckCreate(BaseModel):
 class Country(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
-    code: Optional[str] = None
+    code: Optional[str] = ""
+    
+    class Config:
+        extra = "ignore"  # Ignore _id from MongoDB
     
 class City(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
