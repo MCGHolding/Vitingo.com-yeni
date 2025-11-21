@@ -142,13 +142,24 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            {/* Demo Credentials - Simplified for testing */}
+            {/* Quick Login */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-600 mb-4 text-center font-medium">Hızlı Giriş:</p>
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, username: 'murb' }))}
+                  onClick={async () => {
+                    setLoading(true);
+                    setError('');
+                    try {
+                      await login({ username: 'murb', password: '', rememberMe: false });
+                      navigate('/');
+                    } catch (err) {
+                      setError(err.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
@@ -158,7 +169,18 @@ export default function LoginPage() {
                 
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, username: 'biry' }))}
+                  onClick={async () => {
+                    setLoading(true);
+                    setError('');
+                    try {
+                      await login({ username: 'biry', password: '', rememberMe: false });
+                      navigate('/');
+                    } catch (err) {
+                      setError(err.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
@@ -168,7 +190,18 @@ export default function LoginPage() {
                 
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, username: 'tame' }))}
+                  onClick={async () => {
+                    setLoading(true);
+                    setError('');
+                    try {
+                      await login({ username: 'tame', password: '', rememberMe: false });
+                      navigate('/');
+                    } catch (err) {
+                      setError(err.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
