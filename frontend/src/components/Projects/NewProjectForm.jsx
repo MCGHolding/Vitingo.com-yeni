@@ -40,6 +40,7 @@ export default function NewProjectForm({ onClose, onSave }) {
 
   useEffect(() => {
     loadFairs();
+    loadCustomers();
   }, []);
 
   const loadFairs = async () => {
@@ -55,6 +56,24 @@ export default function NewProjectForm({ onClose, onSave }) {
       }
     } catch (error) {
       console.error('Error loading fairs:', error);
+    }
+  };
+
+  const loadCustomers = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/customers`);
+      if (response.ok) {
+        const data = await response.json();
+        // Filter only active customers (not prospects, not passive)
+        const activeCustomers = data.filter(c => !c.isProspect && c.status !== 'passive');
+        setCustomers(activeCustomers);
+      }
+    } catch (error) {
+      console.error('Error loading customers:', error);
     }
   };
 
