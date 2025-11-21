@@ -1612,6 +1612,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route 
+              path="/landing" 
+              element={<LandingPage />} 
+            />
+            <Route 
               path="/" 
               element={
                 <ProtectedRoute>
