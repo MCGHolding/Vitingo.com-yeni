@@ -44,16 +44,12 @@ export default function LoginPage() {
       return;
     }
 
-    if (!formData.password) {
-      setError('Lütfen şifre giriniz');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      await login({ username: formData.username, password: formData.password });
+      // Development mode: Allow login without password
+      await login({ username: formData.username, password: formData.password || '' });
     } catch (err) {
       setError(err.message);
     } finally {
