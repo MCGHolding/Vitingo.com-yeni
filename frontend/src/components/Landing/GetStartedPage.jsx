@@ -181,9 +181,14 @@ const GetStartedPage = () => {
                           ) : (
                             <>
                               <div className="text-3xl font-bold text-gray-900">
-                                ${isYearly ? plan.yearlyPrice : plan.price}
+                                ${isYearly ? ((plan.price * 12 * 0.80) / 12).toFixed(2) : plan.price}
                               </div>
                               <div className="text-xs text-gray-500">/{plan.period}</div>
+                              {isYearly && (
+                                <div className="text-xs text-green-600 font-semibold">
+                                  ${(plan.price * 12 * 0.80).toFixed(2)}/yıl
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
