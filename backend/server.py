@@ -879,18 +879,18 @@ async def delete_currency(currency_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Fair Centers Endpoints
-@api_router.get("/library/fair-centers", response_model=List[FairCenter])
+@api_router.get("/library/fair-centers", response_model=List[LibraryFairCenter])
 async def get_fair_centers():
     """Get all fair centers"""
     try:
         fair_centers = await db.fair_centers.find().sort("name", 1).to_list(1000)
-        return [FairCenter(**center) for center in fair_centers]
+        return [LibraryFairCenter(**center) for center in fair_centers]
     except Exception as e:
         logger.error(f"Error getting fair centers: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/library/fair-centers", response_model=FairCenter)
-async def create_fair_center(center: FairCenter):
+@api_router.post("/library/fair-centers", response_model=LibraryFairCenter)
+async def create_fair_center(center: LibraryFairCenter):
     """Create a new fair center"""
     try:
         center_dict = center.dict()
@@ -900,8 +900,8 @@ async def create_fair_center(center: FairCenter):
         logger.error(f"Error creating fair center: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/library/fair-centers/{center_id}", response_model=FairCenter)
-async def update_fair_center(center_id: str, center: FairCenter):
+@api_router.put("/library/fair-centers/{center_id}", response_model=LibraryFairCenter)
+async def update_fair_center(center_id: str, center: LibraryFairCenter):
     """Update a fair center"""
     try:
         result = await db.fair_centers.update_one(
