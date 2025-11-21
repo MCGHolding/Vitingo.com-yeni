@@ -25,7 +25,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Özellikler', id: 'features' },
     { name: 'Fiyatlar', id: 'pricing' },
-    { name: 'Giriş Yap', href: '/' },
+    { name: 'Giriş Yap', href: '/login' },
     { name: 'Ultra Admin', href: '/ultra-admin' }
   ];
 
