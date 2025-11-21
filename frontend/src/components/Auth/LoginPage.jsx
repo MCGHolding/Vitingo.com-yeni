@@ -51,7 +51,9 @@ export default function LoginPage() {
 
     try {
       // Development mode: Allow login without password
-      await login({ username: formData.username, password: formData.password || '' });
+      await login({ username: formData.username, password: formData.password || '', rememberMe: formData.rememberMe });
+      // Redirect to dashboard on successful login
+      navigate('/');
     } catch (err) {
       setError(err.message);
     } finally {
