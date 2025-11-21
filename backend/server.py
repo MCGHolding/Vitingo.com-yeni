@@ -147,18 +147,27 @@ class City(BaseModel):
     name: str
     country: str
     
+    class Config:
+        extra = "ignore"
+    
 class Currency(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     code: str
     name: str
     symbol: str
     
+    class Config:
+        extra = "ignore"
+    
 class FairCenter(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     city: str
     country: str
-    address: Optional[str] = None
+    address: Optional[str] = ""
+    
+    class Config:
+        extra = "ignore"
 
 # Fair Models
 class Fair(BaseModel):
