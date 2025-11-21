@@ -463,12 +463,7 @@ const GetStartedPage = () => {
                         <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
                           <span>Toplam:</span>
                           <div className="text-right">
-                            <div className="text-2xl">${calculateTotal()}</div>
-                            {isYearly && selectedPlanData.id !== 'trial' && (
-                              <div className="text-sm font-normal text-gray-500">
-                                (${getMonthlyEquivalent()}/ay)
-                              </div>
-                            )}
+                            <div className="text-2xl">${calculateTotal()}{isYearly ? '/yıl' : ''}</div>
                           </div>
                         </div>
                       </div>
