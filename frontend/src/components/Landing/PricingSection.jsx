@@ -128,15 +128,10 @@ const PricingSection = () => {
               <div className="text-center mb-6">
                 <div className="flex items-baseline justify-center gap-2">
                   <span className={`text-5xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
-                    {plan.currency}{isYearly ? ((plan.monthlyPrice * 12 * 0.80) / 12).toFixed(2) : plan.monthlyPrice}
+                    {plan.currency}{isYearly ? (plan.monthlyPrice * 12 * 0.80).toFixed(2) : plan.monthlyPrice}
                   </span>
-                  <span className={`text-lg ${plan.popular ? 'text-blue-100' : 'text-gray-500'}`}>/ay</span>
+                  <span className={`text-lg ${plan.popular ? 'text-blue-100' : 'text-gray-500'}`}>/{isYearly ? 'yıl' : 'ay'}</span>
                 </div>
-                {isYearly && (
-                  <div className={`text-sm font-semibold mt-1 ${plan.popular ? 'text-blue-100' : 'text-green-600'}`}>
-                    {plan.currency}{(plan.monthlyPrice * 12 * 0.80).toFixed(2)}/yıl
-                  </div>
-                )}
                 <p className={`mt-2 text-sm ${plan.popular ? 'text-blue-100' : 'text-gray-600'}`}>
                   {plan.users}
                 </p>
