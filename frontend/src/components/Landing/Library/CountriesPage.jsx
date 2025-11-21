@@ -19,9 +19,10 @@ const CountriesPage = () => {
     try {
       const response = await fetch(`${backendUrl}/api/library/countries`);
       const data = await response.json();
-      setCountries(data);
+      setCountries(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading countries:', error);
+      setCountries([]);
     } finally {
       setLoading(false);
     }
