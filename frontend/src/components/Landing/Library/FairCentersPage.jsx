@@ -27,11 +27,14 @@ const FairCentersPage = () => {
       const centersData = await centersRes.json();
       const countriesData = await countriesRes.json();
       const citiesData = await citiesRes.json();
-      setFairCenters(centersData);
-      setCountries(countriesData);
-      setCities(citiesData);
+      setFairCenters(Array.isArray(centersData) ? centersData : []);
+      setCountries(Array.isArray(countriesData) ? countriesData : []);
+      setCities(Array.isArray(citiesData) ? citiesData : []);
     } catch (error) {
       console.error('Error loading data:', error);
+      setFairCenters([]);
+      setCountries([]);
+      setCities([]);
     } finally {
       setLoading(false);
     }
