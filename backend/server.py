@@ -1393,7 +1393,7 @@ async def get_currency_rates():
             CurrencyRate(code="GBP", name="POUND STERLING", buying_rate=44.1, selling_rate=44.4)
         ]
 
-@api_router.get("/convert-currency/{try_amount}", response_model=LibraryCurrencyConversion)
+@api_router.get("/convert-currency/{try_amount}", response_model=CurrencyConversion)
 async def convert_currency(try_amount: float):
     """Convert TRY amount to other currencies"""
     try:
