@@ -451,20 +451,47 @@ const GetStartedPage = () => {
 
                     {/* Billing Summary */}
                     <div className="border-t border-gray-200 pt-4 mb-6">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>Periyot:</span>
-                        <span className="font-semibold">{isYearly ? 'Yıllık' : 'Aylık'}</span>
-                      </div>
-                      {isYearly && selectedPlanData.id !== 'trial' && (
-                        <div className="flex justify-between text-sm text-green-600 mb-2">
-                          <span>Yıllık indirim:</span>
-                          <span className="font-semibold">-${selectedPlanData.price - selectedPlanData.yearlyPrice}/ay</span>
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Periyot:</span>
+                          <span className="font-semibold">{isYearly ? 'Yıllık' : 'Aylık'}</span>
                         </div>
-                      )}
-                      <div className="flex justify-between text-lg font-bold text-gray-900 mt-4">
-                        <span>Toplam:</span>
-                        <span className="text-2xl">${calculateTotal()}</span>
+                        
+                        {selectedPlanData.id !== 'trial' && (
+                          <>
+                            <div className="flex justify-between text-sm text-gray-600">
+                              <span>Aylık fiyat:</span>
+                              <span className="font-semibold">${selectedPlanData.price}/ay</span>
+                            </div>
+                            
+                            {isYearly && (
+                              <>
+                                <div className="flex justify-between text-sm text-gray-600">
+                                  <span>Yıllık toplam:</span>
+                                  <span className="font-semibold">${selectedPlanData.price * 12}</span>
+                                </div>
+                                <div className="flex justify-between text-sm text-green-600">
+                                  <span>%20 yıllık indirim:</span>
+                                  <span className="font-semibold">-${(selectedPlanData.price * 12 * 0.20).toFixed(2)}</span>
+                                </div>
+                              </>
+                            )}
+                          </>
+                        )}
+                        
+                        <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
+                          <span>Toplam:</span>
+                          <div className="text-right">
+                            <div className="text-2xl">${calculateTotal()}</div>
+                            {isYearly && selectedPlanData.id !== 'trial' && (
+                              <div className="text-sm font-normal text-gray-500">
+                                (${getMonthlyEquivalent()}/ay)
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
+                      
                       {selectedPlanData.id === 'trial' && (
                         <div className="text-xs text-gray-500 mt-2">
                           14 gün ücretsiz deneme • Kredi kartı gerekmez
