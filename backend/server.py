@@ -48,6 +48,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # Import lead routes
 from routes import leads as leads_router
+from routes import projects as projects_router
 
 # Validation functions for bank information
 def validate_iban(iban: str) -> bool:
