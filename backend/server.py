@@ -9630,6 +9630,9 @@ app.include_router(api_router)
 # Include lead routes
 app.include_router(leads_router.router)
 
+# Include project routes
+app.include_router(projects_router.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
