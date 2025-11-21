@@ -406,24 +406,10 @@ const GetStartedPage = () => {
                             <div className="text-3xl font-bold">$0</div>
                           ) : (
                             <>
-                              {isYearly ? (
-                                <>
-                                  <div className="text-3xl font-bold">
-                                    ${calculateTotal()}
-                                  </div>
-                                  <div className="text-sm opacity-90">/yıl</div>
-                                  <div className="text-xs opacity-75">
-                                    (${getMonthlyEquivalent()}/ay)
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div className="text-3xl font-bold">
-                                    ${calculateTotal()}
-                                  </div>
-                                  <div className="text-sm opacity-90">/{selectedPlanData.period}</div>
-                                </>
-                              )}
+                              <div className="text-3xl font-bold">
+                                ${calculateTotal()}
+                              </div>
+                              <div className="text-sm opacity-90">/{isYearly ? 'yıl' : selectedPlanData.period}</div>
                             </>
                           )}
                         </div>
