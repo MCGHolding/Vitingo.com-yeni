@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Globe, MapPin, DollarSign, Building } from 'lucide-react';
+import { Globe, MapPin, DollarSign, Building, Phone } from 'lucide-react';
 import CountriesPage from './CountriesPage';
 import CitiesPage from './CitiesPage';
 import CurrenciesPage from './CurrenciesPage';
 import FairCentersPage from './FairCentersPage';
+import PhoneCodesPage from './PhoneCodesPage';
 
 const LibraryPage = () => {
   const [activeTab, setActiveTab] = useState('countries');
@@ -26,6 +27,12 @@ const LibraryPage = () => {
       label: 'Para Birimleri',
       icon: DollarSign,
       component: CurrenciesPage
+    },
+    {
+      id: 'phone-codes',
+      label: 'Telefon Kodları',
+      icon: Phone,
+      component: PhoneCodesPage
     },
     {
       id: 'fair-centers',
