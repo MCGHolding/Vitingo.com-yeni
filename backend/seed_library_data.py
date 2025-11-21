@@ -149,6 +149,83 @@ async def seed_library_data():
         await db.fair_centers.insert_many(center_docs)
     print(f"✅ {len(center_docs)} fuar merkezi eklendi")
     
+    # 5. Phone Codes - Major countries
+    phone_codes = [
+        {"country": "Türkiye", "code": "+90"},
+        {"country": "ABD", "code": "+1"},
+        {"country": "Almanya", "code": "+49"},
+        {"country": "Fransa", "code": "+33"},
+        {"country": "İngiltere", "code": "+44"},
+        {"country": "İtalya", "code": "+39"},
+        {"country": "İspanya", "code": "+34"},
+        {"country": "Hollanda", "code": "+31"},
+        {"country": "Belçika", "code": "+32"},
+        {"country": "İsviçre", "code": "+41"},
+        {"country": "Avusturya", "code": "+43"},
+        {"country": "Yunanistan", "code": "+30"},
+        {"country": "Polonya", "code": "+48"},
+        {"country": "Çekya", "code": "+420"},
+        {"country": "Macaristan", "code": "+36"},
+        {"country": "Romanya", "code": "+40"},
+        {"country": "Bulgaristan", "code": "+359"},
+        {"country": "Portekiz", "code": "+351"},
+        {"country": "İsveç", "code": "+46"},
+        {"country": "Norveç", "code": "+47"},
+        {"country": "Finlandiya", "code": "+358"},
+        {"country": "Danimarka", "code": "+45"},
+        {"country": "İrlanda", "code": "+353"},
+        {"country": "Rusya", "code": "+7"},
+        {"country": "Ukrayna", "code": "+380"},
+        {"country": "Çin", "code": "+86"},
+        {"country": "Japonya", "code": "+81"},
+        {"country": "Güney Kore", "code": "+82"},
+        {"country": "Hindistan", "code": "+91"},
+        {"country": "Pakistan", "code": "+92"},
+        {"country": "Bangladeş", "code": "+880"},
+        {"country": "Endonezya", "code": "+62"},
+        {"country": "Tayland", "code": "+66"},
+        {"country": "Malezya", "code": "+60"},
+        {"country": "Singapur", "code": "+65"},
+        {"country": "Filipinler", "code": "+63"},
+        {"country": "Vietnam", "code": "+84"},
+        {"country": "Avustralya", "code": "+61"},
+        {"country": "Yeni Zelanda", "code": "+64"},
+        {"country": "Meksika", "code": "+52"},
+        {"country": "Brezilya", "code": "+55"},
+        {"country": "Arjantin", "code": "+54"},
+        {"country": "Şili", "code": "+56"},
+        {"country": "Kolombiya", "code": "+57"},
+        {"country": "Peru", "code": "+51"},
+        {"country": "Mısır", "code": "+20"},
+        {"country": "Güney Afrika", "code": "+27"},
+        {"country": "Nijerya", "code": "+234"},
+        {"country": "Kenya", "code": "+254"},
+        {"country": "BAE", "code": "+971"},
+        {"country": "Suudi Arabistan", "code": "+966"},
+        {"country": "Katar", "code": "+974"},
+        {"country": "Kuveyt", "code": "+965"},
+        {"country": "İsrail", "code": "+972"},
+        {"country": "Lübnan", "code": "+961"},
+        {"country": "Ürdün", "code": "+962"},
+        {"country": "Azerbaycan", "code": "+994"},
+        {"country": "Gürcistan", "code": "+995"},
+        {"country": "Kazakistan", "code": "+7"},
+        {"country": "Özbekistan", "code": "+998"},
+        {"country": "Ermenistan", "code": "+374"},
+        {"country": "Beyaz Rusya", "code": "+375"},
+        {"country": "İran", "code": "+98"},
+        {"country": "Irak", "code": "+964"},
+        {"country": "Kanada", "code": "+1"},
+        {"country": "Küba", "code": "+53"},
+    ]
+    
+    phone_code_docs = [{"id": str(uuid.uuid4()), **code} for code in phone_codes]
+    
+    await db.phone_codes.delete_many({})
+    if phone_code_docs:
+        await db.phone_codes.insert_many(phone_code_docs)
+    print(f"✅ {len(phone_code_docs)} telefon kodu eklendi")
+    
     client.close()
     print("🎉 Library data seeding tamamlandı!")
 
