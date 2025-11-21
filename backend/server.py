@@ -826,18 +826,18 @@ async def delete_city(city_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Currencies Endpoints
-@api_router.get("/library/currencies", response_model=List[Currency])
+@api_router.get("/library/currencies", response_model=List[LibraryCurrency])
 async def get_currencies():
     """Get all currencies"""
     try:
         currencies = await db.currencies.find().sort("code", 1).to_list(1000)
-        return [Currency(**currency) for currency in currencies]
+        return [LibraryCurrency(**currency) for currency in currencies]
     except Exception as e:
         logger.error(f"Error getting currencies: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/library/currencies", response_model=Currency)
-async def create_currency(currency: Currency):
+@api_router.post("/library/currencies", response_model=LibraryCurrency)
+async def create_currency(currency: LibraryCurrency):
     """Create a new currency"""
     try:
         currency_dict = currency.dict()
@@ -847,8 +847,8 @@ async def create_currency(currency: Currency):
         logger.error(f"Error creating currency: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/library/currencies/{currency_id}", response_model=Currency)
-async def update_currency(currency_id: str, currency: Currency):
+@api_router.put("/library/currencies/{currency_id}", response_model=LibraryCurrency)
+async def update_currency(currency_id: str, currency: LibraryCurrency):
     """Update a currency"""
     try:
         result = await db.currencies.update_one(
@@ -1393,7 +1393,7 @@ async def get_currency_rates():
             CurrencyRate(code="GBP", name="POUND STERLING", buying_rate=44.1, selling_rate=44.4)
         ]
 
-@api_router.get("/convert-currency/{try_amount}", response_model=CurrencyConversion)
+@api_router.get("/convert-currency/{try_amount}", response_model=LibraryCurrencyConversion)
 async def convert_currency(try_amount: float):
     """Convert TRY amount to other currencies"""
     try:
