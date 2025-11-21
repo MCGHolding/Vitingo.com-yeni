@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Card, CardContent } from '../ui/card';
-import { ArrowLeft, Save, Plus, Edit2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { ArrowLeft, Save, Plus, Edit2, FolderKanban, Calendar, DollarSign, FileText } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import PaymentTermsBuilder from './PaymentTermsBuilder';
 import AddFairModal from './AddFairModal';
@@ -153,76 +153,178 @@ export default function NewProjectForm({ onClose, onSave }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="flex items-center space-x-4">
-        <Button variant="ghost" onClick={onClose}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold">Yeni Proje</h1>
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Header - Same style as NewCustomerForm */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <FolderKanban className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Yeni Proje</h1>
+            <p className="text-gray-600">Proje bilgilerini girin ve ödeme koşullarını belirleyin</p>
+          </div>
         </div>
+        <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
+          <ArrowLeft className="h-4 w-4" />
+          <span>Geri Dön</span>
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Proje Bilgileri - Card format like NewCustomerForm */}
         <Card>
-          <CardContent className="pt-6 space-y-4">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <FileText className="h-5 w-5" />
+              <span>Proje Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Project Name */}
             <div>
-              <label className="block text-sm font-medium mb-2">Proje Adı *</label>
-              <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Proje Adı <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Örn: ABC Şirketi - ISK-SODEX 2025"
+                required
+              />
             </div>
 
+            {/* Fair Selection */}
             <div>
-              <label className="block text-sm font-medium mb-2">Fuar *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fuar Adı <span className="text-red-500">*</span>
+              </label>
               <Select value={formData.fairId} onValueChange={handleFairChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Fuar seçin..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {fairs.map(f => <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>)}
+                  {fairs.map(f => (
+                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                  ))}
                   <div className="border-t mt-2 pt-2">
-                    <button type="button" onClick={() => setShowAddFairModal(true)} className="w-full px-2 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 flex items-center">
-                      <Plus className="h-4 w-4 mr-2" />Yeni Fuar Ekle
+                    <button
+                      type="button"
+                      onClick={() => setShowAddFairModal(true)}
+                      className="w-full px-2 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Yeni Fuar Ekle
                     </button>
                   </div>
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Fair Dates */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Başlangıç *</label>
-                <Input type="date" value={formData.fairStartDate} onChange={(e) => setFormData({ ...formData, fairStartDate: e.target.value })} required />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fuar Başlangıç <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={formData.fairStartDate}
+                  onChange={(e) => setFormData({ ...formData, fairStartDate: e.target.value })}
+                  required
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Bitiş *</label>
-                <Input type="date" value={formData.fairEndDate} onChange={(e) => setFormData({ ...formData, fairEndDate: e.target.value })} required />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fuar Bitiş <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={formData.fairEndDate}
+                  onChange={(e) => setFormData({ ...formData, fairEndDate: e.target.value })}
+                  required
+                />
               </div>
             </div>
 
+            {/* City and Country */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Şehir *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Şehir <span className="text-red-500">*</span>
+                </label>
                 <div className="flex space-x-2">
-                  <Input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} disabled={!cityEditable} required />
-                  <Button type="button" variant="outline" size="icon" onClick={() => setCityEditable(!cityEditable)}>
+                  <Input
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="Şehir"
+                    disabled={!cityEditable}
+                    required
+                    className={!cityEditable ? 'bg-gray-100' : ''}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCityEditable(!cityEditable)}
+                    title={cityEditable ? "Kilitle" : "Düzenle"}
+                  >
                     <Edit2 className="h-4 w-4" />
                   </Button>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {cityEditable ? "Şehir değiştirilebilir" : "Fuar'dan otomatik geldi"}
+                </p>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Ülke</label>
-                <Input value={formData.country} disabled className="bg-gray-100" />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ülke
+                </label>
+                <Input
+                  value={formData.country}
+                  disabled
+                  className="bg-gray-100"
+                />
+                <p className="text-xs text-gray-500 mt-1">Fuar'dan otomatik geldi</p>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
+        {/* Sözleşme Bilgileri */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <DollarSign className="h-5 w-5" />
+              <span>Sözleşme Bilgileri</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Sözleşme Tutarı *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sözleşme Tutarı <span className="text-red-500">*</span>
+              </label>
               <div className="flex space-x-2">
-                <Input type="number" step="0.01" value={formData.contractAmount} onChange={(e) => setFormData({ ...formData, contractAmount: parseFloat(e.target.value) || 0 })} required className="flex-1" />
-                <Select value={formData.currency} onValueChange={(v) => setFormData({ ...formData, currency: v })}>
-                  <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.contractAmount}
+                  onChange={(e) => setFormData({ ...formData, contractAmount: parseFloat(e.target.value) || 0 })}
+                  placeholder="0.00"
+                  required
+                  className="flex-1"
+                />
+                <Select 
+                  value={formData.currency} 
+                  onValueChange={(v) => setFormData({ ...formData, currency: v })}
+                >
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
-                    {CURRENCIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                    {CURRENCIES.map(c => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -230,28 +332,74 @@ export default function NewProjectForm({ onClose, onSave }) {
           </CardContent>
         </Card>
 
+        {/* Payment Terms */}
         <Card>
-          <CardContent className="pt-6">
-            <PaymentTermsBuilder paymentTerms={formData.paymentTerms} onChange={(t) => setFormData({ ...formData, paymentTerms: t })} contractAmount={formData.contractAmount} />
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Calendar className="h-5 w-5" />
+              <span>Ödeme Koşulları</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PaymentTermsBuilder 
+              paymentTerms={formData.paymentTerms} 
+              onChange={(t) => setFormData({ ...formData, paymentTerms: t })} 
+              contractAmount={formData.contractAmount} 
+            />
           </CardContent>
         </Card>
 
+        {/* Notes */}
         <Card>
-          <CardContent className="pt-6">
-            <label className="block text-sm font-medium mb-2">Notlar</label>
-            <textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} rows={4} className="w-full px-3 py-2 border rounded-md" />
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <FileText className="h-5 w-5" />
+              <span>Notlar</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              placeholder="Proje hakkında notlar..."
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </CardContent>
         </Card>
 
+        {/* Actions */}
         <div className="flex justify-end space-x-3">
-          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>İptal</Button>
-          <Button type="submit" disabled={loading}>
-            <Save className="h-4 w-4 mr-2" />{loading ? 'Oluşturuluyor...' : 'Proje Oluştur'}
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onClose} 
+            disabled={loading}
+          >
+            İptal
+          </Button>
+          <Button 
+            type="submit" 
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            {loading ? (
+              'Oluşturuluyor...'
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Proje Oluştur
+              </>
+            )}
           </Button>
         </div>
       </form>
 
-      <AddFairModal isOpen={showAddFairModal} onClose={() => setShowAddFairModal(false)} onFairAdded={handleFairAdded} />
+      <AddFairModal 
+        isOpen={showAddFairModal} 
+        onClose={() => setShowAddFairModal(false)} 
+        onFairAdded={handleFairAdded} 
+      />
     </div>
   );
 }
