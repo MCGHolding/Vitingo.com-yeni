@@ -340,8 +340,13 @@ const UltraAdminPage = () => {
             </div>
           )}
 
+          {/* Library Page */}
+          {selectedMenu === 'library' && (
+            <LibraryPage />
+          )}
+
           {/* Other menu content placeholders */}
-          {selectedMenu !== 'dashboard' && (
+          {selectedMenu !== 'dashboard' && selectedMenu !== 'library' && (
             <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
               <div className="inline-flex p-4 bg-purple-100 rounded-full mb-4">
                 {React.createElement(
