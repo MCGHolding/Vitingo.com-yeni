@@ -5,9 +5,8 @@ const plans = [
   {
     name: 'Starter',
     icon: '🚀',
-    monthlyPrice: '29',
-    yearlyPrice: '23',
-    currency: '€',
+    monthlyPrice: 29,
+    currency: '$',
     users: '5 kullanıcıya kadar',
     features: [
       'Kişisel Dashboard',
@@ -22,8 +21,7 @@ const plans = [
   {
     name: 'Professional',
     icon: '🔥',
-    monthlyPrice: '39',
-    yearlyPrice: '31',
+    monthlyPrice: 39,
     currency: '$',
     users: '10 kullanıcıya kadar',
     features: [
@@ -39,8 +37,7 @@ const plans = [
   {
     name: 'Enterprise',
     icon: '🏛️',
-    monthlyPrice: '99',
-    yearlyPrice: '79',
+    monthlyPrice: 49,
     currency: '$',
     users: '20 kullanıcıya kadar',
     features: [
