@@ -103,18 +103,18 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Password Field */}
+              {/* Password Field - Optional for development */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <Lock className="h-4 w-4 mr-2" />
-                  Şifre
+                  Şifre <span className="text-xs text-gray-400 ml-1">(isteğe bağlı)</span>
                 </label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    placeholder="Şifrenizi giriniz"
+                    placeholder="Şifrenizi giriniz (isteğe bağlı)"
                     className="h-12 pr-12"
                     disabled={loading}
                   />
