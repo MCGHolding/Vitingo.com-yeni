@@ -778,13 +778,13 @@ async def get_cities():
     """Get all cities"""
     try:
         cities = await db.cities.find().sort("name", 1).to_list(1000)
-        return [City(**city) for city in cities]
+        return [LibraryCity(**city) for city in cities]
     except Exception as e:
         logger.error(f"Error getting cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/library/cities", response_model=City)
-async def create_city(city: City):
+@api_router.post("/library/cities", response_model=LibraryCity)
+async def create_city(city: LibraryCity):
     """Create a new city"""
     try:
         city_dict = city.dict()
@@ -794,8 +794,8 @@ async def create_city(city: City):
         logger.error(f"Error creating city: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/library/cities/{city_id}", response_model=City)
-async def update_city(city_id: str, city: City):
+@api_router.put("/library/cities/{city_id}", response_model=LibraryCity)
+async def update_city(city_id: str, city: LibraryCity):
     """Update a city"""
     try:
         result = await db.cities.update_one(
@@ -2865,7 +2865,7 @@ async def get_cities_by_country(
         total_count = await db.cities.count_documents(search_filter)
         
         return {
-            "cities": [City(**city) for city in cities],
+            "cities": [LibraryCity(**city) for city in cities],
             "pagination": {
                 "page": page,
                 "limit": limit,
@@ -3625,7 +3625,7 @@ class CityCreate(BaseModel):
     name: str
     country_code: str
 
-@api_router.post("/cities", response_model=City)
+@api_router.post("/cities", response_model=LibraryCity)
 async def create_city(city_data: CityCreate):
     """Create a new city"""
     try:
@@ -3660,7 +3660,7 @@ async def get_cities():
     """Get all cities"""
     try:
         cities = await db.cities.find().sort("name", 1).to_list(length=None)
-        return [City(**city) for city in cities]
+        return [LibraryCity(**city) for city in cities]
         
     except Exception as e:
         logger.error(f"Error getting cities: {str(e)}")
@@ -3671,7 +3671,7 @@ async def get_cities_by_country(country_code: str):
     """Get cities by country code"""
     try:
         cities = await db.cities.find({"country_code": country_code.upper()}).sort("name", 1).to_list(length=None)
-        return [City(**city) for city in cities]
+        return [LibraryCity(**city) for city in cities]
         
     except Exception as e:
         logger.error(f"Error getting cities for country {country_code}: {str(e)}")
