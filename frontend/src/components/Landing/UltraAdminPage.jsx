@@ -98,6 +98,13 @@ const menuItems = [
     color: 'from-yellow-500 to-yellow-600'
   },
   {
+    id: 'library',
+    title: 'Kütüphane',
+    subtitle: 'Master Veriler',
+    icon: BookOpen,
+    color: 'from-emerald-500 to-emerald-600'
+  },
+  {
     id: 'settings',
     title: 'Platform Ayarları',
     subtitle: 'Sistem Ayarları',
