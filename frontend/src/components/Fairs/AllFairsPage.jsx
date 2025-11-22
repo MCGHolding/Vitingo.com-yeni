@@ -496,9 +496,12 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                             <Eye className="h-4 w-4 text-blue-600" />
                           </button>
                           
-                          {/* Edit - Navigate to edit page */}
+                          {/* Edit */}
                           <button 
-                            onClick={() => window.location.hash = `#/edit-fair/${fair.id}`}
+                            onClick={() => {
+                              setOpenMenuId(null);
+                              handleEdit(fair);
+                            }}
                             className="p-2 hover:bg-green-50 rounded-lg transition-all duration-200 hover:shadow-md border border-transparent hover:border-green-200"
                             title="Düzenle"
                           >
