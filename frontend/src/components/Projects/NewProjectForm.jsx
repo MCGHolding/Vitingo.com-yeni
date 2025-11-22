@@ -626,6 +626,80 @@ export default function NewProjectForm({ onClose, onSave }) {
         </div>
       </form>
 
+      {/* Payment Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Ödeme Profili Oluştur</h3>
+                <button
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    setProfileFormData({ name: '', paymentTerms: [] });
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-3xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Profile Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Profil Adı <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    value={profileFormData.name}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, name: e.target.value })}
+                    placeholder="Örn: Standart 3 Taksit, Peşin Ödeme"
+                  />
+                </div>
+
+                {/* Payment Terms Builder */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-4">
+                    Ödeme Koşulları <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <PaymentTermsBuilder 
+                      paymentTerms={profileFormData.paymentTerms} 
+                      onChange={(terms) => setProfileFormData({ ...profileFormData, paymentTerms: terms })}
+                      contractAmount={100000}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    * Ödeme yüzdeleri toplamı %100 olmalıdır
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    setProfileFormData({ name: '', paymentTerms: [] });
+                  }}
+                >
+                  İptal
+                </Button>
+                <Button
+                  type="button"
+                  onClick={savePaymentProfile}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Kaydet
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <AddFairModal 
         isOpen={showAddFairModal} 
         onClose={() => setShowAddFairModal(false)} 
