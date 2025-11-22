@@ -582,14 +582,12 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           </div>
                           <div>
                             {(fair.defaultStartDate || fair.startDate) && (fair.defaultEndDate || fair.endDate) ? (
-                              <>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {formatDate(fair.defaultStartDate || fair.startDate)}
-                                </div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {formatDate(fair.defaultEndDate || fair.endDate)}
-                                </div>
-                              </>
+                              <div className="text-sm font-medium text-gray-900">
+                                {formatDateRange(
+                                  fair.defaultStartDate || fair.startDate,
+                                  fair.defaultEndDate || fair.endDate
+                                )}
+                              </div>
                             ) : (
                               <div className="text-sm text-gray-500 italic">Tarih belirtilmemiş</div>
                             )}
