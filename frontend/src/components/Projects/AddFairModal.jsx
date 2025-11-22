@@ -123,7 +123,7 @@ export default function AddFairModal({ isOpen, onClose, onFairAdded }) {
       setFormData({
         name: '',
         defaultCity: '',
-        defaultCountry: 'TR',
+        defaultCountry: '',
         defaultStartDate: '',
         defaultEndDate: '',
         description: ''
