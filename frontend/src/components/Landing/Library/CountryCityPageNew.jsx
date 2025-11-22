@@ -186,9 +186,24 @@ const CountryCityPageNew = () => {
     }
   };
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      
+      // Read file content
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        setImportText(text);
+      };
+      reader.readAsText(file);
+    }
+  };
+
   const handleBulkImport = async () => {
     if (!importText.trim()) {
-      alert('Lütfen içeri aktarmak istediğiniz verileri girin');
+      alert('Lütfen içeri aktarmak istediğiniz verileri girin veya dosya yükleyin');
       return;
     }
 
