@@ -13,6 +13,9 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Force component identification
+    document.title = 'REAL AllProjectsPage - UPDATED';
+    console.log('🔥🔥🔥 REAL AllProjectsPage MOUNTED - UPDATED VERSION 🔥🔥🔥');
     loadProjects();
   }, []);
 
