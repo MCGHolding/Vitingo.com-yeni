@@ -720,29 +720,6 @@ export default function NewFairFormPage({ onClose }) {
                 </Select>
               </div>
 
-              {/* Year */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Yil <span className="text-red-500">*</span>
-                </label>
-                <Select value={formData.fuarYili} onValueChange={(value) => handleInputChange('fuarYili', value)}>
-                  <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Yil seçiniz" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 10 }, (_, i) => {
-                      const yil = new Date().getFullYear() + i;
-                      return (
-                        <SelectItem key={yil} value={yil.toString()}>
-                          {yil}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
-
               {/* Fair Month */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
