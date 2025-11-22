@@ -299,18 +299,37 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => onEditProject && onEditProject(project.id)}
+                  onClick={() => {
+                    console.log('Edit clicked for project:', project.id);
+                    if (onEditProject) {
+                      onEditProject(project.id);
+                    }
+                  }}
                   className="text-blue-600 hover:text-blue-700"
+                  title="Düzenle"
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => {
+                    console.log('View clicked for project:', project.name);
+                    setSelectedProject(project);
+                  }}
                   className="text-gray-600 hover:text-gray-700"
+                  title="Görüntüle"
                 >
                   <Eye className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleDelete(project.id, project.name)}
+                  className="text-red-600 hover:text-red-700"
+                  title="Sil"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </td>
             </tr>
