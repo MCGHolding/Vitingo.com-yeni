@@ -558,15 +558,15 @@ export default function NewProjectForm({ onClose, onSave }) {
                     </SelectContent>
                   </Select>
                 )}
-                {/* Save Profile Button */}
+                {/* Create Profile Button */}
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowProfileModal(true)}
                   className="flex items-center space-x-2 text-blue-600 border-blue-300 hover:bg-blue-50"
                 >
-                  <Save className="h-4 w-4" />
-                  <span>Profil Kaydet</span>
+                  <Plus className="h-4 w-4" />
+                  <span>Profil Oluştur</span>
                 </Button>
               </div>
             </div>
