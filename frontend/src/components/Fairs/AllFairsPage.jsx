@@ -355,6 +355,20 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     return date.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  const formatDateRange = (startDate, endDate) => {
+    if (!startDate || !endDate) return '-';
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    const startDay = start.getDate();
+    const endDay = end.getDate();
+    const month = String(start.getMonth() + 1).padStart(2, '0');
+    const year = start.getFullYear();
+    
+    return `${startDay}-${endDay}.${month}.${year}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
