@@ -498,7 +498,7 @@ export default function NewFairFormPage({ onClose }) {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Fair Name and Country - Same Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Fuar Adı <span className="text-red-500">*</span>
