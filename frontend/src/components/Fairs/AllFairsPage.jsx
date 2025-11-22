@@ -263,11 +263,18 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                         <div className="flex items-start space-x-2">
                           <Calendar className="h-4 w-4 text-blue-600 mt-1" />
                           <div>
-                            <div className="text-sm text-gray-900">
-                              {(fair.defaultStartDate || fair.startDate) && (fair.defaultEndDate || fair.endDate)
-                                ? `${formatDate(fair.defaultStartDate || fair.startDate)} - ${formatDate(fair.defaultEndDate || fair.endDate)}`
-                                : 'Tarih belirtilmemiş'}
-                            </div>
+                            {(fair.defaultStartDate || fair.startDate) && (fair.defaultEndDate || fair.endDate) ? (
+                              <>
+                                <div className="text-sm text-gray-900">
+                                  {formatDate(fair.defaultStartDate || fair.startDate)}
+                                </div>
+                                <div className="text-sm text-gray-900">
+                                  {formatDate(fair.defaultEndDate || fair.endDate)}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-sm text-gray-500">Tarih belirtilmemiş</div>
+                            )}
                             <div className="text-xs text-gray-500 flex items-center mt-1">
                               <MapPin className="h-3 w-3 mr-1" />
                               {fair.defaultCity || fair.city || '-'}
