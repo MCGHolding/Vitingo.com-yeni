@@ -191,20 +191,41 @@ export default function NewFairFormSimple({ onClose }) {
           </CardHeader>
           <CardContent className="space-y-4">
             
-            {/* Fuar Adı */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Fuar Adı <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={formData.fuarAdi}
-                onChange={(e) => setFormData({ ...formData, fuarAdi: e.target.value })}
-                placeholder="Örn: Teknoloji Fuarı 2025"
-                className="h-12"
-              />
+            {/* Fuar Adı ve Fuar Senesi */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Fuar Adı <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  value={formData.fuarAdi}
+                  onChange={(e) => setFormData({ ...formData, fuarAdi: e.target.value })}
+                  placeholder="Örn: Teknoloji Fuarı 2025"
+                  className="h-12"
+                />
+              </div>
+
+              {/* Fuar Senesi */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Fuar Senesi <span className="text-red-500">*</span>
+                </label>
+                <Select value={formData.fuarSenesi} onValueChange={(value) => setFormData({ ...formData, fuarSenesi: value })}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Sene seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {yillar.map((yil, idx) => (
+                      <SelectItem key={`year-${idx}`} value={yil.toString()}>
+                        {yil}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Fuar Senesi */}
+            {/* REMOVED OLD Fuar Senesi */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
                 Fuar Senesi <span className="text-red-500">*</span>
