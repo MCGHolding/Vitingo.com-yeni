@@ -21382,26 +21382,26 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 COMPREHENSIVE LEADS API ENDPOINTS TESTING")
+    print("🚨 MONGODB COLLECTIONS ADMIN API TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     
-    # Run the leads API testing
+    # Run the MongoDB Collections Admin API testing
     try:
-        result = test_leads_api_endpoints()
+        result = test_mongodb_collections_admin_api()
         if result:
-            print("\n✅ LEADS API ENDPOINTS TESTING COMPLETED SUCCESSFULLY")
-            print("✅ All critical endpoints working correctly")
-            print("✅ Lead creation persists in database")
-            print("✅ Lead to customer conversion creates customer record")
-            print("✅ Delete removes lead from collection")
-            print("✅ Proper error handling for invalid IDs")
+            print("\n✅ MONGODB COLLECTIONS ADMIN API TESTING COMPLETED SUCCESSFULLY")
+            print("✅ All 6 endpoints working correctly")
+            print("✅ Collections listing provides proper structure")
+            print("✅ Document retrieval with pagination works")
+            print("✅ Statistics provide accurate collection information")
+            print("✅ All CRUD operations (Create, Read, Update, Delete) are functional")
             print("📋 Review the test output above for detailed analysis")
         else:
-            print("\n❌ LEADS API ENDPOINTS TESTING FAILED")
+            print("\n❌ MONGODB COLLECTIONS ADMIN API TESTING FAILED")
             print("❌ Critical endpoint issues found")
             print("📋 Review the test output above for specific problems")
     except Exception as e:
-        print(f"\n❌ LEADS API ENDPOINTS TESTING ERROR: {str(e)}")
+        print(f"\n❌ MONGODB COLLECTIONS ADMIN API TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
