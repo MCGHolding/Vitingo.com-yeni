@@ -186,6 +186,8 @@ class Fair(BaseModel):
     name: str
     city: str
     country: str
+    fairCenter: str = ""
+    year: str = Field(default_factory=lambda: str(datetime.utcnow().year))
     startDate: str
     endDate: str
     sector: str
@@ -197,6 +199,8 @@ class Fair(BaseModel):
     budget: float = 0
     revenue: float = 0
     description: str = ""
+    needsUpdate: bool = False
+    updateNotificationSent: bool = False
     createdDate: str = Field(default_factory=lambda: datetime.utcnow().strftime('%Y-%m-%d'))
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
