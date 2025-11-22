@@ -17,6 +17,12 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [searchTerm, setSearchTerm] = useState('');
   const [fairs, setFairs] = useState(initialFairs || []);
   const [loading, setLoading] = useState(false);
+  const [previewFair, setPreviewFair] = useState(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showUpdateDateModal, setShowUpdateDateModal] = useState(false);
+  const [selectedFair, setSelectedFair] = useState(null);
+  const [updateDates, setUpdateDates] = useState({ startDate: '', endDate: '' });
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
     loadFairs();
