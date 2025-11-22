@@ -643,6 +643,72 @@ const CountryCityPageNew = () => {
           </div>
         </div>
       )}
+
+      {/* Bulk Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-800">Toplu İçeri Aktar</h3>
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportText('');
+                }}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <h4 className="font-semibold text-sm text-gray-800 mb-2">📋 Format:</h4>
+                <p className="text-xs text-gray-600 mb-2">
+                  Her satırda bir ülke ve şehirleri olmalı. Format: <code className="bg-white px-1 py-0.5 rounded">Ülke: Şehir1, Şehir2, Şehir3</code>
+                </p>
+                <div className="bg-white rounded p-2 text-xs font-mono text-gray-700">
+                  İtalya: Roma, Milano, Napoli, Floransa<br/>
+                  İspanya: Madrid, Barcelona, Sevilla, Valencia<br/>
+                  Portekiz: Lizbon, Porto, Braga
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ülke ve Şehir Verileri <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={importText}
+                  onChange={(e) => setImportText(e.target.value)}
+                  placeholder="İtalya: Roma, Milano, Napoli&#10;İspanya: Madrid, Barcelona&#10;Fransa: Paris, Lyon"
+                  className="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                  autoFocus
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Mevcut ülkeler için şehirler eklenecek, yeni ülkeler oluşturulacaktır.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportText('');
+                }}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleBulkImport}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                İçeri Aktar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
