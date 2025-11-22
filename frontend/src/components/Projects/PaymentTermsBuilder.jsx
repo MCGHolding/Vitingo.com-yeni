@@ -12,7 +12,7 @@ const DUE_TYPE_OPTIONS = [
   { value: 'ozel', label: 'Özel' }
 ];
 
-export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false }) {
+export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false, fairStartDate = '', kurulumStartDate = '' }) {
   const handleAddTerm = () => {
     const newTerm = {
       id: Date.now().toString(),
