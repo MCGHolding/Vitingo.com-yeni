@@ -56,6 +56,85 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     }
   };
 
+  // Preview fair
+  const handlePreview = (fair) => {
+    setPreviewFair(fair);
+    setShowPreviewModal(true);
+  };
+
+  // Delete fair
+  const handleDelete = async (fair) => {
+    // Check if fair has any linked records
+    if (fair.customerCount > 0) {
+      alert('Bu fuara bağlı müşteri kayıtları var! Fuar silinemez.');
+      return;
+    }
+
+    if (!window.confirm(`"${fair.name}" fuarını silmek istediğinize emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/fairs/${fair.id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        alert('Fuar başarıyla silindi!');
+        fetchFairs(); // Refresh list
+      } else {
+        alert('Fuar silinemedi!');
+      }
+    } catch (error) {
+      console.error('Error deleting fair:', error);
+      alert('Bir hata oluştu!');
+    }
+  };
+
+  // Update dates
+  const handleUpdateDates = (fair) => {
+    setSelectedFair(fair);
+    setUpdateDates({
+      startDate: fair.defaultStartDate || fair.startDate || '',
+      endDate: fair.defaultEndDate || fair.endDate || ''
+    });
+    setShowUpdateDateModal(true);
+  };
+
+  const submitUpdateDates = async () => {
+    if (!updateDates.startDate || !updateDates.endDate) {
+      alert('Lütfen her iki tarihi de doldurun!');
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/fairs/${selectedFair.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...selectedFair,
+          startDate: updateDates.startDate,
+          endDate: updateDates.endDate,
+          defaultStartDate: updateDates.startDate,
+          defaultEndDate: updateDates.endDate
+        })
+      });
+
+      if (response.ok) {
+        alert('Tarihler başarıyla güncellendi!');
+        setShowUpdateDateModal(false);
+        fetchFairs(); // Refresh list
+      } else {
+        alert('Tarihler güncellenemedi!');
+      }
+    } catch (error) {
+      console.error('Error updating dates:', error);
+      alert('Bir hata oluştu!');
+    }
+  };
+
   const filteredFairs = fairs.filter(fair =>
     fair.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     fair.defaultCity?.toLowerCase().includes(searchTerm.toLowerCase()) ||
