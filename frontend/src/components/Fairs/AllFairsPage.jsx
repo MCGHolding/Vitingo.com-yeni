@@ -661,6 +661,22 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fuar Yılı
+                  </label>
+                  <select
+                    value={updateDates.year}
+                    onChange={(e) => setUpdateDates({ ...updateDates, year: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Yıl seçin</option>
+                    {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Başlangıç Tarihi
                   </label>
                   <input
