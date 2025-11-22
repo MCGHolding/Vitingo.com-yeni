@@ -90,12 +90,50 @@ export default function NewFairFormSimple({ onClose }) {
         setSehirler([]);
       }
       
-      // Reset city when country changes
-      setFormData(prev => ({ ...prev, sehir: '' }));
+      // Reset city and fair center when country changes
+      setFormData(prev => ({ ...prev, sehir: '', fuarMerkezi: '' }));
     } else {
       setSehirler([]);
     }
   }, [formData.ulke, tumUlkeler]);
+
+  // Load fair centers from library
+  useEffect(() => {
+    const loadFuarMerkezleri = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/library/fair-centers`);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          setTumFuarMerkezleri(data);
+        }
+      } catch (error) {
+        console.error('Fuar merkezleri yüklenemedi:', error);
+      }
+    };
+
+    loadFuarMerkezleri();
+  }, []);
+
+  // Filter fair centers when city changes
+  useEffect(() => {
+    if (formData.sehir && tumFuarMerkezleri.length > 0) {
+      const sehirMerkezleri = tumFuarMerkezleri.filter(m => m.city === formData.sehir);
+      
+      if (sehirMerkezleri.length > 0) {
+        const merkezIsimleri = [...new Set(sehirMerkezleri.map(m => m.name).filter(n => n))].sort();
+        setFuarMerkezleri(merkezIsimleri);
+      } else {
+        setFuarMerkezleri([]);
+      }
+      
+      // Reset fair center when city changes
+      setFormData(prev => ({ ...prev, fuarMerkezi: '' }));
+    } else {
+      setFuarMerkezleri([]);
+    }
+  }, [formData.sehir, tumFuarMerkezleri]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
