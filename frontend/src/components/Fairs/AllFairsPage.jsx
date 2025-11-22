@@ -41,8 +41,11 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [importing, setImporting] = useState(false);
 
   useEffect(() => {
-    loadFairs();
-  }, []);
+    // Only load fairs from API if not provided via props
+    if (!initialFairs || initialFairs.length === 0) {
+      loadFairs();
+    }
+  }, [initialFairs]);
 
   const loadFairs = async () => {
     setLoading(true);
