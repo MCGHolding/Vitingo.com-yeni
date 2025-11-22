@@ -10,11 +10,24 @@ const CollectionsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'create'
+  const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'create', 'form'
   const [editedDoc, setEditedDoc] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [stats, setStats] = useState(null);
   const docsPerPage = 20;
+
+  // Form data for users collection
+  const [formData, setFormData] = useState({
+    email: '',
+    name: '',
+    password: '',
+    role: 'user',
+    department: '',
+    phone: '',
+    company_id: '',
+    is_verified: true,
+    is_active: true
+  });
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 
