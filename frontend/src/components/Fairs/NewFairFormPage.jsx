@@ -497,8 +497,7 @@ export default function NewFairFormPage({ onClose }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Fair Name and Country - Same Row - UPDATED VERSION XYZ123 */}
-              SYNTAX_ERROR_HERE_TO_TEST
+              {/* Fair Name and Country - Same Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
