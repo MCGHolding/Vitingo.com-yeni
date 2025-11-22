@@ -1033,12 +1033,12 @@ export default function Sidebar({
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {filteredNavigation.map((item) => {
+          {filteredNavigation.map((item, index) => {
             const Icon = item.icon;
             const isSubmenuOpen = openSubmenu === item.name || shouldAutoExpand(item);
             
             return (
-              <div key={item.name}>
+              <div key={`nav-item-${index}-${item.name}`}>
                 {/* Main menu item */}
                 <div
                   className={cn(
