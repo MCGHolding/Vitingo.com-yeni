@@ -171,11 +171,11 @@ export default function NewFairFormPage({ onClose }) {
     const loadCountries = async () => {
       try {
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const response = await fetch(`${backendUrl}/api/admin/collections/countries`);
+        const response = await fetch(`${backendUrl}/api/library/countries`);
         const data = await response.json();
         
-        if (data.documents && Array.isArray(data.documents)) {
-          const countryNames = data.documents
+        if (Array.isArray(data)) {
+          const countryNames = data
             .map(doc => doc.name)
             .filter(name => name)
             .sort();
