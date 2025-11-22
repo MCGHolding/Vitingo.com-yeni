@@ -205,13 +205,22 @@ const CountryCityPageNew = () => {
         <div className="p-4 border-b border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xl font-bold text-gray-800">Tüm Ülkeler ({countries.length})</h2>
-            <button
-              onClick={() => setShowAddCountryModal(true)}
-              className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Yeni Ekle
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Toplu İçeri Aktar
+              </button>
+              <button
+                onClick={() => setShowAddCountryModal(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Yeni Ekle
+              </button>
+            </div>
           </div>
           {/* Search */}
           <div className="relative">
