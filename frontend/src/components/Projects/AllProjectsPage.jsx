@@ -163,39 +163,66 @@ const AllProjectsPage = ({ onBackToDashboard }) => {
                 {getStatusBadge(project.status)}
               </div>
               
-              <p className="text-gray-600 mb-4">{project.description}</p>
+              {project.notes && (
+                <p className="text-gray-600 mb-4 text-sm">{project.notes}</p>
+              )}
               
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
                   <User className="h-4 w-4 text-gray-400" />
                   <span className="text-gray-600">Müşteri:</span>
-                  <span className="font-medium">{project.clientName}</span>
+                  <span className="font-medium">{project.customerName || 'Belirtilmemiş'}</span>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <User className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">Proje Yöneticisi:</span>
-                  <span className="font-medium">{project.projectManager}</span>
-                </div>
+                {project.fairName && (
+                  <div className="flex items-center space-x-2">
+                    <Folder className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-600">Fuar:</span>
+                    <span className="font-medium">{project.fairName}</span>
+                  </div>
+                )}
                 
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">Tarih:</span>
-                  <span className="font-medium">{project.startDate} - {project.endDate}</span>
-                </div>
+                {project.city && (
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-600">Şehir:</span>
+                    <span className="font-medium">{project.city}</span>
+                  </div>
+                )}
                 
                 <div className="flex items-center space-x-2">
                   <DollarSign className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">Bütçe:</span>
-                  <span className="font-medium">₺{project.budget.toLocaleString()}</span>
+                  <span className="text-gray-600">Sözleşme Tutarı:</span>
+                  <span className="font-medium">
+                    {project.contractAmount ? 
+                      `${project.contractAmount.toLocaleString()} ${project.currency || 'TRY'}` : 
+                      'Belirtilmemiş'}
+                  </span>
                 </div>
+
+                {project.contractDate && (
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-600">Sözleşme Tarihi:</span>
+                    <span className="font-medium">
+                      {new Date(project.contractDate).toLocaleDateString('tr-TR')}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-2">
-                <Button variant="outline" size="sm">
-                  Düzenle
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleDelete(project.id, project.name)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Sil
                 </Button>
                 <Button variant="outline" size="sm">
+                  <Eye className="h-4 w-4 mr-1" />
                   Görüntüle
                 </Button>
               </div>
