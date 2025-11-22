@@ -475,6 +475,32 @@ export default function NewProjectForm({ onClose, onSave }) {
               </div>
             </div>
 
+            {/* Kurulum Tarihleri */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kurulum Başlangıç
+                </label>
+                <Input
+                  type="date"
+                  value={formData.kurulumStartDate}
+                  onChange={(e) => setFormData({ ...formData, kurulumStartDate: e.target.value })}
+                />
+                <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kurulum Bitiş
+                </label>
+                <Input
+                  type="date"
+                  value={formData.kurulumEndDate}
+                  onChange={(e) => setFormData({ ...formData, kurulumEndDate: e.target.value })}
+                />
+                <p className="text-xs text-gray-500 mt-1">Kurulum son günü</p>
+              </div>
+            </div>
+
             {/* City and Country */}
             <div className="grid grid-cols-2 gap-4">
               <div>
