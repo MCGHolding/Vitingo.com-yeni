@@ -12,7 +12,7 @@ const DUE_TYPE_OPTIONS = [
   { value: 'ozel', label: 'Özel' }
 ];
 
-export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false, fairStartDate = '', kurulumStartDate = '' }) {
+export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false, fairStartDate = '', kurulumStartDate = '', contractDate = '' }) {
   
   // Calculate due date based on type
   const calculateDueDate = (term) => {
@@ -22,7 +22,11 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
     
     switch(term.dueType) {
       case 'pesin':
-        return 'Sözleşme tarihinde';
+        if (contractDate) {
+          baseDate = new Date(contractDate);
+          return `${baseDate.toLocaleDateString('tr-TR')} (Sözleşme tarihi)`;
+        }
+        return 'Sözleşme tarihi girilmeli';
       case 'kurulum':
         if (kurulumStartDate) {
           baseDate = new Date(kurulumStartDate);
@@ -43,10 +47,12 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
         }
         return 'Gün sayısı girilmeli';
       case 'ozel':
-        if (term.dueDays) {
-          return `Sözleşme + ${term.dueDays} gün`;
+        if (contractDate && term.dueDays) {
+          baseDate = new Date(contractDate);
+          baseDate.setDate(baseDate.getDate() + parseInt(term.dueDays));
+          return `${baseDate.toLocaleDateString('tr-TR')} (Sözleşme + ${term.dueDays} gün)`;
         }
-        return 'Gün sayısı girilmeli';
+        return 'Sözleşme tarihi ve gün sayısı girilmeli';
       default:
         return null;
     }
