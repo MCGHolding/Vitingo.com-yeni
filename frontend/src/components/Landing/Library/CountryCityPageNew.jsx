@@ -185,6 +185,85 @@ const CountryCityPageNew = () => {
     }
   };
 
+  const handleBulkImport = async () => {
+    if (!importText.trim()) {
+      alert('Lütfen içeri aktarmak istediğiniz verileri girin');
+      return;
+    }
+
+    try {
+      // Parse the import text
+      // Format: "Ülke: Şehir1, Şehir2, Şehir3"
+      const lines = importText.trim().split('\n');
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+
+        const parts = line.split(':');
+        if (parts.length !== 2) {
+          console.warn(`Invalid line format: ${line}`);
+          errorCount++;
+          continue;
+        }
+
+        const countryName = parts[0].trim();
+        const citiesStr = parts[1].trim();
+        const citiesList = citiesStr.split(',').map(c => c.trim()).filter(c => c);
+
+        // Check if country already exists
+        let existingCountry = countries.find(c => c.name.toLowerCase() === countryName.toLowerCase());
+
+        if (existingCountry) {
+          // Update existing country - add new cities
+          const updatedCities = [...new Set([...existingCountry.cities, ...citiesList])];
+          
+          const response = await fetch(`${backendUrl}/api/library/countries/${existingCountry.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...existingCountry,
+              cities: updatedCities
+            })
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } else {
+          // Create new country
+          const response = await fetch(`${backendUrl}/api/library/countries`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: crypto.randomUUID(),
+              name: countryName,
+              flag: '',
+              cities: citiesList
+            })
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        }
+      }
+
+      alert(`İçeri aktarma tamamlandı!\n✅ Başarılı: ${successCount}\n❌ Hatalı: ${errorCount}`);
+      await loadCountries();
+      setImportText('');
+      setShowImportModal(false);
+    } catch (error) {
+      console.error('Error importing data:', error);
+      alert('İçeri aktarma sırasında hata oluştu');
+    }
+  };
+
   const filteredCountries = countries.filter(c =>
     c.name.toLowerCase().includes(countrySearch.toLowerCase())
   );
