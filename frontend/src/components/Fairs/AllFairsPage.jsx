@@ -25,6 +25,14 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [openMenuId, setOpenMenuId] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editFormData, setEditFormData] = useState(null);
+  
+  // Custom modal states
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [fairToDelete, setFairToDelete] = useState(null);
 
   useEffect(() => {
     loadFairs();
