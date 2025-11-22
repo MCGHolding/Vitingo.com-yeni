@@ -932,6 +932,54 @@ async def delete_project(project_id: str):
         raise HTTPException(status_code=500, detail=f"Error deleting project: {str(e)}")
 
 
+# ============== PAYMENT PROFILE ENDPOINTS ==============
+
+@api_router.get("/payment-profiles", response_model=List[PaymentProfile])
+async def get_payment_profiles():
+    """Get all payment profiles"""
+    try:
+        profiles = await db.payment_profiles.find().sort("name", 1).to_list(1000)
+        return [PaymentProfile(**profile) for profile in profiles]
+    except Exception as e:
+        logger.error(f"Error getting payment profiles: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/payment-profiles")
+async def create_payment_profile(profile_input: PaymentProfileCreate):
+    """Create a new payment profile"""
+    try:
+        profile_dict = profile_input.dict()
+        profile_dict["id"] = str(uuid.uuid4())
+        profile_dict["created_at"] = datetime.utcnow()
+        profile_dict["updated_at"] = datetime.utcnow()
+        
+        await db.payment_profiles.insert_one(profile_dict)
+        
+        created_profile = await db.payment_profiles.find_one({"id": profile_dict["id"]})
+        return {"success": True, "profile": PaymentProfile(**created_profile)}
+        
+    except Exception as e:
+        logger.error(f"Error creating payment profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating payment profile: {str(e)}")
+
+@api_router.delete("/payment-profiles/{profile_id}")
+async def delete_payment_profile(profile_id: str):
+    """Delete a payment profile"""
+    try:
+        result = await db.payment_profiles.delete_one({"id": profile_id})
+        
+        if result.deleted_count:
+            return {"message": "Payment profile deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Payment profile not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting payment profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting payment profile: {str(e)}")
+
+
 # ============== LIBRARY ENDPOINTS ==============
 
 # Countries Endpoints
