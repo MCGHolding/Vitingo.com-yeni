@@ -1029,7 +1029,18 @@ const Dashboard = () => {
         return <NewProjectForm onBackToDashboard={handleBackToDashboard} onClose={handleBackToDashboard} />;
       
       case 'all-projects':
-        return <AllProjectsPage onBackToDashboard={handleBackToDashboard} />;
+        return <AllProjectsPage onBackToDashboard={handleBackToDashboard} onEditProject={handleEditProject} />;
+      
+      case 'edit-project':
+        return (
+          <EditProjectPage 
+            projectId={editingProjectId}
+            onClose={handleAllProjects}
+            onSave={() => {
+              handleAllProjects();
+            }}
+          />
+        );
       
       case 'ongoing-projects':
         return <OngoingProjectsPage onBackToDashboard={handleBackToDashboard} />;
