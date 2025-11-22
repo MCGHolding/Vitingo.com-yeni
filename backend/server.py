@@ -9940,6 +9940,201 @@ async def update_activity_status(opportunity_id: str, activity_id: str, status: 
         logger.error(f"Error updating activity status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== MONGODB COLLECTIONS ADMIN API =====================
+
+@api_router.get("/admin/collections")
+async def get_all_collections():
+    """Get all MongoDB collections with document counts"""
+    try:
+        # Get all collection names
+        collection_names = await db.list_collection_names()
+        
+        # Get stats for each collection
+        collections_data = []
+        for name in collection_names:
+            # Skip system collections
+            if name.startswith('system.'):
+                continue
+                
+            collection = db[name]
+            count = await collection.count_documents({})
+            
+            collections_data.append({
+                "name": name,
+                "count": count
+            })
+        
+        # Sort by name
+        collections_data.sort(key=lambda x: x['name'])
+        
+        return {
+            "collections": collections_data,
+            "total": len(collections_data)
+        }
+    except Exception as e:
+        logger.error(f"Error getting collections: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/collections/{collection_name}")
+async def get_collection_documents(
+    collection_name: str,
+    skip: int = 0,
+    limit: int = 100,
+    search: Optional[str] = None
+):
+    """Get documents from a specific collection"""
+    try:
+        collection = db[collection_name]
+        
+        # Build query
+        query = {}
+        if search:
+            # Search in all string fields
+            query = {"$text": {"$search": search}}
+        
+        # Get documents
+        cursor = collection.find(query).skip(skip).limit(limit)
+        documents = await cursor.to_list(length=limit)
+        
+        # Convert ObjectId to string for JSON serialization
+        for doc in documents:
+            if '_id' in doc and isinstance(doc['_id'], ObjectId):
+                doc['_id'] = str(doc['_id'])
+        
+        # Get total count
+        total = await collection.count_documents(query)
+        
+        return {
+            "documents": documents,
+            "total": total,
+            "skip": skip,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error getting documents from {collection_name}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/collections/{collection_name}/stats")
+async def get_collection_stats(collection_name: str):
+    """Get statistics for a specific collection"""
+    try:
+        collection = db[collection_name]
+        
+        # Get basic stats
+        total_docs = await collection.count_documents({})
+        
+        # Get collection stats from MongoDB
+        stats = await db.command("collStats", collection_name)
+        
+        return {
+            "name": collection_name,
+            "count": total_docs,
+            "size": stats.get('size', 0),
+            "avgObjSize": stats.get('avgObjSize', 0),
+            "storageSize": stats.get('storageSize', 0),
+            "indexes": stats.get('nindexes', 0)
+        }
+    except Exception as e:
+        logger.error(f"Error getting stats for {collection_name}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/collections/{collection_name}")
+async def create_document(collection_name: str, document: Dict[str, Any]):
+    """Create a new document in a collection"""
+    try:
+        collection = db[collection_name]
+        
+        # Add created_at timestamp if not present
+        if 'created_at' not in document:
+            document['created_at'] = datetime.now(timezone.utc).isoformat()
+        
+        # Generate ID if not present
+        if 'id' not in document and '_id' not in document:
+            document['id'] = str(uuid.uuid4())
+        
+        # Insert document
+        result = await collection.insert_one(document)
+        
+        # Convert ObjectId to string
+        if isinstance(result.inserted_id, ObjectId):
+            document['_id'] = str(result.inserted_id)
+        
+        return {
+            "success": True,
+            "message": "Document created successfully",
+            "document": document
+        }
+    except Exception as e:
+        logger.error(f"Error creating document in {collection_name}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/collections/{collection_name}/{doc_id}")
+async def update_document(collection_name: str, doc_id: str, document: Dict[str, Any]):
+    """Update a document in a collection"""
+    try:
+        collection = db[collection_name]
+        
+        # Add updated_at timestamp
+        document['updated_at'] = datetime.now(timezone.utc).isoformat()
+        
+        # Try to find by 'id' field first, then by '_id'
+        query = {"id": doc_id}
+        result = await collection.update_one(query, {"$set": document})
+        
+        if result.matched_count == 0:
+            # Try with _id
+            try:
+                query = {"_id": ObjectId(doc_id)}
+                result = await collection.update_one(query, {"$set": document})
+            except:
+                pass
+        
+        if result.matched_count:
+            return {
+                "success": True,
+                "message": "Document updated successfully",
+                "modified_count": result.modified_count
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Document not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating document in {collection_name}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/admin/collections/{collection_name}/{doc_id}")
+async def delete_document(collection_name: str, doc_id: str):
+    """Delete a document from a collection"""
+    try:
+        collection = db[collection_name]
+        
+        # Try to find by 'id' field first, then by '_id'
+        query = {"id": doc_id}
+        result = await collection.delete_one(query)
+        
+        if result.deleted_count == 0:
+            # Try with _id
+            try:
+                query = {"_id": ObjectId(doc_id)}
+                result = await collection.delete_one(query)
+            except:
+                pass
+        
+        if result.deleted_count:
+            return {
+                "success": True,
+                "message": "Document deleted successfully",
+                "deleted_count": result.deleted_count
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Document not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting document from {collection_name}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
