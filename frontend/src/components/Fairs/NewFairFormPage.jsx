@@ -698,7 +698,7 @@ export default function NewFairFormPage({ onClose }) {
                 </Select>
               </div>
 
-              {/* Year - MOVED TO TOP FOR TESTING */}
+              {/* Year */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <Calendar className="h-4 w-4 mr-2" />
@@ -706,7 +706,7 @@ export default function NewFairFormPage({ onClose }) {
                 </label>
                 <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Yıl seçiniz" />
+                    <SelectValue placeholder="Yil seçiniz" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 10 }, (_, i) => {
@@ -717,6 +717,26 @@ export default function NewFairFormPage({ onClose }) {
                         </SelectItem>
                       );
                     })}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Fair Month */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Fuar Ayı <span className="text-red-500">*</span>
+                </label>
+                <Select value={formData.fairMonth} onValueChange={(value) => handleInputChange('fairMonth', value)}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Fuar ayını seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((month) => (
+                      <SelectItem key={month.value} value={month.value}>
+                        {month.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
