@@ -375,6 +375,8 @@ export default function NewFairFormPage({ onClose }) {
         name: formData.name,
         city: formData.city,
         country: formData.country,
+        fairCenter: formData.fairCenter || '',
+        year: formData.year,
         startDate: formData.startDate,
         endDate: formData.endDate,
         sector: formData.sector,
