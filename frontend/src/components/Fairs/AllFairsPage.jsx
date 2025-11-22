@@ -85,28 +85,34 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   };
 
   // Delete fair
-  const handleDelete = async (fair) => {
+  const handleDeleteClick = (fair) => {
     // Check if fair has any linked records
     if (fair.customerCount > 0) {
-      alert('Bu fuara bağlı müşteri kayıtları var! Fuar silinemez.');
+      setErrorMessage('Bu fuara bağlı müşteri kayıtları var! Fuar silinemez.');
+      setShowErrorModal(true);
       return;
     }
 
-    if (!window.confirm(`"${fair.name}" fuarını silmek istediğinize emin misiniz?`)) {
-      return;
-    }
+    setFairToDelete(fair);
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmDelete = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-      const response = await fetch(`${backendUrl}/api/fairs/${fair.id}`, {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/fairs/${fairToDelete.id}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        alert('Fuar başarıyla silindi!');
-        fetchFairs(); // Refresh list
+        setShowDeleteConfirm(false);
+        setSuccessMessage('Fuar başarıyla silindi!');
+        setShowSuccessModal(true);
+        loadFairs(); // Refresh list
       } else {
-        alert('Fuar silinemedi!');
+        setShowDeleteConfirm(false);
+        setErrorMessage('Fuar silinemedi!');
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error('Error deleting fair:', error);
