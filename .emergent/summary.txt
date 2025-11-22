@@ -1,89 +1,83 @@
 <analysis>
-The trajectory details a significant evolution of a CRM application, starting with a fundamental architectural refactoring. The initial task was to separate Customer Prospects from Customers, which involved moving from a single  collection with an  boolean flag to two distinct collections:  and . This required creating new backend models and API endpoints (), a data migration script, and extensively modifying the frontend to use the new endpoints for creating, listing, deleting, and converting leads.
+The trajectory documents a rapid, feature-rich development sprint focused on building the public-facing and administrative layers of the Vitingo CRM application. The user, whose primary language is Turkish, directed the AI engineer to pivot from bug fixing to creating a new SaaS landing page, a sign-up/pricing page, and a comprehensive Ultra Admin panel.
 
-A substantial portion of the work involved debugging the Convert Lead to Customer flow. This debugging journey uncovered several critical issues:
-1.  A hardcoded database name in a new route file () caused converted customers to be saved to a different database than the one the main application was reading from.
-2.  After fixing the database issue, the frontend lists didn't update automatically. This was resolved by implementing a state-refresh pattern, passing a  callback function from the root  component down to child components that perform data mutations.
-3.  Multiple UI bugs were identified and fixed, including a critical performance issue caused by using  in a render method, which led to flickering numbers on hover.
+The development process was highly iterative. The engineer first scaffolded the entire landing page, creating separate React components for each section (Hero, Features, Pricing, FAQ, Footer) and adding a top navigation bar, closely following user-provided visual examples. A Get Started page was then built for user registration, which required several loops of feedback to correctly implement the pricing logic for monthly vs. annual billing with a 20% discount.
 
-Following the core refactoring, new features were added, such as managing customer statuses (passive, favorite) and creating a new Projects module with a complex form. The latest work was on the All Fairs page, fixing data display issues, before the user requested a new, large-scale feature: a SaaS landing page and an Ultra Admin panel. The user's primary language is Turkish. The next agent must respond in Turkish.
+The most substantial part of the work was the creation of the Ultra Admin panel. This involved building a new layout and, critically, a Library module to manage master data. This required significant backend work: creating new Pydantic models and RESTful API endpoints in FastAPI for Countries, Cities, Currencies, Fair Centers, and Phone Codes. A Python script () was created to populate the MongoDB database with extensive initial data provided by the user. The frontend was then built with CRUD interfaces for each data type. Debugging involved fixing Pydantic validation errors caused by model name conflicts and ensuring frontend components correctly parsed the API responses. The final user request was to update the phone code and currency data with new, more extensive lists.
+
+The next agent must respond in Turkish.
 </analysis>
 
 <product_requirements>
-The product is a comprehensive CRM application designed to manage the entire customer lifecycle, from lead generation to project management.
+The product is a comprehensive CRM application. The work summarized here focused on building out the public-facing and administrative functionalities required for a SaaS offering.
 
-**Core Functionality Implemented:**
-*   **Lead vs. Customer Segregation:** The system distinctly separates Müşteri Adayları (Leads) from Müşteriler (Customers) into separate database collections and manages them through dedicated UI sections.
-*   **Lead-to-Customer Conversion:** A complete workflow allows users to convert a lead into a customer. This action updates the lead's status and creates a new entry in the customers' database. The UI automatically refreshes to reflect this change.
-*   **Customer Management:** Users can create, view, and list customers. A system for managing customer status (e.g., active, passive) and marking them as favorite has been implemented, with dedicated pages for filtering these views.
-*   **Project Inception:** A new Projects module has been initiated. This includes a New Project form with advanced features like customer selection, dynamic fair selection (with an add new fair modal), and a complex, dynamic payment terms builder.
-*   **Fairs Management:** A page to list all fairs, with custom columns showing associated city, country, and the number of customers.
-
-**Pending High-Level Requests:**
-*   A full-featured SaaS landing page, similar to .
-*   An Ultra Admin panel for high-level system management.
+**Implemented Features:**
+1.  **SaaS Landing Page ():** A professional, multi-section marketing page inspired by a user-provided example, featuring a hero section, features list, dynamic pricing table, testimonials, and FAQ.
+2.  **Get Started Page ():** A registration and plan selection page with four tiers (including a free trial). It features a toggle for monthly/annual pricing, correctly calculating a 20% discount for annual payments and displaying the total yearly cost.
+3.  **Ultra Admin Panel ():** A dedicated administrative interface with a distinct design. It includes a dashboard and a Library module.
+4.  **Master Data Library:** A core feature within the Ultra Admin panel for managing master data. It provides full CRUD (Create, Read, Update, Delete) functionality for:
+    *   Countries (189 seeded)
+    *   Cities (26 seeded)
+    *   Currencies (155+ seeded with flags)
+    *   Fair Centers (1 seeded)
+    *   Phone Codes (150+ seeded)
+5.  **Login Flow:** The main CRM login page () was integrated into the landing page's navigation. For development ease, the password requirement was temporarily removed.
 </product_requirements>
 
 <key_technical_concepts>
-*   **Frontend**: React (Hooks: , , ), React Router, Prop-based state management (passing  callback for list re-fetching), Tailwind CSS.
-*   **Backend**: FastAPI (Pydantic models, APIRouter), MongoDB (using Motor async driver).
-*   **Architecture**: Monorepo structure. Key architectural decision was refactoring from a single  collection with an  flag to separate  and  collections to improve data segregation and scalability. UUIDs are used for IDs.
-*   **Environment**: Vite build tool for frontend, with environment variables () being critical for API communication.
+- **Frontend:** React (Hooks: , ), React Router, Tailwind CSS for styling, Component-based architecture.
+- **Backend:** FastAPI (Pydantic models,  for modularity).
+- **Database:** MongoDB, accessed asynchronously. A Python script () was created and used to perform initial data population.
+- **Architecture:** Monorepo structure. A significant architectural addition is the Library system, which centralizes master data management via dedicated backend APIs and a separate admin UI.
 </key_technical_concepts>
 
 <code_architecture>
-The application is a monorepo with a React frontend and a FastAPI backend.
+The application is a monorepo with a React frontend and a FastAPI backend. The latest work heavily expanded both, particularly by adding new routes and components for the landing page and admin panel.
 
 
 
-*   ** (New File)**
-    *   **Importance**: Encapsulates all backend logic for leads (create, list, delete, convert). This separates concerns from the main .
-    *   **Changes**: Created to handle the new  collection. A critical bug was fixed here where a database name was hardcoded, causing data inconsistency. It now correctly uses the database from the environment configuration.
+- ****
+    - **Importance**: Main FastAPI application file. It defines all API routes and Pydantic models.
+    - **Changes**: Massively expanded to support the Library feature. New Pydantic models (, , , etc.) and dozens of new API endpoints for full CRUD operations on each library entity were added. A Pydantic validation bug was fixed by renaming a conflicting  model to .
 
-*   ****
-    *   **Importance**: The main FastAPI application file. It defines all primary API routes and models.
-    *   **Changes**: Updated to include routers from  and . New endpoints were added to manage customer status () and to fetch fairs with associated customer counts.
+- ** (New File)**
+    - **Importance**: A critical script for populating the MongoDB database with initial master data for the Library.
+    - **Changes**: Created from scratch. It connects to the database and populates the , , , , and  collections with extensive data provided by the user. It was updated multiple times to add more data and new fields (like flags for currencies).
 
-*   ****
-    *   **Importance**: The root component that manages main application state (like the master list of customers) and routing.
-    *   **Changes**: The  function was created to fetch all customers. This function is passed down as a  prop to child components, enabling them to trigger a global state refresh after data mutations (e.g., after creating a customer or converting a lead). Routes for new pages like  and  were added.
+- ** (New Components)**
+    - **Importance**: This new directory and its sub-components form the entire public-facing website.
+    - **Files**:  assembles the marketing page.  handles user registration and plan selection.  is the entry point for the admin panel.  contains the CRUD pages for master data.
+    - **Changes**: All files were created from scratch.  and  underwent multiple revisions to fix the annual pricing calculation logic based on user feedback. The  components were built to fetch data from the new backend endpoints and display it in tables with edit/delete functionality.
 
-*   ****
-    *   **Importance**: The UI for managing leads.
-    *   **Changes**: Completely refactored to fetch data from  instead of . The convert functionality was updated to call the new conversion endpoint and then trigger the  prop to update the main customer list automatically. A filter was added to hide leads with .
+- ****
+    - **Importance**: The user login page for the main CRM.
+    - **Changes**: The login logic in  was modified to remove the password check, allowing login with only a username for development purposes. A Home Page button linking to  was added. Redirection logic using  was added to ensure users are sent to the dashboard upon successful login.
 
-*   ****
-    *   **Importance**: The UI for listing active customers.
-    *   **Changes**: A critical bug was fixed by removing  from the render logic, which caused flickering numbers. Logic was added to implement the Set to Passive feature by calling the new backend endpoint and triggering a list refresh. A filter was added to only show customers with .
-
-*   ****
-    *   **Importance**: The UI for listing all fairs and their associated data.
-    *   **Changes**: This file was heavily modified to replace the old implementation. It now fetches data from a new backend endpoint () and displays columns for Şehir (City), Ülke (Country), and Müşteri (Customer count) as requested by the user. The current work is focused on fixing a bug in this file where City/Country data is not displaying correctly.
-
-*   ** (New File)**
-    *   **Importance**: A new, complex form for creating projects, central to the new Projects module.
-    *   **Changes**: Created from scratch based on detailed user requirements. It features a layout consistent with , includes child components like , and fetches and displays a list of customers for selection.
+- ****
+    - **Importance**: The root component that defines all application routes.
+    - **Changes**: New routes were added for , , , and  to make the new pages accessible.
 </code_architecture>
 
 <pending_tasks>
-- **High-Level Features:**
-  - Build a new SaaS landing page for Vitingo CRM, inspired by .
-  - Develop an Ultra Admin panel for system administration.
-- **Fairs Page Enhancements:**
-  - Implement filters for city, country, and month on the All Fairs page.
-  - Add a search bar to the All Fairs page.
+- **Integrate Library Data into CRM Forms:** The primary pending task is to update the existing CRM forms (e.g., New Project Form, New Fair Form) to fetch data for dropdown menus (like Country and City) from the newly created Library API endpoints, as explicitly requested by the user.
 </pending_tasks>
 
 <current_work>
-The immediate focus is on debugging the **Tüm Fuarlar (All Fairs) page** located at .
+The most recent task was a comprehensive update of the Library data, specifically for **Currencies** and **Phone Codes**, based on extensive new lists provided by the user.
 
-The user reported two issues:
-1.  **Missing Data:** For a fair named Euroshop, the Şehir (City) and Ülke (Country) columns were showing as -, even though the data was entered. The backend API response () confirms that the city and country data is being sent. The bug lies in the frontend rendering logic within .
-2.  **Missing Functionality:** The user requested filters (city, country, month) and a search bar for this page.
+1.  **Currencies Update:** The user provided a list of ~155 currencies with their corresponding flag emojis.
+    *   **Backend:** The  Pydantic model in  was updated to include a  field.
+    *   **Data:** The  script was updated with the full new list of currencies.
+    *   **Frontend:** The  component was modified to display the new  column in the table.
 
-The previous engineer's last action was to modify  to correctly reference  and  instead of  and . A  was also added to inspect the  data object in the browser to diagnose why the values weren't rendering. The user then interrupted with a request to build a new landing page, and the engineer correctly decided to resolve the current bug first.
+2.  **Phone Codes Update:** The user requested to replace the old phone code list with a new, larger one.
+    *   **Backend:** The  model was updated in .
+    *   **Data:** The  script was updated to clear the old phone codes and insert the new list. The script was executed successfully.
+    *   **Frontend:** The corresponding  was updated to display the new data format.
+
+The engineer's very last actions were to run the updated seed script, restart the backend server to apply the changes, and was about to begin testing the frontend to verify that the new data for both currencies and phone codes is displayed correctly in the Ultra Admin panel.
 </current_work>
 
 <optional_next_step>
-Fix the data display bug on the All Fairs page () by inspecting the console logs to see why  and  are not rendering, and then implement the necessary correction.
+Test the frontend at  to confirm that the updated Para Birimleri (Currencies) and Telefon Kodları (Phone Codes) tabs correctly display the new, comprehensive data seeded in the last step.
 </optional_next_step>
