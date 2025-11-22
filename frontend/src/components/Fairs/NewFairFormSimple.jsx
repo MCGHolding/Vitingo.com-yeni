@@ -545,6 +545,67 @@ export default function NewFairFormSimple({ onClose }) {
           </Button>
         </div>
       </form>
+
+      {/* Bulk City Add Modal */}
+      {showBulkCityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Toplu Şehir Ekle - {formData.ulke}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowBulkCityModal(false);
+                    setBulkCityText('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <span className="text-2xl">&times;</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Şehir İsimleri (Her satıra bir şehir)
+                  </label>
+                  <textarea
+                    value={bulkCityText}
+                    onChange={(e) => setBulkCityText(e.target.value)}
+                    placeholder="İstanbul&#10;Ankara&#10;İzmir&#10;..."
+                    className="w-full h-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Her satıra bir şehir ismi yazın. Mevcut şehirler otomatik olarak atlanacaktır.
+                  </p>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowBulkCityModal(false);
+                      setBulkCityText('');
+                    }}
+                  >
+                    İptal
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleBulkCityAdd}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Şehirleri Ekle
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
