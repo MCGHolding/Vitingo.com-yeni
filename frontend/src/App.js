@@ -44,6 +44,7 @@ import ActiveFairsPage from './components/Fairs/ActiveFairsPage';
 import PastFairsPage from './components/Fairs/PastFairsPage';
 import NewFairForm from './components/Fairs/NewFairForm';
 import NewFairFormPage from './components/Fairs/NewFairFormPage';
+import NewFairFormSimple from './components/Fairs/NewFairFormSimple';
 import NewProjectForm from './components/Projects/NewProjectForm';
 import AllProjectsPage from './components/Projects/AllProjectsPage';
 import OngoingProjectsPage from './components/Projects/OngoingProjectsPage';
