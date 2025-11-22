@@ -126,6 +126,7 @@ export default function NewFairFormPage({ onClose }) {
     city: '',
     country: '',
     fairCenter: '',
+    year: new Date().getFullYear().toString(),
     startDate: '',
     endDate: '',
     sector: '',
