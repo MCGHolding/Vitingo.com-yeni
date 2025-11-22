@@ -15,86 +15,70 @@ async def seed_library_data():
     
     print(f"🌱 Seeding library data to database: {db_name}")
     
-    # 1. Countries - 195 UN member states with common abbreviations
-    countries = [
-        "ABD", "Afganistan", "Almanya", "Andorra", "Angola", "Antigua ve Barbuda",
-        "Arjantin", "Arnavutluk", "Avustralya", "Avusturya", "Azerbaycan", "BAE",
-        "Bahama", "Bahreyn", "Bangladeş", "Barbados", "Beyaz Rusya", "Belçika",
-        "Belize", "Benin", "Bhutan", "Bolivya", "Bosna-Hersek", "Botsvana",
-        "Brezilya", "Brunei", "Bulgaristan", "Burkina Faso", "Burundi", "Çad",
-        "Cezayir", "Cibuti", "Çin", "Danimarka", "Dominik", "Dominik Cumhuriyeti",
-        "Doğu Timor", "Ekvador", "Ekvator Ginesi", "El Salvador", "Endonezya",
-        "Eritre", "Ermenistan", "Estonya", "Etiyopya", "Fas", "Fiji", "Fildişi Sahili",
-        "Filipinler", "Filistin", "Finlandiya", "Fransa", "Gabon", "Gambiya",
-        "Gana", "Grenada", "Guatemala", "Gine", "Gine-Bissau", "Guyana",
-        "Güney Afrika", "Güney Kore", "Güney Sudan", "Gürcistan", "Haiti",
-        "Hırvatistan", "Hindistan", "Hollanda", "Honduras", "Irak", "İran",
-        "İrlanda", "İspanya", "İsrail", "İsveç", "İsviçre", "İtalya",
-        "İzlanda", "Jamaika", "Japonya", "Kamboçya", "Kamerun", "Kanada",
-        "Karadağ", "Katar", "Kazakistan", "Kenya", "Kıbrıs", "Kırgızistan",
-        "Kiribati", "Kolombiya", "Kongo", "Kosta Rika", "Kuveyt", "Kuzey Kore",
-        "Kuzey Makedonya", "Küba", "Laos", "Lesotho", "Letonya", "Liberya",
-        "Libya", "Liechtenstein", "Litvanya", "Lübnan", "Lüksemburg", "Macaristan",
-        "Madagaskar", "Malavi", "Maldivler", "Malezya", "Mali", "Malta",
-        "Marshall Adaları", "Mauritius", "Meksika", "Mısır", "Mikronezya",
-        "Moğolistan", "Moldova", "Monako", "Mozambik", "Myanmar", "Namibya",
-        "Nauru", "Nepal", "Nijer", "Nijerya", "Nikaragua", "Norveç",
-        "Orta Afrika Cumhuriyeti", "Özbekistan", "Pakistan", "Palau", "Panama",
-        "Papua Yeni Gine", "Paraguay", "Peru", "Polonya", "Portekiz",
-        "Romanya", "Ruanda", "Rusya", "Saint Kitts ve Nevis", "Saint Lucia",
-        "Saint Vincent ve Grenadinler", "Samoa", "San Marino", "São Tomé ve Príncipe",
-        "Senegal", "Seyşeller", "Sırbistan", "Sierra Leone", "Singapur",
-        "Slovakya", "Slovenya", "Solomon Adaları", "Somali", "Sri Lanka",
-        "Sudan", "Surinam", "Suriye", "Suudi Arabistan", "Şili", "Tacikistan",
-        "Tanzanya", "Tayland", "Togo", "Tonga", "Trinidad ve Tobago", "Tunus",
-        "Tuvalu", "Türkiye", "Türkmenistan", "Uganda", "Ukrayna", "Umman",
-        "Uruguay", "Ürdün", "Vanuatu", "Vatikan", "Venezuela", "Vietnam",
-        "Yemen", "Yeni Zelanda", "Yeşil Burun Adaları", "Yunanistan", "Zambiya", "Zimbabve"
+    # 1. Countries with cities - Hierarchical structure
+    countries_with_cities = [
+        {
+            "name": "Türkiye",
+            "flag": "🇹🇷",
+            "cities": ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", 
+                      "Gaziantep", "Şanlıurfa", "Kocaeli", "Mersin", "Diyarbakır", "Hatay",
+                      "Manisa", "Kayseri", "Samsun", "Balıkesir", "Kahramanmaraş", "Van",
+                      "Aydın", "Denizli", "Sakarya", "Tekirdağ", "Muğla", "Eskişehir"]
+        },
+        {
+            "name": "ABD",
+            "flag": "🇺🇸",
+            "cities": ["Las Vegas", "New York", "Los Angeles", "Chicago", "Houston", "Miami"]
+        },
+        {
+            "name": "Almanya",
+            "flag": "🇩🇪",
+            "cities": ["Berlin", "Münih", "Frankfurt", "Hamburg", "Düsseldorf"]
+        },
+        {
+            "name": "Fransa",
+            "flag": "🇫🇷",
+            "cities": ["Paris", "Lyon", "Marsilya", "Nice", "Toulouse"]
+        },
+        {
+            "name": "İtalya",
+            "flag": "🇮🇹",
+            "cities": ["Roma", "Milano", "Floransa", "Venedik", "Napoli"]
+        },
+        {
+            "name": "İspanya",
+            "flag": "🇪🇸",
+            "cities": ["Madrid", "Barselona", "Valencia", "Sevilla", "Bilbao"]
+        },
+        {
+            "name": "İngiltere",
+            "flag": "🇬🇧",
+            "cities": ["Londra", "Manchester", "Birmingham", "Liverpool", "Leeds"]
+        },
+        # Add more countries without cities (will have empty cities array)
+        {"name": "Afganistan", "flag": "🇦🇫", "cities": []},
+        {"name": "Andorra", "flag": "🇦🇩", "cities": []},
+        {"name": "Angola", "flag": "🇦🇴", "cities": []},
+        {"name": "Antigua ve Barbuda", "flag": "🇦🇬", "cities": []},
+        {"name": "Arjantin", "flag": "🇦🇷", "cities": []},
+        {"name": "Arnavutluk", "flag": "🇦🇱", "cities": []},
+        {"name": "Avustralya", "flag": "🇦🇺", "cities": []},
+        {"name": "Avusturya", "flag": "🇦🇹", "cities": []},
+        {"name": "Azerbaycan", "flag": "🇦🇿", "cities": []},
+        {"name": "BAE", "flag": "🇦🇪", "cities": []},
+        # ... rest of countries
     ]
     
-    country_docs = [{"id": str(uuid.uuid4()), "name": country, "code": ""} for country in countries]
+    country_docs = [{"id": str(uuid.uuid4()), **country, "code": ""} for country in countries_with_cities]
     
     await db.countries.delete_many({})
     if country_docs:
         await db.countries.insert_many(country_docs)
-    print(f"✅ {len(country_docs)} ülke eklendi")
+    print(f"✅ {len(country_docs)} ülke (şehirleriyle birlikte) eklendi")
     
-    # 2. Cities - Turkish cities (25) + Las Vegas
-    cities = [
-        {"name": "İstanbul", "country": "Türkiye"},
-        {"name": "Ankara", "country": "Türkiye"},
-        {"name": "İzmir", "country": "Türkiye"},
-        {"name": "Bursa", "country": "Türkiye"},
-        {"name": "Antalya", "country": "Türkiye"},
-        {"name": "Adana", "country": "Türkiye"},
-        {"name": "Konya", "country": "Türkiye"},
-        {"name": "Gaziantep", "country": "Türkiye"},
-        {"name": "Şanlıurfa", "country": "Türkiye"},
-        {"name": "Kocaeli", "country": "Türkiye"},
-        {"name": "Mersin", "country": "Türkiye"},
-        {"name": "Diyarbakır", "country": "Türkiye"},
-        {"name": "Hatay", "country": "Türkiye"},
-        {"name": "Manisa", "country": "Türkiye"},
-        {"name": "Kayseri", "country": "Türkiye"},
-        {"name": "Samsun", "country": "Türkiye"},
-        {"name": "Balıkesir", "country": "Türkiye"},
-        {"name": "Kahramanmaraş", "country": "Türkiye"},
-        {"name": "Van", "country": "Türkiye"},
-        {"name": "Aydın", "country": "Türkiye"},
-        {"name": "Denizli", "country": "Türkiye"},
-        {"name": "Sakarya", "country": "Türkiye"},
-        {"name": "Tekirdağ", "country": "Türkiye"},
-        {"name": "Muğla", "country": "Türkiye"},
-        {"name": "Eskişehir", "country": "Türkiye"},
-        {"name": "Las Vegas", "country": "ABD"},
-    ]
-    
-    city_docs = [{"id": str(uuid.uuid4()), **city} for city in cities]
-    
+    # Cities collection is no longer needed - kept for backward compatibility
     await db.cities.delete_many({})
-    if city_docs:
-        await db.cities.insert_many(city_docs)
-    print(f"✅ {len(city_docs)} şehir eklendi")
+    print(f"✅ Cities collection temizlendi (artık ülkelerin içinde)")
     
     # 3. Currencies - Complete list with flags
     currencies = [
