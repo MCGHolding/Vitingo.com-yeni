@@ -303,6 +303,8 @@ export default function NewFairFormPage({ onClose }) {
       name: 'Euroshop 2025',
       city: 'Düsseldorf',
       country: 'Almanya',
+      fairCenter: '',
+      fuarYili: '2025',
       startDate: '2025-03-15',
       endDate: '2025-03-19',
       sector: 'Teknoloji',
