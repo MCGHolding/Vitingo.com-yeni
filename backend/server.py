@@ -138,6 +138,8 @@ class LibraryCountry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     code: Optional[str] = ""
+    flag: Optional[str] = ""
+    cities: Optional[List[str]] = []
     
     class Config:
         extra = "ignore"  # Ignore _id from MongoDB
