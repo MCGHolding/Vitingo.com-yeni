@@ -577,8 +577,8 @@ export default function NewFairFormPage({ onClose }) {
                     </SelectTrigger>
                     <SelectContent>
                       {fairCenters.length > 0 ? (
-                        fairCenters.map((center) => (
-                          <SelectItem key={center} value={center}>
+                        fairCenters.map((center, index) => (
+                          <SelectItem key={`center-${index}`} value={center}>
                             {center}
                           </SelectItem>
                         ))
