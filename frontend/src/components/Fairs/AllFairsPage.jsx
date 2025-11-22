@@ -417,8 +417,8 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                            fair.cycle || 'Belirtilmemiş'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="text-sm font-medium text-gray-900">
+                      <td className="px-6 py-5 text-center">
+                        <div className="text-sm font-bold">
                           {(() => {
                             const startDate = new Date(fair.defaultStartDate || fair.startDate);
                             const today = new Date();
@@ -426,13 +426,13 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                             
                             if (diffDays < 0) {
-                              return <span className="text-red-600">Geçti</span>;
+                              return <span className="inline-flex px-3 py-1 rounded-full bg-red-100 text-red-700 border border-red-200">Geçti</span>;
                             } else if (diffDays === 0) {
-                              return <span className="text-green-600">Bugün</span>;
+                              return <span className="inline-flex px-3 py-1 rounded-full bg-green-100 text-green-700 border border-green-200">Bugün</span>;
                             } else if (diffDays === 1) {
-                              return <span className="text-orange-600">1 gün</span>;
+                              return <span className="inline-flex px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200">1 gün</span>;
                             } else {
-                              return <span className="text-gray-900">{diffDays} gün</span>;
+                              return <span className="inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">{diffDays} gün</span>;
                             }
                           })()}
                         </div>
