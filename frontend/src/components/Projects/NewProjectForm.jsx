@@ -369,10 +369,22 @@ export default function NewProjectForm({ onClose, onSave }) {
         {/* Proje Bilgileri - Card format like NewCustomerForm */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5" />
-              <span>Proje Bilgileri</span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <FileText className="h-5 w-5" />
+                <span>Proje Bilgileri</span>
+              </CardTitle>
+              {/* Amerika Fuarları Checkbox */}
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isAmericanFair}
+                  onChange={(e) => setFormData({ ...formData, isAmericanFair: e.target.checked })}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">Amerika Fuarları</span>
+              </label>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Project Name */}
