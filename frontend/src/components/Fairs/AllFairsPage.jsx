@@ -386,15 +386,19 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                      <td className="px-6 py-5">
+                        <div className="flex items-center text-sm font-medium text-gray-900">
+                          <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                            <MapPin className="h-3 w-3 text-white" />
+                          </div>
                           {fair.defaultCity || fair.city || '-'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex items-center justify-center text-sm text-gray-900">
-                          <Globe className="h-4 w-4 mr-2 text-gray-400" />
+                      <td className="px-6 py-5 text-center">
+                        <div className="flex items-center justify-center text-sm font-medium text-gray-900">
+                          <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mr-3">
+                            <Globe className="h-3 w-3 text-white" />
+                          </div>
                           {fair.defaultCountry || fair.country || '-'}
                         </div>
                       </td>
