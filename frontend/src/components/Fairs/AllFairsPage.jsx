@@ -34,6 +34,10 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [fairToDelete, setFairToDelete] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importPreview, setImportPreview] = useState([]);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     loadFairs();
