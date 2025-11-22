@@ -98,6 +98,59 @@ export default function NewProjectForm({ onClose, onSave }) {
     setShowAddFairModal(false);
   };
 
+  const fillTestData = () => {
+    // Select random customer
+    if (customers.length > 0) {
+      const randomCustomer = customers[Math.floor(Math.random() * customers.length)];
+      
+      // Select random fair
+      if (fairs.length > 0) {
+        const randomFair = fairs[Math.floor(Math.random() * fairs.length)];
+        
+        // Generate random project name
+        const projectNames = [
+          'Premium Stand Tasarımı',
+          'Modüler Fuar Standı',
+          'Özel Tasarım Projesi',
+          'VIP Lounge Standı',
+          'İnteraktif Stand Projesi'
+        ];
+        const randomName = projectNames[Math.floor(Math.random() * projectNames.length)];
+        
+        // Generate random amount between 25000-150000
+        const randomAmount = Math.floor(Math.random() * (150000 - 25000) + 25000);
+        
+        // Random currency
+        const currencies = ['TRY', 'USD', 'EUR'];
+        const randomCurrency = currencies[Math.floor(Math.random() * currencies.length)];
+        
+        setFormData({
+          name: `${randomCustomer.companyName} - ${randomName}`,
+          customerId: randomCustomer.id,
+          customerName: randomCustomer.companyName,
+          fairId: randomFair.id,
+          fairName: randomFair.name,
+          fairStartDate: randomFair.defaultStartDate || randomFair.startDate,
+          fairEndDate: randomFair.defaultEndDate || randomFair.endDate,
+          city: randomFair.defaultCity || randomFair.city,
+          country: randomFair.defaultCountry || randomFair.country,
+          contractAmount: randomAmount,
+          currency: randomCurrency,
+          paymentTerms: [],
+          notes: 'Test verisi ile otomatik oluşturuldu',
+          status: 'yeni',
+          isNew: true,
+          createdFrom: 'manual'
+        });
+        
+        toast({
+          title: "Test verisi dolduruldu",
+          description: "Form rastgele test verileriyle dolduruldu"
+        });
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
