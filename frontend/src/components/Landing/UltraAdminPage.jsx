@@ -19,6 +19,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import LibraryPage from './Library/LibraryPage';
+import CollectionsPage from './CollectionsPage';
 
 const menuItems = [
   {
