@@ -21,6 +21,67 @@ export default function AddFairModal({ isOpen, onClose, onFairAdded }) {
     description: ''
   });
 
+  // Load countries from Library API on mount
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                          process.env.REACT_APP_BACKEND_URL || 
+                          import.meta.env.REACT_APP_BACKEND_URL;
+
+        const response = await fetch(`${backendUrl}/api/library/countries`);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          // Extract country names and sort them
+          const countryNames = data
+            .map(doc => doc.name)
+            .filter(name => name) // Remove empty names
+            .sort();
+          setCountries(countryNames);
+          
+          // Store all countries data for city filtering
+          setAllCountries(data);
+        }
+      } catch (error) {
+        console.error('Error loading countries:', error);
+        toast({
+          title: "Uyarı",
+          description: "Ülkeler yüklenemedi. Lütfen sayfayı yenileyin.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    if (isOpen) {
+      loadCountries();
+    }
+  }, [isOpen, toast]);
+
+  // Filter cities when country changes
+  useEffect(() => {
+    if (formData.defaultCountry && allCountries.length > 0) {
+      // Find the selected country
+      const selectedCountry = allCountries.find(c => c.name === formData.defaultCountry);
+      
+      if (selectedCountry && selectedCountry.cities) {
+        // Set cities from the selected country
+        const cityList = selectedCountry.cities.filter(city => city).sort();
+        setCities(cityList);
+      } else {
+        // No cities for this country
+        setCities([]);
+      }
+      
+      // Reset city selection when country changes
+      if (formData.defaultCity) {
+        setFormData(prev => ({ ...prev, defaultCity: '' }));
+      }
+    } else {
+      setCities([]);
+    }
+  }, [formData.defaultCountry, allCountries]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
