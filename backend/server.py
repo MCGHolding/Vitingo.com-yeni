@@ -218,6 +218,51 @@ class FairCreate(BaseModel):
     fairMonth: str = ""
     description: str = ""
 
+# Project Models
+class PaymentTerm(BaseModel):
+    percentage: float
+    dueDate: str
+    description: str = ""
+
+class Project(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    customerId: str
+    customerName: str = ""
+    fairId: str
+    fairName: str = ""
+    fairStartDate: str = ""
+    fairEndDate: str = ""
+    city: str = ""
+    country: str = ""
+    contractAmount: float = 0
+    currency: str = "TRY"
+    paymentTerms: list = []
+    notes: str = ""
+    status: str = "yeni"
+    isNew: bool = True
+    createdFrom: str = "manual"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class ProjectCreate(BaseModel):
+    name: str
+    customerId: str
+    customerName: str = ""
+    fairId: str
+    fairName: str = ""
+    fairStartDate: str = ""
+    fairEndDate: str = ""
+    city: str = ""
+    country: str = ""
+    contractAmount: float = 0
+    currency: str = "TRY"
+    paymentTerms: list = []
+    notes: str = ""
+    status: str = "yeni"
+    isNew: bool = True
+    createdFrom: str = "manual"
+
 # Import Models
 class City(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
