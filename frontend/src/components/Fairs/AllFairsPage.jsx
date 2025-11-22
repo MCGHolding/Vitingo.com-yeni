@@ -393,10 +393,10 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                       TARİH & LOKASYON
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      ŞEHİR
+                      ŞEHİR & ÜLKE
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                      ÜLKE
+                      FUAR SENESİ
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
                       MÜŞTERİ
