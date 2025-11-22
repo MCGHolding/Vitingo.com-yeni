@@ -220,8 +220,8 @@ export default function NewFairFormPage({ onClose }) {
       const selectedCountry = allCities.find(c => c.name === formData.country);
       
       if (selectedCountry && selectedCountry.cities) {
-        // Set cities from the selected country
-        const cityList = selectedCountry.cities.filter(city => city).sort();
+        // Set cities from the selected country - remove duplicates with Set
+        const cityList = [...new Set(selectedCountry.cities.filter(city => city))].sort();
         setCities(cityList);
       } else {
         // No cities for this country
