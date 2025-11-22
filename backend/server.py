@@ -265,6 +265,8 @@ class ProjectCreate(BaseModel):
     status: str = "yeni"
     isNew: bool = True
     createdFrom: str = "manual"
+    createdBy: str = ""  # User ID who created the project
+    createdByName: str = ""  # User name who created the project
 
 # Payment Profile Models
 class PaymentProfile(BaseModel):
