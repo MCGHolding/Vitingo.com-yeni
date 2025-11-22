@@ -209,6 +209,8 @@ class FairCreate(BaseModel):
     name: str
     city: str
     country: str
+    fairCenter: str = ""
+    year: str
     startDate: str
     endDate: str
     sector: str
