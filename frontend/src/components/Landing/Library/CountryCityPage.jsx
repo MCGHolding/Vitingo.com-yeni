@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, ChevronDown, ChevronRight, X, Save, MapPin, Flag } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, MapPin, Flag, Search } from 'lucide-react';
 
 const CountryCityPage = () => {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [expandedCountries, setExpandedCountries] = useState(new Set());
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
+  const [cities, setCities] = useState([]);
   
   // Modals
   const [showAddCountryModal, setShowAddCountryModal] = useState(false);
   const [showAddCityModal, setShowAddCityModal] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [showEditCountryModal, setShowEditCountryModal] = useState(false);
+  const [editingCountry, setEditingCountry] = useState(null);
   
   // Form data
   const [newCountry, setNewCountry] = useState({ name: '', flag: '' });
