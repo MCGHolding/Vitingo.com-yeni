@@ -125,6 +125,7 @@ export default function NewFairFormPage({ onClose }) {
     name: '',
     city: '',
     country: '',
+    fairCenter: '',
     startDate: '',
     endDate: '',
     sector: '',
@@ -136,6 +137,8 @@ export default function NewFairFormPage({ onClose }) {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [allCities, setAllCities] = useState([]);
+  const [fairCenters, setFairCenters] = useState([]);
+  const [allFairCenters, setAllFairCenters] = useState([]);
 
   // Default sectors list
   const [sectors, setSectors] = useState([
