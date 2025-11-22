@@ -116,7 +116,9 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
       }
     } catch (error) {
       console.error('Error deleting fair:', error);
-      alert('Bir hata oluştu!');
+      setShowDeleteConfirm(false);
+      setErrorMessage('Bir hata oluştu!');
+      setShowErrorModal(true);
     }
   };
 
