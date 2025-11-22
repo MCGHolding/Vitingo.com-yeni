@@ -279,10 +279,19 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               <h1 className="text-2xl font-bold text-gray-900">Tüm Fuarlar</h1>
             </div>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Download className="h-4 w-4" />
-            <span>Excel'e Aktar</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              <span>İçe Aktar</span>
+            </button>
+            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Download className="h-4 w-4" />
+              <span>Excel'e Aktar</span>
+            </button>
+          </div>
         </div>
 
         <p className="text-gray-600">Tüm fuar etkinliklerini görüntüleyin ve yönetin • {totalFairs} fuar</p>
