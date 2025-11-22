@@ -598,33 +598,53 @@ export default function NewProjectForm({ onClose, onSave }) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sözleşme Tutarı <span className="text-red-500">*</span>
-              </label>
-              <div className="flex space-x-2">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Sözleşme Tarihi */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sözleşme Tarihi <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.contractAmount}
-                  onChange={(e) => setFormData({ ...formData, contractAmount: parseFloat(e.target.value) || 0 })}
-                  placeholder="0.00"
+                  type="date"
+                  value={formData.contractDate}
+                  onChange={(e) => setFormData({ ...formData, contractDate: e.target.value })}
                   required
-                  className="flex-1"
                 />
-                <Select 
-                  value={formData.currency} 
-                  onValueChange={(v) => setFormData({ ...formData, currency: v })}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CURRENCIES.map(c => (
-                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <p className="text-xs text-gray-500 mt-1">Peşin ve özel vade hesaplamalarında kullanılır</p>
+              </div>
+
+              {/* Sözleşme Tutarı */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sözleşme Tutarı <span className="text-red-500">*</span>
+                </label>
+                <div className="flex space-x-2">
+                  <Input
+                    type="text"
+                    value={formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.replace(/[^\d,]/g, '').replace(',', '.');
+                      const numValue = parseFloat(rawValue) || 0;
+                      setFormData({ ...formData, contractAmount: numValue });
+                    }}
+                    placeholder="0,00"
+                    required
+                    className="flex-1"
+                  />
+                  <Select 
+                    value={formData.currency} 
+                    onValueChange={(v) => setFormData({ ...formData, currency: v })}
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map(c => (
+                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </CardContent>
