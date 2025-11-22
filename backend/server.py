@@ -213,8 +213,8 @@ class FairCreate(BaseModel):
     year: str
     startDate: str
     endDate: str
-    sector: str
-    cycle: str
+    sector: str = ""
+    cycle: str = ""
     fairMonth: str = ""
     description: str = ""
 
