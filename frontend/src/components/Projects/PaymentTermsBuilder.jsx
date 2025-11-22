@@ -188,9 +188,11 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                 <span className={`font-semibold ${totalPercentage === 100 ? 'text-green-600' : 'text-red-600'}`}>
                   %{totalPercentage.toFixed(0)}
                 </span>
-                <span className="font-semibold text-gray-900">
-                  {totalAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
+                {!hideAmounts && (
+                  <span className="font-semibold text-gray-900">
+                    {totalAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                )}
               </div>
             </div>
             {totalPercentage !== 100 && (
