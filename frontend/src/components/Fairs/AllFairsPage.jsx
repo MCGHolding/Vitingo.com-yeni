@@ -208,6 +208,36 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   };
 
   // Import functions
+  const handleManualInput = (text) => {
+    try {
+      const lines = text.split('\n').filter(line => line.trim());
+      const data = [];
+
+      for (let line of lines) {
+        const parts = line.split('|').map(p => p.trim());
+        if (parts.length >= 4) { // At least name, year, country, city
+          data.push({
+            name: parts[0] || '',
+            year: parts[1] || '',
+            country: parts[2] || '',
+            city: parts[3] || '',
+            fairCenter: parts[4] || '',
+            startDate: parts[5] || '',
+            endDate: parts[6] || '',
+            cycle: parts[7] || 'yearly',
+            fairMonth: parts[8] || ''
+          });
+        }
+      }
+
+      setImportPreview(data);
+    } catch (error) {
+      console.error('Parse error:', error);
+      setErrorMessage('Veri formatı hatalı!');
+      setShowErrorModal(true);
+    }
+  };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
