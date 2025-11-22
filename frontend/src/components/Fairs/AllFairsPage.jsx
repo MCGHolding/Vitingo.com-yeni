@@ -402,9 +402,9 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           {fair.defaultCountry || fair.country || '-'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                          <Users className="h-4 w-4 mr-1" />
+                      <td className="px-6 py-5 text-center">
+                        <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300 shadow-sm">
+                          <Users className="h-4 w-4 mr-2" />
                           {fair.customerCount || 0}
                         </div>
                       </td>
