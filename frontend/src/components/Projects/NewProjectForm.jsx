@@ -177,6 +177,8 @@ export default function NewProjectForm({ onClose, onSave }) {
   };
 
   const savePaymentProfile = async () => {
+    console.log('savePaymentProfile called', profileFormData);
+    
     if (!profileFormData.name || profileFormData.paymentTerms.length === 0) {
       toast({
         title: "Eksik Bilgi",
@@ -191,13 +193,20 @@ export default function NewProjectForm({ onClose, onSave }) {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
+      console.log('Sending to:', `${backendUrl}/api/payment-profiles`);
+      console.log('Data:', profileFormData);
+
       const response = await fetch(`${backendUrl}/api/payment-profiles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileFormData)
       });
 
+      console.log('Response status:', response.status);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('Success result:', result);
         toast({
           title: "Başarılı",
           description: "Ödeme profili kaydedildi"
@@ -205,12 +214,20 @@ export default function NewProjectForm({ onClose, onSave }) {
         setShowProfileModal(false);
         setProfileFormData({ name: '', paymentTerms: [] });
         loadPaymentProfiles();
+      } else {
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        toast({
+          title: "Hata",
+          description: errorData.detail || "Profil kaydedilemedi",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error saving profile:', error);
       toast({
         title: "Hata",
-        description: "Profil kaydedilemedi",
+        description: "Profil kaydedilemedi: " + error.message,
         variant: "destructive"
       });
     }
