@@ -536,7 +536,7 @@ export default function NewFairFormPage({ onClose }) {
               </div>
 
               {/* City and Fair Center - Same Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Şehir <span className="text-red-500">*</span>
