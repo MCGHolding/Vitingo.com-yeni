@@ -253,7 +253,10 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                       <td className="px-6 py-4">
                         <div>
                           <div className="font-medium text-gray-900">{fair.name}</div>
-                          <div className="text-sm text-gray-500">Vitingo Events</div>
+                          <div className="text-sm text-gray-500 flex items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {fair.defaultCity || fair.city || 'Şehir belirtilmemiş'}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
