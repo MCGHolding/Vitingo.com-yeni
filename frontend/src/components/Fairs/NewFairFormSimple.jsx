@@ -186,6 +186,7 @@ export default function NewFairFormSimple({ onClose }) {
           fuarSenesi: new Date().getFullYear().toString(),
           ulke: '',
           sehir: '',
+          fuarMerkezi: '',
           baslamaTarihi: '',
           bitisTarihi: '',
           dongu: '',
