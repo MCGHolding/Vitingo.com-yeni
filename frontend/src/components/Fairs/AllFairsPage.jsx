@@ -106,12 +106,57 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     }
   };
 
+  // Edit fair
+  const handleEdit = (fair) => {
+    setEditFormData({
+      id: fair.id,
+      name: fair.name,
+      year: fair.year || '',
+      country: fair.defaultCountry || fair.country || '',
+      city: fair.defaultCity || fair.city || '',
+      fairCenter: fair.fairCenter || '',
+      startDate: fair.defaultStartDate || fair.startDate || '',
+      endDate: fair.defaultEndDate || fair.endDate || '',
+      cycle: fair.cycle || '',
+      fairMonth: fair.fairMonth || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const submitEdit = async () => {
+    if (!editFormData.name || !editFormData.year) {
+      alert('Fuar adı ve yılı zorunludur!');
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/fairs/${editFormData.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editFormData)
+      });
+
+      if (response.ok) {
+        alert('Fuar başarıyla güncellendi!');
+        setShowEditModal(false);
+        loadFairs(); // Refresh list
+      } else {
+        alert('Fuar güncellenemedi!');
+      }
+    } catch (error) {
+      console.error('Error updating fair:', error);
+      alert('Bir hata oluştu!');
+    }
+  };
+
   // Update dates
   const handleUpdateDates = (fair) => {
     setSelectedFair(fair);
     setUpdateDates({
       startDate: fair.defaultStartDate || fair.startDate || '',
-      endDate: fair.defaultEndDate || fair.endDate || ''
+      endDate: fair.defaultEndDate || fair.endDate || '',
+      year: fair.year || new Date().getFullYear()
     });
     setShowUpdateDateModal(true);
   };
