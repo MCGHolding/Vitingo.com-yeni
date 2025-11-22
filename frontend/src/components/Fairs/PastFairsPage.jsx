@@ -16,10 +16,6 @@ export default function PastFairsPage({ fairs, onBackToDashboard }) {
     return fairEndDate < today;
   }) || [];
   
-  console.log('PastFairsPage - Total fairs:', fairs?.length);
-  console.log('PastFairsPage - Past fairs:', pastFairs.length);
-  console.log('PastFairsPage - Today:', today.toISOString());
-  
   return (
     <div className="min-h-screen bg-gray-50">
       <AllFairsPage 
