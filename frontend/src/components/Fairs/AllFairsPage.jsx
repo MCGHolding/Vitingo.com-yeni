@@ -301,9 +301,33 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                          Aktif
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {fair.cycle === 'yearly' ? 'Her Yıl' : 
+                           fair.cycle === '6_months' ? '6 Ayda Bir' :
+                           fair.cycle === '2_years' ? '2 Yılda Bir' :
+                           fair.cycle === '3_years' ? '3 Yılda Bir' :
+                           fair.cycle || 'Belirtilmemiş'}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="text-sm font-medium text-gray-900">
+                          {(() => {
+                            const startDate = new Date(fair.defaultStartDate || fair.startDate);
+                            const today = new Date();
+                            const diffTime = startDate - today;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays < 0) {
+                              return <span className="text-red-600">Geçti</span>;
+                            } else if (diffDays === 0) {
+                              return <span className="text-green-600">Bugün</span>;
+                            } else if (diffDays === 1) {
+                              return <span className="text-orange-600">1 gün</span>;
+                            } else {
+                              return <span className="text-gray-900">{diffDays} gün</span>;
+                            }
+                          })()}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center space-x-2">
