@@ -722,7 +722,7 @@ export default function NewFairFormPage({ onClose }) {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <Calendar className="h-4 w-4 mr-2" />
-                  Yıl <span className="text-red-500">*</span>
+                  TESTING123 <span className="text-red-500">*</span>
                 </label>
                 <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
                   <SelectTrigger className="h-12">
