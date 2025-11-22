@@ -195,10 +195,17 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => {
-                console.log('Edit clicked for project:', project.id);
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('✏️ Edit clicked for project:', project.id);
+                alert('Düzenle butonuna tıklandı: ' + project.name);
                 if (onEditProject) {
+                  console.log('✏️ Calling onEditProject with:', project.id);
                   onEditProject(project.id);
+                } else {
+                  console.error('❌ onEditProject callback not defined!');
+                  alert('onEditProject callback tanımlı değil!');
                 }
               }}
               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
