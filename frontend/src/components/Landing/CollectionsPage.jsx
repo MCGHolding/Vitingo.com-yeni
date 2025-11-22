@@ -140,16 +140,24 @@ const CollectionsPage = () => {
 
   const handleSaveDocument = async () => {
     try {
-      const parsedDoc = JSON.parse(editedDoc);
+      let dataToSave;
       
-      if (modalMode === 'create') {
+      if (modalMode === 'form') {
+        // Use form data for users collection
+        dataToSave = formData;
+      } else {
+        // Parse JSON for other collections
+        dataToSave = JSON.parse(editedDoc);
+      }
+      
+      if (modalMode === 'create' || modalMode === 'form') {
         // Create new document
         const response = await fetch(
           `${BACKEND_URL}/api/admin/collections/${selectedCollection.name}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(parsedDoc)
+            body: JSON.stringify(dataToSave)
           }
         );
         
@@ -157,6 +165,9 @@ const CollectionsPage = () => {
           alert('Doküman başarıyla oluşturuldu');
           loadDocuments();
           setShowModal(false);
+        } else {
+          const error = await response.json();
+          alert('Hata: ' + (error.detail || 'Bilinmeyen hata'));
         }
       } else if (modalMode === 'edit') {
         // Update existing document
@@ -166,7 +177,7 @@ const CollectionsPage = () => {
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(parsedDoc)
+            body: JSON.stringify(dataToSave)
           }
         );
         
@@ -174,6 +185,9 @@ const CollectionsPage = () => {
           alert('Doküman başarıyla güncellendi');
           loadDocuments();
           setShowModal(false);
+        } else {
+          const error = await response.json();
+          alert('Hata: ' + (error.detail || 'Bilinmeyen hata'));
         }
       }
     } catch (error) {
