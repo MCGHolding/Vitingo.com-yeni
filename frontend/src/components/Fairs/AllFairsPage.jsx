@@ -584,7 +584,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                                 <button
                                   onClick={() => {
                                     setOpenMenuId(null);
-                                    handleDelete(fair);
+                                    handleDeleteClick(fair);
                                   }}
                                   className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center space-x-2"
                                 >
