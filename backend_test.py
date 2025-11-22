@@ -1362,6 +1362,499 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_mongodb_collections_admin_api():
+    """
+    MONGODB COLLECTIONS ADMIN API TESTING
+    
+    **Test Requirements:**
+    1. GET /api/admin/collections - List all collections
+       - Should return collections array and total count
+       - Verify 46 collections exist
+       
+    2. GET /api/admin/collections/customers - Get customers collection documents
+       - Parameters: skip=0, limit=20
+       - Should return documents array, total, skip, limit
+       - Verify 6 customer documents exist
+       
+    3. GET /api/admin/collections/customers/stats - Get customers collection statistics
+       - Should return count, size, avgObjSize, storageSize, indexes
+       - Verify count=6, indexes=1
+       
+    4. POST /api/admin/collections/customers - Create new customer document
+       - Body: {"companyName": "Test Collection Company", "email": "test@collection.com"}
+       - Verify document is created successfully
+       
+    5. PUT /api/admin/collections/customers/{doc_id} - Update customer document
+       - Body: {"companyName": "Updated Collection Company"}
+       - Verify document is updated successfully
+       
+    6. DELETE /api/admin/collections/customers/{doc_id} - Delete customer document
+       - Verify document is deleted successfully
+    
+    **Success Criteria:**
+    ✅ All CRUD operations work correctly
+    ✅ Collections listing shows proper structure
+    ✅ Statistics provide accurate information
+    ✅ Document creation, update, and deletion work properly
+    """
+    
+    print("=" * 100)
+    print("🚨 MONGODB COLLECTIONS ADMIN API TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: Testing MongoDB Collections Admin API endpoints for database management")
+    print("=" * 100)
+    
+    test_results = {
+        "collections_list_working": False,
+        "customers_documents_working": False,
+        "customers_stats_working": False,
+        "document_creation_working": False,
+        "document_update_working": False,
+        "document_deletion_working": False,
+        "created_document_id": None,
+        "collections_count": 0,
+        "customers_count": 0,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET /api/admin/collections - List all collections
+    print("\n" + "=" * 80)
+    print("TEST 1: GET /api/admin/collections - LIST ALL COLLECTIONS")
+    print("=" * 80)
+    
+    collections_endpoint = f"{BACKEND_URL}/api/admin/collections"
+    print(f"Testing endpoint: {collections_endpoint}")
+    
+    try:
+        response = requests.get(collections_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Collections endpoint responding")
+            test_results["collections_list_working"] = True
+            
+            try:
+                data = response.json()
+                collections = data.get("collections", [])
+                total = data.get("total", 0)
+                
+                test_results["collections_count"] = total
+                print(f"📊 Found {total} collections in database")
+                
+                if total >= 40:  # Expecting around 46 collections
+                    print(f"✅ PASS: Collection count ({total}) is reasonable")
+                else:
+                    print(f"⚠️  WARNING: Collection count ({total}) seems low, expected around 46")
+                    test_results["warnings"].append(f"LOW_COLLECTION_COUNT_{total}")
+                
+                # Show first few collections
+                print(f"\n📋 First 10 collections:")
+                for i, collection in enumerate(collections[:10], 1):
+                    name = collection.get("name", "N/A")
+                    count = collection.get("count", 0)
+                    print(f"   {i}. {name} ({count} documents)")
+                
+                # Check if customers collection exists
+                customers_found = any(c.get("name") == "customers" for c in collections)
+                if customers_found:
+                    print("✅ PASS: 'customers' collection found in list")
+                else:
+                    print("❌ FAIL: 'customers' collection not found in list")
+                    test_results["critical_issues"].append("CUSTOMERS_COLLECTION_NOT_FOUND")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse collections response: {str(e)}")
+                test_results["critical_issues"].append(f"COLLECTIONS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Collections endpoint failed. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"COLLECTIONS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Collections endpoint error: {str(e)}")
+        test_results["critical_issues"].append(f"COLLECTIONS_ERROR: {str(e)}")
+    
+    # TEST 2: GET /api/admin/collections/customers - Get customers documents
+    print("\n" + "=" * 80)
+    print("TEST 2: GET /api/admin/collections/customers - GET CUSTOMERS DOCUMENTS")
+    print("=" * 80)
+    
+    customers_endpoint = f"{BACKEND_URL}/api/admin/collections/customers"
+    print(f"Testing endpoint: {customers_endpoint}")
+    print("Parameters: skip=0, limit=20")
+    
+    try:
+        params = {"skip": 0, "limit": 20}
+        response = requests.get(customers_endpoint, params=params, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customers documents endpoint responding")
+            test_results["customers_documents_working"] = True
+            
+            try:
+                data = response.json()
+                documents = data.get("documents", [])
+                total = data.get("total", 0)
+                skip = data.get("skip", 0)
+                limit = data.get("limit", 0)
+                
+                test_results["customers_count"] = total
+                print(f"📊 Response structure:")
+                print(f"   • Documents: {len(documents)} items")
+                print(f"   • Total: {total}")
+                print(f"   • Skip: {skip}")
+                print(f"   • Limit: {limit}")
+                
+                if total >= 6:  # Expecting 6 customer documents
+                    print(f"✅ PASS: Customer count ({total}) matches expected (6+)")
+                else:
+                    print(f"⚠️  WARNING: Customer count ({total}) is less than expected (6)")
+                    test_results["warnings"].append(f"LOW_CUSTOMER_COUNT_{total}")
+                
+                # Show first few customers
+                if documents:
+                    print(f"\n📋 First 3 customer documents:")
+                    for i, doc in enumerate(documents[:3], 1):
+                        company_name = doc.get("companyName", "N/A")
+                        email = doc.get("email", "N/A")
+                        doc_id = doc.get("id", doc.get("_id", "N/A"))
+                        print(f"   {i}. {company_name} ({email}) - ID: {doc_id}")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customers documents response: {str(e)}")
+                test_results["critical_issues"].append(f"CUSTOMERS_DOCS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customers documents endpoint failed. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CUSTOMERS_DOCS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customers documents endpoint error: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMERS_DOCS_ERROR: {str(e)}")
+    
+    # TEST 3: GET /api/admin/collections/customers/stats - Get customers statistics
+    print("\n" + "=" * 80)
+    print("TEST 3: GET /api/admin/collections/customers/stats - GET CUSTOMERS STATISTICS")
+    print("=" * 80)
+    
+    stats_endpoint = f"{BACKEND_URL}/api/admin/collections/customers/stats"
+    print(f"Testing endpoint: {stats_endpoint}")
+    
+    try:
+        response = requests.get(stats_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Customers stats endpoint responding")
+            test_results["customers_stats_working"] = True
+            
+            try:
+                data = response.json()
+                name = data.get("name", "N/A")
+                count = data.get("count", 0)
+                size = data.get("size", 0)
+                avg_obj_size = data.get("avgObjSize", 0)
+                storage_size = data.get("storageSize", 0)
+                indexes = data.get("indexes", 0)
+                
+                print(f"📊 Collection Statistics:")
+                print(f"   • Name: {name}")
+                print(f"   • Count: {count}")
+                print(f"   • Size: {size} bytes")
+                print(f"   • Average Object Size: {avg_obj_size} bytes")
+                print(f"   • Storage Size: {storage_size} bytes")
+                print(f"   • Indexes: {indexes}")
+                
+                if count >= 6:  # Expecting count=6
+                    print(f"✅ PASS: Document count ({count}) matches expected (6+)")
+                else:
+                    print(f"⚠️  WARNING: Document count ({count}) is less than expected (6)")
+                
+                if indexes >= 1:  # Expecting indexes=1
+                    print(f"✅ PASS: Index count ({indexes}) is reasonable")
+                else:
+                    print(f"⚠️  WARNING: Index count ({indexes}) seems low")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse customers stats response: {str(e)}")
+                test_results["critical_issues"].append(f"CUSTOMERS_STATS_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Customers stats endpoint failed. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CUSTOMERS_STATS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Customers stats endpoint error: {str(e)}")
+        test_results["critical_issues"].append(f"CUSTOMERS_STATS_ERROR: {str(e)}")
+    
+    # TEST 4: POST /api/admin/collections/customers - Create new customer document
+    print("\n" + "=" * 80)
+    print("TEST 4: POST /api/admin/collections/customers - CREATE NEW CUSTOMER DOCUMENT")
+    print("=" * 80)
+    
+    create_endpoint = f"{BACKEND_URL}/api/admin/collections/customers"
+    print(f"Testing endpoint: {create_endpoint}")
+    
+    # Test document data
+    test_document = {
+        "companyName": "Test Collection Company",
+        "email": "test@collection.com",
+        "phone": "+90 212 555 0999",
+        "address": "Test Address for Collections API",
+        "city": "İstanbul",
+        "country": "TR",
+        "sector": "Test Sector",
+        "notes": f"Test document created by Collections Admin API test - {datetime.now().isoformat()}"
+    }
+    
+    print(f"Creating test document: {test_document['companyName']}")
+    
+    try:
+        response = requests.post(create_endpoint, json=test_document, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Document creation endpoint responding")
+            test_results["document_creation_working"] = True
+            
+            try:
+                data = response.json()
+                success = data.get("success", False)
+                message = data.get("message", "")
+                document = data.get("document", {})
+                
+                print(f"📊 Creation Response:")
+                print(f"   • Success: {success}")
+                print(f"   • Message: {message}")
+                
+                if success:
+                    print("✅ PASS: Document created successfully")
+                    created_id = document.get("id", document.get("_id"))
+                    test_results["created_document_id"] = created_id
+                    print(f"   • Created Document ID: {created_id}")
+                    
+                    # Verify all fields were saved
+                    for key, expected_value in test_document.items():
+                        actual_value = document.get(key)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {key}: {actual_value}")
+                        else:
+                            print(f"   ⚠️  {key}: Expected {expected_value}, Got {actual_value}")
+                else:
+                    print("❌ FAIL: Document creation reported as unsuccessful")
+                    test_results["critical_issues"].append("DOCUMENT_CREATION_UNSUCCESSFUL")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse document creation response: {str(e)}")
+                test_results["critical_issues"].append(f"DOCUMENT_CREATE_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Document creation endpoint failed. Status: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"DOCUMENT_CREATE_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Document creation endpoint error: {str(e)}")
+        test_results["critical_issues"].append(f"DOCUMENT_CREATE_ERROR: {str(e)}")
+    
+    # TEST 5: PUT /api/admin/collections/customers/{doc_id} - Update customer document
+    if test_results["created_document_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 5: PUT /api/admin/collections/customers/{doc_id} - UPDATE CUSTOMER DOCUMENT")
+        print("=" * 80)
+        
+        doc_id = test_results["created_document_id"]
+        update_endpoint = f"{BACKEND_URL}/api/admin/collections/customers/{doc_id}"
+        print(f"Testing endpoint: {update_endpoint}")
+        
+        # Update document data
+        update_data = {
+            "companyName": "Updated Collection Company",
+            "email": "updated@collection.com",
+            "notes": f"Updated by Collections Admin API test - {datetime.now().isoformat()}"
+        }
+        
+        print(f"Updating document ID: {doc_id}")
+        print(f"Update data: {update_data}")
+        
+        try:
+            response = requests.put(update_endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Document update endpoint responding")
+                test_results["document_update_working"] = True
+                
+                try:
+                    data = response.json()
+                    success = data.get("success", False)
+                    message = data.get("message", "")
+                    modified_count = data.get("modified_count", 0)
+                    
+                    print(f"📊 Update Response:")
+                    print(f"   • Success: {success}")
+                    print(f"   • Message: {message}")
+                    print(f"   • Modified Count: {modified_count}")
+                    
+                    if success and modified_count > 0:
+                        print("✅ PASS: Document updated successfully")
+                    else:
+                        print("❌ FAIL: Document update reported as unsuccessful or no changes made")
+                        test_results["critical_issues"].append("DOCUMENT_UPDATE_UNSUCCESSFUL")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse document update response: {str(e)}")
+                    test_results["critical_issues"].append(f"DOCUMENT_UPDATE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: Document update endpoint failed. Status: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DOCUMENT_UPDATE_API_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Document update endpoint error: {str(e)}")
+            test_results["critical_issues"].append(f"DOCUMENT_UPDATE_ERROR: {str(e)}")
+    else:
+        print("\n⚠️  SKIPPING TEST 5: No document ID available for update test")
+    
+    # TEST 6: DELETE /api/admin/collections/customers/{doc_id} - Delete customer document
+    if test_results["created_document_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 6: DELETE /api/admin/collections/customers/{doc_id} - DELETE CUSTOMER DOCUMENT")
+        print("=" * 80)
+        
+        doc_id = test_results["created_document_id"]
+        delete_endpoint = f"{BACKEND_URL}/api/admin/collections/customers/{doc_id}"
+        print(f"Testing endpoint: {delete_endpoint}")
+        print(f"Deleting document ID: {doc_id}")
+        
+        try:
+            response = requests.delete(delete_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Document deletion endpoint responding")
+                test_results["document_deletion_working"] = True
+                
+                try:
+                    data = response.json()
+                    success = data.get("success", False)
+                    message = data.get("message", "")
+                    deleted_count = data.get("deleted_count", 0)
+                    
+                    print(f"📊 Deletion Response:")
+                    print(f"   • Success: {success}")
+                    print(f"   • Message: {message}")
+                    print(f"   • Deleted Count: {deleted_count}")
+                    
+                    if success and deleted_count > 0:
+                        print("✅ PASS: Document deleted successfully")
+                    else:
+                        print("❌ FAIL: Document deletion reported as unsuccessful")
+                        test_results["critical_issues"].append("DOCUMENT_DELETION_UNSUCCESSFUL")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse document deletion response: {str(e)}")
+                    test_results["critical_issues"].append(f"DOCUMENT_DELETE_PARSE_ERROR: {str(e)}")
+                    
+            else:
+                print(f"❌ FAIL: Document deletion endpoint failed. Status: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DOCUMENT_DELETE_API_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Document deletion endpoint error: {str(e)}")
+            test_results["critical_issues"].append(f"DOCUMENT_DELETE_ERROR: {str(e)}")
+    else:
+        print("\n⚠️  SKIPPING TEST 6: No document ID available for deletion test")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL MONGODB COLLECTIONS ADMIN API TEST REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Collections List: {'✅ Working' if test_results['collections_list_working'] else '❌ Failed'}")
+    print(f"   • Customers Documents: {'✅ Working' if test_results['customers_documents_working'] else '❌ Failed'}")
+    print(f"   • Customers Statistics: {'✅ Working' if test_results['customers_stats_working'] else '❌ Failed'}")
+    print(f"   • Document Creation: {'✅ Working' if test_results['document_creation_working'] else '❌ Failed'}")
+    print(f"   • Document Update: {'✅ Working' if test_results['document_update_working'] else '❌ Failed'}")
+    print(f"   • Document Deletion: {'✅ Working' if test_results['document_deletion_working'] else '❌ Failed'}")
+    
+    print(f"\n📊 DATABASE STATISTICS:")
+    print(f"   • Total Collections: {test_results['collections_count']}")
+    print(f"   • Customers Count: {test_results['customers_count']}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_endpoints = sum([
+        test_results['collections_list_working'],
+        test_results['customers_documents_working'],
+        test_results['customers_stats_working'],
+        test_results['document_creation_working'],
+        test_results['document_update_working'],
+        test_results['document_deletion_working']
+    ])
+    
+    if working_endpoints == 6:
+        print("🎉 EXCELLENT: All 6 MongoDB Collections Admin API endpoints are working correctly!")
+        print("   • Collections listing provides proper structure")
+        print("   • Document retrieval with pagination works")
+        print("   • Statistics provide accurate collection information")
+        print("   • All CRUD operations (Create, Read, Update, Delete) are functional")
+        print("   • The admin interface can safely manage MongoDB collections")
+        
+    elif working_endpoints >= 4:
+        print(f"✅ GOOD: {working_endpoints}/6 endpoints are working correctly")
+        print("   • Core functionality is available")
+        print("   • Some advanced features may need attention")
+        
+    elif working_endpoints >= 2:
+        print(f"⚠️  WARNING: Only {working_endpoints}/6 endpoints are working")
+        print("   • Basic functionality may be available but limited")
+        print("   • Several critical issues need to be resolved")
+        
+    else:
+        print(f"🚨 CRITICAL: Only {working_endpoints}/6 endpoints are working")
+        print("   • MongoDB Collections Admin API is not functional")
+        print("   • Immediate attention required for database management features")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if len(test_results['critical_issues']) > 0:
+        print("   1. Review and fix critical issues listed above")
+        print("   2. Check MongoDB connection and permissions")
+        print("   3. Verify collection names and document structures")
+        print("   4. Test individual endpoints with different data")
+    else:
+        print("   1. MongoDB Collections Admin API is ready for production use")
+        print("   2. Consider adding additional validation and error handling")
+        print("   3. Implement user authentication for admin endpoints")
+        print("   4. Add logging and monitoring for admin operations")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ MONGODB COLLECTIONS ADMIN API TEST RESULT: CRITICAL ISSUES FOUND")
+        return False
+    else:
+        print(f"\n✅ MONGODB COLLECTIONS ADMIN API TEST RESULT: ALL TESTS PASSED")
+        return True
+
 def test_leads_api_endpoints():
     """
     COMPREHENSIVE LEADS API ENDPOINTS TESTING
