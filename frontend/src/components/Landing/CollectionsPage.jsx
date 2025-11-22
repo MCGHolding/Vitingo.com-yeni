@@ -113,8 +113,28 @@ const CollectionsPage = () => {
 
   const handleCreateDocument = () => {
     setSelectedDoc(null);
-    setEditedDoc(JSON.stringify({}, null, 2));
-    setModalMode('create');
+    
+    // Check if this collection has a special form
+    if (selectedCollection.name === 'users') {
+      // Reset form data
+      setFormData({
+        email: '',
+        name: '',
+        password: '',
+        role: 'user',
+        department: '',
+        phone: '',
+        company_id: '',
+        is_verified: true,
+        is_active: true
+      });
+      setModalMode('form');
+    } else {
+      // Use JSON editor for other collections
+      setEditedDoc(JSON.stringify({}, null, 2));
+      setModalMode('create');
+    }
+    
     setShowModal(true);
   };
 
