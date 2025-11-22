@@ -692,6 +692,7 @@ export default function NewProjectForm({ onClose, onSave }) {
               paymentTerms={formData.paymentTerms} 
               onChange={(t) => setFormData({ ...formData, paymentTerms: t })} 
               contractAmount={formData.contractAmount}
+              contractDate={formData.contractDate}
               fairStartDate={formData.fairStartDate}
               kurulumStartDate={formData.kurulumStartDate}
             />
