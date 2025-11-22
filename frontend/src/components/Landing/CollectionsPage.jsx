@@ -429,7 +429,9 @@ const CollectionsPage = () => {
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-xl font-bold text-gray-800">
-                {modalMode === 'create' ? 'Yeni Doküman Oluştur' : modalMode === 'edit' ? 'Doküman Düzenle' : 'Doküman Görüntüle'}
+                {modalMode === 'form' ? 'Yeni Kullanıcı Oluştur' : 
+                 modalMode === 'create' ? 'Yeni Doküman Oluştur' : 
+                 modalMode === 'edit' ? 'Doküman Düzenle' : 'Doküman Görüntüle'}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -441,13 +443,139 @@ const CollectionsPage = () => {
 
             {/* Modal Content */}
             <div className="flex-1 overflow-y-auto p-4">
-              <textarea
-                value={editedDoc}
-                onChange={(e) => setEditedDoc(e.target.value)}
-                readOnly={modalMode === 'view'}
-                className="w-full h-full min-h-[400px] p-4 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{ fontFamily: 'monospace' }}
-              />
+              {modalMode === 'form' ? (
+                // User Form
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      E-posta <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="ornek@email.com"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ad Soyad <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Kullanıcının tam adı"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Şifre <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="Güçlü bir şifre belirleyin"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">En az 6 karakter</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Şirket ID
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.company_id}
+                      onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
+                      placeholder="Şirket ID (opsiyonel)"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Rol <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="user">Kullanıcı</option>
+                      <option value="admin">Admin</option>
+                      <option value="manager">Manager</option>
+                      <option value="super-admin">Super Admin</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Departman
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      placeholder="IT, Satış, Pazarlama, vb."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Telefon
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="+90 555 123 45 67"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.is_verified}
+                        onChange={(e) => setFormData({ ...formData, is_verified: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-700">Email doğrulanmış</span>
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.is_active}
+                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-700">Aktif kullanıcı</span>
+                    </label>
+                  </div>
+                </div>
+              ) : (
+                // JSON Editor
+                <textarea
+                  value={editedDoc}
+                  onChange={(e) => setEditedDoc(e.target.value)}
+                  readOnly={modalMode === 'view'}
+                  className="w-full h-full min-h-[400px] p-4 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ fontFamily: 'monospace' }}
+                />
+              )}
             </div>
 
             {/* Modal Footer */}
