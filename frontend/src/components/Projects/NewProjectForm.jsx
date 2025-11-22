@@ -537,10 +537,39 @@ export default function NewProjectForm({ onClose, onSave }) {
         {/* Payment Terms */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
-              <span>Ödeme Koşulları</span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <Calendar className="h-5 w-5" />
+                <span>Ödeme Koşulları</span>
+              </CardTitle>
+              <div className="flex items-center space-x-2">
+                {/* Profile Selection */}
+                {paymentProfiles.length > 0 && (
+                  <Select onValueChange={applyPaymentProfile}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Profil Seç" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentProfiles.map(profile => (
+                        <SelectItem key={profile.id} value={profile.id}>
+                          {profile.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                {/* Save Profile Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowProfileModal(true)}
+                  className="flex items-center space-x-2 text-blue-600 border-blue-300 hover:bg-blue-50"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>Profil Kaydet</span>
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <PaymentTermsBuilder 
