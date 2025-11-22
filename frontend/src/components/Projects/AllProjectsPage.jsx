@@ -48,6 +48,39 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
     }
   };
 
+  const handleDelete = async (projectId, projectName) => {
+    if (!window.confirm(`"${projectName}" projesini silmek istediğinizden emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/projects/${projectId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Proje başarıyla silindi"
+        });
+        loadProjects(); // Listeyi yenile
+      } else {
+        throw new Error('Silme işlemi başarısız');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Hata",
+        description: "Proje silinirken bir hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       'yeni': { label: 'Yeni', className: 'bg-purple-100 text-purple-800' },
