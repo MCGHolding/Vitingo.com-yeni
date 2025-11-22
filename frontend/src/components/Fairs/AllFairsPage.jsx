@@ -207,6 +207,98 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     setShowUpdateDateModal(true);
   };
 
+  // Import functions
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImportFile(file);
+
+    // Read file and parse
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length === 0) {
+          setErrorMessage('Dosya boş!');
+          setShowErrorModal(true);
+          return;
+        }
+
+        // Parse CSV (assuming format: name,year,country,city,fairCenter,startDate,endDate,cycle,fairMonth)
+        const headers = lines[0].split(',').map(h => h.trim());
+        const data = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const values = lines[i].split(',').map(v => v.trim());
+          if (values.length >= 5) { // At least name, year, country, city, fairCenter
+            data.push({
+              name: values[0] || '',
+              year: values[1] || '',
+              country: values[2] || '',
+              city: values[3] || '',
+              fairCenter: values[4] || '',
+              startDate: values[5] || '',
+              endDate: values[6] || '',
+              cycle: values[7] || 'yearly',
+              fairMonth: values[8] || ''
+            });
+          }
+        }
+
+        setImportPreview(data);
+      } catch (error) {
+        console.error('Parse error:', error);
+        setErrorMessage('Dosya formatı hatalı! CSV formatında olmalı.');
+        setShowErrorModal(true);
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  const submitImport = async () => {
+    if (importPreview.length === 0) {
+      setErrorMessage('Lütfen önce bir dosya yükleyin!');
+      setShowErrorModal(true);
+      return;
+    }
+
+    setImporting(true);
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      const response = await fetch(`${backendUrl}/api/fairs/bulk-import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fairs: importPreview })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setShowImportModal(false);
+        setImportFile(null);
+        setImportPreview([]);
+        setSuccessMessage(`${result.count || importPreview.length} fuar başarıyla içe aktarıldı!`);
+        setShowSuccessModal(true);
+        loadFairs();
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(`İçe aktarma başarısız: ${errorData.detail || ''}`);
+        setShowErrorModal(true);
+      }
+    } catch (error) {
+      console.error('Import error:', error);
+      setErrorMessage('Bir hata oluştu!');
+      setShowErrorModal(true);
+    } finally {
+      setImporting(false);
+    }
+  };
+
   const submitUpdateDates = async () => {
     if (!updateDates.startDate || !updateDates.endDate || !updateDates.year) {
       setErrorMessage('Lütfen tüm alanları doldurun!');
