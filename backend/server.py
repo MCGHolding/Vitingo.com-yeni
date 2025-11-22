@@ -716,6 +716,61 @@ async def update_fair(fair_id: str, fair_input: FairCreate):
         logger.error(f"Error updating fair: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error updating fair: {str(e)}")
 
+@api_router.post("/fairs/bulk-import")
+async def bulk_import_fairs(data: dict):
+    """Bulk import fairs from CSV"""
+    try:
+        fairs_data = data.get('fairs', [])
+        
+        if not fairs_data:
+            raise HTTPException(status_code=400, detail="No fairs data provided")
+        
+        imported_count = 0
+        errors = []
+        
+        for fair_data in fairs_data:
+            try:
+                # Create fair object
+                fair_dict = {
+                    "id": str(uuid.uuid4()),
+                    "name": fair_data.get('name', ''),
+                    "year": fair_data.get('year', ''),
+                    "country": fair_data.get('country', ''),
+                    "city": fair_data.get('city', ''),
+                    "fairCenter": fair_data.get('fairCenter', ''),
+                    "startDate": fair_data.get('startDate', ''),
+                    "endDate": fair_data.get('endDate', ''),
+                    "sector": fair_data.get('sector', ''),
+                    "cycle": fair_data.get('cycle', 'yearly'),
+                    "fairMonth": fair_data.get('fairMonth', ''),
+                    "description": fair_data.get('description', ''),
+                    "defaultCountry": fair_data.get('country', ''),
+                    "defaultCity": fair_data.get('city', ''),
+                    "defaultStartDate": fair_data.get('startDate', ''),
+                    "defaultEndDate": fair_data.get('endDate', ''),
+                    "customerCount": 0,
+                    "projectCount": 0,
+                    "created_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+                
+                await db.fairs.insert_one(fair_dict)
+                imported_count += 1
+                
+            except Exception as e:
+                errors.append(f"Error importing {fair_data.get('name', 'unknown')}: {str(e)}")
+                logger.error(f"Error importing fair: {str(e)}")
+        
+        return {
+            "success": True,
+            "count": imported_count,
+            "errors": errors if errors else None
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in bulk import: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bulk import failed: {str(e)}")
+
 @api_router.delete("/fairs/{fair_id}")
 async def delete_fair(fair_id: str):
     """Delete a fair"""
