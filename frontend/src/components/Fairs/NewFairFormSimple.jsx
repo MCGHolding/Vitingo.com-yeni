@@ -9,6 +9,8 @@ import { useToast } from '../../hooks/use-toast';
 export default function NewFairFormSimple({ onClose }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showBulkCityModal, setShowBulkCityModal] = useState(false);
+  const [bulkCityText, setBulkCityText] = useState('');
 
   // Form state
   const [formData, setFormData] = useState({
