@@ -159,6 +159,7 @@ export default function NewFairFormSimple({ onClose }) {
         year: formData.fuarSenesi,
         country: formData.ulke,
         city: formData.sehir,
+        fairCenter: formData.fuarMerkezi || '',
         startDate: formData.baslamaTarihi,
         endDate: formData.bitisTarihi,
         cycle: formData.dongu,
