@@ -601,27 +601,7 @@ export default function NewFairFormPage({ onClose }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Yıl <span className="text-red-500">*</span>
-                  </label>
-                  <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Yıl seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => {
-                        const year = new Date().getFullYear() + i;
-                        return (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Başlangıç Tarihi <span className="text-red-500">*</span>
