@@ -395,7 +395,16 @@ export default function NewProjectForm({ onClose, onSave }) {
               </label>
               <Input
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  // Convert to title case: first letter of each word uppercase, rest lowercase
+                  const titleCase = input
+                    .toLowerCase()
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                  setFormData({ ...formData, name: titleCase });
+                }}
                 placeholder="Örn: ABC Şirketi - ISK-SODEX 2025"
                 required
               />
