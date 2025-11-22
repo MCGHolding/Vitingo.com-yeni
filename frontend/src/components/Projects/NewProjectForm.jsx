@@ -682,7 +682,7 @@ export default function NewProjectForm({ onClose, onSave }) {
                   <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <PaymentTermsBuilder 
                       paymentTerms={profileFormData.paymentTerms} 
-                      onChange={(terms) => setProfileFormData({ ...profileFormData, paymentTerms: terms })}
+                      onChange={(terms) => setProfileFormData(prev => ({ ...prev, paymentTerms: terms }))}
                       contractAmount={0}
                       hideAmounts={true}
                     />
