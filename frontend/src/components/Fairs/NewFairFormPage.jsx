@@ -166,22 +166,77 @@ export default function NewFairFormPage({ onClose }) {
     { value: '3_years', label: '3 senede bir' }
   ];
 
-  const countries = [
-    'Türkiye',
-    'Almanya',
-    'Fransa',
-    'İtalya',
-    'İspanya',
-    'İngiltere',
-    'ABD',
-    'Kanada',
-    'Japonya',
-    'Güney Kore',
-    'Çin',
-    'Singapur',
-    'BAE',
-    'Suudi Arabistan'
-  ];
+  // Load countries from MongoDB collection on mount
+  React.useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/admin/collections/countries`);
+        const data = await response.json();
+        
+        if (data.documents && Array.isArray(data.documents)) {
+          const countryNames = data.documents
+            .map(doc => doc.name)
+            .filter(name => name)
+            .sort();
+          setCountries(countryNames);
+        }
+      } catch (error) {
+        console.error('Error loading countries:', error);
+      }
+    };
+
+    loadCountries();
+  }, []);
+
+  // Load cities from MongoDB collection on mount
+  React.useEffect(() => {
+    const loadCities = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/admin/collections/cities`);
+        const data = await response.json();
+        
+        if (data.documents && Array.isArray(data.documents)) {
+          setAllCities(data.documents);
+          const cityNames = data.documents
+            .map(doc => doc.name)
+            .filter(name => name)
+            .sort();
+          setCities(cityNames);
+        }
+      } catch (error) {
+        console.error('Error loading cities:', error);
+      }
+    };
+
+    loadCities();
+  }, []);
+
+  // Filter cities when country changes
+  React.useEffect(() => {
+    if (formData.country && allCities.length > 0) {
+      const filteredCities = allCities
+        .filter(city => city.country === formData.country)
+        .map(city => city.name)
+        .filter(name => name)
+        .sort();
+      
+      if (filteredCities.length > 0) {
+        setCities(filteredCities);
+      } else {
+        const allCityNames = allCities
+          .map(city => city.name)
+          .filter(name => name)
+          .sort();
+        setCities(allCityNames);
+      }
+      
+      if (formData.city) {
+        setFormData(prev => ({ ...prev, city: '' }));
+      }
+    }
+  }, [formData.country, allCities]);
 
   const months = [
     { value: '01', label: 'Ocak' },
