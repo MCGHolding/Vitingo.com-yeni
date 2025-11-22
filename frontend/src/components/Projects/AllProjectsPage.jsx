@@ -16,8 +16,14 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
     // Force component identification
     document.title = 'REAL AllProjectsPage - UPDATED';
     console.log('🔥🔥🔥 REAL AllProjectsPage MOUNTED - UPDATED VERSION 🔥🔥🔥');
+    console.log('onEditProject callback:', typeof onEditProject);
+    console.log('onBackToDashboard callback:', typeof onBackToDashboard);
     loadProjects();
   }, []);
+
+  useEffect(() => {
+    console.log('📊 selectedProject changed:', selectedProject?.name || 'null');
+  }, [selectedProject]);
 
   const loadProjects = async () => {
     console.log('🚀 AllProjectsPage: loadProjects called - UPDATED VERSION');
