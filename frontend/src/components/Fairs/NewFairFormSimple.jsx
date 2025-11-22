@@ -225,26 +225,52 @@ export default function NewFairFormSimple({ onClose }) {
               </div>
             </div>
 
-            {/* REMOVED OLD Fuar Senesi */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Fuar Senesi <span className="text-red-500">*</span>
-              </label>
-              <Select value={formData.fuarSenesi} onValueChange={(value) => setFormData({ ...formData, fuarSenesi: value })}>
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Sene seçiniz" />
-                </SelectTrigger>
-                <SelectContent>
-                  {yillar.map((yil, idx) => (
-                    <SelectItem key={`year-${idx}`} value={yil.toString()}>
-                      {yil}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Ülke ve Şehir */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Ülke */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Ülke <span className="text-red-500">*</span>
+                </label>
+                <Select value={formData.ulke} onValueChange={(value) => setFormData({ ...formData, ulke: value })}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Ülke seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ulkeler.map((ulke, idx) => (
+                      <SelectItem key={`country-${idx}`} value={ulke}>
+                        {ulke}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Şehir */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Şehir <span className="text-red-500">*</span>
+                </label>
+                <Select 
+                  value={formData.sehir} 
+                  onValueChange={(value) => setFormData({ ...formData, sehir: value })}
+                  disabled={!formData.ulke}
+                >
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder={formData.ulke ? "Şehir seçiniz" : "Önce ülke seçiniz"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sehirler.map((sehir, idx) => (
+                      <SelectItem key={`city-${idx}`} value={sehir}>
+                        {sehir}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Ülke */}
+            {/* OLD Ülke removed */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
                 Ülke <span className="text-red-500">*</span>
