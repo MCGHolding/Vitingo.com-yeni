@@ -38,6 +38,8 @@ export default function NewProjectForm({ onClose, onSave }) {
     fairId: '',
     fairStartDate: '',
     fairEndDate: '',
+    kurulumStartDate: '',
+    kurulumEndDate: '',
     city: '',
     country: 'TR',
     contractAmount: 0,
