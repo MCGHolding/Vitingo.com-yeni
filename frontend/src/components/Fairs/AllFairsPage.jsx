@@ -347,12 +347,17 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                 <tbody className="bg-white divide-y divide-gray-100">
                   {filteredFairs.map((fair, index) => (
                     <tr key={fair.id} className={`hover:bg-blue-50 transition-all duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:shadow-sm`}
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="font-medium text-gray-900">{fair.name}</div>
-                          <div className="text-sm text-gray-500 flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {fair.defaultCity || fair.city || 'Şehir belirtilmemiş'}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <MapPin className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 text-sm">{fair.name}</div>
+                            <div className="text-xs text-gray-500 flex items-center mt-1">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              {fair.defaultCity || fair.city || 'Şehir belirtilmemiş'}
+                            </div>
                           </div>
                         </div>
                       </td>
