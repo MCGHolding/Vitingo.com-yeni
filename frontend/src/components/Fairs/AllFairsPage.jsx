@@ -468,24 +468,27 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                             </button>
                             
                             {openMenuId === fair.id && (
-                              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                              <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-200 z-10 overflow-hidden">
                                 <button
                                   onClick={() => {
                                     setOpenMenuId(null);
                                     handleUpdateDates(fair);
                                   }}
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                                  className="w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center space-x-2"
                                 >
-                                  📅 Tarihleri Güncelle
+                                  <Calendar className="h-4 w-4" />
+                                  <span>Tarihleri Güncelle</span>
                                 </button>
+                                <div className="border-t border-gray-100"></div>
                                 <button
                                   onClick={() => {
                                     setOpenMenuId(null);
                                     handleDelete(fair);
                                   }}
-                                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                                  className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center space-x-2"
                                 >
-                                  🗑️ Sil
+                                  <span className="text-red-500">🗑️</span>
+                                  <span>Sil</span>
                                 </button>
                               </div>
                             )}
