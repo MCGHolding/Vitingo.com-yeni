@@ -490,6 +490,34 @@ export default function NewProjectForm({ onClose, onSave }) {
               </div>
             </div>
 
+            {/* Advance Warehouse Tarihleri - Only for American Fairs */}
+            {formData.isAmericanFair && (
+              <div className="grid grid-cols-2 gap-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Advance Warehouse Başlama
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.advanceWarehouseStartDate}
+                    onChange={(e) => setFormData({ ...formData, advanceWarehouseStartDate: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Depo başlangıç tarihi</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Advance Warehouse Bitiş
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.advanceWarehouseEndDate}
+                    onChange={(e) => setFormData({ ...formData, advanceWarehouseEndDate: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Depo bitiş tarihi</p>
+                </div>
+              </div>
+            )}
+
             {/* Kurulum Tarihleri */}
             <div className="grid grid-cols-2 gap-4">
               <div>
