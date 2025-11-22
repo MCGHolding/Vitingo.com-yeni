@@ -179,29 +179,60 @@ export default function AddFairModal({ isOpen, onClose, onFairAdded }) {
             />
           </div>
 
-          {/* City */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Varsayılan Şehir <span className="text-red-500">*</span>
-            </label>
-            <Input
-              value={formData.defaultCity}
-              onChange={(e) => setFormData({ ...formData, defaultCity: e.target.value })}
-              placeholder="Örn: İstanbul"
-              required
-            />
-          </div>
-
           {/* Country */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Varsayılan Ülke
+              Ülke <span className="text-red-500">*</span>
             </label>
-            <Input
-              value={formData.defaultCountry}
-              onChange={(e) => setFormData({ ...formData, defaultCountry: e.target.value })}
-              placeholder="Örn: TR"
-            />
+            <Select 
+              value={formData.defaultCountry} 
+              onValueChange={(value) => setFormData({ ...formData, defaultCountry: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Ülke seçin..." />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map(country => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* City */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Şehir <span className="text-red-500">*</span>
+            </label>
+            <Select 
+              value={formData.defaultCity} 
+              onValueChange={(value) => setFormData({ ...formData, defaultCity: value })}
+              disabled={!formData.defaultCountry || cities.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={
+                  !formData.defaultCountry 
+                    ? "Önce ülke seçin..." 
+                    : cities.length === 0 
+                    ? "Yükleniyor..." 
+                    : "Şehir seçin..."
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                {cities.map(city => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {formData.defaultCountry && cities.length === 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                Bu ülke için kayıtlı şehir bulunmamaktadır.
+              </p>
+            )}
           </div>
 
           {/* Default Dates */}
