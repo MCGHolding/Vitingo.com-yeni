@@ -306,7 +306,9 @@ export default function NewProjectForm({ onClose, onSave }) {
         fairName: selectedFair?.name || '',
         status: 'yeni',
         isNew: true,
-        createdFrom: 'manual'
+        createdFrom: 'manual',
+        createdBy: user?.username || '',
+        createdByName: user?.name || user?.username || ''
       };
 
       const response = await fetch(`${backendUrl}/api/projects`, {
