@@ -242,8 +242,8 @@ class Project(BaseModel):
     status: str = "yeni"
     isNew: bool = True
     createdFrom: str = "manual"
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 class ProjectCreate(BaseModel):
     name: str
