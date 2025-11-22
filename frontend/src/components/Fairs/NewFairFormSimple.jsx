@@ -137,6 +137,107 @@ export default function NewFairFormSimple({ onClose }) {
     }
   }, [formData.sehir, tumFuarMerkezleri]);
 
+  const handleBulkCityAdd = async () => {
+    if (!formData.ulke) {
+      toast({
+        title: "Uyarı",
+        description: "Lütfen önce bir ülke seçin.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!bulkCityText.trim()) {
+      toast({
+        title: "Uyarı",
+        description: "Lütfen şehir isimlerini girin.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      
+      // Parse cities from text (one per line)
+      const yeniSehirler = bulkCityText
+        .split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      if (yeniSehirler.length === 0) {
+        toast({
+          title: "Uyarı",
+          description: "Geçerli şehir bulunamadı.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Find country in database
+      const response = await fetch(`${backendUrl}/api/library/countries`);
+      const ulkelerData = await response.json();
+      const secilenUlke = ulkelerData.find(u => u.name === formData.ulke);
+
+      if (!secilenUlke) {
+        toast({
+          title: "Hata",
+          description: "Ülke bulunamadı.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Merge new cities with existing ones (avoid duplicates)
+      const mevcutSehirler = secilenUlke.cities || [];
+      const tumSehirler = [...new Set([...mevcutSehirler, ...yeniSehirler])];
+
+      // Update country with new cities
+      const updateResponse = await fetch(`${backendUrl}/api/library/countries/${secilenUlke.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...secilenUlke,
+          cities: tumSehirler
+        })
+      });
+
+      if (updateResponse.ok) {
+        toast({
+          title: "Başarılı!",
+          description: `${yeniSehirler.length} şehir eklendi.`
+        });
+
+        // Refresh countries data
+        const yeniResponse = await fetch(`${backendUrl}/api/library/countries`);
+        const yeniData = await yeniResponse.json();
+        const ulkeIsimleri = yeniData.map(d => d.name).filter(n => n).sort();
+        setUlkeler(ulkeIsimleri);
+        setTumUlkeler(yeniData);
+
+        // Update cities list for selected country
+        const guncelUlke = yeniData.find(u => u.name === formData.ulke);
+        if (guncelUlke && guncelUlke.cities) {
+          const sehirListesi = [...new Set(guncelUlke.cities.filter(c => c))].sort();
+          setSehirler(sehirListesi);
+        }
+
+        // Close modal and reset
+        setShowBulkCityModal(false);
+        setBulkCityText('');
+      } else {
+        throw new Error('Güncelleme başarısız');
+      }
+    } catch (error) {
+      console.error('Hata:', error);
+      toast({
+        title: "Hata",
+        description: "Şehirler eklenemedi.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
