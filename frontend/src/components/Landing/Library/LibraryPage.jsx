@@ -1,26 +1,19 @@
 import React, { useState } from 'react';
 import { Globe, MapPin, DollarSign, Building, Phone } from 'lucide-react';
-import CountriesPage from './CountriesPage';
-import CitiesPage from './CitiesPage';
+import CountryCityPage from './CountryCityPage';
 import CurrenciesPage from './CurrenciesPage';
 import FairCentersPage from './FairCentersPage';
 import PhoneCodesPage from './PhoneCodesPage';
 
 const LibraryPage = () => {
-  const [activeTab, setActiveTab] = useState('countries');
+  const [activeTab, setActiveTab] = useState('country-city');
 
   const tabs = [
     {
-      id: 'countries',
-      label: 'Ülkeler',
+      id: 'country-city',
+      label: 'Ülke & Şehir',
       icon: Globe,
-      component: CountriesPage
-    },
-    {
-      id: 'cities',
-      label: 'Şehirler',
-      icon: MapPin,
-      component: CitiesPage
+      component: CountryCityPage
     },
     {
       id: 'currencies',
