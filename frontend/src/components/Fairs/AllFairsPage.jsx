@@ -33,6 +33,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [errorMessage, setErrorMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [fairToDelete, setFairToDelete] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     loadFairs();
