@@ -688,6 +688,47 @@ const CountryCityPageNew = () => {
                   Portekiz: Lizbon, Porto, Braga
                 </div>
               </div>
+
+              {/* File Upload Section */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📁 Dosya Yükle (.txt)
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    accept=".txt"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Dosya Seç
+                  </label>
+                  {selectedFile && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <span className="font-medium">{selectedFile.name}</span>
+                      <button
+                        onClick={() => {
+                          setSelectedFile(null);
+                          setImportText('');
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  veya aşağıdaki alana manuel olarak yapıştırın
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Ülke ve Şehir Verileri <span className="text-red-500">*</span>
@@ -696,8 +737,7 @@ const CountryCityPageNew = () => {
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   placeholder="İtalya: Roma, Milano, Napoli&#10;İspanya: Madrid, Barcelona&#10;Fransa: Paris, Lyon"
-                  className="w-full h-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                  autoFocus
+                  className="w-full h-48 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   💡 Mevcut ülkeler için şehirler eklenecek, yeni ülkeler oluşturulacaktır.
