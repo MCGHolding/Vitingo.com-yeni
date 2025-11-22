@@ -12,11 +12,13 @@ const CountryCityPageNew = () => {
   const [showAddCountryModal, setShowAddCountryModal] = useState(false);
   const [showAddCityModal, setShowAddCityModal] = useState(false);
   const [showEditCountryModal, setShowEditCountryModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [editingCountry, setEditingCountry] = useState(null);
   
   // Form data
   const [newCountry, setNewCountry] = useState({ name: '', flag: '' });
   const [newCity, setNewCity] = useState('');
+  const [importText, setImportText] = useState('');
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
