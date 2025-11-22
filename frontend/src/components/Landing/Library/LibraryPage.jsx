@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Globe, MapPin, DollarSign, Building, Phone } from 'lucide-react';
 import CountryCityPageNew from './CountryCityPageNew';
 import CurrenciesPage from './CurrenciesPage';
-import FairCentersPage from './FairCentersPage';
+import FairCentersPageNew from './FairCentersPageNew';
 import PhoneCodesPage from './PhoneCodesPage';
 
 const LibraryPage = () => {
@@ -31,7 +31,7 @@ const LibraryPage = () => {
       id: 'fair-centers',
       label: 'Fuar Merkezleri',
       icon: Building,
-      component: FairCentersPage
+      component: FairCentersPageNew
     }
   ];
 
