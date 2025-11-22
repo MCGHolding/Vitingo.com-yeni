@@ -346,7 +346,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
                   {filteredFairs.map((fair, index) => (
-                    <tr key={fair.id} className={`hover:bg-blue-50 transition-all duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:shadow-sm`}
+                    <tr key={fair.id} className={`hover:bg-blue-50 transition-all duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:shadow-sm`}>
                       <td className="px-6 py-5">
                         <div className="flex items-center space-x-3">
                           <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
