@@ -1018,7 +1018,7 @@ const Dashboard = () => {
         return <NewFairFormSimple onClose={handleBackToDashboard} />;
       
       case 'new-project':
-        return <NewProjectForm onBackToDashboard={handleBackToDashboard} />;
+        return <NewProjectForm onBackToDashboard={handleBackToDashboard} onClose={handleBackToDashboard} />;
       
       case 'all-projects':
         return <AllProjectsPage onBackToDashboard={handleBackToDashboard} />;
