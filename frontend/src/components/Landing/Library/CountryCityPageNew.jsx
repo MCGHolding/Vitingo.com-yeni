@@ -276,11 +276,18 @@ const CountryCityPageNew = () => {
         }
       }
 
-      alert(`İçeri aktarma tamamlandı!\n✅ Başarılı: ${successCount}\n❌ Hatalı: ${errorCount}`);
+      // Show success message
+      console.log(`İçeri aktarma tamamlandı! Başarılı: ${successCount}, Hatalı: ${errorCount}`);
+      
       await loadCountries();
       setImportText('');
       setSelectedFile(null);
       setShowImportModal(false);
+      
+      // Show alert after modal closes
+      setTimeout(() => {
+        alert(`İçeri aktarma tamamlandı!\n✅ Başarılı: ${successCount}\n❌ Hatalı: ${errorCount}`);
+      }, 100);
     } catch (error) {
       console.error('Error importing data:', error);
       alert('İçeri aktarma sırasında hata oluştu');
