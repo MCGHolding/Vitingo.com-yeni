@@ -564,6 +564,12 @@ const Dashboard = () => {
 
   const handleAllProjects = () => {
     setCurrentView('all-projects');
+    setEditingProjectId(null);
+  };
+
+  const handleEditProject = (projectId) => {
+    setEditingProjectId(projectId);
+    setCurrentView('edit-project');
   };
 
   const handleOngoingProjects = () => {
