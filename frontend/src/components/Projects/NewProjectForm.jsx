@@ -662,15 +662,16 @@ export default function NewProjectForm({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-4">
                     Ödeme Koşulları <span className="text-red-500">*</span>
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <PaymentTermsBuilder 
                       paymentTerms={profileFormData.paymentTerms} 
                       onChange={(terms) => setProfileFormData({ ...profileFormData, paymentTerms: terms })}
-                      contractAmount={100000}
+                      contractAmount={0}
+                      hideAmounts={true}
                     />
                   </div>
                   <p className="mt-2 text-xs text-gray-500">
-                    * Ödeme yüzdeleri toplamı %100 olmalıdır
+                    * Sadece ödeme yüzdeleri ve vadeleri belirleyin. Tutarlar proje oluştururken otomatik hesaplanacaktır.
                   </p>
                 </div>
               </div>
