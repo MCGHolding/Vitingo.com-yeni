@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Calendar } from 'lucide-react';
 
 const DUE_TYPE_OPTIONS = [
   { value: 'pesin', label: 'Sözleşme Tarihinde Peşin' },
