@@ -471,17 +471,6 @@ export default function NewFairFormPage({ onClose }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
-                    Şehir <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder="Örn: İstanbul"
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
                     Ülke <span className="text-red-500">*</span>
                   </label>
                   <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
@@ -489,11 +478,40 @@ export default function NewFairFormPage({ onClose }) {
                       <SelectValue placeholder="Ülke seçiniz" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
+                      {countries.length > 0 ? (
+                        countries.map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="p-2 text-sm text-gray-500 text-center">
+                          Yükleniyor...
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Şehir <span className="text-red-500">*</span>
+                  </label>
+                  <Select value={formData.city} onValueChange={(value) => handleInputChange('city', value)}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder={formData.country ? "Şehir seçiniz" : "Önce ülke seçiniz"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.length > 0 ? (
+                        cities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="p-2 text-sm text-gray-500 text-center">
+                          {formData.country ? "Yükleniyor..." : "Önce ülke seçiniz"}
+                        </div>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
