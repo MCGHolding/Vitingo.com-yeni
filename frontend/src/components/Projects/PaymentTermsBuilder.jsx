@@ -218,6 +218,17 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                   />
                 </div>
               )}
+
+              {/* Calculated Due Date Display */}
+              {term.dueType && (
+                <div className="col-span-full mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center text-xs text-blue-800">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    <span className="font-medium">Vade: </span>
+                    <span className="ml-1">{calculateDueDate(term)}</span>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
