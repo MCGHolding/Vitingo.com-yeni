@@ -71,13 +71,14 @@ const AllProjectsPage = ({ onBackToDashboard }) => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
+      'yeni': { label: 'Yeni', className: 'bg-purple-100 text-purple-800' },
       'ongoing': { label: 'Devam Ediyor', className: 'bg-blue-100 text-blue-800' },
       'completed': { label: 'Tamamlandı', className: 'bg-green-100 text-green-800' },
       'cancelled': { label: 'İptal Edildi', className: 'bg-red-100 text-red-800' },
       'on-hold': { label: 'Beklemede', className: 'bg-yellow-100 text-yellow-800' }
     };
     
-    const config = statusConfig[status] || statusConfig['ongoing'];
+    const config = statusConfig[status] || statusConfig['yeni'];
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.className}`}>
         {config.label}
@@ -85,10 +86,21 @@ const AllProjectsPage = ({ onBackToDashboard }) => {
     );
   };
 
-  const filteredProjects = mockProjects.filter(project =>
+  const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
+    (project.customerName && project.customerName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Projeler yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
