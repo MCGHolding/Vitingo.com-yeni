@@ -56,6 +56,18 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     }
   };
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenuId && !event.target.closest('.relative')) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [openMenuId]);
+
   // Preview fair
   const handlePreview = (fair) => {
     setPreviewFair(fair);
