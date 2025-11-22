@@ -212,25 +212,24 @@ export default function NewFairFormPage({ onClose }) {
   // Filter cities when country changes
   React.useEffect(() => {
     if (formData.country && allCities.length > 0) {
-      const filteredCities = allCities
-        .filter(city => city.country === formData.country)
-        .map(city => city.name)
-        .filter(name => name)
-        .sort();
+      // Find the selected country
+      const selectedCountry = allCities.find(c => c.name === formData.country);
       
-      if (filteredCities.length > 0) {
-        setCities(filteredCities);
+      if (selectedCountry && selectedCountry.cities) {
+        // Set cities from the selected country
+        const cityList = selectedCountry.cities.filter(city => city).sort();
+        setCities(cityList);
       } else {
-        const allCityNames = allCities
-          .map(city => city.name)
-          .filter(name => name)
-          .sort();
-        setCities(allCityNames);
+        // No cities for this country
+        setCities([]);
       }
       
+      // Reset city selection when country changes
       if (formData.city) {
         setFormData(prev => ({ ...prev, city: '' }));
       }
+    } else {
+      setCities([]);
     }
   }, [formData.country, allCities]);
 
