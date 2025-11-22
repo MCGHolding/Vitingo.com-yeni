@@ -229,12 +229,57 @@ export default function NewFairFormPage({ onClose }) {
       
       // Reset city selection when country changes
       if (formData.city) {
-        setFormData(prev => ({ ...prev, city: '' }));
+        setFormData(prev => ({ ...prev, city: '', fairCenter: '' }));
       }
     } else {
       setCities([]);
     }
   }, [formData.country, allCities]);
+
+  // Load fair centers from Library API on mount
+  React.useEffect(() => {
+    const loadFairCenters = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/library/fair-centers`);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          setAllFairCenters(data);
+        }
+      } catch (error) {
+        console.error('Error loading fair centers:', error);
+      }
+    };
+
+    loadFairCenters();
+  }, []);
+
+  // Filter fair centers when city changes
+  React.useEffect(() => {
+    if (formData.city && allFairCenters.length > 0) {
+      // Filter fair centers for the selected city
+      const centersForCity = allFairCenters.filter(center => center.city === formData.city);
+      
+      if (centersForCity.length > 0) {
+        // Extract fair center names and sort them
+        const centerNames = centersForCity
+          .map(center => center.name)
+          .filter(name => name)
+          .sort();
+        setFairCenters(centerNames);
+      } else {
+        setFairCenters([]);
+      }
+      
+      // Reset fair center selection when city changes
+      if (formData.fairCenter) {
+        setFormData(prev => ({ ...prev, fairCenter: '' }));
+      }
+    } else {
+      setFairCenters([]);
+    }
+  }, [formData.city, allFairCenters]);
 
   const months = [
     { value: '01', label: 'Ocak' },
