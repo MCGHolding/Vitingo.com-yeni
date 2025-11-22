@@ -240,10 +240,21 @@ export default function NewProjectForm({ onClose, onSave }) {
             <p className="text-gray-600">Proje bilgilerini girin ve ödeme koşullarını belirleyin</p>
           </div>
         </div>
-        <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
-          <ArrowLeft className="h-4 w-4" />
-          <span>Geri Dön</span>
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline" 
+            onClick={fillTestData} 
+            className="flex items-center space-x-2 text-green-600 border-green-300 hover:bg-green-50"
+            type="button"
+          >
+            <FileText className="h-4 w-4" />
+            <span>Test Verisi Doldur</span>
+          </Button>
+          <Button variant="outline" onClick={onClose} className="flex items-center space-x-2">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Geri Dön</span>
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
