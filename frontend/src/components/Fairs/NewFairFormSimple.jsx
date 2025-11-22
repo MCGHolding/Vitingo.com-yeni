@@ -1,0 +1,359 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ArrowLeft, Save, Calendar } from 'lucide-react';
+import { useToast } from '../../hooks/use-toast';
+
+export default function NewFairFormSimple({ onClose }) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    fuarAdi: '',
+    fuarSenesi: new Date().getFullYear().toString(),
+    ulke: '',
+    sehir: '',
+    baslamaTarihi: '',
+    bitisTarihi: '',
+    dongu: '',
+    fuarAyi: ''
+  });
+
+  // Data states
+  const [ulkeler, setUlkeler] = useState([]);
+  const [sehirler, setSehirler] = useState([]);
+  const [tumUlkeler, setTumUlkeler] = useState([]); // For filtering cities
+
+  // Yıllar listesi (2025-2050)
+  const yillar = Array.from({ length: 26 }, (_, i) => 2025 + i);
+
+  // Döngü seçenekleri
+  const donguler = [
+    { value: '6_months', label: '6 ayda bir' },
+    { value: 'yearly', label: 'Her yıl' },
+    { value: '2_years', label: '2 yılda bir' },
+    { value: '3_years', label: '3 yılda bir' }
+  ];
+
+  // Aylar
+  const aylar = [
+    { value: '01', label: 'Ocak' },
+    { value: '02', label: 'Şubat' },
+    { value: '03', label: 'Mart' },
+    { value: '04', label: 'Nisan' },
+    { value: '05', label: 'Mayıs' },
+    { value: '06', label: 'Haziran' },
+    { value: '07', label: 'Temmuz' },
+    { value: '08', label: 'Ağustos' },
+    { value: '09', label: 'Eylül' },
+    { value: '10', label: 'Ekim' },
+    { value: '11', label: 'Kasım' },
+    { value: '12', label: 'Aralık' }
+  ];
+
+  // Load countries from library
+  useEffect(() => {
+    const loadUlkeler = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/library/countries`);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
+          setUlkeler(ulkeIsimleri);
+          setTumUlkeler(data);
+        }
+      } catch (error) {
+        console.error('Ülkeler yüklenemedi:', error);
+      }
+    };
+
+    loadUlkeler();
+  }, []);
+
+  // Filter cities when country changes
+  useEffect(() => {
+    if (formData.ulke && tumUlkeler.length > 0) {
+      const secilenUlke = tumUlkeler.find(u => u.name === formData.ulke);
+      
+      if (secilenUlke && secilenUlke.cities) {
+        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
+        setSehirler(sehirListesi);
+      } else {
+        setSehirler([]);
+      }
+      
+      // Reset city when country changes
+      setFormData(prev => ({ ...prev, sehir: '' }));
+    } else {
+      setSehirler([]);
+    }
+  }, [formData.ulke, tumUlkeler]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Validation
+    if (!formData.fuarAdi || !formData.fuarSenesi || !formData.ulke || !formData.sehir ||
+        !formData.baslamaTarihi || !formData.bitisTarihi || !formData.dongu || !formData.fuarAyi) {
+      toast({
+        title: "Eksik Bilgiler",
+        description: "Lütfen tüm alanları doldurun.",
+        variant: "destructive"
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      
+      const fuarData = {
+        name: formData.fuarAdi,
+        year: formData.fuarSenesi,
+        country: formData.ulke,
+        city: formData.sehir,
+        startDate: formData.baslamaTarihi,
+        endDate: formData.bitisTarihi,
+        cycle: formData.dongu,
+        fairMonth: formData.fuarAyi,
+        sector: 'Genel',
+        description: `${formData.fuarAdi} - ${formData.fuarSenesi}`
+      };
+
+      const response = await fetch(`${backendUrl}/api/fairs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fuarData)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı!",
+          description: `${formData.fuarAdi} fuarı kaydedildi.`
+        });
+        
+        // Reset form
+        setFormData({
+          fuarAdi: '',
+          fuarSenesi: new Date().getFullYear().toString(),
+          ulke: '',
+          sehir: '',
+          baslamaTarihi: '',
+          bitisTarihi: '',
+          dongu: '',
+          fuarAyi: ''
+        });
+
+        if (onClose) {
+          setTimeout(() => onClose(), 1500);
+        }
+      } else {
+        throw new Error('Kayıt başarısız');
+      }
+    } catch (error) {
+      console.error('Hata:', error);
+      toast({
+        title: "Hata",
+        description: "Fuar kaydedilemedi.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="mb-6 flex items-center">
+        {onClose && (
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="mr-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Geri
+          </Button>
+        )}
+        <h1 className="text-2xl font-bold text-gray-900">Yeni Fuar Ekle</h1>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Fuar Bilgileri</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            
+            {/* Fuar Adı */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Fuar Adı <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={formData.fuarAdi}
+                onChange={(e) => setFormData({ ...formData, fuarAdi: e.target.value })}
+                placeholder="Örn: Teknoloji Fuarı 2025"
+                className="h-12"
+              />
+            </div>
+
+            {/* Fuar Senesi */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Fuar Senesi <span className="text-red-500">*</span>
+              </label>
+              <Select value={formData.fuarSenesi} onValueChange={(value) => setFormData({ ...formData, fuarSenesi: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Sene seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  {yillar.map((yil, idx) => (
+                    <SelectItem key={`year-${idx}`} value={yil.toString()}>
+                      {yil}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Ülke */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Ülke <span className="text-red-500">*</span>
+              </label>
+              <Select value={formData.ulke} onValueChange={(value) => setFormData({ ...formData, ulke: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Ülke seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ulkeler.map((ulke, idx) => (
+                    <SelectItem key={`country-${idx}`} value={ulke}>
+                      {ulke}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Şehir */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Şehir <span className="text-red-500">*</span>
+              </label>
+              <Select 
+                value={formData.sehir} 
+                onValueChange={(value) => setFormData({ ...formData, sehir: value })}
+                disabled={!formData.ulke}
+              >
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder={formData.ulke ? "Şehir seçiniz" : "Önce ülke seçiniz"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {sehirler.map((sehir, idx) => (
+                    <SelectItem key={`city-${idx}`} value={sehir}>
+                      {sehir}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Fuar Tarihleri */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Başlangıç Tarihi <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={formData.baslamaTarihi}
+                  onChange={(e) => setFormData({ ...formData, baslamaTarihi: e.target.value })}
+                  className="h-12"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Bitiş Tarihi <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={formData.bitisTarihi}
+                  onChange={(e) => setFormData({ ...formData, bitisTarihi: e.target.value })}
+                  className="h-12"
+                />
+              </div>
+            </div>
+
+            {/* Döngü */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Döngü <span className="text-red-500">*</span>
+              </label>
+              <Select value={formData.dongu} onValueChange={(value) => setFormData({ ...formData, dongu: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Döngü seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  {donguler.map((dongu, idx) => (
+                    <SelectItem key={`cycle-${idx}`} value={dongu.value}>
+                      {dongu.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Fuar Ayı */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center">
+                <Calendar className="h-4 w-4 mr-2" />
+                Fuar Ayı <span className="text-red-500">*</span>
+              </label>
+              <Select value={formData.fuarAyi} onValueChange={(value) => setFormData({ ...formData, fuarAyi: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Ay seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  {aylar.map((ay, idx) => (
+                    <SelectItem key={`month-${idx}`} value={ay.value}>
+                      {ay.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+          </CardContent>
+        </Card>
+
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-end space-x-3">
+          {onClose && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+            >
+              İptal
+            </Button>
+          )}
+          <Button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            {loading ? 'Kaydediliyor...' : 'Fuarı Kaydet'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}
