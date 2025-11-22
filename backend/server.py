@@ -834,6 +834,92 @@ async def delete_fair(fair_id: str):
         raise HTTPException(status_code=500, detail=f"Error deleting fair: {str(e)}")
 
 
+# ============== PROJECT ENDPOINTS ==============
+
+@api_router.get("/projects", response_model=List[Project])
+async def get_projects():
+    """Get all projects"""
+    try:
+        projects = await db.projects.find().sort("created_at", -1).to_list(1000)
+        return [Project(**project) for project in projects]
+    except Exception as e:
+        logger.error(f"Error getting projects: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/projects")
+async def create_project(project_input: ProjectCreate):
+    """Create a new project"""
+    try:
+        project_dict = project_input.dict()
+        project_dict["id"] = str(uuid.uuid4())
+        project_dict["created_at"] = datetime.utcnow()
+        project_dict["updated_at"] = datetime.utcnow()
+        
+        await db.projects.insert_one(project_dict)
+        
+        created_project = await db.projects.find_one({"id": project_dict["id"]})
+        return {"success": True, "project": Project(**created_project)}
+        
+    except Exception as e:
+        logger.error(f"Error creating project: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating project: {str(e)}")
+
+@api_router.get("/projects/{project_id}", response_model=Project)
+async def get_project(project_id: str):
+    """Get a single project"""
+    try:
+        project = await db.projects.find_one({"id": project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        return Project(**project)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting project: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/projects/{project_id}", response_model=Project)
+async def update_project(project_id: str, project_input: ProjectCreate):
+    """Update a project"""
+    try:
+        update_data = project_input.dict()
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await db.projects.update_one(
+            {"id": project_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            updated_project = await db.projects.find_one({"id": project_id})
+            return Project(**updated_project)
+        else:
+            raise HTTPException(status_code=404, detail="Project not found or no changes made")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating project: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error updating project: {str(e)}")
+
+@api_router.delete("/projects/{project_id}")
+async def delete_project(project_id: str):
+    """Delete a project"""
+    try:
+        result = await db.projects.delete_one({"id": project_id})
+        
+        if result.deleted_count:
+            return {"message": "Project deleted successfully"}
+        else:
+            raise HTTPException(status_code=404, detail="Project not found")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting project: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting project: {str(e)}")
+
+
 # ============== LIBRARY ENDPOINTS ==============
 
 # Countries Endpoints
