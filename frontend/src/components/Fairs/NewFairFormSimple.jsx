@@ -375,8 +375,19 @@ export default function NewFairFormSimple({ onClose }) {
             <div className="grid grid-cols-2 gap-4">
               {/* Ülke */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Ülke <span className="text-red-500">*</span>
+                <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+                  <span>Ülke <span className="text-red-500">*</span></span>
+                  {formData.ulke && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowBulkCityModal(true)}
+                      className="text-xs h-7"
+                    >
+                      Toplu İçeri At
+                    </Button>
+                  )}
                 </label>
                 <Select value={formData.ulke} onValueChange={(value) => setFormData({ ...formData, ulke: value })}>
                   <SelectTrigger className="h-12">
