@@ -14,18 +14,24 @@ const AllProjectsPage = ({ onBackToDashboard }) => {
   }, []);
 
   const loadProjects = async () => {
+    console.log('🚀 AllProjectsPage: loadProjects called - UPDATED VERSION');
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
+      console.log('🔗 Backend URL:', backendUrl);
       const response = await fetch(`${backendUrl}/api/projects`);
+      console.log('📡 API Response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('📊 Projects loaded:', data.length, 'projects');
+        console.log('First project:', data[0]?.name);
         setProjects(data);
       }
     } catch (error) {
-      console.error('Error loading projects:', error);
+      console.error('❌ Error loading projects:', error);
       toast({
         title: "Hata",
         description: "Projeler yüklenirken bir hata oluştu",
