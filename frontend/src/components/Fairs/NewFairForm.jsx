@@ -392,21 +392,19 @@ export default function NewFairForm({ onClose, onSave }) {
                     <h3 className="text-lg font-semibold text-gray-900">Fuar Bilgileri</h3>
                   </div>
 
-                  {/* Fair Name */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Fuar Adı *
-                    </label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="Örn: Teknoloji Fuarı 2025"
-                      className="h-12"
-                    />
-                  </div>
-
-                  {/* Location Fields */}
+                  {/* Fair Name and Country - Same Row */}
                   <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Fuar Adı *
+                      </label>
+                      <Input
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        placeholder="Örn: Teknoloji Fuarı 2025"
+                        className="h-12"
+                      />
+                    </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">
                         Ülke *
@@ -430,11 +428,15 @@ export default function NewFairForm({ onClose, onSave }) {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  {/* City and Fair Center - Same Row */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">
                         Şehir *
                       </label>
-                      <Select value={formData.city} onValueChange={(value) => handleInputChange('city', value)}>
+                      <Select value={formData.city} onValueChange={(value) => handleInputChange('city', value)} disabled={!formData.country}>
                         <SelectTrigger className="h-12">
                           <SelectValue placeholder={formData.country ? "Şehir seçiniz" : "Önce ülke seçiniz"} />
                         </SelectTrigger>
@@ -448,6 +450,29 @@ export default function NewFairForm({ onClose, onSave }) {
                           ) : (
                             <div className="p-2 text-sm text-gray-500 text-center">
                               {formData.country ? "Yükleniyor..." : "Önce ülke seçiniz"}
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Fuar Merkezi
+                      </label>
+                      <Select value={formData.fairCenter} onValueChange={(value) => handleInputChange('fairCenter', value)} disabled={!formData.city}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder={formData.city ? "Fuar merkezi seçiniz" : "Önce şehir seçiniz"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {fairCenters.length > 0 ? (
+                            fairCenters.map((center) => (
+                              <SelectItem key={center} value={center}>
+                                {center}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-sm text-gray-500 text-center">
+                              {formData.city ? "Bu şehir için kayıtlı fuar merkezi yok" : "Önce şehir seçiniz"}
                             </div>
                           )}
                         </SelectContent>
