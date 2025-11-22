@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://vitingo-admin.preview.emergentagent.com"
+BACKEND_URL = "https://ultra-admin-crm.preview.emergentagent.com"
 
 def test_customer_contact_person_fields():
     """
