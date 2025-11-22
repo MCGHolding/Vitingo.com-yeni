@@ -162,18 +162,19 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   };
 
   const submitUpdateDates = async () => {
-    if (!updateDates.startDate || !updateDates.endDate) {
-      alert('Lütfen her iki tarihi de doldurun!');
+    if (!updateDates.startDate || !updateDates.endDate || !updateDates.year) {
+      alert('Lütfen tüm alanları doldurun!');
       return;
     }
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backendUrl}/api/fairs/${selectedFair.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...selectedFair,
+          year: updateDates.year,
           startDate: updateDates.startDate,
           endDate: updateDates.endDate,
           defaultStartDate: updateDates.startDate,
@@ -182,11 +183,11 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
       });
 
       if (response.ok) {
-        alert('Tarihler başarıyla güncellendi!');
+        alert('Tarihler ve yıl başarıyla güncellendi!');
         setShowUpdateDateModal(false);
-        fetchFairs(); // Refresh list
+        loadFairs(); // Refresh list
       } else {
-        alert('Tarihler güncellenemedi!');
+        alert('Güncelleme başarısız!');
       }
     } catch (error) {
       console.error('Error updating dates:', error);
