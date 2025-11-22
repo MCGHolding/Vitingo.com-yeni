@@ -1114,6 +1114,119 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
           </div>
         </div>
       )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4 transform animate-scaleIn">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Fuar İçe Aktar</h3>
+                <button
+                  onClick={() => {
+                    setShowImportModal(false);
+                    setImportFile(null);
+                    setImportPreview([]);
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <span className="text-2xl">&times;</span>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* File Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    CSV Dosyası Yükle
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors">
+                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Dosya Seç
+                    </label>
+                    {importFile && (
+                      <p className="mt-3 text-sm text-gray-600">
+                        Seçilen dosya: <span className="font-semibold">{importFile.name}</span>
+                      </p>
+                    )}
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Format: Fuar Adı, Yıl, Ülke, Şehir, Fuar Merkezi, Başlangıç Tarihi, Bitiş Tarihi, Döngü, Fuar Ayı
+                  </p>
+                </div>
+
+                {/* Preview */}
+                {importPreview.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">
+                      Önizleme ({importPreview.length} fuar)
+                    </h4>
+                    <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50 sticky top-0">
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Fuar Adı</th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Yıl</th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Şehir</th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Ülke</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {importPreview.slice(0, 10).map((fair, idx) => (
+                            <tr key={idx} className="hover:bg-gray-50">
+                              <td className="px-3 py-2 text-gray-900">{fair.name}</td>
+                              <td className="px-3 py-2 text-gray-600">{fair.year}</td>
+                              <td className="px-3 py-2 text-gray-600">{fair.city}</td>
+                              <td className="px-3 py-2 text-gray-600">{fair.country}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {importPreview.length > 10 && (
+                        <div className="p-2 text-center text-xs text-gray-500 bg-gray-50">
+                          +{importPreview.length - 10} fuar daha...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowImportModal(false);
+                    setImportFile(null);
+                    setImportPreview([]);
+                  }}
+                  className="px-6 py-3 bg-gray-200 text-gray-800 rounded-xl font-semibold hover:bg-gray-300 transition-all duration-200"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={submitImport}
+                  disabled={importing || importPreview.length === 0}
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {importing ? 'İçe Aktarılıyor...' : `${importPreview.length} Fuar İçe Aktar`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
