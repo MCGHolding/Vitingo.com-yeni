@@ -560,25 +560,40 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           </button>
                           
                           {/* More Menu */}
-                          <div className="relative">
+                          <div className="relative" style={{ zIndex: openMenuId === fair.id ? 1000 : 1 }}>
                             <button 
-                              onClick={(e) => {
-                                if (openMenuId === fair.id) {
-                                  setOpenMenuId(null);
-                                } else {
-                                  const rect = e.currentTarget.getBoundingClientRect();
-                                  setMenuPosition({
-                                    top: rect.bottom + window.scrollY + 8,
-                                    left: rect.right + window.scrollX - 208 // 208px = menu width (52 * 4)
-                                  });
-                                  setOpenMenuId(fair.id);
-                                }
-                              }}
+                              onClick={() => setOpenMenuId(openMenuId === fair.id ? null : fair.id)}
                               className="p-2 hover:bg-gray-50 rounded-lg transition-all duration-200 hover:shadow-md border border-transparent hover:border-gray-200"
                               title="Daha Fazla"
                             >
                               <MoreHorizontal className="h-4 w-4 text-gray-600" />
                             </button>
+                            
+                            {openMenuId === fair.id && (
+                              <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden" style={{ zIndex: 10000 }}>
+                                <button
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    handleUpdateDates(fair);
+                                  }}
+                                  className="w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center space-x-2"
+                                >
+                                  <Calendar className="h-4 w-4" />
+                                  <span>Tarihleri Güncelle</span>
+                                </button>
+                                <div className="border-t border-gray-100"></div>
+                                <button
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    handleDeleteClick(fair);
+                                  }}
+                                  className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center space-x-2"
+                                >
+                                  <span className="text-red-500">🗑️</span>
+                                  <span>Sil</span>
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
