@@ -16,6 +16,7 @@ export default function NewFairFormSimple({ onClose }) {
     fuarSenesi: new Date().getFullYear().toString(),
     ulke: '',
     sehir: '',
+    fuarMerkezi: '',
     baslamaTarihi: '',
     bitisTarihi: '',
     dongu: '',
@@ -26,6 +27,8 @@ export default function NewFairFormSimple({ onClose }) {
   const [ulkeler, setUlkeler] = useState([]);
   const [sehirler, setSehirler] = useState([]);
   const [tumUlkeler, setTumUlkeler] = useState([]); // For filtering cities
+  const [fuarMerkezleri, setFuarMerkezleri] = useState([]);
+  const [tumFuarMerkezleri, setTumFuarMerkezleri] = useState([]); // For filtering fair centers
 
   // Yıllar listesi (2025-2050)
   const yillar = Array.from({ length: 26 }, (_, i) => 2025 + i);
