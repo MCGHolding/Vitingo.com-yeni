@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, MapPin, DollarSign, Building, Phone } from 'lucide-react';
-import CountryCityPage from './CountryCityPage';
+import CountryCityPageNew from './CountryCityPageNew';
 import CurrenciesPage from './CurrenciesPage';
 import FairCentersPage from './FairCentersPage';
 import PhoneCodesPage from './PhoneCodesPage';
@@ -13,7 +13,7 @@ const LibraryPage = () => {
       id: 'country-city',
       label: 'Ülke & Şehir',
       icon: Globe,
-      component: CountryCityPage
+      component: CountryCityPageNew
     },
     {
       id: 'currencies',
