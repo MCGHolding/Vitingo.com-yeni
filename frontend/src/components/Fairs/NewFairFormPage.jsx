@@ -704,16 +704,16 @@ export default function NewFairFormPage({ onClose }) {
                   <Calendar className="h-4 w-4 mr-2" />
                   Yil <span className="text-red-500">*</span>
                 </label>
-                <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
+                <Select value={formData.fuarYili} onValueChange={(value) => handleInputChange('fuarYili', value)}>
                   <SelectTrigger className="h-12">
                     <SelectValue placeholder="Yil seçiniz" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 10 }, (_, i) => {
-                      const year = new Date().getFullYear() + i;
+                      const yil = new Date().getFullYear() + i;
                       return (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
+                        <SelectItem key={yil} value={yil.toString()}>
+                          {yil}
                         </SelectItem>
                       );
                     })}
