@@ -107,6 +107,13 @@ const menuItems = [
     color: 'from-emerald-500 to-emerald-600'
   },
   {
+    id: 'collections',
+    title: 'Collections',
+    subtitle: 'MongoDB Yönetimi',
+    icon: Database,
+    color: 'from-purple-500 to-purple-600'
+  },
+  {
     id: 'settings',
     title: 'Platform Ayarları',
     subtitle: 'Sistem Ayarları',
