@@ -284,7 +284,6 @@ const getNavigation = (userDepartment) => {
       ]
     },
     { name: 'Görevler', href: '/tasks', icon: Target, current: false },
-    { name: 'Takvim', href: '/calendar', icon: Calendar, current: false },
     { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
     { 
       name: 'Ayarlar', 
