@@ -394,7 +394,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
         </div>
 
         {/* Fairs Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200" style={{ overflow: 'visible' }}>
           {loading ? (
             <div className="text-center py-12">
               <p className="text-gray-500">Yükleniy or...</p>
@@ -407,7 +407,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" style={{ overflow: 'visible' }}>
               <table className="w-full">
                 <thead className="bg-gradient-to-r from-blue-600 to-blue-700">
                   <tr>
