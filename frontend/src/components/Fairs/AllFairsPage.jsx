@@ -131,10 +131,28 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
 
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Prepare data in backend format
+      const updatePayload = {
+        name: editFormData.name,
+        year: editFormData.year,
+        country: editFormData.country || '',
+        city: editFormData.city || '',
+        fairCenter: editFormData.fairCenter || '',
+        startDate: editFormData.startDate || '',
+        endDate: editFormData.endDate || '',
+        sector: '', // Backend requires this field
+        cycle: editFormData.cycle || '',
+        fairMonth: editFormData.fairMonth || '',
+        description: ''
+      };
+
+      console.log('Updating fair:', editFormData.id, updatePayload);
+      
       const response = await fetch(`${backendUrl}/api/fairs/${editFormData.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editFormData)
+        body: JSON.stringify(updatePayload)
       });
 
       if (response.ok) {
@@ -142,7 +160,9 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
         setShowEditModal(false);
         loadFairs(); // Refresh list
       } else {
-        alert('Fuar güncellenemedi!');
+        const errorData = await response.json();
+        console.error('Update failed:', errorData);
+        alert(`Fuar güncellenemedi! ${errorData.detail || ''}`);
       }
     } catch (error) {
       console.error('Error updating fair:', error);
