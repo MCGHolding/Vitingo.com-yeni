@@ -437,12 +437,12 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           })()}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-5">
                         <div className="flex items-center justify-center space-x-2">
                           {/* Preview */}
                           <button 
                             onClick={() => handlePreview(fair)}
-                            className="p-1 hover:bg-blue-50 rounded transition-colors"
+                            className="p-2 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-md border border-transparent hover:border-blue-200"
                             title="Ön İzleme"
                           >
                             <Eye className="h-4 w-4 text-blue-600" />
@@ -451,7 +451,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           {/* Edit - Navigate to edit page */}
                           <button 
                             onClick={() => window.location.hash = `#/edit-fair/${fair.id}`}
-                            className="p-1 hover:bg-green-50 rounded transition-colors"
+                            className="p-2 hover:bg-green-50 rounded-lg transition-all duration-200 hover:shadow-md border border-transparent hover:border-green-200"
                             title="Düzenle"
                           >
                             <Edit className="h-4 w-4 text-green-600" />
@@ -461,7 +461,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           <div className="relative">
                             <button 
                               onClick={() => setOpenMenuId(openMenuId === fair.id ? null : fair.id)}
-                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              className="p-2 hover:bg-gray-50 rounded-lg transition-all duration-200 hover:shadow-md border border-transparent hover:border-gray-200"
                               title="Daha Fazla"
                             >
                               <MoreHorizontal className="h-4 w-4 text-gray-600" />
