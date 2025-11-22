@@ -40,12 +40,15 @@ export default function NewProjectForm({ onClose, onSave }) {
     fairEndDate: '',
     kurulumStartDate: '',
     kurulumEndDate: '',
+    advanceWarehouseStartDate: '',
+    advanceWarehouseEndDate: '',
     city: '',
     country: 'TR',
     contractAmount: 0,
     currency: 'TRY',
     paymentTerms: [],
-    notes: ''
+    notes: '',
+    isAmericanFair: false
   });
 
   useEffect(() => {
