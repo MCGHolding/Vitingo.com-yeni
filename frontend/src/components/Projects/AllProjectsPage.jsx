@@ -9,7 +9,11 @@ const AllProjectsPage = ({ onBackToDashboard }) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  // Debug: Component mounted
+  console.log('🔥🔥🔥 AllProjectsPage MOUNTED - NEW VERSION 🔥🔥🔥');
+
   useEffect(() => {
+    console.log('🔥 useEffect triggered in AllProjectsPage');
     loadProjects();
   }, []);
 
