@@ -698,27 +698,7 @@ export default function NewFairFormPage({ onClose }) {
                 </Select>
               </div>
 
-              {/* Fair Month */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 flex items-center">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Fuar Ayı <span className="text-red-500">*</span>
-                </label>
-                <Select value={formData.fairMonth} onValueChange={(value) => handleInputChange('fairMonth', value)}>
-                  <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Fuar ayını seçiniz" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {months.map((month) => (
-                      <SelectItem key={month.value} value={month.value}>
-                        {month.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Year */}
+              {/* Year - MOVED TO TOP FOR TESTING */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <Calendar className="h-4 w-4 mr-2" />
