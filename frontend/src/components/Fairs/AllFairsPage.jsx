@@ -201,7 +201,8 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
 
   const submitUpdateDates = async () => {
     if (!updateDates.startDate || !updateDates.endDate || !updateDates.year) {
-      alert('Lütfen tüm alanları doldurun!');
+      setErrorMessage('Lütfen tüm alanları doldurun!');
+      setShowErrorModal(true);
       return;
     }
 
@@ -221,15 +222,18 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
       });
 
       if (response.ok) {
-        alert('Tarihler ve yıl başarıyla güncellendi!');
         setShowUpdateDateModal(false);
+        setSuccessMessage('Tarihler ve yıl başarıyla güncellendi!');
+        setShowSuccessModal(true);
         loadFairs(); // Refresh list
       } else {
-        alert('Güncelleme başarısız!');
+        setErrorMessage('Güncelleme başarısız!');
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error('Error updating dates:', error);
-      alert('Bir hata oluştu!');
+      setErrorMessage('Bir hata oluştu!');
+      setShowErrorModal(true);
     }
   };
 
