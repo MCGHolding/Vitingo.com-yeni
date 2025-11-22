@@ -163,6 +163,7 @@ const Dashboard = () => {
   const [fairs, setFairs] = useState(mockFairs);
   // const [showNewFairForm, setShowNewFairForm] = useState(false); // Removed for page-based approach
   const [surveyInitialTab, setSurveyInitialTab] = useState('send');
+  const [editingProjectId, setEditingProjectId] = useState(null);
   // Supplier states
   const [showNewSupplierForm, setShowNewSupplierForm] = useState(false);
   const [showAllSuppliersPage, setShowAllSuppliersPage] = useState(false);
