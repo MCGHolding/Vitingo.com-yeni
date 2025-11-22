@@ -86,6 +86,7 @@ export default function NewFairForm({ onClose, onSave }) {
     name: '',
     city: '',
     country: '',
+    fairCenter: '',
     startDate: '',
     endDate: '',
     sector: '',
@@ -97,6 +98,8 @@ export default function NewFairForm({ onClose, onSave }) {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [allCities, setAllCities] = useState([]); // Store all cities for filtering
+  const [fairCenters, setFairCenters] = useState([]);
+  const [allFairCenters, setAllFairCenters] = useState([]); // Store all fair centers for filtering
 
   // Default sectors list
   const [sectors, setSectors] = useState([
