@@ -249,39 +249,10 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
     reader.onload = (e) => {
       try {
         const text = e.target.result;
-        const lines = text.split('\n').filter(line => line.trim());
-        
-        if (lines.length === 0) {
-          setErrorMessage('Dosya boş!');
-          setShowErrorModal(true);
-          return;
-        }
-
-        // Parse CSV (assuming format: name,year,country,city,fairCenter,startDate,endDate,cycle,fairMonth)
-        const headers = lines[0].split(',').map(h => h.trim());
-        const data = [];
-
-        for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(',').map(v => v.trim());
-          if (values.length >= 5) { // At least name, year, country, city, fairCenter
-            data.push({
-              name: values[0] || '',
-              year: values[1] || '',
-              country: values[2] || '',
-              city: values[3] || '',
-              fairCenter: values[4] || '',
-              startDate: values[5] || '',
-              endDate: values[6] || '',
-              cycle: values[7] || 'yearly',
-              fairMonth: values[8] || ''
-            });
-          }
-        }
-
-        setImportPreview(data);
+        handleManualInput(text);
       } catch (error) {
         console.error('Parse error:', error);
-        setErrorMessage('Dosya formatı hatalı! CSV formatında olmalı.');
+        setErrorMessage('Dosya formatı hatalı!');
         setShowErrorModal(true);
       }
     };
