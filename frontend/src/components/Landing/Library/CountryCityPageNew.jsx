@@ -233,13 +233,15 @@ const CountryCityPageNew = () => {
 
         if (existingCountry) {
           // Update existing country - add new cities
-          const updatedCities = [...new Set([...existingCountry.cities, ...citiesList])];
+          const updatedCities = [...new Set([...(existingCountry.cities || []), ...citiesList])];
           
           const response = await fetch(`${backendUrl}/api/library/countries/${existingCountry.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ...existingCountry,
+              name: existingCountry.name,
+              flag: existingCountry.flag || '',
+              code: existingCountry.code || '',
               cities: updatedCities
             })
           });
@@ -247,6 +249,8 @@ const CountryCityPageNew = () => {
           if (response.ok) {
             successCount++;
           } else {
+            const errorData = await response.json();
+            console.error(`Failed to update ${countryName}:`, errorData);
             errorCount++;
           }
         } else {
@@ -255,9 +259,9 @@ const CountryCityPageNew = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              id: crypto.randomUUID(),
               name: countryName,
               flag: '',
+              code: '',
               cities: citiesList
             })
           });
@@ -265,6 +269,8 @@ const CountryCityPageNew = () => {
           if (response.ok) {
             successCount++;
           } else {
+            const errorData = await response.json();
+            console.error(`Failed to create ${countryName}:`, errorData);
             errorCount++;
           }
         }
