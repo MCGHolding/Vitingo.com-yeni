@@ -863,12 +863,37 @@ async def get_projects():
         logger.error(f"Error getting projects: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+async def generate_project_number():
+    """Generate project number in format PR-25-10001"""
+    current_year = datetime.now().year % 100  # Get last 2 digits of year
+    
+    # Get the latest project number for this year
+    year_prefix = f"PR-{current_year:02d}-"
+    latest_project = await db.projects.find_one(
+        {"projectNumber": {"$regex": f"^{year_prefix}"}},
+        sort=[("projectNumber", -1)]
+    )
+    
+    if latest_project and latest_project.get("projectNumber"):
+        # Extract the sequence number and increment
+        try:
+            last_number = int(latest_project["projectNumber"].split("-")[-1])
+            next_number = last_number + 1
+        except:
+            next_number = 10001
+    else:
+        # First project of the year
+        next_number = 10001
+    
+    return f"{year_prefix}{next_number:05d}"
+
 @api_router.post("/projects")
 async def create_project(project_input: ProjectCreate):
     """Create a new project"""
     try:
         project_dict = project_input.dict()
         project_dict["id"] = str(uuid.uuid4())
+        project_dict["projectNumber"] = await generate_project_number()
         project_dict["created_at"] = datetime.utcnow()
         project_dict["updated_at"] = datetime.utcnow()
         
