@@ -739,6 +739,26 @@ export default function NewFairFormPage({ onClose }) {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Fair Year */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Fuar Yili <span className="text-red-500">*</span>
+                </label>
+                <Select value={formData.fuarYili} onValueChange={(value) => handleInputChange('fuarYili', value)}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Yil seçiniz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033].map((yil) => (
+                      <SelectItem key={yil} value={yil.toString()}>
+                        {yil}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
 
