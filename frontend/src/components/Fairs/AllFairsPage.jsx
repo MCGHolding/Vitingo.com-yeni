@@ -344,9 +344,9 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredFairs.map((fair) => (
-                    <tr key={fair.id} className="hover:bg-gray-50 transition-colors">
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {filteredFairs.map((fair, index) => (
+                    <tr key={fair.id} className={`hover:bg-blue-50 transition-all duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:shadow-sm`}
                       <td className="px-6 py-4">
                         <div>
                           <div className="font-medium text-gray-900">{fair.name}</div>
