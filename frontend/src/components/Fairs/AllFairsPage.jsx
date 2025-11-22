@@ -416,15 +416,57 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center space-x-2">
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <Eye className="h-4 w-4 text-gray-600" />
+                          {/* Preview */}
+                          <button 
+                            onClick={() => handlePreview(fair)}
+                            className="p-1 hover:bg-blue-50 rounded transition-colors"
+                            title="Ön İzleme"
+                          >
+                            <Eye className="h-4 w-4 text-blue-600" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <Edit className="h-4 w-4 text-gray-600" />
+                          
+                          {/* Edit - Navigate to edit page */}
+                          <button 
+                            onClick={() => window.location.hash = `#/edit-fair/${fair.id}`}
+                            className="p-1 hover:bg-green-50 rounded transition-colors"
+                            title="Düzenle"
+                          >
+                            <Edit className="h-4 w-4 text-green-600" />
                           </button>
-                          <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                            <MoreHorizontal className="h-4 w-4 text-gray-600" />
-                          </button>
+                          
+                          {/* More Menu */}
+                          <div className="relative">
+                            <button 
+                              onClick={() => setOpenMenuId(openMenuId === fair.id ? null : fair.id)}
+                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              title="Daha Fazla"
+                            >
+                              <MoreHorizontal className="h-4 w-4 text-gray-600" />
+                            </button>
+                            
+                            {openMenuId === fair.id && (
+                              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <button
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    handleUpdateDates(fair);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                                >
+                                  📅 Tarihleri Güncelle
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    handleDelete(fair);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                                >
+                                  🗑️ Sil
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
