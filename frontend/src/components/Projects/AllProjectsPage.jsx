@@ -316,8 +316,11 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => {
-                    console.log('Edit clicked for project:', project.id);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('✏️ Edit clicked (list view):', project.id);
+                    alert('Düzenle: ' + project.name);
                     if (onEditProject) {
                       onEditProject(project.id);
                     }
@@ -330,8 +333,11 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => {
-                    console.log('View clicked for project:', project.name);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔍 View clicked (list view):', project.name);
+                    alert('Görüntüle: ' + project.name);
                     setSelectedProject(project);
                   }}
                   className="text-gray-600 hover:text-gray-700"
@@ -342,7 +348,13 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => handleDelete(project.id, project.name)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🗑️ Delete clicked (list view):', project.name);
+                    alert('Sil: ' + project.name);
+                    handleDelete(project.id, project.name);
+                  }}
                   className="text-red-600 hover:text-red-700"
                   title="Sil"
                 >
