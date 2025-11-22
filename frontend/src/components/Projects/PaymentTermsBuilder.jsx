@@ -22,6 +22,9 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
       dueDays: null,
       notes: ''
     };
+    console.log('PaymentTermsBuilder - Adding term:', newTerm);
+    console.log('PaymentTermsBuilder - Current terms:', paymentTerms);
+    console.log('PaymentTermsBuilder - New terms:', [...paymentTerms, newTerm]);
     onChange([...paymentTerms, newTerm]);
   };
 
