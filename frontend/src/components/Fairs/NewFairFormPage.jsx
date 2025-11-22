@@ -340,7 +340,7 @@ export default function NewFairFormPage({ onClose }) {
     console.log('Form submit başladı, form data:', formData);
     
     // Form validation
-    if (!formData.name || !formData.city || !formData.country || 
+    if (!formData.name || !formData.city || !formData.country || !formData.year ||
         !formData.startDate || !formData.endDate || !formData.sector || !formData.cycle || !formData.fairMonth) {
       console.log('Form validation hatası - eksik alanlar');
       toast({
