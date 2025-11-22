@@ -49,7 +49,24 @@ export default function NewProjectForm({ onClose, onSave }) {
   useEffect(() => {
     loadFairs();
     loadCustomers();
+    loadPaymentProfiles();
   }, []);
+
+  const loadPaymentProfiles = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/payment-profiles`);
+      if (response.ok) {
+        const data = await response.json();
+        setPaymentProfiles(data);
+      }
+    } catch (error) {
+      console.error('Error loading payment profiles:', error);
+    }
+  };
 
   const loadFairs = async () => {
     try {
