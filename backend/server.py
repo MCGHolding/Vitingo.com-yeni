@@ -760,7 +760,7 @@ async def update_country(country_id: str, country: LibraryCountry):
             {"id": country_id},
             {"$set": country.dict()}
         )
-        if result.modified_count == 0:
+        if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Country not found")
         return country
     except HTTPException:
