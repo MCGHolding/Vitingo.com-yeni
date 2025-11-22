@@ -164,7 +164,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               <label className="block text-sm font-medium text-gray-700 mb-2">Şehir</label>
               <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Tüm Şehirler</option>
-                {[...new Set(fairs.map(f => f.defaultCity).filter(Boolean))].sort().map(city => (
+                {[...new Set(fairs.map(f => f.defaultCity || f.city).filter(Boolean))].sort().map(city => (
                   <option key={city} value={city}>{city}</option>
                 ))}
               </select>
