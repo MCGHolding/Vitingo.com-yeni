@@ -477,6 +477,155 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
           )}
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && previewFair && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">{previewFair.name}</h2>
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <span className="text-2xl">&times;</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Ülke</p>
+                    <p className="font-medium">{previewFair.defaultCountry || previewFair.country || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Şehir</p>
+                    <p className="font-medium">{previewFair.defaultCity || previewFair.city || '-'}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Fuar Merkezi</p>
+                  <p className="font-medium">{previewFair.fairCenter || '-'}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Yıl</p>
+                  <p className="font-medium">{previewFair.year || '-'}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Başlangıç Tarihi</p>
+                    <p className="font-medium">{previewFair.defaultStartDate || previewFair.startDate || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Bitiş Tarihi</p>
+                    <p className="font-medium">{previewFair.defaultEndDate || previewFair.endDate || '-'}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Periyod</p>
+                  <p className="font-medium">
+                    {previewFair.cycle === 'yearly' ? 'Her Yıl' : 
+                     previewFair.cycle === '6_months' ? '6 Ayda Bir' :
+                     previewFair.cycle === '2_years' ? '2 Yılda Bir' :
+                     previewFair.cycle === '3_years' ? '3 Yılda Bir' :
+                     previewFair.cycle || '-'}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Fuar Ayı</p>
+                  <p className="font-medium">{previewFair.fairMonth || '-'}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Sektör</p>
+                  <p className="font-medium">{previewFair.sector || '-'}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-500">Açıklama</p>
+                  <p className="font-medium">{previewFair.description || '-'}</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Dates Modal */}
+      {showUpdateDateModal && selectedFair && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Tarihleri Güncelle</h2>
+                <button
+                  onClick={() => setShowUpdateDateModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <span className="text-2xl">&times;</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Başlangıç Tarihi
+                  </label>
+                  <input
+                    type="date"
+                    value={updateDates.startDate}
+                    onChange={(e) => setUpdateDates({ ...updateDates, startDate: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bitiş Tarihi
+                  </label>
+                  <input
+                    type="date"
+                    value={updateDates.endDate}
+                    onChange={(e) => setUpdateDates({ ...updateDates, endDate: e.target.value })}
+                    min={updateDates.startDate}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowUpdateDateModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={submitUpdateDates}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Güncelle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
