@@ -127,22 +127,92 @@ export default function NewFairForm({ onClose, onSave }) {
     { value: '3_years', label: '3 senede bir' }
   ];
 
-  const countries = [
-    'Türkiye',
-    'Almanya',
-    'Fransa',
-    'İtalya',
-    'İspanya',
-    'İngiltere',
-    'ABD',
-    'Kanada',
-    'Japonya',
-    'Güney Kore',
-    'Çin',
-    'Singapur',
-    'BAE',
-    'Suudi Arabistan'
-  ];
+  // Load countries from MongoDB collection on mount
+  React.useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/admin/collections/countries`);
+        const data = await response.json();
+        
+        if (data.documents && Array.isArray(data.documents)) {
+          // Extract country names and sort them
+          const countryNames = data.documents
+            .map(doc => doc.name)
+            .filter(name => name) // Remove empty names
+            .sort();
+          setCountries(countryNames);
+        }
+      } catch (error) {
+        console.error('Error loading countries:', error);
+        toast({
+          title: "Uyarı",
+          description: "Ülkeler yüklenemedi. Lütfen sayfayı yenileyin.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadCountries();
+  }, [toast]);
+
+  // Load cities from MongoDB collection on mount
+  React.useEffect(() => {
+    const loadCities = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/admin/collections/cities`);
+        const data = await response.json();
+        
+        if (data.documents && Array.isArray(data.documents)) {
+          setAllCities(data.documents); // Store all cities
+          // Initially show all cities
+          const cityNames = data.documents
+            .map(doc => doc.name)
+            .filter(name => name)
+            .sort();
+          setCities(cityNames);
+        }
+      } catch (error) {
+        console.error('Error loading cities:', error);
+        toast({
+          title: "Uyarı",
+          description: "Şehirler yüklenemedi. Lütfen sayfayı yenileyin.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadCities();
+  }, [toast]);
+
+  // Filter cities when country changes
+  React.useEffect(() => {
+    if (formData.country && allCities.length > 0) {
+      // Filter cities by selected country
+      const filteredCities = allCities
+        .filter(city => city.country === formData.country)
+        .map(city => city.name)
+        .filter(name => name)
+        .sort();
+      
+      if (filteredCities.length > 0) {
+        setCities(filteredCities);
+      } else {
+        // If no cities found for this country, show all cities
+        const allCityNames = allCities
+          .map(city => city.name)
+          .filter(name => name)
+          .sort();
+        setCities(allCityNames);
+      }
+      
+      // Reset city selection when country changes
+      if (formData.city) {
+        setFormData(prev => ({ ...prev, city: '' }));
+      }
+    }
+  }, [formData.country, allCities]);
 
   const months = [
     { value: '01', label: 'Ocak' },
