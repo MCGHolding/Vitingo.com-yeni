@@ -527,8 +527,8 @@ export default function NewFairFormPage({ onClose }) {
                     </SelectTrigger>
                     <SelectContent>
                       {countries.length > 0 ? (
-                        countries.map((country) => (
-                          <SelectItem key={country} value={country}>
+                        countries.map((country, index) => (
+                          <SelectItem key={`country-${index}`} value={country}>
                             {country}
                           </SelectItem>
                         ))
