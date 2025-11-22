@@ -139,7 +139,8 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
 
   const submitEdit = async () => {
     if (!editFormData.name || !editFormData.year) {
-      alert('Fuar adı ve yılı zorunludur!');
+      setErrorMessage('Fuar adı ve yılı zorunludur!');
+      setShowErrorModal(true);
       return;
     }
 
@@ -170,17 +171,20 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
       });
 
       if (response.ok) {
-        alert('Fuar başarıyla güncellendi!');
         setShowEditModal(false);
+        setSuccessMessage('Fuar başarıyla güncellendi!');
+        setShowSuccessModal(true);
         loadFairs(); // Refresh list
       } else {
         const errorData = await response.json();
         console.error('Update failed:', errorData);
-        alert(`Fuar güncellenemedi! ${errorData.detail || ''}`);
+        setErrorMessage(`Fuar güncellenemedi! ${errorData.detail || ''}`);
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error('Error updating fair:', error);
-      alert('Bir hata oluştu!');
+      setErrorMessage('Bir hata oluştu!');
+      setShowErrorModal(true);
     }
   };
 
