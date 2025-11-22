@@ -42,7 +42,8 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
 
   useEffect(() => {
     // Only load fairs from API if not provided via props
-    if (!initialFairs || initialFairs.length === 0) {
+    // If initialFairs is explicitly provided (even if empty), don't call API
+    if (initialFairs === undefined) {
       loadFairs();
     }
   }, [initialFairs]);
