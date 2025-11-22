@@ -105,7 +105,7 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className={`grid grid-cols-1 gap-3 ${hideAmounts ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
                 {/* Percentage */}
                 <div>
                   <label className="text-xs text-gray-600 mb-1 block">Yüzde (%)</label>
@@ -129,17 +129,19 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                   </Select>
                 </div>
 
-                {/* Amount */}
-                <div>
-                  <label className="text-xs text-gray-600 mb-1 block">Tutar</label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={term.amount}
-                    onChange={(e) => handleTermChange(term.id, 'amount', parseFloat(e.target.value) || 0)}
-                    className="w-full"
-                  />
-                </div>
+                {/* Amount - Only show if not hidden */}
+                {!hideAmounts && (
+                  <div>
+                    <label className="text-xs text-gray-600 mb-1 block">Tutar</label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={term.amount}
+                      onChange={(e) => handleTermChange(term.id, 'amount', parseFloat(e.target.value) || 0)}
+                      className="w-full"
+                    />
+                  </div>
+                )}
 
                 {/* Due Type */}
                 <div>
