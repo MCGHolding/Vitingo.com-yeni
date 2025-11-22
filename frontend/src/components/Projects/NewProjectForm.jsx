@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft, Save, Plus, Edit2, FolderKanban, Calendar, DollarSign, FileText } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { useAuth } from '../../contexts/AuthContext';
 import PaymentTermsBuilder from './PaymentTermsBuilder';
 import AddFairModal from './AddFairModal';
 
