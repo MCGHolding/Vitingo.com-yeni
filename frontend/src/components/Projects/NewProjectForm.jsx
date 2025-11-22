@@ -237,11 +237,18 @@ export default function NewProjectForm({ onClose, onSave }) {
 
   const applyPaymentProfile = (profileId) => {
     const profile = paymentProfiles.find(p => p.id === profileId);
-    if (profile) {
+    if (profile && profile.paymentTerms) {
+      // Calculate amounts based on contract amount
+      const termsWithAmounts = profile.paymentTerms.map(term => ({
+        ...term,
+        amount: (formData.contractAmount * term.percentage) / 100
+      }));
+      
       setFormData({
         ...formData,
-        paymentTerms: profile.paymentTerms
+        paymentTerms: termsWithAmounts
       });
+      
       toast({
         title: "Profil Uygulandı",
         description: `"${profile.name}" profili ödeme planına uygulandı`
