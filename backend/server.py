@@ -263,6 +263,18 @@ class ProjectCreate(BaseModel):
     isNew: bool = True
     createdFrom: str = "manual"
 
+# Payment Profile Models
+class PaymentProfile(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    paymentTerms: list = []
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+class PaymentProfileCreate(BaseModel):
+    name: str
+    paymentTerms: list = []
+
 # Import Models
 class City(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
