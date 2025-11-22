@@ -18,6 +18,7 @@ const CURRENCIES = [
 
 export default function NewProjectForm({ onClose, onSave }) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [fairs, setFairs] = useState([]);
   const [customers, setCustomers] = useState([]);
