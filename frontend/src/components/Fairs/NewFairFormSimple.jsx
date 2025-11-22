@@ -477,6 +477,7 @@ export default function NewFairFormSimple({ onClose }) {
                   type="date"
                   value={formData.bitisTarihi}
                   onChange={(e) => setFormData({ ...formData, bitisTarihi: e.target.value })}
+                  min={formData.baslamaTarihi || undefined}
                   className="h-12"
                 />
               </div>
