@@ -19,6 +19,7 @@ const CountryCityPageNew = () => {
   const [newCountry, setNewCountry] = useState({ name: '', flag: '' });
   const [newCity, setNewCity] = useState('');
   const [importText, setImportText] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
