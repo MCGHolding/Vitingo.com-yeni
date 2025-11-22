@@ -173,7 +173,7 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
               <label className="block text-sm font-medium text-gray-700 mb-2">Ülke</label>
               <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Tüm Ülkeler</option>
-                {[...new Set(fairs.map(f => f.defaultCountry).filter(Boolean))].sort().map(country => (
+                {[...new Set(fairs.map(f => f.defaultCountry || f.country).filter(Boolean))].sort().map(country => (
                   <option key={country} value={country}>{country}</option>
                 ))}
               </select>
