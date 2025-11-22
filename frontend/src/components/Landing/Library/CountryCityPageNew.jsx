@@ -273,6 +273,7 @@ const CountryCityPageNew = () => {
       alert(`İçeri aktarma tamamlandı!\n✅ Başarılı: ${successCount}\n❌ Hatalı: ${errorCount}`);
       await loadCountries();
       setImportText('');
+      setSelectedFile(null);
       setShowImportModal(false);
     } catch (error) {
       console.error('Error importing data:', error);
