@@ -1,46 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
-import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign, Trash2, Eye } from 'lucide-react';
+import { useToast } from '../../hooks/use-toast';
 
 const AllProjectsPage = ({ onBackToDashboard }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Mock data - gerçek projeler backend'den gelecek
-  const mockProjects = [
-    {
-      id: 1,
-      name: 'Web Sitesi Yenileme',
-      description: 'Kurumsal web sitesi yenileme projesi',
-      status: 'ongoing',
-      startDate: '2024-09-01',
-      endDate: '2024-12-15',
-      budget: 50000,
-      clientName: 'ABC Şirketi',
-      projectManager: 'Ahmet Yılmaz'
-    },
-    {
-      id: 2,
-      name: 'Mobil Uygulama',
-      description: 'iOS ve Android mobil uygulama geliştirme',
-      status: 'completed',
-      startDate: '2024-06-01',
-      endDate: '2024-09-30',
-      budget: 75000,
-      clientName: 'XYZ Tech',
-      projectManager: 'Mehmet Demir'
-    },
-    {
-      id: 3,
-      name: 'ERP Entegrasyonu',
-      description: 'Mevcut sistemle ERP entegrasyonu',
-      status: 'cancelled',
-      startDate: '2024-08-01',
-      endDate: '2024-11-30',
-      budget: 30000,
-      clientName: '123 Ltd.',
-      projectManager: 'Ayşe Kaya'
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/projects`);
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data);
+      }
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      toast({
+        title: "Hata",
+        description: "Projeler yüklenirken bir hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleDelete = async (projectId, projectName) => {
+    if (!window.confirm(`"${projectName}" projesini silmek istediğinizden emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/projects/${projectId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Proje başarıyla silindi"
+        });
+        loadProjects(); // Listeyi yenile
+      } else {
+        throw new Error('Silme işlemi başarısız');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Hata",
+        description: "Proje silinirken bir hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
