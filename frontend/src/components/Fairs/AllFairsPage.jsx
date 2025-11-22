@@ -21,8 +21,10 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showUpdateDateModal, setShowUpdateDateModal] = useState(false);
   const [selectedFair, setSelectedFair] = useState(null);
-  const [updateDates, setUpdateDates] = useState({ startDate: '', endDate: '' });
+  const [updateDates, setUpdateDates] = useState({ startDate: '', endDate: '', year: '' });
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState(null);
 
   useEffect(() => {
     loadFairs();
