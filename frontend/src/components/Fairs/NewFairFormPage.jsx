@@ -189,28 +189,24 @@ export default function NewFairFormPage({ onClose }) {
     loadCountries();
   }, []);
 
-  // Load cities from MongoDB collection on mount
+  // Load all countries with cities on mount
   React.useEffect(() => {
-    const loadCities = async () => {
+    const loadAllCountriesWithCities = async () => {
       try {
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const response = await fetch(`${backendUrl}/api/admin/collections/cities`);
+        const response = await fetch(`${backendUrl}/api/library/countries`);
         const data = await response.json();
         
-        if (data.documents && Array.isArray(data.documents)) {
-          setAllCities(data.documents);
-          const cityNames = data.documents
-            .map(doc => doc.name)
-            .filter(name => name)
-            .sort();
-          setCities(cityNames);
+        if (Array.isArray(data)) {
+          // Store all countries for city filtering
+          setAllCities(data);
         }
       } catch (error) {
-        console.error('Error loading cities:', error);
+        console.error('Error loading countries with cities:', error);
       }
     };
 
-    loadCities();
+    loadAllCountriesWithCities();
   }, []);
 
   // Filter cities when country changes
