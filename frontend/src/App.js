@@ -1015,7 +1015,7 @@ const Dashboard = () => {
           />
         );
       case 'new-fair':
-        return <NewFairFormPage onClose={handleBackToDashboard} />;
+        return <NewFairFormSimple onClose={handleBackToDashboard} />;
       
       case 'new-project':
         return <NewProjectForm onBackToDashboard={handleBackToDashboard} />;
