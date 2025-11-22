@@ -313,6 +313,35 @@ export default function NewFairFormSimple({ onClose }) {
               </div>
             </div>
 
+            {/* Fuar Merkezi */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Fuar Merkezi
+              </label>
+              <Select 
+                value={formData.fuarMerkezi} 
+                onValueChange={(value) => setFormData({ ...formData, fuarMerkezi: value })}
+                disabled={!formData.sehir}
+              >
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder={formData.sehir ? "Fuar merkezi seçiniz (opsiyonel)" : "Önce şehir seçiniz"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {fuarMerkezleri.length > 0 ? (
+                    fuarMerkezleri.map((merkez, idx) => (
+                      <SelectItem key={`center-${idx}`} value={merkez}>
+                        {merkez}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-gray-500 text-center">
+                      {formData.sehir ? "Bu şehir için kayıtlı fuar merkezi yok" : "Önce şehir seçiniz"}
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Fuar Tarihleri */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
