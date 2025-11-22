@@ -591,6 +591,44 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
         </div>
       </div>
 
+      {/* Floating Action Menu */}
+      {openMenuId && (
+        <div 
+          className="fixed w-52 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+          style={{ 
+            top: `${menuPosition.top}px`, 
+            left: `${menuPosition.left}px`,
+            zIndex: 9999
+          }}
+        >
+          {fairs.filter(f => f.id === openMenuId).map(fair => (
+            <div key={fair.id}>
+              <button
+                onClick={() => {
+                  setOpenMenuId(null);
+                  handleUpdateDates(fair);
+                }}
+                className="w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center space-x-2"
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Tarihleri Güncelle</span>
+              </button>
+              <div className="border-t border-gray-100"></div>
+              <button
+                onClick={() => {
+                  setOpenMenuId(null);
+                  handleDeleteClick(fair);
+                }}
+                className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center space-x-2"
+              >
+                <span className="text-red-500">🗑️</span>
+                <span>Sil</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Preview Modal */}
       {showPreviewModal && previewFair && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
