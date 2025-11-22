@@ -1,94 +1,81 @@
 <analysis>
-The trajectory details an extensive development effort on a CRM's Ultra Admin panel. The user, communicating in Turkish, guides the AI engineer through a series of feature developments and complex bug fixes.
+The trajectory documents an intensive, user-guided development process for a CRM's Ultra Admin panel, with the user communicating exclusively in Turkish. The work began by debugging and enhancing a Fairs management module (), fixing a series of critical UI bugs related to JSX syntax, state-based navigation, and CSS overflow/z-index issues with action menus. The AI then implemented significant features on this page, including a full suite of CRUD actions with custom modals (replacing native alerts), a bulk CSV/text import feature, and improved UI layouts based on user feedback. A crucial task involved using web search to validate and correct inaccurate fair data (dates and locations) in the production database.
 
-The initial work focused on creating a generic MongoDB collection manager and refactoring master data management for countries, cities, and fair centers into hierarchical structures.
+The focus then shifted to the New Project form (), which was non-functional. The AI built the required backend endpoints and Pydantic models from scratch, fixed frontend prop-drilling bugs, and implemented a complex Payment Profiles system. This system allows users to save and apply predefined payment term templates (e.g., percentages and due dates), which automatically calculate installment amounts and dates based on contract value and new setup date fields. The final requests involved adding conditional logic for America Fairs and auto-formatting the project name to title case, which was the task in progress.
 
-The core of this trajectory revolves around two major tasks on the Yeni Fuar (New Fair) form. First, a layout redesign was requested, adding a dependent Fuar Merkezi (Fair Center) dropdown. This led to a prolonged and difficult debugging session where UI changes, though correctly coded, would not render. The AI explored numerous dead-ends, primarily suspecting webpack caching issues. The true root cause was only discovered after the user provided a console screenshot revealing a React duplicate key error (Takvim) in the  component, which was halting the render tree.
-
-Frustrated by the problematic component, the user instructed the AI to create a new, simplified fair creation form () from scratch. The AI successfully built this new form, incorporating all requested fields, including the troublesome Yıl (Year) dropdown.
-
-Subsequent requests involved adding more features to this new form, such as a bulk city import modal and improved date picker logic. The work then shifted to the  (fairs list), where the AI implemented significant UI/UX enhancements and added a full suite of CRUD actions (View, Edit, Delete, Update) with corresponding modals and business logic. The final request, currently in progress, is to improve the visual design of this list page. The next agent must respond in **Turkish**.
+The next agent must respond in **Turkish**.
 </analysis>
-
 <product_requirements>
-The application is a CRM with an Ultra Admin panel. The primary goal is to build and refine a robust Fairs management module.
+The application is a CRM designed for managing fairs and associated sales projects.
 
-**Implemented Features:**
-1.  **New Fair Creation Form (from scratch):** A new, clean form () was created to replace a buggy, complex predecessor. This form allows creating a Fair with the following fields:
-    *   Fuar Adı (Fair Name)
-    *   Fuar Senesi (Fair Year - dropdown)
-    *   Ülke (Country - from Library)
-    *   Şehir (City - dependent on Country, from Library)
-    *   Fuar Merkezi (Fair Center - dependent on City, from Library)
-    *   Başlangıç/Bitiş Tarihi (Start/End Dates - with dependent validation)
-    *   Döngü (Cycle) & Fuar Ayı (Fair Month)
-2.  **Bulk City Import:** A modal was added to the New Fair form, allowing users to paste a list of cities to be added to a selected country.
-3.  **Enhanced Fairs List ():** The list displaying all fairs was significantly updated to:
-    *   Display City, Period, and remaining days (Süre).
-    *   Include a full action menu for each fair: View (modal), Edit (page), Delete (with logic to prevent deletion if linked to sales), and Update (modal).
-    *   Improve the layout for better readability.
+**1. Fairs Management Module:**
+- **Fairs List ():** A comprehensive view to display all fairs. It was enhanced with a custom layout (stacking city/country, adding a year column), a compact date format (), and a full suite of CRUD actions (View, Edit, Delete, Update) managed through custom, styled modals. A major data integrity check was performed, correcting real-world fair dates and locations via web search and direct API updates. The page also features a bulk import function that accepts both CSV files and manually pasted text.
+- **Filtering:** The system supports filtering for Past Fairs and Active Fairs based on date logic. A critical bug was fixed where the main list component would ignore filtered props and re-fetch all data.
+
+**2. Project Creation Module ():**
+- **Core Functionality:** A form to create new sales projects linked to customers and fairs. It was initially broken and required new backend models () and API endpoints.
+- **Payment Profiles:** A key feature allowing users to create, save, and apply payment term templates. When a profile is selected, it automatically calculates installment amounts and due dates based on the contract total, a new  field, and new  fields.
+- **Conditional UI:** The form includes a checkbox for America Fairs which, when checked, conditionally displays Advance Warehouse date fields.
+- **UX Enhancements:** Includes auto-formatting for currency inputs and title-casing for the project name.
 </product_requirements>
-
 <key_technical_concepts>
-- **Frontend:** React (Hooks), Tailwind CSS, Shadcn/UI components (, , ), .
-- **Backend:** FastAPI, Pydantic.
+- **Frontend:** React (Hooks: , ), Tailwind CSS, Shadcn/UI components (Card, Select, Modal).
+- **Backend:** FastAPI, Pydantic for data modeling and validation.
 - **Database:** MongoDB.
-- **Key Bug:** A critical rendering bug was caused by a duplicate key in a React component (), which silently halted rendering of other components. The fix involved making keys unique (using array index or removing duplicate data).
-- **Development Environment:** A recurring, severe issue with Webpack's Hot Module Replacement (HMR) and caching, causing valid code changes to not appear in the browser.
+- **State Management:** Primarily component-level state. Debugging involved fixing issues with stale state in closures (solved with functional updates) and incorrect prop handling causing child components to override parent data.
+- **Debugging:** Resolved critical frontend bugs including JSX syntax errors, React duplicate key errors, CSS / conflicts, and state-based navigation issues.
 </key_technical_concepts>
-
 <code_architecture>
 The application is a monorepo with a  (React) and  (FastAPI).
 
 
 
--   ** (New File)**
-    -   **Importance:** This is the new, primary component for creating fairs, built from scratch to resolve persistent bugs in the old form. It contains the complete logic for the multi-field form, including hierarchical data fetching (Country -> City -> Fair Center), date validation, and state management.
-    -   **Changes:** Created and heavily modified to add Fuar Merkezi, a bulk city import modal, and improved date picker logic.
-
--   ** (Heavily Modified)**
-    -   **Importance:** This component displays the list of all fairs. It's the main interface for users to view and manage existing fairs.
+-   ****
+    -   **Importance:** Central hub for viewing and managing all fairs. It's a highly complex component that has been heavily modified.
     -   **Changes:**
-        -   The table layout was completely overhauled to add Periyod and Süre (Time Remaining) columns and improve readability.
-        -   The displayed data logic was updated to handle different data structures from old and new forms ().
-        -   A full suite of CRUD actions (View, Edit, Delete, Update) was added, including state management for modals (, ) and the action menu.
+        -   UI was overhauled to add/restructure columns (Year, City/Country), and a new date format () was implemented.
+        -   Full CRUD functionality was added using custom modals for View, Edit, Update, and Delete actions, replacing native browser  and .
+        -   A bulk import feature (CSV/text) was implemented with its own modal.
+        -   A critical bug with the action menu () being clipped by the table's  property was fixed by adjusting the parent container's CSS.
+        -   A major bug was fixed where its internal  would re-fetch all fairs, overriding the filtered list passed via props (e.g., from ). The  was modified to be conditional.
 
--   ** (Modified)**
-    -   **Importance:** Renders the main navigation menu. A bug in this file caused application-wide rendering failures.
-    -   **Changes:** A duplicate menu item named Takvim was removed from one of the navigation arrays to fix a critical React duplicate key error that was preventing other components from rendering correctly.
+-   ****
+    -   **Importance:** The primary form for creating new sales projects. It was built from a non-functional state into a feature-rich component.
+    -   **Changes:**
+        -   New state and handlers were added for Payment Profiles, allowing users to save/load payment term templates.
+        -   Conditional rendering logic was implemented for America Fairs to show/hide Advance Warehouse date fields.
+        -   New fields for  and / were added.
+        -   Input handlers were updated to auto-format the project name to Title Case and format the contract amount with thousand separators.
+        -   A bug causing  to fail was fixed by passing the correct prop from .
 
--   ** (Modified)**
-    -   **Importance:** The main FastAPI application file. It defines all API endpoints and data models.
-    -   **Changes:** The  and  Pydantic models were updated to include the new  and  fields to support the updated New Fair form.
+-   ****
+    -   **Importance:** A reusable component for creating and managing payment installment plans.
+    -   **Changes:**
+        -   A  prop was added to allow the component to be used in the Payment Profile creation modal without showing absolute currency values.
+        -   Logic was added to calculate and display due dates based on , , and  props.
 
--   ** (Modified)**
-    -   **Importance:** The root component that handles routing and top-level state.
-    -   **Changes:** The routing logic for the  view was updated to render the new  component instead of the old, buggy .
+-   ****
+    -   **Importance:** The single-file FastAPI backend containing all API logic and data models.
+    -   **Changes:**
+        -   New Pydantic models were created: , , . Existing models () were updated to make fields optional.
+        -   New CRUD endpoints were added for  and .
+        -   A new bulk import endpoint () was added.
+        -   Existing endpoints like  were used to perform data correction on incorrect fair information.
 </code_architecture>
-
 <pending_tasks>
-- **Automatic Fair Renewal System:** Implement the backend scheduled task (cron job) and email notification system. This will trigger one week after a fair ends, sending an admin an email with a link to update the fair for the next year.
-- **Güncellenmedi Badge:** If a fair is not updated via the renewal link, display a Güncellenmedi (Not Updated) badge on its card in the .
-- **Edit Fair Page:** The Edit button was added, but the actual navigation and page/form for editing a fair are not yet implemented.
+- **Automatic Fair Renewal System:** Implement a backend scheduled task (cron job) to send an email notification one week after a fair ends, prompting an admin to renew it.
+- **Güncellenmedi Badge:** Display a Not Updated badge on fairs in  if they haven't been renewed via the automatic system.
+- **Full Edit Fair Page:** The Edit button in the fair list currently opens a modal. The final implementation should navigate to a dedicated edit page.
 </pending_tasks>
-
 <current_work>
-The most recent task was a significant UI/UX overhaul of the fair list page (). The user, providing a screenshot, expressed dissatisfaction with the plain, all-white design and requested a more polished look with dividing lines and better visual separation.
+The most recent task was to implement an automatic title-casing feature for the Proje Adı (Project Name) input field in the  component. The user requested that no matter how the project name is typed, it should be formatted so that the first letter of each word is capitalized and the rest are lowercase.
 
-Prior to this request, the following features were just added to :
-1.  **Fuar Adı & Şehir:** The fair's name is now followed by its city (e.g., Orlando) instead of the static text Vitingo Events.
-2.  **Two-Line Date:** The start and end dates are displayed on two separate lines for better readability.
-3.  **Periyod Column:** The Durum (Status) column was replaced with Periyod (Period) to show the fair's cycle (e.g., Her Yıl).
-4.  **Süre Column:** A new Süre (Time Remaining) column was added to calculate and display the number of days until the fair starts.
-5.  **Action Menu:** A ... menu was implemented with four actions:
-    *   **Göz (View):** Opens a modal to preview all fair details.
-    *   **Edit:** Placeholder for navigating to an edit page.
-    *   **Sil (Delete):** Opens a confirmation modal with logic to prevent deletion if the fair has associated records.
-    *   **Güncelle (Update):** Opens a modal to update fair dates.
+To achieve this, the following actions were taken:
+1.  A helper function, , was created to perform the string transformation.
+2.  The  handler for the project name  was modified to apply this  function to the value before updating the component's state.
 
-The AI successfully implemented the functional code for these changes, and the current, immediate task is to apply the requested aesthetic improvements to this list page.
+The file  was edited to include this logic. The last step was to save these changes. The immediate next action should be to test this new formatting feature on the frontend to ensure it works as expected.
 </current_work>
-
 <optional_next_step>
-I will start by editing  to improve its visual design by adding borders, subtle background colors, and refining the layout to address the user's bembeyaz (all-white) feedback.
+Test the newly implemented title-casing feature for the Proje Adı input field on the Yeni Proje Formu to confirm it works correctly.
 </optional_next_step>
