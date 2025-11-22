@@ -408,8 +408,8 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                           {fair.customerCount || 0}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      <td className="px-6 py-5">
+                        <span className="inline-flex px-3 py-2 text-xs font-bold rounded-full bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300 shadow-sm">
                           {fair.cycle === 'yearly' ? 'Her Yıl' : 
                            fair.cycle === '6_months' ? '6 Ayda Bir' :
                            fair.cycle === '2_years' ? '2 Yılda Bir' :
