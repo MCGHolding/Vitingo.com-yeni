@@ -132,6 +132,11 @@ export default function NewFairFormPage({ onClose }) {
     fairMonth: ''
   });
 
+  // Load countries and cities from collections
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [allCities, setAllCities] = useState([]);
+
   // Default sectors list
   const [sectors, setSectors] = useState([
     'Teknoloji',
