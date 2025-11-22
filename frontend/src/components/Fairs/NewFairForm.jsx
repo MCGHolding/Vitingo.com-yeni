@@ -132,16 +132,19 @@ export default function NewFairForm({ onClose, onSave }) {
     const loadCountries = async () => {
       try {
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const response = await fetch(`${backendUrl}/api/admin/collections/countries`);
+        const response = await fetch(`${backendUrl}/api/library/countries`);
         const data = await response.json();
         
-        if (data.documents && Array.isArray(data.documents)) {
+        if (Array.isArray(data)) {
           // Extract country names and sort them
-          const countryNames = data.documents
+          const countryNames = data
             .map(doc => doc.name)
             .filter(name => name) // Remove empty names
             .sort();
           setCountries(countryNames);
+          
+          // Store all countries for city filtering
+          setAllCities(data);
         }
       } catch (error) {
         console.error('Error loading countries:', error);
@@ -156,61 +159,27 @@ export default function NewFairForm({ onClose, onSave }) {
     loadCountries();
   }, [toast]);
 
-  // Load cities from MongoDB collection on mount
-  React.useEffect(() => {
-    const loadCities = async () => {
-      try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const response = await fetch(`${backendUrl}/api/admin/collections/cities`);
-        const data = await response.json();
-        
-        if (data.documents && Array.isArray(data.documents)) {
-          setAllCities(data.documents); // Store all cities
-          // Initially show all cities
-          const cityNames = data.documents
-            .map(doc => doc.name)
-            .filter(name => name)
-            .sort();
-          setCities(cityNames);
-        }
-      } catch (error) {
-        console.error('Error loading cities:', error);
-        toast({
-          title: "Uyarı",
-          description: "Şehirler yüklenemedi. Lütfen sayfayı yenileyin.",
-          variant: "destructive"
-        });
-      }
-    };
-
-    loadCities();
-  }, [toast]);
-
   // Filter cities when country changes
   React.useEffect(() => {
     if (formData.country && allCities.length > 0) {
-      // Filter cities by selected country
-      const filteredCities = allCities
-        .filter(city => city.country === formData.country)
-        .map(city => city.name)
-        .filter(name => name)
-        .sort();
+      // Find the selected country
+      const selectedCountry = allCities.find(c => c.name === formData.country);
       
-      if (filteredCities.length > 0) {
-        setCities(filteredCities);
+      if (selectedCountry && selectedCountry.cities) {
+        // Set cities from the selected country
+        const cityList = selectedCountry.cities.filter(city => city).sort();
+        setCities(cityList);
       } else {
-        // If no cities found for this country, show all cities
-        const allCityNames = allCities
-          .map(city => city.name)
-          .filter(name => name)
-          .sort();
-        setCities(allCityNames);
+        // No cities for this country
+        setCities([]);
       }
       
       // Reset city selection when country changes
       if (formData.city) {
         setFormData(prev => ({ ...prev, city: '' }));
       }
+    } else {
+      setCities([]);
     }
   }, [formData.country, allCities]);
 
