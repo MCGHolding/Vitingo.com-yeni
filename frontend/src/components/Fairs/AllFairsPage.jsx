@@ -455,19 +455,25 @@ export default function AllFairsPage({ fairs: initialFairs, onBackToDashboard })
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <div className="flex items-center text-sm font-medium text-gray-900">
-                          <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
-                            <MapPin className="h-3 w-3 text-white" />
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <MapPin className="h-4 w-4 text-white" />
                           </div>
-                          {fair.defaultCity || fair.city || '-'}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {fair.defaultCity || fair.city || '-'}
+                            </div>
+                            <div className="text-xs text-gray-500 flex items-center mt-1">
+                              <Globe className="h-3 w-3 mr-1" />
+                              {fair.defaultCountry || fair.country || '-'}
+                            </div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-5 text-center">
-                        <div className="flex items-center justify-center text-sm font-medium text-gray-900">
-                          <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mr-3">
-                            <Globe className="h-3 w-3 text-white" />
-                          </div>
-                          {fair.defaultCountry || fair.country || '-'}
+                        <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-800 border border-indigo-300 shadow-sm">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          {fair.year || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-5 text-center">
