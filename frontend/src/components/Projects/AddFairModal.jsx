@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { X, Check } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
 export default function AddFairModal({ isOpen, onClose, onFairAdded }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [allCountries, setAllCountries] = useState([]); // Store all countries data for city filtering
+  
   const [formData, setFormData] = useState({
     name: '',
     defaultCity: '',
-    defaultCountry: 'TR',
+    defaultCountry: '',
     defaultStartDate: '',
     defaultEndDate: '',
     description: ''
