@@ -176,6 +176,60 @@ export default function NewProjectForm({ onClose, onSave }) {
     }
   };
 
+  const savePaymentProfile = async () => {
+    if (!profileFormData.name || profileFormData.paymentTerms.length === 0) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Profil adı ve en az bir ödeme koşulu gerekli",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/payment-profiles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileFormData)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Ödeme profili kaydedildi"
+        });
+        setShowProfileModal(false);
+        setProfileFormData({ name: '', paymentTerms: [] });
+        loadPaymentProfiles();
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Hata",
+        description: "Profil kaydedilemedi",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const applyPaymentProfile = (profileId) => {
+    const profile = paymentProfiles.find(p => p.id === profileId);
+    if (profile) {
+      setFormData({
+        ...formData,
+        paymentTerms: profile.paymentTerms
+      });
+      toast({
+        title: "Profil Uygulandı",
+        description: `"${profile.name}" profili ödeme planına uygulandı`
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
