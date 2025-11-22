@@ -162,7 +162,12 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => onEditProject && onEditProject(project.id)}
+              onClick={() => {
+                console.log('Edit clicked for project:', project.id);
+                if (onEditProject) {
+                  onEditProject(project.id);
+                }
+              }}
               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
               <Edit2 className="h-4 w-4 mr-1" />
@@ -171,10 +176,22 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => setSelectedProject(project)}
+              onClick={() => {
+                console.log('View clicked for project:', project.name);
+                setSelectedProject(project);
+              }}
             >
               <Eye className="h-4 w-4 mr-1" />
               Görüntüle
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleDelete(project.id, project.name)}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Sil
             </Button>
           </div>
         </div>
