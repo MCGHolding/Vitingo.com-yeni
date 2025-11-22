@@ -44,6 +44,7 @@ export default function NewProjectForm({ onClose, onSave }) {
     advanceWarehouseEndDate: '',
     city: '',
     country: 'TR',
+    contractDate: '',
     contractAmount: 0,
     currency: 'TRY',
     paymentTerms: [],
