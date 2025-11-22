@@ -226,6 +226,7 @@ class PaymentTerm(BaseModel):
 
 class Project(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    projectNumber: str = ""  # PR-25-10001 format
     name: str
     customerId: str
     customerName: str = ""
@@ -242,6 +243,8 @@ class Project(BaseModel):
     status: str = "yeni"
     isNew: bool = True
     createdFrom: str = "manual"
+    createdBy: str = ""  # User ID who created the project
+    createdByName: str = ""  # User name who created the project
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
