@@ -209,9 +209,13 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => {
-                console.log('View clicked for project:', project.name);
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔍 View clicked for project:', project.name, project);
+                alert('Görüntüle butonuna tıklandı: ' + project.name);
                 setSelectedProject(project);
+                console.log('🔍 selectedProject state set to:', project.id);
               }}
             >
               <Eye className="h-4 w-4 mr-1" />
