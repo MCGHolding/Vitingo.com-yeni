@@ -336,6 +336,9 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 <div className="text-sm text-gray-900">{project.customerName || '-'}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{project.companyName || '-'}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">{project.createdByName || '-'}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
