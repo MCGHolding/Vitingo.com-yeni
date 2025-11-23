@@ -619,16 +619,6 @@ const Dashboard = () => {
     setCurrentView('settings');
   };
 
-  const handleTemplateList = () => {
-    console.log('Template List clicked');
-    setCurrentView('template-list');
-  };
-
-  const handleMyContracts = () => {
-    console.log('My Contracts clicked');
-    setCurrentView('my-contracts');
-  };
-
   const handleImportData = () => {
     console.log('Import Data clicked');
     setCurrentView('import-data');
