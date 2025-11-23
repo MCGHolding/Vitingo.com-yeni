@@ -632,6 +632,17 @@ const Dashboard = () => {
     setCurrentView('export-data');
   };
 
+  // Contract Management Handlers
+  const handleContracts = () => {
+    console.log('Contracts clicked');
+    setCurrentView('contracts');
+  };
+
+  const handleNewContract = () => {
+    console.log('New Contract clicked');
+    setCurrentView('contracts-new');
+  };
+
   const handleSalesReports = () => {
     setCurrentView('sales-reports');
   };
