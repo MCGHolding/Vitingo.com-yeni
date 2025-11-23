@@ -163,6 +163,16 @@ const ContractManagementPage = ({ onBack }) => {
     );
   }
 
+  // Show manual template creator
+  if (step === 'manual-creator') {
+    return (
+      <ManualTemplateCreator
+        onBack={() => setStep('selection')}
+        onComplete={() => setStep('complete')}
+      />
+    );
+  }
+
   // Show contract creation page
   if (step === 'create-contract') {
     return (
