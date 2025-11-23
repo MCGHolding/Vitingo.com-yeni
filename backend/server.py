@@ -10590,6 +10590,7 @@ class ContractField(BaseModel):
     unit: Optional[str] = None
     page: Optional[int] = None
     bbox: Optional[List[int]] = None
+    default_value: Optional[str] = None
 
 class ContractTemplateCreate(BaseModel):
     template_name: str
