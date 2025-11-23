@@ -676,8 +676,8 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
         >
           <option value="">Müşteri Seçiniz...</option>
           {customers.map((customer) => (
-            <option key={customer.id} value={customer.name}>
-              {customer.name}
+            <option key={customer.id} value={customer.companyName}>
+              {customer.companyName}
             </option>
           ))}
         </select>
