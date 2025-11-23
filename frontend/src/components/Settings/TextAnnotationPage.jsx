@@ -320,7 +320,11 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   };
 
   const handleRemoveField = (fieldId) => {
-    setFields(fields.filter(f => f.id !== fieldId));
+    const updatedFields = fields.filter(f => f.id !== fieldId);
+    setFields(updatedFields);
+    
+    // Add to history
+    addToHistory(updatedFields, editedPages);
   };
 
   const handleComplete = () => {
