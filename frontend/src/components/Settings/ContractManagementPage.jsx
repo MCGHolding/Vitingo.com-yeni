@@ -184,29 +184,29 @@ const ContractManagementPage = ({ onBack }) => {
           Ayarlar'a Dön
         </button>
         
-        <div className="bg-white rounded-lg shadow-sm p-6 max-w-5xl mx-auto">
-          <div className="text-center mb-6">
-            <div className="inline-flex p-3 bg-emerald-100 rounded-full mb-3">
-              <FileText className="h-8 w-8 text-emerald-600" />
+        <div className="bg-white rounded-lg shadow-sm p-4 max-w-4xl mx-auto">
+          <div className="text-center mb-4">
+            <div className="inline-flex p-2 bg-emerald-100 rounded-full mb-2">
+              <FileText className="h-5 w-5 text-emerald-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-lg font-bold text-gray-900 mb-1">
               Sözleşme Yönetimi
             </h1>
-            <p className="text-gray-600 text-sm mb-3">
+            <p className="text-gray-600 text-xs mb-2">
               Kendi sözleşme şablonlarınızı oluşturun ve yönetin
             </p>
             
             {/* Quick Action - Create Contract */}
             <button
               onClick={() => setStep('create-contract')}
-              className="inline-flex items-center px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm hover:shadow transition-all"
+              className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs font-medium shadow-sm hover:shadow transition-all"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3 w-3 mr-1.5" />
               Mevcut Şablondan Sözleşme Oluştur
             </button>
           </div>
 
-          <div className="mb-6 pt-4 border-t border-gray-200">
+          <div className="mb-3 pt-3 border-t border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Şablon Oluşturma Yöntemi</h2>
             <p className="text-gray-600 text-sm mb-4">
               Nasıl bir şablon oluşturmak istersiniz?
