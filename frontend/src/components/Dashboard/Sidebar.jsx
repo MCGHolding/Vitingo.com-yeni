@@ -454,6 +454,14 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Ayarlar - open directly without submenu
+    if (item.name === 'Ayarlar' && !subItem) {
+      if (onSettings) {
+        onSettings();
+      }
+      return;
+    }
+    
     // If no subItem and the item has submenu, toggle submenu
     if (!subItem && item.hasSubmenu) {
       toggleSubmenu(item.name);
