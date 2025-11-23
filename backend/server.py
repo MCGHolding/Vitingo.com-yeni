@@ -41,12 +41,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 import base64
-from motor.motor_asyncio import AsyncIOMotorGridFSBucket
-import PyPDF2
-from docx import Document as DocxDocument
-import aiofiles
-import tempfile
-import shutil
+# Contract management imports removed
 
 
 ROOT_DIR = Path(__file__).parent
