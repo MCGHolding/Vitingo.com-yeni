@@ -1362,6 +1362,448 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
+def test_contract_management_api():
+    """
+    CONTRACT MANAGEMENT API TESTING
+    
+    **Test Requirements:**
+    1. POST /api/contracts/extract-pdf-text - PDF text extraction
+       - Create test PDF and extract text
+       - Verify response contains filename, total_pages, pages array
+       
+    2. POST /api/contract-templates - Template creation
+       - Create template with mock data
+       - Verify template_id is returned
+       
+    3. GET /api/contract-templates - List templates
+       - Verify templates array and count
+       - Verify at least 1 template exists
+       
+    4. GET /api/contract-templates/{template_id} - Get single template
+       - Use template_id from creation
+       - Verify all fields are returned
+       
+    5. POST /api/contracts/generate - Generate contract PDF
+       - Use template_id and field values
+       - Verify PDF is generated (Content-Type: application/pdf)
+    
+    **Success Criteria:**
+    ✅ All endpoints return 200/201 status codes
+    ✅ Template creation and listing works
+    ✅ PDF generation works (WeasyPrint available)
+    """
+    
+    print("=" * 100)
+    print("🚨 CONTRACT MANAGEMENT API TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: Testing Sözleşme Yönetimi API endpoints for PDF text extraction,")
+    print("template creation, listing, and contract PDF generation.")
+    print("=" * 100)
+    
+    test_results = {
+        "pdf_extraction_working": False,
+        "template_creation_working": False,
+        "template_listing_working": False,
+        "template_retrieval_working": False,
+        "contract_generation_working": False,
+        "created_template_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: PDF Text Extraction
+    print("\n" + "=" * 80)
+    print("TEST 1: PDF TEXT EXTRACTION - POST /api/contracts/extract-pdf-text")
+    print("=" * 80)
+    
+    try:
+        # Create a simple test PDF content
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import letter
+        import io
+        
+        # Create test PDF in memory
+        pdf_buffer = io.BytesIO()
+        c = canvas.Canvas(pdf_buffer, pagesize=letter)
+        c.drawString(100, 750, "Test Sözleşme Metni {{musteri_adi}} {{tarih}}")
+        c.drawString(100, 730, "Bu bir test sözleşmesidir.")
+        c.drawString(100, 710, "Müşteri: {{musteri_adi}}")
+        c.drawString(100, 690, "Tarih: {{tarih}}")
+        c.save()
+        pdf_buffer.seek(0)
+        
+        # Prepare file for upload
+        files = {
+            'file': ('test_contract.pdf', pdf_buffer.getvalue(), 'application/pdf')
+        }
+        
+        endpoint = f"{BACKEND_URL}/api/contracts/extract-pdf-text"
+        print(f"Testing endpoint: {endpoint}")
+        
+        response = requests.post(endpoint, files=files, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: PDF text extraction endpoint responding")
+            
+            try:
+                data = response.json()
+                
+                # Verify response structure
+                required_fields = ["filename", "total_pages", "pages"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if missing_fields:
+                    print(f"❌ FAIL: Missing required fields: {missing_fields}")
+                    test_results["critical_issues"].append("PDF_EXTRACTION_MISSING_FIELDS")
+                else:
+                    print("✅ PASS: Response contains all required fields")
+                    print(f"   Filename: {data.get('filename')}")
+                    print(f"   Total Pages: {data.get('total_pages')}")
+                    print(f"   Pages Array Length: {len(data.get('pages', []))}")
+                    
+                    # Check pages structure
+                    pages = data.get('pages', [])
+                    if pages and len(pages) > 0:
+                        first_page = pages[0]
+                        page_fields = ["page_number", "text", "lines"]
+                        page_missing = [field for field in page_fields if field not in first_page]
+                        
+                        if page_missing:
+                            print(f"⚠️  WARNING: Page missing fields: {page_missing}")
+                        else:
+                            print("✅ PASS: Page structure is correct")
+                            print(f"   Page 1 Text Preview: {first_page.get('text', '')[:100]}...")
+                    
+                    test_results["pdf_extraction_working"] = True
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing PDF extraction response: {str(e)}")
+                test_results["critical_issues"].append(f"PDF_EXTRACTION_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: PDF extraction failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"PDF_EXTRACTION_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: PDF extraction test error: {str(e)}")
+        test_results["critical_issues"].append(f"PDF_EXTRACTION_ERROR: {str(e)}")
+    
+    # TEST 2: Template Creation
+    print("\n" + "=" * 80)
+    print("TEST 2: TEMPLATE CREATION - POST /api/contract-templates")
+    print("=" * 80)
+    
+    template_data = {
+        "template_name": "Test Sözleşme Şablonu",
+        "filename": "test.pdf",
+        "total_pages": 1,
+        "pages": [
+            {
+                "page_number": 1,
+                "text": "Test sözleşme metni {{musteri_adi}} {{tarih}}",
+                "lines": ["Test sözleşme metni {{musteri_adi}} {{tarih}}"]
+            }
+        ],
+        "fields": [
+            {
+                "field_name": "Müşteri Adı",
+                "field_key": "musteri_adi",
+                "field_type": "text",
+                "is_required": True,
+                "dropdown_options": None,
+                "selected_text": "Müşteri Adı",
+                "placeholder": "{{musteri_adi}}",
+                "order_index": 0
+            },
+            {
+                "field_name": "Tarih",
+                "field_key": "tarih",
+                "field_type": "date",
+                "is_required": True,
+                "dropdown_options": None,
+                "selected_text": "Tarih",
+                "placeholder": "{{tarih}}",
+                "order_index": 1
+            }
+        ]
+    }
+    
+    try:
+        endpoint = f"{BACKEND_URL}/api/contract-templates"
+        print(f"Testing endpoint: {endpoint}")
+        
+        response = requests.post(endpoint, json=template_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: Template creation endpoint responding")
+            
+            try:
+                data = response.json()
+                template_id = data.get("id") or data.get("template_id")
+                
+                if template_id:
+                    print(f"✅ PASS: Template created with ID: {template_id}")
+                    test_results["created_template_id"] = template_id
+                    test_results["template_creation_working"] = True
+                else:
+                    print("❌ FAIL: No template_id in response")
+                    test_results["critical_issues"].append("TEMPLATE_CREATION_NO_ID")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing template creation response: {str(e)}")
+                test_results["critical_issues"].append(f"TEMPLATE_CREATION_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Template creation failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"TEMPLATE_CREATION_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Template creation test error: {str(e)}")
+        test_results["critical_issues"].append(f"TEMPLATE_CREATION_ERROR: {str(e)}")
+    
+    # TEST 3: List Templates
+    print("\n" + "=" * 80)
+    print("TEST 3: LIST TEMPLATES - GET /api/contract-templates")
+    print("=" * 80)
+    
+    try:
+        endpoint = f"{BACKEND_URL}/api/contract-templates"
+        print(f"Testing endpoint: {endpoint}")
+        
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Template listing endpoint responding")
+            
+            try:
+                data = response.json()
+                
+                if "templates" in data and "count" in data:
+                    templates = data["templates"]
+                    count = data["count"]
+                    print(f"✅ PASS: Response contains templates array and count")
+                    print(f"   Template Count: {count}")
+                    print(f"   Templates Array Length: {len(templates)}")
+                    
+                    if count >= 1:
+                        print("✅ PASS: At least 1 template exists")
+                        test_results["template_listing_working"] = True
+                    else:
+                        print("⚠️  WARNING: No templates found")
+                        test_results["warnings"].append("NO_TEMPLATES_FOUND")
+                        
+                elif isinstance(data, list):
+                    # Handle case where response is direct array
+                    print(f"✅ PASS: Templates returned as array")
+                    print(f"   Template Count: {len(data)}")
+                    
+                    if len(data) >= 1:
+                        print("✅ PASS: At least 1 template exists")
+                        test_results["template_listing_working"] = True
+                    else:
+                        print("⚠️  WARNING: No templates found")
+                        test_results["warnings"].append("NO_TEMPLATES_FOUND")
+                else:
+                    print("❌ FAIL: Unexpected response format")
+                    test_results["critical_issues"].append("TEMPLATE_LISTING_WRONG_FORMAT")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing template listing response: {str(e)}")
+                test_results["critical_issues"].append(f"TEMPLATE_LISTING_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Template listing failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"TEMPLATE_LISTING_FAILED_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Template listing test error: {str(e)}")
+        test_results["critical_issues"].append(f"TEMPLATE_LISTING_ERROR: {str(e)}")
+    
+    # TEST 4: Get Single Template
+    print("\n" + "=" * 80)
+    print("TEST 4: GET SINGLE TEMPLATE - GET /api/contract-templates/{template_id}")
+    print("=" * 80)
+    
+    if test_results["created_template_id"]:
+        try:
+            template_id = test_results["created_template_id"]
+            endpoint = f"{BACKEND_URL}/api/contract-templates/{template_id}"
+            print(f"Testing endpoint: {endpoint}")
+            
+            response = requests.get(endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Single template retrieval endpoint responding")
+                
+                try:
+                    data = response.json()
+                    
+                    # Verify template fields
+                    expected_fields = ["id", "template_name", "filename", "total_pages", "pages", "fields"]
+                    missing_fields = [field for field in expected_fields if field not in data]
+                    
+                    if missing_fields:
+                        print(f"⚠️  WARNING: Missing template fields: {missing_fields}")
+                        test_results["warnings"].append(f"TEMPLATE_MISSING_FIELDS: {missing_fields}")
+                    else:
+                        print("✅ PASS: Template contains all expected fields")
+                        print(f"   Template Name: {data.get('template_name')}")
+                        print(f"   Fields Count: {len(data.get('fields', []))}")
+                        
+                    test_results["template_retrieval_working"] = True
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing single template response: {str(e)}")
+                    test_results["critical_issues"].append(f"TEMPLATE_RETRIEVAL_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Single template retrieval failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"TEMPLATE_RETRIEVAL_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Single template retrieval test error: {str(e)}")
+            test_results["critical_issues"].append(f"TEMPLATE_RETRIEVAL_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No template_id available from creation test")
+        test_results["warnings"].append("TEMPLATE_RETRIEVAL_SKIPPED_NO_ID")
+    
+    # TEST 5: Generate Contract PDF
+    print("\n" + "=" * 80)
+    print("TEST 5: GENERATE CONTRACT PDF - POST /api/contracts/generate")
+    print("=" * 80)
+    
+    if test_results["created_template_id"]:
+        try:
+            template_id = test_results["created_template_id"]
+            
+            generate_data = {
+                "template_id": template_id,
+                "field_values": {
+                    "musteri_adi": "Test Müşteri A.Ş.",
+                    "tarih": "2025-11-23"
+                },
+                "contract_title": "Test Sözleşmesi"
+            }
+            
+            endpoint = f"{BACKEND_URL}/api/contracts/generate"
+            print(f"Testing endpoint: {endpoint}")
+            
+            response = requests.post(endpoint, json=generate_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Contract generation endpoint responding")
+                
+                # Check Content-Type
+                content_type = response.headers.get('Content-Type', '')
+                print(f"   Content-Type: {content_type}")
+                
+                if 'application/pdf' in content_type:
+                    print("✅ PASS: Response is PDF (Content-Type: application/pdf)")
+                    
+                    # Check Content-Disposition
+                    content_disposition = response.headers.get('Content-Disposition', '')
+                    if 'attachment' in content_disposition:
+                        print("✅ PASS: PDF has proper download headers")
+                    
+                    # Check PDF content length
+                    content_length = len(response.content)
+                    print(f"   PDF Size: {content_length} bytes")
+                    
+                    if content_length > 1000:  # Reasonable PDF size
+                        print("✅ PASS: PDF appears to be properly generated")
+                        test_results["contract_generation_working"] = True
+                    else:
+                        print("⚠️  WARNING: PDF size seems small, might be incomplete")
+                        test_results["warnings"].append("PDF_SIZE_SMALL")
+                        
+                else:
+                    print(f"❌ FAIL: Response is not PDF, got Content-Type: {content_type}")
+                    test_results["critical_issues"].append(f"CONTRACT_GENERATION_NOT_PDF: {content_type}")
+                    
+            else:
+                print(f"❌ FAIL: Contract generation failed with status {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"CONTRACT_GENERATION_FAILED_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Contract generation test error: {str(e)}")
+            test_results["critical_issues"].append(f"CONTRACT_GENERATION_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No template_id available from creation test")
+        test_results["warnings"].append("CONTRACT_GENERATION_SKIPPED_NO_ID")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL CONTRACT MANAGEMENT API TEST REPORT")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • PDF Text Extraction: {'✅ Working' if test_results['pdf_extraction_working'] else '❌ Failed'}")
+    print(f"   • Template Creation: {'✅ Working' if test_results['template_creation_working'] else '❌ Failed'}")
+    print(f"   • Template Listing: {'✅ Working' if test_results['template_listing_working'] else '❌ Failed'}")
+    print(f"   • Template Retrieval: {'✅ Working' if test_results['template_retrieval_working'] else '❌ Failed'}")
+    print(f"   • Contract Generation: {'✅ Working' if test_results['contract_generation_working'] else '❌ Failed'}")
+    
+    if test_results["created_template_id"]:
+        print(f"   • Created Template ID: {test_results['created_template_id']}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_endpoints = sum([
+        test_results['pdf_extraction_working'],
+        test_results['template_creation_working'],
+        test_results['template_listing_working'],
+        test_results['template_retrieval_working'],
+        test_results['contract_generation_working']
+    ])
+    
+    if working_endpoints == 5:
+        print("🎉 EXCELLENT: All 5 contract management endpoints are working correctly!")
+        print("   ✅ PDF text extraction functional")
+        print("   ✅ Template creation and management working")
+        print("   ✅ Contract PDF generation working")
+        print("   ✅ WeasyPrint appears to be properly installed")
+        
+    elif working_endpoints >= 3:
+        print(f"✅ GOOD: {working_endpoints}/5 endpoints working correctly")
+        print("   Most contract management functionality is operational")
+        
+    else:
+        print(f"❌ CRITICAL: Only {working_endpoints}/5 endpoints working")
+        print("   Contract management system has significant issues")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if not test_results['pdf_extraction_working']:
+        print("   1. Check PDF processing libraries (PyPDF2, pdfplumber)")
+    if not test_results['template_creation_working']:
+        print("   2. Verify MongoDB contract_templates collection")
+    if not test_results['contract_generation_working']:
+        print("   3. Check WeasyPrint installation and dependencies")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ OVERALL RESULT: CRITICAL ISSUES FOUND IN CONTRACT MANAGEMENT API")
+        return False
+    else:
+        print(f"\n✅ OVERALL RESULT: CONTRACT MANAGEMENT API IS WORKING CORRECTLY")
+        return True
+
 def test_mongodb_collections_admin_api():
     """
     MONGODB COLLECTIONS ADMIN API TESTING
