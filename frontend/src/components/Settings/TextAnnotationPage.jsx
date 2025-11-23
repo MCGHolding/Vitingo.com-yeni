@@ -481,9 +481,9 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                   <div className="flex items-start">
                     <span className="text-2xl mr-3">👆</span>
                     <div>
-                      <strong className="text-blue-900">Alan Seçim Modu:</strong> Metinde fareyle seçim yapın ve popup'tan alan tanımlayın. 
+                      <strong className="text-blue-900">Görüntüleme Modu:</strong> Metinde fareyle seçim yapın ve popup'tan alan tanımlayın. 
                       <br />
-                      Metin düzenlemek için "Düzenleme Modu" butonuna tıklayın.
+                      💡 Metin düzenlemek için "Düzenleme Modu" butonuna tıklayın.
                     </div>
                   </div>
                 </div>
@@ -494,9 +494,12 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                   <div className="flex items-start">
                     <span className="text-2xl mr-3">✏️</span>
                     <div>
-                      <strong className="text-green-900">Düzenleme Modu:</strong> Bold, italic, renk, resim ekleme yapabilirsiniz.
-                      <br />
-                      <span className="text-orange-700 font-semibold">⚠️ Alan eklemek için "Görüntüleme Modu"na geçin!</span>
+                      <strong className="text-green-900">Düzenleme Modu Aktif:</strong> 
+                      <ul className="mt-2 ml-4 space-y-1">
+                        <li>✅ Bold, italic, renk, resim ekleme yapabilirsiniz</li>
+                        <li>✅ Editör dışındaki metinde alan seçebilirsiniz</li>
+                        <li>✅ Düzenledikçe otomatik kaydedilir (30 sn)</li>
+                      </ul>
                     </div>
                   </div>
                 </div>
