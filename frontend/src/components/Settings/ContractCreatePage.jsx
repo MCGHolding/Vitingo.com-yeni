@@ -283,6 +283,49 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
   };
 
   // Create and save contract
+  const handleSaveDraft = async () => {
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const userEmail = localStorage.getItem('userEmail') || 'demo@example.com';
+
+      const draftData = {
+        contract_title: contractTitle,
+        template_id: selectedTemplate.id,
+        template_name: selectedTemplate.template_name,
+        field_values: fieldValues,
+        status: 'draft',
+        created_by: userEmail
+      };
+
+      const response = await fetch(`${backendUrl}/api/contracts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(draftData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert('✅ Taslak başarıyla kaydedildi!');
+        
+        // Redirect back to contracts page
+        if (onBack) {
+          onBack();
+        } else {
+          window.location.href = '/contracts';
+        }
+      } else {
+        const error = await response.json();
+        alert(`❌ Hata: ${error.detail || 'Taslak kaydedilemedi'}`);
+      }
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('❌ Bir hata oluştu');
+    }
+  };
+
   const handleGenerateContract = async () => {
     if (!updatedPages) {
       alert('⚠️ Önce "Bilgileri Güncelle" butonuna tıklayın!');
