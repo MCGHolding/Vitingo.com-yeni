@@ -10644,10 +10644,10 @@ async def delete_document(collection_name: str, doc_id: str):
 # Include the API router in the main app
 app.include_router(api_router)
 
-# ===================== CONTRACT MANAGEMENT ENDPOINTS =====================
+# Contracts endpoints are above, before app.include_router
 
-# File Upload to GridFS
-@api_router.post("/contracts/upload")
+# Placeholder - contracts moved above
+@api_router_placeholder_contracts_moved_above = None
 async def upload_contract_file(file: UploadFile = File(...)):
     """Upload a file to GridFS for contract templates"""
     try:
