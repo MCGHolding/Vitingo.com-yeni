@@ -227,6 +227,14 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
       text: editedPages[idx] || page.text
     }));
     
+    // Clear draft after completion
+    try {
+      const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+      localStorage.removeItem(draftKey);
+    } catch (error) {
+      console.error('Error clearing draft:', error);
+    }
+    
     onComplete({
       file,
       pdfData: {
