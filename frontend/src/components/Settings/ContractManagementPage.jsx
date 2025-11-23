@@ -65,49 +65,6 @@ const ContractManagementPage = ({ onBack }) => {
     setStep('annotation');
   };
 
-  const handleManualTemplateCreate = async (templateName) => {
-    try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-      
-      // Manuel şablon için boş bir yapı oluştur
-      const templateData = {
-        template_name: templateName,
-        filename: `${templateName}.txt`,
-        total_pages: 1,
-        pages: [
-          {
-            page_number: 1,
-            text: '<p>Bu manuel olarak oluşturulmuş bir şablondur.</p><p>İçeriği düzenleyebilirsiniz.</p>',
-            lines: ['Bu manuel olarak oluşturulmuş bir şablondur. İçeriği düzenleyebilirsiniz.']
-          }
-        ],
-        fields: []
-      };
-      
-      const response = await fetch(`${backendUrl}/api/contract-templates`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(templateData)
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        alert(`✅ Başarılı!\n\nManuel şablon oluşturuldu: ${templateName}\nŞimdi alanları ekleyebilirsiniz.`);
-        setStep('complete');
-      } else {
-        const error = await response.json();
-        alert(`Hata: ${error.detail || 'Şablon kaydedilemedi'}`);
-      }
-    } catch (error) {
-      console.error('Error creating manual template:', error);
-      alert('Şablon oluşturulurken bir hata oluştu');
-    }
-  };
-
   const handleAnnotationComplete = async (data) => {
     console.log('Annotation complete:', data);
     
