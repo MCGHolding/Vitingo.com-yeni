@@ -248,7 +248,7 @@ const ContractsPage = ({ setCurrentView }) => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="bg-white rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
