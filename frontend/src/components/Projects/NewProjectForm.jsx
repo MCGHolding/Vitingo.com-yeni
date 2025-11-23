@@ -456,26 +456,58 @@ export default function NewProjectForm({ onClose, onSave }) {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Project Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Proje Adı <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={formData.name}
-                onChange={(e) => {
-                  const input = e.target.value;
-                  // Convert to title case: first letter of each word uppercase, rest lowercase
-                  const titleCase = input
-                    .toLowerCase()
-                    .split(' ')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ');
-                  setFormData({ ...formData, name: titleCase });
-                }}
-                placeholder="Örn: ABC Şirketi - ISK-SODEX 2025"
-                required
-              />
+            {/* Project Name and Company Selection - Same Row */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Project Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Proje Adı <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    // Convert to title case: first letter of each word uppercase, rest lowercase
+                    const titleCase = input
+                      .toLowerCase()
+                      .split(' ')
+                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(' ');
+                    setFormData({ ...formData, name: titleCase });
+                  }}
+                  placeholder="Örn: ABC Şirketi - ISK-SODEX 2025"
+                  required
+                />
+              </div>
+
+              {/* Company Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Şirketi Seç <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={formData.companyId}
+                  onValueChange={(value) => {
+                    const selectedCompany = groupCompanies.find(c => c.id === value);
+                    setFormData({
+                      ...formData,
+                      companyId: value,
+                      companyName: selectedCompany?.name || ''
+                    });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Şirket seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groupCompanies.map((company) => (
+                      <SelectItem key={company.id} value={company.id}>
+                        {company.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Customer and Fair Selection - Same Row */}
