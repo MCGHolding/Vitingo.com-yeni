@@ -27,11 +27,20 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [emailBanks, setEmailBanks] = useState([]);
   const [emailMode, setEmailMode] = useState('single'); // 'single' or 'country'
 
-  const countries = [
-    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
-    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
-    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
-  ];
+  // Load group companies
+  const loadGroupCompanies = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/group-companies`);
+      
+      if (response.ok) {
+        const companies = await response.json();
+        setGroupCompanies(Array.isArray(companies) ? companies : []);
+      }
+    } catch (error) {
+      console.error('Error loading group companies:', error);
+    }
+  };
 
   // Load banks from backend
   const loadBanks = async () => {
