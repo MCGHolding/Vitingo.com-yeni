@@ -280,6 +280,9 @@ const Dashboard = () => {
   
   // Bank state
   const [selectedBankForEdit, setSelectedBankForEdit] = useState(null);
+  
+  // Template state
+  const [selectedTemplateForEdit, setSelectedTemplateForEdit] = useState(null);
 
   // Collection states
   const [showNewCollectionForm, setShowNewCollectionForm] = useState(false);
