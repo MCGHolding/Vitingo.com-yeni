@@ -215,31 +215,58 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
       return;
     }
 
+    const fieldKey = fieldForm.field_name
+      .toLowerCase()
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ı/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]/g, '_');
+    const placeholder = `{{${fieldKey}}}`;
+
     const newField = {
       id: Date.now(),
       field_name: fieldForm.field_name,
-      field_key: fieldForm.field_name
-        .toLowerCase()
-        .replace(/ğ/g, 'g')
-        .replace(/ü/g, 'u')
-        .replace(/ş/g, 's')
-        .replace(/ı/g, 'i')
-        .replace(/ö/g, 'o')
-        .replace(/ç/g, 'c')
-        .replace(/[^a-z0-9]/g, '_'),
+      field_key: fieldKey,
       field_type: fieldForm.field_type,
       is_required: fieldForm.is_required,
       dropdown_options: fieldForm.field_type === 'dropdown' 
         ? fieldForm.dropdown_options.split(',').map(opt => opt.trim()).filter(opt => opt)
         : null,
       selected_text: selectedText,
-      placeholder: `{{${fieldForm.field_name.toLowerCase().replace(/[^a-z0-9]/g, '_')}}}`
+      placeholder: placeholder
     };
 
     setFields([...fields, newField]);
+    
+    // IMPORTANT: Replace selected text with placeholder in current page
+    if (editMode && editedPages[currentPageIndex]) {
+      // In edit mode with HTML content
+      const currentContent = editedPages[currentPageIndex];
+      const updatedContent = currentContent.replace(selectedText, placeholder);
+      setEditedPages({
+        ...editedPages,
+        [currentPageIndex]: updatedContent
+      });
+    } else if (!editMode && pdfData.pages[currentPageIndex]) {
+      // In view mode with plain text - need to update editedPages
+      const currentText = editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text;
+      const updatedText = currentText.replace(selectedText, placeholder);
+      setEditedPages({
+        ...editedPages,
+        [currentPageIndex]: updatedText
+      });
+    }
+    
     setShowPopup(false);
     setSelectedText(null);
+    
+    // Clear selection
     window.getSelection().removeAllRanges();
+    
+    alert(`✅ Alan eklendi ve metin "${placeholder}" ile değiştirildi!`);
   };
 
   const handleRemoveField = (fieldId) => {
