@@ -367,7 +367,7 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                     onMouseDown={(e) => {
                       e.stopPropagation();
                       console.log('📄 Contract clicked (list view):', project.id);
-                      window.location.href = '/contracts/new';
+                      window.location.href = `/contracts/new?projectId=${project.id}`;
                     }}
                     className="p-2 text-emerald-600 hover:bg-emerald-50 rounded transition-colors cursor-pointer"
                     title="Sözleşme Oluştur"
