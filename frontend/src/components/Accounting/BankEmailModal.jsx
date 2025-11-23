@@ -35,33 +35,113 @@ export default function BankEmailModal({ banks, mode, onClose }) {
   function generateDefaultBody() {
     if (mode === 'single' && banks.length === 1) {
       const bank = banks[0];
-      return `Merhaba,
-
-Aşağıdaki banka bilgilerini sizinle paylaşıyorum:
-
-🏦 Banka Bilgileri:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Banka Adı: ${bank.bank_name}
-Ülke: ${bank.country === 'Turkey' ? 'Türkiye 🇹🇷' : bank.country === 'UAE' ? 'BAE 🇦🇪' : bank.country === 'USA' ? 'ABD 🇺🇸' : bank.country}
-
-${bank.swift_code ? `SWIFT Kodu: ${bank.swift_code}` : ''}
-${bank.iban ? `IBAN: ${bank.iban}` : ''}
-${bank.routing_number ? `Routing Number: ${bank.routing_number}` : ''}
-${bank.us_account_number ? `Account Number: ${bank.us_account_number}` : ''}
-${bank.branch_name ? `Şube: ${bank.branch_name}` : ''}
-${bank.branch_code ? `Şube Kodu: ${bank.branch_code}` : ''}
-${bank.account_holder ? `Hesap Sahibi: ${bank.account_holder}` : ''}
-${bank.account_number ? `Hesap No: ${bank.account_number}` : ''}
-${bank.bank_address ? `Banka Adresi: ${bank.bank_address}` : ''}
-${bank.recipient_address ? `Alıcı Adresi: ${bank.recipient_address}` : ''}
-${bank.recipient_name ? `Alıcı İsmi: ${bank.recipient_name}` : ''}
-${bank.recipient_zip_code ? `Zip Code: ${bank.recipient_zip_code}` : ''}
-
-İyi çalışmalar dileriz.
-
-${currentUser?.fullName || 'Vitingo CRM Kullanıcısı'}
-Vitingo CRM Sistemi`;
+      const companyName = bank.company_name || 'Şirket';
+      const countryFlag = bank.country === 'Turkey' ? '🇹🇷' : bank.country === 'UAE' ? '🇦🇪' : bank.country === 'USA' ? '🇺🇸' : '';
+      const countryName = bank.country === 'Turkey' ? 'Türkiye' : bank.country === 'UAE' ? 'BAE' : bank.country === 'USA' ? 'ABD' : bank.country;
+      
+      return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f5f5f5; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600;">Banka Bilgileri</h1>
+              <p style="margin: 10px 0 0 0; color: #ffffff; opacity: 0.9; font-size: 14px;">${companyName}</p>
+            </td>
+          </tr>
+          
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 30px 40px 20px 40px;">
+              <p style="margin: 0; color: #333333; font-size: 16px; line-height: 1.6;">Merhaba,</p>
+              <p style="margin: 15px 0 0 0; color: #666666; font-size: 14px; line-height: 1.6;">
+                Aşağıda <strong>${companyName}</strong> şirketimize ait banka bilgilerini bulabilirsiniz.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Bank Details -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f8f9fa; border-radius: 8px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr>
+                        <td colspan="2" style="padding-bottom: 15px; border-bottom: 2px solid #e0e0e0;">
+                          <h2 style="margin: 0; color: #667eea; font-size: 18px; font-weight: 600;">🏦 ${bank.bank_name}</h2>
+                          <p style="margin: 5px 0 0 0; color: #999999; font-size: 13px;">${countryFlag} ${countryName}</p>
+                        </td>
+                      </tr>
+                      
+                      ${bank.swift_code ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px; width: 140px;">SWIFT Kodu:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px; font-weight: 500;">${bank.swift_code}</td>
+                      </tr>` : ''}
+                      
+                      ${bank.iban ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px;">IBAN:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px; font-weight: 500; font-family: monospace;">${bank.iban}</td>
+                      </tr>` : ''}
+                      
+                      ${bank.routing_number ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px;">Routing Number:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px; font-weight: 500;">${bank.routing_number}</td>
+                      </tr>` : ''}
+                      
+                      ${bank.us_account_number ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px;">Account Number:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px; font-weight: 500;">${bank.us_account_number}</td>
+                      </tr>` : ''}
+                      
+                      ${bank.account_holder ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px;">Hesap Sahibi:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px; font-weight: 500;">${bank.account_holder}</td>
+                      </tr>` : ''}
+                      
+                      ${bank.branch_name ? `
+                      <tr>
+                        <td style="padding: 12px 0; color: #666666; font-size: 13px;">Şube:</td>
+                        <td style="padding: 12px 0; color: #333333; font-size: 14px;">${bank.branch_name}${bank.branch_code ? ` (${bank.branch_code})` : ''}</td>
+                      </tr>` : ''}
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 40px 30px 40px; border-top: 1px solid #e0e0e0;">
+              <p style="margin: 0; color: #666666; font-size: 13px; line-height: 1.6;">
+                İyi çalışmalar dileriz.<br>
+                <strong style="color: #333333;">${currentUser?.fullName || 'Vitingo CRM Kullanıcısı'}</strong><br>
+                <span style="color: #999999; font-size: 12px;">Vitingo CRM</span>
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
     } else {
       const country = banks[0]?.country;
       const countryName = country === 'Turkey' ? 'Türkiye 🇹🇷' : country === 'UAE' ? 'BAE 🇦🇪' : country === 'USA' ? 'ABD 🇺🇸' : country;
