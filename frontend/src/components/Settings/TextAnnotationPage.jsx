@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, X, Check } from 'lucide-react';
+import { ArrowLeft, Plus, X, Check, ChevronLeft, ChevronRight, Edit3, Eye } from 'lucide-react';
+import RichTextEditor from './RichTextEditor';
 
 const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   const [loading, setLoading] = useState(true);
@@ -8,6 +9,9 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [fields, setFields] = useState([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [editedPages, setEditedPages] = useState({});
   
   const [fieldForm, setFieldForm] = useState({
     field_name: '',
