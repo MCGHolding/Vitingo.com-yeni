@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import LibraryPage from './Library/LibraryPage';
 import CollectionsPage from './CollectionsPage';
+import DocumentsPage from './Documents/DocumentsPage';
 
 const menuItems = [
   {
