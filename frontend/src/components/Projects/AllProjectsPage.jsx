@@ -369,7 +369,7 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                     onMouseDown={(e) => {
                       e.stopPropagation();
                       console.log('🗑️ Delete clicked (list view):', project.name);
-                      handleDelete(project.id, project.name);
+                      handleDeleteClick(project.id, project.name);
                     }}
                     className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
                     title="Sil"
