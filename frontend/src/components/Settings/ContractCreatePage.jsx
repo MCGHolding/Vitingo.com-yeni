@@ -15,7 +15,51 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
 
   useEffect(() => {
     fetchTemplates();
+    loadProjectDataIfNeeded();
   }, []);
+
+  const loadProjectDataIfNeeded = async () => {
+    // Check if projectId is in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('projectId');
+    
+    if (!projectId) return;
+
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/projects/${projectId}`);
+      if (response.ok) {
+        const project = await response.json();
+        console.log('📋 Loaded project data:', project);
+        
+        // Auto-fill fields from project data
+        const autoFilledValues = {
+          'firma_unvani': project.companyName || '',
+          'firma_kisa_adi': project.companyName?.split(' ')[0] || '',
+          'musteri_adi': project.customerName || '',
+          'musteri_kisa_adi': project.customerName?.split(' ')[0] || '',
+          'etkinlik_merkezi': project.fairName || '',
+          'sozlesme_tarihi': project.contractDate || new Date().toISOString().split('T')[0],
+          'tutar': project.contractAmount?.toString() || '',
+          'doviz': project.currency || 'TRY',
+          'sehir': project.city || '',
+          'ulke': project.country || '',
+          'fuar_baslangic': project.fairStartDate || '',
+          'fuar_bitis': project.fairEndDate || ''
+        };
+        
+        setFieldValues(autoFilledValues);
+        
+        // Set contract title
+        setContractTitle(`${project.customerName} - ${project.fairName} Sözleşmesi`);
+      }
+    } catch (error) {
+      console.error('Error loading project data:', error);
+    }
+  };
 
   // Keyboard navigation for preview
   useEffect(() => {
