@@ -534,33 +534,33 @@ const ContractCreatePage = ({ onBack }) => {
             </div>
 
             {/* Contract Title */}
-            <div className="mb-6 pb-6 border-b border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-3 pb-3 border-b border-gray-200">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 Sözleşme Başlığı
               </label>
               <input
                 type="text"
                 value={contractTitle}
                 onChange={(e) => setContractTitle(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="Sözleşme başlığı girin"
               />
             </div>
 
             {/* Dynamic Fields */}
-            <div className="space-y-6">
+            <div className="space-y-3">
               {selectedTemplate.fields
                 .sort((a, b) => a.order_index - b.order_index)
                 .map((field) => (
                   <div key={field.field_key}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       {field.field_name}
                       {field.is_required && (
-                        <span className="text-red-600 ml-1">*</span>
+                        <span className="text-red-600 ml-0.5">*</span>
                       )}
                     </label>
                     {renderFieldInput(field)}
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-[10px] text-gray-500 mt-0.5">
                       {field.placeholder}
                     </p>
                   </div>
