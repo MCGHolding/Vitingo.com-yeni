@@ -189,6 +189,66 @@ class LibraryPhoneCode(BaseModel):
     class Config:
         extra = "ignore"
 
+# Contract Management Models
+class TemplateField(BaseModel):
+    field_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    field_name: str  # "Müşteri Adı"
+    field_key: str  # "musteri_adi"
+    field_type: str  # "text", "number", "date", "email", "phone", "dropdown", "textarea"
+    is_required: bool = True
+    dropdown_options: Optional[List[str]] = None
+    validation_rules: Optional[Dict[str, Any]] = None
+    order_index: int = 0
+
+class ContractTemplate(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = None
+    creation_method: str  # "upload", "ai", "manual"
+    original_file: Optional[Dict[str, str]] = None  # {file_id, filename, file_type, mime_type}
+    template_content: Optional[Dict[str, Any]] = None
+    fields: List[TemplateField] = []
+    created_by: str
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    is_active: bool = True
+    
+    class Config:
+        extra = "ignore"
+
+class TemplateFieldCreate(BaseModel):
+    field_name: str
+    field_key: str
+    field_type: str
+    is_required: bool = True
+    dropdown_options: Optional[List[str]] = None
+    order_index: int = 0
+
+class ContractTemplateCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    creation_method: str = "upload"
+
+class GeneratedContract(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    template_id: str
+    template_name: str
+    contract_name: str
+    field_values: Dict[str, Any]
+    generated_file: Optional[Dict[str, str]] = None  # {file_id, filename, file_type, download_url}
+    status: str = "draft"  # "draft", "generated", "signed"
+    created_by: str
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    metadata: Optional[Dict[str, Any]] = None
+    
+    class Config:
+        extra = "ignore"
+
+class GenerateContractRequest(BaseModel):
+    template_id: str
+    contract_name: str
+    field_values: Dict[str, Any]
+
 # Fair Models
 class Fair(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
