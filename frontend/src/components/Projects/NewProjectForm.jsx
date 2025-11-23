@@ -89,7 +89,10 @@ export default function NewProjectForm({ onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/group-companies`);
       if (response.ok) {
         const data = await response.json();
-        const companies = data.companies || [];
+        // Backend returns array directly, not { companies: [] }
+        let companies = Array.isArray(data) ? data : [];
+        
+        console.log('Loaded group companies:', companies);
         
         // If no group companies, add default company or user name
         if (companies.length === 0) {
