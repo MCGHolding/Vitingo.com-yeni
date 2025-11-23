@@ -174,8 +174,8 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       const customersRes = await fetch(`${backendUrl}/api/customers`);
       if (customersRes.ok) {
         const data = await customersRes.json();
-        console.log('✅ Customers loaded:', data?.customers?.length || 0);
-        setCustomers(data.customers || []);
+        console.log('✅ Customers loaded:', data.length);
+        setCustomers(Array.isArray(data) ? data : []);
       }
 
       // Fetch users
