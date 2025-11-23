@@ -21824,26 +21824,26 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 MONGODB COLLECTIONS ADMIN API TESTING")
+    print("🚨 CONTRACT MANAGEMENT API TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     
-    # Run the MongoDB Collections Admin API testing
+    # Run the Contract Management API testing
     try:
-        result = test_mongodb_collections_admin_api()
+        result = test_contract_management_api()
         if result:
-            print("\n✅ MONGODB COLLECTIONS ADMIN API TESTING COMPLETED SUCCESSFULLY")
-            print("✅ All 6 endpoints working correctly")
-            print("✅ Collections listing provides proper structure")
-            print("✅ Document retrieval with pagination works")
-            print("✅ Statistics provide accurate collection information")
-            print("✅ All CRUD operations (Create, Read, Update, Delete) are functional")
+            print("\n✅ CONTRACT MANAGEMENT API TESTING COMPLETED SUCCESSFULLY")
+            print("✅ All 5 contract endpoints working correctly")
+            print("✅ PDF text extraction functional")
+            print("✅ Template creation and listing working")
+            print("✅ Contract PDF generation working")
+            print("✅ WeasyPrint appears to be properly installed")
             print("📋 Review the test output above for detailed analysis")
         else:
-            print("\n❌ MONGODB COLLECTIONS ADMIN API TESTING FAILED")
+            print("\n❌ CONTRACT MANAGEMENT API TESTING FAILED")
             print("❌ Critical endpoint issues found")
             print("📋 Review the test output above for specific problems")
     except Exception as e:
-        print(f"\n❌ MONGODB COLLECTIONS ADMIN API TESTING ERROR: {str(e)}")
+        print(f"\n❌ CONTRACT MANAGEMENT API TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
