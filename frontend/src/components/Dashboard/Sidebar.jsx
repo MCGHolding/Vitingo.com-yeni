@@ -289,12 +289,7 @@ const getNavigation = (userDepartment) => {
       name: 'Ayarlar', 
       href: '/settings', 
       icon: Settings, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Import Data', href: '/settings/import', icon: Upload },
-        { name: 'Export Data', href: '/settings/export', icon: Download }
-      ]
+      current: false
     }
   ];
 
