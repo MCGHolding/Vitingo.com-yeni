@@ -141,6 +141,14 @@ const TemplateListPage = () => {
             setShowViewModal(false);
             setSelectedTemplate(null);
           }}
+          onFieldsAdded={() => {
+            loadTemplates();
+            // Reload the selected template to show updated fields
+            const updatedTemplate = templates.find(t => t.id === selectedTemplate?.id);
+            if (updatedTemplate) {
+              setSelectedTemplate(updatedTemplate);
+            }
+          }}
         />
       )}
     </div>
