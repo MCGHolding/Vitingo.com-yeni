@@ -374,10 +374,14 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   };
 
   const handlePageContentChange = (newContent) => {
-    setEditedPages({
+    const updatedPages = {
       ...editedPages,
       [currentPageIndex]: newContent
-    });
+    };
+    setEditedPages(updatedPages);
+    
+    // Add to history (debounced to avoid too many history entries)
+    // We'll add it on blur or after a delay
   };
 
   const goToNextPage = () => {
