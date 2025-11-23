@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Save, FileText } from 'lucide-react';
 
-const ManualTemplateCreator = ({ onBack, onComplete }) => {
-  const [templateName, setTemplateName] = useState('');
+const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) => {
+  const isEditMode = Boolean(templateToEdit);
+  const [templateName, setTemplateName] = useState(templateToEdit?.template_name || '');
   const [showAddFieldModal, setShowAddFieldModal] = useState(false);
   const [editingField, setEditingField] = useState(null);
-  const [fields, setFields] = useState(getDefaultFields());
+  const [fields, setFields] = useState(
+    templateToEdit?.fields.map((f, idx) => ({
+      id: idx + 1,
+      name: f.field_name,
+      slug: f.field_key,
+      type: f.field_type,
+      unit: f.unit
+    })) || getDefaultFields()
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Default fields that user can delete if not needed
