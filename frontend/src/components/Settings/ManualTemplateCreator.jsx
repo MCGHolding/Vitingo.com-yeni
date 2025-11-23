@@ -274,7 +274,17 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
                           {getFieldTypeLabel(field.type)}
                           {field.unit && ` (${field.unit})`}
                         </span>
+                        {field.defaultValue && (
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                            ✓ Default
+                          </span>
+                        )}
                       </div>
+                      {field.defaultValue && (
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-1">
+                          Default: {field.defaultValue.substring(0, 50)}...
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
