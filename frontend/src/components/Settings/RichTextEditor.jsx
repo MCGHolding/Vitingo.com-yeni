@@ -20,7 +20,7 @@ import {
   Type
 } from 'lucide-react';
 
-const RichTextEditor = ({ content, onChange, placeholder = "Metni düzenleyin..." }) => {
+const RichTextEditor = ({ content, onChange, onTextSelect, placeholder = "Metni düzenleyin..." }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
