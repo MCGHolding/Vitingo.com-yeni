@@ -23178,12 +23178,12 @@ if __name__ == "__main__":
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 80)
     
-    # Run Bank Email Template Testing (Primary Focus)
-    print("\n" + "🎨" * 40)
-    print("RUNNING BANK EMAIL TEMPLATE TESTING (PRIMARY FOCUS)")
-    print("🎨" * 40)
+    # Run Manuel Şablon Oluşturma Testing (Primary Focus)
+    print("\n" + "🔧" * 40)
+    print("RUNNING MANUEL ŞABLON OLUŞTURMA TESTING (PRIMARY FOCUS)")
+    print("🔧" * 40)
     
-    bank_email_test_passed = test_bank_email_template_functionality()
+    manuel_sablon_test_passed = test_manuel_sablon_olusturma()
     
     # Final Results
     print("\n" + "=" * 100)
