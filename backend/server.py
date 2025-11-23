@@ -10571,7 +10571,36 @@ async def delete_document(collection_name: str, doc_id: str):
         logger.error(f"Error deleting document from {collection_name}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# ===================== CONTRACT PDF PROCESSING =====================
+# ===================== CONTRACT MANAGEMENT =====================
+
+# Contract Template Models
+class ContractField(BaseModel):
+    field_name: str
+    field_key: str
+    field_type: str
+    is_required: bool = True
+    dropdown_options: Optional[List[str]] = None
+    selected_text: str
+    placeholder: str
+    order_index: int = 0
+
+class ContractTemplateCreate(BaseModel):
+    template_name: str
+    filename: str
+    total_pages: int
+    pages: List[Dict]
+    fields: List[ContractField]
+
+class ContractTemplate(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    template_name: str
+    filename: str
+    total_pages: int
+    pages: List[Dict]
+    fields: List[ContractField]
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = None
 
 @api_router.post("/contracts/extract-pdf-text")
 async def extract_pdf_text(file: UploadFile = File(...)):
@@ -10605,6 +10634,192 @@ async def extract_pdf_text(file: UploadFile = File(...)):
     except Exception as e:
         logger.error(f"Error extracting PDF text: {str(e)}")
         raise HTTPException(status_code=500, detail=f"PDF metni çıkarılamadı: {str(e)}")
+
+@api_router.post("/contract-templates")
+async def create_contract_template(template_data: ContractTemplateCreate):
+    """Create a new contract template"""
+    try:
+        template = ContractTemplate(
+            template_name=template_data.template_name,
+            filename=template_data.filename,
+            total_pages=template_data.total_pages,
+            pages=template_data.pages,
+            fields=[field.dict() for field in template_data.fields]
+        )
+        
+        template_dict = template.dict()
+        result = await db.contract_templates.insert_one(template_dict)
+        
+        logger.info(f"Contract template created: {template.id}")
+        return {
+            "success": True,
+            "message": "Sözleşme şablonu başarıyla oluşturuldu",
+            "template_id": template.id,
+            "template": template.dict()
+        }
+    except Exception as e:
+        logger.error(f"Error creating contract template: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Şablon oluşturulamadı: {str(e)}")
+
+@api_router.get("/contract-templates")
+async def get_contract_templates():
+    """Get all contract templates"""
+    try:
+        templates = await db.contract_templates.find().sort("created_at", -1).to_list(length=None)
+        
+        # Remove MongoDB _id field
+        for template in templates:
+            if '_id' in template:
+                del template['_id']
+        
+        return {
+            "templates": templates,
+            "count": len(templates)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching contract templates: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/contract-templates/{template_id}")
+async def get_contract_template(template_id: str):
+    """Get a specific contract template"""
+    try:
+        template = await db.contract_templates.find_one({"id": template_id})
+        
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Remove MongoDB _id field
+        if '_id' in template:
+            del template['_id']
+        
+        return template
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching contract template: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/contract-templates/{template_id}")
+async def delete_contract_template(template_id: str):
+    """Delete a contract template"""
+    try:
+        result = await db.contract_templates.delete_one({"id": template_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        return {
+            "success": True,
+            "message": "Şablon başarıyla silindi"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting contract template: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Contract generation models
+class ContractGenerateRequest(BaseModel):
+    template_id: str
+    field_values: Dict[str, Any]
+    contract_title: Optional[str] = "Yeni Sözleşme"
+
+@api_router.post("/contracts/generate")
+async def generate_contract(request: ContractGenerateRequest):
+    """Generate a PDF contract from template with field values"""
+    try:
+        # Get template
+        template = await db.contract_templates.find_one({"id": request.template_id})
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Build HTML content from pages
+        html_content = """
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    margin: 40px;
+                    font-size: 12pt;
+                }
+                .page {
+                    page-break-after: always;
+                    margin-bottom: 40px;
+                }
+                .page:last-child {
+                    page-break-after: auto;
+                }
+                .page-number {
+                    text-align: center;
+                    font-size: 10pt;
+                    color: #666;
+                    margin-bottom: 20px;
+                }
+                pre {
+                    white-space: pre-wrap;
+                    font-family: Arial, sans-serif;
+                    font-size: 12pt;
+                }
+            </style>
+        </head>
+        <body>
+        """
+        
+        # Replace placeholders in each page
+        for page in template.get('pages', []):
+            page_text = page.get('text', '')
+            
+            # Replace field placeholders with actual values
+            for field in template.get('fields', []):
+                placeholder = field.get('placeholder', '')
+                field_key = field.get('field_key', '')
+                field_value = request.field_values.get(field_key, '[DOLDURULMADI]')
+                
+                # Replace placeholder with value
+                page_text = page_text.replace(placeholder, str(field_value))
+            
+            html_content += f"""
+            <div class="page">
+                <div class="page-number">Sayfa {page.get('page_number', 1)}</div>
+                <pre>{page_text}</pre>
+            </div>
+            """
+        
+        html_content += """
+        </body>
+        </html>
+        """
+        
+        # Generate PDF using WeasyPrint
+        try:
+            from weasyprint import HTML, CSS
+            import io
+            
+            pdf_buffer = io.BytesIO()
+            HTML(string=html_content).write_pdf(pdf_buffer)
+            pdf_buffer.seek(0)
+            
+            # Return PDF as response
+            from fastapi.responses import StreamingResponse
+            return StreamingResponse(
+                pdf_buffer,
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f"attachment; filename={request.contract_title}.pdf"
+                }
+            )
+        except ImportError:
+            raise HTTPException(status_code=500, detail="WeasyPrint kütüphanesi yüklü değil")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating contract: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Sözleşme oluşturulamadı: {str(e)}")
 
 # ===================== MAIN APP SETUP =====================
 
