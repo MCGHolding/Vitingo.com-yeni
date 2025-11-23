@@ -270,6 +270,22 @@ const GroupCompaniesPage = ({ onBack }) => {
           companies={companies}
         />
       )}
+
+      {showDetailsModal && (
+        <CompanyDetailsModal
+          isOpen={showDetailsModal}
+          onClose={() => {
+            setShowDetailsModal(false);
+            setSelectedCompany(null);
+          }}
+          onSave={() => {
+            loadCompanies();
+            setShowDetailsModal(false);
+            setSelectedCompany(null);
+          }}
+          company={selectedCompany}
+        />
+      )}
     </div>
   );
 };
