@@ -162,6 +162,12 @@ const Dashboard = () => {
   // Get initial view from URL path
   const getInitialView = () => {
     const path = window.location.pathname;
+    
+    // Check for edit routes first
+    if (path.startsWith('/contracts/edit/')) {
+      return 'contracts-edit';
+    }
+    
     const pathMap = {
       '/': 'dashboard',
       '/dashboard': 'dashboard',
