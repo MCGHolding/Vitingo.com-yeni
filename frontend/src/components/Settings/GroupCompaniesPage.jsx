@@ -12,7 +12,9 @@ const GroupCompaniesPage = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [showAddAccountantModal, setShowAddAccountantModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   useEffect(() => {
     loadCompanies();
