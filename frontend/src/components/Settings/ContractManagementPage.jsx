@@ -192,12 +192,21 @@ const ContractManagementPage = ({ onBack }) => {
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
               Sözleşme Yönetimine Hoş Geldiniz
             </h1>
-            <p className="text-gray-600 text-lg">
-              Burada kendi sözleşme şablonlarınızı oluşturabilir, düzenleyebilir, geliştirebilir yapabilirdiniz
+            <p className="text-gray-600 text-lg mb-4">
+              Burada kendi sözleşme şablonlarınızı oluşturabilir, düzenleyebilir ve sözleşmeler üretebilirsiniz
             </p>
+            
+            {/* Quick Action - Create Contract */}
+            <button
+              onClick={() => setStep('create-contract')}
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-md hover:shadow-lg transition-all"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Mevcut Şablondan Sözleşme Oluştur
+            </button>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8 pt-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">
               Haydi Başlayalım
             </h2>
