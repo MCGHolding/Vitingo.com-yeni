@@ -10639,6 +10639,91 @@ async def delete_document(collection_name: str, doc_id: str):
         logger.error(f"Error deleting document from {collection_name}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== CONTRACT MANAGEMENT ENDPOINTS =====================
+
+# File Upload to GridFS
+@api_router.post("/contracts/upload")
+async def upload_contract_file(file: UploadFile = File(...)):
+    """Upload a file to GridFS for contract templates"""
+    try:
+        # Validate file type
+        allowed_types = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Sadece PDF ve DOCX dosyaları kabul edilir")
+        
+        # Validate file size (max 10MB)
+        file_content = await file.read()
+        if len(file_content) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="Dosya boyutu 10MB'dan küçük olmalıdır")
+        
+        # Generate unique filename
+        file_extension = ".pdf" if file.content_type == "application/pdf" else ".docx"
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        
+        # Upload to GridFS
+        file_id = await fs.upload_from_stream(
+            unique_filename,
+            file_content,
+            metadata={
+                "original_filename": file.filename,
+                "content_type": file.content_type,
+                "uploaded_at": datetime.now(timezone.utc).isoformat()
+            }
+        )
+        
+        logger.info(f"File uploaded to GridFS: {file_id}")
+        
+        return {
+            "file_id": str(file_id),
+            "filename": unique_filename,
+            "original_filename": file.filename,
+            "file_type": "pdf" if file_extension == ".pdf" else "docx",
+            "mime_type": file.content_type,
+            "file_size": len(file_content)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya yüklenirken hata oluştu: {str(e)}")
+
+# Template CRUD Endpoints
+@api_router.post("/contracts/templates", response_model=ContractTemplate)
+async def create_template(template: ContractTemplateCreate):
+    """Create a new contract template"""
+    try:
+        template_dict = {
+            **template.dict(),
+            "id": str(uuid.uuid4()),
+            "fields": [],
+            "created_by": "admin",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "is_active": True
+        }
+        await db.contract_templates.insert_one(template_dict)
+        return ContractTemplate(**template_dict)
+    except Exception as e:
+        logger.error(f"Error creating template: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/contracts/templates")
+async def get_templates(page: int = 1, limit: int = 10):
+    """Get all templates"""
+    try:
+        skip = (page - 1) * limit
+        templates = await db.contract_templates.find({"is_active": True}).skip(skip).limit(limit).to_list(limit)
+        total = await db.contract_templates.count_documents({"is_active": True})
+        return {
+            "templates": [serialize_document(t) for t in templates],
+            "total": total,
+            "page": page,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error getting templates: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
