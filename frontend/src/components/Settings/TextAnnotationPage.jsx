@@ -24,6 +24,10 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   });
   const [showFieldSuggestions, setShowFieldSuggestions] = useState(false);
   const [replaceAllOccurrences, setReplaceAllOccurrences] = useState(true);
+  
+  // Undo/Redo History
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
 
   const fieldTypes = [
     { value: 'text', label: 'Metin' },
