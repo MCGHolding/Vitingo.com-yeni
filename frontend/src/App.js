@@ -1057,6 +1057,14 @@ const Dashboard = () => {
       case 'cancelled-projects':
         return <CancelledProjectsPage onBackToDashboard={handleBackToDashboard} />;
       
+      case 'settings':
+        return (
+          <SettingsPage 
+            onBack={handleBackToDashboard}
+            currentUser={user}
+          />
+        );
+
       case 'import-data':
         return (
           <ImportDataPage 
