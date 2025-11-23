@@ -256,8 +256,14 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
 
       console.log('Sending bank data:', bankData);
 
-      const response = await fetch(`${backendUrl}/api/banks`, {
-        method: 'POST',
+      const url = isEditMode 
+        ? `${backendUrl}/api/banks/${formData.id}`
+        : `${backendUrl}/api/banks`;
+      
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -266,11 +272,11 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
 
       if (response.ok) {
         const savedBank = await response.json();
-        console.log('Bank saved successfully:', savedBank);
+        console.log(isEditMode ? 'Bank updated successfully:' : 'Bank saved successfully:', savedBank);
         setShowSuccessModal(true);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Banka kaydedilirken hata oluştu');
+        throw new Error(errorData.detail || (isEditMode ? 'Banka güncellenirken hata oluştu' : 'Banka kaydedilirken hata oluştu'));
       }
       
     } catch (error) {
