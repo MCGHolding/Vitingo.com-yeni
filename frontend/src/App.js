@@ -1239,6 +1239,22 @@ const Dashboard = () => {
             fromContracts={true}
             contractId={contractId}
             isEdit={true}
+            onEditTemplate={handleEditTemplate}
+          />
+        );
+
+      case 'edit-template':
+        return (
+          <ManualTemplateCreator
+            templateToEdit={selectedTemplateForEdit}
+            onBack={() => {
+              setSelectedTemplateForEdit(null);
+              setCurrentView('contracts-new');
+            }}
+            onComplete={() => {
+              setSelectedTemplateForEdit(null);
+              setCurrentView('contracts-new');
+            }}
           />
         );
 
