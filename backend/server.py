@@ -229,6 +229,8 @@ class Project(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     projectNumber: str = ""  # PR-25-10001 format
     name: str
+    companyId: str = ""
+    companyName: str = ""
     customerId: str
     customerName: str = ""
     fairId: str
