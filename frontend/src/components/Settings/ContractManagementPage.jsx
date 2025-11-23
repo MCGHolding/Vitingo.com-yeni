@@ -56,15 +56,8 @@ const ContractManagementPage = ({ onBack }) => {
     }
 
     if (selectedMethod === 'manual') {
-      // Manuel şablon oluşturma için basit form
-      const templateName = prompt('Şablon adı girin:');
-      if (!templateName) {
-        alert('Şablon adı gereklidir');
-        return;
-      }
-      
-      // Manuel şablon için basit bir yapı oluştur
-      handleManualTemplateCreate(templateName);
+      // Manuel şablon oluşturma sayfasına git
+      setStep('manual-creator');
       return;
     }
 
