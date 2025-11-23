@@ -321,46 +321,40 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex justify-end space-x-2">
                   <button 
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onMouseDown={(e) => {
                       e.stopPropagation();
                       console.log('✏️ Edit clicked (list view):', project.id);
-                      alert('Düzenle: ' + project.name);
                       if (onEditProject) {
                         onEditProject(project.id);
                       }
                     }}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
                     title="Düzenle"
-                    style={{ zIndex: 10, position: 'relative' }}
+                    style={{ zIndex: 10, position: 'relative', pointerEvents: 'auto' }}
                   >
                     <Edit2 className="h-4 w-4" />
                   </button>
                   <button 
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onMouseDown={(e) => {
                       e.stopPropagation();
                       console.log('🔍 View clicked (list view):', project.name);
-                      alert('Görüntüle: ' + project.name);
                       setSelectedProject(project);
                     }}
-                    className="p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+                    className="p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors cursor-pointer"
                     title="Görüntüle"
-                    style={{ zIndex: 10, position: 'relative' }}
+                    style={{ zIndex: 10, position: 'relative', pointerEvents: 'auto' }}
                   >
                     <Eye className="h-4 w-4" />
                   </button>
                   <button 
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onMouseDown={(e) => {
                       e.stopPropagation();
                       console.log('🗑️ Delete clicked (list view):', project.name);
-                      alert('Sil: ' + project.name);
                       handleDelete(project.id, project.name);
                     }}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
                     title="Sil"
-                    style={{ zIndex: 10, position: 'relative' }}
+                    style={{ zIndex: 10, position: 'relative', pointerEvents: 'auto' }}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
