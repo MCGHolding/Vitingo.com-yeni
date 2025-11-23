@@ -1213,6 +1213,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'user-management':
+        return (
+          <UserManagementPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
