@@ -133,6 +133,17 @@ const MyContractsPage = () => {
           ))}
         </div>
       )}
+
+      {/* Create Contract Modal */}
+      {showCreateModal && (
+        <CreateContractModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => {
+            setShowCreateModal(false);
+            loadContracts();
+          }}
+        />
+      )}
     </div>
   );
 };
