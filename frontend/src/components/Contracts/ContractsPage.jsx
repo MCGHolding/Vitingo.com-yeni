@@ -38,12 +38,15 @@ const ContractsPage = ({ setCurrentView }) => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState('all'); // 'all', 'today', 'week', 'month', 'year'
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
     draft: 0,
     completed: 0
   });
+  const [chartData, setChartData] = useState([]);
+  const [showGraphs, setShowGraphs] = useState(true);
 
   // Fetch contracts
   useEffect(() => {
