@@ -311,24 +311,25 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
             )}
           </div>
         ) : (
-          Object.entries(groupedBanks).map(([country, countryBanks]) => {
-            const countryInfo = getCountryInfo(country);
+          Object.entries(groupedBanks).map(([companyId, companyBanks]) => {
+            const company = groupCompanies.find(c => c.id === companyId);
+            const companyName = company ? company.name : 'Diğer';
             return (
-              <div key={country} className="bg-white rounded-xl shadow-sm border border-gray-200">
-                {/* Country Header */}
+              <div key={companyId} className="bg-white rounded-xl shadow-sm border border-gray-200">
+                {/* Company Header */}
                 <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
                   <div className="flex items-center space-x-2">
-                    <span className="text-2xl">{countryInfo.flag}</span>
-                    <h2 className="text-xl font-semibold text-gray-900">{countryInfo.name}</h2>
+                    <Building2 className="h-6 w-6 text-blue-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">{companyName}</h2>
                     <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full">
-                      {countryBanks.length} banka
+                      {companyBanks.length} banka
                     </span>
                   </div>
                 </div>
 
-                {/* Banks in this country */}
+                {/* Banks in this company */}
                 <div className="p-6 space-y-4">
-                  {countryBanks.map((bank) => (
+                  {companyBanks.map((bank) => (
                     <div key={bank.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
