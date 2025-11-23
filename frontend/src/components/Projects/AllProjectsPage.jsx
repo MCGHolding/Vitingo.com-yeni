@@ -239,16 +239,28 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             <button 
               onMouseDown={(e) => {
                 e.stopPropagation();
+                console.log('📄 Contract clicked:', project.id);
+                window.location.href = '/contracts/new';
+              }}
+              className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+              style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
+              title="Sözleşme Oluştur"
+            >
+              <FileText className="h-5 w-5" />
+            </button>
+            <button 
+              onMouseDown={(e) => {
+                e.stopPropagation();
                 console.log('✏️ Edit clicked:', project.id);
                 if (onEditProject) {
                   onEditProject(project.id);
                 }
               }}
-              className="px-3 py-2 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
               style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
+              title="Düzenle"
             >
-              <Edit2 className="h-4 w-4" />
-              <span>Düzenle</span>
+              <Edit2 className="h-5 w-5" />
             </button>
             <button 
               onMouseDown={(e) => {
@@ -256,11 +268,11 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 console.log('🔍 View clicked:', project.name);
                 setSelectedProject(project);
               }}
-              className="px-3 py-2 text-sm border border-gray-600 text-gray-600 hover:bg-gray-50 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
               style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
+              title="Görüntüle"
             >
-              <Eye className="h-4 w-4" />
-              <span>Görüntüle</span>
+              <Eye className="h-5 w-5" />
             </button>
             <button 
               onMouseDown={(e) => {
@@ -268,11 +280,11 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 console.log('🗑️ Delete clicked:', project.name);
                 handleDeleteClick(project.id, project.name);
               }}
-              className="px-3 py-2 text-sm border border-red-600 text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
+              title="Sil"
             >
-              <Trash2 className="h-4 w-4" />
-              <span>Sil</span>
+              <Trash2 className="h-5 w-5" />
             </button>
           </div>
         </div>
