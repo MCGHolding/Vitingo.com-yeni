@@ -1593,6 +1593,9 @@ const Dashboard = () => {
         onSettings={handleSettings}
         onImportData={handleImportData}
         onExportData={handleExportData}
+        // Contract handlers
+        onContracts={handleContracts}
+        onNewContract={handleNewContract}
         onSalesReports={handleSalesReports}
         onCustomerReports={handleCustomerReports}
         onHandovers={handleHandovers}
