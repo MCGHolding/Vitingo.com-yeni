@@ -91,6 +91,8 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
           'musteri_kisa_adi': project.customerName?.split(' ')[0] || '',
           'etkinlik_merkezi': project.fairName || '',
           'sozlesme_tarihi': project.contractDate || new Date().toISOString().split('T')[0],
+          'sozlesme_tutari': project.contractAmount?.toString() || '',  // ✅ Sözleşme tutarı
+          'para_birimi': project.currency || 'TRY',                     // ✅ Para birimi
           'tutar': project.contractAmount?.toString() || '',
           'doviz': project.currency || 'TRY',
           'sehir': project.city || '',
@@ -104,9 +106,17 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
           project.paymentTerms.forEach((term, index) => {
             const termNum = index + 1;
             
-            // Use the first format for now, will be overwritten if template has different keys
-            autoFilledValues[`${termNum}_odeme`] = term.percentage?.toString() || '';
-            autoFilledValues[`${termNum}_odeme_tutari`] = term.amount?.toString() || '';
+            // Correct field keys based on template
+            if (termNum === 1) {
+              autoFilledValues['1_odeme'] = term.percentage?.toString() || '';
+              autoFilledValues['1_odeme_tutari'] = term.amount?.toString() || '';
+            } else {
+              // 2nd and 3rd payments use "_yuzdesi" suffix
+              autoFilledValues[`${termNum}_odeme_yuzdesi`] = term.percentage?.toString() || '';
+              autoFilledValues[`${termNum}_odeme_tutari`] = term.amount?.toString() || '';
+            }
+            
+            // Vade tipi (if field exists in template)
             autoFilledValues[`${termNum}_odeme_vade`] = term.dueType === 'pesin' ? 'Peşin' : 
                                                         term.dueType === 'kurulum' ? 'Kurulum' :
                                                         term.dueType === 'takip' ? `${term.dueDays} gün` :
