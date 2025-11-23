@@ -99,6 +99,42 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
           'fuar_bitis': project.fairEndDate || ''
         };
         
+        // Add payment terms if available
+        if (project.paymentTerms && Array.isArray(project.paymentTerms)) {
+          project.paymentTerms.forEach((term, index) => {
+            const termNum = index + 1;
+            
+            // Try multiple possible field key formats
+            const possibleKeys = [
+              {
+                percentage: `${termNum}_odeme`,
+                amount: `${termNum}_odeme_tutari`,
+                dueType: `${termNum}_odeme_vade`
+              },
+              {
+                percentage: `f${termNum}_odeme`,
+                amount: `f${termNum}_odeme_tutari`,
+                dueType: `f${termNum}_odeme_vade`
+              },
+              {
+                percentage: `odeme_${termNum}_yuzdesi`,
+                amount: `odeme_${termNum}_tutari`,
+                dueType: `odeme_${termNum}_vade`
+              }
+            ];
+            
+            // Use the first format for now, will be overwritten if template has different keys
+            autoFilledValues[`${termNum}_odeme`] = term.percentage?.toString() || '';
+            autoFilledValues[`${termNum}_odeme_tutari`] = term.amount?.toString() || '';
+            autoFilledValues[`${termNum}_odeme_vade`] = term.dueType === 'pesin' ? 'Peşin' : 
+                                                        term.dueType === 'kurulum' ? 'Kurulum' :
+                                                        term.dueType === 'takip' ? `${term.dueDays} gün` :
+                                                        term.dueType || '';
+          });
+          
+          console.log('💰 Payment terms added to auto-fill');
+        }
+        
         console.log('✨ Auto-filled values:', autoFilledValues);
         setFieldValues(autoFilledValues);
         
