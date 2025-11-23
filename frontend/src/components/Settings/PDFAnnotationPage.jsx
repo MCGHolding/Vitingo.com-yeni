@@ -197,11 +197,20 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
               onMouseUp={handleTextSelect}
             >
               <Document
-                file={file}
+                file={pdfUrl}
                 onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={(error) => console.error('PDF Load Error:', error)}
                 loading={
                   <div className="flex items-center justify-center h-96">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+                  </div>
+                }
+                error={
+                  <div className="flex items-center justify-center h-96 text-red-600">
+                    <div className="text-center">
+                      <p className="font-semibold mb-2">PDF Yüklenemedi</p>
+                      <p className="text-sm">Lütfen geçerli bir PDF dosyası seçin</p>
+                    </div>
                   </div>
                 }
               >
