@@ -660,53 +660,52 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="border border-gray-200 rounded-md p-3 hover:border-emerald-500 hover:bg-emerald-50 transition-all"
+                    className="border border-gray-200 rounded-md p-2.5 hover:border-emerald-500 hover:bg-emerald-50 transition-all"
                   >
                     {/* Template Card */}
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between mb-2">
-                        <FileText className="h-6 w-6 text-emerald-600" />
+                    <div className="space-y-1.5">
+                      <div className="flex items-start justify-between mb-1.5">
+                        <FileText className="h-4 w-4 text-emerald-600" />
                         {/* Creation Method Badge */}
                         {template.creation_method === 'manual' && (
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
+                          <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded-full font-medium">
                             ✏️ Manuel
                           </span>
                         )}
                         {template.creation_method === 'pdf_parse' && (
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                            📄 PDF Parse
+                          <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-full font-medium">
+                            📄 PDF
                           </span>
                         )}
                         {template.creation_method === 'ai_create' && (
-                          <span className="px-2 py-0.5 bg-pink-100 text-pink-700 text-xs rounded-full font-medium">
-                            ✨ AI Create
+                          <span className="px-1.5 py-0.5 bg-pink-100 text-pink-700 text-[10px] rounded-full font-medium">
+                            ✨ AI
                           </span>
                         )}
                         {!template.creation_method && (
-                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
-                            📄 PDF Parse
+                          <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded-full font-medium">
+                            📄 PDF
                           </span>
                         )}
                       </div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                      <h3 className="text-xs font-semibold text-gray-900 leading-tight line-clamp-2">
                         {template.template_name}
                       </h3>
-                      <p className="text-xs text-gray-600 mb-1">
-                        {template.total_pages} sayfa
-                      </p>
-                      <p className="text-xs text-emerald-600">
-                        {template.fields.length} alan
-                      </p>
+                      <div className="flex items-center gap-2 text-[11px]">
+                        <span className="text-gray-600">{template.total_pages} sayfa</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-emerald-600">{template.fields.length} alan</span>
+                      </div>
 
                       {/* Action Buttons */}
-                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                      <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-200">
                         <button
                           onClick={() => handleTemplateSelect(template)}
-                          className="flex-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-medium transition-colors"
+                          className="flex-1 px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-medium transition-colors"
                         >
                           Kullan
                         </button>
@@ -716,10 +715,10 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                               e.stopPropagation();
                               onEditTemplate(template);
                             }}
-                            className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                            className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded text-[11px] font-medium transition-colors flex items-center gap-1"
                             title="Düzenle"
                           >
-                            <Edit2 className="h-3 w-3" />
+                            <Edit2 className="h-2.5 w-2.5" />
                             Düzenle
                           </button>
                         )}
@@ -728,10 +727,10 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                             e.stopPropagation();
                             handleDeleteTemplate(template.id, template.template_name);
                           }}
-                          className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs font-medium transition-colors"
+                          className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
                           title="Sil"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-2.5 w-2.5" />
                         </button>
                       </div>
                     </div>
