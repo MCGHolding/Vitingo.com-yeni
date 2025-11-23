@@ -91,13 +91,13 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setFilteredBanks(filtered);
   }, [banks, searchQuery, selectedCompany]);
 
-  // Group banks by country
+  // Group banks by company
   const groupedBanks = filteredBanks.reduce((groups, bank) => {
-    const country = bank.country;
-    if (!groups[country]) {
-      groups[country] = [];
+    const companyKey = bank.company_id || 'ungrouped';
+    if (!groups[companyKey]) {
+      groups[companyKey] = [];
     }
-    groups[country].push(bank);
+    groups[companyKey].push(bank);
     return groups;
   }, {});
 
