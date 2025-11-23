@@ -10724,6 +10724,120 @@ async def get_templates(page: int = 1, limit: int = 10):
         logger.error(f"Error getting templates: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/contracts/templates/{template_id}", response_model=ContractTemplate)
+async def get_template(template_id: str):
+    """Get a specific template by ID"""
+    try:
+        template = await db.contract_templates.find_one({"id": template_id})
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        return ContractTemplate(**serialize_document(template))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting template: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/contracts/templates/{template_id}/fields")
+async def add_template_fields(template_id: str, fields: List[TemplateFieldCreate]):
+    """Add or update fields for a template"""
+    try:
+        # Convert TemplateFieldCreate to TemplateField
+        template_fields = []
+        for idx, field in enumerate(fields):
+            template_field = {
+                "field_id": str(uuid.uuid4()),
+                "field_name": field.field_name,
+                "field_key": field.field_key,
+                "field_type": field.field_type,
+                "is_required": field.is_required,
+                "dropdown_options": field.dropdown_options,
+                "validation_rules": None,
+                "order_index": field.order_index if field.order_index > 0 else idx
+            }
+            template_fields.append(template_field)
+        
+        result = await db.contract_templates.update_one(
+            {"id": template_id},
+            {
+                "$set": {
+                    "fields": template_fields,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        updated_template = await db.contract_templates.find_one({"id": template_id})
+        return ContractTemplate(**serialize_document(updated_template))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding fields: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/contracts/generate")
+async def generate_contract(request: GenerateContractRequest):
+    """Generate a contract from a template"""
+    try:
+        # Get template
+        template = await db.contract_templates.find_one({"id": request.template_id})
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Validate required fields
+        for field in template.get("fields", []):
+            if field["is_required"] and field["field_key"] not in request.field_values:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Zorunlu alan eksik: {field['field_name']}"
+                )
+        
+        # Create contract record
+        contract_dict = {
+            "id": str(uuid.uuid4()),
+            "template_id": request.template_id,
+            "template_name": template["name"],
+            "contract_name": request.contract_name,
+            "field_values": request.field_values,
+            "status": "generated",
+            "created_by": "user",  # TODO: Get from JWT
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": {}
+        }
+        
+        # TODO: Generate actual PDF/DOCX file with replaced placeholders
+        
+        await db.generated_contracts.insert_one(contract_dict)
+        
+        return GeneratedContract(**serialize_document(contract_dict))
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating contract: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/contracts/my-contracts")
+async def get_my_contracts(page: int = 1, limit: int = 10):
+    """Get user's generated contracts"""
+    try:
+        skip = (page - 1) * limit
+        # TODO: Filter by current user
+        contracts = await db.generated_contracts.find().skip(skip).limit(limit).to_list(limit)
+        total = await db.generated_contracts.count_documents({})
+        
+        return {
+            "contracts": [serialize_document(c) for c in contracts],
+            "total": total,
+            "page": page,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error getting contracts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
