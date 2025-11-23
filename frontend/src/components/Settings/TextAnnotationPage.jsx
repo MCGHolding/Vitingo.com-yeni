@@ -14,6 +14,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   const [editedPages, setEditedPages] = useState({});
   const [draftSaved, setDraftSaved] = useState(false);
   const [showDraftPrompt, setShowDraftPrompt] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   const [fieldForm, setFieldForm] = useState({
     field_name: '',
