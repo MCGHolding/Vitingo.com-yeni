@@ -207,13 +207,13 @@ const ContractManagementPage = ({ onBack }) => {
           </div>
 
           <div className="mb-3 pt-3 border-t border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Şablon Oluşturma Yöntemi</h2>
-            <p className="text-gray-600 text-sm mb-4">
+            <h2 className="text-sm font-semibold text-gray-900 mb-2">Şablon Oluşturma Yöntemi</h2>
+            <p className="text-gray-600 text-xs mb-3">
               Nasıl bir şablon oluşturmak istersiniz?
             </p>
 
             {/* Method Selection */}
-            <div className="space-y-4 mb-6">
+            <div className="space-y-2 mb-4">
               {methods.map((method) => (
                 <div key={method.id} className="relative">
                   <label
