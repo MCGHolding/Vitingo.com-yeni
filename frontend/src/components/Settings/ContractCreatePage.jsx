@@ -96,17 +96,37 @@ const ContractCreatePage = ({ onBack }) => {
       // Always use original template pages, not previously updated ones
       const originalPages = selectedTemplate.pages;
       
+      console.log('🔍 Original Pages:', originalPages);
+      console.log('🔍 Template Fields:', selectedTemplate.fields);
+      console.log('🔍 Field Values:', fieldValues);
+      
       // Replace placeholders in each page
-      const updated = originalPages.map((page) => {
+      const updated = originalPages.map((page, pageIndex) => {
         let updatedText = page.text;
+        
+        console.log(`📄 Page ${pageIndex + 1} Original Text (first 200 chars):`, updatedText.substring(0, 200));
         
         // Replace each field placeholder with its value
         selectedTemplate.fields.forEach((field) => {
           const placeholder = field.placeholder;
           const value = fieldValues[field.field_key] || '[DOLDURULMADI]';
+          
+          console.log(`🔄 Replacing "${placeholder}" with "${value}"`);
+          console.log(`   Found in text: ${updatedText.includes(placeholder)}`);
+          
           // Use global replace to replace all occurrences
-          updatedText = updatedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+          const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+          const beforeReplace = updatedText;
+          updatedText = updatedText.replace(regex, value);
+          
+          if (beforeReplace !== updatedText) {
+            console.log(`✅ Replacement successful for ${placeholder}`);
+          } else {
+            console.log(`❌ No replacement made for ${placeholder}`);
+          }
         });
+        
+        console.log(`📄 Page ${pageIndex + 1} Updated Text (first 200 chars):`, updatedText.substring(0, 200));
         
         return {
           ...page,
@@ -115,6 +135,7 @@ const ContractCreatePage = ({ onBack }) => {
       });
       
       setUpdatedPages(updated);
+      console.log('✅ Updated Pages:', updated);
       alert('✅ Bilgiler sözleşmeye uygulandı! Önizleme yapabilirsiniz.');
     } catch (error) {
       console.error('Error updating contract:', error);
