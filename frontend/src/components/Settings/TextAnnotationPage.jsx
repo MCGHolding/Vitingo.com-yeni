@@ -34,6 +34,24 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     extractPdfText();
   }, []);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showPopup) return; // Don't navigate if popup is open
+      
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPreviousPage();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNextPage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPageIndex, pdfData, showPopup]);
+
   const extractPdfText = async () => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
