@@ -284,17 +284,7 @@ const getNavigation = (userDepartment) => {
       ]
     },
     { name: 'Görevler', href: '/tasks', icon: Target, current: false },
-    { 
-      name: 'Dökümanlar', 
-      href: '/documents', 
-      icon: FileText, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Şablon Yönetimi', href: '/documents/contracts/templates', icon: Files, badge: 'Admin' },
-        { name: 'Sözleşmelerim', href: '/documents/contracts/my-contracts', icon: FileCheck }
-      ]
-    },
+    { name: 'Dökümanlar', href: '/documents', icon: FileText, current: false },
     { 
       name: 'Ayarlar', 
       href: '/settings', 
