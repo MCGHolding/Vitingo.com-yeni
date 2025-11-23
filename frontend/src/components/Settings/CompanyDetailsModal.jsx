@@ -189,11 +189,16 @@ const CompanyDetailsModal = ({ isOpen, onClose, onSave, company }) => {
                 required
               >
                 <option value="">Ülke Seçin</option>
-                {countries.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
+                {countries.map((country) => {
+                  // Handle both string and object formats
+                  const countryName = typeof country === 'string' ? country : country.name;
+                  const countryValue = typeof country === 'string' ? country : country.name;
+                  return (
+                    <option key={countryValue} value={countryValue}>
+                      {countryName}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
