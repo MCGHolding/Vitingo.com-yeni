@@ -164,6 +164,10 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setShowEmailModal(true);
     setSelectedShareCountry('');
   };
+  
+  const getCountryInfo = (countryCode) => {
+    return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦', code: countryCode };
+  };
 
   const renderBankDetails = (bank) => {
     if (bank.country === 'Turkey' || bank.country === 'UAE') {
