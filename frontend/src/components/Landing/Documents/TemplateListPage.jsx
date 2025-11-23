@@ -132,6 +132,17 @@ const TemplateListPage = () => {
           }}
         />
       )}
+
+      {/* View Template Modal */}
+      {showViewModal && (
+        <ViewTemplateModal
+          template={selectedTemplate}
+          onClose={() => {
+            setShowViewModal(false);
+            setSelectedTemplate(null);
+          }}
+        />
+      )}
     </div>
   );
 };
