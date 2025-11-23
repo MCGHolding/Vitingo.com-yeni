@@ -53,9 +53,27 @@ const ContractManagementPage = ({ onBack }) => {
       return;
     }
 
-    // TODO: Next step - PDF viewer and annotation
-    alert('PDF viewer ve annotation sistemi yakında eklenecek...');
+    // Go to annotation step
+    setStep('annotation');
   };
+
+  const handleAnnotationComplete = (data) => {
+    console.log('Annotation complete:', data);
+    // TODO: Save to backend
+    alert(`Tamamlandı! ${data.fields.length} alan tanımlandı.\n\nBackend entegrasyonu yakında...`);
+    setStep('complete');
+  };
+
+  // Show annotation page
+  if (step === 'annotation') {
+    return (
+      <PDFAnnotationPage
+        file={selectedFile}
+        onBack={() => setStep('selection')}
+        onComplete={handleAnnotationComplete}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
