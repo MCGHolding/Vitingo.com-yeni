@@ -289,15 +289,7 @@ const getNavigation = (userDepartment) => {
       name: 'Sözleşmeler', 
       href: '/contracts', 
       icon: FileCheck, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Tüm Sözleşmeler', href: '/contracts', icon: FileCheck },
-        { name: 'Aktif', href: '/contracts?status=active', icon: CheckCircle },
-        { name: 'Taslak', href: '/contracts?status=draft', icon: Edit },
-        { name: 'Tamamlandı', href: '/contracts?status=completed', icon: CheckSquare },
-        { name: 'İptal', href: '/contracts?status=cancelled', icon: XCircle }
-      ]
+      current: false
     },
     { 
       name: 'Ayarlar', 
