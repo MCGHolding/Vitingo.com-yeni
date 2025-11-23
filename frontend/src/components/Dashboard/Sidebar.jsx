@@ -348,6 +348,9 @@ export default function Sidebar({
   onSettings,
   onImportData,
   onExportData,
+  // Contract handlers
+  onContracts,
+  onNewContract,
   onSalesReports,
   onCustomerReports,
   onHandovers,
