@@ -664,37 +664,10 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="relative border border-gray-200 rounded-md p-3 hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
+                    className="border border-gray-200 rounded-md p-3 hover:border-emerald-500 hover:bg-emerald-50 transition-all"
                   >
-                    {/* Edit Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onEditTemplate) onEditTemplate(template);
-                      }}
-                      className="absolute top-2 right-10 p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Şablonu Düzenle"
-                    >
-                      <Edit2 className="h-3 w-3" />
-                    </button>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTemplate(template.id, template.template_name);
-                      }}
-                      className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Şablonu Sil"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-
-                    {/* Template Card - Clickable */}
-                    <div
-                      onClick={() => handleTemplateSelect(template)}
-                      className="cursor-pointer"
-                    >
+                    {/* Template Card */}
+                    <div className="space-y-2">
                       <div className="flex items-start justify-between mb-2">
                         <FileText className="h-6 w-6 text-emerald-600" />
                         {/* Creation Method Badge */}
