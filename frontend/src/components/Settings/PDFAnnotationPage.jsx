@@ -187,74 +187,72 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-3 gap-6">
-          {/* PDF Viewer */}
-          <div className="col-span-2 bg-white rounded-lg shadow-lg p-4">
-            <div 
-              className="relative"
-              onMouseUp={handleTextSelect}
-            >
-              {pdfUrl ? (
-                <iframe
-                  src={`${pdfUrl}#page=${currentPage}&zoom=${scale * 100}`}
-                  className="w-full border border-gray-300 rounded"
-                  style={{ height: '800px' }}
-                  title="PDF Viewer"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-96">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-                </div>
-              )}
-            </div>
-            <div className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded">
-              💡 <strong>İpucu:</strong> PDF'de metni fareyle seçin, ardından popup'ta alan bilgilerini girin.
-            </div>
-          </div>
-
-          {/* Fields Sidebar */}
-          <div className="bg-white rounded-lg shadow-lg p-4">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">
-              Tanımlanan Alanlar ({fields.length})
-            </h2>
-            
-            {fields.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <p className="text-sm">Henüz alan eklenmedi</p>
-                <p className="text-xs mt-2">PDF üzerinde metin seçerek alan ekleyin</p>
-              </div>
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* PDF Viewer - Full Width */}
+        <div className="flex-1 bg-white border-r border-gray-200 p-4 overflow-auto">
+          <div 
+            className="relative h-full"
+            onMouseUp={handleTextSelect}
+          >
+            {pdfUrl ? (
+              <iframe
+                src={`${pdfUrl}#page=${currentPage}&zoom=150`}
+                className="w-full h-full border border-gray-300 rounded"
+                title="PDF Viewer"
+              />
             ) : (
-              <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                {fields.map((field) => (
-                  <div key={field.id} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 text-sm">{field.field_name}</h3>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Tip: {fieldTypes.find(t => t.value === field.field_type)?.label}
-                        </p>
-                        {field.is_required && (
-                          <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded">
-                            Zorunlu
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleRemoveField(field.id)}
-                        className="text-red-600 hover:bg-red-50 p-1 rounded"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                      "{field.selected_text.substring(0, 50)}..."
-                    </p>
-                  </div>
-                ))}
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
               </div>
             )}
           </div>
+        </div>
+
+        {/* Fields Sidebar - Fixed Width */}
+        <div className="w-96 bg-white p-4 overflow-y-auto">
+          <div className="mb-4 text-sm text-gray-600 bg-blue-50 p-3 rounded">
+            💡 <strong>İpucu:</strong> PDF'de metni fareyle seçin
+          </div>
+          
+          <h2 className="text-lg font-bold text-gray-900 mb-4">
+            Tanımlanan Alanlar ({fields.length})
+          </h2>
+          
+          {fields.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <p className="text-sm">Henüz alan eklenmedi</p>
+              <p className="text-xs mt-2">PDF üzerinde metin seçerek alan ekleyin</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {fields.map((field) => (
+                <div key={field.id} className="border border-gray-200 rounded-lg p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 text-sm">{field.field_name}</h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Tip: {fieldTypes.find(t => t.value === field.field_type)?.label}
+                      </p>
+                      {field.is_required && (
+                        <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded">
+                          Zorunlu
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleRemoveField(field.id)}
+                      className="text-red-600 hover:bg-red-50 p-1 rounded"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded break-words">
+                    "{field.selected_text.substring(0, 50)}..."
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
