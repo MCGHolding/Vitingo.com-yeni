@@ -269,7 +269,7 @@ const ContractCreatePage = ({ onBack }) => {
   };
 
   const renderFieldInput = (field) => {
-    const commonClasses = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent";
+    const commonClasses = "w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-transparent";
     
     switch (field.field_type) {
       case 'textarea':
