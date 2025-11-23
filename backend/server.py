@@ -253,6 +253,8 @@ class Project(BaseModel):
 
 class ProjectCreate(BaseModel):
     name: str
+    companyId: str = ""
+    companyName: str = ""
     customerId: str
     customerName: str = ""
     fairId: str
