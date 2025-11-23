@@ -769,6 +769,21 @@ export default function Sidebar({
       return;
     }
 
+    // Handle Contract menu actions
+    if (subItem && subItem.name === 'Şablon Yönetimi') {
+      if (onTemplateList) {
+        onTemplateList();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Sözleşmelerim') {
+      if (onMyContracts) {
+        onMyContracts();
+      }
+      return;
+    }
+
     // Handle Accounting menu actions
     if (subItem && subItem.name === 'Yeni Fatura') {
       if (onNewInvoice) {
