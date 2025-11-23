@@ -701,6 +701,39 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                       <p className="text-xs text-emerald-600">
                         {template.fields.length} alan
                       </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                        <button
+                          onClick={() => handleTemplateSelect(template)}
+                          className="flex-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-medium transition-colors"
+                        >
+                          Kullan
+                        </button>
+                        {onEditTemplate && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEditTemplate(template);
+                            }}
+                            className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded text-xs font-medium transition-colors flex items-center gap-1"
+                            title="Düzenle"
+                          >
+                            <Edit2 className="h-3 w-3" />
+                            Düzenle
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTemplate(template.id, template.template_name);
+                          }}
+                          className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs font-medium transition-colors"
+                          title="Sil"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
