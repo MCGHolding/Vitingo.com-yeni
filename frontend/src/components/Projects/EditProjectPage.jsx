@@ -100,6 +100,32 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     }
   };
 
+  const loadGroupCompanies = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/group-companies`);
+      if (response.ok) {
+        const data = await response.json();
+        let companies = Array.isArray(data) ? data : [];
+        
+        // If no group companies, add fallback
+        if (companies.length === 0) {
+          companies.push({
+            id: 'default',
+            name: 'Varsayılan Şirket'
+          });
+        }
+        
+        setGroupCompanies(companies);
+      }
+    } catch (error) {
+      console.error('Error loading group companies:', error);
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
