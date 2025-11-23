@@ -195,7 +195,8 @@ const ContractsPage = ({ setCurrentView }) => {
     const matchesStatus = filterStatus === 'all' || contract.status === filterStatus;
     const matchesSearch = contract.contract_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contract.template_name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesStatus && matchesSearch;
+    const matchesDateRange = filterByDateRange(contract);
+    return matchesStatus && matchesSearch && matchesDateRange;
   });
 
   const getStatusBadge = (status) => {
