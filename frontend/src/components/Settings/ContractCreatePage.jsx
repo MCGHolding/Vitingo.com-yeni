@@ -646,6 +646,17 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
 
             {/* Action Buttons (bottom) */}
             <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
+              {/* Save Draft Button */}
+              <button
+                onClick={handleSaveDraft}
+                className="w-full flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium bg-gray-600 text-white hover:bg-gray-700"
+              >
+                <svg className="h-3.5 w-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                Kaydet (Taslak)
+              </button>
+              
               <button
                 onClick={handleUpdateContract}
                 className={`w-full flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
