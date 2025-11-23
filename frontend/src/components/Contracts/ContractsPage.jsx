@@ -53,6 +53,60 @@ const ContractsPage = ({ setCurrentView }) => {
     fetchContracts();
   }, []);
 
+  // Calculate monthly data for chart
+  const calculateMonthlyData = (contracts) => {
+    const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 
+                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    const currentDate = new Date();
+    const last6Months = [];
+    
+    // Get last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthName = months[date.getMonth()];
+      const year = date.getFullYear();
+      
+      const monthContracts = contracts.filter(c => {
+        const contractDate = new Date(c.created_at);
+        return contractDate.getMonth() === date.getMonth() && 
+               contractDate.getFullYear() === date.getFullYear();
+      });
+      
+      last6Months.push({
+        ay: `${monthName.substring(0, 3)} '${year.toString().substring(2)}`,
+        aktif: monthContracts.filter(c => c.status === 'active').length,
+        taslak: monthContracts.filter(c => c.status === 'draft').length,
+        tamamlandi: monthContracts.filter(c => c.status === 'completed').length,
+        toplam: monthContracts.length
+      });
+    }
+    
+    return last6Months;
+  };
+
+  // Filter by date range
+  const filterByDateRange = (contract) => {
+    if (dateRange === 'all') return true;
+    
+    const contractDate = new Date(contract.created_at);
+    const now = new Date();
+    
+    switch (dateRange) {
+      case 'today':
+        return contractDate.toDateString() === now.toDateString();
+      case 'week':
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return contractDate >= weekAgo;
+      case 'month':
+        return contractDate.getMonth() === now.getMonth() && 
+               contractDate.getFullYear() === now.getFullYear();
+      case 'year':
+        return contractDate.getFullYear() === now.getFullYear();
+      default:
+        return true;
+    }
+  };
+
   const fetchContracts = async () => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
