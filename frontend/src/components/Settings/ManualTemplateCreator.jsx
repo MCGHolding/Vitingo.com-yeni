@@ -119,6 +119,16 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
     }
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(fields);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setFields(items);
+  };
+
   const handleSaveTemplate = async () => {
     if (!templateName.trim()) {
       alert('Lütfen şablon adı girin');
