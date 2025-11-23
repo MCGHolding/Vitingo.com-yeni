@@ -114,9 +114,22 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     }
   };
 
-  // Keyboard navigation
+  // Keyboard navigation and shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Undo/Redo shortcuts
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+        return;
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        handleRedo();
+        return;
+      }
+      
       if (showPopup) return; // Don't navigate if popup is open
       
       if (e.key === 'ArrowLeft') {
@@ -130,7 +143,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentPageIndex, pdfData, showPopup]);
+  }, [currentPageIndex, pdfData, showPopup, historyIndex, history]);
 
   // Auto-save draft every 30 seconds
   useEffect(() => {
