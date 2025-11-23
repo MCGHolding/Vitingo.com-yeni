@@ -438,7 +438,7 @@ export default function Sidebar({
     
     console.log('Filtered navigation items:', filtered.length);
     return filtered;
-  }, [searchTerm]);
+  }, [searchTerm, navigation]);
 
   // Filter submenu items for each navigation item
   const getFilteredSubmenu = (item) => {
