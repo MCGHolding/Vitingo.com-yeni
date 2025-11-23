@@ -15,10 +15,10 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
 
   useEffect(() => {
     const init = async () => {
-      await fetchTemplates();
+      const loadedTemplates = await fetchTemplates();
       
       if (isEdit && contractId) {
-        await loadDraftContract();
+        await loadDraftContract(loadedTemplates);
       } else {
         await loadProjectDataIfNeeded();
       }
