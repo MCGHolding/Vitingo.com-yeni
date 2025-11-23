@@ -640,7 +640,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {!selectedTemplate ? (
           /* Template Selection */
           <div className="bg-white rounded-lg shadow-sm p-4">
