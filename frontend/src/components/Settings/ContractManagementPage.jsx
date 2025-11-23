@@ -125,26 +125,26 @@ const ContractManagementPage = ({ onBack }) => {
   // Show completion page
   if (step === 'complete') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-lg shadow-sm p-6 max-w-xl w-full text-center">
-          <div className="inline-flex p-3 bg-green-100 rounded-full mb-4">
-            <CheckCircle className="h-10 w-10 text-green-600" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 max-w-md w-full text-center">
+          <div className="inline-flex p-2 bg-green-100 rounded-full mb-3">
+            <CheckCircle className="h-6 w-6 text-green-600" />
           </div>
           
-          <h1 className="text-xl font-bold text-gray-900 mb-3">
+          <h1 className="text-base font-bold text-gray-900 mb-2">
             Şablon Başarıyla Oluşturuldu! 🎉
           </h1>
           
-          <p className="text-gray-600 text-sm mb-6">
+          <p className="text-gray-600 text-xs mb-4">
             Sözleşme şablonunuz kaydedildi. Artık bu şablonu kullanarak yeni sözleşmeler oluşturabilirsiniz.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <button
               onClick={() => setStep('create-contract')}
-              className="flex items-center justify-center px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium text-sm hover:bg-emerald-700 shadow-sm hover:shadow transition-all"
+              className="flex items-center justify-center px-4 py-1.5 bg-emerald-600 text-white rounded-md font-medium text-xs hover:bg-emerald-700 shadow-sm hover:shadow transition-all"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-3 w-3 mr-1.5" />
               Sözleşme Oluştur
             </button>
             
@@ -154,16 +154,16 @@ const ContractManagementPage = ({ onBack }) => {
                 setSelectedMethod(null);
                 setSelectedFile(null);
               }}
-              className="flex items-center justify-center px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all"
+              className="flex items-center justify-center px-4 py-1.5 bg-gray-100 text-gray-700 rounded-md font-medium text-xs hover:bg-gray-200 transition-all"
             >
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="h-3 w-3 mr-1.5" />
               Yeni Şablon Oluştur
             </button>
           </div>
 
           <button
             onClick={onBack}
-            className="mt-4 text-gray-600 hover:text-gray-900 text-xs"
+            className="mt-3 text-gray-600 hover:text-gray-900 text-[10px]"
           >
             Ayarlar'a Dön
           </button>
