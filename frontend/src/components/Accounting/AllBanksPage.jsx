@@ -9,7 +9,8 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [filteredBanks, setFilteredBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedCompany, setSelectedCompany] = useState('all');
+  const [groupCompanies, setGroupCompanies] = useState([]);
   
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
