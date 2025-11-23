@@ -1362,51 +1362,65 @@ def test_arbitrary_survey_invitation():
         print(f"❌ FAIL: Error testing arbitrary survey invitation: {str(e)}")
         return False
 
-def test_contract_management_api():
+def test_contract_management_dashboard():
     """
-    CONTRACT MANAGEMENT API TESTING
+    NEW CONTRACT MANAGEMENT DASHBOARD FUNCTIONALITY TESTING
     
     **Test Requirements:**
-    1. POST /api/contracts/extract-pdf-text - PDF text extraction
-       - Create test PDF and extract text
-       - Verify response contains filename, total_pages, pages array
-       
-    2. POST /api/contract-templates - Template creation
-       - Create template with mock data
-       - Verify template_id is returned
-       
-    3. GET /api/contract-templates - List templates
-       - Verify templates array and count
-       - Verify at least 1 template exists
-       
-    4. GET /api/contract-templates/{template_id} - Get single template
-       - Use template_id from creation
-       - Verify all fields are returned
-       
-    5. POST /api/contracts/generate - Generate contract PDF
-       - Use template_id and field values
-       - Verify PDF is generated (Content-Type: application/pdf)
+    1. Basic Contract Listing:
+       - GET /api/contracts without user_email parameter
+       - GET /api/contracts with user_email parameter (test with: mbucak@gmail.com)
+       - Verify response structure includes: contracts array, count, can_view_all fields
+    
+    2. Role-Based Access Control (CRITICAL):
+       - Test Super Admin access (mbucak@gmail.com) - should see ALL contracts
+       - Test regular user access - should only see their own contracts (created_by field matches)
+       - Verify can_view_all flag is correctly set based on user role
+    
+    3. Contract Data Structure:
+       - Each contract should have: id, contract_title, template_id, template_name, field_values, status, created_by, created_at, updated_at
+       - has_pdf flag should be true if PDF exists
+       - pdf_content should NOT be in list response (only in individual GET)
+    
+    4. User Role Detection:
+       - Backend should fetch user from users collection
+       - Check user's role field against admin_roles list: ["Super Admin", "Yönetici"]
+       - Check user's department field against finance_roles list: ["Muhasebe Müdürü", "Finans Müdürü"]
+       - Either role OR department match should grant can_view_all = true
+    
+    5. Test with Different Users:
+       a) mbucak@gmail.com (Super Admin) - should see all
+       b) A user with department "Muhasebe Müdürü" - should see all
+       c) A regular user with no special role - should see only their own
+    
+    6. Sorting and Data Integrity:
+       - Contracts should be sorted by created_at descending
+       - No MongoDB _id fields should leak to response
+       - All datetime fields should be properly serialized
     
     **Success Criteria:**
-    ✅ All endpoints return 200/201 status codes
-    ✅ Template creation and listing works
-    ✅ PDF generation works (WeasyPrint available)
+    ✅ Basic listing returns contracts array, count, and can_view_all
+    ✅ Super admin (mbucak@gmail.com) gets can_view_all=true and sees all contracts
+    ✅ Regular users get can_view_all=false and see only their contracts
+    ✅ Finance department users get can_view_all=true
+    ✅ Response structure is clean (no _id, no pdf_content in list)
+    ✅ User role detection works from users collection
     """
     
     print("=" * 100)
-    print("🚨 CONTRACT MANAGEMENT API TESTING 🚨")
+    print("🚨 NEW CONTRACT MANAGEMENT DASHBOARD FUNCTIONALITY TESTING 🚨")
     print("=" * 100)
-    print("CONTEXT: Testing Sözleşme Yönetimi API endpoints for PDF text extraction,")
-    print("template creation, listing, and contract PDF generation.")
+    print("CONTEXT: Testing the NEW Contract Management Dashboard functionality")
+    print("with role-based access control and proper data structure.")
     print("=" * 100)
     
     test_results = {
-        "pdf_extraction_working": False,
-        "template_creation_working": False,
-        "template_listing_working": False,
-        "template_retrieval_working": False,
-        "contract_generation_working": False,
-        "created_template_id": None,
+        "basic_listing_working": False,
+        "super_admin_access_working": False,
+        "regular_user_access_working": False,
+        "finance_user_access_working": False,
+        "data_structure_correct": False,
+        "role_detection_working": False,
         "critical_issues": [],
         "warnings": []
     }
