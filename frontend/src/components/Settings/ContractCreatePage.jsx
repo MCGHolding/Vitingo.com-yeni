@@ -632,7 +632,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       {/* Header */}
       <div className="mb-6">
         <button
-          onClick={onBack}
+          onClick={handleBackWithAutoSave}
           className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
