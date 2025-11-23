@@ -236,7 +236,11 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
 
   const handleCardClick = (cardId) => {
     console.log('Settings card clicked:', cardId);
-    // TODO: Navigate to specific settings page
+    
+    // Navigate to specific pages
+    if (onNavigate) {
+      onNavigate(cardId);
+    }
   };
 
   return (
