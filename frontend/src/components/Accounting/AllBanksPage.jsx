@@ -158,10 +158,6 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setSelectedShareCountry('');
   };
 
-  const getCountryInfo = (countryCode) => {
-    return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦' };
-  };
-
   const renderBankDetails = (bank) => {
     if (bank.country === 'Turkey' || bank.country === 'UAE') {
       return (
