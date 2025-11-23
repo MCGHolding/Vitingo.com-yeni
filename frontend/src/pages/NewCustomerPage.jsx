@@ -10,7 +10,7 @@ const NewCustomerPage = () => {
       // Try runtime config first, fallback to environment variables
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://docu-sign-2.preview.emergentagent.com';
+                        'https://contract-hub-36.preview.emergentagent.com';
                         
       console.log('Saving customer to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`, {
