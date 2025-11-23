@@ -399,21 +399,33 @@ const NewBankForm = ({ onBackToDashboard }) => {
               Ülke * 
               <span className="text-xs text-gray-500 ml-2">(Grup şirketine göre otomatik belirlenir)</span>
             </label>
-            <Select value={formData.country} onValueChange={handleCountryChange} disabled={!formData.companyId}>
-              <SelectTrigger className={`h-12 ${!formData.companyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}>
-                <SelectValue placeholder={formData.companyId ? "Ülke otomatik seçildi" : "Önce grup şirketi seçin"} />
-              </SelectTrigger>
-              <SelectContent>
-                {countries.map((country) => (
-                  <SelectItem key={country.code} value={country.code}>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">{country.flag}</span>
-                      <span>{country.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {formData.companyId ? (
+              <div className="h-12 px-3 py-2 bg-gray-50 border border-gray-300 rounded-md flex items-center">
+                {formData.country && countries.find(c => c.code === formData.country) && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">{countries.find(c => c.code === formData.country)?.flag}</span>
+                    <span className="font-medium">{countries.find(c => c.code === formData.country)?.name}</span>
+                  </div>
+                )}
+                {!formData.country && <span className="text-gray-500">Ülke belirleniyor...</span>}
+              </div>
+            ) : (
+              <Select value={formData.country} onValueChange={handleCountryChange} disabled={true}>
+                <SelectTrigger className="h-12 bg-gray-100 cursor-not-allowed">
+                  <SelectValue placeholder="Önce grup şirketi seçin" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">{country.flag}</span>
+                        <span>{country.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
 
