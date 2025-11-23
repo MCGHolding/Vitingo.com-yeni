@@ -577,13 +577,14 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                 
                 {editMode ? (
                   <RichTextEditor
+                    key={`editor-${currentPageIndex}-${refreshKey}`}
                     content={editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text}
                     onChange={handlePageContentChange}
                     onTextSelect={handleTextSelect}
                     placeholder="Sayfa içeriğini düzenleyin..."
                   />
                 ) : (
-                  <div className="prose max-w-none">
+                  <div key={`view-${currentPageIndex}-${refreshKey}`} className="prose max-w-none">
                     <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
                       {editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text}
                     </pre>
