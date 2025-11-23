@@ -22,6 +22,8 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     is_required: true,
     dropdown_options: ''
   });
+  const [showFieldSuggestions, setShowFieldSuggestions] = useState(false);
+  const [replaceAllOccurrences, setReplaceAllOccurrences] = useState(true);
 
   const fieldTypes = [
     { value: 'text', label: 'Metin' },
