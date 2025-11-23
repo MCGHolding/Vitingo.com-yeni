@@ -59,18 +59,18 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-xs text-gray-500 mb-1">Oluşturma Yöntemi</p>
-              <p className="text-sm font-medium text-gray-900 capitalize">{template.creation_method}</p>
+              <p className="text-sm font-medium text-gray-900 capitalize">{currentTemplate.creation_method}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-xs text-gray-500 mb-1">Dosya Tipi</p>
               <p className="text-sm font-medium text-gray-900 uppercase">
-                {template.original_file?.file_type || 'N/A'}
+                {currentTemplate.original_file?.file_type || 'N/A'}
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-xs text-gray-500 mb-1">Oluşturulma Tarihi</p>
               <p className="text-sm font-medium text-gray-900">
-                {new Date(template.created_at).toLocaleDateString('tr-TR', {
+                {new Date(currentTemplate.created_at).toLocaleDateString('tr-TR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric'
@@ -79,7 +79,7 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-xs text-gray-500 mb-1">Alan Sayısı</p>
-              <p className="text-sm font-medium text-gray-900">{template.fields?.length || 0} alan</p>
+              <p className="text-sm font-medium text-gray-900">{currentTemplate.fields?.length || 0} alan</p>
             </div>
           </div>
 
