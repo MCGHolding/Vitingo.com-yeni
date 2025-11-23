@@ -10597,6 +10597,7 @@ class ContractTemplateCreate(BaseModel):
     total_pages: int
     pages: List[Dict]
     fields: List[ContractField]
+    creation_method: str = "manual"  # "manual", "pdf_parse", "ai_create"
 
 class ContractTemplate(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -10608,6 +10609,7 @@ class ContractTemplate(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     created_by: Optional[str] = None
+    creation_method: str = "manual"  # "manual", "pdf_parse", "ai_create"
 
 @api_router.post("/contracts/extract-pdf-text")
 async def extract_pdf_text(file: UploadFile = File(...)):
