@@ -10373,6 +10373,7 @@ async def get_countries():
 async def get_cities(country: str):
     """Get cities by country"""
     try:
+        logger.info(f"Getting cities for country: '{country}'")
         cities_map = {
             'Türkiye': [
                 'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
