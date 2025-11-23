@@ -44,6 +44,19 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     checkForDraft();
   }, []);
 
+  // Initialize history with empty state when PDF loads
+  useEffect(() => {
+    if (pdfData && history.length === 0) {
+      const initialState = {
+        fields: [],
+        editedPages: {}
+      };
+      setHistory([initialState]);
+      setHistoryIndex(0);
+      console.log('📝 History initialized');
+    }
+  }, [pdfData]);
+
   // Check for existing draft
   const checkForDraft = () => {
     try {
