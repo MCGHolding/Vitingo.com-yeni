@@ -130,6 +130,20 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
             Kapat
           </button>
         </div>
+
+        {/* Add Field Modal */}
+        {showAddFieldModal && (
+          <AddFieldModal
+            templateId={template.id}
+            onClose={() => setShowAddFieldModal(false)}
+            onSuccess={() => {
+              setShowAddFieldModal(false);
+              if (onFieldsAdded) {
+                onFieldsAdded();
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   );
