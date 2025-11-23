@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, FileText, Sparkles, Edit3, Upload, CheckCircle, Plus } from 'lucide-react';
 import TextAnnotationPage from './TextAnnotationPage';
 import ContractCreatePage from './ContractCreatePage';
+import ManualTemplateCreator from './ManualTemplateCreator';
 
 const ContractManagementPage = ({ onBack }) => {
   const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete', 'create-contract'
