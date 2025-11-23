@@ -151,6 +151,49 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
     }
   };
 
+  // Fetch dropdown data
+  useEffect(() => {
+    fetchDropdownData();
+  }, []);
+
+  const fetchDropdownData = async () => {
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      // Fetch companies
+      const companiesRes = await fetch(`${backendUrl}/api/group-companies`);
+      if (companiesRes.ok) {
+        const data = await companiesRes.json();
+        setCompanies(data.companies || []);
+      }
+
+      // Fetch customers
+      const customersRes = await fetch(`${backendUrl}/api/customers`);
+      if (customersRes.ok) {
+        const data = await customersRes.json();
+        setCustomers(data.customers || []);
+      }
+
+      // Fetch users
+      const usersRes = await fetch(`${backendUrl}/api/users`);
+      if (usersRes.ok) {
+        const data = await usersRes.json();
+        setUsers(data.users || []);
+      }
+
+      // Fetch all projects
+      const projectsRes = await fetch(`${backendUrl}/api/projects`);
+      if (projectsRes.ok) {
+        const data = await projectsRes.json();
+        setAllProjects(data.projects || []);
+      }
+    } catch (error) {
+      console.error('Error fetching dropdown data:', error);
+    }
+  };
+
   // Keyboard navigation for preview
   useEffect(() => {
     if (!showPreview) return;
