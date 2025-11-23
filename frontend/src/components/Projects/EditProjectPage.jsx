@@ -216,14 +216,40 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Proje Adı *</label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Proje adını girin"
-                  required
-                />
+              {/* Proje Adı ve Şirketi Seç - Same Row */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Proje Adı *</label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    placeholder="Proje adını girin"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Şirketi Seç *</label>
+                  <Select
+                    value={formData.companyId}
+                    onValueChange={(value) => {
+                      const selectedCompany = groupCompanies.find(c => c.id === value);
+                      handleInputChange('companyId', value);
+                      handleInputChange('companyName', selectedCompany?.name || '');
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Şirket seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {groupCompanies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
