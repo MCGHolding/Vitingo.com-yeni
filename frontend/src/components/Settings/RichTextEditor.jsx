@@ -219,10 +219,12 @@ const RichTextEditor = ({ content, onChange, placeholder = "Metni düzenleyin...
       </div>
 
       {/* Editor Content */}
-      <EditorContent 
-        editor={editor} 
-        className="prose max-w-none p-4 min-h-[400px] focus:outline-none"
-      />
+      <div onMouseUp={(e) => e.stopPropagation()}>
+        <EditorContent 
+          editor={editor} 
+          className="prose max-w-none p-4 min-h-[400px] focus:outline-none"
+        />
+      </div>
 
       <style jsx global>{`
         .ProseMirror {
