@@ -202,8 +202,12 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
               <ArrowLeft className="h-6 w-6 text-gray-600" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Manuel Şablon Oluştur</h1>
-              <p className="text-gray-600">Sözleşme alanlarınızı özelleştirin</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {isEditMode ? 'Şablon Düzenle' : 'Manuel Şablon Oluştur'}
+              </h1>
+              <p className="text-gray-600">
+                {isEditMode ? 'Şablon alanlarını güncelleyin' : 'Sözleşme alanlarınızı özelleştirin'}
+              </p>
             </div>
           </div>
           <button
