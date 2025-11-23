@@ -1,7 +1,10 @@
-import React from 'react';
-import { X, FileText, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, FileText, CheckCircle, XCircle, Plus } from 'lucide-react';
+import AddFieldModal from './AddFieldModal';
 
-const ViewTemplateModal = ({ template, onClose }) => {
+const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
+  const [showAddFieldModal, setShowAddFieldModal] = useState(false);
+  
   if (!template) return null;
 
   return (
