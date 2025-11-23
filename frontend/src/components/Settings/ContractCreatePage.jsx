@@ -9,6 +9,9 @@ const ContractCreatePage = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [updatedPages, setUpdatedPages] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewPageIndex, setPreviewPageIndex] = useState(0);
 
   useEffect(() => {
     fetchTemplates();
