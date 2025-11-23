@@ -316,54 +316,53 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
               <td className="px-6 py-4 whitespace-nowrap">
                 {getStatusBadge(project.status)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('✏️ Edit clicked (list view):', project.id);
-                    alert('Düzenle: ' + project.name);
-                    if (onEditProject) {
-                      onEditProject(project.id);
-                    }
-                  }}
-                  className="text-blue-600 hover:text-blue-700"
-                  title="Düzenle"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔍 View clicked (list view):', project.name);
-                    alert('Görüntüle: ' + project.name);
-                    setSelectedProject(project);
-                  }}
-                  className="text-gray-600 hover:text-gray-700"
-                  title="Görüntüle"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🗑️ Delete clicked (list view):', project.name);
-                    alert('Sil: ' + project.name);
-                    handleDelete(project.id, project.name);
-                  }}
-                  className="text-red-600 hover:text-red-700"
-                  title="Sil"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <div className="flex justify-end space-x-2">
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('✏️ Edit clicked (list view):', project.id);
+                      alert('Düzenle: ' + project.name);
+                      if (onEditProject) {
+                        onEditProject(project.id);
+                      }
+                    }}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    title="Düzenle"
+                    style={{ zIndex: 10, position: 'relative' }}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('🔍 View clicked (list view):', project.name);
+                      alert('Görüntüle: ' + project.name);
+                      setSelectedProject(project);
+                    }}
+                    className="p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+                    title="Görüntüle"
+                    style={{ zIndex: 10, position: 'relative' }}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('🗑️ Delete clicked (list view):', project.name);
+                      alert('Sil: ' + project.name);
+                      handleDelete(project.id, project.name);
+                    }}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                    title="Sil"
+                    style={{ zIndex: 10, position: 'relative' }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
