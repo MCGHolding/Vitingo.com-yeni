@@ -12,7 +12,8 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
       name: f.field_name,
       slug: f.field_key,
       type: f.field_type,
-      unit: f.unit
+      unit: f.unit,
+      defaultValue: f.default_value
     })) || getDefaultFields()
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
