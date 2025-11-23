@@ -379,11 +379,12 @@ const NewBankForm = ({ onBackToDashboard }) => {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ülke *
+              Ülke * 
+              <span className="text-xs text-gray-500 ml-2">(Grup şirketine göre otomatik belirlenir)</span>
             </label>
-            <Select value={formData.country} onValueChange={handleCountryChange}>
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Ülke seçiniz" />
+            <Select value={formData.country} onValueChange={handleCountryChange} disabled={!formData.companyId}>
+              <SelectTrigger className={`h-12 ${!formData.companyId ? 'bg-gray-100 cursor-not-allowed' : ''}`}>
+                <SelectValue placeholder={formData.companyId ? "Ülke otomatik seçildi" : "Önce grup şirketi seçin"} />
               </SelectTrigger>
               <SelectContent>
                 {countries.map((country) => (
