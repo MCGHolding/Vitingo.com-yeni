@@ -777,14 +777,32 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
               </div>
             )}
 
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                checked={fieldForm.is_required}
-                onChange={(e) => setFieldForm({...fieldForm, is_required: e.target.checked})}
-                className="h-4 w-4 text-emerald-600 rounded"
-              />
-              <label className="ml-2 text-sm text-gray-700">Zorunlu alan</label>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={fieldForm.is_required}
+                  onChange={(e) => setFieldForm({...fieldForm, is_required: e.target.checked})}
+                  className="h-4 w-4 text-emerald-600 rounded"
+                />
+                <label className="ml-2 text-sm text-gray-700">Zorunlu alan</label>
+              </div>
+              
+              <div className="flex items-center bg-yellow-50 p-2 rounded border border-yellow-200">
+                <input
+                  type="checkbox"
+                  checked={replaceAllOccurrences}
+                  onChange={(e) => setReplaceAllOccurrences(e.target.checked)}
+                  className="h-4 w-4 text-emerald-600 rounded"
+                />
+                <label className="ml-2 text-xs text-gray-700">
+                  <span className="font-semibold">Tüm sayfalarda değiştir</span>
+                  <br />
+                  <span className="text-[10px] text-gray-600">
+                    Bu metni sözleşmenin her yerinde {placeholder} ile değiştirir
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
