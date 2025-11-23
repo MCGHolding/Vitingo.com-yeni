@@ -198,9 +198,7 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
           </div>
           
           <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm"
+            <button 
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -214,14 +212,13 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                   alert('onEditProject callback tanımlı değil!');
                 }
               }}
-              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              className="px-3 py-2 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg flex items-center space-x-1 transition-colors"
+              style={{ zIndex: 10, position: 'relative' }}
             >
-              <Edit2 className="h-4 w-4 mr-1" />
-              Düzenle
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
+              <Edit2 className="h-4 w-4" />
+              <span>Düzenle</span>
+            </button>
+            <button 
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -230,13 +227,13 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 setSelectedProject(project);
                 console.log('🔍 selectedProject state set to:', project.id);
               }}
+              className="px-3 py-2 text-sm border border-gray-600 text-gray-600 hover:bg-gray-50 rounded-lg flex items-center space-x-1 transition-colors"
+              style={{ zIndex: 10, position: 'relative' }}
             >
-              <Eye className="h-4 w-4 mr-1" />
-              Görüntüle
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
+              <Eye className="h-4 w-4" />
+              <span>Görüntüle</span>
+            </button>
+            <button 
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -244,11 +241,12 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                 alert('Sil butonuna tıklandı: ' + project.name);
                 handleDelete(project.id, project.name);
               }}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="px-3 py-2 text-sm border border-red-600 text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-1 transition-colors"
+              style={{ zIndex: 10, position: 'relative' }}
             >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Sil
-            </Button>
+              <Trash2 className="h-4 w-4" />
+              <span>Sil</span>
+            </button>
           </div>
         </div>
       ))}
