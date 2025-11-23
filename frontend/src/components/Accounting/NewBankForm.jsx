@@ -416,7 +416,10 @@ const NewBankForm = ({ onBackToDashboard }) => {
                   ...formData,
                   companyId: value,
                   companyName: selectedCompany?.name || '',
-                  country: countryCode
+                  country: countryCode,
+                  // Auto-fill account holder with company name
+                  accountHolder: selectedCompany?.name || '',
+                  recipientName: selectedCompany?.name || ''
                 });
               }}
             >
