@@ -111,9 +111,6 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# GridFS bucket for file storage
-fs = AsyncIOMotorGridFSBucket(db)
-
 # Create the main app without a prefix
 app = FastAPI()
 
