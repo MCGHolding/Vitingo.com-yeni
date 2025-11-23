@@ -4,26 +4,29 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-const NewBankForm = ({ onBackToDashboard }) => {
+const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
+  const isEditMode = Boolean(bankToEdit);
+  
   const [formData, setFormData] = useState({
-    companyId: '',
-    companyName: '',
-    country: '',
-    bankName: '',
+    id: bankToEdit?.id || '',
+    companyId: bankToEdit?.company_id || '',
+    companyName: bankToEdit?.company_name || '',
+    country: bankToEdit?.country || '',
+    bankName: bankToEdit?.bank_name || '',
     // Turkey/UAE fields
-    swiftCode: '',
-    iban: '',
-    branchName: '',
-    branchCode: '',
-    accountHolder: '',
-    accountNumber: '',
+    swiftCode: bankToEdit?.swift_code || '',
+    iban: bankToEdit?.iban || '',
+    branchName: bankToEdit?.branch_name || '',
+    branchCode: bankToEdit?.branch_code || '',
+    accountHolder: bankToEdit?.account_holder || '',
+    accountNumber: bankToEdit?.account_number || '',
     // USA fields
-    routingNumber: '',
-    usAccountNumber: '',
-    bankAddress: '',
-    recipientAddress: '',
-    recipientName: '',
-    recipientZipCode: ''
+    routingNumber: bankToEdit?.routing_number || '',
+    usAccountNumber: bankToEdit?.us_account_number || '',
+    bankAddress: bankToEdit?.bank_address || '',
+    recipientAddress: bankToEdit?.recipient_address || '',
+    recipientName: bankToEdit?.recipient_name || '',
+    recipientZipCode: bankToEdit?.recipient_zip_code || ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
