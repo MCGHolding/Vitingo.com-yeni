@@ -278,6 +278,9 @@ const Dashboard = () => {
   // Invoice states
   const [selectedInvoiceForEdit, setSelectedInvoiceForEdit] = useState(null);
   
+  // Bank state
+  const [selectedBankForEdit, setSelectedBankForEdit] = useState(null);
+
   // Collection states
   const [showNewCollectionForm, setShowNewCollectionForm] = useState(false);
   
