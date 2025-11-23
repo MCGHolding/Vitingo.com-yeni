@@ -745,7 +745,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
           ) : (
             <div className="space-y-3">
               {fields.map((field) => (
-                <div key={field.id} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                <div key={field.field_key} className="border border-gray-200 rounded-lg p-3 bg-gray-50 hover:border-gray-300 transition-all group">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 text-sm">{field.field_name}</h3>
@@ -762,10 +762,16 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                       )}
                     </div>
                     <button
-                      onClick={() => handleRemoveField(field.id)}
-                      className="text-red-600 hover:bg-red-50 p-1 rounded"
+                      onClick={() => {
+                        if (confirm(`"${field.field_name}" alanını silmek istediğinizden emin misiniz?`)) {
+                          handleRemoveField(field.field_key);
+                        }
+                      }}
+                      className="flex items-center gap-1 px-2 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-all text-xs font-medium opacity-0 group-hover:opacity-100"
+                      title="Alanı Sil"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3.5 w-3.5" />
+                      <span>Sil</span>
                     </button>
                   </div>
                   <p className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-200 break-words">
