@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, FileText, Download, Eye, Trash2, Search } from 'lucide-react';
+import CreateContractModal from './CreateContractModal';
 
 const MyContractsPage = () => {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     loadContracts();
