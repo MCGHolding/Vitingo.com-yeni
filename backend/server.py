@@ -9489,32 +9489,55 @@ class Position(BaseModel):
     value: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-@api_router.post("/users", response_model=User)
+@api_router.post("/users")
 async def create_user(user_data: UserCreate):
-    """Create a new user"""
+    """Create a new user with auto-generated password"""
     try:
-        # Check if user with same username or email already exists
-        existing_user = await db.users.find_one({
-            "$or": [
-                {"username": user_data.username},
-                {"email": user_data.email}
-            ]
-        })
+        # Check if user with same email already exists
+        existing_user = await db.users.find_one({"email": user_data.email})
         
         if existing_user:
-            raise HTTPException(status_code=400, detail="User with this username or email already exists")
+            raise HTTPException(status_code=400, detail="Bu e-posta adresi zaten kullanılıyor")
+        
+        # Generate secure password
+        temp_password = generate_secure_password()
         
         # Create new user
-        new_user = User(
-            id=user_data.username,  # Use username as ID
-            **user_data.dict()
-        )
+        user_id = str(uuid.uuid4())
+        new_user = {
+            "id": user_id,
+            "name": user_data.name,
+            "email": user_data.email,
+            "phone": user_data.phone,
+            "position": user_data.position,
+            "department": user_data.department,
+            "manager_id": user_data.manager_id,
+            "password": temp_password,
+            "role": "user",
+            "status": "active",
+            "notification_method": user_data.notification_method,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
         
         # Save to database
-        await db.users.insert_one(new_user.dict())
+        await db.users.insert_one(new_user)
         
-        logger.info(f"Created new user: {new_user.name} ({new_user.email})")
-        return new_user
+        logger.info(f"Created new user: {new_user['name']} ({new_user['email']})")
+        
+        # Prepare notification info
+        whatsapp_link = f"https://wa.me/{user_data.phone.replace('+', '').replace(' ', '')}?text=Merhaba%20{user_data.name},%0A%0AGiri%C5%9F%20Bilgileriniz:%0AE-posta:%20{user_data.email}%0AGe%C3%A7ici%20%C5%9Eifre:%20{temp_password}%0A%0AL%C3%BCtfen%20ilk%20giri%C5%9Ften%20sonra%20%C5%9Fifrenizi%20de%C4%9Fi%C5%9Ftirin."
+        
+        return {
+            "success": True,
+            "message": f"{new_user['name']} başarıyla oluşturuldu!",
+            "user": serialize_document(new_user),
+            "credentials": {
+                "email": user_data.email,
+                "password": temp_password
+            },
+            "whatsapp_link": whatsapp_link if user_data.phone else None
+        }
         
     except HTTPException:
         raise
