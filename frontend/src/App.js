@@ -850,6 +850,13 @@ const Dashboard = () => {
     setCurrentView('edit-bank');
   };
 
+  // Template handlers
+  const handleEditTemplate = (template) => {
+    console.log('Editing template:', template);
+    setSelectedTemplateForEdit(template);
+    setCurrentView('edit-template');
+  };
+
   // Supplier handlers
   const handleNewSupplier = () => {
     setCurrentView('new-supplier');
