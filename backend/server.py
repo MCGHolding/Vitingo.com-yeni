@@ -10829,15 +10829,30 @@ async def get_contracts(user_email: Optional[str] = None):
     """Get all contracts with permission filtering"""
     try:
         # Permission check
-        super_admin = "mbucak@gmail.com"
+        super_admin_email = "mbucak@gmail.com"
         finance_roles = ["Muhasebe Müdürü", "Finans Müdürü"]
+        admin_roles = ["Super Admin", "Yönetici"]
         
         query = {}
+        can_view_all = False
         
-        # If not super admin or finance, filter by user
-        if user_email and user_email != super_admin:
-            # TODO: Check if user has finance role from user collection
-            # For now, only super admin sees all
+        # Check if user can view all contracts
+        if user_email:
+            if user_email == super_admin_email:
+                can_view_all = True
+            else:
+                # Check user's role from users collection
+                user = await db.users.find_one({"email": user_email})
+                if user:
+                    user_role = user.get('role', '')
+                    user_department = user.get('department', '')
+                    
+                    # Super admins and finance roles can see all
+                    if user_role in admin_roles or user_department in finance_roles:
+                        can_view_all = True
+        
+        # If not authorized to view all, filter by user
+        if not can_view_all and user_email:
             query["created_by"] = user_email
         
         contracts = await db.contracts.find(query).sort("created_at", -1).to_list(length=None)
@@ -10852,7 +10867,8 @@ async def get_contracts(user_email: Optional[str] = None):
         
         return {
             "contracts": contracts,
-            "count": len(contracts)
+            "count": len(contracts),
+            "can_view_all": can_view_all
         }
         
     except Exception as e:
