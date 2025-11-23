@@ -76,6 +76,10 @@ const ContractsPage = ({ setCurrentView }) => {
           completed: data.contracts.filter(c => c.status === 'completed').length
         };
         setStats(stats);
+        
+        // Calculate chart data - Monthly trend for last 6 months
+        const monthlyData = calculateMonthlyData(data.contracts);
+        setChartData(monthlyData);
       }
     } catch (error) {
       console.error('Error fetching contracts:', error);
