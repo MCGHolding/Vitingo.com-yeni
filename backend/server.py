@@ -10800,16 +10800,20 @@ async def generate_contract(request: ContractGenerateRequest):
             import io
             
             pdf_buffer = io.BytesIO()
-            HTML(string=html_content).write_pdf(pdf_buffer)
+            # Encode HTML content as UTF-8 to handle Turkish characters
+            html_bytes = html_content.encode('utf-8')
+            HTML(string=html_content, encoding='utf-8').write_pdf(pdf_buffer)
             pdf_buffer.seek(0)
             
             # Return PDF as response
             from fastapi.responses import StreamingResponse
+            # Encode filename properly for Turkish characters
+            safe_filename = request.contract_title.encode('utf-8').decode('utf-8')
             return StreamingResponse(
                 pdf_buffer,
                 media_type="application/pdf",
                 headers={
-                    "Content-Disposition": f"attachment; filename={request.contract_title}.pdf"
+                    "Content-Disposition": f"attachment; filename*=UTF-8''{safe_filename}.pdf"
                 }
             )
         except ImportError:
