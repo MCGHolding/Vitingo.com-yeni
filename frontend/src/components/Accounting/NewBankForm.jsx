@@ -67,9 +67,25 @@ const NewBankForm = ({ onBackToDashboard }) => {
     }
   };
 
-  // Load countries on component mount
+  // Load group companies
+  const loadGroupCompanies = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/group-companies`);
+      
+      if (response.ok) {
+        const companies = await response.json();
+        setGroupCompanies(Array.isArray(companies) ? companies : []);
+      }
+    } catch (error) {
+      console.error('Error loading group companies:', error);
+    }
+  };
+
+  // Load countries and companies on component mount
   useEffect(() => {
     loadCountries();
+    loadGroupCompanies();
   }, []);
 
   const handleAddCountry = async () => {
