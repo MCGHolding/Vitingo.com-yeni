@@ -200,8 +200,50 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
               <div className="h-6 w-px bg-gray-300"></div>
               <h1 className="text-xl font-bold text-gray-900">Sözleşme Annotation</h1>
               <span className="text-sm text-gray-500">
-                {pdfData?.total_pages || 0} sayfa
+                Sayfa {currentPageIndex + 1} / {pdfData?.total_pages || 0}
               </span>
+              
+              {/* Page Navigation */}
+              <div className="flex items-center gap-2 ml-4">
+                <button
+                  onClick={goToPreviousPage}
+                  disabled={currentPageIndex === 0}
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Önceki Sayfa (←)"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPageIndex === pdfData?.pages.length - 1}
+                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Sonraki Sayfa (→)"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Edit Mode Toggle */}
+              <button
+                onClick={toggleEditMode}
+                className={`flex items-center px-4 py-2 rounded-lg ${
+                  editMode 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {editMode ? (
+                  <>
+                    <Edit3 className="h-4 w-4 mr-2" />
+                    Düzenleme Modu
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-4 w-4 mr-2" />
+                    Görüntüleme
+                  </>
+                )}
+              </button>
             </div>
 
             <button
