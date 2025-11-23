@@ -1063,6 +1063,14 @@ const Dashboard = () => {
           <SettingsPage 
             onBack={handleBackToDashboard}
             currentUser={user}
+            onNavigate={(view) => setCurrentView(view)}
+          />
+        );
+
+      case 'group-companies':
+        return (
+          <GroupCompaniesPage 
+            onBack={() => setCurrentView('settings')}
           />
         );
 
