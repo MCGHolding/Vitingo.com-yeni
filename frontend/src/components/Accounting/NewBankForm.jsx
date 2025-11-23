@@ -371,12 +371,16 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <div className="p-3 bg-green-100 rounded-lg">
-            <Building2 className="h-6 w-6 text-green-600" />
+          <div className={`p-3 ${isEditMode ? 'bg-blue-100' : 'bg-green-100'} rounded-lg`}>
+            <Building2 className={`h-6 w-6 ${isEditMode ? 'text-blue-600' : 'text-green-600'}`} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Yeni Banka</h1>
-            <p className="text-gray-600">Banka bilgilerini ekleyin</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {isEditMode ? 'Banka Düzenle' : 'Yeni Banka'}
+            </h1>
+            <p className="text-gray-600">
+              {isEditMode ? 'Banka bilgilerini güncelleyin' : 'Banka bilgilerini ekleyin'}
+            </p>
           </div>
         </div>
         <div className="space-y-2">
