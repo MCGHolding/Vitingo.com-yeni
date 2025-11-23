@@ -1836,6 +1836,14 @@ function App() {
               } 
             />
             <Route 
+              path="/contracts/edit/:id" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/projects" 
               element={
                 <ProtectedRoute>
