@@ -568,23 +568,23 @@ const ContractCreatePage = ({ onBack }) => {
             </div>
 
             {/* Action Buttons (bottom) */}
-            <div className="mt-8 pt-6 border-t border-gray-200 space-y-3">
+            <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
               <button
                 onClick={handleUpdateContract}
-                className={`w-full flex items-center justify-center px-6 py-4 rounded-lg text-lg font-semibold transition-all ${
+                className={`w-full flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   updatedPages 
-                    ? 'bg-green-100 text-green-700 border-2 border-green-300' 
+                    ? 'bg-green-100 text-green-700 border border-green-300' 
                     : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
                 {updatedPages ? (
                   <>
-                    <Check className="h-6 w-6 mr-2" />
+                    <Check className="h-3.5 w-3.5 mr-1.5" />
                     Bilgiler Güncellendi ✓
                   </>
                 ) : (
                   <>
-                    <svg className="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-3.5 w-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     Bilgileri Güncelle
@@ -592,13 +592,13 @@ const ContractCreatePage = ({ onBack }) => {
                 )}
               </button>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={handlePreview}
                   disabled={!updatedPages}
-                  className="flex items-center justify-center px-6 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                  className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-medium"
                 >
-                  <svg className="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-3.5 w-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
@@ -608,16 +608,16 @@ const ContractCreatePage = ({ onBack }) => {
                 <button
                   onClick={handleGenerateContract}
                   disabled={generating || !updatedPages}
-                  className="flex items-center justify-center px-6 py-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                  className="flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-medium"
                 >
                   {generating ? (
                     <>
-                      <Loader2 className="h-6 w-6 mr-2 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                       PDF Oluşturuluyor...
                     </>
                   ) : (
                     <>
-                      <Download className="h-6 w-6 mr-2" />
+                      <Download className="h-3.5 w-3.5 mr-1.5" />
                       PDF İndir
                     </>
                   )}
