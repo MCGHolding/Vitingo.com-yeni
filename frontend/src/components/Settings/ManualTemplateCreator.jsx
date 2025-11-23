@@ -142,7 +142,8 @@ const ManualTemplateCreator = ({ onBack, onComplete }) => {
           unit: f.unit || null,
           page: 1,
           bbox: [0, 0, 100, 20]
-        }))
+        })),
+        creation_method: 'manual'
       };
 
       const response = await fetch(`${backendUrl}/api/contract-templates`, {
