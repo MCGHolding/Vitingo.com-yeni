@@ -466,7 +466,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
         {/* PDF Text Content - Single Page View */}
         <div 
           className="flex-1 bg-white border-r border-gray-200 overflow-auto"
-          onMouseUp={!editMode ? handleTextSelect : undefined}
+          onMouseUp={handleTextSelect}
         >
           <div className="max-w-6xl mx-auto p-8">
             {/* Info Banners */}
