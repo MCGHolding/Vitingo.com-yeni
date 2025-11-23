@@ -347,23 +347,63 @@ const ContractCreatePage = ({ onBack }) => {
                 </p>
               </div>
               
-              <button
-                onClick={handleGenerateContract}
-                disabled={generating}
-                className="flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {generating ? (
-                  <>
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Oluşturuluyor...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-5 w-5 mr-2" />
-                    PDF Oluştur
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-3">
+                {/* Update Contract Button */}
+                <button
+                  onClick={handleUpdateContract}
+                  className={`flex items-center px-5 py-3 rounded-lg font-semibold transition-all ${
+                    updatedPages 
+                      ? 'bg-green-100 text-green-700 border-2 border-green-300' 
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {updatedPages ? (
+                    <>
+                      <Check className="h-5 w-5 mr-2" />
+                      Güncellendi
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Bilgileri Güncelle
+                    </>
+                  )}
+                </button>
+
+                {/* Preview Button */}
+                <button
+                  onClick={handlePreview}
+                  disabled={!updatedPages}
+                  className="flex items-center px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+                >
+                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Önizleme
+                </button>
+
+                {/* Generate PDF Button */}
+                <button
+                  onClick={handleGenerateContract}
+                  disabled={generating || !updatedPages}
+                  className="flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+                >
+                  {generating ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Oluşturuluyor...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-5 w-5 mr-2" />
+                      PDF Oluştur ve İndir
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Contract Title */}
