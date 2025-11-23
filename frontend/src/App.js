@@ -842,8 +842,9 @@ const Dashboard = () => {
   };
 
   const handleEditBank = (bank) => {
+    console.log('Editing bank:', bank);
+    setSelectedBankForEdit(bank);
     setCurrentView('edit-bank');
-    // Store bank data for editing if needed
   };
 
   // Supplier handlers
