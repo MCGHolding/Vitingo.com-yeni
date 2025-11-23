@@ -22,7 +22,7 @@ import {
   Zap
 } from 'lucide-react';
 
-const SettingsPage = ({ onBack, currentUser }) => {
+const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const settingsCards = [
