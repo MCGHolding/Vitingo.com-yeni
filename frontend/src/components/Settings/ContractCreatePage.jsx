@@ -17,6 +17,26 @@ const ContractCreatePage = ({ onBack }) => {
     fetchTemplates();
   }, []);
 
+  // Keyboard navigation for preview
+  useEffect(() => {
+    if (!showPreview) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setPreviewPageIndex((prev) => Math.max(0, prev - 1));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setPreviewPageIndex((prev) => Math.min(updatedPages.length - 1, prev + 1));
+      } else if (e.key === 'Escape') {
+        setShowPreview(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showPreview, updatedPages]);
+
   const fetchTemplates = async () => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
