@@ -10584,9 +10584,12 @@ class ContractField(BaseModel):
     field_type: str
     is_required: bool = True
     dropdown_options: Optional[List[str]] = None
-    selected_text: str
-    placeholder: str
+    selected_text: str = ""
+    placeholder: str = ""
     order_index: int = 0
+    unit: Optional[str] = None
+    page: Optional[int] = None
+    bbox: Optional[List[int]] = None
 
 class ContractTemplateCreate(BaseModel):
     template_name: str
