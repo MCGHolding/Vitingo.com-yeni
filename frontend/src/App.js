@@ -210,6 +210,41 @@ const Dashboard = () => {
   };
   
   const [currentView, setCurrentView] = useState(getInitialView());
+  
+  // Update URL when view changes (without reload)
+  useEffect(() => {
+    const viewToPath = {
+      'dashboard': '/',
+      'contracts': '/contracts',
+      'contracts-new': '/contracts/new',
+      'projects': '/projects',
+      'new-project': '/projects/new',
+      'all-projects': '/projects/all',
+      'all-customers': '/customers',
+      'new-customer': '/customers/new',
+      'all-opportunities': '/opportunities',
+      'new-opportunity': '/opportunities/new',
+      'settings': '/settings',
+      'documents': '/documents',
+      'tasks': '/tasks',
+      'fairs': '/fairs',
+      'new-fair': '/fairs/new',
+      'muhasebe': '/accounting',
+      'bank': '/bank',
+      'people': '/people',
+      'suppliers': '/suppliers',
+      'surveys': '/surveys',
+      'briefs': '/briefs',
+      'hr': '/hr',
+      'analytics': '/analytics',
+      'reports': '/reports'
+    };
+    
+    const newPath = viewToPath[currentView] || '/';
+    if (window.location.pathname !== newPath) {
+      window.history.pushState({}, '', newPath);
+    }
+  }, [currentView]);
   const [opportunities, setOpportunities] = useState([]);
   const [users, setUsers] = useState(mockUsers);
   const [customers, setCustomers] = useState([]);
