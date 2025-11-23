@@ -260,7 +260,7 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
               onMouseDown={(e) => {
                 e.stopPropagation();
                 console.log('🗑️ Delete clicked:', project.name);
-                handleDelete(project.id, project.name);
+                handleDeleteClick(project.id, project.name);
               }}
               className="px-3 py-2 text-sm border border-red-600 text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
               style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
