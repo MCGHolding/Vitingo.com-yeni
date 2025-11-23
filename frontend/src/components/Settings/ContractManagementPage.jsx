@@ -126,25 +126,25 @@ const ContractManagementPage = ({ onBack }) => {
   if (step === 'complete') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl shadow-sm p-8 max-w-2xl w-full text-center">
-          <div className="inline-flex p-4 bg-green-100 rounded-full mb-6">
-            <CheckCircle className="h-16 w-16 text-green-600" />
+        <div className="bg-white rounded-lg shadow-sm p-6 max-w-xl w-full text-center">
+          <div className="inline-flex p-3 bg-green-100 rounded-full mb-4">
+            <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-xl font-bold text-gray-900 mb-3">
             Şablon Başarıyla Oluşturuldu! 🎉
           </h1>
           
-          <p className="text-gray-600 text-lg mb-8">
+          <p className="text-gray-600 text-sm mb-6">
             Sözleşme şablonunuz kaydedildi. Artık bu şablonu kullanarak yeni sözleşmeler oluşturabilirsiniz.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => setStep('create-contract')}
-              className="flex items-center justify-center px-8 py-4 bg-emerald-600 text-white rounded-xl font-semibold text-lg hover:bg-emerald-700 shadow-lg hover:shadow-xl transition-all"
+              className="flex items-center justify-center px-6 py-2.5 bg-emerald-600 text-white rounded-lg font-medium text-sm hover:bg-emerald-700 shadow-sm hover:shadow transition-all"
             >
-              <Plus className="h-6 w-6 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Sözleşme Oluştur
             </button>
             
@@ -154,16 +154,16 @@ const ContractManagementPage = ({ onBack }) => {
                 setSelectedMethod(null);
                 setSelectedFile(null);
               }}
-              className="flex items-center justify-center px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold text-lg hover:bg-gray-200 transition-all"
+              className="flex items-center justify-center px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all"
             >
-              <FileText className="h-6 w-6 mr-2" />
+              <FileText className="h-4 w-4 mr-2" />
               Yeni Şablon Oluştur
             </button>
           </div>
 
           <button
             onClick={onBack}
-            className="mt-6 text-gray-600 hover:text-gray-900 text-sm"
+            className="mt-4 text-gray-600 hover:text-gray-900 text-xs"
           >
             Ayarlar'a Dön
           </button>
