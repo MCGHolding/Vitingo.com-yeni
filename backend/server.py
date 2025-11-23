@@ -10428,7 +10428,13 @@ async def get_cities(country: str):
             ]
         }
         
-        return sorted(cities_map.get(country, []))
+        cities = cities_map.get(country, [])
+        logger.info(f"Found {len(cities)} cities for '{country}'")
+        
+        if not cities:
+            logger.warning(f"No cities found for country: '{country}'. Available countries: {list(cities_map.keys())}")
+        
+        return sorted(cities)
     except Exception as e:
         logger.error(f"Error getting cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
