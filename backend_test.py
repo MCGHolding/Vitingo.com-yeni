@@ -1425,6 +1425,382 @@ def test_contract_management_dashboard():
         "warnings": []
     }
     
+    # TEST 1: Basic Contract Listing (without user_email parameter)
+    print("\n" + "=" * 80)
+    print("TEST 1: BASIC CONTRACT LISTING (NO USER FILTER)")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/contracts"
+    print(f"Testing endpoint: {endpoint}")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Basic contracts endpoint responding")
+            
+            try:
+                data = response.json()
+                print(f"Response type: {type(data)}")
+                
+                # Check response structure
+                required_fields = ["contracts", "count", "can_view_all"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if missing_fields:
+                    print(f"❌ FAIL: Missing required fields: {missing_fields}")
+                    test_results["critical_issues"].append("MISSING_RESPONSE_FIELDS")
+                else:
+                    print("✅ PASS: Response has all required fields (contracts, count, can_view_all)")
+                    test_results["basic_listing_working"] = True
+                    
+                    contracts = data.get("contracts", [])
+                    count = data.get("count", 0)
+                    can_view_all = data.get("can_view_all", False)
+                    
+                    print(f"📊 Contracts found: {count}")
+                    print(f"📊 Can view all: {can_view_all}")
+                    
+                    # Check data structure of contracts
+                    if contracts:
+                        print(f"\n🔍 ANALYZING FIRST CONTRACT DATA STRUCTURE:")
+                        first_contract = contracts[0]
+                        expected_fields = ["id", "contract_title", "template_id", "template_name", 
+                                         "field_values", "status", "created_by", "created_at", "updated_at"]
+                        
+                        present_fields = []
+                        missing_contract_fields = []
+                        
+                        for field in expected_fields:
+                            if field in first_contract:
+                                present_fields.append(field)
+                                print(f"   ✅ {field}: {first_contract.get(field)}")
+                            else:
+                                missing_contract_fields.append(field)
+                                print(f"   ❌ Missing: {field}")
+                        
+                        # Check for has_pdf flag
+                        if "has_pdf" in first_contract:
+                            print(f"   ✅ has_pdf: {first_contract.get('has_pdf')}")
+                        else:
+                            print(f"   ⚠️  has_pdf field not found")
+                        
+                        # Check that pdf_content is NOT in response
+                        if "pdf_content" not in first_contract:
+                            print(f"   ✅ pdf_content correctly excluded from list response")
+                        else:
+                            print(f"   ❌ FAIL: pdf_content should not be in list response")
+                            test_results["critical_issues"].append("PDF_CONTENT_IN_LIST")
+                        
+                        # Check for MongoDB _id leakage
+                        if "_id" not in first_contract:
+                            print(f"   ✅ MongoDB _id correctly excluded")
+                        else:
+                            print(f"   ❌ FAIL: MongoDB _id should not be in response")
+                            test_results["critical_issues"].append("MONGODB_ID_LEAK")
+                        
+                        if len(missing_contract_fields) == 0:
+                            test_results["data_structure_correct"] = True
+                            print(f"   ✅ PASS: Contract data structure is correct")
+                        else:
+                            print(f"   ❌ FAIL: Missing contract fields: {missing_contract_fields}")
+                            test_results["critical_issues"].append(f"MISSING_CONTRACT_FIELDS: {missing_contract_fields}")
+                    else:
+                        print("ℹ️  INFO: No contracts found in database")
+                        test_results["warnings"].append("NO_CONTRACTS_FOUND")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing response: {str(e)}")
+                test_results["critical_issues"].append(f"JSON_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Basic contracts endpoint failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"BASIC_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Network error: {str(e)}")
+        test_results["critical_issues"].append(f"NETWORK_ERROR: {str(e)}")
+    
+    # TEST 2: Super Admin Access (mbucak@gmail.com)
+    print("\n" + "=" * 80)
+    print("TEST 2: SUPER ADMIN ACCESS (mbucak@gmail.com)")
+    print("=" * 80)
+    
+    super_admin_email = "mbucak@gmail.com"
+    endpoint_with_user = f"{BACKEND_URL}/api/contracts?user_email={super_admin_email}"
+    print(f"Testing endpoint: {endpoint_with_user}")
+    
+    try:
+        response = requests.get(endpoint_with_user, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                can_view_all = data.get("can_view_all", False)
+                contracts = data.get("contracts", [])
+                count = data.get("count", 0)
+                
+                print(f"📊 Super Admin - Can view all: {can_view_all}")
+                print(f"📊 Super Admin - Contracts count: {count}")
+                
+                if can_view_all:
+                    print("✅ PASS: Super admin correctly gets can_view_all=true")
+                    test_results["super_admin_access_working"] = True
+                    test_results["role_detection_working"] = True
+                else:
+                    print("❌ FAIL: Super admin should have can_view_all=true")
+                    test_results["critical_issues"].append("SUPER_ADMIN_ACCESS_DENIED")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing super admin response: {str(e)}")
+                test_results["critical_issues"].append(f"SUPER_ADMIN_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Super admin endpoint failed: {response.status_code}")
+            test_results["critical_issues"].append(f"SUPER_ADMIN_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Super admin network error: {str(e)}")
+        test_results["critical_issues"].append(f"SUPER_ADMIN_NETWORK_ERROR: {str(e)}")
+    
+    # TEST 3: Check Users Collection for Role Testing
+    print("\n" + "=" * 80)
+    print("TEST 3: USER ROLE DETECTION VERIFICATION")
+    print("=" * 80)
+    
+    users_endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Checking users endpoint: {users_endpoint}")
+    
+    finance_user_email = None
+    regular_user_email = None
+    
+    try:
+        response = requests.get(users_endpoint, timeout=30)
+        if response.status_code == 200:
+            users = response.json()
+            print(f"📊 Found {len(users)} users in database")
+            
+            # Look for finance department user
+            for user in users:
+                department = user.get("department", "")
+                role = user.get("role", "")
+                email = user.get("email", "")
+                
+                if department in ["Muhasebe Müdürü", "Finans Müdürü"] and not finance_user_email:
+                    finance_user_email = email
+                    print(f"🔍 Found finance user: {email} (Department: {department})")
+                elif role not in ["Super Admin", "Yönetici"] and department not in ["Muhasebe Müdürü", "Finans Müdürü"] and not regular_user_email:
+                    regular_user_email = email
+                    print(f"🔍 Found regular user: {email} (Role: {role}, Department: {department})")
+                
+                if finance_user_email and regular_user_email:
+                    break
+            
+            if not finance_user_email:
+                print("⚠️  WARNING: No finance department user found for testing")
+                test_results["warnings"].append("NO_FINANCE_USER_FOUND")
+            
+            if not regular_user_email:
+                print("⚠️  WARNING: No regular user found for testing")
+                test_results["warnings"].append("NO_REGULAR_USER_FOUND")
+                
+        else:
+            print(f"⚠️  WARNING: Could not fetch users: {response.status_code}")
+            test_results["warnings"].append("USERS_ENDPOINT_ERROR")
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Error fetching users: {str(e)}")
+        test_results["warnings"].append(f"USERS_FETCH_ERROR: {str(e)}")
+    
+    # TEST 4: Finance Department User Access (if found)
+    if finance_user_email:
+        print("\n" + "=" * 80)
+        print("TEST 4: FINANCE DEPARTMENT USER ACCESS")
+        print("=" * 80)
+        
+        endpoint_finance = f"{BACKEND_URL}/api/contracts?user_email={finance_user_email}"
+        print(f"Testing endpoint: {endpoint_finance}")
+        print(f"Finance user email: {finance_user_email}")
+        
+        try:
+            response = requests.get(endpoint_finance, timeout=30)
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    can_view_all = data.get("can_view_all", False)
+                    count = data.get("count", 0)
+                    
+                    print(f"📊 Finance User - Can view all: {can_view_all}")
+                    print(f"📊 Finance User - Contracts count: {count}")
+                    
+                    if can_view_all:
+                        print("✅ PASS: Finance department user correctly gets can_view_all=true")
+                        test_results["finance_user_access_working"] = True
+                    else:
+                        print("❌ FAIL: Finance department user should have can_view_all=true")
+                        test_results["critical_issues"].append("FINANCE_USER_ACCESS_DENIED")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing finance user response: {str(e)}")
+                    test_results["critical_issues"].append(f"FINANCE_USER_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Finance user endpoint failed: {response.status_code}")
+                test_results["critical_issues"].append(f"FINANCE_USER_ENDPOINT_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Finance user network error: {str(e)}")
+            test_results["critical_issues"].append(f"FINANCE_USER_NETWORK_ERROR: {str(e)}")
+    
+    # TEST 5: Regular User Access (if found)
+    if regular_user_email:
+        print("\n" + "=" * 80)
+        print("TEST 5: REGULAR USER ACCESS (SHOULD SEE ONLY OWN CONTRACTS)")
+        print("=" * 80)
+        
+        endpoint_regular = f"{BACKEND_URL}/api/contracts?user_email={regular_user_email}"
+        print(f"Testing endpoint: {endpoint_regular}")
+        print(f"Regular user email: {regular_user_email}")
+        
+        try:
+            response = requests.get(endpoint_regular, timeout=30)
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    can_view_all = data.get("can_view_all", False)
+                    contracts = data.get("contracts", [])
+                    count = data.get("count", 0)
+                    
+                    print(f"📊 Regular User - Can view all: {can_view_all}")
+                    print(f"📊 Regular User - Contracts count: {count}")
+                    
+                    if not can_view_all:
+                        print("✅ PASS: Regular user correctly gets can_view_all=false")
+                        test_results["regular_user_access_working"] = True
+                        
+                        # Check that all returned contracts are created by this user
+                        if contracts:
+                            all_own_contracts = all(contract.get("created_by") == regular_user_email for contract in contracts)
+                            if all_own_contracts:
+                                print("✅ PASS: Regular user only sees their own contracts")
+                            else:
+                                print("❌ FAIL: Regular user sees contracts not created by them")
+                                test_results["critical_issues"].append("REGULAR_USER_SEES_OTHER_CONTRACTS")
+                        else:
+                            print("ℹ️  INFO: Regular user has no contracts")
+                    else:
+                        print("❌ FAIL: Regular user should have can_view_all=false")
+                        test_results["critical_issues"].append("REGULAR_USER_ACCESS_TOO_BROAD")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing regular user response: {str(e)}")
+                    test_results["critical_issues"].append(f"REGULAR_USER_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Regular user endpoint failed: {response.status_code}")
+                test_results["critical_issues"].append(f"REGULAR_USER_ENDPOINT_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Regular user network error: {str(e)}")
+            test_results["critical_issues"].append(f"REGULAR_USER_NETWORK_ERROR: {str(e)}")
+    
+    # FINAL TEST RESULTS
+    print("\n" + "=" * 100)
+    print("🔍 FINAL CONTRACT MANAGEMENT DASHBOARD TEST RESULTS")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Basic Listing: {'✅ Working' if test_results['basic_listing_working'] else '❌ Failed'}")
+    print(f"   • Super Admin Access: {'✅ Working' if test_results['super_admin_access_working'] else '❌ Failed'}")
+    print(f"   • Regular User Access: {'✅ Working' if test_results['regular_user_access_working'] else '❌ Failed'}")
+    print(f"   • Finance User Access: {'✅ Working' if test_results['finance_user_access_working'] else '❌ Failed'}")
+    print(f"   • Data Structure: {'✅ Correct' if test_results['data_structure_correct'] else '❌ Issues'}")
+    print(f"   • Role Detection: {'✅ Working' if test_results['role_detection_working'] else '❌ Failed'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    success_count = sum([
+        test_results['basic_listing_working'],
+        test_results['super_admin_access_working'],
+        test_results['regular_user_access_working'],
+        test_results['finance_user_access_working'],
+        test_results['data_structure_correct'],
+        test_results['role_detection_working']
+    ])
+    
+    total_tests = 6
+    success_rate = (success_count / total_tests) * 100
+    
+    print(f"   Success Rate: {success_count}/{total_tests} ({success_rate:.1f}%)")
+    
+    if len(test_results['critical_issues']) == 0:
+        print("✅ PASS: Contract Management Dashboard functionality is working correctly!")
+        print("   All role-based access controls are functioning properly.")
+        print("   Data structure is clean and properly formatted.")
+        print("   User role detection is working from users collection.")
+        return True
+    else:
+        print("❌ FAIL: Critical issues found in Contract Management Dashboard!")
+        print("   Role-based access control or data structure issues detected.")
+        return False
+
+def test_contract_management_api():
+    """
+    CONTRACT MANAGEMENT API TESTING
+    
+    **Test Requirements:**
+    1. POST /api/contracts/extract-pdf-text - PDF text extraction
+       - Create test PDF and extract text
+       - Verify response contains filename, total_pages, pages array
+       
+    2. POST /api/contract-templates - Template creation
+       - Create template with mock data
+       - Verify template_id is returned
+       
+    3. GET /api/contract-templates - List templates
+       - Verify templates array and count
+       - Verify at least 1 template exists
+       
+    4. GET /api/contract-templates/{template_id} - Get single template
+       - Use template_id from creation
+       - Verify all fields are returned
+       
+    5. POST /api/contracts/generate - Generate contract PDF
+       - Use template_id and field values
+       - Verify PDF is generated (Content-Type: application/pdf)
+    
+    **Success Criteria:**
+    ✅ All endpoints return 200/201 status codes
+    ✅ Template creation and listing works
+    ✅ PDF generation works (WeasyPrint available)
+    """
+    
+    print("=" * 100)
+    print("🚨 CONTRACT MANAGEMENT API TESTING 🚨")
+    print("=" * 100)
+    print("CONTEXT: Testing Sözleşme Yönetimi API endpoints for PDF text extraction,")
+    print("template creation, listing, and contract PDF generation.")
+    print("=" * 100)
+    
+    test_results = {
+        "pdf_extraction_working": False,
+        "template_creation_working": False,
+        "template_listing_working": False,
+        "template_retrieval_working": False,
+        "contract_generation_working": False,
+        "created_template_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
     # TEST 1: PDF Text Extraction
     print("\n" + "=" * 80)
     print("TEST 1: PDF TEXT EXTRACTION - POST /api/contracts/extract-pdf-text")
