@@ -246,7 +246,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
       placeholder: placeholder
     };
 
-    setFields([...fields, newField]);
+    const updatedFields = [...fields, newField];
     
     // IMPORTANT: Replace selected text with placeholder
     let totalReplacements = 0;
