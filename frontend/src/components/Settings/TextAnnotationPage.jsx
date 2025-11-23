@@ -130,14 +130,46 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
       return;
     }
     
+    // Merge edited pages with original PDF data
+    const finalPages = pdfData.pages.map((page, idx) => ({
+      ...page,
+      text: editedPages[idx] || page.text
+    }));
+    
     onComplete({
       file,
-      pdfData,
+      pdfData: {
+        ...pdfData,
+        pages: finalPages
+      },
       fields: fields.map((f, idx) => ({
         ...f,
         order_index: idx
       }))
     });
+  };
+
+  const handlePageContentChange = (newContent) => {
+    setEditedPages({
+      ...editedPages,
+      [currentPageIndex]: newContent
+    });
+  };
+
+  const goToNextPage = () => {
+    if (currentPageIndex < pdfData.pages.length - 1) {
+      setCurrentPageIndex(currentPageIndex + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPageIndex > 0) {
+      setCurrentPageIndex(currentPageIndex - 1);
+    }
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
   };
 
   if (loading) {
