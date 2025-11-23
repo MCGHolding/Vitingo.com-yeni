@@ -246,7 +246,7 @@ const ContractManagementPage = ({ onBack }) => {
 
                   {/* File Upload Area (only for upload method) */}
                   {selectedMethod === 'upload' && method.id === 'upload' && (
-                    <div className="mt-4 ml-9 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="mt-2 ml-5 p-2.5 bg-gray-50 border border-gray-200 rounded-md">
                       {selectedFile ? (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
