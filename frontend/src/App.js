@@ -57,6 +57,7 @@ import SettingsPage from './components/Settings/SettingsPage';
 import GroupCompaniesPage from './components/Settings/GroupCompaniesPage';
 import ContractManagementPage from './components/Settings/ContractManagementPage';
 import ContractCreatePage from './components/Settings/ContractCreatePage';
+import ManualTemplateCreator from './components/Settings/ManualTemplateCreator';
 import ContractsPage from './components/Contracts/ContractsPage';
 import { customerStats, salesData } from './mock/data';
 // Removed mock data import - now using real API data
