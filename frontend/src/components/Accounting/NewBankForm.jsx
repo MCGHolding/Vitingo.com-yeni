@@ -394,14 +394,16 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
             Geri
           </Button>
           
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={fillTestData}
-            className="w-full bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
-          >
-            🧪 Test Verisi Doldur
-          </Button>
+          {!isEditMode && (
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={fillTestData}
+              className="w-full bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+            >
+              🧪 Test Verisi Doldur
+            </Button>
+          )}
         </div>
       </div>
 
