@@ -15,8 +15,12 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
 
   useEffect(() => {
     fetchTemplates();
-    loadProjectDataIfNeeded();
-  }, []);
+    if (isEdit && contractId) {
+      loadDraftContract();
+    } else {
+      loadProjectDataIfNeeded();
+    }
+  }, [contractId, isEdit]);
 
   const loadProjectDataIfNeeded = async () => {
     // Check if projectId is in URL
