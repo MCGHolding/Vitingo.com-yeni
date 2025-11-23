@@ -9405,6 +9405,36 @@ def generate_secure_password(length=12):
     password = ''.join(secrets.choice(alphabet) for i in range(length))
     return password
 
+@api_router.get("/positions")
+async def get_positions():
+    """Get all positions"""
+    try:
+        positions = await db.positions.find().to_list(length=None)
+        if not positions:
+            # Initialize default positions
+            default_positions = [
+                {"id": str(uuid.uuid4()), "name": "Genel Müdür", "value": "genel_mudur", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Müdür", "value": "mudur", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Proje Yöneticisi", "value": "proje_yoneticisi", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Satış Müdürü", "value": "satis_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Pazarlama Müdürü", "value": "pazarlama_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İnsan Kaynakları Müdürü", "value": "ik_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Mali İşler Müdürü", "value": "mali_isler_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Operasyon Müdürü", "value": "operasyon_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Bilgi İşlem Müdürü", "value": "bilgi_islem_muduru", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Uzman", "value": "uzman", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Kıdemli Uzman", "value": "kidemli_uzman", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Koordinatör", "value": "koordinator", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Stajyer", "value": "stajyer", "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.positions.insert_many(default_positions)
+            positions = default_positions
+        
+        return [serialize_document(pos) for pos in positions]
+    except Exception as e:
+        logger.error(f"Error getting positions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
