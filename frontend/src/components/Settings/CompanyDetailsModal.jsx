@@ -67,11 +67,17 @@ const CompanyDetailsModal = ({ isOpen, onClose, onSave, company }) => {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
-      const response = await fetch(`${backendUrl}/api/library/cities?country=${country}`);
+      console.log('🌍 Loading cities for country:', country);
+      const url = `${backendUrl}/api/library/cities?country=${encodeURIComponent(country)}`;
+      console.log('🔗 URL:', url);
+      
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
+        console.log('🏙️ Cities loaded:', data.length, 'cities');
         setCities(data);
       } else {
+        console.error('❌ Failed to load cities:', response.status);
         // Fallback for Turkey
         if (country === 'Türkiye') {
           setCities([
