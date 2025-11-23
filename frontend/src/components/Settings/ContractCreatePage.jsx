@@ -68,8 +68,52 @@ const ContractCreatePage = ({ onBack }) => {
     return true;
   };
 
-  const handleGenerateContract = async () => {
+  // Update contract with field values (replace placeholders)
+  const handleUpdateContract = () => {
     if (!validateForm()) return;
+
+    try {
+      // Replace placeholders in each page
+      const updated = selectedTemplate.pages.map((page) => {
+        let updatedText = page.text;
+        
+        // Replace each field placeholder with its value
+        selectedTemplate.fields.forEach((field) => {
+          const placeholder = field.placeholder;
+          const value = fieldValues[field.field_key] || '[DOLDURULMADI]';
+          updatedText = updatedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+        });
+        
+        return {
+          ...page,
+          text: updatedText
+        };
+      });
+      
+      setUpdatedPages(updated);
+      alert('✅ Bilgiler sözleşmeye uygulandı! Önizleme yapabilirsiniz.');
+    } catch (error) {
+      console.error('Error updating contract:', error);
+      alert('Bir hata oluştu: ' + error.message);
+    }
+  };
+
+  // Show preview
+  const handlePreview = () => {
+    if (!updatedPages) {
+      alert('⚠️ Önce "Bilgileri Güncelle" butonuna tıklayın!');
+      return;
+    }
+    setShowPreview(true);
+    setPreviewPageIndex(0);
+  };
+
+  // Generate and download PDF
+  const handleGenerateContract = async () => {
+    if (!updatedPages) {
+      alert('⚠️ Önce "Bilgileri Güncelle" butonuna tıklayın!');
+      return;
+    }
 
     setGenerating(true);
     try {
@@ -101,7 +145,7 @@ const ContractCreatePage = ({ onBack }) => {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         
-        alert('✅ Sözleşme başarıyla oluşturuldu ve indirildi!');
+        alert('✅ Sözleşme PDF olarak oluşturuldu ve indirildi!');
       } else {
         const error = await response.json();
         alert(`Hata: ${error.detail || 'Sözleşme oluşturulamadı'}`);
