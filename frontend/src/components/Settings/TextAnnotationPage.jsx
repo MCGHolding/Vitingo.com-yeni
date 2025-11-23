@@ -472,16 +472,28 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
             {/* Info Banners */}
             <div className="space-y-3 mb-4">
               {!editMode && (
-                <div className="text-sm text-gray-600 bg-blue-50 p-4 rounded-lg">
-                  💡 <strong>İpucu:</strong> Metinde fareyle seçim yapın ve alan tanımlayın. 
-                  Gelişmiş düzenleme için "Düzenleme Modu" butonuna tıklayın.
+                <div className="text-sm text-gray-600 bg-blue-50 border-2 border-blue-200 p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <span className="text-2xl mr-3">👆</span>
+                    <div>
+                      <strong className="text-blue-900">Alan Seçim Modu:</strong> Metinde fareyle seçim yapın ve popup'tan alan tanımlayın. 
+                      <br />
+                      Metin düzenlemek için "Düzenleme Modu" butonuna tıklayın.
+                    </div>
+                  </div>
                 </div>
               )}
 
               {editMode && (
-                <div className="text-sm text-gray-600 bg-green-50 p-4 rounded-lg">
-                  ✏️ <strong>Düzenleme Modu:</strong> Metni zengin düzenleyici ile düzenleyebilirsiniz. 
-                  Bold, italic, renk, resim ekleme gibi özellikler mevcuttur.
+                <div className="text-sm text-gray-600 bg-green-50 border-2 border-green-200 p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <span className="text-2xl mr-3">✏️</span>
+                    <div>
+                      <strong className="text-green-900">Düzenleme Modu:</strong> Bold, italic, renk, resim ekleme yapabilirsiniz.
+                      <br />
+                      <span className="text-orange-700 font-semibold">⚠️ Alan eklemek için "Görüntüleme Modu"na geçin!</span>
+                    </div>
+                  </div>
                 </div>
               )}
 
