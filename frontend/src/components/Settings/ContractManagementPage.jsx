@@ -137,6 +137,27 @@ const ContractManagementPage = ({ onBack }) => {
     return (
       <ContractCreatePage
         onBack={() => setStep('selection')}
+        onEditTemplate={(template) => {
+          setSelectedTemplateForEdit(template);
+          setStep('edit-template');
+        }}
+      />
+    );
+  }
+
+  // Show template edit page
+  if (step === 'edit-template') {
+    return (
+      <ManualTemplateCreator
+        templateToEdit={selectedTemplateForEdit}
+        onBack={() => {
+          setSelectedTemplateForEdit(null);
+          setStep('create-contract');
+        }}
+        onComplete={() => {
+          setSelectedTemplateForEdit(null);
+          setStep('complete');
+        }}
       />
     );
   }
