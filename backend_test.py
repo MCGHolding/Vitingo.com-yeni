@@ -1180,6 +1180,634 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_user_management_apis():
+    """
+    Kullanıcı Yönetimi API'leri Testi
+    
+    **Test Edilecek Endpoint'ler:**
+    
+    1. **GET /api/positions**
+       - Pozisyonlar listesini döndürmeli
+       - En az 10+ pozisyon olmalı (Genel Müdür, Müdür, Uzman, vb.)
+       - Response format: [{id, name, value, created_at}]
+    
+    2. **GET /api/users?status=active**
+       - Aktif kullanıcıları döndürmeli
+       - Response format: [{id, name, email, role, department, position, status}]
+    
+    3. **POST /api/users** 
+       - Yeni kullanıcı oluşturma
+       - Test data: name, email, phone, position, department, manager_id, notification_method
+       - Response'da otomatik şifre olmalı
+       - WhatsApp linki olmalı
+    
+    4. **POST /api/users/invite**
+       - Kullanıcı davet etme
+       - Test data: email, role, phone, manager_id
+       - User status "invited" olmalı
+    
+    5. **PUT /api/users/{user_id}**
+       - Kullanıcı güncelleme
+       - Test: İsim, pozisyon, departman güncelleme
+    
+    6. **DELETE /api/users/{user_id}**
+       - Kullanıcı arşivleme
+       - Status "archived" olmalı
+       - Türkçe success mesajı
+    
+    **Başarı Kriterleri:**
+    - Tüm endpoint'ler 200/201 dönmeli
+    - Otomatik şifre 12 karakter olmalı
+    - Türkçe hata mesajları
+    - WhatsApp link formatı doğru olmalı
+    """
+    
+    print("=" * 100)
+    print("🚨 KULLANICI YÖNETİMİ API'LERİ TESTİ 🚨")
+    print("=" * 100)
+    print("CONTEXT: Kullanıcı yönetimi sisteminin tüm API endpoint'lerini test ediyoruz.")
+    print("Bu test, pozisyon listesi, aktif kullanıcılar, kullanıcı oluşturma, davet etme,")
+    print("güncelleme ve arşivleme işlemlerini kapsamaktadır.")
+    print("=" * 100)
+    
+    test_results = {
+        "positions_api_working": False,
+        "active_users_api_working": False,
+        "create_user_api_working": False,
+        "invite_user_api_working": False,
+        "update_user_api_working": False,
+        "delete_user_api_working": False,
+        "positions_count": 0,
+        "active_users_count": 0,
+        "created_user_id": None,
+        "invited_user_id": None,
+        "auto_password_length": 0,
+        "whatsapp_link_present": False,
+        "turkish_messages": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET /api/positions - Pozisyonlar Listesi
+    print("\n" + "=" * 80)
+    print("TEST 1: GET /api/positions - POZİSYONLAR LİSTESİ TESTİ")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/positions"
+    print(f"Testing endpoint: {endpoint}")
+    print("Beklenen: En az 10+ pozisyon (Genel Müdür, Müdür, Uzman, vb.)")
+    print("Response format: [{id, name, value, created_at}]")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Positions endpoint responds with 200")
+            
+            try:
+                positions = response.json()
+                print(f"Response type: {type(positions)}")
+                
+                if isinstance(positions, list):
+                    positions_count = len(positions)
+                    test_results["positions_count"] = positions_count
+                    print(f"📊 Positions Count: {positions_count}")
+                    
+                    if positions_count >= 10:
+                        print(f"✅ PASS: Found {positions_count} positions (≥10 requirement met)")
+                        test_results["positions_api_working"] = True
+                        
+                        # Analyze first few positions
+                        print(f"\n📋 POSITIONS DATA ANALYSIS (First 5):")
+                        for i, position in enumerate(positions[:5], 1):
+                            position_id = position.get("id", "N/A")
+                            position_name = position.get("name", "N/A")
+                            position_value = position.get("value", "N/A")
+                            created_at = position.get("created_at", "N/A")
+                            
+                            print(f"   {i}. ID: {position_id}")
+                            print(f"      Name: {position_name}")
+                            print(f"      Value: {position_value}")
+                            print(f"      Created: {created_at}")
+                            
+                            # Check required fields
+                            required_fields = ["id", "name", "value"]
+                            missing_fields = [field for field in required_fields if field not in position or not position[field]]
+                            
+                            if missing_fields:
+                                print(f"      ⚠️  Missing/empty fields: {missing_fields}")
+                                test_results["warnings"].append(f"POSITION_{i}_MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                            
+                            # Check for Turkish positions
+                            turkish_positions = ["Genel Müdür", "Müdür", "Uzman", "Koordinatör", "Specialist"]
+                            if any(pos in position_name for pos in turkish_positions):
+                                print(f"      ✅ Turkish position name detected")
+                        
+                        # Check for expected position types
+                        position_names = [p.get("name", "") for p in positions]
+                        expected_positions = ["Genel Müdür", "Müdür", "Uzman"]
+                        found_expected = [pos for pos in expected_positions if any(pos in name for name in position_names)]
+                        
+                        if found_expected:
+                            print(f"✅ PASS: Found expected positions: {found_expected}")
+                        else:
+                            print(f"⚠️  WARNING: Expected positions not found: {expected_positions}")
+                            test_results["warnings"].append("EXPECTED_POSITIONS_NOT_FOUND")
+                            
+                    else:
+                        print(f"❌ FAIL: Only {positions_count} positions found, expected ≥10")
+                        test_results["critical_issues"].append(f"INSUFFICIENT_POSITIONS_{positions_count}")
+                else:
+                    print("❌ FAIL: Response should be an array")
+                    test_results["critical_issues"].append("POSITIONS_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse positions response: {str(e)}")
+                test_results["critical_issues"].append(f"POSITIONS_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Positions endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"POSITIONS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Positions request error: {str(e)}")
+        test_results["critical_issues"].append(f"POSITIONS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: GET /api/users?status=active - Aktif Kullanıcılar
+    print("\n" + "=" * 80)
+    print("TEST 2: GET /api/users?status=active - AKTİF KULLANICILAR TESTİ")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users?status=active"
+    print(f"Testing endpoint: {endpoint}")
+    print("Beklenen: Aktif kullanıcıları döndürmeli")
+    print("Response format: [{id, name, email, role, department, position, status}]")
+    
+    try:
+        response = requests.get(endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Active users endpoint responds with 200")
+            
+            try:
+                users = response.json()
+                print(f"Response type: {type(users)}")
+                
+                if isinstance(users, list):
+                    users_count = len(users)
+                    test_results["active_users_count"] = users_count
+                    print(f"📊 Active Users Count: {users_count}")
+                    
+                    if users_count > 0:
+                        print(f"✅ PASS: Found {users_count} active users")
+                        test_results["active_users_api_working"] = True
+                        
+                        # Analyze first few users
+                        print(f"\n📋 ACTIVE USERS DATA ANALYSIS (First 3):")
+                        for i, user in enumerate(users[:3], 1):
+                            user_id = user.get("id", "N/A")
+                            user_name = user.get("name", "N/A")
+                            user_email = user.get("email", "N/A")
+                            user_role = user.get("role", "N/A")
+                            user_department = user.get("department", "N/A")
+                            user_position = user.get("position", "N/A")
+                            user_status = user.get("status", "N/A")
+                            
+                            print(f"   {i}. ID: {user_id}")
+                            print(f"      Name: {user_name}")
+                            print(f"      Email: {user_email}")
+                            print(f"      Role: {user_role}")
+                            print(f"      Department: {user_department}")
+                            print(f"      Position: {user_position}")
+                            print(f"      Status: {user_status}")
+                            
+                            # Check required fields
+                            required_fields = ["id", "name", "email", "status"]
+                            missing_fields = [field for field in required_fields if field not in user or not user[field]]
+                            
+                            if missing_fields:
+                                print(f"      ⚠️  Missing/empty fields: {missing_fields}")
+                                test_results["warnings"].append(f"USER_{i}_MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                            
+                            # Check status is active
+                            if user_status == "active":
+                                print(f"      ✅ User status is active")
+                            else:
+                                print(f"      ⚠️  User status is not active: {user_status}")
+                                test_results["warnings"].append(f"USER_{i}_NOT_ACTIVE_{user_status}")
+                            
+                            # Check Turkish character support
+                            turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+                            has_turkish = any(char in str(user_name) + str(user_department) for char in turkish_chars)
+                            if has_turkish:
+                                print(f"      ✅ Turkish character support verified")
+                                
+                    else:
+                        print(f"❌ FAIL: No active users found")
+                        test_results["critical_issues"].append("NO_ACTIVE_USERS")
+                else:
+                    print("❌ FAIL: Response should be an array")
+                    test_results["critical_issues"].append("USERS_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse users response: {str(e)}")
+                test_results["critical_issues"].append(f"USERS_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Active users endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"USERS_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Active users request error: {str(e)}")
+        test_results["critical_issues"].append(f"USERS_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: POST /api/users - Yeni Kullanıcı Oluşturma
+    print("\n" + "=" * 80)
+    print("TEST 3: POST /api/users - YENİ KULLANICI OLUŞTURMA TESTİ")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users"
+    print(f"Testing endpoint: {endpoint}")
+    print("Test data: name, email, phone, position, department, manager_id, notification_method")
+    print("Beklenen: Otomatik şifre (12 karakter), WhatsApp linki")
+    
+    # Create test user data
+    test_user_data = {
+        "name": "Test Kullanıcı",
+        "email": "test.user@test.com",
+        "phone": "+90 555 123 4567",
+        "position": "Uzman",
+        "department": "IT",
+        "manager_id": None,
+        "notification_method": "email"
+    }
+    
+    print(f"Test user data: {test_user_data}")
+    
+    try:
+        response = requests.post(endpoint, json=test_user_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: User creation endpoint responds with success")
+            
+            try:
+                created_user = response.json()
+                print(f"Response type: {type(created_user)}")
+                
+                if isinstance(created_user, dict):
+                    user_id = created_user.get("id")
+                    auto_password = created_user.get("password") or created_user.get("auto_password")
+                    whatsapp_link = created_user.get("whatsapp_link")
+                    
+                    test_results["created_user_id"] = user_id
+                    print(f"✅ PASS: User created with ID: {user_id}")
+                    
+                    # Check auto password
+                    if auto_password:
+                        password_length = len(auto_password)
+                        test_results["auto_password_length"] = password_length
+                        print(f"📊 Auto Password Length: {password_length}")
+                        
+                        if password_length == 12:
+                            print(f"✅ PASS: Auto password is 12 characters: {auto_password}")
+                            test_results["create_user_api_working"] = True
+                        else:
+                            print(f"⚠️  WARNING: Auto password is {password_length} characters, expected 12: {auto_password}")
+                            test_results["warnings"].append(f"PASSWORD_LENGTH_{password_length}_NOT_12")
+                    else:
+                        print(f"❌ FAIL: No auto password in response")
+                        test_results["critical_issues"].append("NO_AUTO_PASSWORD")
+                    
+                    # Check WhatsApp link
+                    if whatsapp_link:
+                        test_results["whatsapp_link_present"] = True
+                        print(f"✅ PASS: WhatsApp link present: {whatsapp_link}")
+                        
+                        # Validate WhatsApp link format
+                        if "wa.me" in whatsapp_link or "whatsapp.com" in whatsapp_link:
+                            print(f"✅ PASS: WhatsApp link format is correct")
+                        else:
+                            print(f"⚠️  WARNING: WhatsApp link format may be incorrect")
+                            test_results["warnings"].append("WHATSAPP_LINK_FORMAT_ISSUE")
+                    else:
+                        print(f"❌ FAIL: No WhatsApp link in response")
+                        test_results["critical_issues"].append("NO_WHATSAPP_LINK")
+                    
+                    # Check all input fields are preserved
+                    print(f"\n🔍 INPUT DATA VERIFICATION:")
+                    for key, expected_value in test_user_data.items():
+                        actual_value = created_user.get(key)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {key}: {actual_value}")
+                        else:
+                            print(f"   ⚠️  {key}: Expected {expected_value}, Got {actual_value}")
+                            
+                else:
+                    print("❌ FAIL: Response should be an object")
+                    test_results["critical_issues"].append("CREATE_USER_NOT_OBJECT")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse create user response: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_USER_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: User creation endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CREATE_USER_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: User creation request error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_USER_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 4: POST /api/users/invite - Kullanıcı Davet Etme
+    print("\n" + "=" * 80)
+    print("TEST 4: POST /api/users/invite - KULLANICI DAVET ETME TESTİ")
+    print("=" * 80)
+    
+    endpoint = f"{BACKEND_URL}/api/users/invite"
+    print(f"Testing endpoint: {endpoint}")
+    print("Test data: email, role, phone, manager_id")
+    print("Beklenen: User status 'invited' olmalı")
+    
+    # Create test invite data
+    test_invite_data = {
+        "email": "invited.user@test.com",
+        "role": "user",
+        "phone": "+90 555 987 6543",
+        "manager_id": None
+    }
+    
+    print(f"Test invite data: {test_invite_data}")
+    
+    try:
+        response = requests.post(endpoint, json=test_invite_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: User invite endpoint responds with success")
+            
+            try:
+                invited_user = response.json()
+                print(f"Response type: {type(invited_user)}")
+                
+                if isinstance(invited_user, dict):
+                    user_id = invited_user.get("id")
+                    user_status = invited_user.get("status")
+                    
+                    test_results["invited_user_id"] = user_id
+                    print(f"✅ PASS: User invited with ID: {user_id}")
+                    
+                    # Check status is 'invited'
+                    if user_status == "invited":
+                        print(f"✅ PASS: User status is 'invited': {user_status}")
+                        test_results["invite_user_api_working"] = True
+                    else:
+                        print(f"❌ FAIL: User status is not 'invited': {user_status}")
+                        test_results["critical_issues"].append(f"INVITE_STATUS_NOT_INVITED_{user_status}")
+                    
+                    # Check all input fields are preserved
+                    print(f"\n🔍 INVITE DATA VERIFICATION:")
+                    for key, expected_value in test_invite_data.items():
+                        actual_value = invited_user.get(key)
+                        if actual_value == expected_value:
+                            print(f"   ✅ {key}: {actual_value}")
+                        else:
+                            print(f"   ⚠️  {key}: Expected {expected_value}, Got {actual_value}")
+                            
+                else:
+                    print("❌ FAIL: Response should be an object")
+                    test_results["critical_issues"].append("INVITE_USER_NOT_OBJECT")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse invite user response: {str(e)}")
+                test_results["critical_issues"].append(f"INVITE_USER_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: User invite endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"INVITE_USER_API_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: User invite request error: {str(e)}")
+        test_results["critical_issues"].append(f"INVITE_USER_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 5: PUT /api/users/{user_id} - Kullanıcı Güncelleme
+    print("\n" + "=" * 80)
+    print("TEST 5: PUT /api/users/{user_id} - KULLANICI GÜNCELLEME TESTİ")
+    print("=" * 80)
+    
+    if test_results["created_user_id"]:
+        user_id = test_results["created_user_id"]
+        endpoint = f"{BACKEND_URL}/api/users/{user_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print("Test: İsim, pozisyon, departman güncelleme")
+        
+        # Create update data
+        update_data = {
+            "name": "Test Kullanıcı Güncellenmiş",
+            "position": "Kıdemli Uzman",
+            "department": "Pazarlama"
+        }
+        
+        print(f"Update data: {update_data}")
+        
+        try:
+            response = requests.put(endpoint, json=update_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: User update endpoint responds with 200")
+                
+                try:
+                    updated_user = response.json()
+                    print(f"Response type: {type(updated_user)}")
+                    
+                    if isinstance(updated_user, dict):
+                        print(f"✅ PASS: User updated successfully")
+                        test_results["update_user_api_working"] = True
+                        
+                        # Check updated fields
+                        print(f"\n🔍 UPDATE VERIFICATION:")
+                        for key, expected_value in update_data.items():
+                            actual_value = updated_user.get(key)
+                            if actual_value == expected_value:
+                                print(f"   ✅ {key}: {actual_value}")
+                            else:
+                                print(f"   ⚠️  {key}: Expected {expected_value}, Got {actual_value}")
+                                test_results["warnings"].append(f"UPDATE_FIELD_{key}_MISMATCH")
+                                
+                    else:
+                        print("❌ FAIL: Response should be an object")
+                        test_results["critical_issues"].append("UPDATE_USER_NOT_OBJECT")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse update user response: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_USER_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: User update endpoint error: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_USER_API_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: User update request error: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_USER_REQUEST_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No created user ID available for update test")
+        test_results["warnings"].append("UPDATE_TEST_SKIPPED_NO_USER_ID")
+    
+    # TEST 6: DELETE /api/users/{user_id} - Kullanıcı Arşivleme
+    print("\n" + "=" * 80)
+    print("TEST 6: DELETE /api/users/{user_id} - KULLANICI ARŞİVLEME TESTİ")
+    print("=" * 80)
+    
+    if test_results["created_user_id"]:
+        user_id = test_results["created_user_id"]
+        endpoint = f"{BACKEND_URL}/api/users/{user_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print("Beklenen: Status 'archived' olmalı, Türkçe success mesajı")
+        
+        try:
+            response = requests.delete(endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: User delete endpoint responds with 200")
+                
+                try:
+                    delete_response = response.json()
+                    print(f"Response type: {type(delete_response)}")
+                    
+                    if isinstance(delete_response, dict):
+                        success_message = delete_response.get("message", "")
+                        user_status = delete_response.get("status", "")
+                        
+                        print(f"Success message: {success_message}")
+                        print(f"User status: {user_status}")
+                        
+                        # Check status is 'archived'
+                        if user_status == "archived":
+                            print(f"✅ PASS: User status is 'archived': {user_status}")
+                            test_results["delete_user_api_working"] = True
+                        else:
+                            print(f"⚠️  WARNING: User status is not 'archived': {user_status}")
+                            test_results["warnings"].append(f"DELETE_STATUS_NOT_ARCHIVED_{user_status}")
+                        
+                        # Check Turkish message
+                        turkish_indicators = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+                        has_turkish = any(char in success_message for char in turkish_indicators)
+                        if has_turkish:
+                            print(f"✅ PASS: Turkish success message detected")
+                            test_results["turkish_messages"] = True
+                        else:
+                            print(f"⚠️  WARNING: Success message may not be in Turkish")
+                            test_results["warnings"].append("SUCCESS_MESSAGE_NOT_TURKISH")
+                            
+                    else:
+                        print("❌ FAIL: Response should be an object")
+                        test_results["critical_issues"].append("DELETE_USER_NOT_OBJECT")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse delete user response: {str(e)}")
+                    test_results["critical_issues"].append(f"DELETE_USER_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: User delete endpoint error: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DELETE_USER_API_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: User delete request error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_USER_REQUEST_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: No created user ID available for delete test")
+        test_results["warnings"].append("DELETE_TEST_SKIPPED_NO_USER_ID")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 KULLANICI YÖNETİMİ API'LERİ TEST SONUÇLARI")
+    print("=" * 100)
+    
+    print(f"📊 TEST STATISTICS:")
+    print(f"   • Positions API: {'✅ Working' if test_results['positions_api_working'] else '❌ Failed'}")
+    print(f"   • Active Users API: {'✅ Working' if test_results['active_users_api_working'] else '❌ Failed'}")
+    print(f"   • Create User API: {'✅ Working' if test_results['create_user_api_working'] else '❌ Failed'}")
+    print(f"   • Invite User API: {'✅ Working' if test_results['invite_user_api_working'] else '❌ Failed'}")
+    print(f"   • Update User API: {'✅ Working' if test_results['update_user_api_working'] else '❌ Failed'}")
+    print(f"   • Delete User API: {'✅ Working' if test_results['delete_user_api_working'] else '❌ Failed'}")
+    
+    print(f"\n📊 DATA STATISTICS:")
+    print(f"   • Positions Count: {test_results['positions_count']}")
+    print(f"   • Active Users Count: {test_results['active_users_count']}")
+    print(f"   • Auto Password Length: {test_results['auto_password_length']}")
+    print(f"   • WhatsApp Link Present: {'✅ Yes' if test_results['whatsapp_link_present'] else '❌ No'}")
+    print(f"   • Turkish Messages: {'✅ Yes' if test_results['turkish_messages'] else '❌ No'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_apis = sum([
+        test_results['positions_api_working'],
+        test_results['active_users_api_working'], 
+        test_results['create_user_api_working'],
+        test_results['invite_user_api_working'],
+        test_results['update_user_api_working'],
+        test_results['delete_user_api_working']
+    ])
+    
+    total_apis = 6
+    success_rate = (working_apis / total_apis) * 100
+    
+    print(f"📊 SUCCESS RATE: {working_apis}/{total_apis} APIs working ({success_rate:.1f}%)")
+    
+    if success_rate >= 80:
+        print("✅ EXCELLENT: User Management APIs are mostly functional")
+    elif success_rate >= 60:
+        print("⚠️  GOOD: User Management APIs are partially functional")
+    else:
+        print("❌ CRITICAL: User Management APIs have major issues")
+    
+    print(f"\n🎯 RECOMMENDATIONS:")
+    
+    if not test_results['positions_api_working']:
+        print("   1. Fix positions API to return at least 10 positions")
+    
+    if not test_results['active_users_api_working']:
+        print("   2. Ensure active users API returns proper user data")
+    
+    if test_results['auto_password_length'] != 12:
+        print("   3. Fix auto password generation to be exactly 12 characters")
+    
+    if not test_results['whatsapp_link_present']:
+        print("   4. Add WhatsApp link generation to user creation response")
+    
+    if not test_results['turkish_messages']:
+        print("   5. Implement Turkish success/error messages")
+    
+    if len(test_results['critical_issues']) == 0:
+        print("   ✅ All critical functionality is working correctly")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ OVERALL RESULT: CRITICAL ISSUES FOUND - USER MANAGEMENT NEEDS FIXES")
+        return False
+    else:
+        print(f"\n✅ OVERALL RESULT: USER MANAGEMENT APIs ARE WORKING CORRECTLY")
+        return True
+
 def test_contract_create_page_dropdown_apis():
     """
     URGENT: ContractCreatePage Dropdown Data API'leri Testi
