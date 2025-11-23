@@ -213,10 +213,15 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
           <button
             onClick={handleSaveTemplate}
             disabled={isSubmitting}
-            className="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50"
+            className={`flex items-center space-x-2 px-6 py-3 ${isEditMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white rounded-lg disabled:opacity-50`}
           >
             <Save className="h-5 w-5" />
-            <span>{isSubmitting ? 'Kaydediliyor...' : 'Şablonu Kaydet'}</span>
+            <span>
+              {isSubmitting 
+                ? (isEditMode ? 'Güncelleniyor...' : 'Kaydediliyor...') 
+                : (isEditMode ? 'Şablonu Güncelle' : 'Şablonu Kaydet')
+              }
+            </span>
           </button>
         </div>
 
