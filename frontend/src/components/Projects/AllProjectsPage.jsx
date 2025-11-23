@@ -125,7 +125,15 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
   const GridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredProjects.map((project) => (
-        <div key={project.id} className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow" style={{ position: 'relative' }}>
+        <div 
+          key={project.id} 
+          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow" 
+          style={{ position: 'relative' }}
+          onClick={() => {
+            console.log('KART TIKLANDI:', project.name);
+            alert('KART TIKLANDI: ' + project.name);
+          }}
+        >
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Folder className="h-5 w-5 text-blue-600" />
