@@ -3,6 +3,8 @@ import { Button } from '../ui/button';
 import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign, Eye, Edit2, LayoutGrid, List, Hash, Trash2 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import ViewProjectModal from './ViewProjectModal';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
+import SuccessModal from './SuccessModal';
 
 const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
   const [searchTerm, setSearchTerm] = useState('');
