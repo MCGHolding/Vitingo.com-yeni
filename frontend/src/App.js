@@ -1084,6 +1084,22 @@ const Dashboard = () => {
           />
         );
 
+      case 'contracts':
+        return (
+          <ContractsPage 
+            onBack={handleBackToDashboard}
+            user={user}
+          />
+        );
+
+      case 'contracts-new':
+        return (
+          <ContractCreatePage 
+            onBack={() => setCurrentView('contracts')}
+            fromContracts={true}
+          />
+        );
+
       case 'import-data':
         return (
           <ImportDataPage 
