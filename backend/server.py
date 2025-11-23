@@ -6637,9 +6637,6 @@ async def delete_avans(avans_id: str):
 
 # ===================== FILE UPLOAD ENDPOINTS =====================
 
-import shutil
-from pathlib import Path
-
 # Create uploads directory if it doesn't exist
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
