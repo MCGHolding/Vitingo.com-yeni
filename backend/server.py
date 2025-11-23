@@ -9545,6 +9545,49 @@ async def create_user(user_data: UserCreate):
         logger.error(f"Error creating user: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating user: {str(e)}")
 
+@api_router.post("/users/invite")
+async def invite_user(invite_data: UserInvite):
+    """Invite a user to join the system"""
+    try:
+        # Check if user with same email already exists
+        existing_user = await db.users.find_one({"email": invite_data.email})
+        
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Bu e-posta adresi zaten sistemde kayıtlı")
+        
+        # Create invited user record
+        user_id = str(uuid.uuid4())
+        invited_user = {
+            "id": user_id,
+            "email": invite_data.email,
+            "phone": invite_data.phone,
+            "role": invite_data.role or "user",
+            "manager_id": invite_data.manager_id,
+            "status": "invited",
+            "invited_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        # Save to database
+        await db.users.insert_one(invited_user)
+        
+        logger.info(f"Invited user: {invite_data.email}")
+        
+        # TODO: Send invitation email/notification
+        # This would be implemented with email service
+        
+        return {
+            "success": True,
+            "message": f"{invite_data.email} adresine davet gönderildi!",
+            "user": serialize_document(invited_user)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error inviting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error inviting user: {str(e)}")
+
 @api_router.put("/users/{user_id}", response_model=User)
 async def update_user(user_id: str, user_data: UserUpdate):
     """Update an existing user"""
