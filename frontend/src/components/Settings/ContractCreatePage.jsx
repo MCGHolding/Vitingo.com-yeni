@@ -143,13 +143,17 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       const response = await fetch(`${backendUrl}/api/contract-templates`);
       if (response.ok) {
         const data = await response.json();
-        setTemplates(data.templates || []);
+        const loadedTemplates = data.templates || [];
+        setTemplates(loadedTemplates);
+        return loadedTemplates;
       } else {
         setError('Şablonlar yüklenemedi');
+        return [];
       }
     } catch (error) {
       console.error('Error fetching templates:', error);
       setError('Bir hata oluştu');
+      return [];
     } finally {
       setLoading(false);
     }
