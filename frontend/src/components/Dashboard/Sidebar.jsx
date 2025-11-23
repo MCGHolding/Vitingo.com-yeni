@@ -998,15 +998,23 @@ export default function Sidebar({
 
     // Handle Contracts menu actions
     if (item.name === 'Sözleşmeler' && !subItem) {
+      console.log('Sözleşmeler main menu clicked');
       if (onContracts) {
+        console.log('Calling onContracts handler');
         onContracts();
+      } else {
+        console.log('onContracts handler not found!');
       }
       return;
     }
 
     if (subItem && subItem.name === 'Tüm Sözleşmeler') {
+      console.log('Tüm Sözleşmeler clicked');
       if (onContracts) {
+        console.log('Calling onContracts handler for submenu');
         onContracts();
+      } else {
+        console.log('onContracts handler not found for submenu!');
       }
       return;
     }
