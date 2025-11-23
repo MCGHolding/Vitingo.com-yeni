@@ -683,7 +683,30 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
                       onClick={() => handleTemplateSelect(template)}
                       className="cursor-pointer"
                     >
-                      <FileText className="h-6 w-6 text-emerald-600 mb-2" />
+                      <div className="flex items-start justify-between mb-2">
+                        <FileText className="h-6 w-6 text-emerald-600" />
+                        {/* Creation Method Badge */}
+                        {template.creation_method === 'manual' && (
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
+                            ✏️ Manuel
+                          </span>
+                        )}
+                        {template.creation_method === 'pdf_parse' && (
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                            📄 PDF Parse
+                          </span>
+                        )}
+                        {template.creation_method === 'ai_create' && (
+                          <span className="px-2 py-0.5 bg-pink-100 text-pink-700 text-xs rounded-full font-medium">
+                            ✨ AI Create
+                          </span>
+                        )}
+                        {!template.creation_method && (
+                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                            📄 PDF Parse
+                          </span>
+                        )}
+                      </div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">
                         {template.template_name}
                       </h3>
