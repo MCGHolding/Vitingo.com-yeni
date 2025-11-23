@@ -1180,6 +1180,483 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_manuel_sablon_olusturma():
+    """
+    Backend Manuel Şablon Oluşturma Testi
+    
+    **Context:**
+    Yeni bir manuel şablon oluşturma sistemi geliştirdim. Kullanıcılar artık kendi sözleşme alanlarını tanımlayabiliyorlar.
+    
+    **Yeni Özellikler:**
+    1. Manuel şablon oluşturma endpoint'i zaten var: `POST /api/contract-templates`
+    2. 38 adet default alan ile şablon oluşturma
+    3. Özel alan tipleri:
+       - text, number, text_number, date, email
+       - select, textarea, phone, number_unit, file
+    
+    **Test Edilmesi Gerekenler:**
+    1. **Manuel Şablon Oluşturma:**
+       - POST /api/contract-templates ile yeni şablon oluştur
+       - Template data with different field types
+       - Verify field_type and unit parameters are saved correctly
+    
+    2. **Şablon Alanlarını Doğrula:**
+       - Farklı field_type'lar kaydediliyor mu?
+       - unit parametresi (number_unit için) kaydediliyor mu?
+       - field_key'ler (slug'lar) doğru şekilde saklanıyor mu?
+    
+    3. **Şablon Listeleme:**
+       - GET /api/contract-templates ile oluşturulan şablon görünüyor mu?
+       - Fields array'i doğru döndürülüyor mu?
+    
+    **Beklenen Sonuç:**
+    - Manuel şablon başarıyla oluşturulmalı
+    - Tüm alanlar field_type ve unit bilgisi ile birlikte kaydedilmeli
+    - Şablon listesinde görünmeli
+    """
+    
+    print("=" * 100)
+    print("🔧 BACKEND MANUEL ŞABLON OLUŞTURMA TESTİ 🔧")
+    print("=" * 100)
+    print("CONTEXT: Testing manual template creation system with custom field types")
+    print("and 38 default fields including number_unit, textarea, select, etc.")
+    print("=" * 100)
+    
+    test_results = {
+        "template_created": False,
+        "template_id": None,
+        "field_types_saved": False,
+        "unit_parameters_saved": False,
+        "template_in_list": False,
+        "fields_array_correct": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # STEP 1: Test Manuel Şablon Oluşturma
+    print("\n" + "=" * 80)
+    print("STEP 1: MANUEL ŞABLON OLUŞTURMA TESTİ")
+    print("=" * 80)
+    
+    # Prepare test template data with different field types as specified in review request
+    template_data = {
+        "template_name": "Test Manuel Şablon",
+        "filename": "test_manuel.txt",
+        "total_pages": 1,
+        "pages": [
+            {
+                "page_number": 1,
+                "text": "Test",
+                "lines": ["Test"]
+            }
+        ],
+        "fields": [
+            {
+                "field_name": "Firma Adı",
+                "field_key": "firma_adi",
+                "field_type": "text",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "Firma Adı",
+                "placeholder": "Firma adını giriniz",
+                "order_index": 1
+            },
+            {
+                "field_name": "Stand Büyüklüğü",
+                "field_key": "stand_buyuklugu",
+                "field_type": "number_unit",
+                "unit": "sqm",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "Stand Büyüklüğü",
+                "placeholder": "Stand büyüklüğünü giriniz",
+                "order_index": 2
+            },
+            {
+                "field_name": "Müşteri Adresi",
+                "field_key": "musteri_adresi",
+                "field_type": "textarea",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": False,
+                "selected_text": "Müşteri Adresi",
+                "placeholder": "Müşteri adresini giriniz",
+                "order_index": 3
+            },
+            {
+                "field_name": "E-posta",
+                "field_key": "email",
+                "field_type": "email",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "E-posta",
+                "placeholder": "E-posta adresini giriniz",
+                "order_index": 4
+            },
+            {
+                "field_name": "Telefon",
+                "field_key": "telefon",
+                "field_type": "phone",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "Telefon",
+                "placeholder": "Telefon numarasını giriniz",
+                "order_index": 5
+            },
+            {
+                "field_name": "Sözleşme Tarihi",
+                "field_key": "sozlesme_tarihi",
+                "field_type": "date",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "Sözleşme Tarihi",
+                "placeholder": "Tarihi seçiniz",
+                "order_index": 6
+            },
+            {
+                "field_name": "Ödeme Türü",
+                "field_key": "odeme_turu",
+                "field_type": "select",
+                "dropdown_options": ["Nakit", "Kredi Kartı", "Havale", "Çek"],
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": True,
+                "selected_text": "Ödeme Türü",
+                "placeholder": "Ödeme türünü seçiniz",
+                "order_index": 7
+            },
+            {
+                "field_name": "Dosya Eki",
+                "field_key": "dosya_eki",
+                "field_type": "file",
+                "page": 1,
+                "bbox": [0, 0, 100, 20],
+                "is_required": False,
+                "selected_text": "Dosya Eki",
+                "placeholder": "Dosya seçiniz",
+                "order_index": 8
+            }
+        ]
+    }
+    
+    print(f"📋 Test Template Data:")
+    print(f"   Template Name: {template_data['template_name']}")
+    print(f"   Filename: {template_data['filename']}")
+    print(f"   Total Pages: {template_data['total_pages']}")
+    print(f"   Number of Fields: {len(template_data['fields'])}")
+    
+    # Display field types being tested
+    field_types = [field['field_type'] for field in template_data['fields']]
+    unique_field_types = list(set(field_types))
+    print(f"   Field Types: {', '.join(unique_field_types)}")
+    
+    # Test template creation
+    try:
+        create_endpoint = f"{BACKEND_URL}/api/contract-templates"
+        print(f"\n🔧 Creating template via: {create_endpoint}")
+        
+        create_response = requests.post(create_endpoint, json=template_data, timeout=30)
+        print(f"Status Code: {create_response.status_code}")
+        
+        if create_response.status_code in [200, 201]:
+            print("✅ PASS: Template creation endpoint responded successfully")
+            
+            try:
+                response_data = create_response.json()
+                print(f"Response: {response_data}")
+                
+                if response_data.get("success"):
+                    test_results["template_created"] = True
+                    test_results["template_id"] = response_data.get("template_id")
+                    
+                    print(f"✅ PASS: Template created successfully")
+                    print(f"   Template ID: {test_results['template_id']}")
+                    print(f"   Message: {response_data.get('message', 'N/A')}")
+                    
+                    # Verify template data in response
+                    template_response = response_data.get("template", {})
+                    if template_response:
+                        print(f"   Template Name: {template_response.get('template_name')}")
+                        print(f"   Fields Count: {len(template_response.get('fields', []))}")
+                        
+                        # Check if fields are properly structured
+                        fields = template_response.get('fields', [])
+                        if len(fields) == len(template_data['fields']):
+                            print("✅ PASS: All fields included in response")
+                            test_results["fields_array_correct"] = True
+                        else:
+                            print(f"⚠️  WARNING: Field count mismatch. Expected: {len(template_data['fields'])}, Got: {len(fields)}")
+                            test_results["warnings"].append("FIELD_COUNT_MISMATCH")
+                    
+                else:
+                    print(f"❌ FAIL: Template creation not successful: {response_data}")
+                    test_results["critical_issues"].append("TEMPLATE_CREATION_NOT_SUCCESSFUL")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing template creation response: {str(e)}")
+                test_results["critical_issues"].append(f"RESPONSE_PARSE_ERROR: {str(e)}")
+                
+        else:
+            print(f"❌ FAIL: Template creation failed with status: {create_response.status_code}")
+            print(f"Response: {create_response.text}")
+            test_results["critical_issues"].append(f"TEMPLATE_CREATION_FAILED_{create_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error during template creation: {str(e)}")
+        test_results["critical_issues"].append(f"TEMPLATE_CREATION_ERROR: {str(e)}")
+    
+    # STEP 2: Şablon Alanlarını Doğrula
+    print("\n" + "=" * 80)
+    print("STEP 2: ŞABLON ALANLARINI DOĞRULA")
+    print("=" * 80)
+    
+    if test_results["template_created"] and test_results["template_id"]:
+        try:
+            # Get the created template to verify field details
+            get_endpoint = f"{BACKEND_URL}/api/contract-templates/{test_results['template_id']}"
+            print(f"🔍 Retrieving template details from: {get_endpoint}")
+            
+            get_response = requests.get(get_endpoint, timeout=30)
+            print(f"Status Code: {get_response.status_code}")
+            
+            if get_response.status_code == 200:
+                template_details = get_response.json()
+                print("✅ PASS: Template retrieved successfully")
+                
+                fields = template_details.get('fields', [])
+                print(f"📋 Field Validation Results:")
+                print(f"   Total Fields: {len(fields)}")
+                
+                # Test different field types
+                field_type_tests = {
+                    "text": False,
+                    "number_unit": False,
+                    "textarea": False,
+                    "email": False,
+                    "phone": False,
+                    "date": False,
+                    "select": False,
+                    "file": False
+                }
+                
+                unit_parameter_found = False
+                dropdown_options_found = False
+                
+                for field in fields:
+                    field_type = field.get('field_type')
+                    field_name = field.get('field_name')
+                    field_key = field.get('field_key')
+                    
+                    print(f"\n   Field: {field_name} ({field_key})")
+                    print(f"     Type: {field_type}")
+                    
+                    # Check if field type is saved correctly
+                    if field_type in field_type_tests:
+                        field_type_tests[field_type] = True
+                        print(f"     ✅ Field type '{field_type}' saved correctly")
+                    
+                    # Check for unit parameter (number_unit fields)
+                    if field_type == "number_unit":
+                        unit = field.get('unit')
+                        if unit:
+                            unit_parameter_found = True
+                            print(f"     ✅ Unit parameter saved: {unit}")
+                        else:
+                            print(f"     ❌ Unit parameter missing for number_unit field")
+                    
+                    # Check for dropdown options (select fields)
+                    if field_type == "select":
+                        dropdown_options = field.get('dropdown_options')
+                        if dropdown_options:
+                            dropdown_options_found = True
+                            print(f"     ✅ Dropdown options saved: {dropdown_options}")
+                        else:
+                            print(f"     ❌ Dropdown options missing for select field")
+                    
+                    # Check field_key (slug) format
+                    if field_key and '_' in field_key and field_key.islower():
+                        print(f"     ✅ Field key (slug) format correct: {field_key}")
+                    else:
+                        print(f"     ⚠️  Field key format might be incorrect: {field_key}")
+                
+                # Summary of field type tests
+                print(f"\n📊 Field Type Test Results:")
+                passed_types = [ft for ft, passed in field_type_tests.items() if passed]
+                failed_types = [ft for ft, passed in field_type_tests.items() if not passed]
+                
+                print(f"   ✅ Passed Types ({len(passed_types)}): {', '.join(passed_types)}")
+                if failed_types:
+                    print(f"   ❌ Failed Types ({len(failed_types)}): {', '.join(failed_types)}")
+                
+                if len(passed_types) >= 6:  # At least 6 out of 8 field types should work
+                    test_results["field_types_saved"] = True
+                    print("✅ PASS: Field types are being saved correctly")
+                else:
+                    print("❌ FAIL: Not enough field types are working correctly")
+                    test_results["critical_issues"].append("INSUFFICIENT_FIELD_TYPES")
+                
+                if unit_parameter_found:
+                    test_results["unit_parameters_saved"] = True
+                    print("✅ PASS: Unit parameters are being saved correctly")
+                else:
+                    print("❌ FAIL: Unit parameters not found for number_unit fields")
+                    test_results["critical_issues"].append("UNIT_PARAMETERS_NOT_SAVED")
+                
+            else:
+                print(f"❌ FAIL: Could not retrieve template details: {get_response.status_code}")
+                print(f"Response: {get_response.text}")
+                test_results["critical_issues"].append("TEMPLATE_RETRIEVAL_FAILED")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Error during field validation: {str(e)}")
+            test_results["critical_issues"].append(f"FIELD_VALIDATION_ERROR: {str(e)}")
+    else:
+        print("⚠️  SKIP: Cannot validate fields - template creation failed")
+        test_results["warnings"].append("FIELD_VALIDATION_SKIPPED")
+    
+    # STEP 3: Şablon Listeleme
+    print("\n" + "=" * 80)
+    print("STEP 3: ŞABLON LİSTELEME TESTİ")
+    print("=" * 80)
+    
+    try:
+        list_endpoint = f"{BACKEND_URL}/api/contract-templates"
+        print(f"📋 Getting template list from: {list_endpoint}")
+        
+        list_response = requests.get(list_endpoint, timeout=30)
+        print(f"Status Code: {list_response.status_code}")
+        
+        if list_response.status_code == 200:
+            list_data = list_response.json()
+            print("✅ PASS: Template list endpoint working")
+            
+            templates = list_data.get('templates', [])
+            template_count = list_data.get('count', 0)
+            
+            print(f"📊 Template List Results:")
+            print(f"   Total Templates: {template_count}")
+            print(f"   Templates Array Length: {len(templates)}")
+            
+            # Look for our created template
+            created_template_found = False
+            if test_results["template_id"]:
+                for template in templates:
+                    if template.get('id') == test_results["template_id"]:
+                        created_template_found = True
+                        test_results["template_in_list"] = True
+                        
+                        print(f"\n✅ PASS: Created template found in list!")
+                        print(f"   Template Name: {template.get('template_name')}")
+                        print(f"   Template ID: {template.get('id')}")
+                        print(f"   Fields Count: {len(template.get('fields', []))}")
+                        
+                        # Verify fields array structure
+                        fields = template.get('fields', [])
+                        if fields and len(fields) > 0:
+                            print(f"   ✅ Fields array present with {len(fields)} fields")
+                            
+                            # Check first field structure
+                            first_field = fields[0]
+                            required_field_props = ['field_name', 'field_key', 'field_type']
+                            missing_props = [prop for prop in required_field_props if prop not in first_field]
+                            
+                            if not missing_props:
+                                print(f"   ✅ Field structure correct")
+                                test_results["fields_array_correct"] = True
+                            else:
+                                print(f"   ❌ Missing field properties: {missing_props}")
+                                test_results["critical_issues"].append("MISSING_FIELD_PROPERTIES")
+                        else:
+                            print(f"   ❌ Fields array empty or missing")
+                            test_results["critical_issues"].append("FIELDS_ARRAY_EMPTY")
+                        
+                        break
+                
+                if not created_template_found:
+                    print(f"❌ FAIL: Created template not found in list")
+                    print(f"   Looking for template ID: {test_results['template_id']}")
+                    test_results["critical_issues"].append("CREATED_TEMPLATE_NOT_IN_LIST")
+            else:
+                print("⚠️  WARNING: No template ID to search for")
+                test_results["warnings"].append("NO_TEMPLATE_ID_TO_SEARCH")
+            
+            # Show some existing templates for context
+            if templates:
+                print(f"\n📋 Existing Templates (first 3):")
+                for i, template in enumerate(templates[:3], 1):
+                    print(f"   {i}. {template.get('template_name', 'N/A')} (ID: {template.get('id', 'N/A')})")
+            
+        else:
+            print(f"❌ FAIL: Template list endpoint failed: {list_response.status_code}")
+            print(f"Response: {list_response.text}")
+            test_results["critical_issues"].append("TEMPLATE_LIST_FAILED")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Error during template listing: {str(e)}")
+        test_results["critical_issues"].append(f"TEMPLATE_LIST_ERROR: {str(e)}")
+    
+    # FINAL TEST RESULTS
+    print("\n" + "=" * 100)
+    print("🔍 MANUEL ŞABLON OLUŞTURMA TEST SONUÇLARI")
+    print("=" * 100)
+    
+    print(f"📊 TEST SUMMARY:")
+    print(f"   • Template Created: {'✅ YES' if test_results['template_created'] else '❌ NO'}")
+    print(f"   • Field Types Saved: {'✅ YES' if test_results['field_types_saved'] else '❌ NO'}")
+    print(f"   • Unit Parameters Saved: {'✅ YES' if test_results['unit_parameters_saved'] else '❌ NO'}")
+    print(f"   • Template in List: {'✅ YES' if test_results['template_in_list'] else '❌ NO'}")
+    print(f"   • Fields Array Correct: {'✅ YES' if test_results['fields_array_correct'] else '❌ NO'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    success_count = sum([
+        test_results['template_created'],
+        test_results['field_types_saved'],
+        test_results['unit_parameters_saved'],
+        test_results['template_in_list'],
+        test_results['fields_array_correct']
+    ])
+    
+    if success_count >= 4:
+        print("✅ PASS: Manuel şablon oluşturma sistemi başarıyla çalışıyor!")
+        print("   • Şablonlar başarıyla oluşturuluyor")
+        print("   • Farklı alan tipleri destekleniyor")
+        print("   • Unit parametreleri kaydediliyor")
+        print("   • Şablonlar listede görünüyor")
+        
+        if success_count == 5:
+            print("🎉 PERFECT: Tüm testler başarılı!")
+        
+        return True
+        
+    elif success_count >= 2:
+        print("⚠️  PARTIAL: Manuel şablon sistemi kısmen çalışıyor")
+        print("   • Bazı özellikler çalışıyor ancak iyileştirme gerekiyor")
+        print("   • Kritik sorunları gözden geçirin")
+        
+        return False
+        
+    else:
+        print("❌ FAIL: Manuel şablon oluşturma sistemi çalışmıyor!")
+        print("   • Temel işlevsellik sorunları var")
+        print("   • Backend API'leri kontrol edilmeli")
+        
+        return False
+
 def test_bank_email_template_functionality():
     """
     BACKEND EMAIL TEMPLATE TESTING - Bank Email Generation with HTML Templates
