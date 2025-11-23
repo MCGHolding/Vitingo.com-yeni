@@ -70,25 +70,28 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
     }
   };
 
-  const handleDelete = async (projectId, projectName) => {
-    if (!window.confirm(`"${projectName}" projesini silmek istediğinizden emin misiniz?`)) {
-      return;
-    }
+  const handleDeleteClick = (projectId, projectName) => {
+    setProjectToDelete({ id: projectId, name: projectName });
+    setDeleteModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!projectToDelete) return;
+
+    setDeleting(true);
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
-      const response = await fetch(`${backendUrl}/api/projects/${projectId}`, {
+      const response = await fetch(`${backendUrl}/api/projects/${projectToDelete.id}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        toast({
-          title: "Başarılı",
-          description: "Proje başarıyla silindi"
-        });
+        setDeleteModalOpen(false);
+        setSuccessMessage(`"${projectToDelete.name}" projesi başarıyla silindi.`);
+        setSuccessModalOpen(true);
         loadProjects(); // Listeyi yenile
       } else {
         throw new Error('Silme işlemi başarısız');
@@ -100,7 +103,16 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
         description: "Proje silinirken bir hata oluştu",
         variant: "destructive"
       });
+      setDeleteModalOpen(false);
+    } finally {
+      setDeleting(false);
+      setProjectToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalOpen(false);
+    setProjectToDelete(null);
   };
 
   const getStatusBadge = (status) => {
