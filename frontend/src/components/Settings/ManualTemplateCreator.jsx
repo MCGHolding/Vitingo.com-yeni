@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Save, FileText, GripVertical } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) => {
   const isEditMode = Boolean(templateToEdit);
