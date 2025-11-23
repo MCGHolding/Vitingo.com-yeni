@@ -134,14 +134,23 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
     }
   };
 
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-    const items = Array.from(fields);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
 
-    setFields(items);
+    if (active.id !== over?.id) {
+      setFields((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
   };
 
   const handleSaveTemplate = async () => {
