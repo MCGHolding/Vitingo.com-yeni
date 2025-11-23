@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
-import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign, Eye, Edit2, LayoutGrid, List, Hash, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Filter, Folder, Calendar, User, DollarSign, Eye, Edit2, LayoutGrid, List, Hash, Trash2, Building } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import ViewProjectModal from './ViewProjectModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
