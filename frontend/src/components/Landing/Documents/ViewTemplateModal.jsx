@@ -161,10 +161,11 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
         {/* Add Field Modal */}
         {showAddFieldModal && (
           <AddFieldModal
-            templateId={template.id}
+            templateId={currentTemplate.id}
             onClose={() => setShowAddFieldModal(false)}
             onSuccess={() => {
               setShowAddFieldModal(false);
+              reloadTemplate(); // Reload template to show new fields
               if (onFieldsAdded) {
                 onFieldsAdded();
               }
