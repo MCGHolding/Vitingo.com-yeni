@@ -298,10 +298,21 @@ const NewBankForm = ({ onBackToDashboard }) => {
   };
 
   const fillTestData = () => {
-    // Set a test company first
-    const testCompany = groupCompanies.find(c => c.name.includes('Test') || c.name.includes('Başarı'));
-    const companyId = testCompany?.id || (groupCompanies.length > 0 ? groupCompanies[0].id : '');
-    const selectedCompany = groupCompanies.find(c => c.id === companyId);
+    // Use currently selected company or pick first available
+    let selectedCompany;
+    
+    if (formData.companyId) {
+      // If company already selected, use it
+      selectedCompany = groupCompanies.find(c => c.id === formData.companyId);
+    } else {
+      // Otherwise, pick first company
+      selectedCompany = groupCompanies.length > 0 ? groupCompanies[0] : null;
+    }
+    
+    if (!selectedCompany) {
+      alert('Önce bir grup şirketi seçmelisiniz');
+      return;
+    }
     
     // Map country names to country codes
     const countryMapping = {
@@ -317,8 +328,8 @@ const NewBankForm = ({ onBackToDashboard }) => {
     
     // Fill test data based on country
     const testData = {
-      companyId: companyId,
-      companyName: selectedCompany?.name || 'Test Şirketi',
+      companyId: selectedCompany.id,
+      companyName: selectedCompany.name,
       country: countryCode,
       bankName: countryCode === 'Turkey' ? 'Garanti BBVA Test' : 
                 countryCode === 'UAE' ? 'Emirates Islamic Bank Test' : 
@@ -330,14 +341,16 @@ const NewBankForm = ({ onBackToDashboard }) => {
       testData.iban = countryCode === 'Turkey' ? 'TR32 0006 2000 0000 0006 2958 16' : 'AE07 0331 2345 6789 0123 456';
       testData.branchName = countryCode === 'Turkey' ? 'Levent Şubesi' : 'Downtown Dubai Branch';
       testData.branchCode = countryCode === 'Turkey' ? '620' : '033';
-      testData.accountHolder = countryCode === 'Turkey' ? 'Başarı Uluslararası Fuarcılık A.Ş.' : 'Basari International Exhibition LLC';
+      // Use selected company name for account holder (auto-filled)
+      testData.accountHolder = selectedCompany.name;
       testData.accountNumber = countryCode === 'Turkey' ? '6295816' : '1234567890123456';
     } else if (countryCode === 'USA') {
       testData.routingNumber = '021000021';
       testData.usAccountNumber = '1234567890123456';
       testData.bankAddress = '383 Madison Ave, New York, NY 10179';
       testData.recipientAddress = '123 Business St, New York, NY 10001';
-      testData.recipientName = 'Basari International LLC';
+      // Use selected company name for recipient name (auto-filled)
+      testData.recipientName = selectedCompany.name;
       testData.recipientZipCode = '10001';
     }
 
