@@ -204,24 +204,37 @@ const GroupCompaniesPage = ({ onBack }) => {
                   </div>
                 )}
 
-                <div className="flex items-center justify-end space-x-2 pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                   <button
                     onClick={() => {
-                      setEditingCompany(company);
-                      setShowAddCompanyModal(true);
+                      setSelectedCompany(company);
+                      setShowDetailsModal(true);
                     }}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                    title="Düzenle"
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1"
                   >
-                    <Edit2 className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
+                    <span>Detay Ekle</span>
                   </button>
-                  <button
-                    onClick={() => handleDeleteCompany(company.id, company.name)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-                    title="Sil"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => {
+                        setEditingCompany(company);
+                        setShowAddCompanyModal(true);
+                      }}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                      title="Düzenle"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCompany(company.id, company.name)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                      title="Sil"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
