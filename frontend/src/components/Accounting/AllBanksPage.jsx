@@ -267,18 +267,18 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
             />
           </div>
 
-          {/* Country Filter */}
+          {/* Company Filter */}
           <div className="flex items-center space-x-2">
-            <Globe className="h-4 w-4 text-gray-500" />
+            <Building2 className="h-4 w-4 text-gray-500" />
             <select
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              value={selectedCompany}
+              onChange={(e) => setSelectedCompany(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             >
-              <option value="all">Tüm Ülkeler</option>
-              {countries.map(country => (
-                <option key={country.code} value={country.code}>
-                  {country.flag} {country.name}
+              <option value="all">Tüm Şirketler</option>
+              {groupCompanies.map(company => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
                 </option>
               ))}
             </select>
