@@ -251,8 +251,9 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
         alert('✅ Sözleşme başarıyla oluşturuldu!');
         
         // Redirect to contracts page
-        if (fromContracts) {
-          window.location.href = '/contracts';
+        if (fromContracts && onBack) {
+          // Use onBack to navigate properly
+          onBack();
         } else {
           // Stay on page, offer to download
           const downloadResponse = await fetch(`${backendUrl}/api/contracts/${data.contract_id}/pdf`);
