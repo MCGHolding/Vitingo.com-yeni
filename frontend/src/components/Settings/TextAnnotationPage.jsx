@@ -537,6 +537,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                   <RichTextEditor
                     content={editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text}
                     onChange={handlePageContentChange}
+                    onTextSelect={handleTextSelect}
                     placeholder="Sayfa içeriğini düzenleyin..."
                   />
                 ) : (
