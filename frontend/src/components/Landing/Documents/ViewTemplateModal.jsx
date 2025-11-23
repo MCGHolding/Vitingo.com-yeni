@@ -44,8 +44,8 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
               <FileText className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{template.name}</h2>
-              <p className="text-sm text-gray-600">{template.description || 'Açıklama yok'}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{currentTemplate.name}</h2>
+              <p className="text-sm text-gray-600">{currentTemplate.description || 'Açıklama yok'}</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
