@@ -357,14 +357,26 @@ const NewBankForm = ({ onBackToDashboard }) => {
             <p className="text-gray-600">Banka bilgilerini ekleyin</p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={onBackToDashboard}
-          className="flex items-center space-x-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Geri Dön</span>
-        </Button>
+        <div className="space-y-2">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onBackToDashboard}
+            className="w-full"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Geri
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={fillTestData}
+            className="w-full bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+          >
+            🧪 Test Verisi Doldur
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
