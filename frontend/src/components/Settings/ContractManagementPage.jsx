@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, FileText, Sparkles, Edit3, Upload, CheckCircle } from 'lucide-react';
-import PDFAnnotationPage from './PDFAnnotationPage';
+import TextAnnotationPage from './TextAnnotationPage';
 
 const ContractManagementPage = ({ onBack }) => {
   const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete'
