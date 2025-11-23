@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, FileText, Search, Edit, Trash2, Eye } from 'lucide-react';
 import CreateTemplateModal from './CreateTemplateModal';
+import ViewTemplateModal from './ViewTemplateModal';
 
 const TemplateListPage = () => {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
