@@ -9431,18 +9431,33 @@ async def get_users(status: str = "active"):
 class UserCreate(BaseModel):
     name: str
     email: str
-    role: str = "user"
-    department: str
     phone: Optional[str] = None
-    username: str
+    position: Optional[str] = None
+    department: Optional[str] = None
+    manager_id: Optional[str] = None
+    notification_method: str = "email"  # email, whatsapp, both
+
+class UserInvite(BaseModel):
+    email: str
+    role: Optional[str] = "user"
+    manager_id: Optional[str] = None
+    phone: Optional[str] = None
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None
     role: Optional[str] = None
     department: Optional[str] = None
+    position: Optional[str] = None
+    manager_id: Optional[str] = None
     phone: Optional[str] = None
     status: Optional[str] = None
+
+class Position(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    value: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 @api_router.post("/users", response_model=User)
 async def create_user(user_data: UserCreate):
