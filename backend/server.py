@@ -10571,6 +10571,41 @@ async def delete_document(collection_name: str, doc_id: str):
         logger.error(f"Error deleting document from {collection_name}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== CONTRACT PDF PROCESSING =====================
+
+@api_router.post("/contracts/extract-pdf-text")
+async def extract_pdf_text(file: UploadFile = File(...)):
+    """Extract text from PDF for annotation"""
+    try:
+        import PyPDF2
+        import io
+        
+        # Read PDF file
+        pdf_content = await file.read()
+        pdf_file = io.BytesIO(pdf_content)
+        
+        # Extract text from all pages
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        pages_text = []
+        
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            text = page.extract_text()
+            pages_text.append({
+                "page_number": page_num + 1,
+                "text": text,
+                "lines": text.split('\n') if text else []
+            })
+        
+        return {
+            "filename": file.filename,
+            "total_pages": len(pdf_reader.pages),
+            "pages": pages_text
+        }
+    except Exception as e:
+        logger.error(f"Error extracting PDF text: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF metni çıkarılamadı: {str(e)}")
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
