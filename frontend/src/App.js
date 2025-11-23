@@ -1089,6 +1089,7 @@ const Dashboard = () => {
           <ContractsPage 
             onBack={handleBackToDashboard}
             user={user}
+            setCurrentView={setCurrentView}
           />
         );
 
