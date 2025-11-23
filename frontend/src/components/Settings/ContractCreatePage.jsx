@@ -96,37 +96,36 @@ const ContractCreatePage = ({ onBack }) => {
       // Always use original template pages, not previously updated ones
       const originalPages = selectedTemplate.pages;
       
-      console.log('🔍 Original Pages:', originalPages);
-      console.log('🔍 Template Fields:', selectedTemplate.fields);
-      console.log('🔍 Field Values:', fieldValues);
+      console.log('🔍 Debugging Template Update:');
+      console.log('Original Pages:', originalPages);
+      console.log('Template Fields:', selectedTemplate.fields);
+      console.log('Field Values:', fieldValues);
       
       // Replace placeholders in each page
       const updated = originalPages.map((page, pageIndex) => {
         let updatedText = page.text;
-        
-        console.log(`📄 Page ${pageIndex + 1} Original Text (first 200 chars):`, updatedText.substring(0, 200));
         
         // Replace each field placeholder with its value
         selectedTemplate.fields.forEach((field) => {
           const placeholder = field.placeholder;
           const value = fieldValues[field.field_key] || '[DOLDURULMADI]';
           
-          console.log(`🔄 Replacing "${placeholder}" with "${value}"`);
-          console.log(`   Found in text: ${updatedText.includes(placeholder)}`);
+          console.log(`🔄 Trying to replace "${placeholder}" with "${value}"`);
+          console.log(`   Placeholder exists in text: ${updatedText.includes(placeholder)}`);
           
-          // Use global replace to replace all occurrences
-          const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-          const beforeReplace = updatedText;
+          // Escape special regex characters in placeholder
+          const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const regex = new RegExp(escapedPlaceholder, 'g');
+          
+          // Count occurrences before replace
+          const matches = updatedText.match(regex);
+          const matchCount = matches ? matches.length : 0;
+          
+          // Perform replacement
           updatedText = updatedText.replace(regex, value);
           
-          if (beforeReplace !== updatedText) {
-            console.log(`✅ Replacement successful for ${placeholder}`);
-          } else {
-            console.log(`❌ No replacement made for ${placeholder}`);
-          }
+          console.log(`   ${matchCount} occurrences replaced`);
         });
-        
-        console.log(`📄 Page ${pageIndex + 1} Updated Text (first 200 chars):`, updatedText.substring(0, 200));
         
         return {
           ...page,
@@ -136,9 +135,12 @@ const ContractCreatePage = ({ onBack }) => {
       
       setUpdatedPages(updated);
       console.log('✅ Updated Pages:', updated);
-      alert('✅ Bilgiler sözleşmeye uygulandı! Önizleme yapabilirsiniz.');
+      
+      // Count total replacements made
+      const totalReplacements = selectedTemplate.fields.length;
+      alert(`✅ ${totalReplacements} alan güncellendi! Önizleme yapabilirsiniz.`);
     } catch (error) {
-      console.error('Error updating contract:', error);
+      console.error('❌ Error updating contract:', error);
       alert('Bir hata oluştu: ' + error.message);
     }
   };
