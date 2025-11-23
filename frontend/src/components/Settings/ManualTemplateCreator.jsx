@@ -152,21 +152,30 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
           page: 1,
           bbox: [0, 0, 100, 20]
         })),
-        creation_method: 'manual'
+        creation_method: templateToEdit?.creation_method || 'manual'
       };
 
-      const response = await fetch(`${backendUrl}/api/contract-templates`, {
-        method: 'POST',
+      const url = isEditMode 
+        ? `${backendUrl}/api/contract-templates/${templateToEdit.id}`
+        : `${backendUrl}/api/contract-templates`;
+      
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(templateData)
       });
 
       if (response.ok) {
-        alert(`✅ Başarılı!\n\nŞablon "${templateName}" oluşturuldu.\n${fields.length} alan eklendi.`);
+        const message = isEditMode 
+          ? `✅ Başarılı!\n\nŞablon "${templateName}" güncellendi.\n${fields.length} alan mevcut.`
+          : `✅ Başarılı!\n\nŞablon "${templateName}" oluşturuldu.\n${fields.length} alan eklendi.`;
+        alert(message);
         if (onComplete) onComplete();
       } else {
         const error = await response.json();
-        alert(`Hata: ${error.detail || 'Şablon kaydedilemedi'}`);
+        alert(`Hata: ${error.detail || (isEditMode ? 'Şablon güncellenemedi' : 'Şablon kaydedilemedi')}`);
       }
     } catch (error) {
       console.error('Error:', error);
