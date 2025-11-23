@@ -10250,6 +10250,103 @@ async def update_activity_status(opportunity_id: str, activity_id: str, status: 
 
 # ===================== MONGODB COLLECTIONS ADMIN API =====================
 
+# ===================== GROUP COMPANIES =====================
+
+@api_router.get("/group-companies")
+async def get_group_companies():
+    """Get all group companies"""
+    try:
+        companies = await db.group_companies.find().to_list(length=None)
+        serialized_companies = [serialize_document(company) for company in companies]
+        return serialized_companies
+    except Exception as e:
+        logger.error(f"Error getting group companies: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/group-companies")
+async def create_group_company(company_data: GroupCompanyCreate):
+    """Create a new group company"""
+    try:
+        company = GroupCompany(**company_data.dict())
+        company.created_at = datetime.utcnow()
+        company.updated_at = datetime.utcnow()
+        company_dict = company.dict()
+        
+        await db.group_companies.insert_one(company_dict)
+        return company
+    except Exception as e:
+        logger.error(f"Error creating group company: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/group-companies/{company_id}")
+async def update_group_company(company_id: str, company_data: GroupCompanyCreate):
+    """Update a group company"""
+    try:
+        update_data = company_data.dict()
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await db.group_companies.update_one(
+            {"id": company_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Company not found")
+        
+        updated_company = await db.group_companies.find_one({"id": company_id})
+        return serialize_document(updated_company)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating group company: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/group-companies/{company_id}")
+async def delete_group_company(company_id: str):
+    """Delete a group company"""
+    try:
+        result = await db.group_companies.delete_one({"id": company_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Company not found")
+        
+        return {"message": "Company deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting group company: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/accountants")
+async def create_accountant(accountant_data: dict):
+    """Create a new accountant"""
+    try:
+        accountant = Accountant(**accountant_data)
+        accountant.created_at = datetime.utcnow()
+        accountant_dict = accountant.dict()
+        
+        await db.accountants.insert_one(accountant_dict)
+        
+        # Update company with accountant info
+        await db.group_companies.update_one(
+            {"id": accountant.companyId},
+            {"$set": {
+                "accountant": {
+                    "id": accountant.id,
+                    "name": accountant.name,
+                    "email": accountant.email,
+                    "phone": accountant.phone
+                }
+            }}
+        )
+        
+        return accountant
+    except Exception as e:
+        logger.error(f"Error creating accountant: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== ADMIN ENDPOINTS =====================
+
 @api_router.get("/admin/collections")
 async def get_all_collections():
     """Get all MongoDB collections with document counts"""
