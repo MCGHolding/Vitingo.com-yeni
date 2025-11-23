@@ -1078,6 +1078,36 @@ const Dashboard = () => {
           />
         );
 
+      case 'template-list':
+        return (
+          <TemplateListPage 
+            onBack={handleBackToDashboard}
+            onNavigate={(view) => setCurrentView(view)}
+          />
+        );
+
+      case 'my-contracts':
+        return (
+          <MyContractsPage 
+            onBack={handleBackToDashboard}
+            onNavigate={(view) => setCurrentView(view)}
+          />
+        );
+
+      case 'create-template':
+        return (
+          <CreateTemplatePage 
+            onBack={() => setCurrentView('template-list')}
+          />
+        );
+
+      case 'create-contract':
+        return (
+          <CreateContractPage 
+            onBack={() => setCurrentView('my-contracts')}
+          />
+        );
+
       case 'import-data':
         return (
           <ImportDataPage 
