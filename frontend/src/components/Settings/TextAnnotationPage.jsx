@@ -244,31 +244,51 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
 
     setFields([...fields, newField]);
     
-    // IMPORTANT: Replace selected text with placeholder in current page
-    // Get current content from either editedPages or original pdfData
-    const currentText = editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text;
+    // IMPORTANT: Replace selected text with placeholder
+    let totalReplacements = 0;
+    const newEditedPages = {};
     
-    console.log('🔄 Replacing in text:');
-    console.log('  Current text (first 100 chars):', currentText.substring(0, 100));
-    console.log('  Selected text:', selectedText);
-    console.log('  Placeholder:', placeholder);
-    console.log('  Contains selected text?', currentText.includes(selectedText));
+    if (replaceAllOccurrences) {
+      // Replace in ALL pages
+      pdfData.pages.forEach((page, pageIndex) => {
+        const currentText = editedPages[pageIndex] || page.text;
+        
+        // Count occurrences
+        const regex = new RegExp(selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        const matches = currentText.match(regex);
+        const count = matches ? matches.length : 0;
+        
+        if (count > 0) {
+          // Replace all occurrences
+          const updatedText = currentText.replace(regex, placeholder);
+          newEditedPages[pageIndex] = updatedText;
+          totalReplacements += count;
+          
+          console.log(`📄 Page ${pageIndex + 1}: Replaced ${count} occurrences`);
+        } else {
+          // Keep existing or original
+          if (editedPages[pageIndex]) {
+            newEditedPages[pageIndex] = editedPages[pageIndex];
+          }
+        }
+      });
+      
+      console.log(`✅ Total replacements: ${totalReplacements} across all pages`);
+    } else {
+      // Replace only in current page
+      const currentText = editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text;
+      const updatedText = currentText.replace(selectedText, placeholder);
+      newEditedPages[currentPageIndex] = updatedText;
+      totalReplacements = 1;
+      
+      console.log(`✅ Replaced in current page only`);
+    }
     
-    // Replace selected text with placeholder
-    const updatedText = currentText.replace(selectedText, placeholder);
-    
-    console.log('  Updated text (first 100 chars):', updatedText.substring(0, 100));
-    console.log('  Replacement successful?', updatedText !== currentText);
-    
-    // Update editedPages state
-    const newEditedPages = {
+    // Merge with existing editedPages
+    setEditedPages({
       ...editedPages,
-      [currentPageIndex]: updatedText
-    };
-    
-    console.log('  New editedPages:', newEditedPages);
-    
-    setEditedPages(newEditedPages);
+      ...newEditedPages
+    });
     
     // Force re-render
     setRefreshKey(prev => prev + 1);
@@ -281,8 +301,11 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     
     // Show success message
     setTimeout(() => {
-      console.log('✅ Placeholder replacement completed!');
-      alert(`✅ Alan eklendi ve metin "${placeholder}" ile değiştirildi!`);
+      if (replaceAllOccurrences) {
+        alert(`✅ Alan eklendi!\n\n"${selectedText}" → ${placeholder}\n\n${totalReplacements} yerde değiştirildi (tüm sayfalarda)`);
+      } else {
+        alert(`✅ Alan eklendi!\n\n"${selectedText}" → ${placeholder}\n\nSadece bu sayfada değiştirildi`);
+      }
     }, 100);
   };
 
