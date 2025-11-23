@@ -336,11 +336,28 @@ const NewBankForm = ({ onBackToDashboard }) => {
               value={formData.companyId} 
               onValueChange={(value) => {
                 const selectedCompany = groupCompanies.find(c => c.id === value);
+                
+                // Map country names to country codes
+                const countryMapping = {
+                  'Türkiye': 'Turkey',
+                  'ABD': 'USA',
+                  'Birleşik Arap Emirlikleri': 'UAE',
+                  'Turkey': 'Turkey',
+                  'USA': 'USA',
+                  'UAE': 'UAE'
+                };
+                
+                const countryCode = countryMapping[selectedCompany?.country] || selectedCompany?.country || '';
+                
+                console.log('Selected company:', selectedCompany?.name);
+                console.log('Company country:', selectedCompany?.country);
+                console.log('Mapped country code:', countryCode);
+                
                 setFormData({
                   ...formData,
                   companyId: value,
                   companyName: selectedCompany?.name || '',
-                  country: selectedCompany?.country || ''  // Auto-fill country from company
+                  country: countryCode
                 });
               }}
             >
