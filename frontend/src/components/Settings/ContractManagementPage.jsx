@@ -184,29 +184,29 @@ const ContractManagementPage = ({ onBack }) => {
           Ayarlar'a Dön
         </button>
         
-        <div className="bg-white rounded-2xl shadow-sm p-8 max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="inline-flex p-4 bg-emerald-100 rounded-full mb-4">
-              <FileText className="h-12 w-12 text-emerald-600" />
+        <div className="bg-white rounded-lg shadow-sm p-6 max-w-5xl mx-auto">
+          <div className="text-center mb-6">
+            <div className="inline-flex p-3 bg-emerald-100 rounded-full mb-3">
+              <FileText className="h-8 w-8 text-emerald-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
-              Sözleşme Yönetimine Hoş Geldiniz
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Sözleşme Yönetimi
             </h1>
-            <p className="text-gray-600 text-lg mb-4">
-              Burada kendi sözleşme şablonlarınızı oluşturabilir, düzenleyebilir ve sözleşmeler üretebilirsiniz
+            <p className="text-gray-600 text-sm mb-3">
+              Kendi sözleşme şablonlarınızı oluşturun ve yönetin
             </p>
             
             {/* Quick Action - Create Contract */}
             <button
               onClick={() => setStep('create-contract')}
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-md hover:shadow-lg transition-all"
+              className="inline-flex items-center px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm hover:shadow transition-all"
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Mevcut Şablondan Sözleşme Oluştur
             </button>
           </div>
 
-          <div className="mb-8 pt-6 border-t border-gray-200">
+          <div className="mb-6 pt-4 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">
               Haydi Başlayalım
             </h2>
