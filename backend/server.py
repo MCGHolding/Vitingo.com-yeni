@@ -1096,10 +1096,17 @@ async def delete_country(country_id: str):
 
 # Cities Endpoints
 @api_router.get("/library/cities", response_model=List[LibraryCity])
-async def get_cities():
-    """Get all cities"""
+async def get_cities(country: Optional[str] = None):
+    """Get all cities, optionally filtered by country"""
     try:
-        cities = await db.cities.find().sort("name", 1).to_list(1000)
+        # Build query filter
+        query = {}
+        if country:
+            query["country"] = country
+            logger.info(f"Fetching cities for country: '{country}'")
+        
+        cities = await db.cities.find(query).sort("name", 1).to_list(1000)
+        logger.info(f"Found {len(cities)} cities" + (f" for country '{country}'" if country else ""))
         return [LibraryCity(**city) for city in cities]
     except Exception as e:
         logger.error(f"Error getting cities: {str(e)}")
