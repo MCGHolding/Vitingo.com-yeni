@@ -1543,6 +1543,7 @@ const Dashboard = () => {
         onOngoingProjects={handleOngoingProjects}
         onCompletedProjects={handleCompletedProjects}
         onCancelledProjects={handleCancelledProjects}
+        onSettings={handleSettings}
         onImportData={handleImportData}
         onExportData={handleExportData}
         onSalesReports={handleSalesReports}
