@@ -384,6 +384,19 @@ const ContractsPage = ({ setCurrentView }) => {
               <option value="cancelled">İptal</option>
             </select>
 
+            {/* Date Range Filter */}
+            <select
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="all">Tüm Zamanlar</option>
+              <option value="today">Bugün</option>
+              <option value="week">Son 7 Gün</option>
+              <option value="month">Bu Ay</option>
+              <option value="year">Bu Yıl</option>
+            </select>
+
             {/* View Mode Toggle */}
             <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
               <button
