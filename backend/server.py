@@ -10709,6 +10709,46 @@ async def get_contract_template(template_id: str):
         logger.error(f"Error fetching contract template: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/contract-templates/{template_id}")
+async def update_contract_template(template_id: str, template_data: ContractTemplateCreate):
+    """Update an existing contract template"""
+    try:
+        # Check if template exists
+        existing = await db.contract_templates.find_one({"id": template_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Update template
+        updated_template = {
+            "template_name": template_data.template_name,
+            "filename": template_data.filename,
+            "total_pages": template_data.total_pages,
+            "pages": template_data.pages,
+            "fields": [field.dict() for field in template_data.fields],
+            "creation_method": template_data.creation_method,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        result = await db.contract_templates.update_one(
+            {"id": template_id},
+            {"$set": updated_template}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        logger.info(f"Contract template updated: {template_id}")
+        return {
+            "success": True,
+            "message": "Şablon başarıyla güncellendi",
+            "template_id": template_id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating contract template: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Şablon güncellenemedi: {str(e)}")
+
 @api_router.delete("/contract-templates/{template_id}")
 async def delete_contract_template(template_id: str):
     """Delete a contract template"""
