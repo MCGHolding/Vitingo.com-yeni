@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ArrowLeft, FileText, Sparkles, Edit3, Upload, CheckCircle } from 'lucide-react';
+import { ArrowLeft, FileText, Sparkles, Edit3, Upload, CheckCircle, Plus } from 'lucide-react';
 import TextAnnotationPage from './TextAnnotationPage';
+import ContractCreatePage from './ContractCreatePage';
 
 const ContractManagementPage = ({ onBack }) => {
-  const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete'
+  const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete', 'create-contract'
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
