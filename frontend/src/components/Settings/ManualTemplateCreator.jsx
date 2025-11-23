@@ -331,6 +331,7 @@ const AddFieldModal = ({ field, fieldTypes, generateSlug, onSave, onClose }) => 
   const [fieldSlug, setFieldSlug] = useState(field?.slug || '');
   const [fieldType, setFieldType] = useState(field?.type || 'text');
   const [fieldUnit, setFieldUnit] = useState(field?.unit || '');
+  const [fieldDefaultValue, setFieldDefaultValue] = useState(field?.defaultValue || '');
   const [autoSlug, setAutoSlug] = useState(!field);
 
   const handleFieldNameChange = (name) => {
