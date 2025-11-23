@@ -311,8 +311,8 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
   };
 
   // Handler for customer selection
-  const handleCustomerChange = (customerName) => {
-    const customer = customers.find(c => c.name === customerName);
+  const handleCustomerChange (customerName) => {
+    const customer = customers.find(c => c.companyName === customerName);
     setSelectedCustomer(customerName);
     
     // Filter projects for this customer
