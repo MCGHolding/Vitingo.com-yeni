@@ -704,8 +704,9 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
 
     // Müşteri Yetkili Kişisi - Customer contacts
     if (field.field_key === 'musteri_yetkili_kisisi' && selectedCustomer) {
-      const customer = customers.find(c => c.name === selectedCustomer);
-      const contacts = customer?.contact_persons || [];
+      const customer = customers.find(c => c.companyName === selectedCustomer);
+      // Use contactPerson field as the primary contact
+      const contacts = customer?.contactPerson ? [customer.contactPerson] : [];
       
       return (
         <select
