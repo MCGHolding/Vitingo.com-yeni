@@ -184,6 +184,14 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
               <span className="font-medium">{project.customerName || 'Belirtilmemiş'}</span>
             </div>
 
+            {project.companyName && (
+              <div className="flex items-center space-x-2">
+                <Building className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-600">Grup Şirketi:</span>
+                <span className="font-medium">{project.companyName}</span>
+              </div>
+            )}
+
             {project.createdByName && (
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-gray-400" />
