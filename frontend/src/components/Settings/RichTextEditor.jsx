@@ -219,7 +219,7 @@ const RichTextEditor = ({ content, onChange, onTextSelect, placeholder = "Metni 
       </div>
 
       {/* Editor Content */}
-      <div onMouseUp={(e) => e.stopPropagation()}>
+      <div onMouseUp={onTextSelect}>
         <EditorContent 
           editor={editor} 
           className="prose max-w-none p-4 min-h-[400px] focus:outline-none"
