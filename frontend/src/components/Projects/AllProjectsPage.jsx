@@ -482,6 +482,23 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
           onClose={() => setSelectedProject(null)}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        projectName={projectToDelete?.name || ''}
+        loading={deleting}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={successModalOpen}
+        onClose={() => setSuccessModalOpen(false)}
+        title="Proje Silindi"
+        message={successMessage}
+      />
     </div>
   );
 };
