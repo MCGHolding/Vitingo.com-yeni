@@ -239,7 +239,7 @@ const ContractsPage = ({ setCurrentView }) => {
           </div>
           
           <button
-            onClick={() => window.location.href = '/contracts/new'}
+            onClick={() => setCurrentView ? setCurrentView('contracts-new') : window.location.href = '/contracts/new'}
             className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium"
           >
             <Plus className="h-4 w-4 mr-2" />
