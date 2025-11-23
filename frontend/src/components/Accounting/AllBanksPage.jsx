@@ -71,7 +71,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     loadBanks();
   }, []);
 
-  // Filter banks based on search and country
+  // Filter banks based on search and company
   useEffect(() => {
     let filtered = [...banks];
 
@@ -79,17 +79,17 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     if (searchQuery) {
       filtered = filtered.filter(bank => 
         bank.bank_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bank.country.toLowerCase().includes(searchQuery.toLowerCase())
+        (bank.company_name && bank.company_name.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
-    // Country filter
-    if (selectedCountry !== 'all') {
-      filtered = filtered.filter(bank => bank.country === selectedCountry);
+    // Company filter
+    if (selectedCompany !== 'all') {
+      filtered = filtered.filter(bank => bank.company_id === selectedCompany);
     }
 
     setFilteredBanks(filtered);
-  }, [banks, searchQuery, selectedCountry]);
+  }, [banks, searchQuery, selectedCompany]);
 
   // Group banks by country
   const groupedBanks = filteredBanks.reduce((groups, bank) => {
