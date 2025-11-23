@@ -455,6 +455,11 @@ class GroupCompany(BaseModel):
     groupName: Optional[str] = ""
     status: str = "active"
     accountant: Optional[Dict] = None
+    # Details
+    address: Optional[str] = ""
+    postalCode: Optional[str] = ""
+    city: Optional[str] = ""
+    vatNo: Optional[str] = ""
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
