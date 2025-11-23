@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, Search, Building2, Edit2, Trash2, MapPin } from 'lucid
 import { useToast } from '../../hooks/use-toast';
 import AddCompanyModal from './AddCompanyModal';
 import AddAccountantModal from './AddAccountantModal';
+import CompanyDetailsModal from './CompanyDetailsModal';
 
 const GroupCompaniesPage = ({ onBack }) => {
   const { toast } = useToast();
