@@ -1075,6 +1075,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'contract-management':
+        return (
+          <ContractManagementPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'import-data':
         return (
           <ImportDataPage 
