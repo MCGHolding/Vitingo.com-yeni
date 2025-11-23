@@ -352,7 +352,8 @@ const AddFieldModal = ({ field, fieldTypes, generateSlug, onSave, onClose }) => 
       name: fieldName,
       slug: fieldSlug || generateSlug(fieldName),
       type: fieldType,
-      unit: fieldType === 'number_unit' ? fieldUnit : undefined
+      unit: fieldType === 'number_unit' ? fieldUnit : undefined,
+      defaultValue: fieldDefaultValue || undefined
     };
 
     onSave(newField);
