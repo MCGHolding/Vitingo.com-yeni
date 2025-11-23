@@ -639,9 +639,18 @@ const ContractCreatePage = ({ onBack }) => {
                 </div>
                 
                 <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
-                    {updatedPages[previewPageIndex].text}
-                  </pre>
+                  {updatedPages[previewPageIndex].text.includes('<') ? (
+                    // If HTML content, render as HTML
+                    <div 
+                      className="font-sans text-gray-800 leading-relaxed text-base"
+                      dangerouslySetInnerHTML={{ __html: updatedPages[previewPageIndex].text }}
+                    />
+                  ) : (
+                    // If plain text, render as pre
+                    <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
+                      {updatedPages[previewPageIndex].text}
+                    </pre>
+                  )}
                 </div>
               </div>
             </div>
