@@ -43,6 +43,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
   useEffect(() => {
     loadFairs();
     loadCustomers();
+    loadGroupCompanies();
     loadProject();
   }, [projectId]);
 
