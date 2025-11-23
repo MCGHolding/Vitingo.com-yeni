@@ -617,7 +617,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
           <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
           <p className="text-red-600">{error}</p>
           <button
-            onClick={onBack}
+            onClick={handleBackWithAutoSave}
             className="mt-4 px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
           >
             Geri Dön
