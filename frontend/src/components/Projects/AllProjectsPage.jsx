@@ -366,6 +366,18 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
                   <button 
                     onMouseDown={(e) => {
                       e.stopPropagation();
+                      console.log('📄 Contract clicked (list view):', project.id);
+                      window.location.href = '/contracts/new';
+                    }}
+                    className="p-2 text-emerald-600 hover:bg-emerald-50 rounded transition-colors cursor-pointer"
+                    title="Sözleşme Oluştur"
+                    style={{ zIndex: 10, position: 'relative', pointerEvents: 'auto' }}
+                  >
+                    <FileText className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
                       console.log('✏️ Edit clicked (list view):', project.id);
                       if (onEditProject) {
                         onEditProject(project.id);
