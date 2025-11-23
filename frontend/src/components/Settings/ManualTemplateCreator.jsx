@@ -575,4 +575,85 @@ const AddFieldModal = ({ field, fieldTypes, generateSlug, onSave, onClose }) => 
   );
 };
 
+// Sortable Item Component
+function SortableFieldItem({ field, index, onEdit, onDelete, getFieldTypeLabel }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: field.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center justify-between p-4 border border-gray-200 rounded-lg transition-all ${
+        isDragging 
+          ? 'shadow-lg border-blue-400 bg-blue-50 opacity-50' 
+          : 'hover:border-blue-300'
+      }`}
+    >
+      {/* Drag Handle */}
+      <div 
+        {...attributes}
+        {...listeners}
+        className="mr-3 cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+      </div>
+
+      <div className="flex-1">
+        <div className="flex items-center space-x-3">
+          <span className="text-sm text-gray-500 font-medium">#{index + 1}</span>
+          <div>
+            <h3 className="font-medium text-gray-900">{field.name}</h3>
+            <div className="flex items-center space-x-3 mt-1">
+              <code className="text-xs bg-gray-100 px-2 py-1 rounded text-blue-600">
+                {`{{${field.slug}}}`}
+              </code>
+              <span className="text-xs text-gray-500">
+                {getFieldTypeLabel(field.type)}
+                {field.unit && ` (${field.unit})`}
+              </span>
+              {field.defaultValue && (
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                  ✓ Default
+                </span>
+              )}
+            </div>
+            {field.defaultValue && (
+              <p className="text-xs text-gray-600 mt-1 line-clamp-1">
+                Default: {field.defaultValue.substring(0, 50)}{field.defaultValue.length > 50 ? '...' : ''}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={() => onEdit(field)}
+          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+        >
+          <Edit2 className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => onDelete(field.id)}
+          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default ManualTemplateCreator;
