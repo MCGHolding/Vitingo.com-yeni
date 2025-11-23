@@ -214,11 +214,16 @@ const CompanyDetailsModal = ({ isOpen, onClose, onSave, company }) => {
                 disabled={!formData.country}
               >
                 <option value="">Şehir Seçin</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
+                {cities.map((city) => {
+                  // Handle both string and object formats
+                  const cityName = typeof city === 'string' ? city : city.name;
+                  const cityValue = typeof city === 'string' ? city : city.name;
+                  return (
+                    <option key={cityValue} value={cityValue}>
+                      {cityName}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
