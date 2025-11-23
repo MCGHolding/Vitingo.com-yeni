@@ -88,6 +88,23 @@ const ContractCreatePage = ({ onBack }) => {
     return true;
   };
 
+  // Helper function to extract text from HTML
+  const htmlToText = (html) => {
+    if (!html) return '';
+    
+    // If it's already plain text (no HTML tags), return as is
+    if (!html.includes('<')) return html;
+    
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      return doc.body.textContent || '';
+    } catch (error) {
+      // Fallback: strip HTML tags with regex
+      return html.replace(/<[^>]*>/g, '');
+    }
+  };
+
   // Update contract with field values (replace placeholders)
   const handleUpdateContract = () => {
     if (!validateForm()) return;
@@ -105,27 +122,45 @@ const ContractCreatePage = ({ onBack }) => {
       const updated = originalPages.map((page, pageIndex) => {
         let updatedText = page.text;
         
+        // If text is HTML, work with both HTML and plain text
+        const isHTML = updatedText.includes('<');
+        
+        console.log(`📄 Page ${pageIndex + 1}:`);
+        console.log(`   Is HTML: ${isHTML}`);
+        console.log(`   Original (first 200 chars):`, updatedText.substring(0, 200));
+        
         // Replace each field placeholder with its value
         selectedTemplate.fields.forEach((field) => {
           const placeholder = field.placeholder;
           const value = fieldValues[field.field_key] || '[DOLDURULMADI]';
           
-          console.log(`🔄 Trying to replace "${placeholder}" with "${value}"`);
-          console.log(`   Placeholder exists in text: ${updatedText.includes(placeholder)}`);
+          console.log(`🔄 Replacing "${placeholder}" with "${value}"`);
+          
+          // Try to find placeholder in both HTML and text
+          const existsInOriginal = updatedText.includes(placeholder);
+          console.log(`   Found in original: ${existsInOriginal}`);
+          
+          if (!existsInOriginal && isHTML) {
+            // Try in plain text version
+            const plainText = htmlToText(updatedText);
+            console.log(`   Checking in plain text: ${plainText.includes(placeholder)}`);
+          }
           
           // Escape special regex characters in placeholder
           const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const regex = new RegExp(escapedPlaceholder, 'g');
           
           // Count occurrences before replace
-          const matches = updatedText.match(regex);
-          const matchCount = matches ? matches.length : 0;
+          const beforeCount = (updatedText.match(regex) || []).length;
           
-          // Perform replacement
+          // Perform replacement - works for both HTML and plain text
           updatedText = updatedText.replace(regex, value);
           
-          console.log(`   ${matchCount} occurrences replaced`);
+          const afterCount = (updatedText.match(regex) || []).length;
+          console.log(`   Replaced ${beforeCount - afterCount} occurrences`);
         });
+        
+        console.log(`   Updated (first 200 chars):`, updatedText.substring(0, 200));
         
         return {
           ...page,
@@ -134,11 +169,11 @@ const ContractCreatePage = ({ onBack }) => {
       });
       
       setUpdatedPages(updated);
-      console.log('✅ Updated Pages:', updated);
+      console.log('✅ Final Updated Pages:', updated);
       
       // Count total replacements made
       const totalReplacements = selectedTemplate.fields.length;
-      alert(`✅ ${totalReplacements} alan güncellendi! Önizleme yapabilirsiniz.`);
+      alert(`✅ ${totalReplacements} alan için güncelleme yapıldı! Console'u kontrol edin ve önizlemeye bakın.`);
     } catch (error) {
       console.error('❌ Error updating contract:', error);
       alert('Bir hata oluştu: ' + error.message);
