@@ -721,8 +721,12 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
 
             {/* Keyboard Shortcuts Info */}
             <div className="mt-6 text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
-              <strong>Klavye Kısayolları:</strong> ← Önceki Sayfa | → Sonraki Sayfa | 
-              {editMode && ' Ctrl+B: Bold | Ctrl+I: Italic | Ctrl+U: Underline'}
+              <strong>Klavye Kısayolları:</strong> 
+              <span className="ml-2">Ctrl+Z: Geri Al</span> | 
+              <span className="ml-2">Ctrl+Y: İleri Al</span> | 
+              <span className="ml-2">← Önceki Sayfa</span> | 
+              <span className="ml-2">→ Sonraki Sayfa</span>
+              {editMode && ' | Ctrl+B: Bold | Ctrl+I: Italic | Ctrl+U: Underline'}
             </div>
           </div>
         </div>
