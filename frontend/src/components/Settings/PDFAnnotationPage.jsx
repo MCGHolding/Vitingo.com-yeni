@@ -193,34 +193,24 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
           {/* PDF Viewer */}
           <div className="col-span-2 bg-white rounded-lg shadow-lg p-4">
             <div 
-              className="flex justify-center"
+              className="relative"
               onMouseUp={handleTextSelect}
             >
-              <Document
-                file={pdfUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={(error) => console.error('PDF Load Error:', error)}
-                loading={
-                  <div className="flex items-center justify-center h-96">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-                  </div>
-                }
-                error={
-                  <div className="flex items-center justify-center h-96 text-red-600">
-                    <div className="text-center">
-                      <p className="font-semibold mb-2">PDF Yüklenemedi</p>
-                      <p className="text-sm">Lütfen geçerli bir PDF dosyası seçin</p>
-                    </div>
-                  </div>
-                }
-              >
-                <Page
-                  pageNumber={currentPage}
-                  scale={scale}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
+              {pdfUrl ? (
+                <iframe
+                  src={`${pdfUrl}#page=${currentPage}&zoom=${scale * 100}`}
+                  className="w-full border border-gray-300 rounded"
+                  style={{ height: '800px' }}
+                  title="PDF Viewer"
                 />
-              </Document>
+              ) : (
+                <div className="flex items-center justify-center h-96">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+                </div>
+              )}
+            </div>
+            <div className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded">
+              💡 <strong>İpucu:</strong> PDF'de metni fareyle seçin, ardından popup'ta alan bilgilerini girin.
             </div>
           </div>
 
