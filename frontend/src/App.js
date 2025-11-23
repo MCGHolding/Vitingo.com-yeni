@@ -1225,6 +1225,7 @@ const Dashboard = () => {
           <ContractCreatePage 
             onBack={() => setCurrentView('contracts')}
             fromContracts={true}
+            onEditTemplate={handleEditTemplate}
           />
         );
 
