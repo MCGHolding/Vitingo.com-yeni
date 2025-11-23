@@ -10393,6 +10393,12 @@ async def get_cities(country: str):
                 'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis',
                 'Seattle', 'Denver', 'Boston', 'Nashville', 'Detroit', 'Portland', 'Las Vegas'
             ],
+            'Amerika Birleşik Devletleri': [
+                'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia',
+                'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville',
+                'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis',
+                'Seattle', 'Denver', 'Boston', 'Nashville', 'Detroit', 'Portland', 'Las Vegas'
+            ],
             'Almanya': [
                 'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt', 'Stuttgart', 'Düsseldorf',
                 'Dortmund', 'Essen', 'Leipzig', 'Bremen', 'Dresden', 'Hannover', 'Nürnberg',
@@ -10406,6 +10412,18 @@ async def get_cities(country: str):
                 'London', 'Birmingham', 'Manchester', 'Leeds', 'Liverpool', 'Newcastle',
                 'Sheffield', 'Bristol', 'Glasgow', 'Leicester', 'Edinburgh', 'Southampton',
                 'Nottingham', 'Cardiff', 'Belfast'
+            ],
+            'İspanya': [
+                'Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'Zaragoza', 'Málaga',
+                'Murcia', 'Palma', 'Las Palmas', 'Bilbao'
+            ],
+            'İtalya': [
+                'Roma', 'Milano', 'Napoli', 'Torino', 'Palermo', 'Genova',
+                'Bologna', 'Firenze', 'Bari', 'Catania', 'Venezia'
+            ],
+            'Hollanda': [
+                'Amsterdam', 'Rotterdam', 'Den Haag', 'Utrecht', 'Eindhoven',
+                'Groningen', 'Tilburg', 'Almere', 'Breda', 'Nijmegen'
             ]
         }
         
