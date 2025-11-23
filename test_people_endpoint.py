@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://vitingo-contract.preview.emergentagent.com"
+BACKEND_URL = "https://docu-sign-2.preview.emergentagent.com"
 
 def test_people_endpoint():
     """

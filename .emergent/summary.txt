@@ -1,83 +1,110 @@
 <analysis>
-The trajectory details an extensive development and debugging process for a CRM application, with all user interaction in Turkish. The initial work focused on fixing a critical bug on the  where mock data was displayed instead of fetching from the backend. This involved significant debugging of frontend build/cache issues, which appeared to resolve intermittently.
+The trajectory details an intensely iterative and user-driven development process for a Contract Management feature within a CRM, with all user communication in Turkish.
 
-Following this fix, a substantial feature set was implemented on the same page based on user requests: a grid/list view toggle, a project numbering system (), and CRUD functionality. A major debugging effort was required to make the action buttons (View, Edit, Delete) respond to clicks, which was resolved by replacing a custom UI library button with native HTML buttons and adjusting CSS properties. A confirmation modal flow for deletion was also added.
+The work began with creating a contract template system. The initial approach involved PDF-to-text extraction. A backend endpoint () was built using , and a corresponding frontend page () was created for users to select text and define dynamic fields.
 
-The user then deferred a lingering UI bug (modal z-index) to request a complete redesign of the Settings page, inspired by an external site. This new page and its sub-page for Group Companies were built from scratch, including new backend models and API endpoints in  and corresponding frontend components and routing.
+Following user feedback, the project's scope expanded significantly. The user requested a rich text editor, leading to the integration of .  became highly complex, incorporating features like Edit Mode vs. View Mode, page-by-page navigation, and a rich text editor toolbar.
 
-The most recent task was to add an Add Detail modal to the Group Companies page, which included country and city dropdowns. A bug arose where the city dropdown failed to populate. The work is currently paused mid-debug on the backend  endpoint, which is incorrectly returning an empty array. The next agent must respond in **Turkish**.
+Subsequent user requests led to numerous iterative enhancements and bug fixes:
+-   **Core Functionality:** A draft-saving mechanism using , an undo/redo history stack, field name autocompletion, and a replace all function for placeholders were added.
+-   **Bug Fixing:** A critical bug where field values weren't updating in the final contract was traced to placeholders not being correctly inserted into the template's HTML content. This was resolved by implementing a feature to automatically replace selected text with a placeholder and a force-rerender mechanism.
+-   **UI/UX:** Multiple rounds of CSS changes were made to address user complaints about inconsistent and oversized UI elements. Field deletion UI was also improved.
+
+The most recent and significant pivot was the user's request to build a full-fledged Sözleşmeler (Contracts) module. This includes a new dashboard with statistics, filters, role-based access, and a complete lifecycle for creating, viewing, and managing contracts. The AI has just laid the groundwork for this by creating the backend models/endpoints and the initial frontend routing and components.
+
+The next agent must respond in **Turkish**.
 </analysis>
+
 <product_requirements>
-The application is a CRM for managing fairs and sales projects.
+The primary goal is to build a comprehensive Contract Management System integrated into the existing CRM application.
 
-**1. Projects Module ():**
-- Displays all projects in either a grid or list view, with a toggle to switch between them.
-- Each project card/row shows key details, including a unique, automatically generated project number (e.g., ) and the name of the user who created it.
-- Provides CRUD operations:
-    - **View:** Opens a modal () to display project details.
-    - **Edit:** Navigates to a dedicated page () to modify the project.
-    - **Delete:** Triggers a confirmation modal () before deleting the project and shows a success modal () upon completion.
+**Phase 1: Template Creation (Largely Complete)**
+1.  **Upload & Process:** A user uploads a contract template as a PDF. The backend extracts the text content from all pages.
+2.  **Annotation & Editing:** The extracted text is displayed in a multi-page interface. The user can:
+    *   Switch to an Advanced Edit Mode powered by a rich text editor (Tiptap) to format text, add images, etc.
+    *   Select text segments to define as dynamic placeholder fields (e.g., ).
+    *   Use features like autocomplete for previously used field names and a replace all option to apply a placeholder document-wide.
+    *   Utilize Undo/Redo functionality for all changes.
+    *   Save progress as a local draft.
+3.  **Save Template:** The finalized template, including its multi-page structure, rich content (HTML), and defined fields, is saved to the database.
 
-**2. Settings Module:**
-- A completely redesigned Settings page () provides a grid of cards for accessing different configuration areas, inspired by the  UI.
-- **Group Companies ():** A sub-module accessed from the Settings page. It allows users to view, add, and manage a list of group companies. It includes modals for adding a new company, an accountant, and detailed company information (address, VAT no, etc.) with country/city dropdowns.
+**Phase 2: Contract Lifecycle Management (In Progress)**
+1.  **Dashboard:** A new Sözleşmeler section in the main navigation will lead to a dashboard displaying contract statistics (e.g., total, active, draft), graphs (e.g., monthly trends), and filters.
+2.  **Creation:** Users initiate contract creation from the dashboard, select a template, and are taken to a form where they fill in the values for the template's dynamic fields.
+3.  **Generation & Storage:** Upon completion, a Contract record is created and stored in the database. The system should also generate a final PDF.
+4.  **Management:** The dashboard will list all created contracts (in grid/list views), with role-based visibility (Super Admins see all; others see their own).
 </product_requirements>
+
 <key_technical_concepts>
-- **Frontend:** React, Tailwind CSS, Shadcn/UI components (used for Modals, Buttons, etc., though Button component was problematic).
-- **Backend:** FastAPI, Pydantic for data modeling.
-- **Database:** MongoDB.
-- **Core Concepts:**
-    - API-driven state management in React (, ).
-    - Debugging complex frontend issues (build/cache problems, CSS z-index/pointer-events, component event handling).
-    - Dynamic routing and state management in a single-page application ().
-    - Building features from scratch (new backend models, API endpoints, and corresponding frontend components/pages).
+- **Frontend:**
+  - React, Tailwind CSS
+  - : For rich text editing capabilities.
+  - : For client-side draft saving.
+  - State Management: Complex state management using  and  for multi-page content, edit history (undo/redo), and UI state.
+- **Backend:**
+  - FastAPI, Pydantic
+  - : For extracting text from uploaded PDFs.
+  - : For generating PDFs from HTML content.
+  - MongoDB ( driver): Database for storing contract templates and generated contracts. GridFS is planned for file storage.
+- **Architecture:** Monorepo with a single backend service and a React SPA.
 </key_technical_concepts>
+
 <code_architecture>
-The application is a monorepo with a React frontend and a FastAPI backend.
+The application follows a standard monorepo structure with a React frontend and a FastAPI backend.
 
 
 
 - ****
-    - **Importance:** Monolithic FastAPI backend containing all API routes and Pydantic data models for the entire application.
-    - **Changes:** Heavily modified to support new features. New models (, , ) and fields (, ) were added. New API endpoints for projects (), group companies (), and a data library (, ) were created.
+  - **Importance:** The single file containing all backend logic, including API routes, database models (Pydantic), and business logic.
+  - **Summary of Changes:** This file now contains two main sets of endpoints.
+    - : CRUD operations for managing the contract templates created by users.
+    - : (Newly Added) CRUD operations for managing the final, generated contract instances. This includes endpoints to create, list, view, and delete contracts, with user role logic planned. Models for , , etc., have been defined.
 
 - ****
-    - **Importance:** The root component that manages application-wide state, including the current view (routing).
-    - **Changes:** Updated to handle navigation to the new , , and  by managing the  state.
+  - **Importance:** This has become the core of the template creation process. It's a highly complex component.
+  - **Summary of Changes:** It was heavily modified to integrate the  component. It manages the state for multi-page content, an edit mode toggle, a history stack for undo/redo, text selection for field annotation, a popup for defining fields (with autocomplete and replace all), and keyboard shortcuts. It also handles draft saving to . A  was added to force re-renders to solve a stubborn UI update bug.
 
 - ****
-    - **Importance:** The main page for listing all projects. It was the focus of extensive debugging and feature development.
-    - **Changes:** Refactored from using mock data to fetching live data from the backend. Implemented a grid/list view toggle, action buttons (View, Edit, Delete), and the state management for view, delete confirmation, and success modals. The problematic UI library buttons were replaced with native HTML buttons to fix click event issues.
+  - **Importance:** This is the form where users fill in data to generate a contract from a selected template.
+  - **Summary of Changes:** The main functionality was changed. The Download PDF button is now a Create Contract button that sends a  request to the new  endpoint to save the contract record. A three-step user flow (Update Info, Preview, Create Contract) was implemented. The UI has been repeatedly made more compact based on user feedback, and a template deletion feature was added.
 
 - ****
-    - **Importance:** A brand-new page created to provide a centralized, user-friendly hub for all application settings.
-    - **Changes:** Created from scratch with a responsive grid layout of 21 setting cards, including a live search/filter functionality. It handles navigation to sub-pages like .
+  - **Importance:** The main application navigation.
+  - **Summary of Changes:** A new menu item, Sözleşmeler, was added, linking to the  route.
 
 - ****
-    - **Importance:** A new sub-page for managing group companies.
-    - **Changes:** Created from scratch. It fetches and displays a list of companies, and manages modals for adding new companies, accountants, and company details.
+  - **Importance:** This is the entry point for the new, full-fledged contract management module.
+  - **Summary of Changes:** This is a newly created placeholder file. It's intended to become the main dashboard for viewing, filtering, and managing all contracts.
 
 - ****
-    - **Importance:** The modal used to add/edit address details for a group company. It's the location of the current bug.
-    - **Changes:** Created from scratch. It contains a form with dropdowns for Country and City. An error Objects are not valid as a React child was fixed here by handling both string and object data types from the API.
+  - **Importance:** The main application router and component container.
+  - **Summary of Changes:** A new route for  was added to render the  component.
 </code_architecture>
+
 <pending_tasks>
-- **Modal Z-Index Bug:** The user reported that when the View Project modal is open, the buttons on the project card underneath are still visible. The AI attempted a fix by increasing z-index, but the user deferred testing, so this fix is unconfirmed.
-- **Advanced Project Features:** The user provided a large PRD (message 274) detailing extensive features like advanced filtering, activity logs, and data exporting (Excel/PDF) for the projects page. These were agreed to be implemented after the initial button fixes.
+- **Build Contracts Dashboard:** Fully implement the  component with statistics, graphs (), filters, and a list/grid view to display contracts fetched from the  endpoint.
+- **Implement Backend Permissions:** Add the role-based access control logic to the  endpoint to ensure users only see contracts they are permitted to see.
+- **Finalize Creation Flow:** Ensure that after a contract is created via , the user is successfully redirected to the new  dashboard.
+- **Fix Undo/Redo Visibility:** The undo/redo buttons are not appearing on the UI, despite the code being present. This needs to be debugged and fixed.
 </pending_tasks>
+
 <current_work>
-The AI is in the middle of debugging a critical bug where the Şehir (City) dropdown in the  component remains empty after a country is selected.
+The most recent work was a major pivot to build a full Sözleşmeler (Contracts) management system, based on an extensive user request. The AI engineer was in the middle of this implementation.
 
-**Problem:** The user reported şehirler veritabanında var neden hep sorun oluypr ? (The cities are in the database, why is there always a problem?).
+**Backend:**
+- New Pydantic models for contract instances (e.g., ) were added to .
+- A complete set of CRUD endpoints (, , ) for  was created to manage these instances.
+- The backend service was restarted to apply these changes.
 
-**Investigation so far:**
-1.  The AI confirmed via  that the backend API endpoint  is returning an empty array , which is the direct cause of the empty dropdown.
-2.  The initial hypothesis of an incorrect country name in the hardcoded backend data was tested and did not resolve the issue.
-3.  The core data filtering logic was tested in a standalone Python script and confirmed to be working correctly, indicating the problem lies within the FastAPI application context (e.g., code not being reloaded, routing issue).
-4.  Multiple server restarts and logging additions have been attempted without success in identifying the root cause. The API is being hit, but the correct code doesn't seem to execute.
+**Frontend:**
+1.  **Navigation:** A Sözleşmeler link was added to the main .
+2.  **New Page:** A placeholder component file, , was created to serve as the future dashboard.
+3.  **Routing:** The main  was updated to include a route that renders  when the path is .
+4.  **Flow Update:** The  was significantly modified. The final button was changed from Download PDF to Sözleşme Oluştur (Create Contract). Its handler was updated to make a  request to the new  endpoint, saving the contract data to the database instead of just triggering a download.
 
-The very last action was the assistant deciding to check FastAPI's internal routing table to verify that the  path is correctly registered to the intended function in .
+The work paused immediately after modifying the  to implement this new behavior. The full frontend dashboard and backend permissions are the clear next steps in this new feature build-out.
 </current_work>
+
 <optional_next_step>
-Continue debugging the  endpoint by inspecting the application's registered API routes to ensure it's correctly mapped.
+Continue the implementation of the new Sözleşmeler module by fetching and displaying the contract data in the newly created  dashboard, as per the user's detailed request.
 </optional_next_step>
