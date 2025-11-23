@@ -9620,30 +9620,34 @@ async def update_user(user_id: str, user_data: UserUpdate):
 
 @api_router.delete("/users/{user_id}")
 async def delete_user(user_id: str):
-    """Delete a user (soft delete - set status to inactive)"""
+    """Archive a user (soft delete - set status to archived)"""
     try:
         # Check if user exists
         existing_user = await db.users.find_one({"id": user_id})
         if not existing_user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı")
         
-        # Soft delete (set status to inactive)
+        # Archive user (set status to archived)
         await db.users.update_one(
             {"id": user_id},
             {"$set": {
-                "status": "inactive",
+                "status": "archived",
                 "updated_at": datetime.now(timezone.utc)
             }}
         )
         
-        logger.info(f"Soft deleted user: {user_id}")
-        return {"success": True, "message": "User deactivated successfully"}
+        user_name = existing_user.get("name", existing_user.get("email", ""))
+        logger.info(f"Archived user: {user_id} ({user_name})")
+        return {
+            "success": True, 
+            "message": f"{user_name} arşivlendi"
+        }
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error deleting user: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error deleting user: {str(e)}")
+        logger.error(f"Error archiving user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error archiving user: {str(e)}")
 
 @api_router.get("/users/count")
 async def get_users_count():
