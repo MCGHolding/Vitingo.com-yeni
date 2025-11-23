@@ -218,7 +218,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
     setPreviewPageIndex(0);
   };
 
-  // Generate and download PDF
+  // Create and save contract
   const handleGenerateContract = async () => {
     if (!updatedPages) {
       alert('⚠️ Önce "Bilgileri Güncelle" butonuna tıklayın!');
@@ -231,37 +231,49 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
-      const response = await fetch(`${backendUrl}/api/contracts/generate`, {
+      // Create contract (saves to DB and generates PDF)
+      const response = await fetch(`${backendUrl}/api/contracts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          contract_title: contractTitle,
           template_id: selectedTemplate.id,
           field_values: fieldValues,
-          contract_title: contractTitle
+          status: 'active',
+          created_by: 'mbucak@gmail.com' // TODO: Get from auth context
         })
       });
 
       if (response.ok) {
-        // Download PDF
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${contractTitle}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        const data = await response.json();
+        alert('✅ Sözleşme başarıyla oluşturuldu!');
         
-        alert('✅ Sözleşme PDF olarak oluşturuldu ve indirildi!');
+        // Redirect to contracts page
+        if (fromContracts) {
+          window.location.href = '/contracts';
+        } else {
+          // Stay on page, offer to download
+          const downloadResponse = await fetch(`${backendUrl}/api/contracts/${data.contract_id}/pdf`);
+          if (downloadResponse.ok) {
+            const blob = await downloadResponse.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${contractTitle}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+          }
+        }
       } else {
         const error = await response.json();
         alert(`Hata: ${error.detail || 'Sözleşme oluşturulamadı'}`);
       }
     } catch (error) {
-      console.error('Error generating contract:', error);
+      console.error('Error creating contract:', error);
       alert('Bir hata oluştu: ' + error.message);
     } finally {
       setGenerating(false);
