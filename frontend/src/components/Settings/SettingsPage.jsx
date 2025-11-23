@@ -72,6 +72,15 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Organizasyon'
     },
     {
+      id: 'bank-management',
+      title: 'Banka Yönetimi',
+      description: 'Grup şirketlerine ait banka hesaplarını yönetin',
+      icon: Landmark,
+      color: 'cyan',
+      adminOnly: false,
+      category: 'Finans'
+    },
+    {
       id: 'advance-rules',
       title: 'Avans Kuralları',
       description: 'Avans kapama süreleri ve kuralları',
