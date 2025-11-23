@@ -79,7 +79,8 @@ const ContractManagementPage = ({ onBack }) => {
         filename: data.pdfData.filename,
         total_pages: data.pdfData.total_pages,
         pages: data.pdfData.pages,
-        fields: data.fields
+        fields: data.fields,
+        creation_method: 'pdf_parse'
       };
       
       if (!templateData.template_name) {
