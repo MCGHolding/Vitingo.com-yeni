@@ -185,13 +185,13 @@ const NewBankForm = ({ onBackToDashboard }) => {
       iban: '',
       branchName: '',
       branchCode: '',
-      accountHolder: '',
+      accountHolder: prev.companyName || '', // Auto-fill with company name
       accountNumber: '',
       routingNumber: '',
       usAccountNumber: '',
       bankAddress: '',
       recipientAddress: '',
-      recipientName: '',
+      recipientName: prev.companyName || '', // Auto-fill with company name
       recipientZipCode: ''
     }));
   };
