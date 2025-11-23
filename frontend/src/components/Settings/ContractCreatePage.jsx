@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, FileText, Download, Loader2, AlertCircle, Check, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Loader2, AlertCircle, Check, ChevronLeft, ChevronRight, X, Trash2, Edit2 } from 'lucide-react';
 
 const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, isEdit = false }) => {
   const [templates, setTemplates] = useState([]);
