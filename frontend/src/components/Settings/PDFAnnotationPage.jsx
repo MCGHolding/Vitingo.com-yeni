@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
 import { ArrowLeft, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, X } from 'lucide-react';
-
-// PDF.js worker setup - using local worker file
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
 
 const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
   const [numPages, setNumPages] = useState(null);
