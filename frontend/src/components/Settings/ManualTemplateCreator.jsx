@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Save, FileText } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, FileText, GripVertical } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) => {
   const isEditMode = Boolean(templateToEdit);
