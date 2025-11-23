@@ -995,6 +995,31 @@ export default function Sidebar({
       }
       return;
     }
+
+    // Handle Contracts menu actions
+    if (item.name === 'Sözleşmeler' && !subItem) {
+      if (onContracts) {
+        onContracts();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Tüm Sözleşmeler') {
+      if (onContracts) {
+        onContracts();
+      }
+      return;
+    }
+
+    if (subItem && (subItem.name === 'Aktif' || subItem.name === 'Taslak' || 
+                    subItem.name === 'Tamamlandı' || subItem.name === 'İptal')) {
+      // For now, all status filters go to the main contracts page
+      // The ContractsPage component will handle filtering based on URL params
+      if (onContracts) {
+        onContracts();
+      }
+      return;
+    }
     
     // Default click behavior (preventDefault for demo)
     if (!subItem) {
