@@ -42,9 +42,12 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
     { value: 'textarea', label: 'Uzun Metin' }
   ];
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
+  // Set total pages (for iframe we'll use a default)
+  useEffect(() => {
+    if (pdfUrl) {
+      setNumPages(10); // Default - iframe will handle actual pages
+    }
+  }, [pdfUrl]);
 
   const handleTextSelect = () => {
     const selection = window.getSelection();
