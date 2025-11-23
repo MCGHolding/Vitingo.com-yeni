@@ -28,7 +28,7 @@ const ContractManagementPage = ({ onBack }) => {
       title: 'Manuel Şablon oluştur',
       description: 'Sıfırdan kendi şablonunuzu oluşturun',
       icon: Edit3,
-      enabled: false
+      enabled: true
     }
   ];
 
