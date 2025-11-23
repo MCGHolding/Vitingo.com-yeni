@@ -10350,6 +10350,70 @@ async def create_accountant(accountant_data: dict):
         logger.error(f"Error creating accountant: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== LIBRARY (COUNTRIES & CITIES) =====================
+
+@api_router.get("/library/countries")
+async def get_countries():
+    """Get all countries"""
+    try:
+        countries = [
+            'Türkiye', 'ABD', 'Afganistan', 'Almanya', 'Amerika Birleşik Devletleri',
+            'Arjantin', 'Avustralya', 'Avusturya', 'Belçika', 'Brezilya', 'Bulgaristan',
+            'Çek Cumhuriyeti', 'Çin', 'Danimarka', 'Finlandiya', 'Fransa', 'Güney Afrika',
+            'Güney Kore', 'Hindistan', 'Hollanda', 'İngiltere', 'İrlanda', 'İspanya',
+            'İsrail', 'İsveç', 'İsviçre', 'İtalya', 'Japonya', 'Kanada', 'Meksika',
+            'Norveç', 'Polonya', 'Portekiz', 'Romanya', 'Rusya', 'Singapur', 'Yunanistan'
+        ]
+        return sorted(countries)
+    except Exception as e:
+        logger.error(f"Error getting countries: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/library/cities")
+async def get_cities(country: str):
+    """Get cities by country"""
+    try:
+        cities_map = {
+            'Türkiye': [
+                'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
+                'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman',
+                'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale',
+                'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ',
+                'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane',
+                'Hakkâri', 'Hatay', 'Iğdır', 'Isparta', 'İstanbul', 'İzmir', 'Kahramanmaraş',
+                'Karabük', 'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli',
+                'Kırşehir', 'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa',
+                'Mardin', 'Mersin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye',
+                'Rize', 'Sakarya', 'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak',
+                'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+            ],
+            'ABD': [
+                'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia',
+                'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville',
+                'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis',
+                'Seattle', 'Denver', 'Boston', 'Nashville', 'Detroit', 'Portland', 'Las Vegas'
+            ],
+            'Almanya': [
+                'Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt', 'Stuttgart', 'Düsseldorf',
+                'Dortmund', 'Essen', 'Leipzig', 'Bremen', 'Dresden', 'Hannover', 'Nürnberg',
+                'Duisburg', 'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Münster'
+            ],
+            'Fransa': [
+                'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg',
+                'Montpellier', 'Bordeaux', 'Lille', 'Rennes', 'Reims', 'Le Havre', 'Saint-Étienne'
+            ],
+            'İngiltere': [
+                'London', 'Birmingham', 'Manchester', 'Leeds', 'Liverpool', 'Newcastle',
+                'Sheffield', 'Bristol', 'Glasgow', 'Leicester', 'Edinburgh', 'Southampton',
+                'Nottingham', 'Cardiff', 'Belfast'
+            ]
+        }
+        
+        return sorted(cities_map.get(country, []))
+    except Exception as e:
+        logger.error(f"Error getting cities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== ADMIN ENDPOINTS =====================
 
 @api_router.get("/admin/collections")
