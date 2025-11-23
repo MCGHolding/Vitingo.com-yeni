@@ -12,6 +12,11 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [selectedProject, setSelectedProject] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
