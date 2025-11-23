@@ -63,6 +63,15 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Organizasyon'
     },
     {
+      id: 'contract-management',
+      title: 'Sözleşme Yönetimi',
+      description: 'Sözleşme şablonlarını ve sözleşmeleri yönetin',
+      icon: FileText,
+      color: 'emerald',
+      adminOnly: false,
+      category: 'Dökümanlar'
+    },
+    {
       id: 'advance-rules',
       title: 'Avans Kuralları',
       description: 'Avans kapama süreleri ve kuralları',
