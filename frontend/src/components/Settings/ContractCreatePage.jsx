@@ -22,6 +22,44 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
     }
   }, [contractId, isEdit]);
 
+  const loadDraftContract = async () => {
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/contracts/${contractId}`);
+      if (response.ok) {
+        const draft = await response.json();
+        console.log('📋 Loaded draft contract:', draft);
+        
+        // Set contract title
+        setContractTitle(draft.contract_title);
+        
+        // Set field values
+        setFieldValues(draft.field_values || {});
+        
+        // Find and set the template
+        const template = templates.find(t => t.id === draft.template_id);
+        if (template) {
+          setSelectedTemplate(template);
+        } else {
+          // If template not in list yet, we need to wait for templates to load
+          // Store draft data and set it after templates load
+          console.log('⏳ Waiting for templates to load...');
+        }
+      } else {
+        console.error('❌ Failed to load draft contract');
+        alert('Taslak yüklenemedi');
+        if (onBack) onBack();
+      }
+    } catch (error) {
+      console.error('Error loading draft contract:', error);
+      alert('Bir hata oluştu');
+      if (onBack) onBack();
+    }
+  };
+
   const loadProjectDataIfNeeded = async () => {
     // Check if projectId is in URL
     const urlParams = new URLSearchParams(window.location.search);
