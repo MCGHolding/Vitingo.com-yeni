@@ -10742,8 +10742,20 @@ async def get_template(template_id: str):
 async def add_template_fields(template_id: str, fields: List[TemplateFieldCreate]):
     """Add or update fields for a template"""
     try:
-        # Convert TemplateFieldCreate to TemplateField
-        template_fields = []
+        # Get existing template
+        template = await db.contract_templates.find_one({"id": template_id})
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Get existing fields
+        existing_fields = template.get("fields", [])
+        
+        # Find the highest order_index
+        max_order = 0
+        if existing_fields:
+            max_order = max([f.get("order_index", 0) for f in existing_fields])
+        
+        # Convert TemplateFieldCreate to TemplateField and append to existing
         for idx, field in enumerate(fields):
             template_field = {
                 "field_id": str(uuid.uuid4()),
@@ -10753,22 +10765,23 @@ async def add_template_fields(template_id: str, fields: List[TemplateFieldCreate
                 "is_required": field.is_required,
                 "dropdown_options": field.dropdown_options,
                 "validation_rules": None,
-                "order_index": field.order_index if field.order_index > 0 else idx
+                "order_index": max_order + idx + 1
             }
-            template_fields.append(template_field)
+            existing_fields.append(template_field)
         
+        # Update with all fields (existing + new)
         result = await db.contract_templates.update_one(
             {"id": template_id},
             {
                 "$set": {
-                    "fields": template_fields,
+                    "fields": existing_fields,
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 }
             }
         )
         
         if result.modified_count == 0:
-            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+            raise HTTPException(status_code=404, detail="Şablon güncellenemedi")
         
         updated_template = await db.contract_templates.find_one({"id": template_id})
         return ContractTemplate(**serialize_document(updated_template))
