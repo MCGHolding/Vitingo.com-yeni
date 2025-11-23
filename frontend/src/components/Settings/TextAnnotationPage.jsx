@@ -242,31 +242,41 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     setFields([...fields, newField]);
     
     // IMPORTANT: Replace selected text with placeholder in current page
-    if (editMode && editedPages[currentPageIndex]) {
-      // In edit mode with HTML content
-      const currentContent = editedPages[currentPageIndex];
-      const updatedContent = currentContent.replace(selectedText, placeholder);
-      setEditedPages({
-        ...editedPages,
-        [currentPageIndex]: updatedContent
-      });
-    } else if (!editMode && pdfData.pages[currentPageIndex]) {
-      // In view mode with plain text - need to update editedPages
-      const currentText = editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text;
-      const updatedText = currentText.replace(selectedText, placeholder);
-      setEditedPages({
-        ...editedPages,
-        [currentPageIndex]: updatedText
-      });
-    }
+    // Get current content from either editedPages or original pdfData
+    const currentText = editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text;
     
+    console.log('🔄 Replacing in text:');
+    console.log('  Current text (first 100 chars):', currentText.substring(0, 100));
+    console.log('  Selected text:', selectedText);
+    console.log('  Placeholder:', placeholder);
+    console.log('  Contains selected text?', currentText.includes(selectedText));
+    
+    // Replace selected text with placeholder
+    const updatedText = currentText.replace(selectedText, placeholder);
+    
+    console.log('  Updated text (first 100 chars):', updatedText.substring(0, 100));
+    console.log('  Replacement successful?', updatedText !== currentText);
+    
+    // Update editedPages state
+    const newEditedPages = {
+      ...editedPages,
+      [currentPageIndex]: updatedText
+    };
+    
+    console.log('  New editedPages:', newEditedPages);
+    
+    setEditedPages(newEditedPages);
     setShowPopup(false);
     setSelectedText(null);
     
     // Clear selection
     window.getSelection().removeAllRanges();
     
-    alert(`✅ Alan eklendi ve metin "${placeholder}" ile değiştirildi!`);
+    // Force re-render by updating a dummy state
+    setTimeout(() => {
+      console.log('✅ Placeholder replacement completed!');
+      alert(`✅ Alan eklendi ve metin "${placeholder}" ile değiştirildi!`);
+    }, 100);
   };
 
   const handleRemoveField = (fieldId) => {
