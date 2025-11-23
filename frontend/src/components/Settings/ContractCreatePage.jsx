@@ -58,6 +58,34 @@ const ContractCreatePage = ({ onBack }) => {
     }
   };
 
+  const handleDeleteTemplate = async (templateId, templateName) => {
+    if (!confirm(`"${templateName}" şablonunu silmek istediğinizden emin misiniz?`)) {
+      return;
+    }
+
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/contract-templates/${templateId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Remove from local state
+        setTemplates(templates.filter(t => t.id !== templateId));
+        alert('✅ Şablon başarıyla silindi!');
+      } else {
+        const error = await response.json();
+        alert(`Hata: ${error.detail || 'Şablon silinemedi'}`);
+      }
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      alert('Bir hata oluştu: ' + error.message);
+    }
+  };
+
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
     // Initialize field values
