@@ -10719,11 +10719,33 @@ async def delete_contract_template(template_id: str):
         logger.error(f"Error deleting contract template: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Contract (Saved Contract) Models
+class Contract(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    contract_title: str
+    template_id: str
+    template_name: str
+    field_values: Dict[str, Any]
+    status: str = "active"  # draft, active, completed, cancelled
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    pdf_content: Optional[str] = None  # Base64 encoded PDF
+
+class ContractCreate(BaseModel):
+    contract_title: str
+    template_id: str
+    field_values: Dict[str, Any]
+    status: Optional[str] = "active"
+    created_by: str
+
 # Contract generation models
 class ContractGenerateRequest(BaseModel):
     template_id: str
     field_values: Dict[str, Any]
     contract_title: Optional[str] = "Yeni Sözleşme"
+    save_contract: Optional[bool] = False
+    created_by: Optional[str] = None
 
 @api_router.post("/contracts/generate")
 async def generate_contract(request: ContractGenerateRequest):
