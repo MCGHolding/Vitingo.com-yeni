@@ -51,10 +51,15 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
           'fuar_bitis': project.fairEndDate || ''
         };
         
+        console.log('✨ Auto-filled values:', autoFilledValues);
         setFieldValues(autoFilledValues);
         
         // Set contract title
-        setContractTitle(`${project.customerName} - ${project.fairName} Sözleşmesi`);
+        const title = `${project.customerName} - ${project.fairName} Sözleşmesi`;
+        console.log('📝 Setting contract title:', title);
+        setContractTitle(title);
+      } else {
+        console.error('❌ Failed to load project:', response.status);
       }
     } catch (error) {
       console.error('Error loading project data:', error);
