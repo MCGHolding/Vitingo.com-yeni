@@ -524,7 +524,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
                   Önizle
                 </button>
 
-                {/* Generate PDF Button */}
+                {/* Generate Contract Button */}
                 <button
                   onClick={handleGenerateContract}
                   disabled={generating || !updatedPages}
@@ -537,8 +537,8 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
                     </>
                   ) : (
                     <>
-                      <Download className="h-3 w-3 mr-1" />
-                      PDF İndir
+                      <Check className="h-3 w-3 mr-1" />
+                      Sözleşme Oluştur
                     </>
                   )}
                 </button>
