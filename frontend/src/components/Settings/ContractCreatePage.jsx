@@ -568,6 +568,103 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
   const renderFieldInput = (field) => {
     const commonClasses = "w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-transparent";
     
+    // Special handling for specific fields based on field_key
+    // Firma Adı - Company Dropdown
+    if (field.field_key === 'firma_adi') {
+      return (
+        <select
+          value={fieldValues[field.field_key] || ''}
+          onChange={(e) => handleCompanyChange(e.target.value)}
+          className={commonClasses}
+        >
+          <option value="">Grup Şirketi Seçiniz...</option>
+          {companies.map((company) => (
+            <option key={company.id} value={company.name}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    // Müşteri Adı - Customer Dropdown
+    if (field.field_key === 'musteri_adi') {
+      return (
+        <select
+          value={fieldValues[field.field_key] || ''}
+          onChange={(e) => handleCustomerChange(e.target.value)}
+          className={commonClasses}
+        >
+          <option value="">Müşteri Seçiniz...</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.name}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    // Firma Yetkili Kişisi - Users Dropdown
+    if (field.field_key === 'firma_yetkili_kisisi') {
+      return (
+        <select
+          value={fieldValues[field.field_key] || ''}
+          onChange={(e) => handleFieldChange(field.field_key, e.target.value)}
+          className={commonClasses}
+        >
+          <option value="">Yetkili Seçiniz...</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.fullName}>
+              {user.fullName}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    // Müşteri Yetkili Kişisi - Customer contacts
+    if (field.field_key === 'musteri_yetkili_kisisi' && selectedCustomer) {
+      const customer = customers.find(c => c.name === selectedCustomer);
+      const contacts = customer?.contact_persons || [];
+      
+      return (
+        <select
+          value={fieldValues[field.field_key] || ''}
+          onChange={(e) => handleFieldChange(field.field_key, e.target.value)}
+          className={commonClasses}
+        >
+          <option value="">Yetkili Seçiniz...</option>
+          {contacts.map((contact, idx) => (
+            <option key={idx} value={contact}>
+              {contact}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    // Sözleşme Konusu / Fuar Adı - Project Dropdown
+    if ((field.field_key === 'sozlesme_konusu' || field.field_key === 'fuar_adi') && selectedCustomer) {
+      const customerProjects = allProjects.filter(p => p.customer === selectedCustomer);
+      
+      return (
+        <select
+          value={fieldValues[field.field_key] || ''}
+          onChange={(e) => handleProjectChange(e.target.value, field.field_key)}
+          className={commonClasses}
+        >
+          <option value="">Proje Seçiniz...</option>
+          {customerProjects.map((project) => (
+            <option key={project.id} value={project.name}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      );
+    }
+    
+    // Original field rendering logic (DO NOT CHANGE!)
     switch (field.field_type) {
       case 'textarea':
         return (
