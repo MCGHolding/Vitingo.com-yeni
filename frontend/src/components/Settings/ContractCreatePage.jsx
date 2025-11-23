@@ -457,19 +457,19 @@ const ContractCreatePage = ({ onBack }) => {
           </div>
         ) : (
           /* Contract Form */
-          <div className="bg-white rounded-xl shadow-sm p-8">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className="text-gray-600 hover:text-gray-900 mb-2 text-sm"
+                  className="text-gray-600 hover:text-gray-900 mb-1 text-xs"
                 >
                   ← Şablon Değiştir
                 </button>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-lg font-bold text-gray-900">
                   Yeni Sözleşme Oluştur
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600 text-xs mt-0.5">
                   Şablon: {selectedTemplate.template_name}
                 </p>
               </div>
