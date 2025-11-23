@@ -26,6 +26,13 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailBanks, setEmailBanks] = useState([]);
   const [emailMode, setEmailMode] = useState('single'); // 'single' or 'country'
+  
+  // Countries list
+  const countries = [
+    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+  ];
 
   // Load group companies
   const loadGroupCompanies = async () => {
