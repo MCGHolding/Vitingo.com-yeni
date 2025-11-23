@@ -267,13 +267,17 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     console.log('  New editedPages:', newEditedPages);
     
     setEditedPages(newEditedPages);
+    
+    // Force re-render
+    setRefreshKey(prev => prev + 1);
+    
     setShowPopup(false);
     setSelectedText(null);
     
     // Clear selection
     window.getSelection().removeAllRanges();
     
-    // Force re-render by updating a dummy state
+    // Show success message
     setTimeout(() => {
       console.log('✅ Placeholder replacement completed!');
       alert(`✅ Alan eklendi ve metin "${placeholder}" ile değiştirildi!`);
