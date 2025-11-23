@@ -67,7 +67,7 @@ const ContractManagementPage = ({ onBack }) => {
   // Show annotation page
   if (step === 'annotation') {
     return (
-      <PDFAnnotationPage
+      <TextAnnotationPage
         file={selectedFile}
         onBack={() => setStep('selection')}
         onComplete={handleAnnotationComplete}
