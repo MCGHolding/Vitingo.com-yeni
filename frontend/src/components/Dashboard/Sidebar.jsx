@@ -332,8 +332,6 @@ export default function Sidebar({
   onCompletedProjects,
   onCancelledProjects,
   onSettings,
-  onTemplateList,
-  onMyContracts,
   onImportData,
   onExportData,
   onSalesReports,
