@@ -166,13 +166,15 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       const companiesRes = await fetch(`${backendUrl}/api/group-companies`);
       if (companiesRes.ok) {
         const data = await companiesRes.json();
-        setCompanies(data.companies || []);
+        console.log('✅ Companies loaded:', data.length);
+        setCompanies(Array.isArray(data) ? data : []);
       }
 
       // Fetch customers
       const customersRes = await fetch(`${backendUrl}/api/customers`);
       if (customersRes.ok) {
         const data = await customersRes.json();
+        console.log('✅ Customers loaded:', data?.customers?.length || 0);
         setCustomers(data.customers || []);
       }
 
@@ -180,6 +182,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       const usersRes = await fetch(`${backendUrl}/api/users`);
       if (usersRes.ok) {
         const data = await usersRes.json();
+        console.log('✅ Users loaded:', data?.users?.length || 0);
         setUsers(data.users || []);
       }
 
@@ -187,6 +190,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       const projectsRes = await fetch(`${backendUrl}/api/projects`);
       if (projectsRes.ok) {
         const data = await projectsRes.json();
+        console.log('✅ Projects loaded:', data?.projects?.length || 0);
         setAllProjects(data.projects || []);
       }
     } catch (error) {
