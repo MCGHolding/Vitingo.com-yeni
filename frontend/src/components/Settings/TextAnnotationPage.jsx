@@ -259,31 +259,59 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
 
       {/* Main Content */}
       <div className="flex h-[calc(100vh-80px)]">
-        {/* PDF Text Content */}
+        {/* PDF Text Content - Single Page View */}
         <div 
-          className="flex-1 bg-white border-r border-gray-200 p-8 overflow-auto"
-          onMouseUp={handleTextSelect}
+          className="flex-1 bg-white border-r border-gray-200 overflow-auto"
+          onMouseUp={!editMode ? handleTextSelect : undefined}
         >
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-4 text-sm text-gray-600 bg-blue-50 p-4 rounded-lg">
-              💡 <strong>İpucu:</strong> Aşağıdaki metinde fareyle seçim yapın. 
-              Seçtiğiniz metin için popup açılacak ve alan tanımlayabileceksiniz.
-            </div>
-
-            {pdfData?.pages.map((page) => (
-              <div key={page.page_number} className="mb-8 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-500">
-                    Sayfa {page.page_number}
-                  </h3>
-                </div>
-                <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
-                    {page.text}
-                  </pre>
-                </div>
+          <div className="max-w-6xl mx-auto p-8">
+            {!editMode && (
+              <div className="mb-4 text-sm text-gray-600 bg-blue-50 p-4 rounded-lg">
+                💡 <strong>İpucu:</strong> Metinde fareyle seçim yapın ve alan tanımlayın. 
+                Gelişmiş düzenleme için "Düzenleme Modu" butonuna tıklayın.
               </div>
-            ))}
+            )}
+
+            {editMode && (
+              <div className="mb-4 text-sm text-gray-600 bg-green-50 p-4 rounded-lg">
+                ✏️ <strong>Düzenleme Modu:</strong> Metni zengin düzenleyici ile düzenleyebilirsiniz. 
+                Bold, italic, renk, resim ekleme gibi özellikler mevcuttur.
+              </div>
+            )}
+
+            {/* Current Page Content */}
+            {pdfData?.pages[currentPageIndex] && (
+              <div className="bg-white border-2 border-gray-300 rounded-xl shadow-lg p-8 min-h-[600px]">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-700">
+                    Sayfa {currentPageIndex + 1}
+                  </h3>
+                  <span className="text-sm text-gray-500">
+                    {editMode ? 'Düzenleme Modu Aktif' : 'Alan Seçim Modu'}
+                  </span>
+                </div>
+                
+                {editMode ? (
+                  <RichTextEditor
+                    content={editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text}
+                    onChange={handlePageContentChange}
+                    placeholder="Sayfa içeriğini düzenleyin..."
+                  />
+                ) : (
+                  <div className="prose max-w-none">
+                    <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
+                      {editedPages[currentPageIndex] || pdfData.pages[currentPageIndex].text}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Keyboard Shortcuts Info */}
+            <div className="mt-6 text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+              <strong>Klavye Kısayolları:</strong> ← Önceki Sayfa | → Sonraki Sayfa | 
+              {editMode && ' Ctrl+B: Bold | Ctrl+I: Italic | Ctrl+U: Underline'}
+            </div>
           </div>
         </div>
 
