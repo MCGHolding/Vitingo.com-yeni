@@ -158,7 +158,58 @@ const Dashboard = () => {
   }, []);
   const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
-  const [currentView, setCurrentView] = useState('dashboard');
+  
+  // Get initial view from URL path
+  const getInitialView = () => {
+    const path = window.location.pathname;
+    const pathMap = {
+      '/': 'dashboard',
+      '/dashboard': 'dashboard',
+      '/contracts': 'contracts',
+      '/contracts/new': 'contracts-new',
+      '/projects': 'projects',
+      '/projects/new': 'new-project',
+      '/projects/all': 'all-projects',
+      '/customers': 'all-customers',
+      '/customers/new': 'new-customer',
+      '/opportunities': 'all-opportunities',
+      '/opportunities/new': 'new-opportunity',
+      '/settings': 'settings',
+      '/documents': 'documents',
+      '/tasks': 'tasks',
+      '/fairs': 'fairs',
+      '/fairs/new': 'new-fair',
+      '/accounting': 'muhasebe',
+      '/bank': 'bank',
+      '/people': 'people',
+      '/suppliers': 'suppliers',
+      '/surveys': 'surveys',
+      '/briefs': 'briefs',
+      '/hr': 'hr',
+      '/analytics': 'analytics',
+      '/reports': 'reports'
+    };
+    
+    // Check exact match first
+    if (pathMap[path]) {
+      return pathMap[path];
+    }
+    
+    // Check for partial matches
+    if (path.startsWith('/projects/edit/')) {
+      return 'edit-project';
+    }
+    if (path.startsWith('/customers/')) {
+      return 'all-customers';
+    }
+    if (path.startsWith('/opportunities/')) {
+      return 'all-opportunities';
+    }
+    
+    return 'dashboard';
+  };
+  
+  const [currentView, setCurrentView] = useState(getInitialView());
   const [opportunities, setOpportunities] = useState([]);
   const [users, setUsers] = useState(mockUsers);
   const [customers, setCustomers] = useState([]);
