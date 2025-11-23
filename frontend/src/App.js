@@ -613,6 +613,11 @@ const Dashboard = () => {
   };
 
   // Settings Management Handlers
+  const handleSettings = () => {
+    console.log('Settings clicked');
+    setCurrentView('settings');
+  };
+
   const handleImportData = () => {
     console.log('Import Data clicked');
     setCurrentView('import-data');
