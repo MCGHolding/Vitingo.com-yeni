@@ -799,7 +799,7 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                   <span className="font-semibold">Tüm sayfalarda değiştir</span>
                   <br />
                   <span className="text-[10px] text-gray-600">
-                    Bu metni sözleşmenin her yerinde {placeholder} ile değiştirir
+                    Bu metni sözleşmenin her yerinde placeholder ile değiştirir
                   </span>
                 </label>
               </div>
