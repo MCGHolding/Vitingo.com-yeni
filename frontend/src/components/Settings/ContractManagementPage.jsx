@@ -217,7 +217,7 @@ const ContractManagementPage = ({ onBack }) => {
               {methods.map((method) => (
                 <div key={method.id} className="relative">
                   <label
-                    className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    className={`flex items-start p-2.5 border rounded-md cursor-pointer transition-all ${
                       selectedMethod === method.id
                         ? 'border-emerald-500 bg-emerald-50'
                         : 'border-gray-200 hover:border-gray-300 bg-white'
@@ -228,19 +228,19 @@ const ContractManagementPage = ({ onBack }) => {
                       checked={selectedMethod === method.id}
                       onChange={() => method.enabled && setSelectedMethod(method.id)}
                       disabled={!method.enabled}
-                      className="mt-0.5 h-4 w-4 text-emerald-600 rounded focus:ring-emerald-500"
+                      className="mt-0.5 h-3 w-3 text-emerald-600 rounded focus:ring-emerald-500"
                     />
-                    <div className="ml-3 flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <method.icon className="h-4 w-4 text-gray-700" />
-                        <h3 className="text-sm font-semibold text-gray-900">{method.title}</h3>
+                    <div className="ml-2 flex-1">
+                      <div className="flex items-center space-x-1.5 mb-0.5">
+                        <method.icon className="h-3.5 w-3.5 text-gray-700" />
+                        <h3 className="text-xs font-semibold text-gray-900">{method.title}</h3>
                         {!method.enabled && (
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
+                          <span className="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">
                             Yakında
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-600">{method.description}</p>
+                      <p className="text-[10px] text-gray-600 leading-tight">{method.description}</p>
                     </div>
                   </label>
 
