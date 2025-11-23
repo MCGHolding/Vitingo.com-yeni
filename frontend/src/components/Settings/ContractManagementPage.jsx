@@ -54,7 +54,20 @@ const ContractManagementPage = ({ onBack }) => {
       return;
     }
 
-    // Go to annotation step
+    if (selectedMethod === 'manual') {
+      // Manuel şablon oluşturma için basit form
+      const templateName = prompt('Şablon adı girin:');
+      if (!templateName) {
+        alert('Şablon adı gereklidir');
+        return;
+      }
+      
+      // Manuel şablon için basit bir yapı oluştur
+      handleManualTemplateCreate(templateName);
+      return;
+    }
+
+    // Go to annotation step for upload method
     setStep('annotation');
   };
 
