@@ -447,6 +447,30 @@ class Customer(BaseModel):
     tags: List[str] = Field(default_factory=list)  # Etiketler
     # Services field
     services: List[str] = Field(default_factory=list)  # Hizmetler
+
+class GroupCompany(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    country: str
+    groupName: Optional[str] = ""
+    status: str = "active"
+    accountant: Optional[Dict] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+class GroupCompanyCreate(BaseModel):
+    name: str
+    country: str
+    groupName: Optional[str] = ""
+
+class Accountant(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: Optional[str] = ""
+    companyId: str
+    role: str = "accountant"
+    created_at: Optional[datetime] = None
     # Contact person details
     contactMobile: str = ""  # İletişim Kişisi Cep Telefonu
     contactEmail: str = ""  # İletişim Kişisi Email
