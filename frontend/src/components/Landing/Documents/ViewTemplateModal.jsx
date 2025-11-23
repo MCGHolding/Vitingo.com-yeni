@@ -1,11 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, FileText, CheckCircle, XCircle, Plus } from 'lucide-react';
 import AddFieldModal from './AddFieldModal';
 
 const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
   const [showAddFieldModal, setShowAddFieldModal] = useState(false);
+  const [currentTemplate, setCurrentTemplate] = useState(template);
+  const [loading, setLoading] = useState(false);
   
-  if (!template) return null;
+  useEffect(() => {
+    setCurrentTemplate(template);
+  }, [template]);
+
+  const reloadTemplate = async () => {
+    if (!template) return;
+    
+    setLoading(true);
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/contracts/templates/${template.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentTemplate(data);
+      }
+    } catch (error) {
+      console.error('Error reloading template:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  if (!currentTemplate) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
