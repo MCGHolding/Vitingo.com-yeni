@@ -355,19 +355,19 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                 onClick={toggleEditMode}
                 className={`flex items-center px-4 py-2 rounded-lg ${
                   editMode 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
                 {editMode ? (
                   <>
-                    <Edit3 className="h-4 w-4 mr-2" />
-                    Düzenleme Modu
+                    <Eye className="h-4 w-4 mr-2" />
+                    Görüntüleme Modu
                   </>
                 ) : (
                   <>
-                    <Eye className="h-4 w-4 mr-2" />
-                    Görüntüleme
+                    <Edit3 className="h-4 w-4 mr-2" />
+                    Düzenleme Modu
                   </>
                 )}
               </button>
