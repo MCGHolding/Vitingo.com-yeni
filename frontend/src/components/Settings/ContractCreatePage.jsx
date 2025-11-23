@@ -625,12 +625,12 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
                   {generating ? (
                     <>
                       <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                      PDF Oluşturuluyor...
+                      Sözleşme Oluşturuluyor...
                     </>
                   ) : (
                     <>
-                      <Download className="h-3.5 w-3.5 mr-1.5" />
-                      PDF İndir
+                      <Check className="h-3.5 w-3.5 mr-1.5" />
+                      Sözleşme Oluştur
                     </>
                   )}
                 </button>
