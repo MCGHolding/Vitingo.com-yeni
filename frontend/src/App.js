@@ -245,6 +245,16 @@ const Dashboard = () => {
       window.history.pushState({}, '', newPath);
     }
   }, [currentView]);
+  
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentView(getInitialView());
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [opportunities, setOpportunities] = useState([]);
   const [users, setUsers] = useState(mockUsers);
   const [customers, setCustomers] = useState([]);
