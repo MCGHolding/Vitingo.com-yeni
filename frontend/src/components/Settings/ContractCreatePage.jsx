@@ -362,6 +362,51 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
   };
 
   // Create and save contract
+  const handleBackWithAutoSave = async () => {
+    // Check if form has been filled
+    const hasFilledFields = Object.values(fieldValues).some(value => value && value.trim() !== '');
+    const hasTitle = contractTitle && contractTitle !== 'Yeni Sözleşme';
+    
+    if (selectedTemplate && (hasFilledFields || hasTitle)) {
+      // Auto-save as draft
+      console.log('💾 Auto-saving draft before going back...');
+      
+      try {
+        const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                          process.env.REACT_APP_BACKEND_URL || 
+                          import.meta.env.REACT_APP_BACKEND_URL;
+
+        const userEmail = localStorage.getItem('userEmail') || 'demo@example.com';
+
+        const draftData = {
+          contract_title: contractTitle,
+          template_id: selectedTemplate.id,
+          template_name: selectedTemplate.template_name,
+          field_values: fieldValues,
+          status: 'draft',
+          created_by: userEmail
+        };
+
+        const response = await fetch(`${backendUrl}/api/contracts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draftData)
+        });
+
+        if (response.ok) {
+          console.log('✅ Draft auto-saved successfully');
+        }
+      } catch (error) {
+        console.error('Error auto-saving draft:', error);
+      }
+    }
+    
+    // Go back regardless
+    if (onBack) {
+      onBack();
+    }
+  };
+
   const handleSaveDraft = async () => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
