@@ -80,6 +80,66 @@ export default function NewProjectForm({ onClose, onSave }) {
     }
   };
 
+  const loadGroupCompanies = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/group-companies`);
+      if (response.ok) {
+        const data = await response.json();
+        const companies = data.companies || [];
+        
+        // If no group companies, add default company or user name
+        if (companies.length === 0) {
+          // Check if user has a default company from registration
+          if (user?.companyName) {
+            companies.push({
+              id: 'default',
+              name: user.companyName
+            });
+          } else if (user?.name) {
+            // Individual user - use their name
+            companies.push({
+              id: 'individual',
+              name: user.name
+            });
+          }
+        }
+        
+        setGroupCompanies(companies);
+        
+        // Auto-select first company
+        if (companies.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            companyId: companies[0].id,
+            companyName: companies[0].name
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading group companies:', error);
+      // Fallback to user info if API fails
+      if (user?.companyName) {
+        setGroupCompanies([{ id: 'default', name: user.companyName }]);
+        setFormData(prev => ({
+          ...prev,
+          companyId: 'default',
+          companyName: user.companyName
+        }));
+      } else if (user?.name) {
+        setGroupCompanies([{ id: 'individual', name: user.name }]);
+        setFormData(prev => ({
+          ...prev,
+          companyId: 'individual',
+          companyName: user.name
+        }));
+      }
+    }
+  };
+
   const loadFairs = async () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
