@@ -346,7 +346,7 @@ const ContractsPage = ({ setCurrentView }) => {
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz sözleşme yok</h3>
           <p className="text-gray-600 mb-4">İlk sözleşmenizi oluşturun</p>
           <button
-            onClick={() => window.location.href = '/contracts/new'}
+            onClick={() => setCurrentView ? setCurrentView('contracts-new') : window.location.href = '/contracts/new'}
             className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
           >
             <Plus className="h-4 w-4 mr-2" />
