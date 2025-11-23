@@ -440,29 +440,159 @@ const ContractCreatePage = ({ onBack }) => {
                 ))}
             </div>
 
-            {/* Generate Button (bottom) */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            {/* Action Buttons (bottom) */}
+            <div className="mt-8 pt-6 border-t border-gray-200 space-y-3">
               <button
-                onClick={handleGenerateContract}
-                disabled={generating}
-                className="w-full flex items-center justify-center px-6 py-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                onClick={handleUpdateContract}
+                className={`w-full flex items-center justify-center px-6 py-4 rounded-lg text-lg font-semibold transition-all ${
+                  updatedPages 
+                    ? 'bg-green-100 text-green-700 border-2 border-green-300' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
               >
-                {generating ? (
+                {updatedPages ? (
                   <>
-                    <Loader2 className="h-6 w-6 mr-2 animate-spin" />
-                    Sözleşme Oluşturuluyor...
+                    <Check className="h-6 w-6 mr-2" />
+                    Bilgiler Güncellendi ✓
                   </>
                 ) : (
                   <>
-                    <Download className="h-6 w-6 mr-2" />
-                    PDF Oluştur ve İndir
+                    <svg className="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Bilgileri Güncelle
                   </>
                 )}
               </button>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={handlePreview}
+                  disabled={!updatedPages}
+                  className="flex items-center justify-center px-6 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                >
+                  <svg className="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Önizleme
+                </button>
+
+                <button
+                  onClick={handleGenerateContract}
+                  disabled={generating || !updatedPages}
+                  className="flex items-center justify-center px-6 py-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                >
+                  {generating ? (
+                    <>
+                      <Loader2 className="h-6 w-6 mr-2 animate-spin" />
+                      PDF Oluşturuluyor...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-6 w-6 mr-2" />
+                      PDF İndir
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && updatedPages && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Sözleşme Önizleme</h2>
+                  <p className="text-purple-100 mt-1">
+                    Sayfa {previewPageIndex + 1} / {updatedPages.length}
+                  </p>
+                </div>
+                
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Page Navigation */}
+              <div className="flex items-center justify-center gap-4 mt-4">
+                <button
+                  onClick={() => setPreviewPageIndex(Math.max(0, previewPageIndex - 1))}
+                  disabled={previewPageIndex === 0}
+                  className="p-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                
+                <span className="px-6 py-2 bg-white bg-opacity-20 rounded-lg font-semibold">
+                  {previewPageIndex + 1} / {updatedPages.length}
+                </span>
+                
+                <button
+                  onClick={() => setPreviewPageIndex(Math.min(updatedPages.length - 1, previewPageIndex + 1))}
+                  disabled={previewPageIndex === updatedPages.length - 1}
+                  className="p-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-auto p-8 bg-gray-50">
+              <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto min-h-[600px]">
+                <div className="mb-4 pb-4 border-b-2 border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-700">
+                    Sayfa {updatedPages[previewPageIndex].page_number}
+                  </h3>
+                </div>
+                
+                <div className="prose max-w-none">
+                  <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed text-base">
+                    {updatedPages[previewPageIndex].text}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-100 p-4 flex items-center justify-between border-t border-gray-200">
+              <div className="text-sm text-gray-600">
+                💡 <strong>İpucu:</strong> ← ve → ok tuşlarıyla sayfalar arası geçiş yapabilirsiniz
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-semibold"
+                >
+                  Kapat
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setShowPreview(false);
+                    handleGenerateContract();
+                  }}
+                  disabled={generating}
+                  className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold"
+                >
+                  PDF Oluştur ve İndir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
