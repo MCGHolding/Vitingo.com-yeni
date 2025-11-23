@@ -321,6 +321,43 @@ const NewBankForm = ({ onBackToDashboard }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Group Company Selection */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="flex items-center space-x-2 mb-6">
+            <Building2 className="h-5 w-5 text-gray-600" />
+            <h3 className="text-xl font-semibold text-gray-900">Grup Şirketi Seçimi</h3>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Grup Şirketi *
+            </label>
+            <Select 
+              value={formData.companyId} 
+              onValueChange={(value) => {
+                const selectedCompany = groupCompanies.find(c => c.id === value);
+                setFormData({
+                  ...formData,
+                  companyId: value,
+                  companyName: selectedCompany?.name || '',
+                  country: selectedCompany?.country || ''  // Auto-fill country from company
+                });
+              }}
+            >
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="Grup şirketi seçiniz" />
+              </SelectTrigger>
+              <SelectContent>
+                {groupCompanies.map((company) => (
+                  <SelectItem key={company.id} value={company.id}>
+                    {company.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         {/* Country Selection */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex items-center justify-between mb-6">
