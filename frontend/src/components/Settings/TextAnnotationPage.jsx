@@ -373,6 +373,49 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     setEditMode(!editMode);
   };
 
+  // Add state to history
+  const addToHistory = (newFields, newEditedPages) => {
+    const newState = {
+      fields: JSON.parse(JSON.stringify(newFields)), // Deep copy
+      editedPages: JSON.parse(JSON.stringify(newEditedPages))
+    };
+    
+    // Remove future history if we're not at the end
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newState);
+    
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+    
+    console.log(`📝 History added. Total: ${newHistory.length}, Index: ${newHistory.length - 1}`);
+  };
+
+  // Undo
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      const prevState = history[historyIndex - 1];
+      setFields(prevState.fields);
+      setEditedPages(prevState.editedPages);
+      setHistoryIndex(historyIndex - 1);
+      setRefreshKey(prev => prev + 1);
+      
+      console.log(`↩️ Undo. Index: ${historyIndex - 1}/${history.length}`);
+    }
+  };
+
+  // Redo
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      const nextState = history[historyIndex + 1];
+      setFields(nextState.fields);
+      setEditedPages(nextState.editedPages);
+      setHistoryIndex(historyIndex + 1);
+      setRefreshKey(prev => prev + 1);
+      
+      console.log(`↪️ Redo. Index: ${historyIndex + 1}/${history.length}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
