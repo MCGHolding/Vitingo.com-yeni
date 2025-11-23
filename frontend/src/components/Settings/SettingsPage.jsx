@@ -69,7 +69,7 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       icon: FileText,
       color: 'emerald',
       adminOnly: false,
-      category: 'Dökümanlar'
+      category: 'Organizasyon'
     },
     {
       id: 'advance-rules',
