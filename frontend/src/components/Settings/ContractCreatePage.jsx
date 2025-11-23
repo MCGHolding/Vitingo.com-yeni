@@ -27,7 +27,7 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
     init();
   }, [contractId, isEdit]);
 
-  const loadDraftContract = async () => {
+  const loadDraftContract = async (templatesArray) => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
                         process.env.REACT_APP_BACKEND_URL || 
@@ -44,21 +44,16 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
         // Set field values
         setFieldValues(draft.field_values || {});
         
-        // Find and set the template - templates should be loaded by now
-        // We need to use the callback form or wait for templates state
-        setTimeout(() => {
-          setTemplates(currentTemplates => {
-            const template = currentTemplates.find(t => t.id === draft.template_id);
-            if (template) {
-              console.log('✅ Template found and set:', template.template_name);
-              setSelectedTemplate(template);
-            } else {
-              console.error('❌ Template not found:', draft.template_id);
-              alert('Şablon bulunamadı');
-            }
-            return currentTemplates;
-          });
-        }, 500);
+        // Find and set the template using the passed templates array
+        const template = templatesArray.find(t => t.id === draft.template_id);
+        if (template) {
+          console.log('✅ Template found and set:', template.template_name);
+          setSelectedTemplate(template);
+        } else {
+          console.error('❌ Template not found:', draft.template_id);
+          alert('Şablon bulunamadı');
+          if (onBack) onBack();
+        }
       } else {
         console.error('❌ Failed to load draft contract');
         alert('Taslak yüklenemedi');
