@@ -22,6 +22,7 @@ export default function NewProjectForm({ onClose, onSave }) {
   const [loading, setLoading] = useState(false);
   const [fairs, setFairs] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [groupCompanies, setGroupCompanies] = useState([]);
   const [showAddFairModal, setShowAddFairModal] = useState(false);
   const [cityEditable, setCityEditable] = useState(false);
   
