@@ -107,6 +107,13 @@ const menuItems = [
     color: 'from-emerald-500 to-emerald-600'
   },
   {
+    id: 'documents',
+    title: 'Dökümanlar',
+    subtitle: 'Sözleşme Yönetimi',
+    icon: FileText,
+    color: 'from-blue-500 to-blue-600'
+  },
+  {
     id: 'collections',
     title: 'Collections',
     subtitle: 'MongoDB Yönetimi',
