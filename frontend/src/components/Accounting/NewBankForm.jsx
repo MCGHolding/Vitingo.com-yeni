@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 
 const NewBankForm = ({ onBackToDashboard }) => {
   const [formData, setFormData] = useState({
+    companyId: '',
+    companyName: '',
     country: '',
     bankName: '',
     // Turkey/UAE fields
@@ -27,6 +29,9 @@ const NewBankForm = ({ onBackToDashboard }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [ibanError, setIbanError] = useState('');
+  
+  // Group companies
+  const [groupCompanies, setGroupCompanies] = useState([]);
   
   // Country management
   const [countries, setCountries] = useState([]);
