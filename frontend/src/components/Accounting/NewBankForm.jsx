@@ -590,12 +590,16 @@ const NewBankForm = ({ onBackToDashboard }) => {
                       'Örn: Başarı Uluslararası Fuarcılık A.Ş.' : 
                       'Örn: Basari International Exhibition LLC'
                     }
-                    className="w-full"
+                    className="w-full bg-green-50 border-green-200"
+                    disabled
                   />
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ Otomatik dolduruldu: {formData.companyName}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hesap Numarası
+                    Hesap Numarası <span className="text-gray-500">(Opsiyonel)</span>
                   </label>
                   <Input
                     value={formData.accountNumber}
