@@ -490,6 +490,33 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
                 </button>
               </div>
 
+              {/* Undo/Redo Buttons */}
+              <div className="flex items-center gap-1 border-r border-gray-300 pr-3 mr-3">
+                <button
+                  onClick={handleUndo}
+                  disabled={historyIndex <= 0}
+                  className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  title="Geri Al (Ctrl+Z)"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleRedo}
+                  disabled={historyIndex >= history.length - 1}
+                  className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  title="İleri Al (Ctrl+Y)"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" />
+                  </svg>
+                </button>
+                <span className="text-xs text-gray-500 ml-1">
+                  {historyIndex + 1}/{history.length}
+                </span>
+              </div>
+
               {/* Edit Mode Toggle */}
               <button
                 onClick={toggleEditMode}
