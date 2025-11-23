@@ -5,9 +5,10 @@ import ContractCreatePage from './ContractCreatePage';
 import ManualTemplateCreator from './ManualTemplateCreator';
 
 const ContractManagementPage = ({ onBack }) => {
-  const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete', 'create-contract'
+  const [step, setStep] = useState('selection'); // 'selection', 'annotation', 'complete', 'create-contract', 'edit-template'
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedTemplateForEdit, setSelectedTemplateForEdit] = useState(null);
 
   const methods = [
     {
