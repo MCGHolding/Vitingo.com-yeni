@@ -350,14 +350,13 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
             </Droppable>
           </DragDropContext>
 
-            {fields.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Henüz alan eklenmemiş</p>
-                <p className="text-sm">Yukarıdaki "Yeni Alan Ekle" butonuna tıklayın</p>
-              </div>
-            )}
-          </div>
+          {fields.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <p>Henüz alan eklenmemiş</p>
+              <p className="text-sm">Yukarıdaki "Yeni Alan Ekle" butonuna tıklayın</p>
+            </div>
+          )}
         </div>
       </div>
 
