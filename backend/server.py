@@ -9385,9 +9385,25 @@ class User(BaseModel):
     email: str = Field(..., description="User email")
     role: str = Field(default="user", description="User role")
     department: Optional[str] = Field(None, description="User department")
+    position: Optional[str] = Field(None, description="User position/title")
+    manager_id: Optional[str] = Field(None, description="Manager user ID")
     phone: Optional[str] = Field(None, description="User phone")
-    status: str = Field(default="active", description="User status: active, inactive")
+    password: Optional[str] = Field(None, description="User password")
+    status: str = Field(default="active", description="User status: active, inactive, invited, archived")
+    invited_at: Optional[datetime] = Field(None, description="Invitation timestamp")
+    notification_method: Optional[str] = Field(None, description="email, whatsapp, both")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = Field(None, description="Last update timestamp")
+
+# Password generation helper
+import secrets
+import string
+
+def generate_secure_password(length=12):
+    """Generate a secure random password"""
+    alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+    password = ''.join(secrets.choice(alphabet) for i in range(length))
+    return password
 
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
