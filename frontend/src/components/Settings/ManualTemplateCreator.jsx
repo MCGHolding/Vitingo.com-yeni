@@ -448,6 +448,36 @@ const AddFieldModal = ({ field, fieldTypes, generateSlug, onSave, onClose }) => 
               </select>
             </div>
           )}
+
+          {/* Default Value */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Default Değer (Opsiyonel)
+              <span className="text-xs text-gray-500 ml-2">
+                - Sözleşmede otomatik doldurulacak
+              </span>
+            </label>
+            {fieldType === 'textarea' ? (
+              <textarea
+                value={fieldDefaultValue}
+                onChange={(e) => setFieldDefaultValue(e.target.value)}
+                placeholder="Bu alanın default değerini girin..."
+                rows={6}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+              />
+            ) : (
+              <input
+                type="text"
+                value={fieldDefaultValue}
+                onChange={(e) => setFieldDefaultValue(e.target.value)}
+                placeholder="Bu alanın default değerini girin..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              💡 Örn: "Genel Hükümler" için standart metin, "Para Birimi" için "TRY" gibi
+            </p>
+          </div>
         </div>
 
         <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
