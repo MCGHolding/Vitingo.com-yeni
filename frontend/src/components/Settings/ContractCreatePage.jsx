@@ -223,11 +223,11 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
       console.log('📦 Previous field values:', prevValues);
       const initialValues = {};
       template.fields.forEach((field) => {
-        // Use existing value if available (from project data), otherwise empty string
-        const value = prevValues[field.field_key] || '';
+        // Priority: 1. Existing value from project, 2. Default value from field, 3. Empty
+        const value = prevValues[field.field_key] || field.default_value || '';
         initialValues[field.field_key] = value;
         if (value) {
-          console.log(`  ✅ Kept value for ${field.field_key}: ${value}`);
+          console.log(`  ✅ ${prevValues[field.field_key] ? 'Kept' : 'Set default'} value for ${field.field_key}: ${value}`);
         }
       });
       console.log('🔄 New field values:', initialValues);
