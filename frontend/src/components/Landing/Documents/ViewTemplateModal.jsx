@@ -95,9 +95,9 @@ const ViewTemplateModal = ({ template, onClose, onFieldsAdded }) => {
                 Alan Ekle
               </button>
             </div>
-            {template.fields && template.fields.length > 0 ? (
+            {currentTemplate.fields && currentTemplate.fields.length > 0 ? (
               <div className="space-y-3">
-                {template.fields
+                {currentTemplate.fields
                   .sort((a, b) => a.order_index - b.order_index)
                   .map((field) => (
                     <div key={field.field_id} className="border border-gray-200 rounded-lg p-4">
