@@ -184,31 +184,29 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
   };
 
   const handleTextSelect = (e) => {
-    // Don't show popup if clicking inside TipTap editor
-    if (editMode && e.target.closest('.ProseMirror')) {
-      return;
-    }
-    
-    const selection = window.getSelection();
-    const text = selection.toString().trim();
-    
-    if (text.length > 0) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
+    // Small delay to let selection settle (especially in TipTap editor)
+    setTimeout(() => {
+      const selection = window.getSelection();
+      const text = selection.toString().trim();
       
-      setSelectedText(text);
-      setPopupPosition({
-        x: rect.left + window.scrollX,
-        y: rect.bottom + window.scrollY + 10
-      });
-      setShowPopup(true);
-      setFieldForm({
-        field_name: '',
-        field_type: 'text',
-        is_required: true,
-        dropdown_options: ''
-      });
-    }
+      if (text.length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        
+        setSelectedText(text);
+        setPopupPosition({
+          x: rect.left + window.scrollX,
+          y: rect.bottom + window.scrollY + 10
+        });
+        setShowPopup(true);
+        setFieldForm({
+          field_name: '',
+          field_type: 'text',
+          is_required: true,
+          dropdown_options: ''
+        });
+      }
+    }, 100);
   };
 
   const handleAddField = () => {
