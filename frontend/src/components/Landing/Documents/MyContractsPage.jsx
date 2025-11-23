@@ -96,13 +96,33 @@ const MyContractsPage = () => {
                 })}
               </p>
               <div className="flex space-x-2">
-                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="İndir">
+                <button 
+                  onClick={() => {
+                    alert(`Sözleşme İndirme: ${contract.contract_name}\n\nBu özellik yakında eklenecek...`);
+                  }}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                  title="İndir"
+                >
                   <Download className="w-4 h-4" />
                 </button>
-                <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Görüntüle">
+                <button 
+                  onClick={() => {
+                    alert(`Sözleşme Görüntüleme: ${contract.contract_name}\n\nBu özellik yakında eklenecek...`);
+                  }}
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" 
+                  title="Görüntüle"
+                >
                   <Eye className="w-4 h-4" />
                 </button>
-                <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Sil">
+                <button 
+                  onClick={() => {
+                    if (window.confirm(`"${contract.contract_name}" sözleşmesini silmek istediğinizden emin misiniz?`)) {
+                      alert('Silme işlemi yakında eklenecek...');
+                    }
+                  }}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                  title="Sil"
+                >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
