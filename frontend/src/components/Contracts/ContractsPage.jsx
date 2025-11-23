@@ -454,19 +454,42 @@ const ContractsPage = ({ setCurrentView }) => {
               </div>
 
               <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
-                <button
-                  onClick={() => handleDownload(contract.id, contract.contract_title)}
-                  className="flex-1 flex items-center justify-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 text-xs font-medium"
-                >
-                  <Download className="h-3 w-3 mr-1" />
-                  İndir
-                </button>
-                <button
-                  onClick={() => handleDelete(contract.id)}
-                  className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                {contract.status === 'draft' ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        // Continue editing draft
+                        window.location.href = `/contracts/edit/${contract.id}`;
+                      }}
+                      className="flex-1 flex items-center justify-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-xs font-medium"
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Devam Et
+                    </button>
+                    <button
+                      onClick={() => handleDelete(contract.id)}
+                      className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleDownload(contract.id, contract.contract_title)}
+                      className="flex-1 flex items-center justify-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 text-xs font-medium"
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      İndir
+                    </button>
+                    <button
+                      onClick={() => handleDelete(contract.id)}
+                      className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}
