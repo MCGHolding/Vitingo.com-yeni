@@ -93,14 +93,18 @@ const ContractCreatePage = ({ onBack }) => {
     if (!validateForm()) return;
 
     try {
+      // Always use original template pages, not previously updated ones
+      const originalPages = selectedTemplate.pages;
+      
       // Replace placeholders in each page
-      const updated = selectedTemplate.pages.map((page) => {
+      const updated = originalPages.map((page) => {
         let updatedText = page.text;
         
         // Replace each field placeholder with its value
         selectedTemplate.fields.forEach((field) => {
           const placeholder = field.placeholder;
           const value = fieldValues[field.field_key] || '[DOLDURULMADI]';
+          // Use global replace to replace all occurrences
           updatedText = updatedText.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
         });
         
