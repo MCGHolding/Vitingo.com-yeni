@@ -19,8 +19,11 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
   const [loading, setLoading] = useState(false);
   const [fairs, setFairs] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [groupCompanies, setGroupCompanies] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
+    companyId: '',
+    companyName: '',
     customerId: '',
     customerName: '',
     fairId: '',
