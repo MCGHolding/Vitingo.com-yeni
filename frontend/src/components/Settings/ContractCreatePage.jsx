@@ -293,6 +293,81 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
     }
   };
 
+  // Handler for company selection
+  const handleCompanyChange = (companyName) => {
+    const company = companies.find(c => c.name === companyName);
+    setSelectedCompany(companyName);
+    
+    setFieldValues(prev => ({
+      ...prev,
+      'firma_adi': companyName,
+      'firma_kisa_adi': generateShortName(companyName),
+      'firma_adresi': company?.address || ''
+    }));
+  };
+
+  // Handler for customer selection
+  const handleCustomerChange = (customerName) => {
+    const customer = customers.find(c => c.name === customerName);
+    setSelectedCustomer(customerName);
+    
+    // Filter projects for this customer
+    const customerProjects = allProjects.filter(p => p.customer === customerName);
+    setProjects(customerProjects);
+    
+    setFieldValues(prev => ({
+      ...prev,
+      'musteri_adi': customerName,
+      'musteri_kisa_adi': generateShortName(customerName),
+      'musteri_adresi': customer?.address || '',
+      'musteri_yetkili_kisisi': '' // Reset contact
+    }));
+  };
+
+  // Handler for project selection
+  const handleProjectChange = (projectName, fieldKey) => {
+    const project = allProjects.find(p => p.name === projectName);
+    setSelectedProject(project);
+    
+    if (project) {
+      setFieldValues(prev => ({
+        ...prev,
+        [fieldKey]: projectName,
+        'fuar_adi': project.fairName || projectName,
+        'sozlesme_konusu': project.name || projectName,
+        'fuar_baslama_tarihi': project.fairStartDate || '',
+        'fuar_bitis_tarihi': project.fairEndDate || '',
+        'fuar_merkezi': project.fairCenter || '',
+        'hol_no': project.hallNo || '',
+        'stand_no': project.standNo || '',
+        'stand_buyuklugu': project.standSize || '',
+        'stand_eni': project.standWidth || '',
+        'stand_boyu': project.standLength || '',
+        'stand_yuksekligi': project.standHeight || ''
+      }));
+    }
+  };
+
+  // Generate short name from full name
+  const generateShortName = (fullName) => {
+    if (!fullName) return '';
+    
+    // Remove common suffixes
+    const cleaned = fullName
+      .replace(/Ltd\.|Ltd|Şti\.|Şti|A\.Ş\.|A\.Ş|Inc\.|Inc|LLC|Corporation|Corp\./gi, '')
+      .trim();
+    
+    // Get first 2-3 words or first 20 chars
+    const words = cleaned.split(' ');
+    if (words.length <= 2) {
+      return cleaned;
+    }
+    
+    // Take first 2 significant words
+    const shortName = words.slice(0, 2).join(' ');
+    return shortName.length > 20 ? shortName.substring(0, 20) : shortName;
+  };
+
   const handleFieldChange = (fieldKey, value) => {
     setFieldValues({
       ...fieldValues,
