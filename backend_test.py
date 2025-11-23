@@ -22697,28 +22697,40 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 NEW CONTRACT MANAGEMENT DASHBOARD TESTING")
+    print("🚀 Starting Backend API Testing Suite...")
     print(f"Backend URL: {BACKEND_URL}")
+    print("=" * 80)
     
-    # Run the NEW Contract Management Dashboard testing
-    try:
-        result = test_contract_management_dashboard()
-        if result:
-            print("\n✅ CONTRACT MANAGEMENT DASHBOARD TESTING COMPLETED SUCCESSFULLY")
-            print("✅ Basic contract listing returns contracts array, count, and can_view_all")
-            print("✅ Super admin (mbucak@gmail.com) gets can_view_all=true and sees all contracts")
-            print("✅ Regular users get can_view_all=false and see only their contracts")
-            print("✅ Finance department users get can_view_all=true")
-            print("✅ Response structure is clean (no _id, no pdf_content in list)")
-            print("✅ User role detection works from users collection")
-            print("📋 Review the test output above for detailed analysis")
-        else:
-            print("\n❌ CONTRACT MANAGEMENT DASHBOARD TESTING FAILED")
-            print("❌ Critical role-based access control or data structure issues found")
-            print("📋 Review the test output above for specific problems")
-    except Exception as e:
-        print(f"\n❌ CONTRACT MANAGEMENT DASHBOARD TESTING ERROR: {str(e)}")
-        result = False
+    # Run Bank Email Template Testing (Primary Focus)
+    print("\n" + "🎨" * 40)
+    print("RUNNING BANK EMAIL TEMPLATE TESTING (PRIMARY FOCUS)")
+    print("🎨" * 40)
+    
+    bank_email_test_passed = test_bank_email_template_functionality()
+    
+    # Final Results
+    print("\n" + "=" * 100)
+    print("🏁 BANK EMAIL TEMPLATE TEST RESULTS")
+    print("=" * 100)
+    
+    if bank_email_test_passed:
+        print("✅ BANK EMAIL TEMPLATE TEST PASSED - Email template functionality is working correctly!")
+        print("\n📋 SUMMARY:")
+        print("   • HTML email templates are properly structured")
+        print("   • Purple-blue gradient design is implemented")
+        print("   • Company names are correctly integrated")
+        print("   • Both single and multiple bank modes are functional")
+        print("   • Email body is HTML format (not plain text)")
+        print("   • Professional design achieved (no more 'ugly blue tones')")
+        sys.exit(0)
+    else:
+        print("❌ BANK EMAIL TEMPLATE TEST FAILED - Issues found with email template functionality")
+        print("\n📋 ISSUES DETECTED:")
+        print("   • Check email template HTML structure")
+        print("   • Verify purple-blue gradient implementation")
+        print("   • Confirm company name integration")
+        print("   • Review single/multiple bank mode functionality")
+        sys.exit(1)
 
 def test_opportunity_statuses_get_endpoint():
     """
