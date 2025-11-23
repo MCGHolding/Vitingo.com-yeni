@@ -183,7 +183,12 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     }
   };
 
-  const handleTextSelect = () => {
+  const handleTextSelect = (e) => {
+    // Don't show popup if clicking inside TipTap editor
+    if (editMode && e.target.closest('.ProseMirror')) {
+      return;
+    }
+    
     const selection = window.getSelection();
     const text = selection.toString().trim();
     
