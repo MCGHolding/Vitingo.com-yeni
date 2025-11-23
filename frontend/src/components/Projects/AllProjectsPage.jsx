@@ -18,6 +18,15 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
     console.log('🔥🔥🔥 REAL AllProjectsPage MOUNTED - UPDATED VERSION 🔥🔥🔥');
     console.log('onEditProject callback:', typeof onEditProject);
     console.log('onBackToDashboard callback:', typeof onBackToDashboard);
+    
+    // Global test fonksiyonu
+    window.testButtonClick = () => {
+      alert('TEST BUTTON ÇALIŞIYOR!');
+      console.log('Test button clicked!');
+    };
+    
+    console.log('Global test function created. Call window.testButtonClick() to test.');
+    
     loadProjects();
   }, []);
 
