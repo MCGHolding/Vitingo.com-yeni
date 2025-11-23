@@ -396,43 +396,60 @@ const ContractCreatePage = ({ onBack }) => {
         </button>
       </div>
 
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {!selectedTemplate ? (
           /* Template Selection */
-          <div className="bg-white rounded-xl shadow-sm p-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <h1 className="text-lg font-bold text-gray-900 mb-4">
               Sözleşme Şablonu Seçin
             </h1>
             
             {templates.length === 0 ? (
-              <div className="text-center py-12">
-                <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">Henüz şablon oluşturulmamış</p>
+              <div className="text-center py-8">
+                <FileText className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 text-sm mb-3">Henüz şablon oluşturulmamış</p>
                 <button
                   onClick={onBack}
-                  className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                  className="px-4 py-1.5 bg-emerald-600 text-white text-xs rounded-md hover:bg-emerald-700"
                 >
                   Şablon Oluştur
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    onClick={() => handleTemplateSelect(template)}
-                    className="border-2 border-gray-200 rounded-lg p-6 hover:border-emerald-500 hover:bg-emerald-50 cursor-pointer transition-all"
+                    className="relative border border-gray-200 rounded-md p-3 hover:border-emerald-500 hover:bg-emerald-50 transition-all group"
                   >
-                    <FileText className="h-10 w-10 text-emerald-600 mb-3" />
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {template.template_name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {template.total_pages} sayfa
-                    </p>
-                    <p className="text-sm text-emerald-600">
-                      {template.fields.length} alan
-                    </p>
+                    {/* Delete Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTemplate(template.id, template.template_name);
+                      }}
+                      className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Şablonu Sil"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+
+                    {/* Template Card - Clickable */}
+                    <div
+                      onClick={() => handleTemplateSelect(template)}
+                      className="cursor-pointer"
+                    >
+                      <FileText className="h-6 w-6 text-emerald-600 mb-2" />
+                      <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                        {template.template_name}
+                      </h3>
+                      <p className="text-xs text-gray-600 mb-1">
+                        {template.total_pages} sayfa
+                      </p>
+                      <p className="text-xs text-emerald-600">
+                        {template.fields.length} alan
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
