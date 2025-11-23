@@ -34,7 +34,78 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
 
   useEffect(() => {
     extractPdfText();
+    checkForDraft();
   }, []);
+
+  // Check for existing draft
+  const checkForDraft = () => {
+    try {
+      const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      
+      if (savedDraft) {
+        setShowDraftPrompt(true);
+      }
+    } catch (error) {
+      console.error('Error checking for draft:', error);
+    }
+  };
+
+  // Load draft
+  const loadDraft = () => {
+    try {
+      const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        setEditedPages(draft.editedPages || {});
+        setFields(draft.fields || []);
+        setCurrentPageIndex(draft.currentPageIndex || 0);
+        setShowDraftPrompt(false);
+        alert('✅ Taslak yüklendi!');
+      }
+    } catch (error) {
+      console.error('Error loading draft:', error);
+      alert('❌ Taslak yüklenirken hata oluştu');
+    }
+  };
+
+  // Discard draft
+  const discardDraft = () => {
+    try {
+      const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+      localStorage.removeItem(draftKey);
+      setShowDraftPrompt(false);
+    } catch (error) {
+      console.error('Error discarding draft:', error);
+    }
+  };
+
+  // Save draft
+  const saveDraft = () => {
+    try {
+      const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+      const draftData = {
+        editedPages,
+        fields,
+        currentPageIndex,
+        savedAt: new Date().toISOString(),
+        fileName: file?.name || 'unknown'
+      };
+      
+      localStorage.setItem(draftKey, JSON.stringify(draftData));
+      setDraftSaved(true);
+      
+      // Show success message temporarily
+      setTimeout(() => setDraftSaved(false), 3000);
+      
+      alert('💾 Taslak kaydedildi!');
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('❌ Taslak kaydedilirken hata oluştu');
+    }
+  };
 
   // Keyboard navigation
   useEffect(() => {
