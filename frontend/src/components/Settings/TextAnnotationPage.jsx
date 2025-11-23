@@ -125,6 +125,34 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentPageIndex, pdfData, showPopup]);
 
+  // Auto-save draft every 30 seconds
+  useEffect(() => {
+    if (!pdfData) return;
+    
+    const autoSaveInterval = setInterval(() => {
+      // Only auto-save if there are changes
+      if (Object.keys(editedPages).length > 0 || fields.length > 0) {
+        try {
+          const draftKey = `contract_draft_${file?.name || 'unknown'}`;
+          const draftData = {
+            editedPages,
+            fields,
+            currentPageIndex,
+            savedAt: new Date().toISOString(),
+            fileName: file?.name || 'unknown'
+          };
+          
+          localStorage.setItem(draftKey, JSON.stringify(draftData));
+          console.log('📝 Otomatik taslak kaydedildi');
+        } catch (error) {
+          console.error('Error auto-saving draft:', error);
+        }
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [editedPages, fields, currentPageIndex, file, pdfData]);
+
   const extractPdfText = async () => {
     try {
       const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
