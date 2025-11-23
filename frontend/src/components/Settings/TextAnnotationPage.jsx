@@ -345,16 +345,93 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
               </button>
             </div>
 
-            <button
-              onClick={handleComplete}
-              className="flex items-center px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
-            >
-              <Check className="h-5 w-5 mr-2" />
-              Tamamla ({fields.length} alan)
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={saveDraft}
+                className={`flex items-center px-4 py-2 rounded-lg transition-all ${
+                  draftSaved 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+                title="Değişiklikleri taslak olarak kaydet"
+              >
+                <svg 
+                  className="h-5 w-5 mr-2" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" 
+                  />
+                </svg>
+                {draftSaved ? 'Kaydedildi!' : 'Taslak Kaydet'}
+              </button>
+              
+              <button
+                onClick={handleComplete}
+                className="flex items-center px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+              >
+                <Check className="h-5 w-5 mr-2" />
+                Tamamla ({fields.length} alan)
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Draft Prompt Modal */}
+      {showDraftPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="inline-flex p-4 bg-blue-100 rounded-full mb-4">
+                <svg 
+                  className="h-12 w-12 text-blue-600" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                  />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Kaydedilmiş Taslak Bulundu!
+              </h2>
+              <p className="text-gray-600">
+                Bu dosya için daha önce kaydedilmiş bir taslak var. Ne yapmak istersiniz?
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={loadDraft}
+                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+              >
+                📂 Taslağı Yükle
+              </button>
+              <button
+                onClick={discardDraft}
+                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
+              >
+                🗑️ Taslağı Sil ve Yeni Başla
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-500 text-center mt-4">
+              💡 İpucu: Düzenlemelerinizi kaybetmemek için düzenli olarak "Taslak Kaydet" butonunu kullanın
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex h-[calc(100vh-80px)]">
