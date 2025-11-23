@@ -719,13 +719,6 @@ export default function Sidebar({
     }
     
     // Handle Settings menu actions
-    if (item.name === 'Ayarlar' && !subItem) {
-      if (onSettings) {
-        onSettings();
-      }
-      return;
-    }
-    
     if (subItem && subItem.name === 'Import Data') {
       if (onImportData) {
         onImportData();
