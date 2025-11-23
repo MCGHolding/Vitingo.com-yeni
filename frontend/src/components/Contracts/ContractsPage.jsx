@@ -18,8 +18,21 @@ import {
   Users,
   Calendar
 } from 'lucide-react';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
 
-const ContractsPage = () => {
+const ContractsPage = ({ setCurrentView }) => {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
