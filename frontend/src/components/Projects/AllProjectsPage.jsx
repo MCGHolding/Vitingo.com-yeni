@@ -214,52 +214,38 @@ const AllProjectsPage = ({ onBackToDashboard, onEditProject }) => {
             )}
           </div>
           
-          <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-2">
+          <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-2" style={{ zIndex: 100, position: 'relative' }}>
             <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('✏️ Edit clicked for project:', project.id);
-                alert('Düzenle butonuna tıklandı: ' + project.name);
-                if (onEditProject) {
-                  console.log('✏️ Calling onEditProject with:', project.id);
-                  onEditProject(project.id);
-                } else {
-                  console.error('❌ onEditProject callback not defined!');
-                  alert('onEditProject callback tanımlı değil!');
-                }
+              onMouseDown={() => {
+                alert('DÜZENLE - MouseDown: ' + project.name);
+                console.log('Edit mousedown');
               }}
-              className="px-3 py-2 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg flex items-center space-x-1 transition-colors"
-              style={{ zIndex: 10, position: 'relative' }}
+              className="px-3 py-2 text-sm border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
             >
               <Edit2 className="h-4 w-4" />
               <span>Düzenle</span>
             </button>
             <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔍 View clicked for project:', project.name, project);
-                alert('Görüntüle butonuna tıklandı: ' + project.name);
+              onMouseDown={() => {
+                alert('GÖRÜNTÜLE - MouseDown: ' + project.name);
+                console.log('View mousedown');
                 setSelectedProject(project);
-                console.log('🔍 selectedProject state set to:', project.id);
               }}
-              className="px-3 py-2 text-sm border border-gray-600 text-gray-600 hover:bg-gray-50 rounded-lg flex items-center space-x-1 transition-colors"
-              style={{ zIndex: 10, position: 'relative' }}
+              className="px-3 py-2 text-sm border-2 border-green-600 bg-green-600 text-white hover:bg-green-700 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
             >
               <Eye className="h-4 w-4" />
               <span>Görüntüle</span>
             </button>
             <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🗑️ Delete clicked for project:', project.name);
-                alert('Sil butonuna tıklandı: ' + project.name);
+              onMouseDown={() => {
+                alert('SİL - MouseDown: ' + project.name);
+                console.log('Delete mousedown');
                 handleDelete(project.id, project.name);
               }}
-              className="px-3 py-2 text-sm border border-red-600 text-red-600 hover:bg-red-50 rounded-lg flex items-center space-x-1 transition-colors"
-              style={{ zIndex: 10, position: 'relative' }}
+              className="px-3 py-2 text-sm border-2 border-red-600 bg-red-600 text-white hover:bg-red-700 rounded-lg flex items-center space-x-1 transition-colors cursor-pointer"
+              style={{ zIndex: 200, position: 'relative', pointerEvents: 'auto' }}
             >
               <Trash2 className="h-4 w-4" />
               <span>Sil</span>
