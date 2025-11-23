@@ -732,10 +732,27 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
         </div>
 
         {/* Fields Sidebar */}
-        <div className="w-96 bg-white p-4 overflow-y-auto">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
-            Tanımlanan Alanlar ({fields.length})
-          </h2>
+        <div className="w-96 bg-white p-4 overflow-y-auto border-l border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">
+              Tanımlanan Alanlar ({fields.length})
+            </h2>
+            {fields.length > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm(`${fields.length} alanın tümünü silmek istediğinizden emin misiniz?`)) {
+                    setFields([]);
+                    addToHistory([], editedPages);
+                  }
+                }}
+                className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-all text-xs font-medium"
+                title="Tüm Alanları Sil"
+              >
+                <X className="h-3 w-3" />
+                <span>Tümünü Sil</span>
+              </button>
+            )}
+          </div>
           
           {fields.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
