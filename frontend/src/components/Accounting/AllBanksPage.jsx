@@ -65,8 +65,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
-  // Load banks on component mount
+  // Load banks and companies on component mount
   useEffect(() => {
+    loadGroupCompanies();
     loadBanks();
   }, []);
 
