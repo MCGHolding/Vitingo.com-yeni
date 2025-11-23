@@ -664,14 +664,18 @@ const NewBankForm = ({ onBackToDashboard }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Alıcı İsmi
+                    Alıcı İsmi (Hesap Sahibi)
                   </label>
                   <Input
                     value={formData.recipientName}
                     onChange={(e) => handleInputChange('recipientName', e.target.value)}
                     placeholder="Örn: Basari International LLC"
-                    className="w-full"
+                    className="w-full bg-green-50 border-green-200"
+                    disabled
                   />
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ Otomatik dolduruldu: {formData.companyName}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
