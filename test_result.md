@@ -726,7 +726,7 @@ test_plan:
     - "Customer Management API Endpoints Testing"
     - "ViewCustomerPage and EditCustomerPage Integration Testing"
     - "NewCustomerForm Backend Integration Issue Testing"
-    - "NewCustomerForm Backend Integration Issue Testing"
+    - "User Management APIs Testing"
   test_all: false
   test_priority: "high_first"
   completed_tests:
