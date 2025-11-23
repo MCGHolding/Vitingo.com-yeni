@@ -431,6 +431,11 @@ const NewBankForm = ({ onBackToDashboard }) => {
                 ))}
               </SelectContent>
             </Select>
+            {formData.companyName && (
+              <p className="text-xs text-green-600 mt-2">
+                ✓ Hesap sahibi otomatik olarak "{formData.companyName}" şeklinde doldurulacaktır
+              </p>
+            )}
           </div>
         </div>
 
