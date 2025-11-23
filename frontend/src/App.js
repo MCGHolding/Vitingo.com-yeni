@@ -1214,6 +1214,18 @@ const Dashboard = () => {
           />
         );
 
+      case 'contracts-edit':
+        // Extract contract ID from URL
+        const contractId = window.location.pathname.split('/').pop();
+        return (
+          <ContractCreatePage 
+            onBack={() => setCurrentView('contracts')}
+            fromContracts={true}
+            contractId={contractId}
+            isEdit={true}
+          />
+        );
+
       case 'import-data':
         return (
           <ImportDataPage 
