@@ -13,6 +13,7 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [fields, setFields] = useState([]);
+  const [pdfUrl, setPdfUrl] = useState(null);
   
   // Field form state
   const [fieldForm, setFieldForm] = useState({
@@ -21,6 +22,15 @@ const PDFAnnotationPage = ({ file, onBack, onComplete }) => {
     is_required: true,
     dropdown_options: ''
   });
+
+  // Convert File to URL
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPdfUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [file]);
 
   const fieldTypes = [
     { value: 'text', label: 'Metin' },
