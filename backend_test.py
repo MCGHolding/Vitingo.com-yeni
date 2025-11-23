@@ -22214,26 +22214,27 @@ def test_customer_field_level_editing_backend():
     return all_tests_passed or test_results["individual_field_updates_working"]
 
 if __name__ == "__main__":
-    print("🚨 CONTRACT MANAGEMENT API TESTING")
+    print("🚨 NEW CONTRACT MANAGEMENT DASHBOARD TESTING")
     print(f"Backend URL: {BACKEND_URL}")
     
-    # Run the Contract Management API testing
+    # Run the NEW Contract Management Dashboard testing
     try:
-        result = test_contract_management_api()
+        result = test_contract_management_dashboard()
         if result:
-            print("\n✅ CONTRACT MANAGEMENT API TESTING COMPLETED SUCCESSFULLY")
-            print("✅ All 5 contract endpoints working correctly")
-            print("✅ PDF text extraction functional")
-            print("✅ Template creation and listing working")
-            print("✅ Contract PDF generation working")
-            print("✅ WeasyPrint appears to be properly installed")
+            print("\n✅ CONTRACT MANAGEMENT DASHBOARD TESTING COMPLETED SUCCESSFULLY")
+            print("✅ Basic contract listing returns contracts array, count, and can_view_all")
+            print("✅ Super admin (mbucak@gmail.com) gets can_view_all=true and sees all contracts")
+            print("✅ Regular users get can_view_all=false and see only their contracts")
+            print("✅ Finance department users get can_view_all=true")
+            print("✅ Response structure is clean (no _id, no pdf_content in list)")
+            print("✅ User role detection works from users collection")
             print("📋 Review the test output above for detailed analysis")
         else:
-            print("\n❌ CONTRACT MANAGEMENT API TESTING FAILED")
-            print("❌ Critical endpoint issues found")
+            print("\n❌ CONTRACT MANAGEMENT DASHBOARD TESTING FAILED")
+            print("❌ Critical role-based access control or data structure issues found")
             print("📋 Review the test output above for specific problems")
     except Exception as e:
-        print(f"\n❌ CONTRACT MANAGEMENT API TESTING ERROR: {str(e)}")
+        print(f"\n❌ CONTRACT MANAGEMENT DASHBOARD TESTING ERROR: {str(e)}")
         result = False
 
 def test_opportunity_statuses_get_endpoint():
