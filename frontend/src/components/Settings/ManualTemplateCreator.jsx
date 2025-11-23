@@ -149,6 +149,7 @@ const ManualTemplateCreator = ({ onBack, onComplete, templateToEdit = null }) =>
           field_key: f.slug,
           field_type: f.type,
           unit: f.unit || null,
+          default_value: f.defaultValue || null,
           page: 1,
           bbox: [0, 0, 100, 20]
         })),
