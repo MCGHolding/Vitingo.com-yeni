@@ -132,13 +132,20 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
 
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
-    // Initialize field values
-    const initialValues = {};
-    template.fields.forEach((field) => {
-      initialValues[field.field_key] = '';
+    // Initialize field values - preserve any auto-filled values from project data
+    setFieldValues((prevValues) => {
+      const initialValues = {};
+      template.fields.forEach((field) => {
+        // Use existing value if available (from project data), otherwise empty string
+        initialValues[field.field_key] = prevValues[field.field_key] || '';
+      });
+      return initialValues;
     });
-    setFieldValues(initialValues);
-    setContractTitle(`${template.template_name} - ${new Date().toLocaleDateString('tr-TR')}`);
+    
+    // Update contract title if not already set from project
+    if (contractTitle === 'Yeni Sözleşme') {
+      setContractTitle(`${template.template_name} - ${new Date().toLocaleDateString('tr-TR')}`);
+    }
   };
 
   const handleFieldChange = (fieldKey, value) => {
