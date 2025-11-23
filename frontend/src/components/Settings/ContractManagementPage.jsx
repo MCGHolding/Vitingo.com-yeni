@@ -57,11 +57,48 @@ const ContractManagementPage = ({ onBack }) => {
     setStep('annotation');
   };
 
-  const handleAnnotationComplete = (data) => {
+  const handleAnnotationComplete = async (data) => {
     console.log('Annotation complete:', data);
-    // TODO: Save to backend
-    alert(`Tamamlandı! ${data.fields.length} alan tanımlandı.\n\nBackend entegrasyonu yakında...`);
-    setStep('complete');
+    
+    try {
+      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Prepare template data
+      const templateData = {
+        template_name: prompt('Şablon için bir isim girin:', data.file.name.replace('.pdf', '')),
+        filename: data.pdfData.filename,
+        total_pages: data.pdfData.total_pages,
+        pages: data.pdfData.pages,
+        fields: data.fields
+      };
+      
+      if (!templateData.template_name) {
+        alert('Şablon ismi gereklidir');
+        return;
+      }
+      
+      const response = await fetch(`${backendUrl}/api/contract-templates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(templateData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        alert(`✅ Başarılı!\n\nŞablon kaydedildi: ${result.template_id}\n${data.fields.length} alan tanımlandı.`);
+        setStep('complete');
+      } else {
+        const error = await response.json();
+        alert(`Hata: ${error.detail || 'Şablon kaydedilemedi'}`);
+      }
+    } catch (error) {
+      console.error('Error saving template:', error);
+      alert('Bir hata oluştu: ' + error.message);
+    }
   };
 
   // Show annotation page
