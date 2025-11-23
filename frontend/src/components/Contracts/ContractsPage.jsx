@@ -290,6 +290,70 @@ const ContractsPage = ({ setCurrentView }) => {
           </div>
         </div>
 
+        {/* Graphs Section */}
+        <div className="mb-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Aylık Sözleşme Trendi (Son 6 Ay)</h2>
+              <button
+                onClick={() => setShowGraphs(!showGraphs)}
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+              >
+                {showGraphs ? 'Gizle' : 'Göster'}
+              </button>
+            </div>
+            
+            {showGraphs && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Bar Chart - Monthly Trend */}
+                <div className="lg:col-span-2">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="ay" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="aktif" fill="#10b981" name="Aktif" />
+                      <Bar dataKey="taslak" fill="#f59e0b" name="Taslak" />
+                      <Bar dataKey="tamamlandi" fill="#3b82f6" name="Tamamlandı" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Pie Chart - Status Distribution */}
+                <div>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Aktif', value: stats.active, fill: '#10b981' },
+                          { name: 'Taslak', value: stats.draft, fill: '#f59e0b' },
+                          { name: 'Tamamlandı', value: stats.completed, fill: '#3b82f6' }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        dataKey="value"
+                      >
+                        <Cell fill="#10b981" />
+                        <Cell fill="#f59e0b" />
+                        <Cell fill="#3b82f6" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="text-center mt-2">
+                    <p className="text-sm font-medium text-gray-700">Durum Dağılımı</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Filters and View Mode */}
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="flex items-center justify-between gap-4">
