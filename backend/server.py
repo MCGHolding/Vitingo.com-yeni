@@ -10747,6 +10747,225 @@ class ContractGenerateRequest(BaseModel):
     save_contract: Optional[bool] = False
     created_by: Optional[str] = None
 
+# ===================== CONTRACTS (Saved Contracts) CRUD =====================
+
+@api_router.post("/contracts")
+async def create_contract(contract_data: ContractCreate):
+    """Create and save a new contract"""
+    try:
+        # Get template
+        template = await db.contract_templates.find_one({"id": contract_data.template_id})
+        if not template:
+            raise HTTPException(status_code=404, detail="Şablon bulunamadı")
+        
+        # Generate PDF content
+        html_content = """
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; font-size: 12pt; }
+                .page { page-break-after: always; margin-bottom: 40px; }
+                .page:last-child { page-break-after: auto; }
+                pre { white-space: pre-wrap; font-family: Arial, sans-serif; font-size: 12pt; }
+            </style>
+        </head>
+        <body>
+        """
+        
+        for page in template.get('pages', []):
+            page_text = page.get('text', '')
+            for field in template.get('fields', []):
+                placeholder = field.get('placeholder', '')
+                field_key = field.get('field_key', '')
+                field_value = contract_data.field_values.get(field_key, '[DOLDURULMADI]')
+                page_text = page_text.replace(placeholder, str(field_value))
+            
+            html_content += f'<div class="page"><pre>{page_text}</pre></div>'
+        
+        html_content += "</body></html>"
+        
+        # Generate PDF
+        from weasyprint import HTML
+        import io
+        import base64
+        
+        pdf_buffer = io.BytesIO()
+        HTML(string=html_content, encoding='utf-8').write_pdf(pdf_buffer)
+        pdf_buffer.seek(0)
+        pdf_base64 = base64.b64encode(pdf_buffer.read()).decode('utf-8')
+        
+        # Create contract document
+        contract = Contract(
+            contract_title=contract_data.contract_title,
+            template_id=contract_data.template_id,
+            template_name=template.get('template_name', ''),
+            field_values=contract_data.field_values,
+            status=contract_data.status,
+            created_by=contract_data.created_by,
+            pdf_content=pdf_base64
+        )
+        
+        contract_dict = contract.dict()
+        await db.contracts.insert_one(contract_dict)
+        
+        logger.info(f"Contract created: {contract.id} by {contract.created_by}")
+        
+        return {
+            "success": True,
+            "message": "Sözleşme başarıyla oluşturuldu",
+            "contract_id": contract.id,
+            "contract": contract.dict()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating contract: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Sözleşme oluşturulamadı: {str(e)}")
+
+@api_router.get("/contracts")
+async def get_contracts(user_email: Optional[str] = None):
+    """Get all contracts with permission filtering"""
+    try:
+        # Permission check
+        super_admin = "mbucak@gmail.com"
+        finance_roles = ["Muhasebe Müdürü", "Finans Müdürü"]
+        
+        query = {}
+        
+        # If not super admin or finance, filter by user
+        if user_email and user_email != super_admin:
+            # TODO: Check if user has finance role from user collection
+            # For now, only super admin sees all
+            query["created_by"] = user_email
+        
+        contracts = await db.contracts.find(query).sort("created_at", -1).to_list(length=None)
+        
+        for contract in contracts:
+            if '_id' in contract:
+                del contract['_id']
+            # Don't send PDF content in list (too large)
+            if 'pdf_content' in contract:
+                contract['has_pdf'] = True
+                del contract['pdf_content']
+        
+        return {
+            "contracts": contracts,
+            "count": len(contracts)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching contracts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/contracts/{contract_id}")
+async def get_contract(contract_id: str):
+    """Get a specific contract"""
+    try:
+        contract = await db.contracts.find_one({"id": contract_id})
+        
+        if not contract:
+            raise HTTPException(status_code=404, detail="Sözleşme bulunamadı")
+        
+        if '_id' in contract:
+            del contract['_id']
+        
+        return contract
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching contract: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/contracts/{contract_id}/pdf")
+async def download_contract_pdf(contract_id: str):
+    """Download contract PDF"""
+    try:
+        contract = await db.contracts.find_one({"id": contract_id})
+        
+        if not contract:
+            raise HTTPException(status_code=404, detail="Sözleşme bulunamadı")
+        
+        if not contract.get('pdf_content'):
+            raise HTTPException(status_code=404, detail="PDF bulunamadı")
+        
+        import base64
+        from fastapi.responses import StreamingResponse
+        import io
+        
+        pdf_bytes = base64.b64decode(contract['pdf_content'])
+        pdf_buffer = io.BytesIO(pdf_bytes)
+        
+        return StreamingResponse(
+            pdf_buffer,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={contract['contract_title']}.pdf"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading contract PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/contracts/{contract_id}")
+async def delete_contract(contract_id: str):
+    """Delete a contract"""
+    try:
+        result = await db.contracts.delete_one({"id": contract_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Sözleşme bulunamadı")
+        
+        return {
+            "success": True,
+            "message": "Sözleşme başarıyla silindi"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting contract: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/contracts/{contract_id}/status")
+async def update_contract_status(contract_id: str, status: str):
+    """Update contract status"""
+    try:
+        valid_statuses = ["draft", "active", "completed", "cancelled"]
+        if status not in valid_statuses:
+            raise HTTPException(status_code=400, detail="Geçersiz durum")
+        
+        result = await db.contracts.update_one(
+            {"id": contract_id},
+            {
+                "$set": {
+                    "status": status,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Sözleşme bulunamadı")
+        
+        return {
+            "success": True,
+            "message": "Durum güncellendi"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating contract status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== CONTRACT PDF GENERATION =====================
+
 @api_router.post("/contracts/generate")
 async def generate_contract(request: ContractGenerateRequest):
     """Generate a PDF contract from template with field values"""
