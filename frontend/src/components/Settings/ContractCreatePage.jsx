@@ -14,12 +14,17 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
   const [previewPageIndex, setPreviewPageIndex] = useState(0);
 
   useEffect(() => {
-    fetchTemplates();
-    if (isEdit && contractId) {
-      loadDraftContract();
-    } else {
-      loadProjectDataIfNeeded();
-    }
+    const init = async () => {
+      await fetchTemplates();
+      
+      if (isEdit && contractId) {
+        await loadDraftContract();
+      } else {
+        await loadProjectDataIfNeeded();
+      }
+    };
+    
+    init();
   }, [contractId, isEdit]);
 
   const loadDraftContract = async () => {
