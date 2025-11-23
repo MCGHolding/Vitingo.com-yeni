@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://fairadmin.preview.emergentagent.com"
+BACKEND_URL = "https://fairmanager-crm.preview.emergentagent.com"
 
 def test_recursive_stand_elements_get():
     """
