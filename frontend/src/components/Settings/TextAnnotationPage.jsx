@@ -289,10 +289,16 @@ const TextAnnotationPage = ({ file, onBack, onComplete }) => {
     }
     
     // Merge with existing editedPages
-    setEditedPages({
+    const finalEditedPages = {
       ...editedPages,
       ...newEditedPages
-    });
+    };
+    
+    setEditedPages(finalEditedPages);
+    setFields(updatedFields);
+    
+    // Add to history
+    addToHistory(updatedFields, finalEditedPages);
     
     // Force re-render
     setRefreshKey(prev => prev + 1);
