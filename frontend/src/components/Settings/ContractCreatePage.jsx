@@ -136,14 +136,22 @@ const ContractCreatePage = ({ onBack, fromContracts = false }) => {
   };
 
   const handleTemplateSelect = (template) => {
+    console.log('🎯 Template selected:', template.template_name);
     setSelectedTemplate(template);
+    
     // Initialize field values - preserve any auto-filled values from project data
     setFieldValues((prevValues) => {
+      console.log('📦 Previous field values:', prevValues);
       const initialValues = {};
       template.fields.forEach((field) => {
         // Use existing value if available (from project data), otherwise empty string
-        initialValues[field.field_key] = prevValues[field.field_key] || '';
+        const value = prevValues[field.field_key] || '';
+        initialValues[field.field_key] = value;
+        if (value) {
+          console.log(`  ✅ Kept value for ${field.field_key}: ${value}`);
+        }
       });
+      console.log('🔄 New field values:', initialValues);
       return initialValues;
     });
     
