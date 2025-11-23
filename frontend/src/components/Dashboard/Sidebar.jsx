@@ -990,33 +990,12 @@ export default function Sidebar({
 
     // Handle Contracts menu actions
     if (item.name === 'Sözleşmeler' && !subItem) {
-      console.log('Sözleşmeler main menu clicked');
+      console.log('Sözleşmeler clicked');
       if (onContracts) {
         console.log('Calling onContracts handler');
         onContracts();
       } else {
         console.log('onContracts handler not found!');
-      }
-      return;
-    }
-
-    if (subItem && subItem.name === 'Tüm Sözleşmeler') {
-      console.log('Tüm Sözleşmeler clicked');
-      if (onContracts) {
-        console.log('Calling onContracts handler for submenu');
-        onContracts();
-      } else {
-        console.log('onContracts handler not found for submenu!');
-      }
-      return;
-    }
-
-    if (subItem && (subItem.name === 'Aktif' || subItem.name === 'Taslak' || 
-                    subItem.name === 'Tamamlandı' || subItem.name === 'İptal')) {
-      // For now, all status filters go to the main contracts page
-      // The ContractsPage component will handle filtering based on URL params
-      if (onContracts) {
-        onContracts();
       }
       return;
     }
