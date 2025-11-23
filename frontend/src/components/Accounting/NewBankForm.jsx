@@ -297,6 +297,53 @@ const NewBankForm = ({ onBackToDashboard }) => {
     });
   };
 
+  const fillTestData = () => {
+    // Set a test company first
+    const testCompany = groupCompanies.find(c => c.name.includes('Test') || c.name.includes('Başarı'));
+    const companyId = testCompany?.id || (groupCompanies.length > 0 ? groupCompanies[0].id : '');
+    const selectedCompany = groupCompanies.find(c => c.id === companyId);
+    
+    // Map country names to country codes
+    const countryMapping = {
+      'Türkiye': 'Turkey',
+      'ABD': 'USA',
+      'Birleşik Arap Emirlikleri': 'UAE',
+      'Turkey': 'Turkey',
+      'USA': 'USA',
+      'UAE': 'UAE'
+    };
+    
+    const countryCode = countryMapping[selectedCompany?.country] || selectedCompany?.country || 'Turkey';
+    
+    // Fill test data based on country
+    const testData = {
+      companyId: companyId,
+      companyName: selectedCompany?.name || 'Test Şirketi',
+      country: countryCode,
+      bankName: countryCode === 'Turkey' ? 'Garanti BBVA Test' : 
+                countryCode === 'UAE' ? 'Emirates Islamic Bank Test' : 
+                'Chase Bank Test'
+    };
+
+    if (countryCode === 'Turkey' || countryCode === 'UAE') {
+      testData.swiftCode = countryCode === 'Turkey' ? 'TGBATRIS' : 'EIBKAEADXXX';
+      testData.iban = countryCode === 'Turkey' ? 'TR32 0006 2000 0000 0006 2958 16' : 'AE07 0331 2345 6789 0123 456';
+      testData.branchName = countryCode === 'Turkey' ? 'Levent Şubesi' : 'Downtown Dubai Branch';
+      testData.branchCode = countryCode === 'Turkey' ? '620' : '033';
+      testData.accountHolder = countryCode === 'Turkey' ? 'Başarı Uluslararası Fuarcılık A.Ş.' : 'Basari International Exhibition LLC';
+      testData.accountNumber = countryCode === 'Turkey' ? '6295816' : '1234567890123456';
+    } else if (countryCode === 'USA') {
+      testData.routingNumber = '021000021';
+      testData.usAccountNumber = '1234567890123456';
+      testData.bankAddress = '383 Madison Ave, New York, NY 10179';
+      testData.recipientAddress = '123 Business St, New York, NY 10001';
+      testData.recipientName = 'Basari International LLC';
+      testData.recipientZipCode = '10001';
+    }
+
+    setFormData(testData);
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
