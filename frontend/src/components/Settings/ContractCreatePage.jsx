@@ -13,6 +13,16 @@ const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, 
   const [showPreview, setShowPreview] = useState(false);
   const [previewPageIndex, setPreviewPageIndex] = useState(0);
 
+  // New states for dropdowns
+  const [companies, setCompanies] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [allProjects, setAllProjects] = useState([]); // Store all projects
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+
   useEffect(() => {
     const init = async () => {
       const loadedTemplates = await fetchTemplates();
