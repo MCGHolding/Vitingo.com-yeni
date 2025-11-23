@@ -539,62 +539,62 @@ function SortableFieldItem({ field, index, onEdit, onDelete, getFieldTypeLabel }
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-4 border border-gray-200 rounded-lg transition-all ${
+      className={`p-3 border border-gray-200 rounded-lg transition-all ${
         isDragging 
           ? 'shadow-lg border-blue-400 bg-blue-50 opacity-50' 
           : 'hover:border-blue-300'
       }`}
     >
-      {/* Drag Handle */}
-      <div 
-        {...attributes}
-        {...listeners}
-        className="mr-3 cursor-grab active:cursor-grabbing"
-      >
-        <GripVertical className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-      </div>
-
-      <div className="flex-1">
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-500 font-medium">#{index + 1}</span>
-          <div>
-            <h3 className="font-medium text-gray-900">{field.name}</h3>
-            <div className="flex items-center space-x-3 mt-1">
-              <code className="text-xs bg-gray-100 px-2 py-1 rounded text-blue-600">
-                {`{{${field.slug}}}`}
-              </code>
-              <span className="text-xs text-gray-500">
-                {getFieldTypeLabel(field.type)}
-                {field.unit && ` (${field.unit})`}
-              </span>
-              {field.defaultValue && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                  ✓ Default
-                </span>
-              )}
-            </div>
-            {field.defaultValue && (
-              <p className="text-xs text-gray-600 mt-1 line-clamp-1">
-                Default: {field.defaultValue.substring(0, 50)}{field.defaultValue.length > 50 ? '...' : ''}
-              </p>
-            )}
+      {/* Header with drag handle and number */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center space-x-2">
+          <div 
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="h-4 w-4 text-gray-400 hover:text-gray-600" />
           </div>
+          <span className="text-xs text-gray-500 font-medium">#{index + 1}</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <button
+            onClick={() => onEdit(field)}
+            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => onDelete(field.id)}
+            className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <button
-          onClick={() => onEdit(field)}
-          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-        >
-          <Edit2 className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => onDelete(field.id)}
-          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+      {/* Field name */}
+      <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-1">{field.name}</h3>
+
+      {/* Field details */}
+      <div className="space-y-1.5">
+        <code className="text-xs bg-gray-100 px-2 py-0.5 rounded text-blue-600 block truncate">
+          {`{{${field.slug}}}`}
+        </code>
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <span>{getFieldTypeLabel(field.type)}</span>
+          {field.unit && <span className="text-gray-400">({field.unit})</span>}
+        </div>
+        {field.defaultValue && (
+          <>
+            <span className="inline-block text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+              ✓ Default
+            </span>
+            <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+              {field.defaultValue}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
