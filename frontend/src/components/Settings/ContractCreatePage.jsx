@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, FileText, Download, Loader2, AlertCircle, Check, ChevronLeft, ChevronRight, X, Trash2, Edit2 } from 'lucide-react';
 
-const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, isEdit = false }) => {
+const ContractCreatePage = ({ onBack, fromContracts = false, contractId = null, isEdit = false, onEditTemplate = null }) => {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [fieldValues, setFieldValues] = useState({});
