@@ -207,9 +207,10 @@ const ContractManagementPage = ({ onBack }) => {
           </div>
 
           <div className="mb-6 pt-4 border-t border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">
-              Haydi Başlayalım
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Şablon Oluşturma Yöntemi</h2>
+            <p className="text-gray-600 text-sm mb-4">
+              Nasıl bir şablon oluşturmak istersiniz?
+            </p>
 
             {/* Method Selection */}
             <div className="space-y-4 mb-6">
