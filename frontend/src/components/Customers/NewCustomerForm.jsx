@@ -1380,9 +1380,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     </div>
                   </div>
                 </div>
-
+                </div>
+                )}
               </div>
-            ))}
+            );
+            })}
           </CardContent>
         </Card>
 
