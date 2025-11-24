@@ -1222,19 +1222,17 @@ def test_user_positions_apis():
     print("=" * 100)
     
     test_results = {
-        "positions_api_working": False,
-        "active_users_api_working": False,
-        "create_user_api_working": False,
-        "invite_user_api_working": False,
-        "update_user_api_working": False,
-        "delete_user_api_working": False,
+        "get_positions_working": False,
+        "create_position_working": False,
+        "update_position_working": False,
+        "delete_position_working": False,
         "positions_count": 0,
-        "active_users_count": 0,
-        "created_user_id": None,
-        "invited_user_id": None,
-        "auto_password_length": 0,
-        "whatsapp_link_present": False,
-        "turkish_messages": False,
+        "default_positions_present": False,
+        "turkish_character_support": False,
+        "value_generation_working": False,
+        "duplicate_prevention_working": False,
+        "created_position_id": None,
+        "turkish_success_messages": False,
         "critical_issues": [],
         "warnings": []
     }
