@@ -9435,6 +9435,116 @@ async def get_positions():
         logger.error(f"Error getting positions: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+class PositionCreate(BaseModel):
+    name: str
+
+@api_router.post("/positions")
+async def create_position(position_data: PositionCreate):
+    """Create a new position"""
+    try:
+        # Generate value from name (lowercase, replace spaces with underscores, Turkish chars)
+        value = position_data.name.lower()
+        # Turkish character conversion
+        tr_chars = {'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c', 'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'}
+        for tr, en in tr_chars.items():
+            value = value.replace(tr, en)
+        value = value.replace(' ', '_')
+        
+        # Check if position already exists
+        existing = await db.positions.find_one({"value": value})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu pozisyon zaten mevcut")
+        
+        new_position = {
+            "id": str(uuid.uuid4()),
+            "name": position_data.name,
+            "value": value,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        await db.positions.insert_one(new_position)
+        logger.info(f"Created position: {new_position['name']}")
+        
+        return {
+            "success": True,
+            "message": f"{new_position['name']} pozisyonu oluşturuldu",
+            "position": serialize_document(new_position)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating position: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/positions/{position_id}")
+async def update_position(position_id: str, position_data: PositionCreate):
+    """Update a position"""
+    try:
+        existing = await db.positions.find_one({"id": position_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Pozisyon bulunamadı")
+        
+        # Generate new value from name
+        value = position_data.name.lower()
+        tr_chars = {'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c', 'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'}
+        for tr, en in tr_chars.items():
+            value = value.replace(tr, en)
+        value = value.replace(' ', '_')
+        
+        update_data = {
+            "name": position_data.name,
+            "value": value,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.positions.update_one(
+            {"id": position_id},
+            {"$set": update_data}
+        )
+        
+        updated = await db.positions.find_one({"id": position_id})
+        logger.info(f"Updated position: {position_id}")
+        
+        return {
+            "success": True,
+            "message": "Pozisyon güncellendi",
+            "position": serialize_document(updated)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating position: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/positions/{position_id}")
+async def delete_position(position_id: str):
+    """Delete a position (only if not used by any user)"""
+    try:
+        position = await db.positions.find_one({"id": position_id})
+        if not position:
+            raise HTTPException(status_code=404, detail="Pozisyon bulunamadı")
+        
+        # Check if position is used by any user
+        users_with_position = await db.users.find_one({"position": position["name"]})
+        if users_with_position:
+            raise HTTPException(
+                status_code=400, 
+                detail="Bu pozisyon aktif kullanıcılar tarafından kullanılıyor ve silinemez"
+            )
+        
+        await db.positions.delete_one({"id": position_id})
+        logger.info(f"Deleted position: {position_id}")
+        
+        return {
+            "success": True,
+            "message": f"{position['name']} pozisyonu silindi"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting position: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
