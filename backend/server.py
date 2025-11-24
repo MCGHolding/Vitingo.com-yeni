@@ -9910,9 +9910,31 @@ async def update_expense_center(center_id: str, center_data: ExpenseCenterCreate
         if not existing:
             raise HTTPException(status_code=404, detail="Masraf merkezi bulunamadı")
         
+        # Generate new code from name
+        code_prefix = generate_expense_center_code(center_data.name)
+        
+        # Find next available number for this prefix
+        existing_centers = await db.expense_centers.find(
+            {"code": {"$regex": f"^{code_prefix}-"}, "id": {"$ne": center_id}}
+        ).to_list(length=None)
+        
+        if existing_centers:
+            numbers = []
+            for center in existing_centers:
+                try:
+                    num = int(center['code'].split('-')[-1])
+                    numbers.append(num)
+                except:
+                    pass
+            next_num = max(numbers) + 1 if numbers else 1
+        else:
+            next_num = 1
+        
+        final_code = f"{code_prefix}-{next_num:03d}"
+        
         update_data = {
             "name": center_data.name,
-            "code": center_data.code,
+            "code": final_code,
             "updated_at": datetime.now(timezone.utc)
         }
         
@@ -9922,11 +9944,11 @@ async def update_expense_center(center_id: str, center_data: ExpenseCenterCreate
         )
         
         updated = await db.expense_centers.find_one({"id": center_id})
-        logger.info(f"Updated expense center: {center_id}")
+        logger.info(f"Updated expense center: {center_id} with new code {final_code}")
         
         return {
             "success": True,
-            "message": "Masraf merkezi güncellendi",
+            "message": f"Masraf merkezi güncellendi (Yeni Kod: {final_code})",
             "expense_center": serialize_document(updated)
         }
     except HTTPException:
