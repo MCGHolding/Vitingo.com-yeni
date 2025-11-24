@@ -476,7 +476,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
             <select
               value={countryFilter}
               onChange={(e) => setCountryFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
             >
               <option value="all">Tüm Ülkeler</option>
               {Object.entries(countryCounts).sort().map(([country, count]) => (
@@ -487,7 +487,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
             >
               <option value="all">Tüm Şehirler</option>
               {Object.entries(cityCounts).sort().map(([city, count]) => (
@@ -498,7 +498,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
             <select
               value={monthFilter}
               onChange={(e) => setMonthFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
             >
               <option value="all">Tüm Aylar</option>
               <option value="1">Ocak</option>
@@ -762,7 +762,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                   type="text"
                   value={editFormData.name}
                   onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -772,7 +772,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                     type="text"
                     value={editFormData.country}
                     onChange={(e) => setEditFormData({...editFormData, country: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -781,7 +781,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                     type="text"
                     value={editFormData.city}
                     onChange={(e) => setEditFormData({...editFormData, city: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -791,7 +791,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                   type="text"
                   value={editFormData.fairCenter}
                   onChange={(e) => setEditFormData({...editFormData, fairCenter: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -801,7 +801,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                     type="date"
                     value={editFormData.startDate}
                     onChange={(e) => setEditFormData({...editFormData, startDate: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -810,7 +810,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                     type="date"
                     value={editFormData.endDate}
                     onChange={(e) => setEditFormData({...editFormData, endDate: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -821,7 +821,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                     type="text"
                     value={editFormData.year}
                     onChange={(e) => setEditFormData({...editFormData, year: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -829,7 +829,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                   <select
                     value={editFormData.cycle}
                     onChange={(e) => setEditFormData({...editFormData, cycle: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   >
                     <option value="yearly">Her Yıl</option>
                     <option value="6_months">6 Ayda Bir</option>
@@ -983,7 +983,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                   type="file"
                   accept=".txt"
                   onChange={handleFileUpload}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
 
