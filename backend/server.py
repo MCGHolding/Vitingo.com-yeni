@@ -10073,6 +10073,79 @@ async def delete_advance_category(category_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== EXPENSE CATEGORIES (Hierarchical) ====================
+
+class ExpenseCategoryCreate(BaseModel):
+    name: str
+    parent_id: Optional[str] = None
+
+@api_router.get("/expense-categories")
+async def get_expense_categories():
+    try:
+        categories = await db.expense_categories.find().to_list(length=None)
+        if not categories:
+            default = [
+                {"id": str(uuid.uuid4()), "name": "Konaklama", "parent_id": None, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Ulaşım", "parent_id": None, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Yemek", "parent_id": None, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İletişim", "parent_id": None, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Eğitim", "parent_id": None, "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.expense_categories.insert_many(default)
+            konaklama_id = default[0]["id"]
+            ulasim_id = default[1]["id"]
+            sub_cats = [
+                {"id": str(uuid.uuid4()), "name": "Otel/Ev Giderleri", "parent_id": konaklama_id, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Minibar Harcamaları", "parent_id": konaklama_id, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Şehir Vergisi", "parent_id": konaklama_id, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Uçak Bileti", "parent_id": ulasim_id, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Tren Bileti", "parent_id": ulasim_id, "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Taksi", "parent_id": ulasim_id, "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.expense_categories.insert_many(sub_cats)
+            categories = default + sub_cats
+        return [serialize_document(cat) for cat in categories]
+    except Exception as e:
+        logger.error(f"Error getting expense categories: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/expense-categories")
+async def create_expense_category(category_data: ExpenseCategoryCreate):
+    try:
+        new_category = {
+            "id": str(uuid.uuid4()),
+            "name": category_data.name,
+            "parent_id": category_data.parent_id,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.expense_categories.insert_one(new_category)
+        return {"success": True, "message": f"{new_category['name']} kategorisi oluşturuldu"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/expense-categories/{category_id}")
+async def update_expense_category(category_id: str, category_data: ExpenseCategoryCreate):
+    try:
+        existing = await db.expense_categories.find_one({"id": category_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+        await db.expense_categories.update_one({"id": category_id}, {"$set": {"name": category_data.name}})
+        return {"success": True, "message": "Kategori güncellendi"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/expense-categories/{category_id}")
+async def delete_expense_category(category_id: str):
+    try:
+        category = await db.expense_categories.find_one({"id": category_id})
+        if not category:
+            raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+        await db.expense_categories.delete_many({"parent_id": category_id})
+        await db.expense_categories.delete_one({"id": category_id})
+        return {"success": True, "message": f"{category['name']} kategorisi silindi"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
