@@ -650,10 +650,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     }
   };
 
-  // Debug: Check if handleSubmit is defined
-  console.log('🔍 NewCustomerForm render - handleSubmit type:', typeof handleSubmit);
-  console.log('🔍 handleSubmit function:', handleSubmit ? 'DEFINED' : 'UNDEFINED');
-
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
