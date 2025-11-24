@@ -387,6 +387,14 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     setContacts(updatedContacts);
   };
 
+  const toggleContactExpanded = (contactIndex) => {
+    setExpandedContacts(prev => 
+      prev.includes(contactIndex)
+        ? prev.filter(i => i !== contactIndex)
+        : [...prev, contactIndex]
+    );
+  };
+
   const handleAddContact = () => {
     setContacts([...contacts, { 
       full_name: '', 
