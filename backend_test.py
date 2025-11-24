@@ -1686,8 +1686,15 @@ def test_user_positions_apis():
         return True
 
 def test_opportunity_statuses_get_endpoint():
-                        print(f"\n📋 ACTIVE USERS DATA ANALYSIS (First 3):")
-                        for i, user in enumerate(users[:3], 1):
+    """
+    Test GET /api/opportunity-statuses endpoint.
+    
+    Requirements to verify:
+    1. Should return all active opportunity statuses
+    2. Should return proper JSON array structure
+    3. Each status should have required fields (id, value, label, description, is_active, created_at, created_by)
+    4. Should handle empty list gracefully
+    """
                             user_id = user.get("id", "N/A")
                             user_name = user.get("name", "N/A")
                             user_email = user.get("email", "N/A")
