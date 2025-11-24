@@ -5,7 +5,6 @@ import SuccessModal from './SuccessModal';
 // Expense Center Card Component
 const ExpenseCenterCard = ({ center, isEditing, onEdit, onSave, onCancel, onDelete }) => {
   const [editName, setEditName] = useState(center.name);
-  const [editCode, setEditCode] = useState(center.code);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -25,32 +24,23 @@ const ExpenseCenterCard = ({ center, isEditing, onEdit, onSave, onCancel, onDele
         {/* Center Info */}
         <div className="flex-1 min-w-0">
           {isEditing ? (
-            <div className="space-y-1">
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder="Masraf Merkezi Adı"
-                className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                autoFocus
-              />
-              <input
-                type="text"
-                value={editCode}
-                onChange={(e) => setEditCode(e.target.value)}
-                placeholder="Kod"
-                className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-xs"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    console.log('Enter pressed, saving:', editName, editCode);
-                    onSave(center.id, editName, editCode);
-                  } else if (e.key === 'Escape') {
-                    console.log('Escape pressed, cancelling');
-                    onCancel();
-                  }
-                }}
-              />
-            </div>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="Masraf Merkezi Adı"
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  console.log('Enter pressed, saving:', editName);
+                  onSave(center.id, editName);
+                } else if (e.key === 'Escape') {
+                  console.log('Escape pressed, cancelling');
+                  onCancel();
+                }
+              }}
+            />
           ) : (
             <>
               <h3 className="text-sm font-semibold text-gray-900 truncate">
@@ -67,8 +57,8 @@ const ExpenseCenterCard = ({ center, isEditing, onEdit, onSave, onCancel, onDele
             <>
               <button
                 onClick={() => {
-                  console.log('Save button clicked:', editName, editCode);
-                  onSave(center.id, editName, editCode);
+                  console.log('Save button clicked:', editName);
+                  onSave(center.id, editName);
                 }}
                 className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                 title="Kaydet"
