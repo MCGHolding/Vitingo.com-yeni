@@ -25331,4 +25331,18 @@ def test_opportunity_management_endpoints():
     print("=" * 100)
     
     return passed_tests == total_tests
+
+if __name__ == "__main__":
+    print("🚀 Starting User Positions API Testing...")
+    print("=" * 100)
+    
+    # Run the positions API test
+    result = test_user_positions_apis()
+    
+    if result:
+        print("\n🎉 ALL POSITIONS API TESTS PASSED!")
+        exit(0)
+    else:
+        print("\n❌ SOME POSITIONS API TESTS FAILED!")
+        exit(1)
     
