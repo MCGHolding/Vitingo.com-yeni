@@ -518,7 +518,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
 
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">
-              <span className="text-blue-600 font-bold">{filteredFairs.length}</span> fuar bulundu
+              <span className="text-red-600 font-bold">{filteredFairs.length}</span> fuar bulundu
             </span>
             {(searchTerm || cityFilter !== 'all' || countryFilter !== 'all' || monthFilter !== 'all') && (
               <button
