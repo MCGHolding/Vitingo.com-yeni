@@ -1221,6 +1221,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'user-positions':
+        return (
+          <PositionsPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
