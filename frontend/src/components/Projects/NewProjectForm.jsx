@@ -569,6 +569,43 @@ export default function NewProjectForm({ onClose, onSave }) {
                 </Select>
               </div>
             </div>
+            {/* Customer Information Display */}
+            {formData.customerId && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">Seçilen Müşteri Bilgileri</h4>
+                {(() => {
+                  const selectedCustomer = customers.find(c => c.id === formData.customerId);
+                  if (!selectedCustomer) return null;
+                  
+                  return (
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Şirket Adı:</span>
+                        <span className="ml-2 font-medium">{selectedCustomer.companyName}</span>
+                      </div>
+                      {selectedCustomer.contactPerson && (
+                        <div>
+                          <span className="text-gray-600">İletişim Kişisi:</span>
+                          <span className="ml-2 font-medium">{selectedCustomer.contactPerson}</span>
+                        </div>
+                      )}
+                      {selectedCustomer.email && (
+                        <div>
+                          <span className="text-gray-600">E-posta:</span>
+                          <span className="ml-2 font-medium">{selectedCustomer.email}</span>
+                        </div>
+                      )}
+                      {selectedCustomer.phone && (
+                        <div>
+                          <span className="text-gray-600">Telefon:</span>
+                          <span className="ml-2 font-medium">{selectedCustomer.phone}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
 
             {/* Fair Dates */}
             <div className="grid grid-cols-2 gap-4">
