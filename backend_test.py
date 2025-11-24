@@ -1456,8 +1456,160 @@ def test_user_positions_apis():
             
     except Exception as e:
         print(f"❌ FAIL: Duplicate test error: {str(e)}")
-        test_results["critical_issues"].append(f"DUPLICATE_TEST_ERROR: {str(e)}")rs_count
-                    print(f"📊 Active Users Count: {users_count}")
+        test_results["critical_issues"].append(f"DUPLICATE_TEST_ERROR: {str(e)}")
+    
+    # TEST 3: PUT /api/positions/{position_id} - Pozisyon Güncelleme
+    print("\n" + "=" * 80)
+    print("TEST 3: PUT /api/positions/{position_id} - POZİSYON GÜNCELLEME TESTİ")
+    print("=" * 80)
+    
+    if test_results["created_position_id"]:
+        position_id = test_results["created_position_id"]
+        endpoint = f"{BACKEND_URL}/api/positions/{position_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print("Test: İsim değiştirme, Türkçe başarı mesajı")
+        
+        # Update position data
+        update_position_data = {
+            "name": "Güncellenmiş Test Pozisyonu"
+        }
+        
+        try:
+            response = requests.put(endpoint, json=update_position_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Position update endpoint responds with 200")
+                
+                try:
+                    result = response.json()
+                    print(f"Response: {result}")
+                    
+                    # Check if response has success field
+                    if result.get("success") == True:
+                        print("✅ PASS: Update response contains success: true")
+                        test_results["update_position_working"] = True
+                        
+                        # Check for Turkish success message
+                        message = result.get("message", "")
+                        if message and any(char in message for char in ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']):
+                            print(f"✅ PASS: Turkish update success message: '{message}'")
+                        else:
+                            print(f"⚠️  WARNING: Update message not in Turkish: '{message}'")
+                            test_results["warnings"].append("UPDATE_MESSAGE_NOT_TURKISH")
+                        
+                        # Check updated position data
+                        position = result.get("position", {})
+                        if position:
+                            updated_name = position.get("name")
+                            updated_value = position.get("value")
+                            
+                            print(f"📊 Updated Position:")
+                            print(f"   Name: {updated_name}")
+                            print(f"   Value: {updated_value}")
+                            
+                            if updated_name == update_position_data["name"]:
+                                print(f"✅ PASS: Position name updated correctly")
+                            else:
+                                print(f"⚠️  WARNING: Position name not updated correctly")
+                                test_results["warnings"].append("UPDATE_NAME_MISMATCH")
+                        else:
+                            print("⚠️  WARNING: Updated position data not returned")
+                            test_results["warnings"].append("UPDATE_POSITION_DATA_MISSING")
+                    else:
+                        print("❌ FAIL: Update response does not contain success: true")
+                        test_results["critical_issues"].append("UPDATE_POSITION_NO_SUCCESS")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse position update response: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_POSITION_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Position update failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_POSITION_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Position update request error: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_POSITION_REQUEST_ERROR: {str(e)}")
+    else:
+        print("❌ SKIP: No position ID available for update test")
+        test_results["warnings"].append("UPDATE_TEST_SKIPPED_NO_ID")
+    
+    # TEST 4: DELETE /api/positions/{position_id} - Pozisyon Silme
+    print("\n" + "=" * 80)
+    print("TEST 4: DELETE /api/positions/{position_id} - POZİSYON SİLME TESTİ")
+    print("=" * 80)
+    
+    if test_results["created_position_id"]:
+        position_id = test_results["created_position_id"]
+        endpoint = f"{BACKEND_URL}/api/positions/{position_id}"
+        print(f"Testing endpoint: {endpoint}")
+        print("Test: Pozisyon silme, Türkçe başarı mesajı")
+        print("Not: Aktif kullanıcı kullanan pozisyon silinemez kontrolü")
+        
+        try:
+            response = requests.delete(endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Position delete endpoint responds with 200")
+                
+                try:
+                    result = response.json()
+                    print(f"Response: {result}")
+                    
+                    # Check if response has success field
+                    if result.get("success") == True:
+                        print("✅ PASS: Delete response contains success: true")
+                        test_results["delete_position_working"] = True
+                        
+                        # Check for Turkish success message
+                        message = result.get("message", "")
+                        if message and any(char in message for char in ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']):
+                            print(f"✅ PASS: Turkish delete success message: '{message}'")
+                        else:
+                            print(f"⚠️  WARNING: Delete message not in Turkish: '{message}'")
+                            test_results["warnings"].append("DELETE_MESSAGE_NOT_TURKISH")
+                    else:
+                        print("❌ FAIL: Delete response does not contain success: true")
+                        test_results["critical_issues"].append("DELETE_POSITION_NO_SUCCESS")
+                        
+                except Exception as e:
+                    print(f"❌ FAIL: Could not parse position delete response: {str(e)}")
+                    test_results["critical_issues"].append(f"DELETE_POSITION_PARSE_ERROR: {str(e)}")
+            elif response.status_code == 400:
+                print("✅ PASS: Position delete correctly rejected (may be in use)")
+                
+                try:
+                    error_result = response.json()
+                    error_detail = error_result.get("detail", "")
+                    
+                    if "kullanılıyor" in error_detail.lower() or "silinemez" in error_detail.lower():
+                        print(f"✅ PASS: Turkish error message for position in use: '{error_detail}'")
+                        test_results["delete_position_working"] = True
+                    else:
+                        print(f"⚠️  WARNING: Error message not in Turkish: '{error_detail}'")
+                        test_results["warnings"].append("DELETE_ERROR_NOT_TURKISH")
+                        
+                except Exception as e:
+                    print(f"⚠️  WARNING: Could not parse delete error response: {str(e)}")
+                    test_results["warnings"].append("DELETE_ERROR_PARSE_ISSUE")
+            else:
+                print(f"❌ FAIL: Position delete failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DELETE_POSITION_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Position delete request error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_POSITION_REQUEST_ERROR: {str(e)}")
+    else:
+        print("❌ SKIP: No position ID available for delete test")
+        test_results["warnings"].append("DELETE_TEST_SKIPPED_NO_ID")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 KULLANICI POZİSYONLARI API'LERİ TEST SONUÇLARI")
+    print("=" * 100)
                     
                     if users_count > 0:
                         print(f"✅ PASS: Found {users_count} active users")
