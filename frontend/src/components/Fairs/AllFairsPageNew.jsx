@@ -931,7 +931,7 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">Fuar İçe Aktar</h2>
               <button
@@ -946,8 +946,29 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
               </button>
             </div>
             
-            <div className="px-6 py-4">
-              <div className="mb-4">
+            <div className="px-6 py-4 space-y-4">
+              {/* Manual Text Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Manuel Veri Girişi (Her satıra bir fuar)
+                </label>
+                <textarea
+                  rows="8"
+                  placeholder="Fuar verilerini buraya yapıştırın...&#10;Format: FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay&#10;&#10;Örnek:&#10;A3 Business Forum | 2026 | ABD | Orlando | Orange County Convention Center | 19-21.01.2026 | 21-21.01.2026 | yearly | 01"
+                  onChange={(e) => handleManualInput(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                />
+              </div>
+
+              {/* OR Divider */}
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-gray-300"></div>
+                <span className="px-4 text-sm text-gray-500">VEYA</span>
+                <div className="flex-1 border-t border-gray-300"></div>
+              </div>
+
+              {/* File Upload */}
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Dosya Seç (TXT formatında)
                 </label>
@@ -957,33 +978,57 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
                   onChange={handleFileUpload}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <p className="mt-2 text-xs text-gray-500">
-                  Format: FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay
+              </div>
+
+              {/* Format Info */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-900 mb-2">Veri Formatı:</h4>
+                <p className="text-xs text-blue-800 font-mono">
+                  FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay
+                </p>
+                <p className="text-xs text-blue-700 mt-2">
+                  • Her satıra bir fuar bilgisi<br/>
+                  • Alanlar "|" karakteri ile ayrılmalı<br/>
+                  • Tarih formatı: GG-GG.AA.YYYY (örn: 19-21.01.2026)<br/>
+                  • Periyod: yearly, 6_months, 2_years, 3_years
                 </p>
               </div>
 
+              {/* Preview Table */}
               {importPreview.length > 0 && (
                 <div className="mt-4">
                   <h3 className="text-sm font-medium text-gray-700 mb-2">
                     Önizleme ({importPreview.length} fuar)
                   </h3>
-                  <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                  <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-50 sticky top-0">
                         <tr>
+                          <th className="px-2 py-2 text-left text-gray-600">No</th>
                           <th className="px-2 py-2 text-left text-gray-600">Fuar Adı</th>
                           <th className="px-2 py-2 text-left text-gray-600">Yıl</th>
                           <th className="px-2 py-2 text-left text-gray-600">Ülke</th>
                           <th className="px-2 py-2 text-left text-gray-600">Şehir</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Tarih</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Periyod</th>
                         </tr>
                       </thead>
                       <tbody>
                         {importPreview.map((fair, index) => (
-                          <tr key={index} className="border-t border-gray-100">
-                            <td className="px-2 py-2">{fair.name}</td>
+                          <tr key={index} className="border-t border-gray-100 hover:bg-gray-50">
+                            <td className="px-2 py-2">{index + 1}</td>
+                            <td className="px-2 py-2 font-medium">{fair.name}</td>
                             <td className="px-2 py-2">{fair.year}</td>
                             <td className="px-2 py-2">{fair.country}</td>
                             <td className="px-2 py-2">{fair.city}</td>
+                            <td className="px-2 py-2">{fair.startDate} - {fair.endDate}</td>
+                            <td className="px-2 py-2">
+                              {fair.cycle === 'yearly' ? 'Her Yıl' : 
+                               fair.cycle === '6_months' ? '6 Ayda Bir' :
+                               fair.cycle === '2_years' ? '2 Yılda Bir' :
+                               fair.cycle === '3_years' ? '3 Yılda Bir' :
+                               fair.cycle || '-'}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1007,9 +1052,19 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
               <button
                 onClick={submitImport}
                 disabled={importing || importPreview.length === 0}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {importing ? 'İçe Aktarılıyor...' : `${importPreview.length} Fuar İçe Aktar`}
+                {importing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    İçe Aktarılıyor...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    {importPreview.length} Fuar İçe Aktar
+                  </>
+                )}
               </button>
             </div>
           </div>
