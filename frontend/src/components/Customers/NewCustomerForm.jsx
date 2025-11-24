@@ -1344,45 +1344,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                   </div>
                 </div>
 
-                {/* Kişi Etiketleri */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Etiketler
-                  </label>
-                  <div className="flex space-x-2 mb-2">
-                    <Input
-                      value={currentContactTag}
-                      onChange={(e) => setCurrentContactTag(e.target.value)}
-                      placeholder="Etiket girin..."
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddContactTag(contactIndex))}
-                    />
-                    <Button 
-                      type="button" 
-                      onClick={() => handleAddContactTag(contactIndex)} 
-                      size="sm" 
-                      variant="outline"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {(contact.tags || []).map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
-                      >
-                        {tag}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveContactTag(contactIndex, tagIndex)}
-                          className="ml-2 text-green-600 hover:text-green-800"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
               </div>
             ))}
           </CardContent>
