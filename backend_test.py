@@ -1686,8 +1686,6 @@ def test_user_positions_apis():
         return True
 
 def test_opportunity_statuses_get_endpoint():
-                        print(f"✅ PASS: Found {users_count} active users")
-                        test_results["active_users_api_working"] = True
                         
                         # Analyze first few users
                         print(f"\n📋 ACTIVE USERS DATA ANALYSIS (First 3):")
