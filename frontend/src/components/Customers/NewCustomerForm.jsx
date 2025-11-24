@@ -891,7 +891,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email <span className="text-red-500">*</span>
+                  Firma Emaili <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
