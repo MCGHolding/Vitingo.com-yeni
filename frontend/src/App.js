@@ -1153,15 +1153,16 @@ const Dashboard = () => {
           />
         );
       case 'active-fairs':
+      case 'future-fairs':
         return (
-          <ActiveFairsPage 
+          <FutureFairsPage 
             fairs={fairs}
             onBackToDashboard={handleBackToDashboard}
           />
         );
       case 'past-fairs':
         return (
-          <PastFairsPage 
+          <PastFairsPageNew 
             fairs={fairs}
             onBackToDashboard={handleBackToDashboard}
           />
