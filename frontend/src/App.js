@@ -1245,6 +1245,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'advance-categories':
+        return (
+          <AdvanceCategoriesPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
