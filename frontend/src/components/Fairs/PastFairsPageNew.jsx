@@ -51,7 +51,21 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
       
       if (response.ok) {
         const fairsData = await response.json();
-        setFairs(fairsData);
+        // Filter for past fairs
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const pastFairs = fairsData.filter(fair => {
+          const endDate = fair.defaultEndDate || fair.endDate;
+          if (!endDate) return false;
+          
+          const fairEndDate = new Date(endDate);
+          fairEndDate.setHours(0, 0, 0, 0);
+          
+          return fairEndDate < today;
+        });
+        
+        setFairs(pastFairs);
       } else {
         setFairs(initialFairs || []);
       }
