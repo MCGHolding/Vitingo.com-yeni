@@ -508,6 +508,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     
     // Enhanced validation - more required fields (sector_id is now optional)
     console.log('🎯 Starting validation check...');
+    console.log('🎯 isIndividualCustomer:', isIndividualCustomer);
+    console.log('🎯 formData:', formData);
+    console.log('🎯 contacts:', contacts);
+    console.log('🎯 contacts[0]:', contacts[0]);
+    
     const requiredFieldsValid = isIndividualCustomer 
       ? formData.customer_type_id && formData.specialty_id && 
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
@@ -518,7 +523,10 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
         contacts[0]?.address && contacts[0]?.country && contacts[0]?.city; // Contact person + location required
     
+    console.log('🎯 requiredFieldsValid:', requiredFieldsValid);
+    
     if (!requiredFieldsValid) {
+      console.log('❌ Validation FAILED - showing toast');
       toast({
         title: "Hata",
         description: isIndividualCustomer 
@@ -528,6 +536,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       });
       return;
     }
+    
+    console.log('✅ Validation PASSED - proceeding with save');
 
     setIsLoading(true);
     
