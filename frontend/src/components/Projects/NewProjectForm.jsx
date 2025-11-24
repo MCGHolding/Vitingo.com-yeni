@@ -571,8 +571,8 @@ export default function NewProjectForm({ onClose, onSave }) {
             </div>
             {/* Customer Information Display */}
             {formData.customerId && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-blue-800 mb-2">Seçilen Müşteri Bilgileri</h4>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-yellow-800 mb-2">Seçilen Müşteri Bilgileri</h4>
                 {(() => {
                   const selectedCustomer = customers.find(c => c.id === formData.customerId);
                   if (!selectedCustomer) return null;
