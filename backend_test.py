@@ -1180,46 +1180,37 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
-def test_user_management_apis():
+def test_user_positions_apis():
     """
-    Kullanıcı Yönetimi API'leri Testi
+    Kullanıcı Pozisyonları API'leri Testi
     
     **Test Edilecek Endpoint'ler:**
     
     1. **GET /api/positions**
-       - Pozisyonlar listesini döndürmeli
-       - En az 10+ pozisyon olmalı (Genel Müdür, Müdür, Uzman, vb.)
-       - Response format: [{id, name, value, created_at}]
+       - Tüm pozisyonları döndürmeli
+       - En az 13 default pozisyon olmalı
     
-    2. **GET /api/users?status=active**
-       - Aktif kullanıcıları döndürmeli
-       - Response format: [{id, name, email, role, department, position, status}]
+    2. **POST /api/positions**
+       - Yeni pozisyon oluşturma
+       - Test data: {"name": "Test Pozisyonu"}
+       - Response'da success: true olmalı
+       - Türkçe başarı mesajı
     
-    3. **POST /api/users** 
-       - Yeni kullanıcı oluşturma
-       - Test data: name, email, phone, position, department, manager_id, notification_method
-       - Response'da otomatik şifre olmalı
-       - WhatsApp linki olmalı
+    3. **PUT /api/positions/{position_id}**
+       - Pozisyon güncelleme
+       - Test: İsim değiştirme
+       - Türkçe başarı mesajı
     
-    4. **POST /api/users/invite**
-       - Kullanıcı davet etme
-       - Test data: email, role, phone, manager_id
-       - User status "invited" olmalı
-    
-    5. **PUT /api/users/{user_id}**
-       - Kullanıcı güncelleme
-       - Test: İsim, pozisyon, departman güncelleme
-    
-    6. **DELETE /api/users/{user_id}**
-       - Kullanıcı arşivleme
-       - Status "archived" olmalı
-       - Türkçe success mesajı
+    4. **DELETE /api/positions/{position_id}**
+       - Pozisyon silme
+       - Aktif kullanıcı kullanan pozisyon silinemez
+       - Türkçe hata/başarı mesajı
     
     **Başarı Kriterleri:**
-    - Tüm endpoint'ler 200/201 dönmeli
-    - Otomatik şifre 12 karakter olmalı
-    - Türkçe hata mesajları
-    - WhatsApp link formatı doğru olmalı
+    - Tüm endpoint'ler çalışır olmalı
+    - Türkçe karakter desteği
+    - Value otomatik generate (lowercase, underscore, Turkish char conversion)
+    - Duplicate kontrolü
     """
     
     print("=" * 100)
