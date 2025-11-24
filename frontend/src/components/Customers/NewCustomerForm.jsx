@@ -469,24 +469,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         city: ''  // Clear city when country changes
       };
       
-      // Update contact phone number with new country dial code (if needed)
-      if (countryName) {
-        const dialCodes = {
-          'tr': '+90', 'us': '+1', 'gb': '+44', 'de': '+49', 'fr': '+33',
-          'it': '+39', 'es': '+34', 'ca': '+1', 'au': '+61', 'in': '+91',
-          'cn': '+86', 'jp': '+81', 'br': '+55', 'mx': '+52', 'ru': '+7',
-          'kr': '+82', 'sa': '+966', 'ae': '+971', 'eg': '+20', 'za': '+27'
-        };
-        
-        const newDialCode = dialCodes[countryCode.toLowerCase()];
-        if (newDialCode) {
-          updated[contactIndex].mobile = newDialCode;
-        }
-      } else {
-        // Reset to default Turkish number if no country selected
-        updated[contactIndex].mobile = '+90';
-      }
-      
       return updated;
     });
   };
