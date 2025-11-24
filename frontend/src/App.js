@@ -1229,6 +1229,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'department-management':
+        return (
+          <DepartmentsPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
