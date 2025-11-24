@@ -57,6 +57,7 @@ import SettingsPage from './components/Settings/SettingsPage';
 import GroupCompaniesPage from './components/Settings/GroupCompaniesPage';
 import ContractManagementPage from './components/Settings/ContractManagementPage';
 import UserManagementPage from './components/Settings/UserManagementPage';
+import PositionsPage from './components/Settings/PositionsPage';
 import ContractCreatePage from './components/Settings/ContractCreatePage';
 import ManualTemplateCreator from './components/Settings/ManualTemplateCreator';
 import ContractsPage from './components/Contracts/ContractsPage';
