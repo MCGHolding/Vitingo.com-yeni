@@ -174,9 +174,9 @@ const ExpenseCentersPage = ({ onBack }) => {
     }
   };
 
-  const handleUpdateCenter = async (centerId, newName, newCode) => {
-    if (!newName.trim() || !newCode.trim()) {
-      alert('Lütfen masraf merkezi adı ve kodu girin');
+  const handleUpdateCenter = async (centerId, newName) => {
+    if (!newName.trim()) {
+      alert('Lütfen masraf merkezi adı girin');
       return;
     }
 
@@ -185,12 +185,12 @@ const ExpenseCentersPage = ({ onBack }) => {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
-      console.log('Updating expense center:', centerId, newName, newCode);
+      console.log('Updating expense center:', centerId, newName);
 
       const response = await fetch(`${backendUrl}/api/expense-centers/${centerId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName, code: newCode })
+        body: JSON.stringify({ name: newName })
       });
 
       console.log('Update response status:', response.status);
