@@ -60,6 +60,7 @@ import UserManagementPage from './components/Settings/UserManagementPage';
 import PositionsPage from './components/Settings/PositionsPage';
 import DepartmentsPage from './components/Settings/DepartmentsPage';
 import ExpenseCentersPage from './components/Settings/ExpenseCentersPage';
+import AdvanceCategoriesPage from './components/Settings/AdvanceCategoriesPage';
 import ContractCreatePage from './components/Settings/ContractCreatePage';
 import ManualTemplateCreator from './components/Settings/ManualTemplateCreator';
 import ContractsPage from './components/Contracts/ContractsPage';
