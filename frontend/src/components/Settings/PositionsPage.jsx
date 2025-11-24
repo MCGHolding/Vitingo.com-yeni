@@ -2,6 +2,109 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, Search, Edit2, Trash2, GripVertical, X, Check, Info } from 'lucide-react';
 import SuccessModal from './SuccessModal';
 
+// Position Card Component
+const PositionCard = ({ position, isEditing, onEdit, onSave, onCancel, onDelete }) => {
+  const [editValue, setEditValue] = useState(position.name);
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-3">
+        {/* Drag Handle */}
+        <div className="cursor-move text-gray-400 hover:text-gray-600">
+          <GripVertical className="h-5 w-5" />
+        </div>
+
+        {/* Avatar */}
+        <div className="flex-shrink-0">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
+            {position.name.charAt(0).toUpperCase()}
+          </div>
+        </div>
+
+        {/* Position Info */}
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  console.log('Enter pressed, saving:', editValue);
+                  onSave(position.id, editValue);
+                } else if (e.key === 'Escape') {
+                  console.log('Escape pressed, cancelling');
+                  onCancel();
+                }
+              }}
+            />
+          ) : (
+            <>
+              <h3 className="text-sm font-semibold text-gray-900 truncate">
+                {position.name}
+              </h3>
+              <p className="text-xs text-gray-500">ID: {position.id.substring(0, 8)}</p>
+            </>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <button
+                onClick={() => {
+                  console.log('Save button clicked:', editValue);
+                  onSave(position.id, editValue);
+                }}
+                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                title="Kaydet"
+              >
+                <Check className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => {
+                  console.log('Cancel button clicked');
+                  onCancel();
+                }}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                title="İptal"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  console.log('Edit button clicked for:', position.id, position.name);
+                  onEdit(position);
+                }}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Düzenle"
+              >
+                <Edit2 className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => {
+                  console.log('Delete button clicked for:', position.id, position.name);
+                  onDelete(position.id, position.name);
+                }}
+                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Sil"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PositionsPage = ({ onBack }) => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
