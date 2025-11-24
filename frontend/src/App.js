@@ -39,7 +39,7 @@ import AllUsersPage from './components/UserManagement/AllUsersPage';
 import ViewUserModal from './components/UserManagement/ViewUserModal';
 import EditUserModal from './components/UserManagement/EditUserModal';
 import NewUserFormModal from './components/UserManagement/NewUserFormModal';
-import AllFairsPage from './components/Fairs/AllFairsPage';
+import AllFairsPage from './components/Fairs/AllFairsPageNew';
 import ActiveFairsPage from './components/Fairs/ActiveFairsPage';
 import PastFairsPage from './components/Fairs/PastFairsPage';
 import NewFairForm from './components/Fairs/NewFairForm';
