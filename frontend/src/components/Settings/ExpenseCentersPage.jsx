@@ -113,7 +113,6 @@ const ExpenseCentersPage = ({ onBack }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingCenter, setEditingCenter] = useState(null);
   const [newCenterName, setNewCenterName] = useState('');
-  const [newCenterCode, setNewCenterCode] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
