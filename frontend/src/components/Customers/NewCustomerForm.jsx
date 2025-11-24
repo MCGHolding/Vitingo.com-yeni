@@ -59,6 +59,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     country: '',
     city: ''
   }]);
+  
+  // Countries and cities from library
+  const [ulkeler, setUlkeler] = useState([]);
+  const [sehirler, setSehirler] = useState([]);
+  const [tumUlkeler, setTumUlkeler] = useState([]);
 
   const [formData, setFormData] = useState({
     company_short_name: '',
