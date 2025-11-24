@@ -108,7 +108,44 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   useEffect(() => {
     loadCustomerTypes();
     loadSectors();
+    loadUlkeler();
   }, []);
+  
+  // Load countries from library
+  const loadUlkeler = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/countries`);
+      const data = await response.json();
+      
+      if (Array.isArray(data)) {
+        const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
+        setUlkeler(ulkeIsimleri);
+        setTumUlkeler(data);
+      }
+    } catch (error) {
+      console.error('Ülkeler yüklenemedi:', error);
+    }
+  };
+  
+  // Filter cities when country changes
+  useEffect(() => {
+    if (formData.country && tumUlkeler.length > 0) {
+      const secilenUlke = tumUlkeler.find(u => u.name === formData.country);
+      
+      if (secilenUlke && secilenUlke.cities) {
+        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
+        setSehirler(sehirListesi);
+      } else {
+        setSehirler([]);
+      }
+      
+      // Reset city when country changes
+      setFormData(prev => ({ ...prev, city: '' }));
+    } else {
+      setSehirler([]);
+    }
+  }, [formData.country, tumUlkeler]);
 
   // Load specialties when category changes
   useEffect(() => {
