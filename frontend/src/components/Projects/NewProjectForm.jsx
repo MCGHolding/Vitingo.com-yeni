@@ -36,7 +36,7 @@ export default function NewProjectForm({ onClose, onSave }) {
 
   const [formData, setFormData] = useState({
     name: '',
-    companyId: '',
+    companyId: undefined,
     companyName: '',
     customerId: '',
     customerName: '',
