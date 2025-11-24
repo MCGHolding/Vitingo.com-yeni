@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://contract-hub-38.preview.emergentagent.com"
+BACKEND_URL = "https://biz-admin-hub.preview.emergentagent.com"
 
 def test_invoice_status_filtering():
     """

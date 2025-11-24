@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://contract-hub-38.preview.emergentagent.com"
+BACKEND_URL = "https://biz-admin-hub.preview.emergentagent.com"
 
 def test_user_positions_apis():
     """
