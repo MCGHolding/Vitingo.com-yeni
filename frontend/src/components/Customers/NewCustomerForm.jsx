@@ -1206,22 +1206,49 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {(contacts || []).map((contact, contactIndex) => (
-              <div key={contactIndex} className="border rounded-lg p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900">Yetkili Kişi {contactIndex + 1}</h4>
-                  {contacts.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => handleRemoveContact(contactIndex)}
-                      size="sm"
-                      variant="outline"
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
+            {(contacts || []).map((contact, contactIndex) => {
+              const isExpanded = expandedContacts.includes(contactIndex);
+              const showAccordion = contacts.length > 1;
+              
+              return (
+              <div key={contactIndex} className="border rounded-lg overflow-hidden">
+                {/* Accordion Header */}
+                <div 
+                  className={`flex items-center justify-between p-4 ${showAccordion ? 'cursor-pointer hover:bg-gray-50' : ''} transition-colors`}
+                  onClick={() => showAccordion && toggleContactExpanded(contactIndex)}
+                >
+                  <div className="flex items-center space-x-2">
+                    {showAccordion && (
+                      <ChevronDown 
+                        className={`h-5 w-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`}
+                      />
+                    )}
+                    <h4 className="font-medium text-gray-900">
+                      Yetkili Kişi {contactIndex + 1}
+                      {contact.full_name && <span className="text-gray-600 ml-2">- {contact.full_name}</span>}
+                    </h4>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {contacts.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveContact(contactIndex);
+                        }}
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
+
+                {/* Accordion Content */}
+                {(!showAccordion || isExpanded) && (
+                <div className="p-4 pt-0 space-y-4">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
