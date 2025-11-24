@@ -378,13 +378,6 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <Upload className="h-4 w-4" />
-              İçe Aktar
-            </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               <Download className="h-4 w-4" />
               Excel'e Aktar
