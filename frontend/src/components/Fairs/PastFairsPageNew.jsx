@@ -573,7 +573,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                       }`}
                     >
                       <td className="py-3 px-4">
-                        <span className="font-medium text-blue-600 text-sm">{index + 1}</span>
+                        <span className="font-medium text-red-600 text-sm">{index + 1}</span>
                       </td>
                       
                       <td className="py-3 px-4">
