@@ -1296,12 +1296,19 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     </label>
                     <div className="flex space-x-2">
                       <div className="flex-1">
-                        <CountrySelect
+                        <Select
                           value={contact.country}
-                          onChange={(country) => handleContactCountryChange(contactIndex, country)}
-                          placeholder="Ülke seçiniz..."
-                          refreshTrigger={geoRefreshTrigger}
-                        />
+                          onValueChange={(value) => handleContactCountryChange(contactIndex, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Ülke seçiniz..." />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {ulkeler.map(ulke => (
+                              <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <Button
                         type="button"
@@ -1322,17 +1329,20 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     </label>
                     <div className="flex space-x-2">
                       <div className="flex-1">
-                        <CitySelect
-                          country={contact.country}
+                        <Select
                           value={contact.city}
-                          onChange={(city) => {
-                            const cityName = city ? city.name : '';
-                            handleContactChange(contactIndex, 'city', cityName);
-                          }}
-                          placeholder="Şehir seçiniz..."
+                          onValueChange={(value) => handleContactChange(contactIndex, 'city', value)}
                           disabled={!contact.country}
-                          refreshTrigger={geoRefreshTrigger}
-                        />
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Önce ülke seçiniz..." />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {(contactSehirler[contactIndex] || []).map(sehir => (
+                              <SelectItem key={sehir} value={sehir}>{sehir}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <Button
                         type="button"
