@@ -9795,6 +9795,134 @@ async def delete_department(department_id: str):
         logger.error(f"Error deleting department: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== EXPENSE CENTERS ENDPOINTS ====================
+
+class ExpenseCenter(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    code: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ExpenseCenterCreate(BaseModel):
+    name: str
+    code: str
+
+@api_router.get("/expense-centers")
+async def get_expense_centers():
+    """Get all expense centers"""
+    try:
+        centers = await db.expense_centers.find().to_list(length=None)
+        if not centers:
+            # Initialize default expense centers
+            default_centers = [
+                {"id": str(uuid.uuid4()), "name": "Genel Giderler", "code": "GG-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Pazarlama Giderleri", "code": "PAZ-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Satış Giderleri", "code": "SAT-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İnsan Kaynakları Giderleri", "code": "IK-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Bilgi Teknolojileri Giderleri", "code": "BT-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Üretim Giderleri", "code": "UR-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Lojistik Giderleri", "code": "LOJ-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Ar-Ge Giderleri", "code": "ARGE-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Finans Giderleri", "code": "FIN-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Hukuk Giderleri", "code": "HUK-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Operasyon Giderleri", "code": "OPR-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Kalite Güvence Giderleri", "code": "KG-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Müşteri Hizmetleri Giderleri", "code": "MH-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Satın Alma Giderleri", "code": "SA-001", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İdari Giderler", "code": "ID-001", "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.expense_centers.insert_many(default_centers)
+            centers = default_centers
+        
+        return [serialize_document(center) for center in centers]
+    except Exception as e:
+        logger.error(f"Error getting expense centers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/expense-centers")
+async def create_expense_center(center_data: ExpenseCenterCreate):
+    """Create a new expense center"""
+    try:
+        # Check if expense center with same code already exists
+        existing = await db.expense_centers.find_one({"code": center_data.code})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu masraf merkezi kodu zaten mevcut")
+        
+        new_center = {
+            "id": str(uuid.uuid4()),
+            "name": center_data.name,
+            "code": center_data.code,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        await db.expense_centers.insert_one(new_center)
+        logger.info(f"Created expense center: {new_center['name']}")
+        
+        return {
+            "success": True,
+            "message": f"{new_center['name']} masraf merkezi oluşturuldu",
+            "expense_center": serialize_document(new_center)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating expense center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/expense-centers/{center_id}")
+async def update_expense_center(center_id: str, center_data: ExpenseCenterCreate):
+    """Update an expense center"""
+    try:
+        existing = await db.expense_centers.find_one({"id": center_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Masraf merkezi bulunamadı")
+        
+        update_data = {
+            "name": center_data.name,
+            "code": center_data.code,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.expense_centers.update_one(
+            {"id": center_id},
+            {"$set": update_data}
+        )
+        
+        updated = await db.expense_centers.find_one({"id": center_id})
+        logger.info(f"Updated expense center: {center_id}")
+        
+        return {
+            "success": True,
+            "message": "Masraf merkezi güncellendi",
+            "expense_center": serialize_document(updated)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating expense center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/expense-centers/{center_id}")
+async def delete_expense_center(center_id: str):
+    """Delete an expense center"""
+    try:
+        center = await db.expense_centers.find_one({"id": center_id})
+        if not center:
+            raise HTTPException(status_code=404, detail="Masraf merkezi bulunamadı")
+        
+        await db.expense_centers.delete_one({"id": center_id})
+        logger.info(f"Deleted expense center: {center_id}")
+        
+        return {
+            "success": True,
+            "message": f"{center['name']} masraf merkezi silindi"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting expense center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
