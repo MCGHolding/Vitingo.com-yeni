@@ -316,9 +316,7 @@ const PositionsPage = ({ onBack }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Positions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {filteredPositions.map(position => (
-            <PositionCard key={position.id} position={position} />
-          ))}
+          {filteredPositions.map(position => renderPositionCard(position))}
         </div>
 
         {filteredPositions.length === 0 && (
