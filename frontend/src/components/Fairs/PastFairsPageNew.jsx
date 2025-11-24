@@ -545,7 +545,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <p className="text-gray-600">
-                {searchTerm ? 'Arama sonucu bulunamadı' : 'Henüz fuar eklenmemiş'}
+                {searchTerm ? 'Arama sonucu bulunamadı' : 'Henüz geçmiş fuar bulunmuyor'}
               </p>
             </div>
           ) : (
