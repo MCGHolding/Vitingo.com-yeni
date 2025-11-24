@@ -125,11 +125,45 @@ const ExpenseCategoriesPage = ({ onBack }) => {
     const [editName, setEditName] = useState(category.name);
     const subCategories = getSubCategories(category.id);
 
+    React.useEffect(() => {
+      setEditName(category.name);
+    }, [category.name]);
+
+    const handleToggleClick = (e) => {
+      e.stopPropagation();
+      console.log('Toggle clicked for:', category.id);
+      onToggle(category.id);
+    };
+
+    const handleEditClick = (e) => {
+      e.stopPropagation();
+      console.log('Edit clicked for:', category.id, category.name);
+      onEdit(category);
+    };
+
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      console.log('Delete clicked for:', category.id, category.name);
+      onDelete(category.id, category.name);
+    };
+
+    const handleSaveClick = (e) => {
+      e.stopPropagation();
+      console.log('Save clicked:', editName);
+      onSave(category.id, editName);
+    };
+
+    const handleCancelClick = (e) => {
+      e.stopPropagation();
+      console.log('Cancel clicked');
+      onCancel();
+    };
+
     return (
       <div className={`${isParent ? 'bg-white border border-gray-200' : 'bg-gray-50 border-l-4 border-indigo-400 ml-8'} rounded-lg p-3`}>
         <div className="flex items-center gap-2">
           {isParent && subCategories.length > 0 && (
-            <button onClick={() => onToggle(category.id)} className="p-1 hover:bg-gray-100 rounded">
+            <button onClick={handleToggleClick} className="p-1 hover:bg-gray-100 rounded">
               {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </button>
           )}
@@ -138,7 +172,20 @@ const ExpenseCategoriesPage = ({ onBack }) => {
           </div>
           <div className="flex-1 min-w-0">
             {isEditing ? (
-              <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 text-sm" autoFocus onKeyDown={(e) => { if (e.key === 'Enter') onSave(category.id, editName); else if (e.key === 'Escape') onCancel(); }} />
+              <input 
+                type="text" 
+                value={editName} 
+                onChange={(e) => setEditName(e.target.value)} 
+                className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 text-sm" 
+                autoFocus 
+                onKeyDown={(e) => { 
+                  if (e.key === 'Enter') {
+                    handleSaveClick(e);
+                  } else if (e.key === 'Escape') {
+                    handleCancelClick(e);
+                  }
+                }} 
+              />
             ) : (
               <h3 className="text-sm font-semibold text-gray-900 truncate">{category.name}</h3>
             )}
@@ -146,13 +193,21 @@ const ExpenseCategoriesPage = ({ onBack }) => {
           <div className="flex gap-1">
             {isEditing ? (
               <>
-                <button onClick={() => onSave(category.id, editName)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg" title="Kaydet"><Check className="h-4 w-4" /></button>
-                <button onClick={onCancel} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg" title="İptal"><X className="h-4 w-4" /></button>
+                <button onClick={handleSaveClick} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg" title="Kaydet">
+                  <Check className="h-4 w-4" />
+                </button>
+                <button onClick={handleCancelClick} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg" title="İptal">
+                  <X className="h-4 w-4" />
+                </button>
               </>
             ) : (
               <>
-                <button onClick={() => onEdit(category)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" title="Düzenle"><Edit2 className="h-3 w-3" /></button>
-                <button onClick={() => onDelete(category.id, category.name)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Sil"><Trash2 className="h-3 w-3" /></button>
+                <button onClick={handleEditClick} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" title="Düzenle">
+                  <Edit2 className="h-3 w-3" />
+                </button>
+                <button onClick={handleDeleteClick} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Sil">
+                  <Trash2 className="h-3 w-3" />
+                </button>
               </>
             )}
           </div>
@@ -160,7 +215,18 @@ const ExpenseCategoriesPage = ({ onBack }) => {
         {isParent && isExpanded && subCategories.length > 0 && (
           <div className="mt-2 space-y-2">
             {subCategories.map(subCat => (
-              <CategoryCard key={subCat.id} category={subCat} isParent={false} isEditing={editingCategory?.id === subCat.id} onEdit={onEdit} onSave={onSave} onCancel={onCancel} onDelete={onDelete} onToggle={onToggle} isExpanded={false} />
+              <CategoryCard 
+                key={subCat.id} 
+                category={subCat} 
+                isParent={false} 
+                isEditing={isEditing && editingCategory?.id === subCat.id} 
+                onEdit={onEdit} 
+                onSave={onSave} 
+                onCancel={onCancel} 
+                onDelete={onDelete} 
+                onToggle={onToggle} 
+                isExpanded={false} 
+              />
             ))}
           </div>
         )}
