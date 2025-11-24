@@ -364,7 +364,7 @@ const ExpenseCentersPage = ({ onBack }) => {
               </button>
             </div>
 
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-6 py-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Masraf Merkezi Adı
@@ -376,25 +376,15 @@ const ExpenseCentersPage = ({ onBack }) => {
                   placeholder="Örn: Pazarlama Giderleri"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Masraf Merkezi Kodu
-                </label>
-                <input
-                  type="text"
-                  value={newCenterCode}
-                  onChange={(e) => setNewCenterCode(e.target.value)}
-                  placeholder="Örn: PAZ-001"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleAddCenter();
                     }
                   }}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Kod otomatik oluşturulacaktır
+                </p>
               </div>
             </div>
 
