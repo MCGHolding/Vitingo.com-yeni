@@ -8,6 +8,7 @@ import { useToast } from '../../hooks/use-toast';
 import { useAuth } from '../../contexts/AuthContext';
 import PaymentTermsBuilder from './PaymentTermsBuilder';
 import AddFairModal from './AddFairModal';
+import ModernDatePicker from '../ui/DatePicker';
 
 const CURRENCIES = [
   { value: 'TRY', label: '₺ TRY' },
