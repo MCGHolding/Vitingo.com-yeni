@@ -1,77 +1,98 @@
 <analysis>
-The trajectory outlines an intensive, iterative feature development process conducted in Turkish. The initial focus on enhancing a contract creation form was quickly superseded by a series of user requests to build out a comprehensive Settings module from scratch. The AI engineer adopted a rapid development pattern: for each new settings entity (Users, Positions, Departments, Expense Centers, etc.), it created the necessary backend CRUD endpoints in the monolithic  file, built a corresponding frontend page component (often by copying and modifying a previous one), and wired up the navigation in  and .
+The trajectory documents an extensive, highly iterative development process driven by a Turkish-speaking user. The work spanned multiple features and involved rapid prototyping, frequent user-guided refactoring, and debugging.
 
-This fast-paced approach led to several debugging cycles. A major recurring issue was a misunderstanding of React's Rules of Hooks, where stateful sub-components were incorrectly defined inside the render function of a parent component, causing Rendered more hooks than during the previous render errors. This happened with both  and , requiring significant refactoring. Another critical bug involved the backend writing to and reading from an incorrect database ( instead of the one specified in the environment), which was resolved after invoking the .
+Initially, the AI engineer addressed UI tweaks on the Expense Categories page. The focus then shifted to a major data management task: adding a backend endpoint to delete all Fair data and confirming its success.
 
-The most recent task is fixing the non-functional edit, delete, and collapse buttons on the hierarchical Harcama Kategorileri (Expense Categories) page. The AI correctly identified this as the same React Hook scope violation and is in the middle of refactoring the component. The user's language is **Turkish**, and all future responses must be in Turkish.
+A significant portion of the work involved a complete redesign of the Fairs module. The card-based UI was replaced with a cleaner, table-based layout. This led to a series of follow-up requests: re-implementing a missing import button, fixing the import modal's functionality, and then refactoring the code to apply the new design to Past Fairs and Future Fairs pages, which introduced and subsequently fixed data-fetching bugs.
+
+The final, and most intensive, phase focused on heavily modifying the New Project and New Customer forms. This included adding a modern date picker, introducing collapsible sections for detailed information, implementing an accordion UI for contacts, and completely overhauling the country/city selection logic to fix a recurring bug. These rapid, cascading changes to the complex  component have culminated in the current critical issue: the Save button is no longer functional.
+
+The user's primary language is **Turkish**. The next agent must continue all communication in Turkish.
 </analysis>
 
 <product_requirements>
-The primary objective is to build a comprehensive Settings section for a multi-functional business application. This involves creating a series of management pages for core organizational entities.
+The overall goal is to build and refine a comprehensive business administration application.
 
-**Implemented/In-Progress Modules:**
-*   **User Management:** A dashboard to view, create, invite, edit, and archive users, categorized by status (Active, Invited, Inactive, Archived).
-*   **User Positions:** A page for CRUD operations on user job titles.
-*   **Departments:** A page for CRUD operations on company departments.
-*   **Expense Centers:** A page for managing expense centers, featuring automatic code generation based on the center's name.
-*   **Advance Categories:** A page for managing advance payment categories.
-*   **Expense Categories:** A page for managing expense categories with a **hierarchical (parent-child) structure**, allowing categories to be nested.
+**1. Fairs Module (Fuarlar):**
+- **Data Deletion:** A mechanism to purge all existing fair data from the database.
+- **UI Redesign:** Replace the initial colorful card-based layout for All Fairs, Past Fairs, and Active Fairs with a unified, professional, table-based design inspired by the Opportunities page.
+- **Renaming:** Change Active Fairs (Aktif Fuarlar) to Future Fairs (Gelecek Fuarlar).
+- **Functionality Restoration:** Ensure the Import functionality, including a modal with both text paste and file upload options, is present in the new design.
+- **Date Formatting:** Standardize date display to use two digits for the day (e.g., ).
 
-For each module, the requirement is a dedicated full-screen page accessible from the main Settings dashboard, featuring a card-based or list layout, search functionality, and modals for creating and editing entries. All edit, delete, and interaction functionalities must be fully operational.
+**2. Customer & Project Creation Forms:**
+- **UI/UX Enhancements:** Implement numerous specific UI changes requested by the user to improve data entry flow. This includes:
+    - Adding collapsible sections for Stand Details and Bank Information.
+    - Using an accordion UI for multiple contacts.
+    - Rearranging form fields and action buttons to specific locations.
+    - Relabeling fields and sections for clarity (e.g., Müşteri Form Bilgileri to Firma Bilgileri).
+- **Data-driven UI:** Display selected customer details in a highlighted box.
+- **Data Inheritance:** Automatically populate the country and city for a new contact based on the firm's details.
+- **Validation:** Prevent selection of past dates for Installation Date.
+- **Component Modernization:** Replace the browser's native date picker with a modern, styled component.
+- **Bug Fixes:** Ensure country and city dropdowns fetch data correctly from the central library.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend:** React, Tailwind CSS,  icons.
-- **Backend:** FastAPI (Python), Pydantic (data validation), Motor (async MongoDB driver).
-- **Architecture:** Monorepo with a single  backend and a React SPA frontend.
-- **Routing:** Custom, state-based routing managed within  ( state).
-- **Development Pattern:** Rapid, iterative creation of CRUD modules by replicating and modifying existing backend and frontend code.
-- **Key Concept:** Hierarchical data modeling () for Expense Categories.
-- **Recurring Bug:** React Hook scope violations from defining components within parent render functions.
+- **Frontend:** React, Tailwind CSS, , .
+- **Backend:** FastAPI (Python), Motor (async MongoDB driver).
+- **Architecture:** Monorepo with a single monolithic  backend and a React SPA frontend.
+- **State Management:** React Hooks (, ).
+- **UI Patterns:** Conditional Rendering for collapsible sections, Accordion UI, Reusable components with props (), extensive use of responsive grid layouts.
+- **Data Fetching:**  API,  for loading data on component mount.
+- **Key Bug Patterns:** Incorrect API endpoint usage, regressions caused by rapid refactoring, state management complexity in large forms.
 </key_technical_concepts>
 
 <code_architecture>
 The application is a monorepo with a React frontend and a FastAPI backend.
 
--   ****
-    -   **Importance:** This is a monolithic file containing ALL backend API logic, Pydantic models, and database interactions for the entire application. It's the single source of truth for the backend.
-    -   **Summary of changes:** Extensively modified to add complete sets of CRUD (Create, Read, Update, Delete) endpoints for multiple new entities: , , , , and  (including logic to handle ). Logic was also added to seed the database with default data for each of these entities upon the first API call if the collection is empty.
 
--   ****
-    -   **Importance:** Acts as the central router and state manager for the application. It uses a  statement based on the  state to render all top-level pages.
-    -   **Summary of changes:** Updated repeatedly to support the new settings pages. This involved importing each new page component (e.g., , ) and adding a corresponding  to the main routing  statement.
+- ****
+    - **Importance:** This is a large, complex form for creating new customers. It has become the central focus of recent development and is the location of the current bug.
+    - **Summary of Changes:** This file has been massively refactored. Changes include:
+        - Replacing  and  components with simpler  elements populated by a new data fetching logic.
+        - Adding state and JSX for collapsible sections (Bank Details) and an accordion UI (Contacts).
+        - Moving large blocks of JSX to reorganize the form layout multiple times.
+        - Updating field labels and logic for pre-filling contact information. The Save functionality is currently broken.
 
--   ****
-    -   **Importance:** This is the main navigation hub for the Settings section, displaying a grid of cards that navigate the user to the various management pages.
-    -   **Summary of changes:** The file was mostly read to confirm that the uid=0(root) gid=0(root) groups=0(root) for each navigation card matched the route key defined in . A bug was fixed where the uid=0(root) gid=0(root) groups=0(root) for Masraf Merkezleri () did not match the route (), which was corrected.
+- ****
+    - **Importance:** This is the new, primary component for displaying all fair-related lists. It was built to be reusable.
+    - **Summary of Changes:** Created from scratch to provide a table-based UI. It was later refactored to accept a  prop to filter for all, future, or past fairs and change its title and theme color accordingly. It also contains the restored Import modal logic and a custom date formatting function.
 
--   ****
-    -   **Importance:** This is the component for the hierarchical Expense Categories feature and the focus of the most recent work. It's more complex than the others due to the need to render a nested tree structure.
-    -   **Summary of changes:** Created from scratch to display parent and child categories. It immediately ran into a bug where edit/delete/toggle buttons did not work. The AI engineer identified this was due to defining a stateful  sub-component inside the main component's render function, a violation of React Hook rules. The file was heavily refactored to move  into its own standalone component definition outside the main  component. A duplicate inline definition was found and deleted in the last step.
+- ****
+    - **Importance:** The form for creating new projects.
+    - **Summary of Changes:** The native date picker was replaced with a new custom  component. Logic was added for a collapsible Stand Details section and to display information about a selected customer. Date validation was also added.
 
--   **Other Settings Pages (, , etc.)**
-    -   **Importance:** Each file provides the complete UI for its respective CRUD module.
-    -   **Summary of changes:** These files were created sequentially, often by copying the previous one and adapting it for the new entity (e.g., changing Position to Department).  was notably refactored to fix the same React Hook violation that later appeared in .
+- ****
+    - **Importance:** The single, monolithic file for all backend API logic.
+    - **Summary of Changes:** A new endpoint  was added to delete all fairs. Another endpoint, , was added to support the country/city dropdown dependency.
+
+- ****
+    - **Importance:** The application's main router and layout container.
+    - **Summary of Changes:** Routing was updated to replace the old fair pages with the new  component and its wrappers (, ).
+
+- ** & **
+    - **Importance:** A new, modern date picker component.
+    - **Summary of Changes:** Created from scratch using the  library to provide a more modern UI than the native browser date input.
 </code_architecture>
 
 <pending_tasks>
-- Fix the non-functional edit, delete, and collapse/expand buttons on the Harcama Kategorileri (Expense Categories) page.
-- Thoroughly test all functionalities of the Harcama Kategorileri page, including creating, editing, and deleting both parent and child categories, to ensure the recent refactoring was successful.
+- Fix the non-functional Kaydet (Save) button on the Yeni Müşteri Ekle (Add New Customer) page (). The user has provided screenshots showing the form filled out, but the save action does not work.
 </pending_tasks>
 
 <current_work>
-The AI engineer was in the final stages of debugging the Harcama Kategorileri (Expense Categories) page. The user reported that all interactive buttons (edit, delete, and the expand/collapse toggle for parent categories) were not working, even after a previous fix attempt.
+The AI engineer's last action was acknowledging a critical bug reported by the user. The user stated, kaydet çalışmıyor (save is not working), referring to the Müşteri Kaydet (Save Customer) button on the  page. They provided several screenshots showing a fully populated form that fails to save.
 
-The root cause was identified as a classic React anti-pattern: defining a stateful sub-component () inside the render scope of its parent component (), which violates the Rules of Hooks. This exact issue had been fixed on the  earlier.
+This form has been the subject of numerous, rapid, and complex changes, including:
+1.  A complete overhaul of the country/city selection logic.
+2.  The introduction of a collapsible Bank Details section.
+3.  The addition of an accordion UI for multiple contacts.
+4.  Multiple relocations of the action buttons themselves.
+5.  Logic to pre-populate contact details from firm details.
 
-The AI's corrective actions were:
-1.  Define  as a proper, standalone component outside the  function.
-2.  Identify that a duplicate, inline definition of  was still present within the  component.
-3.  The very last action performed was to delete this duplicate inline definition (lines 239-350 in ).
-
-The work is paused immediately after this file edit. The code is in a state where the faulty inline component has been removed, but the main render loop may still need to be updated to correctly pass props to the new, external  component before the fix can be considered complete.
+The work is paused at the very beginning of the debugging process for this issue. The immediate task is to investigate the  component to find the root cause of the failed save operation. This could be a broken  function, a validation error that isn't providing user feedback, a state management issue, or a problem with the API payload being sent to the backend.
 </current_work>
 
 <optional_next_step>
-Update the main render loop in  to correctly call the new external  component, then restart the frontend service and test to confirm that the edit, delete, and toggle buttons are now working.
+Begin debugging the Save button in  by examining the  function and inspecting the browser's developer console for errors upon clicking the button.
 </optional_next_step>
