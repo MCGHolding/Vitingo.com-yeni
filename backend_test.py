@@ -1295,16 +1295,32 @@ def test_user_positions_apis():
                             if any(pos in position_name for pos in turkish_positions):
                                 print(f"      ✅ Turkish position name detected")
                         
-                        # Check for expected position types
+                        # Check for default positions
                         position_names = [p.get("name", "") for p in positions]
-                        expected_positions = ["Genel Müdür", "Müdür", "Uzman"]
-                        found_expected = [pos for pos in expected_positions if any(pos in name for name in position_names)]
+                        expected_default_positions = [
+                            "Genel Müdür", "Müdür", "Proje Yöneticisi", "Satış Müdürü", 
+                            "Pazarlama Müdürü", "İnsan Kaynakları Müdürü", "Mali İşler Müdürü",
+                            "Operasyon Müdürü", "Bilgi İşlem Müdürü", "Uzman", "Kıdemli Uzman",
+                            "Koordinatör", "Stajyer"
+                        ]
+                        found_default = [pos for pos in expected_default_positions if pos in position_names]
                         
-                        if found_expected:
-                            print(f"✅ PASS: Found expected positions: {found_expected}")
+                        if len(found_default) >= 13:
+                            print(f"✅ PASS: Found {len(found_default)}/13 default positions")
+                            test_results["default_positions_present"] = True
                         else:
-                            print(f"⚠️  WARNING: Expected positions not found: {expected_positions}")
-                            test_results["warnings"].append("EXPECTED_POSITIONS_NOT_FOUND")
+                            print(f"⚠️  WARNING: Only found {len(found_default)}/13 default positions")
+                            test_results["warnings"].append(f"MISSING_DEFAULT_POSITIONS_{len(found_default)}")
+                        
+                        # Check Turkish character support in position names
+                        turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
+                        has_turkish = any(any(char in name for char in turkish_chars) for name in position_names)
+                        if has_turkish:
+                            print(f"✅ PASS: Turkish character support verified in position names")
+                            test_results["turkish_character_support"] = True
+                        else:
+                            print(f"⚠️  WARNING: No Turkish characters found in position names")
+                            test_results["warnings"].append("NO_TURKISH_CHARS_IN_POSITIONS")
                             
                     else:
                         print(f"❌ FAIL: Only {positions_count} positions found, expected ≥13")
