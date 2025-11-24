@@ -625,9 +625,10 @@ export default function NewProjectForm({ onClose, onSave }) {
                 <Input
                   type="date"
                   value={formData.kurulumStartDate}
+                  min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setFormData({ ...formData, kurulumStartDate: e.target.value })}
                 />
-                <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü</p>
+                <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü (geçmiş tarih seçilemez)</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -636,6 +637,7 @@ export default function NewProjectForm({ onClose, onSave }) {
                 <Input
                   type="date"
                   value={formData.kurulumEndDate}
+                  min={formData.kurulumStartDate || new Date().toISOString().split('T')[0]}
                   onChange={(e) => setFormData({ ...formData, kurulumEndDate: e.target.value })}
                 />
                 <p className="text-xs text-gray-500 mt-1">Kurulum son günü</p>
