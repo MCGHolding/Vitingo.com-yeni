@@ -141,8 +141,8 @@ const ExpenseCentersPage = ({ onBack }) => {
   };
 
   const handleAddCenter = async () => {
-    if (!newCenterName.trim() || !newCenterCode.trim()) {
-      alert('Lütfen masraf merkezi adı ve kodu girin');
+    if (!newCenterName.trim()) {
+      alert('Lütfen masraf merkezi adı girin');
       return;
     }
 
@@ -154,7 +154,7 @@ const ExpenseCentersPage = ({ onBack }) => {
       const response = await fetch(`${backendUrl}/api/expense-centers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCenterName, code: newCenterCode })
+        body: JSON.stringify({ name: newCenterName })
       });
 
       if (response.ok) {
@@ -163,7 +163,6 @@ const ExpenseCentersPage = ({ onBack }) => {
         setShowSuccessModal(true);
         setShowAddModal(false);
         setNewCenterName('');
-        setNewCenterCode('');
         fetchCenters();
       } else {
         const error = await response.json();
