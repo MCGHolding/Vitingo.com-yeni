@@ -148,6 +148,20 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       setSehirler([]);
     }
   }, [formData.country, tumUlkeler]);
+  
+  // Filter cities for contacts when their country changes
+  useEffect(() => {
+    const newContactSehirler = {};
+    contacts.forEach((contact, index) => {
+      if (contact.country && tumUlkeler.length > 0) {
+        const secilenUlke = tumUlkeler.find(u => u.name === contact.country);
+        if (secilenUlke && secilenUlke.cities) {
+          newContactSehirler[index] = [...new Set(secilenUlke.cities.filter(c => c))].sort();
+        }
+      }
+    });
+    setContactSehirler(newContactSehirler);
+  }, [contacts, tumUlkeler]);
 
   // Load specialties when category changes
   useEffect(() => {
