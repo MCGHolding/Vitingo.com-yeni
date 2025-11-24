@@ -25,17 +25,12 @@ export default function FutureFairsPage({ fairs: initialFairs, onBackToDashboard
   }, [initialFairs]);
 
   return (
-    <div>
-      <AllFairsPageNew 
-        fairs={futureFairs}
-        onBackToDashboard={onBackToDashboard}
-      />
-      <style jsx global>{`
-        /* Override header color for Future Fairs */
-        h1 {
-          color: #059669 !important;
-        }
-      `}</style>
-    </div>
+    <AllFairsPageNew 
+      fairs={futureFairs}
+      onBackToDashboard={onBackToDashboard}
+      title="Gelecek Fuarlar"
+      titleColor="text-green-600"
+      showImport={false}
+    />
   );
 }
