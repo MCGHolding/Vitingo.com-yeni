@@ -970,7 +970,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Building2 className="h-5 w-5" />
-                  <span>Banka / Ödeme Bilgileri</span>
+                  <span>Banka / İade Bilgileri</span>
                 </div>
                 {/* USA Format Checkbox */}
                 <div className="flex items-center space-x-2">
