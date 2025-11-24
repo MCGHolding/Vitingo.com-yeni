@@ -509,9 +509,25 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     // Enhanced validation - more required fields (sector_id is now optional)
     console.log('🎯 Starting validation check...');
     console.log('🎯 isIndividualCustomer:', isIndividualCustomer);
-    console.log('🎯 formData:', formData);
-    console.log('🎯 contacts:', contacts);
-    console.log('🎯 contacts[0]:', contacts[0]);
+    
+    // Check each field individually
+    console.log('🔍 company_short_name:', !!formData.company_short_name);
+    console.log('🔍 company_title:', !!formData.company_title);
+    console.log('🔍 customer_type_id:', !!formData.customer_type_id);
+    console.log('🔍 specialty_id:', !!formData.specialty_id);
+    console.log('🔍 email:', !!formData.email);
+    console.log('🔍 phone:', !!formData.phone);
+    console.log('🔍 mobile:', !!formData.mobile);
+    console.log('🔍 country:', !!formData.country);
+    console.log('🔍 city:', !!formData.city);
+    console.log('🔍 address:', !!formData.address);
+    console.log('🔍 contact full_name:', !!contacts[0]?.full_name);
+    console.log('🔍 contact email:', !!contacts[0]?.email);
+    console.log('🔍 contact mobile:', !!contacts[0]?.mobile);
+    console.log('🔍 contact position:', !!contacts[0]?.position);
+    console.log('🔍 contact address:', !!contacts[0]?.address);
+    console.log('🔍 contact country:', !!contacts[0]?.country);
+    console.log('🔍 contact city:', !!contacts[0]?.city);
     
     const requiredFieldsValid = isIndividualCustomer 
       ? formData.customer_type_id && formData.specialty_id && 
