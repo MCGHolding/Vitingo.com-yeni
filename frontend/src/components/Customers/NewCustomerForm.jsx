@@ -502,58 +502,27 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   };
 
   const handleSubmit = async (e) => {
-    console.log('🎯 handleSubmit CALLED - START');
     e.preventDefault();
-    console.log('🎯 preventDefault done');
     
-    // Enhanced validation - more required fields (sector_id is now optional)
-    console.log('🎯 Starting validation check...');
-    console.log('🎯 isIndividualCustomer:', isIndividualCustomer);
-    
-    // Check each field individually
-    console.log('🔍 company_short_name:', !!formData.company_short_name);
-    console.log('🔍 company_title:', !!formData.company_title);
-    console.log('🔍 customer_type_id:', !!formData.customer_type_id);
-    console.log('🔍 specialty_id:', !!formData.specialty_id);
-    console.log('🔍 email:', !!formData.email);
-    console.log('🔍 phone:', !!formData.phone);
-    console.log('🔍 mobile:', !!formData.mobile);
-    console.log('🔍 country:', !!formData.country);
-    console.log('🔍 city:', !!formData.city);
-    console.log('🔍 address:', !!formData.address);
-    console.log('🔍 contact full_name:', !!contacts[0]?.full_name);
-    console.log('🔍 contact email:', !!contacts[0]?.email);
-    console.log('🔍 contact mobile:', !!contacts[0]?.mobile);
-    console.log('🔍 contact position:', !!contacts[0]?.position);
-    console.log('🔍 contact address:', !!contacts[0]?.address);
-    console.log('🔍 contact country:', !!contacts[0]?.country);
-    console.log('🔍 contact city:', !!contacts[0]?.city);
-    
+    // Relaxed validation - country and city are now optional for main form
     const requiredFieldsValid = isIndividualCustomer 
       ? formData.customer_type_id && formData.specialty_id && 
-        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
-        contacts[0]?.address && contacts[0]?.country && contacts[0]?.city  // Contact location info required
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position
       : formData.company_short_name && formData.company_title && formData.customer_type_id && 
         formData.specialty_id && formData.email && formData.phone && 
-        formData.mobile && formData.country && formData.city && formData.address &&  // Company basic info required + address
-        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
-        contacts[0]?.address && contacts[0]?.country && contacts[0]?.city; // Contact person + location required
-    
-    console.log('🎯 requiredFieldsValid:', requiredFieldsValid);
+        formData.mobile && formData.address &&  // Company basic info required
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position; // Contact person required
     
     if (!requiredFieldsValid) {
-      console.log('❌ Validation FAILED - showing toast');
       toast({
         title: "Hata",
         description: isIndividualCustomer 
-          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)"
-          : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres, ülke, şehir), iletişim bilgileri ve yetkili kişi bilgileri (ad, email, telefon, görev, adres, ülke, şehir)",
+          ? "Zorunlu alanları doldurunuz: Müşteri türü, uzmanlık, yetkili kişi bilgileri (ad, email, telefon, görev)"
+          : "Zorunlu alanları doldurunuz: Firma bilgileri (ad, ünvan, adres), iletişim bilgileri ve yetkili kişi bilgileri (ad, email, telefon, görev)",
         variant: "destructive"
       });
       return;
     }
-    
-    console.log('✅ Validation PASSED - proceeding with save');
 
     setIsLoading(true);
     
