@@ -318,7 +318,7 @@ const ExpenseCentersPage = ({ onBack }) => {
               center={center}
               isEditing={editingCenter?.id === center.id}
               onEdit={(c) => setEditingCenter(c)}
-              onSave={(id, name, code) => handleUpdateCenter(id, name, code)}
+              onSave={(id, name) => handleUpdateCenter(id, name)}
               onCancel={() => setEditingCenter(null)}
               onDelete={(id, name) => handleDeleteCenter(id, name)}
             />
