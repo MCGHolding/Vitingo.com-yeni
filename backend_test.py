@@ -1341,15 +1341,15 @@ def test_user_positions_apis():
         print(f"❌ FAIL: Positions request error: {str(e)}")
         test_results["critical_issues"].append(f"POSITIONS_REQUEST_ERROR: {str(e)}")
     
-    # TEST 2: GET /api/users?status=active - Aktif Kullanıcılar
+    # TEST 2: POST /api/positions - Yeni Pozisyon Oluşturma
     print("\n" + "=" * 80)
-    print("TEST 2: GET /api/users?status=active - AKTİF KULLANICILAR TESTİ")
+    print("TEST 2: POST /api/positions - YENİ POZİSYON OLUŞTURMA TESTİ")
     print("=" * 80)
     
-    endpoint = f"{BACKEND_URL}/api/users?status=active"
+    endpoint = f"{BACKEND_URL}/api/positions"
     print(f"Testing endpoint: {endpoint}")
-    print("Beklenen: Aktif kullanıcıları döndürmeli")
-    print("Response format: [{id, name, email, role, department, position, status}]")
+    print("Test data: {'name': 'Test Pozisyonu'}")
+    print("Beklenen: success: true, Türkçe başarı mesajı, otomatik value generation")
     
     try:
         response = requests.get(endpoint, timeout=30)
