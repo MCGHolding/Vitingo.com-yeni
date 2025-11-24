@@ -672,7 +672,7 @@ export default function Sidebar({
       return;
     }
     
-    if (subItem && subItem.name === 'Aktif Fuarlar') {
+    if (subItem && subItem.name === 'Gelecek Fuarlar') {
       if (onActiveFairs) {
         onActiveFairs();
       }
