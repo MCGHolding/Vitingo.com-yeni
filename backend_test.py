@@ -1695,13 +1695,10 @@ def test_opportunity_statuses_get_endpoint():
     3. Each status should have required fields (id, value, label, description, is_active, created_at, created_by)
     4. Should handle empty list gracefully
     """
-                            user_id = user.get("id", "N/A")
-                            user_name = user.get("name", "N/A")
-                            user_email = user.get("email", "N/A")
-                            user_role = user.get("role", "N/A")
-                            user_department = user.get("department", "N/A")
-                            user_position = user.get("position", "N/A")
-                            user_status = user.get("status", "N/A")
+    
+    print("=" * 80)
+    print("TESTING GET OPPORTUNITY STATUSES ENDPOINT")
+    print("=" * 80)
                             
                             print(f"   {i}. ID: {user_id}")
                             print(f"      Name: {user_name}")
