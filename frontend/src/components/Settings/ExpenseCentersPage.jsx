@@ -337,10 +337,10 @@ const ExpenseCentersPage = ({ onBack }) => {
             <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div className="space-y-2 text-sm text-blue-900">
               <p><span className="font-semibold">Arama:</span> Masraf merkezlerini ad veya kod ile arayabilirsiniz</p>
-              <p><span className="font-semibold">Yeni Merkez:</span> Sisteme yeni masraf merkezleri ekleyebilirsiniz</p>
-              <p><span className="font-semibold">Düzenleme:</span> Mevcut masraf merkezlerinin ad ve kodlarını değiştirebilirsiniz</p>
+              <p><span className="font-semibold">Yeni Merkez:</span> Sadece ad girin, kod otomatik oluşturulur</p>
+              <p><span className="font-semibold">Düzenleme:</span> İsmi değiştirdiğinizde kod otomatik güncellenir</p>
               <p><span className="font-semibold">Silme:</span> Kullanılmayan masraf merkezleri silinebilir</p>
-              <p><span className="font-semibold">Kod:</span> Her masraf merkezinin benzersiz bir kodu olmalıdır</p>
+              <p><span className="font-semibold">Kod Sistemi:</span> İlk harflerden oluşur (örn: Pazarlama Giderleri → PAZ-001)</p>
             </div>
           </div>
         </div>
