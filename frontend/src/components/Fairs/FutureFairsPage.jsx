@@ -560,3 +560,353 @@ export default function FutureFairsPage({ fairs: initialFairs, onBackToDashboard
     </div>
   );
 }
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editFormData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Fuar Düzenle</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="px-6 py-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Adı</label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ülke</label>
+                  <input
+                    type="text"
+                    value={editFormData.country}
+                    onChange={(e) => setEditFormData({...editFormData, country: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Şehir</label>
+                  <input
+                    type="text"
+                    value={editFormData.city}
+                    onChange={(e) => setEditFormData({...editFormData, city: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Merkezi</label>
+                <input
+                  type="text"
+                  value={editFormData.fairCenter}
+                  onChange={(e) => setEditFormData({...editFormData, fairCenter: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Başlangıç Tarihi</label>
+                  <input
+                    type="date"
+                    value={editFormData.startDate}
+                    onChange={(e) => setEditFormData({...editFormData, startDate: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Bitiş Tarihi</label>
+                  <input
+                    type="date"
+                    value={editFormData.endDate}
+                    onChange={(e) => setEditFormData({...editFormData, endDate: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Yıl</label>
+                  <input
+                    type="text"
+                    value={editFormData.year}
+                    onChange={(e) => setEditFormData({...editFormData, year: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Periyod</label>
+                  <select
+                    value={editFormData.cycle}
+                    onChange={(e) => setEditFormData({...editFormData, cycle: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="yearly">Her Yıl</option>
+                    <option value="6_months">6 Ayda Bir</option>
+                    <option value="2_years">2 Yılda Bir</option>
+                    <option value="3_years">3 Yılda Bir</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && fairToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Fuar Sil</h2>
+              <p className="text-gray-600 mb-6">
+                "{fairToDelete.name}" fuarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Sil
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="px-6 py-4">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Başarılı</h2>
+              </div>
+              <p className="text-gray-600 mb-6">{successMessage}</p>
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Tamam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="px-6 py-4">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900">Hata</h2>
+              </div>
+              <p className="text-gray-600 mb-6">{errorMessage}</p>
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Tamam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Fuar İçe Aktar</h2>
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportPreview([]);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="px-6 py-4 space-y-4">
+              {/* Manual Text Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Manuel Veri Girişi (Her satıra bir fuar)
+                </label>
+                <textarea
+                  rows="8"
+                  placeholder="Fuar verilerini buraya yapıştırın...&#10;Format: FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay&#10;&#10;Örnek:&#10;A3 Business Forum | 2026 | ABD | Orlando | Orange County Convention Center | 19-21.01.2026 | 21-21.01.2026 | yearly | 01"
+                  onChange={(e) => handleManualInput(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                />
+              </div>
+
+              {/* OR Divider */}
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-gray-300"></div>
+                <span className="px-4 text-sm text-gray-500">VEYA</span>
+                <div className="flex-1 border-t border-gray-300"></div>
+              </div>
+
+              {/* File Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Dosya Seç (TXT formatında)
+                </label>
+                <input
+                  type="file"
+                  accept=".txt"
+                  onChange={handleFileUpload}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Format Info */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-900 mb-2">Veri Formatı:</h4>
+                <p className="text-xs text-blue-800 font-mono">
+                  FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay
+                </p>
+                <p className="text-xs text-blue-700 mt-2">
+                  • Her satıra bir fuar bilgisi<br/>
+                  • Alanlar "|" karakteri ile ayrılmalı<br/>
+                  • Tarih formatı: GG-GG.AA.YYYY (örn: 19-21.01.2026)<br/>
+                  • Periyod: yearly, 6_months, 2_years, 3_years
+                </p>
+              </div>
+
+              {/* Preview Table */}
+              {importPreview.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Önizleme ({importPreview.length} fuar)
+                  </h3>
+                  <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                          <th className="px-2 py-2 text-left text-gray-600">No</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Fuar Adı</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Yıl</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Ülke</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Şehir</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Tarih</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Periyod</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {importPreview.map((fair, index) => (
+                          <tr key={index} className="border-t border-gray-100 hover:bg-gray-50">
+                            <td className="px-2 py-2">{index + 1}</td>
+                            <td className="px-2 py-2 font-medium">{fair.name}</td>
+                            <td className="px-2 py-2">{fair.year}</td>
+                            <td className="px-2 py-2">{fair.country}</td>
+                            <td className="px-2 py-2">{fair.city}</td>
+                            <td className="px-2 py-2">{fair.startDate} - {fair.endDate}</td>
+                            <td className="px-2 py-2">
+                              {fair.cycle === 'yearly' ? 'Her Yıl' : 
+                               fair.cycle === '6_months' ? '6 Ayda Bir' :
+                               fair.cycle === '2_years' ? '2 Yılda Bir' :
+                               fair.cycle === '3_years' ? '3 Yılda Bir' :
+                               fair.cycle || '-'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportPreview([]);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={submitImport}
+                disabled={importing || importPreview.length === 0}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {importing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    İçe Aktarılıyor...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    {importPreview.length} Fuar İçe Aktar
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
