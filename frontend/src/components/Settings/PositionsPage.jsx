@@ -150,34 +150,6 @@ const PositionsPage = ({ onBack }) => {
 
   const renderPositionCard = (position) => {
     const isEditing = editingPosition?.id === position.id;
-    const [localEditName, setLocalEditName] = useState(position.name);
-
-    // Update local state when position changes
-    React.useEffect(() => {
-      setLocalEditName(position.name);
-    }, [position.name]);
-
-    const handleEdit = () => {
-      console.log('Edit button clicked for:', position.id, position.name);
-      setEditingPosition(position);
-      setLocalEditName(position.name);
-    };
-
-    const handleSave = () => {
-      console.log('Save button clicked for:', position.id, localEditName);
-      handleUpdatePosition(position.id, localEditName);
-    };
-
-    const handleCancel = () => {
-      console.log('Cancel button clicked');
-      setEditingPosition(null);
-      setLocalEditName(position.name);
-    };
-
-    const handleDelete = () => {
-      console.log('Delete button clicked for:', position.id, position.name);
-      handleDeletePosition(position.id, position.name);
-    };
 
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
