@@ -1467,6 +1467,28 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
           </CardContent>
         </Card>
 
+        {/* Submit Buttons - Etiketler'in hemen altında */}
+        <div className="flex justify-between items-center">
+          {onClose && (
+            <Button type="button" variant="outline" onClick={onClose}>
+              İptal
+            </Button>
+          )}
+          <div className="flex space-x-3">
+            <Button 
+              type="button"
+              onClick={() => setShowBankDetails(!showBankDetails)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {showBankDetails ? 'Detayı Gizle' : 'Detay'}
+            </Button>
+            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+              <Save className="h-4 w-4 mr-2" />
+              {isLoading ? 'Kaydediliyor...' : 'Müşteri Kaydet'}
+            </Button>
+          </div>
+        </div>
+
         {/* Banka/İade Bilgileri (Detay butonuna basınca açılır) */}
         {showBankDetails && !isIndividualCustomer && (
           <Card>
