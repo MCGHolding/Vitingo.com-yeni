@@ -9805,7 +9805,22 @@ class ExpenseCenter(BaseModel):
 
 class ExpenseCenterCreate(BaseModel):
     name: str
-    code: str
+
+def generate_expense_center_code(name: str) -> str:
+    """Generate expense center code from name"""
+    # Take first letters of each word
+    words = name.upper().split()
+    if len(words) == 1:
+        code_prefix = words[0][:3]
+    else:
+        code_prefix = ''.join([word[0] for word in words[:3]])
+    
+    # Turkish character conversion
+    tr_chars = {'İ': 'I', 'Ş': 'S', 'Ğ': 'G', 'Ü': 'U', 'Ö': 'O', 'Ç': 'C'}
+    for tr, en in tr_chars.items():
+        code_prefix = code_prefix.replace(tr, en)
+    
+    return code_prefix
 
 @api_router.get("/expense-centers")
 async def get_expense_centers():
