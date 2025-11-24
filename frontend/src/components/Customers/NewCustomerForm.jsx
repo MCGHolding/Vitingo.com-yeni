@@ -65,6 +65,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   const [ulkeler, setUlkeler] = useState([]);
   const [sehirler, setSehirler] = useState([]);
   const [tumUlkeler, setTumUlkeler] = useState([]);
+  const [contactSehirler, setContactSehirler] = useState({});
 
   const [formData, setFormData] = useState({
     company_short_name: '',
