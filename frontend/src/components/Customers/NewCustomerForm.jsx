@@ -746,7 +746,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Building2 className="h-5 w-5" />
-                <span>Müşteri Form Bilgileri</span>
+                <span>Firma Bilgileri</span>
               </CardTitle>
             </CardHeader>
           <CardContent className="space-y-4">
