@@ -113,14 +113,8 @@ export default function NewProjectForm({ onClose, onSave }) {
         
         setGroupCompanies(companies);
         
-        // Auto-select first company
-        if (companies.length > 0) {
-          setFormData(prev => ({
-            ...prev,
-            companyId: companies[0].id,
-            companyName: companies[0].name
-          }));
-        }
+        // Don't auto-select company - user should choose
+        // Keep companyId and companyName empty by default
       }
     } catch (error) {
       console.error('Error loading group companies:', error);
