@@ -1237,14 +1237,14 @@ def test_user_positions_apis():
         "warnings": []
     }
     
-    # TEST 1: GET /api/positions - Pozisyonlar Listesi
+    # TEST 1: GET /api/positions - Tüm Pozisyonları Döndürme
     print("\n" + "=" * 80)
-    print("TEST 1: GET /api/positions - POZİSYONLAR LİSTESİ TESTİ")
+    print("TEST 1: GET /api/positions - TÜM POZİSYONLARI DÖNDÜRME TESTİ")
     print("=" * 80)
     
     endpoint = f"{BACKEND_URL}/api/positions"
     print(f"Testing endpoint: {endpoint}")
-    print("Beklenen: En az 10+ pozisyon (Genel Müdür, Müdür, Uzman, vb.)")
+    print("Beklenen: En az 13 default pozisyon olmalı")
     print("Response format: [{id, name, value, created_at}]")
     
     try:
