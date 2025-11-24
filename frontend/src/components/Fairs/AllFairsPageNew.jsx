@@ -12,7 +12,7 @@ import {
   X
 } from 'lucide-react';
 
-export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard }) {
+export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard, title = "Tüm Fuarlar", titleColor = "text-gray-900", showImport = true }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [fairs, setFairs] = useState(initialFairs || []);
   const [loading, setLoading] = useState(false);
