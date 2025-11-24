@@ -359,8 +359,12 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Tüm Fuarlar</h1>
-              <p className="text-gray-600 mt-1">Tüm fuar etkinliklerini görüntüleyin ve yönetin • {totalFairs} fuar</p>
+              <h1 className={`text-3xl font-bold ${titleColor}`}>{title}</h1>
+              <p className="text-gray-600 mt-1">
+                {title === "Gelecek Fuarlar" ? "Yaklaşan ve aktif fuar etkinliklerini görüntüleyin" : 
+                 title === "Geçmiş Fuarlar" ? "Tamamlanmış fuar etkinliklerini görüntüleyin" :
+                 "Tüm fuar etkinliklerini görüntüleyin ve yönetin"} • {totalFairs} fuar
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
