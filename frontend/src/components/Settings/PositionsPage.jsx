@@ -150,9 +150,10 @@ const PositionsPage = ({ onBack }) => {
 
   const renderPositionCard = (position) => {
     const isEditing = editingPosition?.id === position.id;
+    const [localName, setLocalName] = React.useState(position.name);
 
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+      <div key={position.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
         <div className="flex items-center gap-3">
           {/* Drag Handle */}
           <div className="cursor-move text-gray-400 hover:text-gray-600">
@@ -171,15 +172,17 @@ const PositionsPage = ({ onBack }) => {
             {isEditing ? (
               <input
                 type="text"
-                value={localEditName}
-                onChange={(e) => setLocalEditName(e.target.value)}
+                defaultValue={position.name}
+                onChange={(e) => setLocalName(e.target.value)}
                 className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleSave();
+                    console.log('Enter pressed, saving:', localName);
+                    handleUpdatePosition(position.id, e.target.value);
                   } else if (e.key === 'Escape') {
-                    handleCancel();
+                    console.log('Escape pressed, cancelling');
+                    setEditingPosition(null);
                   }
                 }}
               />
@@ -198,14 +201,23 @@ const PositionsPage = ({ onBack }) => {
             {isEditing ? (
               <>
                 <button
-                  onClick={handleSave}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Save button clicked, localName:', localName);
+                    const input = e.target.closest('.flex').querySelector('input');
+                    handleUpdatePosition(position.id, input ? input.value : localName);
+                  }}
                   className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                   title="Kaydet"
                 >
                   <Check className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={handleCancel}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Cancel button clicked');
+                    setEditingPosition(null);
+                  }}
                   className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   title="İptal"
                 >
@@ -215,14 +227,23 @@ const PositionsPage = ({ onBack }) => {
             ) : (
               <>
                 <button
-                  onClick={handleEdit}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Edit button clicked for position:', position.id, position.name);
+                    setEditingPosition(position);
+                    setLocalName(position.name);
+                  }}
                   className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   title="Düzenle"
                 >
                   <Edit2 className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={handleDelete}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Delete button clicked for position:', position.id, position.name);
+                    handleDeletePosition(position.id, position.name);
+                  }}
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   title="Sil"
                 >
