@@ -684,7 +684,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         )}
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); console.log('🚀 INLINE FORM SUBMIT FIRED!'); handleSubmit(e); }} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
           {/* Kategori Seçimi */}
           <Card>
           <CardHeader>
