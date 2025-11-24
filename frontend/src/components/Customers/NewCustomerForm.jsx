@@ -456,9 +456,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   };
 
   // Handle contact country change and update contact phone numbers
-  const handleContactCountryChange = (contactIndex, country) => {
-    const countryCode = country ? country.iso2 : '';
-    
+  const handleContactCountryChange = (contactIndex, countryName) => {
     // Update contact in single operation to prevent re-render loop
     setContacts(prev => {
       const updated = [...prev];
@@ -467,12 +465,12 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       // Update contact fields
       updated[contactIndex] = {
         ...contact,
-        country: countryCode,
-        city: countryCode ? '' : contact.city  // Clear city only if country changed
+        country: countryName,
+        city: ''  // Clear city when country changes
       };
       
-      // Update contact phone number with new country dial code
-      if (countryCode) {
+      // Update contact phone number with new country dial code (if needed)
+      if (countryName) {
         const dialCodes = {
           'tr': '+90', 'us': '+1', 'gb': '+44', 'de': '+49', 'fr': '+33',
           'it': '+39', 'es': '+34', 'ca': '+1', 'au': '+61', 'in': '+91',
