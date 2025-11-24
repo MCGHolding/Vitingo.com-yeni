@@ -1237,6 +1237,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'expense-centers':
+        return (
+          <ExpenseCentersPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
