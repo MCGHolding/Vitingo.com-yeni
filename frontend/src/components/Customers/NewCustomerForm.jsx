@@ -502,9 +502,12 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   };
 
   const handleSubmit = async (e) => {
+    console.log('🎯 handleSubmit CALLED - START');
     e.preventDefault();
+    console.log('🎯 preventDefault done');
     
     // Enhanced validation - more required fields (sector_id is now optional)
+    console.log('🎯 Starting validation check...');
     const requiredFieldsValid = isIndividualCustomer 
       ? formData.customer_type_id && formData.specialty_id && 
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position &&
