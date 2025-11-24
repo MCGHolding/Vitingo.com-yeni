@@ -94,7 +94,7 @@ const CategoryCard = ({ category, isParent, isEditing, onEdit, onSave, onCancel,
         </div>
       </div>
       {isParent && isExpanded && subCategories.length > 0 && (
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 grid grid-cols-1 gap-2">
           {subCategories.map(subCat => (
             <CategoryCard 
               key={subCat.id} 
