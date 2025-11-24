@@ -405,8 +405,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       position: '', 
       tags: [],
       address: '',
-      country: '',
-      city: ''
+      country: formData.country || '', // Firma bilgilerinden ülkeyi al
+      city: formData.city || '' // Firma bilgilerinden şehri al
     }]);
   };
 
