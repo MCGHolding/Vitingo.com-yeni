@@ -302,8 +302,8 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
     const start = new Date(startDate);
     const end = new Date(endDate);
     
-    const startDay = start.getDate();
-    const endDay = end.getDate();
+    const startDay = String(start.getDate()).padStart(2, '0');
+    const endDay = String(end.getDate()).padStart(2, '0');
     const month = String(start.getMonth() + 1).padStart(2, '0');
     const year = start.getFullYear();
     
