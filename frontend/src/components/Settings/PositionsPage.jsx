@@ -384,6 +384,17 @@ const PositionsPage = ({ onBack }) => {
           </div>
         </div>
       )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <SuccessModal
+          message={successMessage}
+          onClose={() => {
+            setShowSuccessModal(false);
+            setSuccessMessage('');
+          }}
+        />
+      )}
     </div>
   );
 };
