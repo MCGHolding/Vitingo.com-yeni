@@ -148,7 +148,7 @@ const PositionsPage = ({ onBack }) => {
     pos.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const PositionCard = ({ position }) => {
+  const renderPositionCard = (position) => {
     const isEditing = editingPosition?.id === position.id;
     const [localEditName, setLocalEditName] = useState(position.name);
 
