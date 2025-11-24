@@ -119,16 +119,23 @@ const PositionsPage = ({ onBack }) => {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
+      console.log('Deleting position:', positionId, positionName);
+
       const response = await fetch(`${backendUrl}/api/positions/${positionId}`, {
         method: 'DELETE'
       });
 
+      console.log('Delete response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
-        alert(data.message);
+        console.log('Delete response data:', data);
+        setSuccessMessage(data.message);
+        setShowSuccessModal(true);
         fetchPositions();
       } else {
         const error = await response.json();
+        console.error('Delete error:', error);
         alert(error.detail || 'Pozisyon silinirken bir hata oluştu');
       }
     } catch (error) {
