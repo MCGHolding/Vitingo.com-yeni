@@ -313,7 +313,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         .replace(/[^a-z0-9]/g, '')
         .substring(0, 15) + '.com',
       address: `${Math.floor(Math.random() * 200) + 1} Sok. No:${Math.floor(Math.random() * 50) + 1} Beşiktaş/İstanbul`,
-      country: 'TR',
+      country: 'Turkey',
       city: 'İstanbul',
       tax_office: 'Beşiktaş Vergi Dairesi',
       tax_number: '1' + Math.floor(Math.random() * 900000000 + 100000000),
@@ -336,7 +336,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       position: 'Genel Müdür',
       tags: [],
       address: testData.address,
-      country: 'TR',
+      country: 'Turkey',
       city: 'İstanbul'
     }];
 
