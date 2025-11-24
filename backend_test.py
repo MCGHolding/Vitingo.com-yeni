@@ -1307,7 +1307,7 @@ def test_user_positions_apis():
                             test_results["warnings"].append("EXPECTED_POSITIONS_NOT_FOUND")
                             
                     else:
-                        print(f"❌ FAIL: Only {positions_count} positions found, expected ≥10")
+                        print(f"❌ FAIL: Only {positions_count} positions found, expected ≥13")
                         test_results["critical_issues"].append(f"INSUFFICIENT_POSITIONS_{positions_count}")
                 else:
                     print("❌ FAIL: Response should be an array")
