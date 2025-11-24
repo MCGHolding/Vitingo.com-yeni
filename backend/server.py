@@ -884,6 +884,21 @@ async def delete_fair(fair_id: str):
         logger.error(f"Error deleting fair: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting fair: {str(e)}")
 
+@api_router.delete("/fairs")
+async def delete_all_fairs():
+    """Delete all fairs from the database"""
+    try:
+        result = await db.fairs.delete_many({})
+        
+        return {
+            "message": f"Successfully deleted {result.deleted_count} fairs",
+            "deleted_count": result.deleted_count
+        }
+            
+    except Exception as e:
+        logger.error(f"Error deleting all fairs: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting all fairs: {str(e)}")
+
 
 # ============== PROJECT ENDPOINTS ==============
 
