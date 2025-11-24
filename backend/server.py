@@ -9858,24 +9858,42 @@ async def get_expense_centers():
 async def create_expense_center(center_data: ExpenseCenterCreate):
     """Create a new expense center"""
     try:
-        # Check if expense center with same code already exists
-        existing = await db.expense_centers.find_one({"code": center_data.code})
-        if existing:
-            raise HTTPException(status_code=400, detail="Bu masraf merkezi kodu zaten mevcut")
+        # Generate code from name
+        code_prefix = generate_expense_center_code(center_data.name)
+        
+        # Find next available number
+        existing_centers = await db.expense_centers.find(
+            {"code": {"$regex": f"^{code_prefix}-"}}
+        ).to_list(length=None)
+        
+        if existing_centers:
+            # Extract numbers and find max
+            numbers = []
+            for center in existing_centers:
+                try:
+                    num = int(center['code'].split('-')[-1])
+                    numbers.append(num)
+                except:
+                    pass
+            next_num = max(numbers) + 1 if numbers else 1
+        else:
+            next_num = 1
+        
+        final_code = f"{code_prefix}-{next_num:03d}"
         
         new_center = {
             "id": str(uuid.uuid4()),
             "name": center_data.name,
-            "code": center_data.code,
+            "code": final_code,
             "created_at": datetime.now(timezone.utc)
         }
         
         await db.expense_centers.insert_one(new_center)
-        logger.info(f"Created expense center: {new_center['name']}")
+        logger.info(f"Created expense center: {new_center['name']} with code {final_code}")
         
         return {
             "success": True,
-            "message": f"{new_center['name']} masraf merkezi oluşturuldu",
+            "message": f"{new_center['name']} masraf merkezi oluşturuldu (Kod: {final_code})",
             "expense_center": serialize_document(new_center)
         }
     except HTTPException:
