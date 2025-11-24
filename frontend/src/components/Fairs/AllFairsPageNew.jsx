@@ -29,6 +29,10 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
   const [successMessage, setSuccessMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importPreview, setImportPreview] = useState([]);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     if (initialFairs === undefined) {
