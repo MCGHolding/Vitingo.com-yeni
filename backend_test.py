@@ -1351,20 +1351,112 @@ def test_user_positions_apis():
     print("Test data: {'name': 'Test Pozisyonu'}")
     print("Beklenen: success: true, Türkçe başarı mesajı, otomatik value generation")
     
+    # Create test position data
+    test_position_data = {
+        "name": "Test Pozisyonu Türkçe Karakter İçeren"
+    }
+    
     try:
-        response = requests.get(endpoint, timeout=30)
+        response = requests.post(endpoint, json=test_position_data, timeout=30)
         print(f"Status Code: {response.status_code}")
         
-        if response.status_code == 200:
-            print("✅ PASS: Active users endpoint responds with 200")
+        if response.status_code in [200, 201]:
+            print("✅ PASS: Position creation endpoint responds with success")
             
             try:
-                users = response.json()
-                print(f"Response type: {type(users)}")
+                result = response.json()
+                print(f"Response type: {type(result)}")
+                print(f"Response: {result}")
                 
-                if isinstance(users, list):
-                    users_count = len(users)
-                    test_results["active_users_count"] = users_count
+                # Check if response has success field
+                if result.get("success") == True:
+                    print("✅ PASS: Response contains success: true")
+                    test_results["create_position_working"] = True
+                    
+                    # Check for Turkish success message
+                    message = result.get("message", "")
+                    if message and any(char in message for char in ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']):
+                        print(f"✅ PASS: Turkish success message: '{message}'")
+                        test_results["turkish_success_messages"] = True
+                    else:
+                        print(f"⚠️  WARNING: Success message not in Turkish: '{message}'")
+                        test_results["warnings"].append("SUCCESS_MESSAGE_NOT_TURKISH")
+                    
+                    # Check position data
+                    position = result.get("position", {})
+                    if position:
+                        position_id = position.get("id")
+                        position_name = position.get("name")
+                        position_value = position.get("value")
+                        
+                        test_results["created_position_id"] = position_id
+                        print(f"📊 Created Position:")
+                        print(f"   ID: {position_id}")
+                        print(f"   Name: {position_name}")
+                        print(f"   Value: {position_value}")
+                        
+                        # Check value generation (lowercase, underscore, Turkish char conversion)
+                        expected_value = "test_pozisyonu_turkce_karakter_iceren"
+                        if position_value == expected_value:
+                            print(f"✅ PASS: Value generation working correctly")
+                            test_results["value_generation_working"] = True
+                        else:
+                            print(f"⚠️  WARNING: Value generation issue. Expected: '{expected_value}', Got: '{position_value}'")
+                            test_results["warnings"].append(f"VALUE_GENERATION_ISSUE_{position_value}")
+                    else:
+                        print("⚠️  WARNING: Position data not returned in response")
+                        test_results["warnings"].append("POSITION_DATA_MISSING")
+                        
+                else:
+                    print("❌ FAIL: Response does not contain success: true")
+                    test_results["critical_issues"].append("CREATE_POSITION_NO_SUCCESS")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Could not parse position creation response: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_POSITION_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Position creation failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CREATE_POSITION_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Position creation request error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_POSITION_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2.1: Test Duplicate Prevention
+    print("\n" + "-" * 60)
+    print("TEST 2.1: DUPLICATE PREVENTION TEST")
+    print("-" * 60)
+    print("Attempting to create the same position again...")
+    
+    try:
+        duplicate_response = requests.post(endpoint, json=test_position_data, timeout=30)
+        print(f"Duplicate Status Code: {duplicate_response.status_code}")
+        
+        if duplicate_response.status_code == 400:
+            print("✅ PASS: Duplicate position correctly rejected with 400")
+            
+            try:
+                error_result = duplicate_response.json()
+                error_detail = error_result.get("detail", "")
+                
+                if "zaten mevcut" in error_detail.lower():
+                    print(f"✅ PASS: Turkish error message for duplicate: '{error_detail}'")
+                    test_results["duplicate_prevention_working"] = True
+                else:
+                    print(f"⚠️  WARNING: Error message not in Turkish: '{error_detail}'")
+                    test_results["warnings"].append("DUPLICATE_ERROR_NOT_TURKISH")
+                    
+            except Exception as e:
+                print(f"⚠️  WARNING: Could not parse duplicate error response: {str(e)}")
+                test_results["warnings"].append("DUPLICATE_ERROR_PARSE_ISSUE")
+        else:
+            print(f"❌ FAIL: Duplicate position not rejected properly: {duplicate_response.status_code}")
+            test_results["critical_issues"].append(f"DUPLICATE_NOT_PREVENTED_{duplicate_response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Duplicate test error: {str(e)}")
+        test_results["critical_issues"].append(f"DUPLICATE_TEST_ERROR: {str(e)}")rs_count
                     print(f"📊 Active Users Count: {users_count}")
                     
                     if users_count > 0:
