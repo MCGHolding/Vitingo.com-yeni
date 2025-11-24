@@ -9978,6 +9978,101 @@ async def delete_expense_center(center_id: str):
         logger.error(f"Error deleting expense center: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== ADVANCE CATEGORIES ENDPOINTS ====================
+
+class AdvanceCategory(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    status: str = "active"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class AdvanceCategoryCreate(BaseModel):
+    name: str
+
+class AdvanceCategoryStatusUpdate(BaseModel):
+    status: str
+
+@api_router.get("/advance-categories")
+async def get_advance_categories():
+    try:
+        categories = await db.advance_categories.find().to_list(length=None)
+        if not categories:
+            default_categories = [
+                {"id": str(uuid.uuid4()), "name": "Yol", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Yemek", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Konaklama", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Ulaşım", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Yakıt", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Eğitim", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Kırtasiye", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Telefon", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İnternet", "status": "active", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Temizlik", "status": "active", "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.advance_categories.insert_many(default_categories)
+            categories = default_categories
+        return [serialize_document(cat) for cat in categories]
+    except Exception as e:
+        logger.error(f"Error getting advance categories: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/advance-categories")
+async def create_advance_category(category_data: AdvanceCategoryCreate):
+    try:
+        new_category = {
+            "id": str(uuid.uuid4()),
+            "name": category_data.name,
+            "status": "active",
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.advance_categories.insert_one(new_category)
+        logger.info(f"Created advance category: {new_category['name']}")
+        return {
+            "success": True,
+            "message": f"{new_category['name']} kategorisi oluşturuldu",
+            "category": serialize_document(new_category)
+        }
+    except Exception as e:
+        logger.error(f"Error creating advance category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/advance-categories/{category_id}")
+async def update_advance_category(category_id: str, category_data: AdvanceCategoryCreate):
+    try:
+        existing = await db.advance_categories.find_one({"id": category_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+        await db.advance_categories.update_one(
+            {"id": category_id},
+            {"$set": {"name": category_data.name, "updated_at": datetime.now(timezone.utc)}}
+        )
+        return {"success": True, "message": "Kategori güncellendi"}
+    except Exception as e:
+        logger.error(f"Error updating advance category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/advance-categories/{category_id}/status")
+async def update_advance_category_status(category_id: str, status_data: AdvanceCategoryStatusUpdate):
+    try:
+        await db.advance_categories.update_one(
+            {"id": category_id},
+            {"$set": {"status": status_data.status, "updated_at": datetime.now(timezone.utc)}}
+        )
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/advance-categories/{category_id}")
+async def delete_advance_category(category_id: str):
+    try:
+        category = await db.advance_categories.find_one({"id": category_id})
+        if not category:
+            raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+        await db.advance_categories.delete_one({"id": category_id})
+        return {"success": True, "message": f"{category['name']} kategorisi silindi"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
