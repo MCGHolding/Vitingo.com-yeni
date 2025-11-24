@@ -789,12 +789,19 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </label>
                 <div className="flex space-x-2">
                   <div className="flex-1">
-                    <CountrySelect
+                    <Select
                       value={formData.country}
-                      onChange={handleCountryChange}
-                      placeholder="Ülke seçiniz..."
-                      refreshTrigger={geoRefreshTrigger}
-                    />
+                      onValueChange={(value) => handleInputChange('country', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Ülke seçiniz..." />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {ulkeler.map(ulke => (
+                          <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <Button
                     type="button"
@@ -815,17 +822,20 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </label>
                 <div className="flex space-x-2">
                   <div className="flex-1">
-                    <CitySelect
-                      country={formData.country}
+                    <Select
                       value={formData.city}
-                      onChange={(city) => {
-                        const cityName = city ? city.name : '';
-                        handleInputChange('city', cityName);
-                      }}
-                      placeholder="Şehir seçiniz..."
+                      onValueChange={(value) => handleInputChange('city', value)}
                       disabled={!formData.country}
-                      refreshTrigger={geoRefreshTrigger}
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Önce ülke seçiniz..." />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {sehirler.map(sehir => (
+                          <SelectItem key={sehir} value={sehir}>{sehir}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <Button
                     type="button"
