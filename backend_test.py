@@ -1214,11 +1214,11 @@ def test_user_positions_apis():
     """
     
     print("=" * 100)
-    print("🚨 KULLANICI YÖNETİMİ API'LERİ TESTİ 🚨")
+    print("🚨 KULLANICI POZİSYONLARI API'LERİ TESTİ 🚨")
     print("=" * 100)
-    print("CONTEXT: Kullanıcı yönetimi sisteminin tüm API endpoint'lerini test ediyoruz.")
-    print("Bu test, pozisyon listesi, aktif kullanıcılar, kullanıcı oluşturma, davet etme,")
-    print("güncelleme ve arşivleme işlemlerini kapsamaktadır.")
+    print("CONTEXT: Kullanıcı pozisyonları yönetimi sisteminin tüm API endpoint'lerini test ediyoruz.")
+    print("Bu test, pozisyon listesi, pozisyon oluşturma, güncelleme ve silme işlemlerini kapsamaktadır.")
+    print("Türkçe karakter desteği, otomatik value generation ve duplicate kontrolü test edilecek.")
     print("=" * 100)
     
     test_results = {
