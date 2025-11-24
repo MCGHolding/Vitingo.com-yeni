@@ -927,6 +927,94 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
           </div>
         </div>
       )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Fuar İçe Aktar</h2>
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportPreview([]);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="px-6 py-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Dosya Seç (TXT formatında)
+                </label>
+                <input
+                  type="file"
+                  accept=".txt"
+                  onChange={handleFileUpload}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  Format: FuarAdı | Yıl | Ülke | Şehir | FuarMerkezi | BaşlangıçTarihi | BitişTarihi | Periyod | Ay
+                </p>
+              </div>
+
+              {importPreview.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Önizleme ({importPreview.length} fuar)
+                  </h3>
+                  <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                          <th className="px-2 py-2 text-left text-gray-600">Fuar Adı</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Yıl</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Ülke</th>
+                          <th className="px-2 py-2 text-left text-gray-600">Şehir</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {importPreview.map((fair, index) => (
+                          <tr key={index} className="border-t border-gray-100">
+                            <td className="px-2 py-2">{fair.name}</td>
+                            <td className="px-2 py-2">{fair.year}</td>
+                            <td className="px-2 py-2">{fair.country}</td>
+                            <td className="px-2 py-2">{fair.city}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportFile(null);
+                  setImportPreview([]);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={submitImport}
+                disabled={importing || importPreview.length === 0}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {importing ? 'İçe Aktarılıyor...' : `${importPreview.length} Fuar İçe Aktar`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
