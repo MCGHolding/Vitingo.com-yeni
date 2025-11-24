@@ -47,8 +47,8 @@ export default function CitySelect({
     
     setIsLoading(true);
     try {
-      // Use new cities endpoint
-      const response = await fetch(`${backendUrl}/api/cities/${country}`);
+      // Use library cities endpoint
+      const response = await fetch(`${backendUrl}/api/library/cities/${country}`);
       
       if (response.ok) {
         const citiesData = await response.json();
