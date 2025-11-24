@@ -1132,6 +1132,18 @@ async def get_cities(country: Optional[str] = None):
         logger.error(f"Error getting cities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/library/cities/{country}", response_model=List[LibraryCity])
+async def get_cities_by_country(country: str):
+    """Get cities for a specific country"""
+    try:
+        logger.info(f"Fetching cities for country: '{country}'")
+        cities = await db.cities.find({"country": country}).sort("name", 1).to_list(1000)
+        logger.info(f"Found {len(cities)} cities for country '{country}'")
+        return [LibraryCity(**city) for city in cities]
+    except Exception as e:
+        logger.error(f"Error getting cities for country {country}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/library/cities", response_model=LibraryCity)
 async def create_city(city: LibraryCity):
     """Create a new city"""
