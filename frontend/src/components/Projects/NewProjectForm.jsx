@@ -121,19 +121,10 @@ export default function NewProjectForm({ onClose, onSave }) {
       // Fallback to user info if API fails
       if (user?.companyName) {
         setGroupCompanies([{ id: 'default', name: user.companyName }]);
-        setFormData(prev => ({
-          ...prev,
-          companyId: 'default',
-          companyName: user.companyName
-        }));
       } else if (user?.name) {
         setGroupCompanies([{ id: 'individual', name: user.name }]);
-        setFormData(prev => ({
-          ...prev,
-          companyId: 'individual',
-          companyName: user.name
-        }));
       }
+      // Don't auto-select - let user choose
     }
   };
 
