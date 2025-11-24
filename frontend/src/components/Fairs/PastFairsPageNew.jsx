@@ -535,7 +535,7 @@ export default function PastFairsPageNew({ fairs: initialFairs, onBackToDashboar
         {/* Fairs Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Tüm Fuarlar Listesi</h3>
+            <h3 className="text-lg font-medium text-gray-900">Geçmiş Fuarlar Listesi</h3>
           </div>
           
           {filteredFairs.length === 0 ? (
