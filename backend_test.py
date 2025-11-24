@@ -1686,8 +1686,6 @@ def test_user_positions_apis():
         return True
 
 def test_opportunity_statuses_get_endpoint():
-                        
-                        # Analyze first few users
                         print(f"\n📋 ACTIVE USERS DATA ANALYSIS (First 3):")
                         for i, user in enumerate(users[:3], 1):
                             user_id = user.get("id", "N/A")
