@@ -117,7 +117,7 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Organizasyon'
     },
     {
-      id: 'cost-centers',
+      id: 'expense-centers',
       title: 'Masraf Merkezleri',
       description: 'Proje ve genel gider türlerini yönetin',
       icon: Briefcase,
