@@ -55,7 +55,14 @@ export default function NewProjectForm({ onClose, onSave }) {
     currency: 'TRY',
     paymentTerms: [],
     notes: '',
-    isAmericanFair: false
+    isAmericanFair: false,
+    // Stand details
+    standWidth: '',
+    standWidthUnit: 'mt',
+    standLength: '',
+    standLengthUnit: 'mt',
+    standHeight: '',
+    standHeightUnit: 'mt'
   });
 
   useEffect(() => {
