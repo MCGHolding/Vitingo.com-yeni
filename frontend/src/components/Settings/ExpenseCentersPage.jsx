@@ -356,7 +356,6 @@ const ExpenseCentersPage = ({ onBack }) => {
                 onClick={() => {
                   setShowAddModal(false);
                   setNewCenterName('');
-                  setNewCenterCode('');
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -393,7 +392,6 @@ const ExpenseCentersPage = ({ onBack }) => {
                 onClick={() => {
                   setShowAddModal(false);
                   setNewCenterName('');
-                  setNewCenterCode('');
                 }}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
