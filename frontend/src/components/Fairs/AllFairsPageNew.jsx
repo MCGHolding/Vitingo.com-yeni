@@ -149,6 +149,98 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
     }
   };
 
+  // Import functions
+  const handleManualInput = (text) => {
+    try {
+      const lines = text.split('\n').filter(line => line.trim());
+      const data = [];
+
+      for (let line of lines) {
+        const parts = line.split('|').map(p => p.trim());
+        if (parts.length >= 4) {
+          data.push({
+            name: parts[0] || '',
+            year: parts[1] || '',
+            country: parts[2] || '',
+            city: parts[3] || '',
+            fairCenter: parts[4] || '',
+            startDate: parts[5] || '',
+            endDate: parts[6] || '',
+            cycle: parts[7] || 'yearly',
+            fairMonth: parts[8] || ''
+          });
+        }
+      }
+
+      setImportPreview(data);
+    } catch (error) {
+      console.error('Parse error:', error);
+      setErrorMessage('Veri formatı hatalı!');
+      setShowErrorModal(true);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImportFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        handleManualInput(text);
+      } catch (error) {
+        console.error('Parse error:', error);
+        setErrorMessage('Dosya formatı hatalı!');
+        setShowErrorModal(true);
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  const submitImport = async () => {
+    if (importPreview.length === 0) {
+      setErrorMessage('Lütfen önce bir dosya yükleyin!');
+      setShowErrorModal(true);
+      return;
+    }
+
+    setImporting(true);
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      const response = await fetch(`${backendUrl}/api/fairs/bulk-import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fairs: importPreview })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setShowImportModal(false);
+        setImportFile(null);
+        setImportPreview([]);
+        setSuccessMessage(`${result.count || importPreview.length} fuar başarıyla içe aktarıldı!`);
+        setShowSuccessModal(true);
+        loadFairs();
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(`İçe aktarma başarısız: ${errorData.detail || ''}`);
+        setShowErrorModal(true);
+      }
+    } catch (error) {
+      console.error('Import error:', error);
+      setErrorMessage('Bir hata oluştu!');
+      setShowErrorModal(true);
+    } finally {
+      setImporting(false);
+    }
+  };
+
   const filteredFairs = useMemo(() => {
     let filtered = fairs;
 
