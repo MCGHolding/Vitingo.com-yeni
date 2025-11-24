@@ -825,8 +825,114 @@ export default function NewProjectForm({ onClose, onSave }) {
           </CardContent>
         </Card>
 
+        {/* Stand Details Section (collapsible) */}
+        {showDetails && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <FileText className="h-5 w-5 mr-2" />
+                Stand Detayları
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Stand Width */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stand Eni
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.standWidth}
+                    onChange={(e) => setFormData({ ...formData, standWidth: e.target.value })}
+                    placeholder="Eni girin"
+                    className="flex-1"
+                  />
+                  <Select
+                    value={formData.standWidthUnit}
+                    onValueChange={(value) => setFormData({ ...formData, standWidthUnit: value })}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cm">cm</SelectItem>
+                      <SelectItem value="mt">mt</SelectItem>
+                      <SelectItem value="ft">ft</SelectItem>
+                      <SelectItem value="in">in</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Stand Length */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stand Boyu
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.standLength}
+                    onChange={(e) => setFormData({ ...formData, standLength: e.target.value })}
+                    placeholder="Boyu girin"
+                    className="flex-1"
+                  />
+                  <Select
+                    value={formData.standLengthUnit}
+                    onValueChange={(value) => setFormData({ ...formData, standLengthUnit: value })}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cm">cm</SelectItem>
+                      <SelectItem value="mt">mt</SelectItem>
+                      <SelectItem value="ft">ft</SelectItem>
+                      <SelectItem value="in">in</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Stand Height */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Stand Yüksekliği
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.standHeight}
+                    onChange={(e) => setFormData({ ...formData, standHeight: e.target.value })}
+                    placeholder="Yüksekliği girin"
+                    className="flex-1"
+                  />
+                  <Select
+                    value={formData.standHeightUnit}
+                    onValueChange={(value) => setFormData({ ...formData, standHeightUnit: value })}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cm">cm</SelectItem>
+                      <SelectItem value="mt">mt</SelectItem>
+                      <SelectItem value="ft">ft</SelectItem>
+                      <SelectItem value="in">in</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Actions */}
-        <div className="flex justify-end space-x-3">
+        <div className="flex justify-between items-center">
           <Button 
             type="button" 
             variant="outline" 
@@ -835,20 +941,30 @@ export default function NewProjectForm({ onClose, onSave }) {
           >
             İptal
           </Button>
-          <Button 
-            type="submit" 
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {loading ? (
-              'Oluşturuluyor...'
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Proje Oluştur
-              </>
-            )}
-          </Button>
+          
+          <div className="flex space-x-3">
+            <Button 
+              type="button"
+              onClick={() => setShowDetails(!showDetails)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {showDetails ? 'Detayları Gizle' : 'Detaylar'}
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {loading ? (
+                'Oluşturuluyor...'
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Proje Oluştur
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </form>
 
