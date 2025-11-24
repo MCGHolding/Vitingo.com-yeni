@@ -261,7 +261,20 @@ const ExpenseCategoriesPage = ({ onBack }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-3 mb-8">
           {getParentCategories().map(category => (
-            <CategoryCard key={category.id} category={category} isParent={true} isEditing={editingCategory?.id === category.id} onEdit={(cat) => setEditingCategory(cat)} onSave={(id, name) => handleUpdateCategory(id, name)} onCancel={() => setEditingCategory(null)} onDelete={(id, name) => handleDeleteCategory(id, name)} onToggle={toggleExpand} isExpanded={expandedCategories[category.id]} />
+            <CategoryCard 
+              key={category.id} 
+              category={category} 
+              isParent={true} 
+              isEditing={editingCategory?.id === category.id} 
+              onEdit={(cat) => setEditingCategory(cat)} 
+              onSave={(id, name) => handleUpdateCategory(id, name)} 
+              onCancel={() => setEditingCategory(null)} 
+              onDelete={(id, name) => handleDeleteCategory(id, name)} 
+              onToggle={toggleExpand} 
+              isExpanded={expandedCategories[category.id]}
+              getSubCategories={getSubCategories}
+              editingCategory={editingCategory}
+            />
           ))}
         </div>
       </div>
