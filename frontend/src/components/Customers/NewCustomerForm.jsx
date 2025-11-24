@@ -965,7 +965,9 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         </Card>
         )}
 
-        {!isIndividualCustomer && (
+        {/* Banka/İade Bilgileri kaldırıldı - Detay butonunun altına taşındı */}
+
+        {false && !isIndividualCustomer && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
