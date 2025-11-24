@@ -55,7 +55,8 @@ const PositionsPage = ({ onBack }) => {
 
       if (response.ok) {
         const data = await response.json();
-        alert(data.message);
+        setSuccessMessage(data.message);
+        setShowSuccessModal(true);
         setShowAddModal(false);
         setNewPositionName('');
         fetchPositions();
