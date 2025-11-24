@@ -66,6 +66,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   const [sehirler, setSehirler] = useState([]);
   const [tumUlkeler, setTumUlkeler] = useState([]);
   const [contactSehirler, setContactSehirler] = useState({});
+  const [expandedContacts, setExpandedContacts] = useState([0]); // İlk contact açık
 
   const [formData, setFormData] = useState({
     company_short_name: '',
