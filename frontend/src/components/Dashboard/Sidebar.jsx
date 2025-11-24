@@ -140,7 +140,7 @@ const getNavigation = (userDepartment) => {
       submenu: [
         { name: 'Yeni Fuar', href: '/fairs/new', icon: Plus },
         { name: 'Tüm Fuarlar', href: '/fairs/all', icon: List },
-        { name: 'Aktif Fuarlar', href: '/fairs/active', icon: Eye },
+        { name: 'Gelecek Fuarlar', href: '/fairs/active', icon: Eye },
         { name: 'Geçmiş Fuarlar', href: '/fairs/past', icon: Calendar }
       ]
     },
