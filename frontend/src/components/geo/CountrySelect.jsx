@@ -41,7 +41,7 @@ export default function CountrySelect({
   const fetchCountries = async (query = '') => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${backendUrl}/api/geo/countries?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`${backendUrl}/api/library/countries?query=${encodeURIComponent(query)}`);
       if (response.ok) {
         const data = await response.json();
         setCountries(data);
