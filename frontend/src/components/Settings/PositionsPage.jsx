@@ -150,7 +150,34 @@ const PositionsPage = ({ onBack }) => {
 
   const PositionCard = ({ position }) => {
     const isEditing = editingPosition?.id === position.id;
-    const [editName, setEditName] = useState(position.name);
+    const [localEditName, setLocalEditName] = useState(position.name);
+
+    // Update local state when position changes
+    React.useEffect(() => {
+      setLocalEditName(position.name);
+    }, [position.name]);
+
+    const handleEdit = () => {
+      console.log('Edit button clicked for:', position.id, position.name);
+      setEditingPosition(position);
+      setLocalEditName(position.name);
+    };
+
+    const handleSave = () => {
+      console.log('Save button clicked for:', position.id, localEditName);
+      handleUpdatePosition(position.id, localEditName);
+    };
+
+    const handleCancel = () => {
+      console.log('Cancel button clicked');
+      setEditingPosition(null);
+      setLocalEditName(position.name);
+    };
+
+    const handleDelete = () => {
+      console.log('Delete button clicked for:', position.id, position.name);
+      handleDeletePosition(position.id, position.name);
+    };
 
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -172,15 +199,15 @@ const PositionsPage = ({ onBack }) => {
             {isEditing ? (
               <input
                 type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
+                value={localEditName}
+                onChange={(e) => setLocalEditName(e.target.value)}
                 className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleUpdatePosition(position.id, editName);
+                    handleSave();
                   } else if (e.key === 'Escape') {
-                    setEditingPosition(null);
+                    handleCancel();
                   }
                 }}
               />
@@ -199,14 +226,14 @@ const PositionsPage = ({ onBack }) => {
             {isEditing ? (
               <>
                 <button
-                  onClick={() => handleUpdatePosition(position.id, editName)}
+                  onClick={handleSave}
                   className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                   title="Kaydet"
                 >
                   <Check className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => setEditingPosition(null)}
+                  onClick={handleCancel}
                   className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   title="İptal"
                 >
@@ -216,17 +243,14 @@ const PositionsPage = ({ onBack }) => {
             ) : (
               <>
                 <button
-                  onClick={() => {
-                    setEditingPosition(position);
-                    setEditName(position.name);
-                  }}
+                  onClick={handleEdit}
                   className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   title="Düzenle"
                 >
                   <Edit2 className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => handleDeletePosition(position.id, position.name)}
+                  onClick={handleDelete}
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   title="Sil"
                 >
