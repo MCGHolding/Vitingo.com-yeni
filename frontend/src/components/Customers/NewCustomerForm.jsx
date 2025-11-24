@@ -1055,15 +1055,19 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Ülke
                       </label>
-                      <CountrySelect
+                      <Select
                         value={formData.country}
-                        onChange={(country) => {
-                          const countryCode = country ? country.iso2 : '';
-                          handleInputChange('country', countryCode);
-                        }}
-                        placeholder="Ülke seçiniz..."
-                        refreshTrigger={geoRefreshTrigger}
-                      />
+                        onValueChange={(value) => handleInputChange('country', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Ülke seçiniz..." />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60">
+                          {ulkeler.map(ulke => (
+                            <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
