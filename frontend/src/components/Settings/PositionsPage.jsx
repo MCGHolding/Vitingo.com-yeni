@@ -81,19 +81,26 @@ const PositionsPage = ({ onBack }) => {
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
 
+      console.log('Updating position:', positionId, newName);
+
       const response = await fetch(`${backendUrl}/api/positions/${positionId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newName })
       });
 
+      console.log('Update response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
-        alert(data.message);
+        console.log('Update response data:', data);
+        setSuccessMessage(data.message);
+        setShowSuccessModal(true);
         setEditingPosition(null);
         fetchPositions();
       } else {
         const error = await response.json();
+        console.error('Update error:', error);
         alert(error.detail || 'Pozisyon güncellenirken bir hata oluştu');
       }
     } catch (error) {
