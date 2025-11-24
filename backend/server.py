@@ -9646,6 +9646,155 @@ async def delete_position(position_id: str):
         logger.error(f"Error deleting position: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== DEPARTMENTS ENDPOINTS ====================
+
+class Department(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    value: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DepartmentCreate(BaseModel):
+    name: str
+
+@api_router.get("/departments")
+async def get_departments():
+    """Get all departments"""
+    try:
+        departments = await db.departments.find().to_list(length=None)
+        if not departments:
+            # Initialize default departments
+            default_departments = [
+                {"id": str(uuid.uuid4()), "name": "Genel Müdürlük", "value": "genel_mudurluk", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İnsan Kaynakları", "value": "insan_kaynaklari", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Finans ve Muhasebe", "value": "finans_muhasebe", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Satış ve Pazarlama", "value": "satis_pazarlama", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Operasyon", "value": "operasyon", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Bilgi Teknolojileri", "value": "bilgi_teknolojileri", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Hukuk", "value": "hukuk", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Ar-Ge", "value": "ar_ge", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Üretim", "value": "uretim", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Kalite Güvence", "value": "kalite_guvence", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Lojistik", "value": "lojistik", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Satın Alma", "value": "satin_alma", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Müşteri Hizmetleri", "value": "musteri_hizmetleri", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "İç Denetim", "value": "ic_denetim", "created_at": datetime.now(timezone.utc)},
+                {"id": str(uuid.uuid4()), "name": "Kurumsal İletişim", "value": "kurumsal_iletisim", "created_at": datetime.now(timezone.utc)},
+            ]
+            await db.departments.insert_many(default_departments)
+            departments = default_departments
+        
+        return [serialize_document(dept) for dept in departments]
+    except Exception as e:
+        logger.error(f"Error getting departments: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/departments")
+async def create_department(department_data: DepartmentCreate):
+    """Create a new department"""
+    try:
+        # Generate value from name
+        value = department_data.name.lower()
+        tr_chars = {'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c', 'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'}
+        for tr, en in tr_chars.items():
+            value = value.replace(tr, en)
+        value = value.replace(' ', '_')
+        
+        # Check if department already exists
+        existing = await db.departments.find_one({"value": value})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu departman zaten mevcut")
+        
+        new_department = {
+            "id": str(uuid.uuid4()),
+            "name": department_data.name,
+            "value": value,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        await db.departments.insert_one(new_department)
+        logger.info(f"Created department: {new_department['name']}")
+        
+        return {
+            "success": True,
+            "message": f"{new_department['name']} departmanı oluşturuldu",
+            "department": serialize_document(new_department)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating department: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/departments/{department_id}")
+async def update_department(department_id: str, department_data: DepartmentCreate):
+    """Update a department"""
+    try:
+        existing = await db.departments.find_one({"id": department_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Departman bulunamadı")
+        
+        # Generate new value from name
+        value = department_data.name.lower()
+        tr_chars = {'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c', 'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'}
+        for tr, en in tr_chars.items():
+            value = value.replace(tr, en)
+        value = value.replace(' ', '_')
+        
+        update_data = {
+            "name": department_data.name,
+            "value": value,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        await db.departments.update_one(
+            {"id": department_id},
+            {"$set": update_data}
+        )
+        
+        updated = await db.departments.find_one({"id": department_id})
+        logger.info(f"Updated department: {department_id}")
+        
+        return {
+            "success": True,
+            "message": "Departman güncellendi",
+            "department": serialize_document(updated)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating department: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/departments/{department_id}")
+async def delete_department(department_id: str):
+    """Delete a department (only if not used by any user)"""
+    try:
+        department = await db.departments.find_one({"id": department_id})
+        if not department:
+            raise HTTPException(status_code=404, detail="Departman bulunamadı")
+        
+        # Check if department is used by any user
+        users_with_dept = await db.users.find_one({"department": department["name"]})
+        if users_with_dept:
+            raise HTTPException(
+                status_code=400, 
+                detail="Bu departman aktif kullanıcılar tarafından kullanılıyor ve silinemez"
+            )
+        
+        await db.departments.delete_one({"id": department_id})
+        logger.info(f"Deleted department: {department_id}")
+        
+        return {
+            "success": True,
+            "message": f"{department['name']} departmanı silindi"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting department: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/users", response_model=List[User])
 async def get_users(status: str = "active"):
     """Get all active users from database"""
