@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, Search, Edit2, Trash2, GripVertical, X, Check, Info } from 'lucide-react';
+import SuccessModal from './SuccessModal';
 
 const PositionsPage = ({ onBack }) => {
   const [positions, setPositions] = useState([]);
@@ -8,6 +9,8 @@ const PositionsPage = ({ onBack }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingPosition, setEditingPosition] = useState(null);
   const [newPositionName, setNewPositionName] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchPositions();
