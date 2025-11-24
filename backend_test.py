@@ -1263,9 +1263,9 @@ def test_user_positions_apis():
                     test_results["positions_count"] = positions_count
                     print(f"📊 Positions Count: {positions_count}")
                     
-                    if positions_count >= 10:
-                        print(f"✅ PASS: Found {positions_count} positions (≥10 requirement met)")
-                        test_results["positions_api_working"] = True
+                    if positions_count >= 13:
+                        print(f"✅ PASS: Found {positions_count} positions (≥13 requirement met)")
+                        test_results["get_positions_working"] = True
                         
                         # Analyze first few positions
                         print(f"\n📋 POSITIONS DATA ANALYSIS (First 5):")
