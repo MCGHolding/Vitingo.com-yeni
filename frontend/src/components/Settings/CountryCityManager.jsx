@@ -173,6 +173,8 @@ const CountryCityManager = () => {
   const [editingCity, setEditingCity] = useState(null);
   const [newCountryData, setNewCountryData] = useState({ name: '', code: '', continent: '' });
   const [newCityData, setNewCityData] = useState({ name: '' });
+  const [bulkImportCountry, setBulkImportCountry] = useState('');
+  const [bulkImportText, setBulkImportText] = useState('');
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
