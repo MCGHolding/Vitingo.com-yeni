@@ -247,10 +247,10 @@ export default function PassiveCustomersPage({ customers = [], onBackToDashboard
             </div>
           </div>
         </CardContent>
-      </Card>
+        </Card>
 
-      {/* Customer List */}
-      <Card>
+        {/* Customer List */}
+        <Card>
         <CardContent className="pt-6">
           {filteredCustomers.length === 0 ? (
             <div className="text-center py-12">
