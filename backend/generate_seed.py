@@ -3,7 +3,7 @@
 # Major countries with 20 cities each
 MAJOR_COUNTRIES_CITIES = {
     "Türkiye": ["İstanbul", "Ankara", "İzmir", "Bursa", "Adana", "Antalya", "Gaziantep", "Konya", "Kayseri", "Mersin", "Diyarbakır", "Eskişehir", "Şanlıurfa", "Malatya", "Kahramanmaraş", "Erzurum", "Van", "Denizli", "Samsun", "Balıkesir"],
-    "Amerika Birleşik Devletleri": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston"],
+    "ABD": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston"],
     "Birleşik Krallık": ["Londra", "Birmingham", "Manchester", "Liverpool", "Leeds", "Newcastle", "Sheffield", "Bristol", "Edinburgh", "Glasgow", "Leicester", "Nottingham", "Cardiff", "Belfast", "Southampton", "Bradford", "Plymouth", "Derby", "Portsmouth", "Stoke-on-Trent"],
     "Almanya": ["Berlin", "Hamburg", "Münih", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Dortmund", "Essen", "Leipzig", "Bremen", "Dresden", "Hannover", "Nürnberg", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster"],
     "Fransa": ["Paris", "Marsilya", "Lyon", "Toulouse", "Nice", "Nantes", "Montpellier", "Strasbourg", "Bordeaux", "Lille", "Rennes", "Reims", "Toulon", "Saint-Étienne", "Le Havre", "Grenoble", "Dijon", "Angers", "Nîmes", "Villeurbanne"],
