@@ -111,6 +111,7 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
   const handleCreateRequest = async () => {
     setIsSubmitting(true);
     try {
+      // 1. Create meeting request
       const response = await fetch(`${BACKEND_URL}/api/meeting-requests`, {
         method: 'POST',
         headers: {
@@ -125,6 +126,42 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
       if (response.ok) {
         const result = await response.json();
         console.log('Meeting request created:', result);
+        
+        // 2. ALSO create calendar event so it shows in calendar immediately
+        try {
+          // Combine date and time to create datetime
+          const startDatetime = `${requestForm.date}T${requestForm.start_time}:00`;
+          const endDatetime = `${requestForm.date}T${requestForm.end_time}:00`;
+          
+          const calendarEventData = {
+            title: requestForm.subject,
+            description: `Toplantı Talebi - ${requestForm.meeting_type === 'physical' ? 'Fiziksel' : 'Online'}`,
+            start_datetime: startDatetime,
+            end_datetime: endDatetime,
+            location: requestForm.meeting_type === 'physical' ? requestForm.location : requestForm.platform,
+            event_type: 'meeting',
+            visibility: 'public',
+            organizer_id: currentUser.id,
+            attendee_ids: requestForm.attendee_ids || []
+          };
+          
+          const calendarResponse = await fetch(`${BACKEND_URL}/api/calendar/events`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(calendarEventData)
+          });
+          
+          if (calendarResponse.ok) {
+            console.log('✅ Calendar event also created successfully');
+          } else {
+            console.warn('⚠️ Calendar event creation failed, but meeting request was created');
+          }
+        } catch (calendarError) {
+          console.error('Error creating calendar event:', calendarError);
+          // Don't fail the whole operation if calendar creation fails
+        }
         
         // Reset form and close modal
         setRequestForm({
