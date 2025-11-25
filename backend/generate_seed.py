@@ -53,7 +53,16 @@ MAJOR_COUNTRIES_CITIES = {
     "Romanya": ["Bükreş", "Cluj-Napoca", "Timișoara", "Iași", "Constanța", "Craiova", "Brașov", "Galați", "Ploiești", "Oradea", "Brăila", "Arad", "Pitești", "Sibiu", "Bacău", "Târgu Mureș", "Baia Mare", "Buzău", "Botoșani", "Satu Mare"],
     "Peru": ["Lima", "Arequipa", "Trujillo", "Chiclayo", "Piura", "Iquitos", "Cusco", "Huancayo", "Chimbote", "Pucallpa", "Tacna", "Ica", "Juliaca", "Sullana", "Ayacucho", "Chincha Alta", "Cajamarca", "Puno", "Tarapoto", "Huánuco"],
     "Ekvador": ["Guayaquil", "Quito", "Cuenca", "Santo Domingo", "Machala", "Durán", "Manta", "Portoviejo", "Loja", "Ambato", "Esmeraldas", "Quevedo", "Riobamba", "Milagro", "Ibarra", "La Libertad", "Babahoyo", "Sangolquí", "Daule", "Latacunga"],
-    "Malezya": ["Kuala Lumpur", "George Town", "Ipoh", "Shah Alam", "Petaling Jaya", "Johor Bahru", "Subang Jaya", "Malacca City", "Kuching", "Kota Kinabalu", "Seremban", "Klang", "Ampang Jaya", "Sandakan", "Kuantan", "Kota Bharu", "Alor Setar", "Taiping", "Tawau", "Miri"]
+    "Malezya": ["Kuala Lumpur", "George Town", "Ipoh", "Shah Alam", "Petaling Jaya", "Johor Bahru", "Subang Jaya", "Malacca City", "Kuching", "Kota Kinabalu", "Seremban", "Klang", "Ampang Jaya", "Sandakan", "Kuantan", "Kota Bharu", "Alor Setar", "Taiping", "Tawau", "Miri"],
+    # A harfi ile başlayan ülkeler (eksik olanlar)
+    "Afganistan": ["Kabil", "Kandahar", "Herat", "Mezar-ı Şerif", "Celalabad", "Kunduz", "Lashkar Gah", "Taloqan", "Puli Khumri", "Sar-e Pol", "Ghazni", "Khost", "Shiberghan", "Aybak", "Gardez", "Zaranj", "Mahmud-e Raqi", "Farah", "Fayzabad", "Baghlan"],
+    "Arnavutluk": ["Tiran", "Dürres", "Vlora", "Elbasan", "Shkodër", "Fier", "Korçë", "Berat", "Lushnjë", "Kavajë", "Gjirokastër", "Kukës", "Laç", "Krujë", "Lezhë", "Pogradec", "Sarandë", "Patos", "Peshkopi", "Kuçovë"],
+    "Cezayir": ["Cezayir", "Oran", "Constantine", "Annaba", "Blida", "Batna", "Djelfa", "Sétif", "Sidi Bel Abbès", "Biskra", "Tébessa", "El Oued", "Skikda", "Tiaret", "Béjaïa", "Tlemcen", "Béchar", "Mostaganem", "Bordj Bou Arréridj", "Chlef"],
+    "Andorra": ["Andorra la Vella", "Escaldes-Engordany", "Encamp", "Sant Julià de Lòria", "La Massana", "Santa Coloma", "Ordino", "Canillo", "Arinsal", "El Pas de la Casa", "Soldeu", "La Cortinada", "Aixovall", "Llorts", "Sispony", "Anyós", "Arans", "Erts", "Juberri", "Fontaneda"],
+    "Angola": ["Luanda", "Huambo", "Lobito", "Benguela", "Kuito", "Lubango", "Malanje", "Namibe", "Soyo", "Cabinda", "Uíge", "Saurimo", "Sumbe", "Menongue", "Dundo", "Ondjiva", "Lucapa", "Caxito", "N'dalatando", "Caála"],
+    "Antigua ve Barbuda": ["St. John's", "All Saints", "Liberta", "Potter's Village", "Bolans", "Swetes", "Seaview Farm", "Pigotts", "Parham", "Clare Hall", "Willikies", "Codrington", "English Harbour", "Falmouth", "Old Road", "Jennings", "Five Islands", "Cedar Grove", "Freetown", "Urlings"],
+    "Ermenistan": ["Erivan", "Gyumri", "Vanadzor", "Vagharshapat", "Hrazdan", "Abovyan", "Kapan", "Armavir", "Gavar", "Artashat", "Goris", "Ashtarak", "Sevan", "Charentsavan", "Dilijan", "Spitak", "Ijevan", "Yeghvard", "Metsamor", "Vardenis"],
+    "Azerbaycan": ["Bakü", "Gəncə", "Sumqayıt", "Mingəçevir", "Qaraçuxur", "Şirvan", "Naxçıvan", "Yevlax", "Lankaran", "Xankəndi", "Şəki", "Naftalan", "Quba", "Qəbələ", "Qusar", "Ağdam", "Ağdaş", "Astara", "Balakən", "Bərdə"]
 }
 
 # Generate Python code
