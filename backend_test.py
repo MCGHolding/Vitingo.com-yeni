@@ -2141,24 +2141,6 @@ def test_opportunity_statuses_get_endpoint():
     print("TESTING GET OPPORTUNITY STATUSES ENDPOINT")
     print("=" * 80)
                             
-                            print(f"   {i}. ID: {user_id}")
-                            print(f"      Name: {user_name}")
-                            print(f"      Email: {user_email}")
-                            print(f"      Role: {user_role}")
-                            print(f"      Department: {user_department}")
-                            print(f"      Position: {user_position}")
-                            print(f"      Status: {user_status}")
-                            
-                            # Check required fields
-                            required_fields = ["id", "name", "email", "status"]
-                            missing_fields = [field for field in required_fields if field not in user or not user[field]]
-                            
-                            if missing_fields:
-                                print(f"      ⚠️  Missing/empty fields: {missing_fields}")
-                                test_results["warnings"].append(f"USER_{i}_MISSING_FIELDS_{missing_fields}")
-                            else:
-                                print(f"      ✅ All required fields present")
-                            
                             # Check status is active
                             if user_status == "active":
                                 print(f"      ✅ User status is active")
