@@ -111,11 +111,11 @@ const getNavigation = (userDepartment) => {
       hasSubmenu: true,
       submenu: [
         { name: 'Yeni Satış Fırsatı', href: '/opportunities/new', icon: Plus },
+        { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List },
         { name: 'Açık Fırsatlar', href: '/opportunities/open', icon: Eye },
         { name: 'Kazanılan Fırsatlar', href: '/opportunities/won', icon: Trophy },
         { name: 'Kaybedilen Fırsatlar', href: '/opportunities/lost', icon: XCircle },
-        { name: 'Favori Fırsatlar', href: '/opportunities/favorites', icon: Heart },
-        { name: 'Tüm Satış Fırsatları', href: '/opportunities/all', icon: List }
+        { name: 'Favori Fırsatlar', href: '/opportunities/favorites', icon: Heart }
       ]
     },
     { 
