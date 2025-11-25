@@ -490,7 +490,7 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
             <p className="text-gray-600 mt-1">Potansiyel müşterilerin listesi ve yönetimi</p>
           </div>
           <div className="flex items-center space-x-3">
-            {/* New Customer Prospect Button */}
+            {/* New Customer Prospect Button - Same size as Import button */}
             <Button
               onClick={() => {
                 // Navigate to new customer with prospect checkbox checked
@@ -498,16 +498,16 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
                   onNewCustomer({ isProspect: true });
                 }
               }}
-              className="bg-purple-600 hover:bg-purple-700 px-6"
+              className="bg-purple-600 hover:bg-purple-700 px-6 h-10"
             >
-              <UserPlus className="h-5 w-5 mr-2" />
+              <UserPlus className="h-4 w-4 mr-2" />
               Yeni Müşteri Adayı
             </Button>
             
             {/* Import CSV - Open Modal */}
             <Button
               onClick={() => setImportModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 px-6"
+              className="bg-blue-600 hover:bg-blue-700 px-6 h-10"
             >
               <FileText className="h-4 w-4 mr-2" />
               İçeri Aktar
