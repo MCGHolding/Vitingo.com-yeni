@@ -100,7 +100,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     sector: '',
     tags: [],
     notes: '',
-    is_candidate: false
+    is_candidate: initialIsProspect // Set from prop
   });
 
   const [currentContactTag, setCurrentContactTag] = useState('');
