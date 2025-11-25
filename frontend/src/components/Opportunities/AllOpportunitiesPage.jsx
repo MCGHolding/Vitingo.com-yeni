@@ -25,7 +25,8 @@ import {
   X,
   List,
   BarChart,
-  Zap
+  Zap,
+  Star
 } from 'lucide-react';
 // import { allOpportunities, tagColors } from '../../mock/opportunitiesData'; // Removed - using real API
 
