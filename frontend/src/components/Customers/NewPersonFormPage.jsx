@@ -169,6 +169,47 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     });
   };
 
+  // Fill form with realistic test data
+  const fillTestData = () => {
+    const randomFirstName = testDataSamples.firstNames[Math.floor(Math.random() * testDataSamples.firstNames.length)];
+    const randomLastName = testDataSamples.lastNames[Math.floor(Math.random() * testDataSamples.lastNames.length)];
+    const randomJobTitle = testDataSamples.jobTitles[Math.floor(Math.random() * testDataSamples.jobTitles.length)];
+    const randomDepartment = testDataSamples.departments[Math.floor(Math.random() * testDataSamples.departments.length)];
+    const randomCity = testDataSamples.cities[Math.floor(Math.random() * testDataSamples.cities.length)];
+    const randomAddress = testDataSamples.addresses[Math.floor(Math.random() * testDataSamples.addresses.length)];
+    
+    // Generate realistic phone numbers
+    const phonePrefix = '+90 5' + ['3', '4', '5'][Math.floor(Math.random() * 3)];
+    const phoneNumber = phonePrefix + Math.floor(Math.random() * 900000000 + 100000000);
+    
+    // Generate email from name
+    const email = `${randomFirstName.toLowerCase()}.${randomLastName.toLowerCase()}@${['gmail.com', 'hotmail.com', 'outlook.com', 'icloud.com'][Math.floor(Math.random() * 4)]}`;
+
+    setFormData({
+      ...formData,
+      firstName: randomFirstName,
+      lastName: randomLastName,
+      relationshipType: ['customer', 'supplier', 'partner'][Math.floor(Math.random() * 3)],
+      jobTitle: randomJobTitle,
+      department: randomDepartment,
+      phone: phoneNumber,
+      mobile: phonePrefix + Math.floor(Math.random() * 900000000 + 100000000),
+      email: email,
+      country: 'tr',
+      city: randomCity,
+      address: randomAddress,
+      notes: 'Fuar görüşmesinde tanışıldı.',
+      // If companies loaded, select a random one
+      companyId: companies.length > 0 ? companies[Math.floor(Math.random() * companies.length)].id : '',
+      company: companies.length > 0 ? companies[Math.floor(Math.random() * companies.length)].companyName : ''
+    });
+
+    toast({
+      title: "Başarılı",
+      description: "Gerçekçi veriler dolduruldu",
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
