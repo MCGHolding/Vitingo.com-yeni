@@ -27,7 +27,8 @@ import {
   Receipt,
   UserX,
   Star,
-  Trash2
+  Trash2,
+  UserPlus
 } from 'lucide-react';
 // import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
 import DeleteCustomerModal from './DeleteCustomerModal';
