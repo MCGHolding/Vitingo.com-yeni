@@ -196,7 +196,15 @@ const LibraryPage = ({ onBack }) => {
       </div>
 
       {/* Content */}
-      <div className="px-6 py-6">
+      <div className={activeTab === 'countries-cities' ? '' : 'px-6 py-6'}>
+        {/* Country & City Manager (Full Width) */}
+        {activeTab === 'countries-cities' && (
+          <CountryCityManager />
+        )}
+
+        {/* Other tabs content */}
+        {activeTab !== 'countries-cities' && (
+          <>
         {/* Search and Add Button */}
         <div className="flex items-center justify-between mb-6">
           <div className="relative flex-1 max-w-md">
