@@ -190,14 +190,10 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   
   // Filter cities when country changes
   useEffect(() => {
-    if (formData.country && tumUlkeler.length > 0) {
-      const secilenUlke = tumUlkeler.find(u => u.name === formData.country);
-      
-      if (secilenUlke && secilenUlke.cities) {
-        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
-        setSehirler(sehirListesi);
-      } else {
-        setSehirler([]);
+    if (formData.country) {
+      loadSehirler(formData.country);
+    } else {
+      setSehirler([]);
       }
       
       // Reset city when country changes
