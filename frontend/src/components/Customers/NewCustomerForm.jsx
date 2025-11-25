@@ -223,16 +223,18 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
 
   // Firma bilgileri değiştiğinde TÜM contact'lerin ülke, şehir ve adres bilgilerini güncelle
   useEffect(() => {
-    if (contacts.length > 0) {
+    if (contacts.length > 0 && (formData.country || formData.city || formData.address)) {
       setContacts(prev => {
-        return prev.map((contact, index) => {
-          // Yeni eklenen contact'ler için veya mevcut değerler boşsa firma bilgilerini ata
-          return {
-            ...contact,
-            country: contact.country || formData.country || '',
-            city: contact.city || formData.city || '',
-            address: contact.address || formData.address || ''
-          };
+        return prev.map((contact) => {
+          // Her zaman firma bilgilerini contact'lere yans ıt (kullanıcı sonradan değiştirebilir)
+          const updated = { ...contact };
+          
+          // Firma bilgilerinden değerleri al
+          if (formData.country) updated.country = formData.country;
+          if (formData.city) updated.city = formData.city;
+          if (formData.address && !contact.address) updated.address = formData.address; // Address sadece boşsa doldur
+          
+          return updated;
         });
       });
     }
