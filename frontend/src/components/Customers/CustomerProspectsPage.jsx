@@ -175,6 +175,8 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
 
   // Modal states - placeholder for future implementation
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importData, setImportData] = useState('');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
