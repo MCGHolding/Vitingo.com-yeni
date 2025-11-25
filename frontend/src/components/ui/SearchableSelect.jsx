@@ -205,8 +205,25 @@ export default function SearchableSelect({
             )}
           </div>
 
+          {/* Add New Button */}
+          {showAddNew && onAddNew && (
+            <div className="border-t border-gray-100">
+              <button
+                className="w-full text-left px-3 py-2 text-sm hover:bg-green-50 flex items-center space-x-2 text-green-600 font-medium"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                  setSearchQuery('');
+                  onAddNew();
+                }}
+              >
+                <span>{addNewLabel}</span>
+              </button>
+            </div>
+          )}
+
           {/* Footer */}
-          {filteredOptions.length > 0 && (
+          {filteredOptions.length > 0 && !showAddNew && (
             <div className="p-2 border-t border-gray-100 text-xs text-gray-400 text-center">
               {filteredOptions.length} seçenek gösteriliyor
             </div>
