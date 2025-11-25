@@ -148,7 +148,7 @@ export default function EditOpportunityModal({ opportunity, onClose, onSave }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -160,28 +160,65 @@ export default function EditOpportunityModal({ opportunity, onClose, onSave }) {
       return;
     }
 
-    // Update the opportunity
-    const updatedOpportunity = {
-      ...opportunity,
-      customer: formData.customer,
-      eventName: formData.subject || formData.tradeShowName || opportunity.eventName,
-      amount: parseFloat(formData.amount) || opportunity.amount,
-      currency: formData.currency,
-      contactPerson: formData.contactPerson,
-      lastUpdate: new Date().toISOString().split('T')[0]
-    };
+    try {
+      // Prepare update data for backend
+      const updateData = {
+        customer: formData.customer,
+        title: formData.subject || formData.tradeShowName || opportunity.title,
+        amount: parseFloat(formData.amount) || 0,
+        currency: formData.currency,
+        contact_person: formData.contactPerson,
+        status: formData.status || opportunity.status,
+        stage: formData.stage || opportunity.stage,
+        priority: formData.priority || opportunity.priority,
+        country: formData.country || opportunity.country,
+        city: formData.city || opportunity.city,
+        trade_show: formData.tradeShowName || opportunity.trade_show,
+        description: formData.description || opportunity.description
+      };
 
-    if (onSave) {
-      onSave(updatedOpportunity);
-    }
-    
-    toast({
-      title: "Başarılı",
-      description: "Satış fırsatı başarıyla güncellendi",
-    });
+      // Call backend API
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/opportunities/${opportunity.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
 
-    if (onClose) {
-      onClose();
+      if (!response.ok) {
+        throw new Error('Backend update failed');
+      }
+
+      const savedOpportunity = await response.json();
+
+      // Update local state
+      const updatedOpportunity = {
+        ...opportunity,
+        ...savedOpportunity,
+        eventName: savedOpportunity.title,
+        contactPerson: savedOpportunity.contact_person,
+        lastUpdate: new Date().toISOString().split('T')[0]
+      };
+
+      if (onSave) {
+        onSave(updatedOpportunity);
+      }
+      
+      toast({
+        title: "Başarılı",
+        description: "Satış fırsatı başarıyla güncellendi ve kaydedildi",
+      });
+
+      if (onClose) {
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error updating opportunity:', error);
+      toast({
+        title: "Hata",
+        description: "Satış fırsatı güncellenemedi",
+        variant: "destructive",
+      });
     }
   };
 
