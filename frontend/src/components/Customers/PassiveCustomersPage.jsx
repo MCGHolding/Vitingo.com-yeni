@@ -135,11 +135,8 @@ export default function PassiveCustomersPage({ customers = [], onBackToDashboard
             <UserX className="h-6 w-6" />
             <span>Pasif Müşteriler</span>
           </h1>
-          <p className="text-gray-600 mt-1">Pasif duruma alınmış müşteriler</p>
+          <p className="text-gray-600 mt-1">Son 3 ayda hareket görmemiş müşteriler</p>
         </div>
-        <Button variant="outline" onClick={onBackToDashboard}>
-          Geri Dön
-        </Button>
       </div>
 
       {/* Statistics */}
