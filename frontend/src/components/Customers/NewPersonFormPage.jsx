@@ -311,6 +311,15 @@ export default function NewPersonFormPage({ onClose, onSave }) {
           </div>
           <div className="flex items-center space-x-3">
             <Button
+              type="button"
+              variant="outline"
+              onClick={fillTestData}
+              className="px-6 bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Gerçekçi Veri Doldur
+            </Button>
+            <Button
               variant="outline"
               onClick={onClose}
               className="px-6"
