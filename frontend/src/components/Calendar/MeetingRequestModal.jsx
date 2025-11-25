@@ -23,6 +23,27 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
 
   const platformOptions = ['Zoom', 'Google Meet', 'Microsoft Teams', 'Skype', 'WebEx'];
 
+  // Realistic test data samples
+  const testDataSamples = {
+    subjects: [
+      'Proje Durum Değerlendirme Toplantısı',
+      'Haftalık Ekip Koordinasyon Toplantısı',
+      'Müşteri Görüşmesi - Yeni Proje',
+      'Aylık Performans Değerlendirme',
+      'Stratejik Planlama Toplantısı',
+      'Teknik Analiz ve Çözüm Toplantısı',
+      'Bütçe Planlama Görüşmesi'
+    ],
+    locations: [
+      'Toplantı Odası 1 (Zemin Kat)',
+      'Toplantı Odası 2 (1. Kat)',
+      'Yönetim Kurulu Salonu',
+      'Kafeterya Toplantı Alanı',
+      'Açık Ofis Alan B'
+    ],
+    platforms: ['Zoom', 'Google Meet', 'Microsoft Teams']
+  };
+
   // Load system users
   const loadUsers = async () => {
     setIsLoadingUsers(true);
