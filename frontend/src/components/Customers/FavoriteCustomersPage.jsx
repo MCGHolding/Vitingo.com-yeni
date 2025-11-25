@@ -302,10 +302,10 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
             )}
           </div>
         </CardContent>
-      </Card>
+        </Card>
 
-      {/* Customer List */}
-      <div className="space-y-4">
+        {/* Customer List */}
+        <div className="space-y-4">
         {filteredCustomers.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
