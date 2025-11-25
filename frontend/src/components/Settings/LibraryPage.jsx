@@ -8,6 +8,7 @@ import AddCustomerTypeModal from '../Customers/AddCustomerTypeModal';
 import AddSectorModal from '../Customers/AddSectorModal';
 import CountryCityManager from './CountryCityManager';
 import PhoneCodeManager from './PhoneCodeManager';
+import ConventionCenterManager from './ConventionCenterManager';
 
 const LibraryPage = ({ onBack }) => {
   const { toast } = useToast();
