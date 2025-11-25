@@ -164,9 +164,15 @@ const CountryCityManager = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAddCountryModal, setShowAddCountryModal] = useState(false);
   const [showAddCityModal, setShowAddCityModal] = useState(false);
+  const [showEditCountryModal, setShowEditCountryModal] = useState(false);
+  const [showEditCityModal, setShowEditCityModal] = useState(false);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [countryCityCounts, setCountryCityCounts] = useState({});
   const [selectedContinent, setSelectedContinent] = useState('Tümü');
+  const [editingCountry, setEditingCountry] = useState(null);
+  const [editingCity, setEditingCity] = useState(null);
+  const [newCountryData, setNewCountryData] = useState({ name: '', code: '' });
+  const [newCityData, setNewCityData] = useState({ name: '' });
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
