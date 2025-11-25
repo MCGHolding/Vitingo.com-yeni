@@ -94,6 +94,10 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                     <p className="text-xl font-bold text-gray-900 mt-1">{customer.companyName || customer.name || customer.fullName || '-'}</p>
                   </div>
                   <div>
+                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Firma Ünvanı</label>
+                    <p className="text-base text-gray-700 mt-1">{customer.companyTitle || customer.company_title || '-'}</p>
+                  </div>
+                  <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri Türü</label>
                     <p className="text-base text-gray-700 mt-1">{customer.customerType || customer.customer_type || '-'}</p>
                   </div>
