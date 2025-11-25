@@ -152,7 +152,7 @@ export default function SearchableSelect({
 
       {/* Dropdown */}
       {isOpen && !disabled && (
-        <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-60 overflow-visible">
+        <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl overflow-hidden">
           {/* Search input */}
           <div className="p-3 border-b border-gray-100">
             <div className="relative">
@@ -167,7 +167,7 @@ export default function SearchableSelect({
             </div>
           </div>
 
-          {/* Options list */}
+          {/* Options list - scrollable area */}
           <div className="max-h-48 overflow-y-auto">
             {filteredOptions.length > 0 ? (
               <div className="py-1">
