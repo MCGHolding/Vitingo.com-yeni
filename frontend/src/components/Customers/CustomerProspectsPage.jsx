@@ -573,7 +573,7 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
                   onNewCustomer({ isProspect: true });
                 }
               }}
-              className="bg-purple-600 hover:bg-purple-700 px-6 h-12"
+              className="bg-purple-600 hover:bg-purple-700 px-6"
             >
               <UserPlus className="h-5 w-5 mr-2" />
               Yeni Müşteri Adayı
@@ -586,25 +586,6 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
             >
               <FileText className="h-4 w-4 mr-2" />
               İçeri Aktar
-            </Button>
-            
-            {/* Download Sample CSV */}
-            <Button
-              onClick={downloadSampleCSV}
-              variant="outline"
-              className="px-6"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Örnek İndir
-            </Button>
-            
-            {/* Export CSV */}
-            <Button
-              onClick={exportToExcel}
-              className="bg-green-600 hover:bg-green-700 px-6"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Dışarı Aktar
             </Button>
           </div>
         </div>
