@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://fair-manager-1.preview.emergentagent.com"
+BACKEND_URL = "https://musteripro.preview.emergentagent.com"
 
 def test_contract_create_page_dropdown_apis():
     """

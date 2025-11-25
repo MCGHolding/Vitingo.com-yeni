@@ -1,98 +1,98 @@
 <analysis>
-The trajectory documents an extensive, highly iterative development process driven by a Turkish-speaking user. The work spanned multiple features and involved rapid prototyping, frequent user-guided refactoring, and debugging.
+The trajectory details an intensive, iterative development process with a Turkish-speaking user. The work began by debugging a critical Save button failure on the , which was traced to a validation issue. This was followed by a series of user-driven UI and feature enhancements.
 
-Initially, the AI engineer addressed UI tweaks on the Expense Categories page. The focus then shifted to a major data management task: adding a backend endpoint to delete all Fair data and confirming its success.
+A significant effort was dedicated to fixing a recurring UI bug where dropdown menus were clipped by parent containers. The engineer implemented a fix using  and later enhanced it with dynamic positioning to open the menu upwards if space is limited.
 
-A significant portion of the work involved a complete redesign of the Fairs module. The card-based UI was replaced with a cleaner, table-based layout. This led to a series of follow-up requests: re-implementing a missing import button, fixing the import modal's functionality, and then refactoring the code to apply the new design to Past Fairs and Future Fairs pages, which introduced and subsequently fixed data-fetching bugs.
+The core of the work involved two major feature enhancements on the customer management module. First, the  was heavily modified to support data inheritance from company fields to contact fields (e.g., country, address, phone code) and a complete layout redesign of the contacts section. This involved complex state management with  and . Second, the  was overhauled based on a 13-point user request list to display more customer data accurately.
 
-The final, and most intensive, phase focused on heavily modifying the New Project and New Customer forms. This included adding a modern date picker, introducing collapsible sections for detailed information, implementing an accordion UI for contacts, and completely overhauling the country/city selection logic to fix a recurring bug. These rapid, cascading changes to the complex  component have culminated in the current critical issue: the Save button is no longer functional.
+The final tasks involved adding a Yeni Müşteri Adayı (New Customer Prospect) button, which led to an  error. The last action was to add the missing prop to the  component to resolve this error.
 
 The user's primary language is **Turkish**. The next agent must continue all communication in Turkish.
 </analysis>
-
 <product_requirements>
-The overall goal is to build and refine a comprehensive business administration application.
+The goal is to build and refine a business administration application with a focus on customer and prospect management.
 
-**1. Fairs Module (Fuarlar):**
-- **Data Deletion:** A mechanism to purge all existing fair data from the database.
-- **UI Redesign:** Replace the initial colorful card-based layout for All Fairs, Past Fairs, and Active Fairs with a unified, professional, table-based design inspired by the Opportunities page.
-- **Renaming:** Change Active Fairs (Aktif Fuarlar) to Future Fairs (Gelecek Fuarlar).
-- **Functionality Restoration:** Ensure the Import functionality, including a modal with both text paste and file upload options, is present in the new design.
-- **Date Formatting:** Standardize date display to use two digits for the day (e.g., ).
+**1. Customer & Prospect Management:**
+*   **Forms:** A highly detailed New Customer form () that supports creating both full customers and prospects.
+    *   **Data Inheritance:** Company information (country, city, address) should automatically populate the fields for contact persons. Phone number country codes must update dynamically based on the selected company country.
+    *   **Layout:** Specific layouts are required for contact person details, including side-by-side fields and an accounting responsible checkbox.
+*   **Customer Details View:** A comprehensive read-only view () that correctly displays all customer information, including custom fields, multiple contacts, financial details, and system metadata.
+*   **Prospects Page:** A dedicated page for Customer Prospects () with a professional CSV import/export feature, including a modal for import instructions and a sample file download.
 
-**2. Customer & Project Creation Forms:**
-- **UI/UX Enhancements:** Implement numerous specific UI changes requested by the user to improve data entry flow. This includes:
-    - Adding collapsible sections for Stand Details and Bank Information.
-    - Using an accordion UI for multiple contacts.
-    - Rearranging form fields and action buttons to specific locations.
-    - Relabeling fields and sections for clarity (e.g., Müşteri Form Bilgileri to Firma Bilgileri).
-- **Data-driven UI:** Display selected customer details in a highlighted box.
-- **Data Inheritance:** Automatically populate the country and city for a new contact based on the firm's details.
-- **Validation:** Prevent selection of past dates for Installation Date.
-- **Component Modernization:** Replace the browser's native date picker with a modern, styled component.
-- **Bug Fixes:** Ensure country and city dropdowns fetch data correctly from the central library.
+**2. UI/UX & Bug Fixes:**
+*   **Dropdown/Overlay Menus:** All ... action menus must appear as overlays above other content and dynamically reposition themselves (opening upwards) if they are at the bottom of the viewport.
+*   **Dashboard Stats:** Statistics on the main dashboard (e.g., Active Customers) must update in real-time when data changes (e.g., a customer is deleted).
+*   **Sidebar Persistence:** The main navigation sidebar must remain visible after a hard page refresh.
 </product_requirements>
-
 <key_technical_concepts>
-- **Frontend:** React, Tailwind CSS, , .
-- **Backend:** FastAPI (Python), Motor (async MongoDB driver).
-- **Architecture:** Monorepo with a single monolithic  backend and a React SPA frontend.
-- **State Management:** React Hooks (, ).
-- **UI Patterns:** Conditional Rendering for collapsible sections, Accordion UI, Reusable components with props (), extensive use of responsive grid layouts.
-- **Data Fetching:**  API,  for loading data on component mount.
-- **Key Bug Patterns:** Incorrect API endpoint usage, regressions caused by rapid refactoring, state management complexity in large forms.
+- **Frontend:** React, Tailwind CSS, , 
+- **Backend:** FastAPI (Python)
+- **Architecture:** Monorepo with a React SPA frontend and a monolithic FastAPI backend.
+- **State Management:** React Hooks (, ) for component-level state and data fetching.
+- **UI Patterns:** Reusable components, dynamic CSS positioning with , conditional rendering, Accordion UI.
+- **Debugging:** Heavy reliance on  and browser dev tools to trace rendering issues, state changes, and event handler failures.
 </key_technical_concepts>
-
 <code_architecture>
 The application is a monorepo with a React frontend and a FastAPI backend.
 
+- ****
+  - **Importance:** A massive, multi-purpose form for creating customers and prospects. It's the most complex component and the source of many bugs and feature requests.
+  - **Summary of Changes:** The file underwent extensive refactoring. Key changes include:
+    - Implementation of data inheritance from company fields to contact fields using .
+    - Dynamic phone code updates using  based on country selection.
+    - A complete layout overhaul for the Yetkili Kişi (Contact Person) section to place fields side-by-side and add a new checkbox.
+    - Logic to accept an  prop to pre-fill the Müşteri Adayı checkbox.
+    - The initial Save button not working bug was fixed here by correcting validation logic.
 
 - ****
-    - **Importance:** This is a large, complex form for creating new customers. It has become the central focus of recent development and is the location of the current bug.
-    - **Summary of Changes:** This file has been massively refactored. Changes include:
-        - Replacing  and  components with simpler  elements populated by a new data fetching logic.
-        - Adding state and JSX for collapsible sections (Bank Details) and an accordion UI (Contacts).
-        - Moving large blocks of JSX to reorganize the form layout multiple times.
-        - Updating field labels and logic for pre-filling contact information. The Save functionality is currently broken.
+  - **Importance:** The main page for listing all customers. It contains the table and action menus.
+  - **Summary of Changes:**
+    - The action menu dropdown was fixed to be an overlay using  and .
+    - Logic was added to dynamically change the menu's opening direction (up or down) based on viewport space.
+    - A Yeni Müşteri Adayı (New Customer Prospect) button was added to the header.
+    - The  prop was added to the component to handle the new button's click event.
 
 - ****
-    - **Importance:** This is the new, primary component for displaying all fair-related lists. It was built to be reusable.
-    - **Summary of Changes:** Created from scratch to provide a table-based UI. It was later refactored to accept a  prop to filter for all, future, or past fairs and change its title and theme color accordingly. It also contains the restored Import modal logic and a custom date formatting function.
+  - **Importance:** Displays the details of a single customer.
+  - **Summary of Changes:** The component was heavily modified to satisfy a 13-point list from the user. This involved displaying previously hidden or incorrect data (customer type, company title, web site, bank info, contact's position), relabeling sections, and reformatting layouts (e.g., placing country and city side-by-side).
 
 - ****
-    - **Importance:** The form for creating new projects.
-    - **Summary of Changes:** The native date picker was replaced with a new custom  component. Logic was added for a collapsible Stand Details section and to display information about a selected customer. Date validation was also added.
+  - **Importance:** Page for managing potential customers (prospects).
+  - **Summary of Changes:**
+    - The Close button was removed.
+    - Excel Aktar was renamed to Dışarı Aktar.
+    - A professional import feature was added, including a new modal dialog with instructions, a sample file download link, and a file upload area, replacing a simpler, non-functional implementation.
 
 - ****
-    - **Importance:** The single, monolithic file for all backend API logic.
-    - **Summary of Changes:** A new endpoint  was added to delete all fairs. Another endpoint, , was added to support the country/city dropdown dependency.
-
-- ****
-    - **Importance:** The application's main router and layout container.
-    - **Summary of Changes:** Routing was updated to replace the old fair pages with the new  component and its wrappers (, ).
-
-- ** & **
-    - **Importance:** A new, modern date picker component.
-    - **Summary of Changes:** Created from scratch using the  library to provide a more modern UI than the native browser date input.
+  - **Importance:** The main application component handling routing (via state) and global state.
+  - **Summary of Changes:**
+    - The hardcoded value for the Aktif Müşteri stat card was replaced with  to make it dynamic.
+    - State and handler functions (, ) were added to support opening the  in prospect mode.
+    - Props were passed down to  to connect the new button.
+    - The sidebar disappearing on hard refresh was investigated here, though the final fix was in the component's state initialization.
 </code_architecture>
-
 <pending_tasks>
-- Fix the non-functional Kaydet (Save) button on the Yeni Müşteri Ekle (Add New Customer) page (). The user has provided screenshots showing the form filled out, but the save action does not work.
+- Verify that the Yeni Müşteri Adayı button on the Tüm Müşteriler page correctly opens the new customer form with the Müşteri Adayı checkbox ticked and without errors.
+- Fully test the dynamic overlay menu on the  to ensure it opens upwards when at the bottom of the screen, as this was implemented but not conclusively verified.
 </pending_tasks>
-
 <current_work>
-The AI engineer's last action was acknowledging a critical bug reported by the user. The user stated, kaydet çalışmıyor (save is not working), referring to the Müşteri Kaydet (Save Customer) button on the  page. They provided several screenshots showing a fully populated form that fails to save.
+The most recent task was to address a user request to add a Yeni Müşteri Adayı (New Customer Prospect) button on the Tüm Müşteriler () page. This button should open the Yeni Müşteri () form with the Müşteri Adayı checkbox automatically selected.
 
-This form has been the subject of numerous, rapid, and complex changes, including:
-1.  A complete overhaul of the country/city selection logic.
-2.  The introduction of a collapsible Bank Details section.
-3.  The addition of an accordion UI for multiple contacts.
-4.  Multiple relocations of the action buttons themselves.
-5.  Logic to pre-populate contact details from firm details.
+The implementation involved:
+1.  Adding a  state to .
+2.  Modifying the  function in  to accept a boolean and set this state.
+3.  Passing the  function as a prop () down to .
+4.  Adding the button to the header of  with an  handler.
+5.  Modifying  to accept an  prop and set the initial state of the checkbox accordingly.
 
-The work is paused at the very beginning of the debugging process for this issue. The immediate task is to investigate the  component to find the root cause of the failed save operation. This could be a broken  function, a validation error that isn't providing user feedback, a state management issue, or a problem with the API payload being sent to the backend.
+This resulted in a runtime error: . The AI engineer identified that the  prop was missing from the component's function signature in .
+
+The very last action was to fix this by adding the prop:
+**File:** 
+**Change:**
+
+The work is paused immediately after applying this fix, before it could be tested.
 </current_work>
-
 <optional_next_step>
-Begin debugging the Save button in  by examining the  function and inspecting the browser's developer console for errors upon clicking the button.
+Test the fix. Go to the Tüm Müşteriler page, click the Yeni Müşteri Adayı button, and confirm the new customer form opens with the prospect checkbox ticked, and no console errors appear.
 </optional_next_step>
