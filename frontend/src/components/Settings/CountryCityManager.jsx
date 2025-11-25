@@ -125,7 +125,7 @@ const CountryCityManager = () => {
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
-  // Load countries
+  // Load countries and their city counts
   const loadCountries = async () => {
     setIsLoading(true);
     try {
@@ -133,6 +133,20 @@ const CountryCityManager = () => {
       if (response.ok) {
         const data = await response.json();
         setCountries(data);
+        
+        // Load all cities to calculate counts
+        const citiesResponse = await fetch(`${BACKEND_URL}/api/library/cities`);
+        if (citiesResponse.ok) {
+          const allCitiesData = await citiesResponse.json();
+          setAllCities(allCitiesData);
+          
+          // Calculate city counts per country
+          const counts = {};
+          allCitiesData.forEach(city => {
+            counts[city.country] = (counts[city.country] || 0) + 1;
+          });
+          setCountryCityCounts(counts);
+        }
         
         // If no countries, initialize with defaults
         if (data.length === 0) {
