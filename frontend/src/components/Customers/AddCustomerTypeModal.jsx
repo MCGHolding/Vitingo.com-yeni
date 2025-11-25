@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { X, Plus, CheckCircle } from 'lucide-react';
 
-const AddCustomerTypeModal = ({ onClose, onSave }) => {
+const AddCustomerTypeModal = ({ onClose, onSave, onSuccess }) => {
   const [customerTypeName, setCustomerTypeName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
