@@ -67,8 +67,10 @@ export default function EditOpportunityModal({ opportunity, onClose, onSave }) {
   }, [opportunity]);
 
   const statusOptions = [
-    { value: 'open-active', label: 'Açık - Aktif', color: 'bg-green-100 text-green-800' },
+    { value: 'open', label: 'Açık - Aktif', color: 'bg-green-100 text-green-800' },
     { value: 'pending', label: 'Beklemede', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'won', label: 'Kazanıldı ✓', color: 'bg-blue-100 text-blue-800' },
+    { value: 'lost', label: 'Kaybedildi ✗', color: 'bg-red-100 text-red-800' },
     { value: 'closed', label: 'Kapalı', color: 'bg-gray-100 text-gray-800' }
   ];
 
