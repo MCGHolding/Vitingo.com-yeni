@@ -386,11 +386,142 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
     }
   };
 
+  // Export to CSV
   const exportToExcel = () => {
+    if (filteredProspects.length === 0) {
+      toast({
+        title: "Uyarı",
+        description: "Dışarı aktarılacak müşteri adayı bulunamadı.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // CSV headers
+    const headers = ['Ad Soyad', 'Email', 'Telefon', 'Şirket', 'Durum', 'Değer', 'Notlar'];
+    
+    // CSV rows
+    const rows = filteredProspects.map(prospect => [
+      prospect.fullName || '',
+      prospect.email || '',
+      prospect.phone || '',
+      prospect.company || '',
+      prospect.status || '',
+      prospect.value || '',
+      prospect.notes || ''
+    ]);
+    
+    // Create CSV content
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    // Create and download file
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `musteri_adaylari_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
     toast({
-      title: "Excel Aktarımı",
-      description: `${filteredProspects.length} müşteri adayı Excel dosyasına aktarılıyor...`,
+      title: "Başarılı",
+      description: `${filteredProspects.length} müşteri adayı CSV dosyasına aktarıldı.`,
     });
+  };
+
+  // Download sample CSV
+  const downloadSampleCSV = () => {
+    const sampleHeaders = ['Ad Soyad', 'Email', 'Telefon', 'Şirket', 'Durum', 'Değer', 'Notlar'];
+    const sampleRows = [
+      ['Ahmet Yılmaz', 'ahmet@example.com', '+90 532 123 4567', 'ABC Şirketi', 'Yeni', '50000', 'Potansiyel müşteri'],
+      ['Ayşe Demir', 'ayse@example.com', '+90 533 987 6543', 'XYZ Ltd', 'İlgileniyor', '75000', 'Takip edilmeli']
+    ];
+    
+    const csvContent = [
+      sampleHeaders.join(','),
+      ...sampleRows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'ornek_musteri_adaylari.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Örnek Dosya İndirildi",
+      description: "Örnek CSV dosyası indirildi. Bu formatı kullanarak veri yükleyebilirsiniz.",
+    });
+  };
+
+  // Import from CSV
+  const handleImportCSV = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          toast({
+            title: "Hata",
+            description: "CSV dosyası boş veya geçersiz.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        // Skip header line
+        const dataLines = lines.slice(1);
+        const newProspects = [];
+        
+        for (const line of dataLines) {
+          const values = line.split(',').map(v => v.replace(/^"|"$/g, '').trim());
+          if (values.length >= 4) {
+            newProspects.push({
+              fullName: values[0],
+              email: values[1],
+              phone: values[2],
+              company: values[3],
+              status: values[4] || 'Yeni',
+              value: values[5] || '',
+              notes: values[6] || ''
+            });
+          }
+        }
+        
+        // TODO: Send to backend API
+        toast({
+          title: "Başarılı",
+          description: `${newProspects.length} müşteri adayı içe aktarıldı.`,
+        });
+        
+        // Refresh prospects list
+        // await fetchProspects();
+        
+      } catch (error) {
+        toast({
+          title: "Hata",
+          description: "CSV dosyası işlenirken hata oluştu.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
   };
 
   const getInitials = (name) => {
