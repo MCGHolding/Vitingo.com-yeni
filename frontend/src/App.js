@@ -1681,8 +1681,8 @@ const Dashboard = () => {
                 <GrowthRateCard />
                 <ModernKPICard
                   title="Aktif Müşteri"
-                  value={892}
-                  change="+42 bu ay"
+                  value={customers?.length || 0}
+                  change={customers?.length > 0 ? `${customers.length} müşteri` : "Müşteri yok"}
                   changeType="positive"
                   icon={Users}
                   gradient="from-orange-500 to-orange-600"
