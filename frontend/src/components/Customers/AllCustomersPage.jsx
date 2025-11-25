@@ -558,26 +558,12 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
-                <Building className="h-8 w-8 text-blue-600" />
-                <span>Tüm Müşteriler</span>
-              </h1>
-              <p className="text-gray-600 mt-1">Sistemdeki tüm müşterilerin kapsamlı görünümü</p>
-            </div>
-            <Button
-              onClick={() => {
-                // Navigate to new customer with prospect checkbox checked
-                if (onNewCustomer) {
-                  onNewCustomer({ isProspect: true });
-                }
-              }}
-              className="bg-purple-600 hover:bg-purple-700 px-6 h-12"
-            >
-              <UserPlus className="h-5 w-5 mr-2" />
-              Yeni Müşteri Adayı
-            </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
+              <Building className="h-8 w-8 text-blue-600" />
+              <span>Tüm Müşteriler</span>
+            </h1>
+            <p className="text-gray-600 mt-1">Sistemdeki tüm müşterilerin kapsamlı görünümü</p>
           </div>
           <div className="flex items-center space-x-3">
             <Button
