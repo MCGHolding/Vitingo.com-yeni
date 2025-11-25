@@ -25771,16 +25771,23 @@ def test_opportunity_management_endpoints():
     return passed_tests == total_tests
 
 if __name__ == "__main__":
-    print("🚀 Starting User Positions API Testing...")
-    print("=" * 100)
+    print("🚀 Starting Backend API Tests...")
+    print(f"Backend URL: {BACKEND_URL}")
+    print("=" * 80)
     
-    # Run the positions API test
-    result = test_user_positions_apis()
-    
-    if result:
-        print("\n🎉 ALL POSITIONS API TESTS PASSED!")
-        exit(0)
-    else:
-        print("\n❌ SOME POSITIONS API TESTS FAILED!")
-        exit(1)
+    # Run the specific test requested in the review
+    print("\n🔍 Running Calendar Archive and Meeting Requests Test...")
+    try:
+        result = test_calendar_archive_and_meeting_requests()
+        if result:
+            print("\n🎉 CALENDAR ARCHIVE AND MEETING REQUESTS TEST PASSED!")
+            sys.exit(0)
+        else:
+            print("\n❌ CALENDAR ARCHIVE AND MEETING REQUESTS TEST FAILED!")
+            sys.exit(1)
+    except Exception as e:
+        print(f"❌ Calendar Archive and Meeting Requests test failed with error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
     
