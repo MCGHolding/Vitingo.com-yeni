@@ -47,9 +47,10 @@ import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
 
-// ActionMenuPopover Component
+// ActionMenuPopover Component - FIXED: Dropdown now appears as overlay
 const ActionMenuPopover = ({ customer, onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, right: 0 });
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -71,6 +72,15 @@ const ActionMenuPopover = ({ customer, onAction }) => {
   const togglePopover = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right
+      });
+    }
+    
     setIsOpen(!isOpen);
   };
 
@@ -96,7 +106,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
   }, [isOpen]);
 
   return (
-    <div className="relative">
+    <>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -119,7 +129,12 @@ const ActionMenuPopover = ({ customer, onAction }) => {
       {isOpen && (
         <div 
           ref={popoverRef}
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px] max-h-[300px] overflow-y-auto animate-in fade-in-0 zoom-in-95"
+          className="fixed bg-white border border-gray-200 rounded-lg shadow-lg min-w-[140px] max-h-[300px] overflow-y-auto animate-in fade-in-0 zoom-in-95"
+          style={{ 
+            top: `${position.top}px`, 
+            right: `${position.right}px`,
+            zIndex: 9999
+          }}
         >
           {menuItems.map((item, index) => (
             <button
@@ -135,7 +150,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
