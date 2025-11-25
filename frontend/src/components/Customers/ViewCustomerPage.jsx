@@ -99,11 +99,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Sektör</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.sector || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">İş Türü</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.relationshipType || '-'}</p>
+                    <p className="text-base text-gray-700 mt-1">{customer.sector || customer.specialty || '-'}</p>
                   </div>
                 </div>
               </CardContent>
