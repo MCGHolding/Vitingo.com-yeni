@@ -136,19 +136,25 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   
   // Load cities from library for a specific country
   const loadSehirler = async (countryName) => {
+    console.log('🏙️ loadSehirler CALLED for:', countryName);
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/library/cities?country=${encodeURIComponent(countryName)}`);
+      const url = `${backendUrl}/api/library/cities?country=${encodeURIComponent(countryName)}`;
+      console.log('📡 Fetching cities from:', url);
+      const response = await fetch(url);
       const data = await response.json();
+      console.log('📊 Cities received:', data.length, 'cities');
       
       if (Array.isArray(data)) {
         const sehirIsimleri = data.map(d => d.name).filter(n => n).sort();
+        console.log('✅ Setting cities:', sehirIsimleri.slice(0, 5), '... total:', sehirIsimleri.length);
         setSehirler(sehirIsimleri);
       } else {
+        console.log('❌ Data is not array');
         setSehirler([]);
       }
     } catch (error) {
-      console.error('Şehirler yüklenemedi:', error);
+      console.error('❌ Şehirler yüklenemedi:', error);
       setSehirler([]);
     }
   };
