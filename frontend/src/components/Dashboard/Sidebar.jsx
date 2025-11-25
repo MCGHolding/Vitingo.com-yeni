@@ -489,7 +489,7 @@ export default function Sidebar({
       return;
     }
     
-    if (subItem && subItem.name === 'Müşteriler') {
+    if (subItem && subItem.name === 'Tüm Müşteriler') {
       if (onAllCustomers) {
         onAllCustomers();
       }
