@@ -120,6 +120,8 @@ const CountryCityManager = () => {
   const [showAddCountryModal, setShowAddCountryModal] = useState(false);
   const [showAddCityModal, setShowAddCityModal] = useState(false);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
+  const [countryCityCounts, setCountryCityCounts] = useState({});
+  const [allCities, setAllCities] = useState([]);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
