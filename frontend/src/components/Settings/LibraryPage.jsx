@@ -197,14 +197,24 @@ const LibraryPage = ({ onBack }) => {
       </div>
 
       {/* Content */}
-      <div className={activeTab === 'countries-cities' ? '' : 'px-6 py-6'}>
+      <div className={activeTab === 'countries-cities' || activeTab === 'phone-codes' ? '' : 'px-6 py-6'}>
         {/* Country & City Manager (Full Width) */}
         {activeTab === 'countries-cities' && (
           <CountryCityManager />
         )}
+        
+        {/* Phone Codes Manager (Full Width) */}
+        {activeTab === 'phone-codes' && (
+          <div className="p-6">
+            <div className="text-center text-gray-500">
+              <p>Telefon Kodları modülü yakında eklenecek...</p>
+              <p className="text-sm mt-2">221 telefon kodu API'de hazır</p>
+            </div>
+          </div>
+        )}
 
         {/* Other tabs content */}
-        {activeTab !== 'countries-cities' && (
+        {activeTab !== 'countries-cities' && activeTab !== 'phone-codes' && (
           <>
         {/* Search and Add Button */}
         <div className="flex items-center justify-between mb-6">
