@@ -194,19 +194,38 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Vergi Numarası</label>
+                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">VKN (Vergi Kimlik No)</label>
                     <p className="text-base text-gray-700 mt-1 font-mono">{customer.taxNumber || customer.tax_number || '-'}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">IBAN</label>
-                    <p className="text-base text-gray-700 mt-1 font-mono">{customer.iban || '-'}</p>
+                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Vergi Dairesi</label>
+                    <p className="text-base text-gray-700 mt-1">{customer.taxOffice || customer.tax_office || '-'}</p>
                   </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Para Birimi</label>
-                    <Badge className="mt-1 bg-emerald-100 text-emerald-800">
-                      {customer.currency || 'TRY'}
-                    </Badge>
-                  </div>
+                  {(customer.iban || customer.bankName || customer.bank_name) && (
+                    <>
+                      <div className="pt-2 border-t">
+                        <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Banka Bilgileri</label>
+                      </div>
+                      {customer.bankName || customer.bank_name ? (
+                        <div>
+                          <label className="text-xs text-gray-500">Banka Adı</label>
+                          <p className="text-base text-gray-700">{customer.bankName || customer.bank_name}</p>
+                        </div>
+                      ) : null}
+                      {customer.iban && (
+                        <div>
+                          <label className="text-xs text-gray-500">IBAN</label>
+                          <p className="text-base text-gray-700 font-mono">{customer.iban}</p>
+                        </div>
+                      )}
+                      {(customer.accountHolderName || customer.account_holder_name) && (
+                        <div>
+                          <label className="text-xs text-gray-500">Hesap Sahibi</label>
+                          <p className="text-base text-gray-700">{customer.accountHolderName || customer.account_holder_name}</p>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
