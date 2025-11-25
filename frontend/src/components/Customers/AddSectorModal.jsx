@@ -44,9 +44,12 @@ const AddSectorModal = ({ onClose, onSave, onSuccess }) => {
         setCreatedSector(newSector);
         setShowSuccess(true);
         
-        // Notify parent component
+        // Notify parent component - support both onSave and onSuccess
         if (onSave) {
           onSave(newSector);
+        }
+        if (onSuccess) {
+          onSuccess(newSector);
         }
 
         // Don't auto-close, let user manually close with X or button
