@@ -140,7 +140,8 @@ const LibraryPage = ({ onBack }) => {
 
   const tabs = [
     { id: 'customer-types', label: 'Müşteri Türleri', icon: Tag },
-    { id: 'sectors', label: 'Sektörler', icon: Building }
+    { id: 'sectors', label: 'Sektörler', icon: Building },
+    { id: 'countries-cities', label: 'Ülke & Şehir', icon: Globe }
   ];
 
   return (
