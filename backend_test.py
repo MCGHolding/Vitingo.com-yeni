@@ -1225,14 +1225,22 @@ def test_final_countries_cities_seed_data():
     print("=" * 100)
     
     test_results = {
-        "initialize_working": False,
-        "countries_loaded": 0,
-        "cities_loaded": 0,
-        "countries_endpoint_working": False,
-        "turkey_cities_working": False,
-        "usa_cities_working": False,
-        "turkey_cities_count": 0,
-        "usa_cities_count": 0,
+        "test1_initialize_working": False,
+        "test1_total_countries": 0,
+        "test1_total_cities": 0,
+        "test2_countries_count": 0,
+        "test2_exact_195": False,
+        "test2_no_duplicates": False,
+        "test2_fransa_found": False,
+        "test2_turkiye_found": False,
+        "test3_turkey_cities_count": 0,
+        "test3_istanbul_found": False,
+        "test3_ankara_found": False,
+        "test3_izmir_found": False,
+        "test4_italy_cities_count": 0,
+        "test4_roma_found": False,
+        "test4_milano_found": False,
+        "test4_napoli_found": False,
         "critical_issues": [],
         "warnings": []
     }
