@@ -136,25 +136,53 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   
   // Helper function to get country dial code
   const getCountryDialCode = (countryName) => {
-    if (!countryName || tumUlkeler.length === 0) return 'tr'; // Default to Turkey
+    if (!countryName) return 'tr'; // Default to Turkey
     
-    const secilenUlke = tumUlkeler.find(u => u.name === countryName);
-    if (secilenUlke && secilenUlke.dial_code) {
-      return secilenUlke.dial_code.toLowerCase().replace('+', '');
-    }
-    
-    // Fallback country codes
+    // Comprehensive country code mapping
     const countryCodeMap = {
-      'Turkey': 'tr',
-      'Türkiye': 'tr',
-      'United States': 'us',
-      'Amerika Birleşik Devletleri': 'us',
-      'Germany': 'de',
-      'Almanya': 'de',
-      'France': 'fr',
-      'Fransa': 'fr',
-      'United Kingdom': 'gb',
-      'İngiltere': 'gb'
+      'Turkey': 'tr', 'Türkiye': 'tr',
+      'Afghanistan': 'af', 'Afganistan': 'af',
+      'Albania': 'al', 'Arnavutluk': 'al',
+      'Algeria': 'dz', 'Cezayir': 'dz',
+      'United States': 'us', 'Amerika Birleşik Devletleri': 'us', 'ABD': 'us',
+      'Germany': 'de', 'Almanya': 'de',
+      'France': 'fr', 'Fransa': 'fr',
+      'United Kingdom': 'gb', 'İngiltere': 'gb', 'Birleşik Krallık': 'gb',
+      'Spain': 'es', 'İspanya': 'es',
+      'Italy': 'it', 'İtalya': 'it',
+      'Canada': 'ca', 'Kanada': 'ca',
+      'Australia': 'au', 'Avustralya': 'au',
+      'India': 'in', 'Hindistan': 'in',
+      'China': 'cn', 'Çin': 'cn',
+      'Japan': 'jp', 'Japonya': 'jp',
+      'Brazil': 'br', 'Brezilya': 'br',
+      'Mexico': 'mx', 'Meksika': 'mx',
+      'Russia': 'ru', 'Rusya': 'ru',
+      'South Korea': 'kr', 'Güney Kore': 'kr',
+      'Saudi Arabia': 'sa', 'Suudi Arabistan': 'sa',
+      'UAE': 'ae', 'Birleşik Arap Emirlikleri': 'ae',
+      'Egypt': 'eg', 'Mısır': 'eg',
+      'South Africa': 'za', 'Güney Afrika': 'za',
+      'Netherlands': 'nl', 'Hollanda': 'nl',
+      'Belgium': 'be', 'Belçika': 'be',
+      'Switzerland': 'ch', 'İsviçre': 'ch',
+      'Austria': 'at', 'Avusturya': 'at',
+      'Greece': 'gr', 'Yunanistan': 'gr',
+      'Poland': 'pl', 'Polonya': 'pl',
+      'Ukraine': 'ua', 'Ukrayna': 'ua',
+      'Pakistan': 'pk', 'Pakistan': 'pk',
+      'Bangladesh': 'bd', 'Bangladeş': 'bd',
+      'Iran': 'ir', 'İran': 'ir',
+      'Iraq': 'iq', 'Irak': 'iq',
+      'Israel': 'il', 'İsrail': 'il',
+      'Jordan': 'jo', 'Ürdün': 'jo',
+      'Lebanon': 'lb', 'Lübnan': 'lb',
+      'Syria': 'sy', 'Suriye': 'sy',
+      'Qatar': 'qa', 'Katar': 'qa',
+      'Kuwait': 'kw', 'Kuveyt': 'kw',
+      'Bahrain': 'bh', 'Bahreyn': 'bh',
+      'Oman': 'om', 'Umman': 'om',
+      'Yemen': 'ye', 'Yemen': 'ye'
     };
     
     return countryCodeMap[countryName] || 'tr';
