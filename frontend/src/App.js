@@ -1566,6 +1566,10 @@ const Dashboard = () => {
         console.log('📋 SUCCESS: Rendering MeetingRequestsPage component for currentView:', currentView);
         return <MeetingRequestsPage currentUser={{ id: 'demo_user', role: user?.role || 'user', name: user?.name || 'Demo User' }} />;
 
+      case 'calendar-archive':
+        console.log('📚 SUCCESS: Rendering ArchivedMeetingsPage component');
+        return <ArchivedMeetingsPage onBack={handleBackToDashboard} />;
+
       case 'closed-briefs':
         return (
           <div className="p-6">
