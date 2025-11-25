@@ -1224,8 +1224,8 @@ async def bulk_import_countries(data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/library/countries/initialize-defaults")
-async def initialize_default_countries():
-    """Initialize database with 195 UN member countries and their major cities (20 each)"""
+async def initialize_default_countries(force_reload: bool = False):
+    """Initialize database with 195 UN member countries and their major cities"""
     try:
         from seed_data import COUNTRIES_AND_CITIES_SEED
         
@@ -1233,52 +1233,55 @@ async def initialize_default_countries():
         existing_countries = await db.countries.count_documents({})
         existing_cities = await db.cities.count_documents({})
         
-        if existing_countries > 50 and existing_cities > 100:
+        # If force_reload or if counts don't match expected, clear and reload
+        if force_reload or existing_countries != 195:
+            logger.info(f"🔄 Clearing existing data: {existing_countries} countries, {existing_cities} cities")
+            await db.countries.delete_many({})
+            await db.cities.delete_many({})
+            logger.info("✅ Existing data cleared")
+        elif existing_countries == 195:
             return {
-                "message": "Varsayılan veriler zaten yüklenmiş",
+                "message": "Varsayılan veriler zaten yüklenmiş (tam 195 ülke)",
                 "countries_count": existing_countries,
                 "cities_count": existing_cities,
                 "status": "already_initialized"
             }
         
-        # Clear existing data (optional - comment out if you want to keep existing)
-        # await db.countries.delete_many({})
-        # await db.cities.delete_many({})
-        
         # Import countries
         countries_data = COUNTRIES_AND_CITIES_SEED["countries"]
         cities_data = COUNTRIES_AND_CITIES_SEED["cities"]
         
+        logger.info(f"📥 Loading {len(countries_data)} countries and {len(cities_data)} cities from seed data")
+        
         countries_imported = 0
         for country_dict in countries_data:
-            # Check if exists
-            existing = await db.countries.find_one({"code": country_dict["code"]})
-            if not existing:
-                country = LibraryCountry(**country_dict)
-                await db.countries.insert_one(country.dict())
-                countries_imported += 1
+            country = LibraryCountry(**country_dict)
+            await db.countries.insert_one(country.dict())
+            countries_imported += 1
         
         # Import cities
         cities_imported = 0
         for city_dict in cities_data:
-            # Check if exists
-            existing = await db.cities.find_one({"id": city_dict["id"]})
-            if not existing:
-                city = LibraryCity(**city_dict)
-                await db.cities.insert_one(city.dict())
-                cities_imported += 1
+            city = LibraryCity(**city_dict)
+            await db.cities.insert_one(city.dict())
+            cities_imported += 1
+        
+        final_countries = await db.countries.count_documents({})
+        final_cities = await db.cities.count_documents({})
+        
+        logger.info(f"✅ Import complete: {final_countries} countries, {final_cities} cities")
         
         return {
-            "message": "Varsayılan veriler başarıyla yüklendi",
+            "message": f"Varsayılan veriler başarıyla yüklendi! {final_countries} ülke, {final_cities} şehir",
             "countries_imported": countries_imported,
             "cities_imported": cities_imported,
-            "total_countries": await db.countries.count_documents({}),
-            "total_cities": await db.cities.count_documents({}),
+            "total_countries": final_countries,
+            "total_cities": final_cities,
             "status": "success"
         }
         
     except Exception as e:
-        logger.error(f"Error initializing defaults: {str(e)}")
+        logger.error(f"❌ Error initializing defaults: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Currencies Endpoints
