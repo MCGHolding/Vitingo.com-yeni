@@ -29,7 +29,8 @@ import {
   UserX,
   Star,
   Trash2,
-  UserSearch
+  UserSearch,
+  UserPlus
 } from 'lucide-react';
 // import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
 
