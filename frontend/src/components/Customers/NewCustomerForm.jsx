@@ -192,22 +192,22 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     setContactSehirler(newContactSehirler);
   }, [contacts, tumUlkeler]);
 
-  // Firma bilgileri değiştiğinde ilk contact'i de güncelle
+  // Firma bilgileri değiştiğinde TÜM contact'lerin ülke, şehir ve adres bilgilerini güncelle
   useEffect(() => {
-    if (contacts.length > 0 && (formData.country || formData.city)) {
+    if (contacts.length > 0) {
       setContacts(prev => {
-        const updated = [...prev];
-        // Sadece ilk contact'in ülke ve şehri boşsa güncelle
-        if (!updated[0].country && formData.country) {
-          updated[0].country = formData.country;
-        }
-        if (!updated[0].city && formData.city) {
-          updated[0].city = formData.city;
-        }
-        return updated;
+        return prev.map((contact, index) => {
+          // Yeni eklenen contact'ler için veya mevcut değerler boşsa firma bilgilerini ata
+          return {
+            ...contact,
+            country: contact.country || formData.country || '',
+            city: contact.city || formData.city || '',
+            address: contact.address || formData.address || ''
+          };
+        });
       });
     }
-  }, [formData.country, formData.city]);
+  }, [formData.country, formData.city, formData.address]);
 
   // Load specialties when category changes
   useEffect(() => {
