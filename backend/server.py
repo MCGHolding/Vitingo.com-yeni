@@ -8756,21 +8756,36 @@ async def get_calendar_events(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     user_id: str = "demo_user",
-    user_role: str = "user"  # user, admin, super_admin
+    user_role: str = "user",  # user, admin, super_admin
+    include_archived: bool = False,  # Set to true to include archived events
+    archived_only: bool = False  # Set to true to get only archived events
 ):
     """Get calendar events based on user permissions"""
     try:
         query = {}
         
+        # Archive filtering
+        if archived_only:
+            query["is_archived"] = True
+        elif not include_archived:
+            query["is_archived"] = {"$ne": True}
+        
         # Date filtering
         if start_date and end_date:
             start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
             end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
-            query["$or"] = [
-                {"start_datetime": {"$gte": start_dt, "$lte": end_dt}},
-                {"end_datetime": {"$gte": start_dt, "$lte": end_dt}},
-                {"start_datetime": {"$lte": start_dt}, "end_datetime": {"$gte": end_dt}}
-            ]
+            date_query = {
+                "$or": [
+                    {"start_datetime": {"$gte": start_dt, "$lte": end_dt}},
+                    {"end_datetime": {"$gte": start_dt, "$lte": end_dt}},
+                    {"start_datetime": {"$lte": start_dt}, "end_datetime": {"$gte": end_dt}}
+                ]
+            }
+            # Merge with existing query
+            if "$or" in query:
+                query = {"$and": [query, date_query]}
+            else:
+                query.update(date_query)
         
         # Permission-based filtering
         if user_role in ["admin", "super_admin"]:
@@ -8778,11 +8793,18 @@ async def get_calendar_events(
             pass
         else:
             # Regular users can only see their own events and public events they're invited to
-            query["$or"] = [
-                {"organizer_id": user_id},
-                {"attendee_ids": user_id, "visibility": "public"},
-                {"visibility": "public"}
-            ]
+            perm_query = {
+                "$or": [
+                    {"organizer_id": user_id},
+                    {"attendee_ids": user_id, "visibility": "public"},
+                    {"visibility": "public"}
+                ]
+            }
+            # Merge with existing query
+            if "$and" in query:
+                query["$and"].append(perm_query)
+            else:
+                query = {"$and": [query, perm_query]}
         
         events = await db.calendar_events.find(query).sort("start_datetime", 1).to_list(length=None)
         return [CalendarEvent(**event) for event in events]
