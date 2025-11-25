@@ -565,6 +565,20 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
             <p className="text-gray-600 mt-1">Potansiyel müşterilerin listesi ve yönetimi</p>
           </div>
           <div className="flex items-center space-x-3">
+            {/* New Customer Prospect Button */}
+            <Button
+              onClick={() => {
+                // Navigate to new customer with prospect checkbox checked
+                if (onNewCustomer) {
+                  onNewCustomer({ isProspect: true });
+                }
+              }}
+              className="bg-purple-600 hover:bg-purple-700 px-6 h-12"
+            >
+              <UserPlus className="h-5 w-5 mr-2" />
+              Yeni Müşteri Adayı
+            </Button>
+            
             {/* Import CSV - Open Modal */}
             <Button
               onClick={() => setImportModalOpen(true)}
