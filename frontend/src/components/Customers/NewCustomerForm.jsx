@@ -782,25 +782,15 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sektör
                 </label>
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <SearchableSelect
-                      options={(sectors || []).map(sector => ({ value: sector.value, label: sector.name }))}
-                      value={formData.specialty_id}
-                      onValueChange={(value) => handleInputChange('specialty_id', value)}
-                      placeholder="Sektör seçin..."
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAddSectorModal(true)}
-                    className="px-3"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                <SearchableSelect
+                  options={(sectors || []).map(sector => ({ value: sector.value, label: sector.name }))}
+                  value={formData.specialty_id}
+                  onValueChange={(value) => handleInputChange('specialty_id', value)}
+                  placeholder="Sektör seçin..."
+                  showAddNew={true}
+                  onAddNew={() => setShowAddSectorModal(true)}
+                  addNewLabel="+ Yeni Sektör Ekle"
+                />
               </div>
             </div>
           </CardContent>
