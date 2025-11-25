@@ -983,6 +983,130 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
           }}
         />
       )}
+
+      {/* Import Modal */}
+      {importModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
+              <h2 className="text-2xl font-bold">Toplu İçe Aktar</h2>
+              <p className="text-blue-100 mt-1">CSV veya TXT formatında müşteri adaylarını içe aktarın</p>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Instructions */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Nasıl Kullanılır?
+                </h3>
+                <ol className="space-y-2 text-sm text-blue-800">
+                  <li className="flex items-start">
+                    <span className="font-semibold mr-2">1.</span>
+                    <span>Örnek dosyayı indirin (musteri-adaylari-ornek.csv)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-semibold mr-2">2.</span>
+                    <span>Dosyayı Notepad, Excel veya herhangi bir editörde açın</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-semibold mr-2">3.</span>
+                    <span>Kendi müşteri adaylarınızı ekleyin/düzenleyin</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-semibold mr-2">4.</span>
+                    <span>Dosyayı yükleyin (.txt veya .csv formatında)</span>
+                  </li>
+                </ol>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  onClick={downloadSampleCSV}
+                  className="bg-green-600 hover:bg-green-700 h-16 text-base"
+                >
+                  <FileText className="h-5 w-5 mr-2" />
+                  Örnek Dosyayı İndir
+                </Button>
+                
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept=".csv,.txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <div className="bg-blue-600 hover:bg-blue-700 text-white h-16 rounded-lg flex items-center justify-center text-base font-medium transition-colors">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Dosya Yükle
+                  </div>
+                </label>
+              </div>
+
+              {/* Format Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Kabul Edilen Formatlar:</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• .csv dosyaları (Excel)</li>
+                    <li>• .txt dosyaları (Notepad)</li>
+                    <li>• Düz metin dosyaları</li>
+                  </ul>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Format Kuralları:</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• Her satır bir müşteri adayı</li>
+                    <li>• Virgül ile ayrılmış değerler</li>
+                    <li>• Ad Soyad, Email, Telefon, Şirket</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Data Input Area */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Müşteri Adayları Listesi
+                </label>
+                <textarea
+                  value={importData}
+                  onChange={(e) => setImportData(e.target.value)}
+                  placeholder="Ahmet Yılmaz, ahmet@example.com, +90 532 123 4567, ABC Şirketi
+Ayşe Demir, ayse@example.com, +90 533 987 6543, XYZ Ltd
+Mehmet Kaya, mehmet@example.com, +90 534 555 7890, DEF A.Ş."
+                  className="w-full h-48 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Her satır: Ad Soyad, Email, Telefon, Şirket şeklinde olmalıdır.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3 border-t">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setImportModalOpen(false);
+                  setImportData('');
+                }}
+              >
+                İptal
+              </Button>
+              <Button
+                onClick={handleProcessImport}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                İçe Aktar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
