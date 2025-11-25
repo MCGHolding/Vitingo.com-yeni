@@ -944,15 +944,7 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
               </div>
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  onClick={downloadSampleCSV}
-                  className="bg-green-600 hover:bg-green-700 h-16 text-base"
-                >
-                  <FileText className="h-5 w-5 mr-2" />
-                  Örnek Dosyayı İndir
-                </Button>
-                
+              <div className="grid grid-cols-1 gap-4">
                 <label className="cursor-pointer">
                   <input
                     type="file"
