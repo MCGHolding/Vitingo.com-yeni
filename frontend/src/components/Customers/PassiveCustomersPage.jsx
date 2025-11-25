@@ -320,7 +320,8 @@ export default function PassiveCustomersPage({ customers = [], onBackToDashboard
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
