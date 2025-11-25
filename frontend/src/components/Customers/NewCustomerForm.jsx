@@ -1366,7 +1366,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                       Cep Telefonu <span className="text-red-500">*</span>
                     </label>
                     <PhoneInput
-                      key={`contact-${contactIndex}-mobile-${contact.country || formData.country || 'default'}-${Date.now()}`}
+                      key={`contact-${contactIndex}-${contact.country || formData.country}`}
                       country={getCountryDialCode(contact.country || formData.country)}
                       value={contact.mobile}
                       onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
