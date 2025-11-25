@@ -329,9 +329,11 @@ const CountryCityManager = () => {
     }
   };
 
-  const filteredCountries = countries.filter(c =>
-    c.name.toLowerCase().includes(countrySearch.toLowerCase())
-  );
+  const filteredCountries = countries.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(countrySearch.toLowerCase());
+    const matchesContinent = selectedContinent === 'Tümü' || CONTINENT_MAP[c.code] === selectedContinent;
+    return matchesSearch && matchesContinent;
+  });
 
   const filteredCities = cities.filter(c =>
     c.name.toLowerCase().includes(citySearch.toLowerCase())
