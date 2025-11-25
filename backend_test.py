@@ -1180,6 +1180,383 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_phone_codes_api_endpoints():
+    """
+    PHONE CODES API ENDPOINTS TESTING
+    
+    Test the Phone Codes API endpoints to ensure they are working correctly:
+    
+    **API Endpoints to Test:**
+    1. GET /api/library/phone-codes - Should return 221 phone codes
+    2. POST /api/library/phone-codes - Create new phone code
+    3. PUT /api/library/phone-codes/{id} - Update phone code
+    4. DELETE /api/library/phone-codes/{id} - Delete phone code
+    
+    **Test Scenarios:**
+    1. GET all phone codes - should return 221 items with structure: {id, country, code, country_code, phone_code, flag}
+    2. Verify Turkey phone code exists - should have country="Türkiye 🇹🇷", code="+90"
+    3. Create new test phone code - country="Test Ülke", code="+999", country_code="TE"
+    4. Update the test phone code - change country to "Test Country Updated"
+    5. Delete the test phone code - verify it's removed
+    
+    **Expected Results:**
+    - All CRUD operations should work correctly
+    - Turkish characters should be handled properly
+    - Phone codes should include country names, codes, and flags
+    - Data validation should be in place
+    """
+    
+    print("=" * 100)
+    print("📞 PHONE CODES API ENDPOINTS TESTING 📞")
+    print("=" * 100)
+    print("CONTEXT: Testing Phone Codes API endpoints for CRUD operations")
+    print("Requirements: 221 phone codes, Turkey phone code verification, CRUD operations")
+    print("=" * 100)
+    
+    test_results = {
+        "get_phone_codes_working": False,
+        "phone_codes_count": 0,
+        "turkey_phone_code_found": False,
+        "create_phone_code_working": False,
+        "update_phone_code_working": False,
+        "delete_phone_code_working": False,
+        "test_phone_code_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET all phone codes
+    print("\n" + "=" * 80)
+    print("TEST 1: GET ALL PHONE CODES")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/phone-codes")
+    print("Expected: Should return 221 phone codes with proper structure")
+    
+    get_endpoint = f"{BACKEND_URL}/api/library/phone-codes"
+    print(f"Testing endpoint: {get_endpoint}")
+    
+    try:
+        print("\n1. Making GET request to retrieve all phone codes...")
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Phone codes endpoint responds with status 200")
+            test_results["get_phone_codes_working"] = True
+            
+            try:
+                phone_codes = response.json()
+                
+                if isinstance(phone_codes, list):
+                    phone_codes_count = len(phone_codes)
+                    test_results["phone_codes_count"] = phone_codes_count
+                    print(f"📊 Phone codes count: {phone_codes_count}")
+                    
+                    # Test: Should have 221 phone codes
+                    if phone_codes_count == 221:
+                        print("✅ PASS: Exactly 221 phone codes found as expected")
+                    else:
+                        print(f"⚠️  WARNING: Expected 221 phone codes, found {phone_codes_count}")
+                        test_results["warnings"].append(f"PHONE_CODES_COUNT_{phone_codes_count}_NOT_221")
+                    
+                    # Check data structure of first few phone codes
+                    if phone_codes_count > 0:
+                        print(f"\n📋 PHONE CODES DATA STRUCTURE ANALYSIS (First 3 codes):")
+                        expected_fields = ["id", "country", "code", "country_code", "phone_code", "flag"]
+                        
+                        for i, phone_code in enumerate(phone_codes[:3], 1):
+                            print(f"   {i}. {phone_code}")
+                            
+                            # Check required fields
+                            missing_fields = []
+                            for field in expected_fields:
+                                if field not in phone_code:
+                                    missing_fields.append(field)
+                            
+                            if missing_fields:
+                                print(f"      ⚠️  Missing fields: {missing_fields}")
+                                test_results["warnings"].append(f"MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                        
+                        # TEST 2: Verify Turkey phone code exists
+                        print(f"\n🔍 SEARCHING FOR TURKEY PHONE CODE...")
+                        turkey_found = False
+                        for phone_code in phone_codes:
+                            country = phone_code.get("country", "")
+                            code = phone_code.get("code", "")
+                            
+                            # Check for Turkey variations
+                            if "Türkiye" in country or "Turkey" in country:
+                                print(f"   Found Turkey entry: {phone_code}")
+                                if "+90" in code or "90" in code:
+                                    print("   ✅ PASS: Turkey phone code (+90) found")
+                                    test_results["turkey_phone_code_found"] = True
+                                    turkey_found = True
+                                    break
+                        
+                        if not turkey_found:
+                            print("   ❌ FAIL: Turkey phone code not found")
+                            test_results["critical_issues"].append("TURKEY_PHONE_CODE_NOT_FOUND")
+                    
+                else:
+                    print("❌ FAIL: Response is not an array")
+                    test_results["critical_issues"].append("PHONE_CODES_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing phone codes response: {str(e)}")
+                test_results["critical_issues"].append(f"PHONE_CODES_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Phone codes endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_PHONE_CODES_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Phone codes GET request error: {str(e)}")
+        test_results["critical_issues"].append(f"GET_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Create new phone code
+    print("\n" + "=" * 80)
+    print("TEST 3: CREATE NEW PHONE CODE")
+    print("=" * 80)
+    print("Endpoint: POST /api/library/phone-codes")
+    print("Test data: country='Test Ülke', code='+999', country_code='TE'")
+    
+    test_phone_code_data = {
+        "country": "Test Ülke",
+        "code": "+999",
+        "country_code": "TE",
+        "phone_code": "+999",
+        "flag": "🏳️"
+    }
+    
+    create_endpoint = f"{BACKEND_URL}/api/library/phone-codes"
+    print(f"Testing endpoint: {create_endpoint}")
+    print(f"Test data: {test_phone_code_data}")
+    
+    try:
+        print("\n1. Making POST request to create new phone code...")
+        response = requests.post(create_endpoint, json=test_phone_code_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: Phone code creation successful")
+            test_results["create_phone_code_working"] = True
+            
+            try:
+                created_phone_code = response.json()
+                test_phone_code_id = created_phone_code.get("id")
+                test_results["test_phone_code_id"] = test_phone_code_id
+                print(f"✅ PASS: Test phone code created with ID: {test_phone_code_id}")
+                
+                # Verify created data
+                print(f"📋 Created phone code data: {created_phone_code}")
+                
+                # Check if Turkish characters are preserved
+                if "Test Ülke" in str(created_phone_code):
+                    print("✅ PASS: Turkish characters preserved in creation")
+                else:
+                    print("⚠️  WARNING: Turkish characters may not be preserved")
+                    test_results["warnings"].append("TURKISH_CHARS_NOT_PRESERVED")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing created phone code: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Phone code creation failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CREATE_PHONE_CODE_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Phone code creation request error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 4: Update phone code (only if creation was successful)
+    if test_results["create_phone_code_working"] and test_results["test_phone_code_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 4: UPDATE PHONE CODE")
+        print("=" * 80)
+        print("Endpoint: PUT /api/library/phone-codes/{id}")
+        print("Update: Change country to 'Test Country Updated'")
+        
+        updated_phone_code_data = {
+            "id": test_results["test_phone_code_id"],
+            "country": "Test Country Updated",
+            "code": "+999",
+            "country_code": "TE",
+            "phone_code": "+999",
+            "flag": "🏳️"
+        }
+        
+        update_endpoint = f"{BACKEND_URL}/api/library/phone-codes/{test_results['test_phone_code_id']}"
+        print(f"Testing endpoint: {update_endpoint}")
+        print(f"Update data: {updated_phone_code_data}")
+        
+        try:
+            print("\n1. Making PUT request to update phone code...")
+            response = requests.put(update_endpoint, json=updated_phone_code_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Phone code update successful")
+                test_results["update_phone_code_working"] = True
+                
+                try:
+                    # Verify update by getting the phone code again
+                    verify_response = requests.get(get_endpoint, timeout=30)
+                    if verify_response.status_code == 200:
+                        all_codes = verify_response.json()
+                        updated_code_found = False
+                        
+                        for code in all_codes:
+                            if code.get("id") == test_results["test_phone_code_id"]:
+                                if code.get("country") == "Test Country Updated":
+                                    print("✅ PASS: Phone code update verified - country changed to 'Test Country Updated'")
+                                    updated_code_found = True
+                                    break
+                        
+                        if not updated_code_found:
+                            print("❌ FAIL: Updated phone code not found or not updated correctly")
+                            test_results["critical_issues"].append("UPDATE_NOT_VERIFIED")
+                    
+                except Exception as e:
+                    print(f"⚠️  WARNING: Could not verify update: {str(e)}")
+                    test_results["warnings"].append(f"UPDATE_VERIFY_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Phone code update failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_PHONE_CODE_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Phone code update request error: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_REQUEST_ERROR: {str(e)}")
+    else:
+        print("\n⚠️  SKIPPING UPDATE TEST: Phone code creation failed or no ID available")
+    
+    # TEST 5: Delete phone code (only if creation was successful)
+    if test_results["create_phone_code_working"] and test_results["test_phone_code_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 5: DELETE PHONE CODE")
+        print("=" * 80)
+        print("Endpoint: DELETE /api/library/phone-codes/{id}")
+        print("Action: Delete the test phone code and verify removal")
+        
+        delete_endpoint = f"{BACKEND_URL}/api/library/phone-codes/{test_results['test_phone_code_id']}"
+        print(f"Testing endpoint: {delete_endpoint}")
+        
+        try:
+            print("\n1. Making DELETE request to remove phone code...")
+            response = requests.delete(delete_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Phone code deletion successful")
+                test_results["delete_phone_code_working"] = True
+                
+                try:
+                    # Verify deletion by checking if phone code is gone
+                    verify_response = requests.get(get_endpoint, timeout=30)
+                    if verify_response.status_code == 200:
+                        all_codes = verify_response.json()
+                        deleted_code_found = False
+                        
+                        for code in all_codes:
+                            if code.get("id") == test_results["test_phone_code_id"]:
+                                deleted_code_found = True
+                                break
+                        
+                        if not deleted_code_found:
+                            print("✅ PASS: Phone code deletion verified - test code no longer exists")
+                        else:
+                            print("❌ FAIL: Phone code still exists after deletion")
+                            test_results["critical_issues"].append("DELETE_NOT_VERIFIED")
+                    
+                except Exception as e:
+                    print(f"⚠️  WARNING: Could not verify deletion: {str(e)}")
+                    test_results["warnings"].append(f"DELETE_VERIFY_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Phone code deletion failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DELETE_PHONE_CODE_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Phone code deletion request error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_REQUEST_ERROR: {str(e)}")
+    else:
+        print("\n⚠️  SKIPPING DELETE TEST: Phone code creation failed or no ID available")
+    
+    # FINAL TEST RESULTS
+    print("\n" + "=" * 100)
+    print("📞 PHONE CODES API ENDPOINTS TEST RESULTS")
+    print("=" * 100)
+    
+    print(f"📊 TEST SUMMARY:")
+    print(f"   • GET Phone Codes: {'✅ Working' if test_results['get_phone_codes_working'] else '❌ Failed'}")
+    print(f"   • Phone Codes Count: {test_results['phone_codes_count']} (Expected: 221)")
+    print(f"   • Turkey Phone Code: {'✅ Found' if test_results['turkey_phone_code_found'] else '❌ Not Found'}")
+    print(f"   • CREATE Phone Code: {'✅ Working' if test_results['create_phone_code_working'] else '❌ Failed'}")
+    print(f"   • UPDATE Phone Code: {'✅ Working' if test_results['update_phone_code_working'] else '❌ Failed'}")
+    print(f"   • DELETE Phone Code: {'✅ Working' if test_results['delete_phone_code_working'] else '❌ Failed'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_endpoints = sum([
+        test_results['get_phone_codes_working'],
+        test_results['create_phone_code_working'],
+        test_results['update_phone_code_working'],
+        test_results['delete_phone_code_working']
+    ])
+    
+    if working_endpoints == 4:
+        print("✅ EXCELLENT: All 4 phone codes API endpoints are working correctly")
+        print("✅ CRUD operations are fully functional")
+        print("✅ Turkish character support verified")
+        if test_results['turkey_phone_code_found']:
+            print("✅ Turkey phone code verification passed")
+    elif working_endpoints >= 2:
+        print(f"⚠️  PARTIAL: {working_endpoints}/4 phone codes API endpoints working")
+        print("⚠️  Some CRUD operations may not be fully functional")
+    else:
+        print("❌ CRITICAL: Most phone codes API endpoints are not working")
+        print("❌ CRUD operations are not functional")
+    
+    if test_results['phone_codes_count'] == 221:
+        print("✅ Phone codes count matches expected value (221)")
+    elif test_results['phone_codes_count'] > 0:
+        print(f"⚠️  Phone codes count ({test_results['phone_codes_count']}) differs from expected (221)")
+    else:
+        print("❌ No phone codes found in database")
+    
+    print(f"\n🎯 RECOMMENDATIONS:")
+    if len(test_results['critical_issues']) > 0:
+        print("   1. Fix critical issues preventing API endpoints from working")
+        print("   2. Verify backend server status and API routing")
+        print("   3. Check database connection and phone_codes collection")
+    else:
+        print("   1. Phone codes API endpoints are production-ready")
+        print("   2. Consider initializing phone codes data if count is not 221")
+        print("   3. Verify frontend integration with these endpoints")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    basic_functionality_working = test_results['get_phone_codes_working'] and test_results['create_phone_code_working']
+    
+    if has_critical_issues or not basic_functionality_working:
+        print(f"\n❌ PHONE CODES API TEST RESULT: CRITICAL ISSUES FOUND")
+        return False
+    else:
+        print(f"\n✅ PHONE CODES API TEST RESULT: ALL ENDPOINTS WORKING CORRECTLY")
+        return True
+
 def test_country_city_module_finlandiya_gurcistan():
     """
     Country & City Module Backend Testing - Finlandiya ve Gürcistan Şehir Verilerini Doğrula
