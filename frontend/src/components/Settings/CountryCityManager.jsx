@@ -463,31 +463,29 @@ const CountryCityManager = () => {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                   <MapPin className="h-5 w-5 mr-2 text-green-600" />
-                  {selectedCountry.code === 'ALL' ? 'Tüm Şehirler' : `${selectedCountry.name} Şehirleri`}
+                  {selectedCountry.name} Şehirleri
                   <span className="ml-2 bg-gray-100 px-3 py-1 rounded-full text-sm">
                     {cities.length}
                   </span>
                 </h2>
-                {selectedCountry.code !== 'ALL' && (
-                  <div className="flex space-x-2">
-                    <Button
-                      onClick={() => setShowBulkImportModal(true)}
-                      size="sm"
-                      variant="outline"
-                    >
-                      <Upload className="h-4 w-4 mr-1" />
-                      Toplu İçe Aktar
-                    </Button>
-                    <Button
-                      onClick={() => setShowAddCityModal(true)}
-                      size="sm"
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Şehir Ekle
-                    </Button>
-                  </div>
-                )}
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => setShowBulkImportModal(true)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    <Upload className="h-4 w-4 mr-1" />
+                    Toplu İçe Aktar
+                  </Button>
+                  <Button
+                    onClick={() => setShowAddCityModal(true)}
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Şehir Ekle
+                  </Button>
+                </div>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
