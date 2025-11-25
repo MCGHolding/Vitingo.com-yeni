@@ -95,18 +95,11 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
     return colors[eventType] || '#6B7280';
   };
 
-  // Handle date select (create new event)
+  // Handle date select - DISABLED: Only use "Yeni Toplantı Talebi" button
   const handleDateSelect = (selectInfo) => {
-    const start = moment(selectInfo.start);
-    const end = moment(selectInfo.end);
-    
-    setEventForm({
-      ...eventForm,
-      start_datetime: start.format('YYYY-MM-DDTHH:mm'),
-      end_datetime: end.format('YYYY-MM-DDTHH:mm'),
-      all_day: selectInfo.allDay
-    });
-    setShowCreateModal(true);
+    // Do nothing - direct calendar click disabled
+    // User must use "Yeni Toplantı Talebi" button to create meetings
+    console.log('Direct calendar click disabled. Use "Yeni Toplantı Talebi" button.');
   };
 
   // Handle event click
