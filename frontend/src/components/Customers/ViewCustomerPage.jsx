@@ -373,13 +373,19 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Oluşturulma:</span>
-                    <span className="text-sm font-medium text-gray-900">{formatDate(customer.created_at)}</span>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Oluşturma Tarihi:</span>
+                    <span className="text-sm font-medium text-gray-900">{formatDate(customer.createdAt || customer.created_at)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  {(customer.createdBy || customer.created_by) && (
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Oluşturan:</span>
+                      <span className="text-sm font-medium text-gray-900">{customer.createdBy || customer.created_by}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center py-2 border-t pt-3">
                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Son Güncelleme:</span>
-                    <span className="text-sm font-medium text-gray-900">{formatDate(customer.updated_at)}</span>
+                    <span className="text-sm font-medium text-gray-900">{formatDate(customer.updatedAt || customer.updated_at)}</span>
                   </div>
                 </div>
               </CardContent>
