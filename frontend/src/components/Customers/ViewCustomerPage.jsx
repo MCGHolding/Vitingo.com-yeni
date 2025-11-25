@@ -95,7 +95,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri Türü</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.customer_type || '-'}</p>
+                    <p className="text-base text-gray-700 mt-1">{customer.customerType || customer.customer_type || '-'}</p>
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Sektör</label>
