@@ -1382,27 +1382,42 @@ async def delete_convention_center(center_id: str):
 
 @api_router.post("/library/convention-centers/bulk-import")
 async def bulk_import_convention_centers(data: dict):
-    """Bulk import convention centers"""
+    """Bulk import convention centers from CSV format: Country, City, Convention Center"""
     try:
-        centers_data = data.get("centers", [])
-        country = data.get("country", "")
-        city = data.get("city", "")
+        import_text = data.get("import_text", "")
         
-        if not country or not city:
-            raise HTTPException(status_code=400, detail="Country and city are required")
-        
-        # Get existing centers for this city
-        existing_centers = await db.convention_centers.find({"country": country, "city": city}).to_list(None)
-        existing_names = {center['name'].lower() for center in existing_centers}
+        if not import_text or not import_text.strip():
+            raise HTTPException(status_code=400, detail="Import text is required")
         
         success_count = 0
         update_count = 0
         error_count = 0
+        errors = []
         
-        for center_name in centers_data:
+        # Parse lines
+        lines = import_text.strip().split('\n')
+        
+        for line_num, line in enumerate(lines, 1):
             try:
-                center_name = center_name.strip()
-                if not center_name:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Parse CSV: Country, City, Convention Center
+                parts = [p.strip() for p in line.split(',')]
+                
+                if len(parts) < 3:
+                    error_count += 1
+                    errors.append(f"Line {line_num}: Not enough columns (need: Country, City, Convention Center)")
+                    continue
+                
+                country = parts[0]
+                city = parts[1]
+                center_name = parts[2]
+                
+                if not country or not city or not center_name:
+                    error_count += 1
+                    errors.append(f"Line {line_num}: Empty values not allowed")
                     continue
                 
                 # Check if exists
@@ -1431,15 +1446,18 @@ async def bulk_import_convention_centers(data: dict):
                         "website": ""
                     })
                     success_count += 1
+                    
             except Exception as err:
-                logger.error(f"Error processing center {center_name}: {str(err)}")
+                logger.error(f"Error processing line {line_num}: {str(err)}")
                 error_count += 1
+                errors.append(f"Line {line_num}: {str(err)}")
         
         return {
             "message": "Bulk import completed",
             "created": success_count,
             "updated": update_count,
-            "errors": error_count
+            "errors": error_count,
+            "error_details": errors[:10]  # Return first 10 errors
         }
     except HTTPException:
         raise
