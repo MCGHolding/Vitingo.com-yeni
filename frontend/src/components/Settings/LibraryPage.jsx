@@ -144,7 +144,8 @@ const LibraryPage = ({ onBack }) => {
     { id: 'customer-types', label: 'Müşteri Türleri', icon: Tag },
     { id: 'sectors', label: 'Sektörler', icon: Building },
     { id: 'countries-cities', label: 'Ülke & Şehir', icon: Globe },
-    { id: 'phone-codes', label: 'Telefon Kodları', icon: Tag }
+    { id: 'phone-codes', label: 'Telefon Kodları', icon: Tag },
+    { id: 'convention-centers', label: 'Fuar Merkezleri', icon: Building }
   ];
 
   return (
