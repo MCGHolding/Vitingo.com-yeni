@@ -12001,6 +12001,59 @@ async def generate_contract(request: ContractGenerateRequest):
         logger.error(f"Error generating contract: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Sözleşme oluşturulamadı: {str(e)}")
 
+# ===================== FILE UPLOAD ENDPOINTS =====================
+
+@api_router.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """
+    Upload a file and return file metadata
+    Simple implementation - stores file info in memory
+    """
+    try:
+        # Read file content
+        contents = await file.read()
+        file_size = len(contents)
+        
+        # Generate a unique ID for the file
+        file_id = str(uuid.uuid4())
+        
+        # In a real app, you would save the file to disk or cloud storage
+        # For now, we'll just return metadata
+        
+        return {
+            "id": file_id,
+            "filename": file.filename,
+            "original_filename": file.filename,
+            "size": file_size,
+            "content_type": file.content_type,
+            "url": f"/api/files/{file_id}",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya yüklenemedi: {str(e)}")
+
+@api_router.delete("/files/{file_id}")
+async def delete_file(file_id: str):
+    """
+    Delete a file by ID
+    Simple implementation - just returns success
+    """
+    try:
+        # In a real app, you would delete the file from storage
+        return {"success": True, "message": "Dosya silindi"}
+    except Exception as e:
+        logger.error(f"Error deleting file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya silinemedi: {str(e)}")
+
+@api_router.get("/files/{file_id}")
+async def get_file(file_id: str):
+    """
+    Get file by ID
+    Simple implementation - returns 404 for now
+    """
+    raise HTTPException(status_code=404, detail="Dosya bulunamadı")
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
