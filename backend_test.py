@@ -26149,17 +26149,17 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Run the specific test requested in the review
-    print("\n🔍 Running Countries and Cities Seed Data Test...")
+    print("\n🔍 Running Final Countries and Cities Seed Data Test...")
     try:
-        result = test_countries_and_cities_seed_data()
+        result = test_final_countries_cities_seed_data()
         if result:
-            print("\n🎉 COUNTRIES AND CITIES SEED DATA TEST PASSED!")
+            print("\n🎉 FINAL COUNTRIES AND CITIES SEED DATA TEST PASSED!")
             sys.exit(0)
         else:
-            print("\n❌ COUNTRIES AND CITIES SEED DATA TEST FAILED!")
+            print("\n❌ FINAL COUNTRIES AND CITIES SEED DATA TEST FAILED!")
             sys.exit(1)
     except Exception as e:
-        print(f"❌ Countries and Cities Seed Data test failed with error: {str(e)}")
+        print(f"❌ Final Countries and Cities Seed Data test failed with error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
