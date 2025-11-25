@@ -417,24 +417,26 @@ const CountryCityManager = () => {
                     {cities.length}
                   </span>
                 </h2>
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={() => setShowBulkImportModal(true)}
-                    size="sm"
-                    variant="outline"
-                  >
-                    <Upload className="h-4 w-4 mr-1" />
-                    Toplu İçe Aktar
-                  </Button>
-                  <Button
-                    onClick={() => setShowAddCityModal(true)}
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Şehir Ekle
-                  </Button>
-                </div>
+                {selectedCountry.code !== 'ALL' && (
+                  <div className="flex space-x-2">
+                    <Button
+                      onClick={() => setShowBulkImportModal(true)}
+                      size="sm"
+                      variant="outline"
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      Toplu İçe Aktar
+                    </Button>
+                    <Button
+                      onClick={() => setShowAddCityModal(true)}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Şehir Ekle
+                    </Button>
+                  </div>
+                )}
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
