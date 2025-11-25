@@ -898,16 +898,22 @@ const CountryCityManager = () => {
               </div>
             </div>
             <div className="flex justify-end space-x-2 mt-6">
-              <Button variant="outline" onClick={() => {
-                setShowBulkImportModal(false);
-                setBulkImportCountry('');
-                setBulkImportText('');
-              }}>
-                İptal
-              </Button>
-              <Button 
+              <button 
                 type="button"
-                onClick={async () => {
+                onClick={() => {
+                  setShowBulkImportModal(false);
+                  setBulkImportCountry('');
+                  setBulkImportText('');
+                }}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                İptal
+              </button>
+              <button 
+                type="button"
+                onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('İçe Aktar clicked!', { bulkImportCountry, bulkImportText });
                 if (!bulkImportCountry) {
                   toast({ title: "Uyarı", description: "Lütfen ülke seçin", variant: "destructive" });
