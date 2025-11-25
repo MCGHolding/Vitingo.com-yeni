@@ -104,7 +104,18 @@ MAJOR_COUNTRIES_CITIES = {
     "Gine": ["Conakry", "Nzérékoré", "Kankan", "Kindia", "Labé", "Guéckédou", "Macenta", "Kissidougou", "Mamou", "Siguiri", "Boké", "Dubréka", "Faranah", "Kamsar", "Forecariah", "Coyah", "Pita", "Fria", "Télimélé", "Dabola"],
     "Gine-Bissau": ["Bissau", "Bafatá", "Gabú", "Bissorã", "Bolama", "Cacheu", "Bubaque", "Catió", "Mansôa", "Buba", "Quebo", "Farim", "Canchungo", "São Domingos", "Quinhámel", "Fulacunda", "Contuboel", "Bambadinca", "Pitche", "Bigene"],
     "Guyana": ["Georgetown", "Linden", "New Amsterdam", "Anna Regina", "Bartica", "Skeldon", "Rosignol", "Mahaica", "Vreed-en-Hoop", "Parika", "Charity", "Corriverton", "Lethem", "Mabaruma", "Mahdia", "Paradise", "Diamond", "Eccles", "Good Hope", "Uitvlugt"],
-    "Güney Sudan": ["Juba", "Malakal", "Wau", "Yei", "Yambio", "Rumbek", "Bor", "Bentiu", "Aweil", "Kuajok", "Torit", "Maridi", "Nimule", "Tonj", "Kapoeta", "Pibor", "Gogrial", "Akobo", "Mundri", "Renk"]
+    "Güney Sudan": ["Juba", "Malakal", "Wau", "Yei", "Yambio", "Rumbek", "Bor", "Bentiu", "Aweil", "Kuajok", "Torit", "Maridi", "Nimule", "Tonj", "Kapoeta", "Pibor", "Gogrial", "Akobo", "Mundri", "Renk"],
+    # H harfi ile başlayan ülkeler (eksikler)
+    "Haiti": ["Port-au-Prince", "Carrefour", "Delmas", "Cap-Haïtien", "Pétionville", "Gonaïves", "Saint-Marc", "Les Cayes", "Verrettes", "Port-de-Paix", "Jacmel", "Jérémie", "Fort-Liberté", "Miragoâne", "Petit-Goâve", "Hinche", "Limbé", "Trou du Nord", "Ouanaminthe", "Thomazeau"],
+    "Hırvatistan": ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar", "Pula", "Slavonski Brod", "Karlovac", "Varaždin", "Šibenik", "Sisak", "Velika Gorica", "Dubrovnik", "Bjelovar", "Koprivnica", "Vinkovci", "Požega", "Vukovar", "Čakovec", "Samobor"],
+    "Honduras": ["Tegucigalpa", "San Pedro Sula", "Choloma", "La Ceiba", "El Progreso", "Choluteca", "Comayagua", "Puerto Cortés", "La Lima", "Danlí", "Siguatepeque", "Juticalpa", "Tocoa", "Villanueva", "Tela", "Olanchito", "Santa Rosa de Copán", "Catacamas", "La Paz", "Potrerillos"],
+    # I harfi ile başlayan ülkeler (eksikler)
+    "Irak": ["Bağdat", "Basra", "Musul", "Erbil", "Kerkük", "Necef", "Nasıriye", "Süleymaniye", "Kerbela", "Ramadi", "Dohuk", "Amarah", "Hillah", "Kut", "Samarra", "Baqubah", "Tikrit", "Fallujah", "Zakho", "Sinjar"],
+    "İran": ["Tahran", "Meşhed", "İsfahan", "Karaj", "Tebriz", "Şiraz", "Ahvaz", "Kum", "Kirmanşah", "Urmiye", "Reşt", "Zehdan", "Hemedan", "Kirman", "Arak", "Erdebil", "Yezd", "Bandar Abbas", "Esfahan", "Eslamshahr"],
+    "İzlanda": ["Reykjavik", "Kópavogur", "Hafnarfjörður", "Akureyri", "Reykjanesbær", "Garðabær", "Mosfellsbær", "Árborg", "Akranes", "Fjarðabyggð", "Ísafjörður", "Vestmannaeyjar", "Grindavík", "Hveragerði", "Selfoss", "Sauðárkrókur", "Dalvík", "Neskaupstaður", "Húsavík", "Bolungarvík"],
+    # İ harfi ile başlayan ülkeler (mevcut: İran, İrlanda, İsrail, İsveç, İsviçre, İspanya, İtalya, İzlanda zaten var)
+    # J harfi ile başlayan ülkeler (eksikler)
+    "Jamaika": ["Kingston", "Spanish Town", "Portmore", "Montego Bay", "May Pen", "Mandeville", "Old Harbour", "Savanna-la-Mar", "Port Antonio", "Linstead", "Half Way Tree", "Ocho Rios", "Morant Bay", "Santa Cruz", "Black River", "Bog Walk", "Brown's Town", "Falmouth", "Lucea", "Port Maria"]
 }
 
 # Generate Python code
