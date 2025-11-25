@@ -175,7 +175,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
   );
 };
 
-export default function AllCustomersPage({ onBackToDashboard, customers = [], refreshCustomers, onViewCustomer, onEditCustomer }) {
+export default function AllCustomersPage({ onBackToDashboard, customers = [], refreshCustomers, onViewCustomer, onEditCustomer, onNewCustomer }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearch, setTagSearch] = useState('');
