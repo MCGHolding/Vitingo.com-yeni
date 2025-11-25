@@ -772,9 +772,10 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Final Countries and Cities Seed Data Testing"
   stuck_tasks:
-    - "Dynamic Country/City Dropdowns Test - NewOpportunityFormPage"
+    - "Final Countries and Cities Seed Data Testing"
   completed_tests:
     - "Enhanced CallRecordForm with Dynamic Contact Person Dropdown and New Contact Addition Modal Testing"
     - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
