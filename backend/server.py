@@ -1225,16 +1225,57 @@ async def bulk_import_countries(data: dict):
 
 @api_router.post("/library/countries/initialize-defaults")
 async def initialize_default_countries():
-    """Initialize database with 195 UN member countries and their major cities"""
+    """Initialize database with 195 UN member countries and their major cities (20 each)"""
     try:
-        # Check if already initialized
-        existing_count = await db.countries.count_documents({})
-        if existing_count > 50:
-            return {"message": "Ülkeler zaten yüklenmiş", "count": existing_count}
+        from seed_data import COUNTRIES_AND_CITIES_SEED
         
-        # This will be populated with 195 countries and their top 10 cities
-        # For now, we'll create the structure and it will be called from frontend
-        return {"message": "Varsayılan ülkeler yüklenecek", "status": "ready"}
+        # Check if already initialized
+        existing_countries = await db.countries.count_documents({})
+        existing_cities = await db.cities.count_documents({})
+        
+        if existing_countries > 50 and existing_cities > 100:
+            return {
+                "message": "Varsayılan veriler zaten yüklenmiş",
+                "countries_count": existing_countries,
+                "cities_count": existing_cities,
+                "status": "already_initialized"
+            }
+        
+        # Clear existing data (optional - comment out if you want to keep existing)
+        # await db.countries.delete_many({})
+        # await db.cities.delete_many({})
+        
+        # Import countries
+        countries_data = COUNTRIES_AND_CITIES_SEED["countries"]
+        cities_data = COUNTRIES_AND_CITIES_SEED["cities"]
+        
+        countries_imported = 0
+        for country_dict in countries_data:
+            # Check if exists
+            existing = await db.countries.find_one({"code": country_dict["code"]})
+            if not existing:
+                country = LibraryCountry(**country_dict)
+                await db.countries.insert_one(country.dict())
+                countries_imported += 1
+        
+        # Import cities
+        cities_imported = 0
+        for city_dict in cities_data:
+            # Check if exists
+            existing = await db.cities.find_one({"id": city_dict["id"]})
+            if not existing:
+                city = LibraryCity(**city_dict)
+                await db.cities.insert_one(city.dict())
+                cities_imported += 1
+        
+        return {
+            "message": "Varsayılan veriler başarıyla yüklendi",
+            "countries_imported": countries_imported,
+            "cities_imported": cities_imported,
+            "total_countries": await db.countries.count_documents({}),
+            "total_cities": await db.cities.count_documents({}),
+            "status": "success"
+        }
         
     except Exception as e:
         logger.error(f"Error initializing defaults: {str(e)}")
