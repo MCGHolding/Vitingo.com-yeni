@@ -84,6 +84,21 @@ const PhoneCodeManager = () => {
       return;
     }
 
+    // Check for duplicates
+    const isDuplicate = phoneCodes.some(
+      code => code.country_code === formData.country_code || code.country === formData.country
+    );
+    
+    if (isDuplicate) {
+      toast({ 
+        title: "Uyarı", 
+        description: "Bu ülke veya ülke kodu zaten mevcut!", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/library/phone-codes`, {
         method: 'POST',
@@ -108,6 +123,8 @@ const PhoneCodeManager = () => {
         description: "Telefon kodu eklenirken hata oluştu", 
         variant: "destructive" 
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
