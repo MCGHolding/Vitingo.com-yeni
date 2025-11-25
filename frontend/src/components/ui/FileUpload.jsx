@@ -433,66 +433,77 @@ export default function FileUpload({
         )}
       </div>
 
-      {/* Uploaded Files List */}
+      {/* Uploaded Files List - Grid Layout (5 per row) */}
       {files.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <p className="text-sm font-medium text-gray-700">Yüklenen Dosyalar ({files.length})</p>
-          <div className="space-y-2">
+          <div className="grid grid-cols-5 gap-3">
             {files.map((file) => (
-              <Card key={file.id} className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    {getFileIcon(file.type)}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {file.original_filename}
-                      </p>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {file.type}
-                        </Badge>
-                        <span className="text-xs text-gray-500">
-                          {formatFileSize(file.file_size)}
-                        </span>
-                      </div>
+              <Card key={file.id} className="p-3 hover:shadow-lg transition-shadow">
+                <div className="flex flex-col space-y-2">
+                  {/* File Icon - Large and Centered */}
+                  <div className="flex justify-center">
+                    <div className="text-blue-500">
+                      {getFileIcon(file.type)}
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-1">
+                  {/* File Name - Truncated */}
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-900 truncate" title={file.original_filename}>
+                      {file.original_filename}
+                    </p>
+                  </div>
+                  
+                  {/* File Info */}
+                  <div className="flex flex-col items-center space-y-1">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                      {file.type}
+                    </Badge>
+                    <span className="text-[10px] text-gray-500">
+                      {formatFileSize(file.file_size)}
+                    </span>
+                  </div>
+                  
+                  {/* Action Buttons - Stacked Vertically */}
+                  <div className="flex flex-col space-y-1 pt-2">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      className="h-7 w-7 p-0 text-green-600 hover:text-green-800"
+                      className="h-7 w-full text-xs text-green-600 hover:text-green-800 hover:bg-green-50"
                       onClick={(e) => {
                         e.stopPropagation();
                         handlePreviewFile(file);
                       }}
                     >
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-3 w-3 mr-1" />
+                      Önizle
                     </Button>
 
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      className="h-7 w-7 p-0 text-blue-600 hover:text-blue-800"
+                      className="h-7 w-full text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDownloadFile(file.id, file.original_filename);
                       }}
                     >
-                      <Download className="h-3.5 w-3.5" />
+                      <Download className="h-3 w-3 mr-1" />
+                      İndir
                     </Button>
                     
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
-                      className="h-7 w-7 p-0 text-red-600 hover:text-red-800"
+                      className="h-7 w-full text-xs text-red-600 hover:text-red-800 hover:bg-red-50"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemoveFile(file.id);
                       }}
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-3 w-3 mr-1" />
+                      Sil
                     </Button>
                   </div>
                 </div>
