@@ -1318,6 +1318,135 @@ async def initialize_phone_codes(force: bool = False):
         logger.error(f"Error initializing phone codes: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== CONVENTION CENTERS ====================
+@api_router.get("/library/convention-centers", response_model=List[LibraryConventionCenter])
+async def get_convention_centers(country: Optional[str] = None, city: Optional[str] = None):
+    """Get all convention centers, optionally filtered by country and/or city"""
+    try:
+        query = {}
+        if country:
+            query['country'] = country
+        if city:
+            query['city'] = city
+        
+        centers = await db.convention_centers.find(query).sort("name", 1).collation({"locale": "tr"}).to_list(None)
+        # Remove _id from MongoDB documents
+        for center in centers:
+            center.pop('_id', None)
+        return [LibraryConventionCenter(**center) for center in centers]
+    except Exception as e:
+        logger.error(f"Error getting convention centers: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/convention-centers", response_model=LibraryConventionCenter)
+async def create_convention_center(center: LibraryConventionCenter):
+    """Create a new convention center"""
+    try:
+        center_dict = center.dict()
+        await db.convention_centers.insert_one(center_dict)
+        return center
+    except Exception as e:
+        logger.error(f"Error creating convention center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/convention-centers/{center_id}", response_model=LibraryConventionCenter)
+async def update_convention_center(center_id: str, center: LibraryConventionCenter):
+    """Update a convention center"""
+    try:
+        result = await db.convention_centers.update_one(
+            {"id": center_id},
+            {"$set": center.dict()}
+        )
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Convention center not found")
+        return center
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating convention center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/convention-centers/{center_id}")
+async def delete_convention_center(center_id: str):
+    """Delete a convention center"""
+    try:
+        result = await db.convention_centers.delete_one({"id": center_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Convention center not found")
+        return {"message": "Convention center deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting convention center: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/convention-centers/bulk-import")
+async def bulk_import_convention_centers(data: dict):
+    """Bulk import convention centers"""
+    try:
+        centers_data = data.get("centers", [])
+        country = data.get("country", "")
+        city = data.get("city", "")
+        
+        if not country or not city:
+            raise HTTPException(status_code=400, detail="Country and city are required")
+        
+        # Get existing centers for this city
+        existing_centers = await db.convention_centers.find({"country": country, "city": city}).to_list(None)
+        existing_names = {center['name'].lower() for center in existing_centers}
+        
+        success_count = 0
+        update_count = 0
+        error_count = 0
+        
+        for center_name in centers_data:
+            try:
+                center_name = center_name.strip()
+                if not center_name:
+                    continue
+                
+                # Check if exists
+                existing = await db.convention_centers.find_one({
+                    "country": country,
+                    "city": city,
+                    "name": center_name
+                })
+                
+                if existing:
+                    # Update existing
+                    await db.convention_centers.update_one(
+                        {"id": existing['id']},
+                        {"$set": {"name": center_name}}
+                    )
+                    update_count += 1
+                else:
+                    # Create new
+                    center_id = str(uuid.uuid4())
+                    await db.convention_centers.insert_one({
+                        "id": center_id,
+                        "name": center_name,
+                        "country": country,
+                        "city": city,
+                        "address": "",
+                        "website": ""
+                    })
+                    success_count += 1
+            except Exception as err:
+                logger.error(f"Error processing center {center_name}: {str(err)}")
+                error_count += 1
+        
+        return {
+            "message": "Bulk import completed",
+            "created": success_count,
+            "updated": update_count,
+            "errors": error_count
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in bulk import: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/library/countries/bulk-import")
 async def bulk_import_countries(data: dict):
     """Bulk import countries and cities"""
