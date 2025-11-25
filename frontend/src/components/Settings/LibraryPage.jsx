@@ -317,7 +317,11 @@ const LibraryPage = ({ onBack }) => {
       {showAddCustomerTypeModal && (
         <AddCustomerTypeModal
           isOpen={showAddCustomerTypeModal}
-          onClose={() => setShowAddCustomerTypeModal(false)}
+          onClose={() => {
+            setShowAddCustomerTypeModal(false);
+            // Reload customer types when modal closes
+            loadCustomerTypes();
+          }}
           onSuccess={() => {
             setShowAddCustomerTypeModal(false);
             loadCustomerTypes();
@@ -328,7 +332,11 @@ const LibraryPage = ({ onBack }) => {
       {showAddSectorModal && (
         <AddSectorModal
           isOpen={showAddSectorModal}
-          onClose={() => setShowAddSectorModal(false)}
+          onClose={() => {
+            setShowAddSectorModal(false);
+            // Reload sectors when modal closes
+            loadSectors();
+          }}
           onSuccess={() => {
             setShowAddSectorModal(false);
             loadSectors();
