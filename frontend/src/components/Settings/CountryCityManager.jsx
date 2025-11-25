@@ -449,7 +449,11 @@ const CountryCityManager = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditingCountry(country);
-                          setNewCountryData({ name: country.name, code: country.code });
+                          setNewCountryData({ 
+                            name: country.name, 
+                            code: country.code,
+                            continent: country.continent || CONTINENT_MAP[country.code] || ''
+                          });
                           setShowEditCountryModal(true);
                         }}
                         className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
