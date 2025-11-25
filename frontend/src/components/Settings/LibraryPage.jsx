@@ -321,6 +321,8 @@ const LibraryPage = ({ onBack }) => {
             )}
           </div>
         )}
+        </>
+        )}
       </div>
 
       {/* Modals */}
