@@ -905,7 +905,10 @@ const CountryCityManager = () => {
               }}>
                 İptal
               </Button>
-              <Button onClick={async () => {
+              <Button 
+                type="button"
+                onClick={async () => {
+                console.log('İçe Aktar clicked!', { bulkImportCountry, bulkImportText });
                 if (!bulkImportCountry) {
                   toast({ title: "Uyarı", description: "Lütfen ülke seçin", variant: "destructive" });
                   return;
