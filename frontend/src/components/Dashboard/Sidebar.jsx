@@ -28,6 +28,7 @@ import {
   Files,
   Building,
   Building2,
+  Archive,
   UserX,
   Star,
   UserRound,
