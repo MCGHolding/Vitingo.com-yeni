@@ -6,8 +6,6 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
-import CountrySelect from '../ui/CountrySelect';
-import CitySelect from '../ui/CitySelect';
 import FileUpload from '../ui/FileUpload';
 import { 
   X,
