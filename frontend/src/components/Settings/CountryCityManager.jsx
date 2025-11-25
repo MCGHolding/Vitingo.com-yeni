@@ -337,7 +337,9 @@ const CountryCityManager = () => {
 
   const filteredCountries = countries.filter(c => {
     const matchesSearch = c.name.toLowerCase().includes(countrySearch.toLowerCase());
-    const matchesContinent = selectedContinent === 'Tümü' || CONTINENT_MAP[c.code] === selectedContinent;
+    // Use continent from backend if available, otherwise fallback to CONTINENT_MAP
+    const countryContinent = c.continent || CONTINENT_MAP[c.code] || '';
+    const matchesContinent = selectedContinent === 'Tümü' || countryContinent === selectedContinent;
     return matchesSearch && matchesContinent;
   });
 
