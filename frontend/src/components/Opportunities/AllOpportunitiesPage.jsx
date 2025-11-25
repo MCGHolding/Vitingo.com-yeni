@@ -786,6 +786,24 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  className={`h-7 w-7 p-0 ${opportunity.is_favorite ? 'text-yellow-500 hover:text-yellow-600' : 'text-gray-400 hover:text-yellow-500'} hover:bg-yellow-50`}
+                                  onClick={() => toggleFavorite(opportunity.id, opportunity.is_favorite)}
+                                >
+                                  <Star className={`h-3 w-3 ${opportunity.is_favorite ? 'fill-yellow-500' : ''}`} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{opportunity.is_favorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
                                   className="h-7 w-7 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
                                   onClick={() => handleDelete(opportunity)}
                                 >
