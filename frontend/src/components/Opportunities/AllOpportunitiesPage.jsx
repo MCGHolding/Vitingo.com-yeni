@@ -115,6 +115,35 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
     loadOpportunities();
   }, []);
 
+  // Toggle favorite
+  const toggleFavorite = async (opportunityId, currentFavoriteStatus) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/opportunities/${opportunityId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_favorite: !currentFavoriteStatus })
+      });
+      
+      if (response.ok) {
+        toast({
+          title: !currentFavoriteStatus ? "Favorilere Eklendi" : "Favorilerden Çıkarıldı",
+          description: `Fırsat ${!currentFavoriteStatus ? 'favorilere eklendi' : 'favorilerden çıkarıldı'}`,
+        });
+        loadOpportunities(); // Reload to reflect changes
+      } else {
+        throw new Error('Favori güncellenemedi');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Favori durumu güncellenemedi",
+      });
+    }
+  };
+
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
