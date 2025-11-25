@@ -865,8 +865,12 @@ const CountryCityManager = () => {
 
       {/* Bulk Import Modal */}
       {showBulkImportModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => {
+          setShowBulkImportModal(false);
+          setBulkImportCountry('');
+          setBulkImportText('');
+        }}>
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold mb-4">Toplu Şehir İçe Aktarma</h3>
             <div className="space-y-4">
               <div>
