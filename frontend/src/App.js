@@ -934,6 +934,11 @@ const Dashboard = () => {
     setCurrentView('meeting-requests');
   };
 
+  const handleArchivedMeetings = () => {
+    console.log('📚 handleArchivedMeetings called - setting view to calendar-archive');
+    setCurrentView('calendar-archive');
+  };
+
   const handleAllBriefs = () => {
     setCurrentView('all-briefs');
   };
