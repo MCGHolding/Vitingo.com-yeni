@@ -225,9 +225,12 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
           });
           
           if (calendarResponse.ok) {
-            console.log('✅ Calendar event also created successfully');
+            const calendarResult = await calendarResponse.json();
+            console.log('✅ Calendar event also created successfully:', calendarResult);
           } else {
-            console.warn('⚠️ Calendar event creation failed, but meeting request was created');
+            const errorText = await calendarResponse.text();
+            console.error('⚠️ Calendar event creation failed:', errorText);
+            console.warn('Meeting request was created but calendar event failed');
           }
         } catch (calendarError) {
           console.error('Error creating calendar event:', calendarError);
