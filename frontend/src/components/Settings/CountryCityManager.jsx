@@ -343,6 +343,28 @@ const CountryCityManager = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
+              {/* "Tüm Ülkeler" option at the top */}
+              <div
+                className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b-2 border-gray-200 ${
+                  selectedCountry?.code === 'ALL' ? 'bg-blue-50 border-l-4 border-blue-600' : ''
+                }`}
+                onClick={() => setSelectedCountry({ id: 'ALL', name: 'Tüm Ülkeler', code: 'ALL' })}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Globe className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="font-bold text-gray-900">Tüm Ülkeler</div>
+                      <div className="text-sm text-gray-500">Tüm şehirleri görüntüle</div>
+                    </div>
+                  </div>
+                  <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {allCities.length}
+                  </div>
+                </div>
+              </div>
+
+              {/* Individual countries */}
               {filteredCountries.map((country) => (
                 <div
                   key={country.id}
@@ -352,21 +374,28 @@ const CountryCityManager = () => {
                   onClick={() => setSelectedCountry(country)}
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900">{country.name}</div>
+                    <div className="flex-1 min-w-0 mr-2">
+                      <div className="font-medium text-gray-900 truncate">{country.name}</div>
                       <div className="text-sm text-gray-500">{country.code}</div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteCountry(country.id, country.name);
-                      }}
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      {countryCityCounts[country.name] > 0 && (
+                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">
+                          {countryCityCounts[country.name]}
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCountry(country.id, country.name);
+                        }}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
