@@ -199,7 +199,29 @@ MAJOR_COUNTRIES_CITIES = {
     "Orta Afrika Cumhuriyeti": ["Bangui", "Bimbo", "Berbérati", "Carnot", "Bambari", "Bouar", "Bossangoa", "Bria", "Bangassou", "Nola", "Kaga-Bandoro", "Zemio", "Mobaye", "Gamboula", "Paoua", "Sibut", "Bozoum", "Batangafo", "Obo", "Rafaï"],
     "Suriye": ["Şam", "Halep", "Humus", "Lazkiye", "Hama", "Rakka", "Deir ez-Zor", "Haseke", "Kamışlı", "Tartus", "Daraa", "İdlib", "Cebele", "Sweida", "Münbiç", "Afrin", "Azaz", "Jarablus", "Tel Abyad", "Kobani"],
     "Finlandiya": ["Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu", "Turku", "Jyväskylä", "Lahti", "Kuopio", "Pori", "Kouvola", "Joensuu", "Lappeenranta", "Hämeenlinna", "Vaasa", "Seinäjoki", "Rovaniemi", "Mikkeli", "Kotka", "Salo"],
-    "Gürcistan": ["Tiflis", "Kutaisi", "Batumi", "Rustavi", "Zugdidi", "Gori", "Poti", "Khashuri", "Samtredia", "Senaki", "Zestafoni", "Marneuli", "Telavi", "Akhaltsikhe", "Kobuleti", "Ozurgeti", "Kaspi", "Chiatura", "Tskaltubo", "Sagarejo"]
+    "Gürcistan": ["Tiflis", "Kutaisi", "Batumi", "Rustavi", "Zugdidi", "Gori", "Poti", "Khashuri", "Samtredia", "Senaki", "Zestafoni", "Marneuli", "Telavi", "Akhaltsikhe", "Kobuleti", "Ozurgeti", "Kaspi", "Chiatura", "Tskaltubo", "Sagarejo"],
+    # Kullanıcı talebi ile eklenen ülkeler
+    "Ürdün": ["Amman", "Zarqa", "Irbid", "Russeifa", "Aqaba", "Madaba", "Jerash", "Mafraq", "Karak", "Tafilah", "Ma'an", "Salt", "Ajloun", "Petra", "Wadi Musa", "Ramtha", "Umm Qais", "Azraq", "Sahab", "Fuheis"],
+    "Özbekistan": ["Taşkent", "Semerkand", "Namangan", "Andican", "Nukus", "Buhara", "Karakalpakistan", "Fergana", "Cizak", "Urganch", "Karşı", "Kokand", "Çirçik", "Angren", "Margilan", "Termez", "Navoi", "Hiva", "Gazalkent", "Bekabat"],
+    "Zimbabve": ["Harare", "Bulawayo", "Chitungwiza", "Mutare", "Gweru", "Epworth", "Kwekwe", "Kadoma", "Masvingo", "Chinhoyi", "Marondera", "Norton", "Chegutu", "Bindura", "Zvishavane", "Victoria Falls", "Hwange", "Redcliff", "Rusape", "Kariba"],
+    "Zambiya": ["Lusaka", "Kitwe", "Ndola", "Kabwe", "Chingola", "Mufulira", "Livingstone", "Luanshya", "Kasama", "Chipata", "Mazabuka", "Solwezi", "Mongu", "Choma", "Mansa", "Kabompo", "Mpika", "Nchelenge", "Kapiri Mposhi", "Monze"],
+    "Yeşil Burun Adaları": ["Praia", "Mindelo", "Santa Maria", "Assomada", "Porto Novo", "Espargos", "Tarrafal", "Pedra Badejo", "São Filipe", "Ribeira Grande", "Cova Figueira", "Sal Rei", "Vila do Maio", "Ponta do Sol"],
+    "Yemen": ["Sana", "Aden", "Taiz", "Hodeida", "Mukalla", "Ibb", "Dhamar", "Amran", "Saada", "Seiyun", "Zinjibar", "Hajjah", "Marib", "Lahij", "Al Bayda", "Rida", "Ataq", "Al Ghaydah", "Al Hazm", "Al Mahwit"],
+    "Venezuela": ["Caracas", "Maracaibo", "Valencia", "Barquisimeto", "Maracay", "Ciudad Guayana", "Barcelona", "Maturín", "Puerto La Cruz", "Petare", "Turmero", "Ciudad Bolívar", "Mérida", "Santa Teresa", "Barinas", "Cumaná", "San Cristóbal", "Cabimas", "Guanare", "Los Teques"],
+    "Vatikan": ["Vatikan"],
+    "Vanuatu": ["Port Vila", "Luganville", "Norsup", "Isangel", "Sola", "Lakatoro", "Port Olry", "Saratamata", "Lenakel", "Longana"],
+    "Uruguay": ["Montevideo", "Salto", "Paysandú", "Las Piedras", "Rivera", "Maldonado", "Tacuarembó", "Melo", "Mercedes", "Artigas", "Minas", "San José de Mayo", "Durazno", "Florida", "Treinta y Tres", "Rocha", "San Carlos", "Fray Bentos", "Trinidad", "Carmelo"],
+    "Umman": ["Maskat", "Seeb", "Salalah", "Bawshar", "Sohar", "As Suwayq", "Ibri", "Saham", "Barka", "Rustaq", "Al Buraimi", "Nizwa", "Sur", "Bahla", "Al Khaburah", "Shinas", "Izki", "Bidiyah", "Adam", "Duqm"],
+    "Ukrayna": ["Kiev", "Harkiv", "Odesa", "Dnipro", "Donetsk", "Zaporijya", "Lviv", "Krıvoy Rog", "Mikolaiv", "Mariupol", "Vinnitsya", "Herson", "Poltava", "Çernigiv", "Çerkası", "Jitomir", "Sumy", "Rivne", "Hmelnıtskıy", "İvano-Frankivsk"],
+    "Uganda": ["Kampala", "Gulu", "Lira", "Mbarara", "Jinja", "Mbale", "Mukono", "Kasese", "Masaka", "Entebbe", "Njeru", "Kitgum", "Arua", "Soroti", "Kabale", "Fort Portal", "Tororo", "Hoima", "Bushenyi", "Iganga"],
+    "Sırbistan": ["Belgrad", "Novi Sad", "Niş", "Kragujevac", "Subotica", "Zrenjanin", "Pançova", "Çaçak", "Kruşevac", "Leskovac", "Smederevo", "Novi Pazar", "Vranje", "Valjevo", "Kikinda", "Šabac", "Užice", "Sombor", "Požarevac", "Pirot"],
+    "Saint Vincent ve Grenadinler": ["Kingstown", "Georgetown", "Byera Village", "Biabou", "Barrouallie", "Port Elizabeth", "Chateaubelair", "Layou"],
+    "Saint Lucia": ["Castries", "Vieux Fort", "Micoud", "Soufrière", "Dennery", "Gros Islet", "Choiseul", "Laborie", "Anse La Raye", "Canaries"],
+    "Saint Kitts ve Nevis": ["Basseterre", "Charlestown", "Dieppe Bay Town", "Monkey Hill", "Newcastle", "Cayon", "Sandy Point Town"],
+    "Macaristan": ["Budapeşte", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza", "Kecskemét", "Székesfehérvár", "Szombathely", "Szolnok", "Tatabánya", "Kaposvár", "Érd", "Veszprém", "Békéscsaba", "Zalaegerszeg", "Sopron", "Eger", "Nagykanizsa"],
+    "Kazakistan": ["Astana", "Almatı", "Şımkent", "Karagandı", "Aktobe", "Taraz", "Pavlodar", "Öskemen", "Semey", "Oral", "Atırau", "Kostanay", "Kızılorda", "Petropavl", "Aktau", "Temirtau", "Türkistan", "Ekibastuz", "Rudnıy", "Balhaş"],
+    "Katar": ["Doha", "Al Rayyan", "Umm Salal", "Al Wakrah", "Al Khor", "Mesaieed", "Dukhan", "Al Shamal", "Al Ruwais"],
+    "Esvatini": ["Mbabane", "Manzini", "Lobamba", "Big Bend", "Malkerns", "Nhlangano", "Siteki", "Piggs Peak", "Hluti", "Simunye"]
 }
 
 # Generate Python code
