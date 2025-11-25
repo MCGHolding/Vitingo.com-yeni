@@ -655,11 +655,19 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                   <MapPin className="inline w-4 h-4 mr-1" />
                   Ülke <span className="text-red-500">*</span>
                 </label>
-                <CountrySelect
+                <Select
                   value={formData.country}
-                  onChange={handleCountryChange}
-                  placeholder="Ülke seçiniz..."
-                />
+                  onValueChange={(value) => handleInputChange('country', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Ülke seçiniz..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {ulkeler.map(ulke => (
+                      <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Şehir */}
@@ -668,16 +676,20 @@ export default function NewPersonFormPage({ onClose, onSave }) {
                   <MapPin className="inline w-4 h-4 mr-1" />
                   Şehir <span className="text-red-500">*</span>
                 </label>
-                <CitySelect
-                  country={formData.country}
+                <Select
                   value={formData.city}
-                  onChange={(city) => {
-                    const cityName = city ? city.name : '';
-                    handleInputChange('city', cityName);
-                  }}
-                  placeholder="Şehir seçiniz..."
+                  onValueChange={(value) => handleInputChange('city', value)}
                   disabled={!formData.country}
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={!formData.country ? "Önce ülke seçiniz..." : "Şehir seçiniz..."} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {sehirler.map(sehir => (
+                      <SelectItem key={sehir} value={sehir}>{sehir}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
