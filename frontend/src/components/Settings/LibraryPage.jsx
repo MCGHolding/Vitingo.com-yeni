@@ -206,12 +206,7 @@ const LibraryPage = ({ onBack }) => {
         
         {/* Phone Codes Manager (Full Width) */}
         {activeTab === 'phone-codes' && (
-          <div className="p-6">
-            <div className="text-center text-gray-500">
-              <p>Telefon Kodları modülü yakında eklenecek...</p>
-              <p className="text-sm mt-2">221 telefon kodu API'de hazır</p>
-            </div>
-          </div>
+          <PhoneCodeManager />
         )}
 
         {/* Other tabs content */}
