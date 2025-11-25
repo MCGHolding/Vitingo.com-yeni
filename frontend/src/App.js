@@ -1277,6 +1277,13 @@ const Dashboard = () => {
           />
         );
 
+      case 'library':
+        return (
+          <LibraryPage 
+            onBack={() => setCurrentView('settings')}
+          />
+        );
+
       case 'contracts':
         return (
           <ContractsPage 
