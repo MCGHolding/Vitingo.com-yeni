@@ -63,9 +63,13 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
           console.log('✅ API Response:', allOpportunities.length, 'opportunities loaded');
           console.log('📊 Sample opportunity:', allOpportunities[0]);
           
-          // Filter for open opportunities
+          // Filter for open opportunities - EXCLUDE won and lost
           const openOps = allOpportunities.filter(op => 
-            op.status && (op.status.includes('open') || op.status.includes('active') || op.status === 'açık')
+            op.status && 
+            (op.status.includes('open') || op.status.includes('active') || op.status === 'açık') &&
+            !op.status.includes('won') && 
+            !op.status.includes('lost') &&
+            !op.status.includes('closed')
           );
           console.log('🎯 Filtered open opportunities:', openOps.length);
           
