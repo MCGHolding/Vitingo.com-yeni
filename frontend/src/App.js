@@ -129,7 +129,7 @@ import {
 const Dashboard = () => {
   useActivityTracker();
   const { user } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Changed to true - sidebar visible by default
 
   // ResizeObserver cleanup to prevent loop errors
   useEffect(() => {
