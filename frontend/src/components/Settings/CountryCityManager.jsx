@@ -347,7 +347,7 @@ const CountryCityManager = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center">
               <Globe className="h-5 w-5 mr-2 text-blue-600" />
-              Ülkeler ({countries.length})
+              Ülkeler ({filteredCountries.length})
             </h2>
             <Button
               onClick={() => setShowAddCountryModal(true)}
@@ -358,14 +358,43 @@ const CountryCityManager = () => {
               Ekle
             </Button>
           </div>
+          
+          {/* Continent Filter */}
+          <div className="mb-3">
+            <div className="flex flex-wrap gap-2">
+              {CONTINENTS.map(continent => (
+                <button
+                  key={continent}
+                  onClick={() => setSelectedContinent(continent)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    selectedContinent === continent
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {continent}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Search with clear button */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               value={countrySearch}
               onChange={(e) => setCountrySearch(e.target.value)}
               placeholder="Ülke ara..."
-              className="pl-10"
+              className="pl-10 pr-10"
             />
+            {countrySearch && (
+              <button
+                onClick={() => setCountrySearch('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
         
