@@ -297,32 +297,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   };
 
   // Handle country change and load cities
-  const handleCountryChange = async (countryCode) => {
-    console.log('Country changed to:', countryCode);
-    
-    // Find country name from countries list
-    const selectedCountry = countries.find(c => c.code === countryCode || c.iso2 === countryCode);
-    const countryName = selectedCountry ? selectedCountry.name : countryCode;
-    
-    setSelectedCountryCode(countryCode);
-    setFormData(prev => ({
-      ...prev,
-      country: countryName,
-      city: '' // Reset city when country changes
-    }));
-    
-    // Load cities for selected country
-    await loadCitiesByCountry(countryCode);
-  };
-
-  // Handle city change
-  const handleCityChange = (cityName) => {
-    console.log('City changed to:', cityName);
-    setFormData(prev => ({
-      ...prev,
-      city: cityName
-    }));
-  };
+  // Country and city change handled by useEffect above
 
   // Handle status change with new status creation
   const handleStatusChange = async (value) => {
