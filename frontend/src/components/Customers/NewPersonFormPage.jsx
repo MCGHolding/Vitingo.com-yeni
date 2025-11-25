@@ -218,7 +218,7 @@ export default function NewPersonFormPage({ onClose, onSave }) {
       phone: phoneNumber,
       mobile: phonePrefix + Math.floor(Math.random() * 900000000 + 100000000),
       email: email,
-      country: 'tr',
+      country: 'Türkiye',
       city: randomCity,
       address: randomAddress,
       notes: 'Fuar görüşmesinde tanışıldı.',
