@@ -270,7 +270,7 @@ countries_list = [
     ('SY', 'Suriye'), ('TJ', 'Tacikistan'), ('TZ', 'Tanzanya'), ('TH', 'Tayland'), ('TL', 'Doğu Timor'),
     ('TG', 'Togo'), ('TO', 'Tonga'), ('TT', 'Trinidad ve Tobago'), ('TN', 'Tunus'), ('TR', 'Türkiye'),
     ('TM', 'Türkmenistan'), ('TV', 'Tuvalu'), ('UG', 'Uganda'), ('UA', 'Ukrayna'), ('AE', 'Birleşik Arap Emirlikleri'),
-    ('GB', 'Birleşik Krallık'), ('US', 'Amerika Birleşik Devletleri'), ('UY', 'Uruguay'), ('UZ', 'Özbekistan'), ('VU', 'Vanuatu'),
+    ('GB', 'Birleşik Krallık'), ('US', 'ABD'), ('UY', 'Uruguay'), ('UZ', 'Özbekistan'), ('VU', 'Vanuatu'),
     ('VE', 'Venezuela'), ('VN', 'Vietnam'), ('YE', 'Yemen'), ('ZM', 'Zambiya'), ('ZW', 'Zimbabve')
 ]
 
