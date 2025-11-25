@@ -26856,17 +26856,17 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Run the specific test requested in the review
-    print("\n🔍 Running Final Countries and Cities Seed Data Test...")
+    print("\n🔍 Running Phone Codes API Endpoints Test...")
     try:
-        result = test_final_countries_cities_seed_data()
+        result = test_phone_codes_api_endpoints()
         if result:
-            print("\n🎉 FINAL COUNTRIES AND CITIES SEED DATA TEST PASSED!")
+            print("\n🎉 PHONE CODES API ENDPOINTS TEST PASSED!")
             sys.exit(0)
         else:
-            print("\n❌ FINAL COUNTRIES AND CITIES SEED DATA TEST FAILED!")
+            print("\n❌ PHONE CODES API ENDPOINTS TEST FAILED!")
             sys.exit(1)
     except Exception as e:
-        print(f"❌ Final Countries and Cities Seed Data test failed with error: {str(e)}")
+        print(f"❌ Phone Codes API Endpoints test failed with error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
