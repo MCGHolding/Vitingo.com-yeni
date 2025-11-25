@@ -59,7 +59,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     tags: [],
     address: '',
     country: '',
-    city: ''
+    city: '',
+    is_accounting_responsible: false
   }]);
   
   // Countries and cities from library
