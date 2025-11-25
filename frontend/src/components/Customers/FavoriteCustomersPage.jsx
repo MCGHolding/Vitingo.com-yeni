@@ -148,24 +148,14 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            onClick={onBackToDashboard}
-            className="flex items-center space-x-2"
-          >
-            <TrendingUp className="h-4 w-4" />
-            <span>Dashboard'a Dön</span>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-red-500" />
-              <span>Favori Müşteriler</span>
-            </h1>
-            <p className="text-gray-600 text-sm mt-1">
-              Son 1 yılda 3+ fatura ile yüksek aktivite gösteren müşteriler
-            </p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
+            <Heart className="h-8 w-8 text-red-500" />
+            <span>Favori Müşteriler</span>
+          </h1>
+          <p className="text-gray-600 text-sm mt-1">
+            Son 1 yılda 3+ fatura ile yüksek aktivite gösteren müşteriler
+          </p>
         </div>
       </div>
 
