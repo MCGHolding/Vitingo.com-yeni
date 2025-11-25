@@ -766,25 +766,15 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Müşteri Türü *
                 </label>
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <SearchableSelect
-                      options={(customerTypes || []).map(type => ({ value: type.value, label: type.name }))}
-                      value={formData.customer_type_id}
-                      onValueChange={(value) => handleInputChange('customer_type_id', value)}
-                      placeholder="Müşteri türü seçin..."
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAddCustomerTypeModal(true)}
-                    className="px-3"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                <SearchableSelect
+                  options={(customerTypes || []).map(type => ({ value: type.value, label: type.name }))}
+                  value={formData.customer_type_id}
+                  onValueChange={(value) => handleInputChange('customer_type_id', value)}
+                  placeholder="Müşteri türü seçin..."
+                  showAddNew={true}
+                  onAddNew={() => setShowAddCustomerTypeModal(true)}
+                  addNewLabel="+ Yeni Müşteri Türü Ekle"
+                />
               </div>
 
               {/* Sektör */}
