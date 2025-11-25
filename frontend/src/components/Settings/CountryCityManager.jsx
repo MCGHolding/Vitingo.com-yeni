@@ -166,7 +166,7 @@ const CountryCityManager = () => {
   const [showAddCityModal, setShowAddCityModal] = useState(false);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [countryCityCounts, setCountryCityCounts] = useState({});
-  const [allCities, setAllCities] = useState([]);
+  const [selectedContinent, setSelectedContinent] = useState('Tümü');
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
