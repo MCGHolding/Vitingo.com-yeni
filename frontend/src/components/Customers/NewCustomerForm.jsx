@@ -814,7 +814,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 <Input
                   value={formData.company_short_name}
                   onChange={(e) => handleInputChange('company_short_name', e.target.value)}
-                  placeholder="Örn: ABC Ltd"
+                  placeholder="Vitingo Expo"
                   required
                 />
               </div>
