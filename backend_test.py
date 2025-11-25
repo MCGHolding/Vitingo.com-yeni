@@ -1307,12 +1307,15 @@ def test_final_countries_cities_seed_data():
         print(f"❌ FAIL: Initialize endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"INITIALIZE_REQUEST_ERROR: {str(e)}")
     
-    # TEST 2: Ülkeleri Çekme - GET /api/library/countries
+    # TEST 2: Ülke Sayısını Doğrula
     print("\n" + "=" * 80)
-    print("TEST 2: ÜLKELERİ ÇEKME")
+    print("TEST 2: ÜLKE SAYISINI DOĞRULA")
     print("=" * 80)
     print("Endpoint: GET /api/library/countries")
-    print("Amaç: Yüklenen tüm ülkeleri getirmek")
+    print("Test: 1. GET request gönder")
+    print("      2. Dönen ülke sayısı EXACTLY 195 olmalı")
+    print("      3. Duplicate kontrol: Her ülke adı sadece 1 kez olmalı")
+    print("      4. 'Fransa' ve 'Türkiye'nin listede olduğunu doğrula")
     
     countries_endpoint = f"{BACKEND_URL}/api/library/countries"
     print(f"Testing endpoint: {countries_endpoint}")
@@ -1324,63 +1327,81 @@ def test_final_countries_cities_seed_data():
         
         if response.status_code == 200:
             print("✅ PASS: Countries endpoint başarıyla yanıt verdi")
-            test_results["countries_endpoint_working"] = True
             
             try:
                 countries = response.json()
-                print(f"Response type: {type(countries)}")
                 
                 if isinstance(countries, list):
                     country_count = len(countries)
-                    print(f"📊 Dönen ülke sayısı: {country_count}")
+                    test_results["test2_countries_count"] = country_count
+                    print(f"2. Dönen ülke sayısı: {country_count}")
                     
-                    if country_count >= 50:  # Should be around 195
-                        print("✅ PASS: Yeterli sayıda ülke döndü (50+ olmalı)")
-                        
-                        # Log first 3 countries
-                        print("\n2. İlk 3 ülkenin adını ve kodunu loglama...")
-                        for i, country in enumerate(countries[:3], 1):
-                            name = country.get("name", "N/A")
-                            code = country.get("code", "N/A")
-                            print(f"   {i}. {name} ({code})")
-                        
-                        # Check if Turkey is in the list
-                        turkey_found = False
-                        usa_found = False
-                        for country in countries:
-                            country_name = country.get("name", "")
-                            if "Türkiye" in country_name or "Turkey" in country_name:
-                                turkey_found = True
-                                print(f"✅ PASS: Türkiye bulundu: {country_name}")
-                            if "Amerika" in country_name or "United States" in country_name:
-                                usa_found = True
-                                print(f"✅ PASS: ABD bulundu: {country_name}")
-                        
-                        if not turkey_found:
-                            print("⚠️  WARNING: Türkiye ülke listesinde bulunamadı")
-                            test_results["warnings"].append("TURKEY_NOT_FOUND_IN_COUNTRIES")
-                        
-                        if not usa_found:
-                            print("⚠️  WARNING: ABD ülke listesinde bulunamadı")
-                            test_results["warnings"].append("USA_NOT_FOUND_IN_COUNTRIES")
-                            
+                    # Test: Dönen ülke sayısı EXACTLY 195 olmalı
+                    if country_count == 195:
+                        print("✅ PASS: Ülke sayısı TAM OLARAK 195")
+                        test_results["test2_exact_195"] = True
                     else:
-                        print(f"❌ FAIL: Ülke sayısı yetersiz: {country_count} (50+ olmalı)")
-                        test_results["critical_issues"].append(f"INSUFFICIENT_COUNTRIES_{country_count}")
+                        print(f"❌ FAIL: Ülke sayısı {country_count}, 195 olmalıydı")
+                        test_results["critical_issues"].append(f"COUNTRIES_COUNT_NOT_195_GOT_{country_count}")
+                    
+                    # Test 3: Duplicate kontrol
+                    country_names = [country.get("name", "") for country in countries]
+                    unique_names = set(country_names)
+                    
+                    if len(country_names) == len(unique_names):
+                        print("✅ PASS: Duplicate ülke yok - her ülke adı sadece 1 kez")
+                        test_results["test2_no_duplicates"] = True
+                    else:
+                        duplicates = len(country_names) - len(unique_names)
+                        print(f"❌ FAIL: {duplicates} duplicate ülke bulundu")
+                        test_results["critical_issues"].append(f"DUPLICATE_COUNTRIES_{duplicates}")
+                        
+                        # Find and log duplicates
+                        seen = set()
+                        duplicate_names = []
+                        for name in country_names:
+                            if name in seen:
+                                duplicate_names.append(name)
+                            seen.add(name)
+                        print(f"   Duplicate ülkeler: {duplicate_names[:5]}")  # Show first 5
+                    
+                    # Test 4: "Fransa" ve "Türkiye"nin listede olduğunu doğrula
+                    fransa_found = False
+                    turkiye_found = False
+                    
+                    for country in countries:
+                        country_name = country.get("name", "")
+                        if "Fransa" in country_name or "France" in country_name:
+                            fransa_found = True
+                            test_results["test2_fransa_found"] = True
+                            print(f"✅ PASS: Fransa bulundu: {country_name}")
+                        if "Türkiye" in country_name or "Turkey" in country_name:
+                            turkiye_found = True
+                            test_results["test2_turkiye_found"] = True
+                            print(f"✅ PASS: Türkiye bulundu: {country_name}")
+                    
+                    if not fransa_found:
+                        print("❌ FAIL: Fransa ülke listesinde bulunamadı")
+                        test_results["critical_issues"].append("FRANSA_NOT_FOUND")
+                    
+                    if not turkiye_found:
+                        print("❌ FAIL: Türkiye ülke listesinde bulunamadı")
+                        test_results["critical_issues"].append("TURKIYE_NOT_FOUND")
+                        
                 else:
                     print("❌ FAIL: Response bir liste olmalı")
                     test_results["critical_issues"].append("COUNTRIES_RESPONSE_NOT_LIST")
                     
             except Exception as e:
-                print(f"❌ FAIL: Countries response'u parse edilemedi: {str(e)}")
+                print(f"❌ FAIL: Countries response parse hatası: {str(e)}")
                 test_results["critical_issues"].append(f"COUNTRIES_RESPONSE_PARSE_ERROR: {str(e)}")
         else:
-            print(f"❌ FAIL: Countries endpoint'i hata döndü: {response.status_code}")
+            print(f"❌ FAIL: Countries endpoint hata döndü: {response.status_code}")
             print(f"Response: {response.text}")
             test_results["critical_issues"].append(f"COUNTRIES_ENDPOINT_ERROR_{response.status_code}")
             
     except Exception as e:
-        print(f"❌ FAIL: Countries endpoint'i request hatası: {str(e)}")
+        print(f"❌ FAIL: Countries endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"COUNTRIES_REQUEST_ERROR: {str(e)}")
     
     # TEST 3: Türkiye'nin Şehirlerini Çekme - GET /api/library/cities?country=Türkiye
