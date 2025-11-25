@@ -46,21 +46,26 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
   // Load events
   const loadEvents = async () => {
     try {
+      // First, trigger automatic archiving of past events
+      try {
+        await fetch(`${BACKEND_URL}/api/calendar/events/archive-past`, {
+          method: 'POST'
+        });
+        console.log('✅ Past events archived automatically');
+      } catch (archiveError) {
+        console.warn('Archive endpoint failed:', archiveError);
+      }
+
+      // Get only non-archived events (include_archived=false is default)
       const response = await fetch(
-        `${BACKEND_URL}/api/calendar/events?user_id=${currentUser.id}&user_role=${currentUser.role}`
+        `${BACKEND_URL}/api/calendar/events?user_id=${currentUser.id}&user_role=${currentUser.role}&include_archived=false`
       );
       if (response.ok) {
         const eventsData = await response.json();
         
-        // Filter out past events - only show current and future meetings
-        const now = new Date();
-        const currentAndFutureEvents = eventsData.filter(event => {
-          const endDate = new Date(event.end_datetime);
-          return endDate >= now;
-        });
-        
+        // Events are already filtered by backend (is_archived != true)
         // Transform events for FullCalendar
-        const transformedEvents = currentAndFutureEvents.map(event => ({
+        const transformedEvents = eventsData.map(event => ({
           id: event.id,
           title: event.title,
           start: event.start_datetime,
