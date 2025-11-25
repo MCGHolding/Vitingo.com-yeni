@@ -8837,6 +8837,37 @@ async def update_calendar_event(event_id: str, event_input: CalendarEventCreate)
         logger.error(f"Error updating calendar event: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/calendar/events/archive-past")
+async def archive_past_events():
+    """
+    Automatically archive all past events (end_datetime < now)
+    """
+    try:
+        now = datetime.now(timezone.utc)
+        
+        # Find all past events that are not archived yet
+        result = await db.calendar_events.update_many(
+            {
+                "end_datetime": {"$lt": now},
+                "is_archived": {"$ne": True}
+            },
+            {
+                "$set": {
+                    "is_archived": True,
+                    "updated_at": now
+                }
+            }
+        )
+        
+        return {
+            "success": True,
+            "archived_count": result.modified_count,
+            "message": f"{result.modified_count} toplantı arşivlendi"
+        }
+    except Exception as e:
+        logger.error(f"Error archiving past events: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/calendar/events/{event_id}")
 async def delete_calendar_event(event_id: str):
     """Delete a calendar event"""
