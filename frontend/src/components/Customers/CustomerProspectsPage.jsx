@@ -465,65 +465,82 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
     });
   };
 
-  // Import from CSV
-  const handleImportCSV = (event) => {
+  // Upload and parse file
+  const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
     
     const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const text = e.target.result;
-        const lines = text.split('\n').filter(line => line.trim());
-        
-        if (lines.length < 2) {
-          toast({
-            title: "Hata",
-            description: "CSV dosyası boş veya geçersiz.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        // Skip header line
-        const dataLines = lines.slice(1);
-        const newProspects = [];
-        
-        for (const line of dataLines) {
-          const values = line.split(',').map(v => v.replace(/^"|"$/g, '').trim());
-          if (values.length >= 4) {
-            newProspects.push({
-              fullName: values[0],
-              email: values[1],
-              phone: values[2],
-              company: values[3],
-              status: values[4] || 'Yeni',
-              value: values[5] || '',
-              notes: values[6] || ''
-            });
-          }
-        }
-        
-        // TODO: Send to backend API
-        toast({
-          title: "Başarılı",
-          description: `${newProspects.length} müşteri adayı içe aktarıldı.`,
-        });
-        
-        // Refresh prospects list
-        // await fetchProspects();
-        
-      } catch (error) {
-        toast({
-          title: "Hata",
-          description: "CSV dosyası işlenirken hata oluştu.",
-          variant: "destructive"
-        });
-      }
+    reader.onload = (e) => {
+      const text = e.target.result;
+      setImportData(text);
     };
     
     reader.readAsText(file);
-    event.target.value = ''; // Reset input
+    event.target.value = '';
+  };
+
+  // Process import data
+  const handleProcessImport = async () => {
+    if (!importData.trim()) {
+      toast({
+        title: "Uyarı",
+        description: "Lütfen içe aktarılacak veriyi girin veya dosya yükleyin.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const lines = importData.split('\n').filter(line => line.trim());
+      const newProspects = [];
+      
+      for (const line of lines) {
+        // Format: Ad Soyad, Email, Telefon, Şirket, Durum, Değer, Notlar
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length >= 4) {
+          newProspects.push({
+            fullName: parts[0],
+            email: parts[1],
+            phone: parts[2],
+            company: parts[3],
+            status: parts[4] || 'Yeni',
+            value: parts[5] || '',
+            notes: parts[6] || ''
+          });
+        }
+      }
+      
+      if (newProspects.length === 0) {
+        toast({
+          title: "Uyarı",
+          description: "İçe aktarılacak geçerli veri bulunamadı.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // TODO: Send to backend API
+      // const response = await fetch('/api/leads/bulk-import', { ... });
+      
+      toast({
+        title: "Başarılı",
+        description: `${newProspects.length} müşteri adayı içe aktarıldı.`,
+      });
+      
+      setImportModalOpen(false);
+      setImportData('');
+      
+      // Refresh list
+      await fetchProspects();
+      
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: "Veriler işlenirken hata oluştu.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getInitials = (name) => {
