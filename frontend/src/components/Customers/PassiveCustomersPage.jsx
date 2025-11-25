@@ -183,10 +183,10 @@ export default function PassiveCustomersPage({ customers = [], onBackToDashboard
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
 
-      {/* Filters */}
-      <Card>
+        {/* Filters */}
+        <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
