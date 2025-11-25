@@ -26186,17 +26186,17 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Run the specific test requested in the review
-    print("\n🔍 Running Calendar Archive and Meeting Requests Test...")
+    print("\n🔍 Running Countries and Cities Seed Data Test...")
     try:
-        result = test_calendar_archive_and_meeting_requests()
+        result = test_countries_and_cities_seed_data()
         if result:
-            print("\n🎉 CALENDAR ARCHIVE AND MEETING REQUESTS TEST PASSED!")
+            print("\n🎉 COUNTRIES AND CITIES SEED DATA TEST PASSED!")
             sys.exit(0)
         else:
-            print("\n❌ CALENDAR ARCHIVE AND MEETING REQUESTS TEST FAILED!")
+            print("\n❌ COUNTRIES AND CITIES SEED DATA TEST FAILED!")
             sys.exit(1)
     except Exception as e:
-        print(f"❌ Calendar Archive and Meeting Requests test failed with error: {str(e)}")
+        print(f"❌ Countries and Cities Seed Data test failed with error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
