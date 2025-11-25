@@ -1180,6 +1180,434 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_countries_and_cities_seed_data():
+    """
+    Ülke & Şehir Seed Data Test
+    
+    Test edilecek endpoint'ler:
+    1. POST /api/library/countries/initialize-defaults - 195 ülke ve şehirleri seed data'dan yüklemek
+    2. GET /api/library/countries - Yüklenen tüm ülkeleri getirmek
+    3. GET /api/library/cities?country=Türkiye - Türkiye'nin şehirlerini getirmek
+    4. GET /api/library/cities?country=Amerika Birleşik Devletleri - ABD'nin şehirlerini getirmek
+    
+    Beklenen Sonuçlar:
+    - Initialize endpoint başarılı çalışmalı
+    - Ülkeler ve şehirler seed data'dan yüklenmeli
+    - Ülkelere göre şehir filtreleme doğru çalışmalı
+    """
+    
+    print("=" * 100)
+    print("🌍 ÜLKE & ŞEHİR SEED DATA TEST 🌍")
+    print("=" * 100)
+    print("CONTEXT: 195 ülke ve şehirleri seed data'dan yükleme ve filtreleme testleri")
+    print("Bu test, varsayılan ülke ve şehir verilerinin yüklenmesi ve doğru filtrelenmesini test eder.")
+    print("=" * 100)
+    
+    test_results = {
+        "initialize_working": False,
+        "countries_loaded": 0,
+        "cities_loaded": 0,
+        "countries_endpoint_working": False,
+        "turkey_cities_working": False,
+        "usa_cities_working": False,
+        "turkey_cities_count": 0,
+        "usa_cities_count": 0,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: Varsayılan Verileri Yükleme - POST /api/library/countries/initialize-defaults
+    print("\n" + "=" * 80)
+    print("TEST 1: VARSAYILAN VERİLERİ YÜKLEME")
+    print("=" * 80)
+    print("Endpoint: POST /api/library/countries/initialize-defaults")
+    print("Amaç: 195 ülke ve şehirleri seed data'dan yüklemek")
+    
+    initialize_endpoint = f"{BACKEND_URL}/api/library/countries/initialize-defaults"
+    print(f"Testing endpoint: {initialize_endpoint}")
+    
+    try:
+        print("\n1. POST request gönderiliyor (body gerekmez)...")
+        response = requests.post(initialize_endpoint, timeout=60)  # Longer timeout for data loading
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Initialize endpoint başarıyla yanıt verdi")
+            test_results["initialize_working"] = True
+            
+            try:
+                result = response.json()
+                print(f"Response type: {type(result)}")
+                print(f"Response content: {result}")
+                
+                # Check response structure
+                if "status" in result:
+                    status = result.get("status")
+                    print(f"📊 Status: {status}")
+                    
+                    if status == "success":
+                        print("✅ PASS: Status 'success' olarak döndü")
+                        
+                        # Log countries and cities counts
+                        countries_imported = result.get("countries_imported", 0)
+                        cities_imported = result.get("cities_imported", 0)
+                        total_countries = result.get("total_countries", 0)
+                        total_cities = result.get("total_cities", 0)
+                        
+                        print(f"📊 Yeni yüklenen ülke sayısı: {countries_imported}")
+                        print(f"📊 Yeni yüklenen şehir sayısı: {cities_imported}")
+                        print(f"📊 Toplam ülke sayısı: {total_countries}")
+                        print(f"📊 Toplam şehir sayısı: {total_cities}")
+                        
+                        test_results["countries_loaded"] = total_countries
+                        test_results["cities_loaded"] = total_cities
+                        
+                        if total_countries >= 50:  # Should be around 195 but allow for some flexibility
+                            print("✅ PASS: Yeterli sayıda ülke yüklendi")
+                        else:
+                            print(f"⚠️  WARNING: Ülke sayısı beklenenden az: {total_countries}")
+                            test_results["warnings"].append(f"LOW_COUNTRY_COUNT_{total_countries}")
+                        
+                        if total_cities >= 100:  # Should be much more but minimum check
+                            print("✅ PASS: Yeterli sayıda şehir yüklendi")
+                        else:
+                            print(f"⚠️  WARNING: Şehir sayısı beklenenden az: {total_cities}")
+                            test_results["warnings"].append(f"LOW_CITY_COUNT_{total_cities}")
+                            
+                    elif status == "already_initialized":
+                        print("ℹ️  INFO: Veriler zaten yüklenmiş")
+                        total_countries = result.get("countries_count", 0)
+                        total_cities = result.get("cities_count", 0)
+                        test_results["countries_loaded"] = total_countries
+                        test_results["cities_loaded"] = total_cities
+                        print(f"📊 Mevcut ülke sayısı: {total_countries}")
+                        print(f"📊 Mevcut şehir sayısı: {total_cities}")
+                    else:
+                        print(f"❌ FAIL: Beklenmeyen status: {status}")
+                        test_results["critical_issues"].append(f"UNEXPECTED_STATUS_{status}")
+                else:
+                    print("⚠️  WARNING: Response'da status bilgisi yok")
+                    test_results["warnings"].append("MISSING_STATUS_IN_RESPONSE")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Initialize response'u parse edilemedi: {str(e)}")
+                test_results["critical_issues"].append(f"INITIALIZE_RESPONSE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Initialize endpoint'i hata döndü: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"INITIALIZE_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Initialize endpoint'i request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"INITIALIZE_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: Ülkeleri Çekme - GET /api/library/countries
+    print("\n" + "=" * 80)
+    print("TEST 2: ÜLKELERİ ÇEKME")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/countries")
+    print("Amaç: Yüklenen tüm ülkeleri getirmek")
+    
+    countries_endpoint = f"{BACKEND_URL}/api/library/countries"
+    print(f"Testing endpoint: {countries_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(countries_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Countries endpoint başarıyla yanıt verdi")
+            test_results["countries_endpoint_working"] = True
+            
+            try:
+                countries = response.json()
+                print(f"Response type: {type(countries)}")
+                
+                if isinstance(countries, list):
+                    country_count = len(countries)
+                    print(f"📊 Dönen ülke sayısı: {country_count}")
+                    
+                    if country_count >= 50:  # Should be around 195
+                        print("✅ PASS: Yeterli sayıda ülke döndü (50+ olmalı)")
+                        
+                        # Log first 3 countries
+                        print("\n2. İlk 3 ülkenin adını ve kodunu loglama...")
+                        for i, country in enumerate(countries[:3], 1):
+                            name = country.get("name", "N/A")
+                            code = country.get("code", "N/A")
+                            print(f"   {i}. {name} ({code})")
+                        
+                        # Check if Turkey is in the list
+                        turkey_found = False
+                        usa_found = False
+                        for country in countries:
+                            country_name = country.get("name", "")
+                            if "Türkiye" in country_name or "Turkey" in country_name:
+                                turkey_found = True
+                                print(f"✅ PASS: Türkiye bulundu: {country_name}")
+                            if "Amerika" in country_name or "United States" in country_name:
+                                usa_found = True
+                                print(f"✅ PASS: ABD bulundu: {country_name}")
+                        
+                        if not turkey_found:
+                            print("⚠️  WARNING: Türkiye ülke listesinde bulunamadı")
+                            test_results["warnings"].append("TURKEY_NOT_FOUND_IN_COUNTRIES")
+                        
+                        if not usa_found:
+                            print("⚠️  WARNING: ABD ülke listesinde bulunamadı")
+                            test_results["warnings"].append("USA_NOT_FOUND_IN_COUNTRIES")
+                            
+                    else:
+                        print(f"❌ FAIL: Ülke sayısı yetersiz: {country_count} (50+ olmalı)")
+                        test_results["critical_issues"].append(f"INSUFFICIENT_COUNTRIES_{country_count}")
+                else:
+                    print("❌ FAIL: Response bir liste olmalı")
+                    test_results["critical_issues"].append("COUNTRIES_RESPONSE_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Countries response'u parse edilemedi: {str(e)}")
+                test_results["critical_issues"].append(f"COUNTRIES_RESPONSE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Countries endpoint'i hata döndü: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"COUNTRIES_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Countries endpoint'i request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"COUNTRIES_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Türkiye'nin Şehirlerini Çekme - GET /api/library/cities?country=Türkiye
+    print("\n" + "=" * 80)
+    print("TEST 3: TÜRKİYE'NİN ŞEHİRLERİNİ ÇEKME")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/cities?country=Türkiye")
+    print("Amaç: Türkiye'nin şehirlerini getirmek")
+    
+    turkey_cities_endpoint = f"{BACKEND_URL}/api/library/cities?country=Türkiye"
+    print(f"Testing endpoint: {turkey_cities_endpoint}")
+    
+    try:
+        print("\n1. country=Türkiye parametresi ile GET request gönderiliyor...")
+        response = requests.get(turkey_cities_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Turkey cities endpoint başarıyla yanıt verdi")
+            test_results["turkey_cities_working"] = True
+            
+            try:
+                cities = response.json()
+                print(f"Response type: {type(cities)}")
+                
+                if isinstance(cities, list):
+                    city_count = len(cities)
+                    test_results["turkey_cities_count"] = city_count
+                    print(f"📊 Dönen şehir sayısı: {city_count}")
+                    
+                    if city_count == 20:
+                        print("✅ PASS: Türkiye şehir sayısı tam olarak 20")
+                    elif city_count >= 15:
+                        print(f"✅ PASS: Türkiye şehir sayısı yeterli: {city_count} (15+ olmalı)")
+                    else:
+                        print(f"❌ FAIL: Türkiye şehir sayısı yetersiz: {city_count} (20 olmalı)")
+                        test_results["critical_issues"].append(f"INSUFFICIENT_TURKEY_CITIES_{city_count}")
+                    
+                    # Log first 5 cities
+                    print("\n2. İlk 5 şehrin adını loglama...")
+                    for i, city in enumerate(cities[:5], 1):
+                        name = city.get("name", "N/A")
+                        country = city.get("country", "N/A")
+                        print(f"   {i}. {name} (Ülke: {country})")
+                        
+                        # Verify country is Türkiye
+                        if country != "Türkiye":
+                            print(f"      ⚠️  WARNING: Şehir ülkesi Türkiye değil: {country}")
+                    
+                    # Check for major Turkish cities
+                    expected_cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"]
+                    found_cities = []
+                    for city in cities:
+                        city_name = city.get("name", "")
+                        if city_name in expected_cities:
+                            found_cities.append(city_name)
+                    
+                    print(f"\n3. Büyük şehirler kontrolü:")
+                    print(f"   Bulunan büyük şehirler: {found_cities}")
+                    if len(found_cities) >= 3:
+                        print("✅ PASS: Yeterli sayıda büyük şehir bulundu")
+                    else:
+                        print("⚠️  WARNING: Büyük şehirler eksik olabilir")
+                        test_results["warnings"].append("MISSING_MAJOR_TURKISH_CITIES")
+                        
+                else:
+                    print("❌ FAIL: Response bir liste olmalı")
+                    test_results["critical_issues"].append("TURKEY_CITIES_RESPONSE_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Turkey cities response'u parse edilemedi: {str(e)}")
+                test_results["critical_issues"].append(f"TURKEY_CITIES_RESPONSE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Turkey cities endpoint'i hata döndü: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"TURKEY_CITIES_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Turkey cities endpoint'i request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"TURKEY_CITIES_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 4: ABD'nin Şehirlerini Çekme - GET /api/library/cities?country=Amerika Birleşik Devletleri
+    print("\n" + "=" * 80)
+    print("TEST 4: ABD'NİN ŞEHİRLERİNİ ÇEKME")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/cities?country=Amerika Birleşik Devletleri")
+    print("Amaç: ABD'nin şehirlerini getirmek")
+    
+    usa_cities_endpoint = f"{BACKEND_URL}/api/library/cities?country=Amerika Birleşik Devletleri"
+    print(f"Testing endpoint: {usa_cities_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(usa_cities_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: USA cities endpoint başarıyla yanıt verdi")
+            test_results["usa_cities_working"] = True
+            
+            try:
+                cities = response.json()
+                print(f"Response type: {type(cities)}")
+                
+                if isinstance(cities, list):
+                    city_count = len(cities)
+                    test_results["usa_cities_count"] = city_count
+                    print(f"📊 Dönen şehir sayısı: {city_count}")
+                    
+                    if city_count == 20:
+                        print("✅ PASS: ABD şehir sayısı tam olarak 20")
+                    elif city_count >= 15:
+                        print(f"✅ PASS: ABD şehir sayısı yeterli: {city_count} (15+ olmalı)")
+                    else:
+                        print(f"❌ FAIL: ABD şehir sayısı yetersiz: {city_count} (20 olmalı)")
+                        test_results["critical_issues"].append(f"INSUFFICIENT_USA_CITIES_{city_count}")
+                    
+                    # Check for New York and Los Angeles
+                    print("\n2. New York ve Los Angeles'ın listede olduğunu doğrulama...")
+                    new_york_found = False
+                    los_angeles_found = False
+                    
+                    for city in cities:
+                        city_name = city.get("name", "")
+                        country = city.get("country", "")
+                        
+                        if "New York" in city_name:
+                            new_york_found = True
+                            print(f"✅ PASS: New York bulundu: {city_name}")
+                        
+                        if "Los Angeles" in city_name or "LA" in city_name:
+                            los_angeles_found = True
+                            print(f"✅ PASS: Los Angeles bulundu: {city_name}")
+                        
+                        # Verify country
+                        if country != "Amerika Birleşik Devletleri":
+                            print(f"      ⚠️  WARNING: Şehir ülkesi ABD değil: {country}")
+                    
+                    if new_york_found and los_angeles_found:
+                        print("✅ PASS: New York ve Los Angeles her ikisi de listede")
+                    elif new_york_found:
+                        print("⚠️  WARNING: New York bulundu ama Los Angeles bulunamadı")
+                        test_results["warnings"].append("LOS_ANGELES_NOT_FOUND")
+                    elif los_angeles_found:
+                        print("⚠️  WARNING: Los Angeles bulundu ama New York bulunamadı")
+                        test_results["warnings"].append("NEW_YORK_NOT_FOUND")
+                    else:
+                        print("❌ FAIL: New York ve Los Angeles her ikisi de bulunamadı")
+                        test_results["critical_issues"].append("MAJOR_USA_CITIES_NOT_FOUND")
+                    
+                    # Log some cities
+                    print(f"\n3. İlk 5 ABD şehrini loglama...")
+                    for i, city in enumerate(cities[:5], 1):
+                        name = city.get("name", "N/A")
+                        country = city.get("country", "N/A")
+                        print(f"   {i}. {name} (Ülke: {country})")
+                        
+                else:
+                    print("❌ FAIL: Response bir liste olmalı")
+                    test_results["critical_issues"].append("USA_CITIES_RESPONSE_NOT_LIST")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: USA cities response'u parse edilemedi: {str(e)}")
+                test_results["critical_issues"].append(f"USA_CITIES_RESPONSE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: USA cities endpoint'i hata döndü: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"USA_CITIES_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: USA cities endpoint'i request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"USA_CITIES_REQUEST_ERROR: {str(e)}")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 ÜLKE & ŞEHİR SEED DATA TEST RAPORU")
+    print("=" * 100)
+    
+    print(f"📊 TEST SONUÇLARI:")
+    print(f"   • Initialize Endpoint: {'✅ Çalışıyor' if test_results['initialize_working'] else '❌ Çalışmıyor'}")
+    print(f"   • Countries Endpoint: {'✅ Çalışıyor' if test_results['countries_endpoint_working'] else '❌ Çalışmıyor'}")
+    print(f"   • Turkey Cities: {'✅ Çalışıyor' if test_results['turkey_cities_working'] else '❌ Çalışmıyor'}")
+    print(f"   • USA Cities: {'✅ Çalışıyor' if test_results['usa_cities_working'] else '❌ Çalışmıyor'}")
+    
+    print(f"\n📊 VERİ İSTATİSTİKLERİ:")
+    print(f"   • Toplam Ülke Sayısı: {test_results['countries_loaded']}")
+    print(f"   • Toplam Şehir Sayısı: {test_results['cities_loaded']}")
+    print(f"   • Türkiye Şehir Sayısı: {test_results['turkey_cities_count']}")
+    print(f"   • ABD Şehir Sayısı: {test_results['usa_cities_count']}")
+    
+    print(f"\n🚨 KRİTİK SORUNLAR: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  UYARILAR: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 SONUÇLAR:")
+    
+    if not test_results['initialize_working']:
+        print("🚨 KRİTİK: Initialize endpoint çalışmıyor!")
+        print("   ÖNERİ: Backend server durumunu ve seed data dosyasını kontrol edin")
+        
+    elif not test_results['countries_endpoint_working']:
+        print("🚨 KRİTİK: Countries endpoint çalışmıyor!")
+        print("   ÖNERİ: Backend API routing ve database bağlantısını kontrol edin")
+        
+    elif not test_results['turkey_cities_working'] or not test_results['usa_cities_working']:
+        print("🚨 KRİTİK: Şehir filtreleme endpoint'leri çalışmıyor!")
+        print("   ÖNERİ: Cities endpoint query parameter işlemesini kontrol edin")
+        
+    elif test_results['countries_loaded'] < 50:
+        print("🚨 KRİTİK: Yeterli ülke yüklenmemiş!")
+        print("   ÖNERİ: Seed data dosyasının doğru olduğunu ve tam yüklendiğini kontrol edin")
+        
+    else:
+        print("✅ BAŞARILI: Tüm endpoint'ler çalışıyor ve veriler doğru yüklenmiş!")
+        print("   • Initialize endpoint başarılı çalışıyor")
+        print("   • Ülkeler ve şehirler seed data'dan yüklenmiş")
+        print("   • Ülkelere göre şehir filtreleme doğru çalışıyor")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ GENEL TEST SONUCU: KRİTİK SORUNLAR BULUNDU")
+        return False
+    else:
+        print(f"\n✅ GENEL TEST SONUCU: TÜM TESTLER BAŞARILI")
+        return True
+
 def test_calendar_archive_and_meeting_requests():
     """
     Backend Arşiv ve Toplantı Talepleri Test Görevleri
