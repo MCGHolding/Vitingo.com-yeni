@@ -862,6 +862,160 @@ const CountryCityManager = () => {
           </div>
         </div>
       )}
+
+      {/* Bulk Import Modal */}
+      {showBulkImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <h3 className="text-lg font-semibold mb-4">Toplu Şehir İçe Aktarma</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Seçin</label>
+                <select
+                  value={bulkImportCountry}
+                  onChange={(e) => setBulkImportCountry(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Ülke Seçin</option>
+                  {countries.map(country => (
+                    <option key={country.id} value={country.name}>{country.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Şehir Listesi (virgülle ayrılmış)
+                </label>
+                <textarea
+                  value={bulkImportText}
+                  onChange={(e) => setBulkImportText(e.target.value)}
+                  placeholder="Berlin, Hamburg, München, Köln, Frankfurt am Main, Stuttgart, Düsseldorf..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[200px] font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Şehir isimlerini virgülle ayırarak giriniz. Aynı isimli şehirler güncellenir.
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" onClick={() => {
+                setShowBulkImportModal(false);
+                setBulkImportCountry('');
+                setBulkImportText('');
+              }}>
+                İptal
+              </Button>
+              <Button onClick={async () => {
+                if (!bulkImportCountry) {
+                  toast({ title: "Uyarı", description: "Lütfen ülke seçin", variant: "destructive" });
+                  return;
+                }
+                if (!bulkImportText.trim()) {
+                  toast({ title: "Uyarı", description: "Lütfen şehir listesi girin", variant: "destructive" });
+                  return;
+                }
+
+                try {
+                  // Parse city names (split by comma and trim)
+                  const cityNames = bulkImportText
+                    .split(',')
+                    .map(name => name.trim())
+                    .filter(name => name.length > 0);
+
+                  if (cityNames.length === 0) {
+                    toast({ title: "Uyarı", description: "Geçerli şehir bulunamadı", variant: "destructive" });
+                    return;
+                  }
+
+                  // Get country code
+                  const country = countries.find(c => c.name === bulkImportCountry);
+                  if (!country) {
+                    toast({ title: "Hata", description: "Ülke bulunamadı", variant: "destructive" });
+                    return;
+                  }
+
+                  // Get existing cities for this country
+                  const existingResponse = await fetch(`${BACKEND_URL}/api/library/cities?country=${encodeURIComponent(bulkImportCountry)}`);
+                  const existingCities = existingResponse.ok ? await existingResponse.json() : [];
+                  const existingCityNames = new Set(existingCities.map(c => c.name.toLowerCase()));
+
+                  let successCount = 0;
+                  let updateCount = 0;
+                  let errorCount = 0;
+
+                  // Process each city
+                  for (const cityName of cityNames) {
+                    try {
+                      // Check if city exists
+                      const existingCity = existingCities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
+                      
+                      if (existingCity) {
+                        // Update existing city
+                        const response = await fetch(`${BACKEND_URL}/api/library/cities/${existingCity.id}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ 
+                            id: existingCity.id, 
+                            name: cityName, 
+                            country: bulkImportCountry 
+                          })
+                        });
+                        if (response.ok) {
+                          updateCount++;
+                        } else {
+                          errorCount++;
+                        }
+                      } else {
+                        // Create new city
+                        const cityId = `${country.code}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                        const response = await fetch(`${BACKEND_URL}/api/library/cities`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ 
+                            id: cityId, 
+                            name: cityName, 
+                            country: bulkImportCountry 
+                          })
+                        });
+                        if (response.ok) {
+                          successCount++;
+                        } else {
+                          errorCount++;
+                        }
+                      }
+                    } catch (err) {
+                      console.error(`Error processing city ${cityName}:`, err);
+                      errorCount++;
+                    }
+                  }
+
+                  // Show result
+                  toast({ 
+                    title: "Tamamlandı", 
+                    description: `${successCount} şehir eklendi, ${updateCount} şehir güncellendi${errorCount > 0 ? `, ${errorCount} hata` : ''}` 
+                  });
+                  
+                  setShowBulkImportModal(false);
+                  setBulkImportCountry('');
+                  setBulkImportText('');
+                  
+                  // Reload cities if the selected country matches
+                  if (selectedCountry && selectedCountry.name === bulkImportCountry) {
+                    loadCities(bulkImportCountry);
+                  }
+                  loadCountries(); // Refresh city counts
+                  
+                } catch (error) {
+                  console.error('Bulk import error:', error);
+                  toast({ title: "Hata", description: "Toplu içe aktarma sırasında hata oluştu", variant: "destructive" });
+                }
+              }}>
+                İçe Aktar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
