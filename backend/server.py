@@ -1223,6 +1223,9 @@ async def get_phone_codes():
     """Get all phone codes"""
     try:
         phone_codes = await db.phone_codes.find().sort("country", 1).collation({"locale": "tr"}).to_list(None)
+        # Remove _id from MongoDB documents
+        for code in phone_codes:
+            code.pop('_id', None)
         return [LibraryPhoneCode(**code) for code in phone_codes]
     except Exception as e:
         logger.error(f"Error getting phone codes: {str(e)}")
