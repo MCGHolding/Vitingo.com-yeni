@@ -128,6 +128,54 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
     }
   }, [isOpen]);
 
+  // Fill form with realistic test data
+  const fillTestData = () => {
+    const randomSubject = testDataSamples.subjects[Math.floor(Math.random() * testDataSamples.subjects.length)];
+    const randomMeetingType = Math.random() > 0.5 ? 'physical' : 'online';
+    const randomLocation = testDataSamples.locations[Math.floor(Math.random() * testDataSamples.locations.length)];
+    const randomPlatform = testDataSamples.platforms[Math.floor(Math.random() * testDataSamples.platforms.length)];
+    
+    // Generate date (tomorrow or 2-3 days from now)
+    const today = new Date();
+    const futureDate = new Date(today);
+    futureDate.setDate(today.getDate() + Math.floor(Math.random() * 3) + 1);
+    const dateStr = futureDate.toISOString().split('T')[0];
+    
+    // Generate time (between 09:00 and 16:00, 1 hour duration)
+    const startHour = Math.floor(Math.random() * 7) + 9; // 9-15
+    const startMinute = Math.random() > 0.5 ? '00' : '30';
+    const startTime = `${String(startHour).padStart(2, '0')}:${startMinute}`;
+    
+    const endHour = startMinute === '30' ? startHour + 1 : startHour;
+    const endMinute = startMinute === '30' ? '30' : '00';
+    const endTime = `${String(endHour + 1).padStart(2, '0')}:${endMinute}`;
+    
+    // Select 1-3 random attendees
+    const randomAttendeeCount = Math.min(Math.floor(Math.random() * 3) + 1, users.length);
+    const shuffledUsers = [...users].sort(() => 0.5 - Math.random());
+    const selectedAttendees = shuffledUsers.slice(0, randomAttendeeCount).map(u => u.id);
+    
+    setRequestForm({
+      subject: randomSubject,
+      date: dateStr,
+      start_time: startTime,
+      end_time: endTime,
+      meeting_type: randomMeetingType,
+      location: randomMeetingType === 'physical' ? randomLocation : '',
+      platform: randomMeetingType === 'online' ? randomPlatform : 'Zoom',
+      meeting_link: randomMeetingType === 'online' ? `https://meet.example.com/${Math.random().toString(36).substr(2, 9)}` : '',
+      attendee_ids: selectedAttendees
+    });
+    
+    console.log('✅ Test verisi dolduruldu:', {
+      subject: randomSubject,
+      date: dateStr,
+      time: `${startTime} - ${endTime}`,
+      type: randomMeetingType,
+      attendees: selectedAttendees.length
+    });
+  };
+
   // Create meeting request
   const handleCreateRequest = async () => {
     setIsSubmitting(true);
