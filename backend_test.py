@@ -1404,83 +1404,94 @@ def test_final_countries_cities_seed_data():
         print(f"❌ FAIL: Countries endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"COUNTRIES_REQUEST_ERROR: {str(e)}")
     
-    # TEST 3: Türkiye'nin Şehirlerini Çekme - GET /api/library/cities?country=Türkiye
+    # TEST 3: Türkiye Şehirleri
     print("\n" + "=" * 80)
-    print("TEST 3: TÜRKİYE'NİN ŞEHİRLERİNİ ÇEKME")
+    print("TEST 3: TÜRKİYE ŞEHİRLERİ")
     print("=" * 80)
     print("Endpoint: GET /api/library/cities?country=Türkiye")
-    print("Amaç: Türkiye'nin şehirlerini getirmek")
+    print("Test: 1. GET request gönder")
+    print("      2. 20 şehir olmalı")
+    print("      3. İstanbul, Ankara, İzmir'in olduğunu doğrula")
     
     turkey_cities_endpoint = f"{BACKEND_URL}/api/library/cities?country=Türkiye"
     print(f"Testing endpoint: {turkey_cities_endpoint}")
     
     try:
-        print("\n1. country=Türkiye parametresi ile GET request gönderiliyor...")
+        print("\n1. GET request gönderiliyor...")
         response = requests.get(turkey_cities_endpoint, timeout=30)
         print(f"Status Code: {response.status_code}")
         
         if response.status_code == 200:
             print("✅ PASS: Turkey cities endpoint başarıyla yanıt verdi")
-            test_results["turkey_cities_working"] = True
             
             try:
                 cities = response.json()
-                print(f"Response type: {type(cities)}")
                 
                 if isinstance(cities, list):
                     city_count = len(cities)
-                    test_results["turkey_cities_count"] = city_count
-                    print(f"📊 Dönen şehir sayısı: {city_count}")
+                    test_results["test3_turkey_cities_count"] = city_count
+                    print(f"2. Dönen şehir sayısı: {city_count}")
                     
+                    # Test: 20 şehir olmalı
                     if city_count == 20:
-                        print("✅ PASS: Türkiye şehir sayısı tam olarak 20")
-                    elif city_count >= 15:
-                        print(f"✅ PASS: Türkiye şehir sayısı yeterli: {city_count} (15+ olmalı)")
+                        print("✅ PASS: Türkiye şehir sayısı TAM OLARAK 20")
                     else:
-                        print(f"❌ FAIL: Türkiye şehir sayısı yetersiz: {city_count} (20 olmalı)")
-                        test_results["critical_issues"].append(f"INSUFFICIENT_TURKEY_CITIES_{city_count}")
+                        print(f"❌ FAIL: Türkiye şehir sayısı {city_count}, 20 olmalıydı")
+                        test_results["critical_issues"].append(f"TURKEY_CITIES_NOT_20_GOT_{city_count}")
                     
-                    # Log first 5 cities
-                    print("\n2. İlk 5 şehrin adını loglama...")
-                    for i, city in enumerate(cities[:5], 1):
+                    # Test 3: İstanbul, Ankara, İzmir'in olduğunu doğrula
+                    istanbul_found = False
+                    ankara_found = False
+                    izmir_found = False
+                    
+                    for city in cities:
+                        city_name = city.get("name", "")
+                        if "İstanbul" in city_name or "Istanbul" in city_name:
+                            istanbul_found = True
+                            test_results["test3_istanbul_found"] = True
+                            print(f"✅ PASS: İstanbul bulundu: {city_name}")
+                        if "Ankara" in city_name:
+                            ankara_found = True
+                            test_results["test3_ankara_found"] = True
+                            print(f"✅ PASS: Ankara bulundu: {city_name}")
+                        if "İzmir" in city_name or "Izmir" in city_name:
+                            izmir_found = True
+                            test_results["test3_izmir_found"] = True
+                            print(f"✅ PASS: İzmir bulundu: {city_name}")
+                    
+                    if not istanbul_found:
+                        print("❌ FAIL: İstanbul Türkiye şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("ISTANBUL_NOT_FOUND")
+                    
+                    if not ankara_found:
+                        print("❌ FAIL: Ankara Türkiye şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("ANKARA_NOT_FOUND")
+                    
+                    if not izmir_found:
+                        print("❌ FAIL: İzmir Türkiye şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("IZMIR_NOT_FOUND")
+                    
+                    # Log all cities for debugging
+                    print(f"\n3. Tüm Türkiye şehirleri:")
+                    for i, city in enumerate(cities, 1):
                         name = city.get("name", "N/A")
                         country = city.get("country", "N/A")
                         print(f"   {i}. {name} (Ülke: {country})")
-                        
-                        # Verify country is Türkiye
-                        if country != "Türkiye":
-                            print(f"      ⚠️  WARNING: Şehir ülkesi Türkiye değil: {country}")
-                    
-                    # Check for major Turkish cities
-                    expected_cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"]
-                    found_cities = []
-                    for city in cities:
-                        city_name = city.get("name", "")
-                        if city_name in expected_cities:
-                            found_cities.append(city_name)
-                    
-                    print(f"\n3. Büyük şehirler kontrolü:")
-                    print(f"   Bulunan büyük şehirler: {found_cities}")
-                    if len(found_cities) >= 3:
-                        print("✅ PASS: Yeterli sayıda büyük şehir bulundu")
-                    else:
-                        print("⚠️  WARNING: Büyük şehirler eksik olabilir")
-                        test_results["warnings"].append("MISSING_MAJOR_TURKISH_CITIES")
                         
                 else:
                     print("❌ FAIL: Response bir liste olmalı")
                     test_results["critical_issues"].append("TURKEY_CITIES_RESPONSE_NOT_LIST")
                     
             except Exception as e:
-                print(f"❌ FAIL: Turkey cities response'u parse edilemedi: {str(e)}")
+                print(f"❌ FAIL: Turkey cities response parse hatası: {str(e)}")
                 test_results["critical_issues"].append(f"TURKEY_CITIES_RESPONSE_PARSE_ERROR: {str(e)}")
         else:
-            print(f"❌ FAIL: Turkey cities endpoint'i hata döndü: {response.status_code}")
+            print(f"❌ FAIL: Turkey cities endpoint hata döndü: {response.status_code}")
             print(f"Response: {response.text}")
             test_results["critical_issues"].append(f"TURKEY_CITIES_ENDPOINT_ERROR_{response.status_code}")
             
     except Exception as e:
-        print(f"❌ FAIL: Turkey cities endpoint'i request hatası: {str(e)}")
+        print(f"❌ FAIL: Turkey cities endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"TURKEY_CITIES_REQUEST_ERROR: {str(e)}")
     
     # TEST 4: ABD'nin Şehirlerini Çekme - GET /api/library/cities?country=Amerika Birleşik Devletleri
