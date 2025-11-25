@@ -44,9 +44,12 @@ const AddCustomerTypeModal = ({ onClose, onSave, onSuccess }) => {
         setCreatedType(newType);
         setShowSuccess(true);
         
-        // Notify parent component
+        // Notify parent component - support both onSave and onSuccess
         if (onSave) {
           onSave(newType);
+        }
+        if (onSuccess) {
+          onSuccess(newType);
         }
 
         // Don't auto-close, let user manually close with X or button
