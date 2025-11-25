@@ -2568,38 +2568,6 @@ def test_opportunity_statuses_get_endpoint():
     print("=" * 80)
     print("TESTING GET OPPORTUNITY STATUSES ENDPOINT")
     print("=" * 80)
-                            
-                            # Check status is active
-                            if user_status == "active":
-                                print(f"      ✅ User status is active")
-                            else:
-                                print(f"      ⚠️  User status is not active: {user_status}")
-                                test_results["warnings"].append(f"USER_{i}_NOT_ACTIVE_{user_status}")
-                            
-                            # Check Turkish character support
-                            turkish_chars = ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç']
-                            has_turkish = any(char in str(user_name) + str(user_department) for char in turkish_chars)
-                            if has_turkish:
-                                print(f"      ✅ Turkish character support verified")
-                                
-                    else:
-                        print(f"❌ FAIL: No active users found")
-                        test_results["critical_issues"].append("NO_ACTIVE_USERS")
-                else:
-                    print("❌ FAIL: Response should be an array")
-                    test_results["critical_issues"].append("USERS_NOT_ARRAY")
-                    
-            except Exception as e:
-                print(f"❌ FAIL: Could not parse users response: {str(e)}")
-                test_results["critical_issues"].append(f"USERS_PARSE_ERROR: {str(e)}")
-        else:
-            print(f"❌ FAIL: Active users endpoint error: {response.status_code}")
-            print(f"Response: {response.text}")
-            test_results["critical_issues"].append(f"USERS_API_ERROR_{response.status_code}")
-            
-    except Exception as e:
-        print(f"❌ FAIL: Active users request error: {str(e)}")
-        test_results["critical_issues"].append(f"USERS_REQUEST_ERROR: {str(e)}")
     
     # TEST 3: POST /api/users - Yeni Kullanıcı Oluşturma
     print("\n" + "=" * 80)
