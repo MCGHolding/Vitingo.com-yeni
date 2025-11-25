@@ -200,7 +200,7 @@ const LibraryPage = ({ onBack }) => {
       </div>
 
       {/* Content */}
-      <div className={activeTab === 'countries-cities' || activeTab === 'phone-codes' ? '' : 'px-6 py-6'}>
+      <div className={activeTab === 'countries-cities' || activeTab === 'phone-codes' || activeTab === 'convention-centers' ? '' : 'px-6 py-6'}>
         {/* Country & City Manager (Full Width) */}
         {activeTab === 'countries-cities' && (
           <CountryCityManager />
@@ -211,8 +211,13 @@ const LibraryPage = ({ onBack }) => {
           <PhoneCodeManager />
         )}
 
+        {/* Convention Centers Manager (Full Width) */}
+        {activeTab === 'convention-centers' && (
+          <ConventionCenterManager />
+        )}
+
         {/* Other tabs content */}
-        {activeTab !== 'countries-cities' && activeTab !== 'phone-codes' && (
+        {activeTab !== 'countries-cities' && activeTab !== 'phone-codes' && activeTab !== 'convention-centers' && (
           <>
         {/* Search and Add Button */}
         <div className="flex items-center justify-between mb-6">
