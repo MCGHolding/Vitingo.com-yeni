@@ -580,6 +580,67 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }
   };
 
+  // Fill form with realistic test data
+  const fillTestData = () => {
+    const randomTitle = testDataSamples.titles[Math.floor(Math.random() * testDataSamples.titles.length)];
+    const randomSource = testDataSamples.sources[Math.floor(Math.random() * testDataSamples.sources.length)];
+    const randomBusinessType = testDataSamples.businessTypes[Math.floor(Math.random() * testDataSamples.businessTypes.length)];
+    const randomDescription = testDataSamples.descriptions[Math.floor(Math.random() * testDataSamples.descriptions.length)];
+    const randomAmount = testDataSamples.amounts[Math.floor(Math.random() * testDataSamples.amounts.length)];
+    const randomTradeshow = testDataSamples.tradeshows[Math.floor(Math.random() * testDataSamples.tradeshows.length)];
+    
+    // Generate close date (2-6 months from now)
+    const today = new Date();
+    const futureDate = new Date(today);
+    futureDate.setMonth(today.getMonth() + Math.floor(Math.random() * 4) + 2);
+    const closeDate = futureDate.toISOString().split('T')[0];
+    
+    // Generate tradeshow dates (1-2 months from now)
+    const tradeshowStart = new Date(today);
+    tradeshowStart.setMonth(today.getMonth() + Math.floor(Math.random() * 2) + 1);
+    const tradeshowEnd = new Date(tradeshowStart);
+    tradeshowEnd.setDate(tradeshowStart.getDate() + 4);
+    
+    const newFormData = {
+      ...formData,
+      title: randomTitle,
+      customer: customers.length > 0 ? customers[Math.floor(Math.random() * customers.length)].companyName : 'Örnek Müşteri A.Ş.',
+      amount: randomAmount,
+      currency: ['TRY', 'USD', 'EUR'][Math.floor(Math.random() * 3)],
+      status: ['open', 'qualified', 'proposal'][Math.floor(Math.random() * 3)],
+      stage: ['lead', 'contact', 'demo', 'proposal'][Math.floor(Math.random() * 4)],
+      priority: ['medium', 'high'][Math.floor(Math.random() * 2)],
+      closeDate: closeDate,
+      source: randomSource,
+      description: randomDescription,
+      businessType: randomBusinessType,
+      projectType: projectTypes.length > 0 ? projectTypes[Math.floor(Math.random() * projectTypes.length)].value : 'standard',
+      country: 'Türkiye',
+      city: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya'][Math.floor(Math.random() * 5)],
+      tradeShow: randomTradeshow,
+      tradeShowStartDate: tradeshowStart.toISOString().split('T')[0],
+      tradeShowEndDate: tradeshowEnd.toISOString().split('T')[0],
+      standSize: String(Math.floor(Math.random() * 80) + 20),
+      standSizeUnit: 'm2',
+      expectedRevenue: String(parseInt(randomAmount) * (1 + Math.random() * 0.5)),
+      probability: String(Math.floor(Math.random() * 40) + 40)
+    };
+    
+    setFormData(newFormData);
+    
+    // If customer is selected, load contacts
+    if (customers.length > 0) {
+      const selectedCust = customers[Math.floor(Math.random() * customers.length)];
+      setFormData(prev => ({ ...prev, customer: selectedCust.companyName }));
+      handleCustomerChange(selectedCust.companyName);
+    }
+    
+    toast({
+      title: "Başarılı",
+      description: "Gerçekçi test verisi dolduruldu",
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
