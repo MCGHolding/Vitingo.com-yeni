@@ -1245,89 +1245,66 @@ def test_final_countries_cities_seed_data():
         "warnings": []
     }
     
-    # TEST 1: Varsayılan Verileri Yükleme - POST /api/library/countries/initialize-defaults
+    # TEST 1: Veritabanını Temizle ve Yeniden Yükle
     print("\n" + "=" * 80)
-    print("TEST 1: VARSAYILAN VERİLERİ YÜKLEME")
+    print("TEST 1: VERİTABANINI TEMİZLE VE YENİDEN YÜKLE")
     print("=" * 80)
     print("Endpoint: POST /api/library/countries/initialize-defaults")
-    print("Amaç: 195 ülke ve şehirleri seed data'dan yüklemek")
+    print("Test: 1. POST request gönder")
+    print("      2. Kaç ülke ve şehir yüklendiğini logla")
+    print("      3. Response'daki total_countries = 195 olmalı")
+    print("      4. Response'daki total_cities ~400 olmalı")
     
     initialize_endpoint = f"{BACKEND_URL}/api/library/countries/initialize-defaults"
     print(f"Testing endpoint: {initialize_endpoint}")
     
     try:
-        print("\n1. POST request gönderiliyor (body gerekmez)...")
-        response = requests.post(initialize_endpoint, timeout=60)  # Longer timeout for data loading
+        print("\n1. POST request gönderiliyor...")
+        response = requests.post(initialize_endpoint, timeout=60)
         print(f"Status Code: {response.status_code}")
         
         if response.status_code == 200:
             print("✅ PASS: Initialize endpoint başarıyla yanıt verdi")
-            test_results["initialize_working"] = True
+            test_results["test1_initialize_working"] = True
             
             try:
                 result = response.json()
-                print(f"Response type: {type(result)}")
-                print(f"Response content: {result}")
+                print(f"2. Response parse edildi: {result}")
                 
-                # Check response structure
-                if "status" in result:
-                    status = result.get("status")
-                    print(f"📊 Status: {status}")
-                    
-                    if status == "success":
-                        print("✅ PASS: Status 'success' olarak döndü")
-                        
-                        # Log countries and cities counts
-                        countries_imported = result.get("countries_imported", 0)
-                        cities_imported = result.get("cities_imported", 0)
-                        total_countries = result.get("total_countries", 0)
-                        total_cities = result.get("total_cities", 0)
-                        
-                        print(f"📊 Yeni yüklenen ülke sayısı: {countries_imported}")
-                        print(f"📊 Yeni yüklenen şehir sayısı: {cities_imported}")
-                        print(f"📊 Toplam ülke sayısı: {total_countries}")
-                        print(f"📊 Toplam şehir sayısı: {total_cities}")
-                        
-                        test_results["countries_loaded"] = total_countries
-                        test_results["cities_loaded"] = total_cities
-                        
-                        if total_countries >= 50:  # Should be around 195 but allow for some flexibility
-                            print("✅ PASS: Yeterli sayıda ülke yüklendi")
-                        else:
-                            print(f"⚠️  WARNING: Ülke sayısı beklenenden az: {total_countries}")
-                            test_results["warnings"].append(f"LOW_COUNTRY_COUNT_{total_countries}")
-                        
-                        if total_cities >= 100:  # Should be much more but minimum check
-                            print("✅ PASS: Yeterli sayıda şehir yüklendi")
-                        else:
-                            print(f"⚠️  WARNING: Şehir sayısı beklenenden az: {total_cities}")
-                            test_results["warnings"].append(f"LOW_CITY_COUNT_{total_cities}")
-                            
-                    elif status == "already_initialized":
-                        print("ℹ️  INFO: Veriler zaten yüklenmiş")
-                        total_countries = result.get("countries_count", 0)
-                        total_cities = result.get("cities_count", 0)
-                        test_results["countries_loaded"] = total_countries
-                        test_results["cities_loaded"] = total_cities
-                        print(f"📊 Mevcut ülke sayısı: {total_countries}")
-                        print(f"📊 Mevcut şehir sayısı: {total_cities}")
-                    else:
-                        print(f"❌ FAIL: Beklenmeyen status: {status}")
-                        test_results["critical_issues"].append(f"UNEXPECTED_STATUS_{status}")
+                # Extract counts
+                total_countries = result.get("total_countries", 0)
+                total_cities = result.get("total_cities", 0)
+                
+                test_results["test1_total_countries"] = total_countries
+                test_results["test1_total_cities"] = total_cities
+                
+                print(f"📊 Kaç ülke yüklendi: {total_countries}")
+                print(f"📊 Kaç şehir yüklendi: {total_cities}")
+                
+                # Test 3: Response'daki total_countries = 195 olmalı
+                if total_countries == 195:
+                    print("✅ PASS: total_countries = 195 (TAM OLARAK)")
                 else:
-                    print("⚠️  WARNING: Response'da status bilgisi yok")
-                    test_results["warnings"].append("MISSING_STATUS_IN_RESPONSE")
+                    print(f"❌ FAIL: total_countries = {total_countries}, 195 olmalıydı")
+                    test_results["critical_issues"].append(f"COUNTRIES_NOT_195_GOT_{total_countries}")
+                
+                # Test 4: Response'daki total_cities ~400 olmalı
+                if 350 <= total_cities <= 450:
+                    print(f"✅ PASS: total_cities = {total_cities} (~400 aralığında)")
+                else:
+                    print(f"❌ FAIL: total_cities = {total_cities}, ~400 olmalıydı")
+                    test_results["critical_issues"].append(f"CITIES_NOT_AROUND_400_GOT_{total_cities}")
                     
             except Exception as e:
-                print(f"❌ FAIL: Initialize response'u parse edilemedi: {str(e)}")
+                print(f"❌ FAIL: Initialize response parse hatası: {str(e)}")
                 test_results["critical_issues"].append(f"INITIALIZE_RESPONSE_PARSE_ERROR: {str(e)}")
         else:
-            print(f"❌ FAIL: Initialize endpoint'i hata döndü: {response.status_code}")
+            print(f"❌ FAIL: Initialize endpoint hata döndü: {response.status_code}")
             print(f"Response: {response.text}")
             test_results["critical_issues"].append(f"INITIALIZE_ENDPOINT_ERROR_{response.status_code}")
             
     except Exception as e:
-        print(f"❌ FAIL: Initialize endpoint'i request hatası: {str(e)}")
+        print(f"❌ FAIL: Initialize endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"INITIALIZE_REQUEST_ERROR: {str(e)}")
     
     # TEST 2: Ülkeleri Çekme - GET /api/library/countries
