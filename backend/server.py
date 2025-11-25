@@ -8596,6 +8596,7 @@ class CalendarEvent(BaseModel):
     meeting_link: Optional[str] = ""  # Zoom, Teams, etc.
     reminder_minutes: List[int] = Field(default_factory=lambda: [15])  # Reminder before event
     visibility: str = "public"  # public, private
+    is_archived: bool = False  # Automatically set to true for past events
     created_by: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
