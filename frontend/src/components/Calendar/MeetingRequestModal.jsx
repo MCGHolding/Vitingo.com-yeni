@@ -334,23 +334,69 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Başlangıç Saati *
               </label>
-              <input
-                type="time"
-                value={requestForm.start_time}
-                onChange={(e) => setRequestForm({...requestForm, start_time: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  value={requestForm.start_time.split(':')[0] || '09'}
+                  onChange={(e) => {
+                    const minute = requestForm.start_time.split(':')[1] || '00';
+                    setRequestForm({...requestForm, start_time: `${e.target.value}:${minute}`});
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {Array.from({length: 24}, (_, i) => i).map(hour => (
+                    <option key={hour} value={String(hour).padStart(2, '0')}>
+                      {String(hour).padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={requestForm.start_time.split(':')[1] || '00'}
+                  onChange={(e) => {
+                    const hour = requestForm.start_time.split(':')[0] || '09';
+                    setRequestForm({...requestForm, start_time: `${hour}:${e.target.value}`});
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Bitiş Saati *
               </label>
-              <input
-                type="time"
-                value={requestForm.end_time}
-                onChange={(e) => setRequestForm({...requestForm, end_time: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  value={requestForm.end_time.split(':')[0] || '10'}
+                  onChange={(e) => {
+                    const minute = requestForm.end_time.split(':')[1] || '00';
+                    setRequestForm({...requestForm, end_time: `${e.target.value}:${minute}`});
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {Array.from({length: 24}, (_, i) => i).map(hour => (
+                    <option key={hour} value={String(hour).padStart(2, '0')}>
+                      {String(hour).padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={requestForm.end_time.split(':')[1] || '00'}
+                  onChange={(e) => {
+                    const hour = requestForm.end_time.split(':')[0] || '10';
+                    setRequestForm({...requestForm, end_time: `${hour}:${e.target.value}`});
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+              </div>
             </div>
           </div>
 
