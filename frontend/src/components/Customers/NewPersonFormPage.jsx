@@ -58,6 +58,10 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   // Dynamic data states
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  
+  // Country and city data from countriesAndCities.js
+  const [ulkeler, setUlkeler] = useState([]);
+  const [sehirler, setSehirler] = useState([]);
 
   // Realistic Turkish names and data for test
   const testDataSamples = {
