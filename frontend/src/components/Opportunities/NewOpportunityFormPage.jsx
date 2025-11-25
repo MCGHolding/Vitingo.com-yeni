@@ -1110,13 +1110,19 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Ülke
                   </label>
-                  <CountrySelect
-                    value={selectedCountryCode}
-                    onChange={handleCountryChange}
-                    countries={countries}
-                    placeholder="Ülke seçin..."
-                    searchPlaceholder="Ara..."
-                  />
+                  <Select
+                    value={formData.country}
+                    onValueChange={(value) => handleInputChange('country', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ülke seçiniz..." />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {ulkeler.map(ulke => (
+                        <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Şehir */}
@@ -1124,17 +1130,20 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Şehir
                   </label>
-                  <CitySelect
+                  <Select
                     value={formData.city}
-                    onChange={handleCityChange}
-                    cities={cities}
-                    countrySelected={!!selectedCountryCode}
-                    placeholder="Şehir seçin..."
-                    searchPlaceholder="Ara..."
-                    allowManualEntry={true}
-                    noCountryMessage="Önce ülke seçiniz..."
-                    noCitiesMessage="Bu ülke için kayıtlı şehir bulunamadı"
-                  />
+                    onValueChange={(value) => handleInputChange('city', value)}
+                    disabled={!formData.country}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={!formData.country ? "Önce ülke seçiniz..." : "Şehir seçiniz..."} />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {sehirler.map(sehir => (
+                        <SelectItem key={sehir} value={sehir}>{sehir}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
