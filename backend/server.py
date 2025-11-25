@@ -3998,6 +3998,23 @@ async def get_sectors():
         logger.error(f"Error getting sectors: {str(e)}")
         return []
 
+@api_router.delete("/sectors/{sector_id}")
+async def delete_sector(sector_id: str):
+    """Delete a sector"""
+    try:
+        result = await db.sectors.delete_one({"id": sector_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Sektör bulunamadı")
+        
+        return {"message": "Sektör başarıyla silindi", "id": sector_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting sector: {str(e)}")
+        raise HTTPException(status_code=500, detail="Sektör silinirken hata oluştu")
+
 # ===================== COUNTRIES ENDPOINTS =====================
 
 class Country(BaseModel):
