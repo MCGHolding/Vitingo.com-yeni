@@ -239,71 +239,20 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     }
   };
 
-  const loadCountries = async () => {
+  // Load countries from library (SAME AS NewCustomerForm)
+  const loadUlkeler = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/countries`);
+      const data = await response.json();
       
-      // First try to get countries from the geo endpoint which has more countries
-      try {
-        const response = await fetch(`${backendUrl}/api/geo/countries`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Countries loaded from geo endpoint:', data);
-          // Convert geo countries format to expected format and filter out countries with empty codes
-          const formattedCountries = data
-            .filter(country => country.iso2 && country.iso2.trim() !== '' && country.name && country.name.trim() !== '')
-            .map(country => ({
-              code: country.iso2 || country.code,
-              name: country.name,
-              iso2: country.iso2 || country.code
-            }));
-          console.log('Filtered countries:', formattedCountries.length, 'out of', data.length);
-          setCountries(formattedCountries);
-          return;
-        }
-      } catch (geoError) {
-        console.log('Geo endpoint failed, trying regular countries endpoint');
-      }
-      
-      // Fallback to regular countries endpoint
-      const response = await fetch(`${backendUrl}/api/countries`);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Countries loaded from regular endpoint:', data);
-        // Filter out countries with empty codes here too
-        const validCountries = data.filter(country => 
-          (country.code && country.code.trim() !== '') || 
-          (country.iso2 && country.iso2.trim() !== '')
-        );
-        setCountries(validCountries);
-      } else {
-        console.error('Failed to load countries from both endpoints');
+      if (Array.isArray(data)) {
+        const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
+        setUlkeler(ulkeIsimleri);
+        setTumUlkeler(data);
       }
     } catch (error) {
-      console.error('Error loading countries:', error);
-    }
-  };
-
-  const loadCitiesByCountry = async (countryCode) => {
-    if (!countryCode) {
-      setCities([]);
-      return;
-    }
-    
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/cities/${countryCode}`);
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`Cities loaded for ${countryCode}:`, data);
-        setCities(data);
-      } else {
-        console.error(`Failed to load cities for ${countryCode}`);
-        setCities([]);
-      }
-    } catch (error) {
-      console.error('Error loading cities:', error);
-      setCities([]);
+      console.error('Ülkeler yüklenemedi:', error);
     }
   };
 
