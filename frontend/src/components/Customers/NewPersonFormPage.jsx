@@ -59,6 +59,22 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   // Dynamic data states
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+
+  // Realistic Turkish names and data for test
+  const testDataSamples = {
+    firstNames: ['Ahmet', 'Mehmet', 'Ayşe', 'Fatma', 'Ali', 'Zeynep', 'Mustafa', 'Elif', 'Hüseyin', 'Emine', 'Can', 'Deniz', 'Ece', 'Emre', 'Selin'],
+    lastNames: ['Yılmaz', 'Kaya', 'Demir', 'Çelik', 'Şahin', 'Öztürk', 'Aydın', 'Arslan', 'Doğan', 'Kılıç', 'Erdoğan', 'Özdemir', 'Koç', 'Kurt', 'Aksoy'],
+    jobTitles: ['Satış Müdürü', 'Pazarlama Direktörü', 'İnsan Kaynakları Müdürü', 'Genel Müdür Yardımcısı', 'Proje Müdürü', 'Operasyon Müdürü', 'Finans Müdürü', 'Satın Alma Müdürü', 'Üretim Müdürü', 'Kalite Kontrol Müdürü'],
+    departments: ['Satış', 'Pazarlama', 'İnsan Kaynakları', 'Finans', 'Operasyon', 'Üretim', 'Kalite Kontrol', 'Satın Alma', 'Lojistik', 'IT'],
+    cities: ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Gaziantep', 'Konya'],
+    addresses: [
+      'Maslak Mahallesi, Ahi Evran Caddesi No:1 Daire:5',
+      'Bağlarbaşı Mahallesi, Kızılırmak Sokak No:23/7',
+      'Çankaya Mahallesi, Tunalı Hilmi Caddesi No:45 Kat:3',
+      'Karşıyaka Mahallesi, Gazi Bulvarı No:156/12',
+      'Nilüfer Mahallesi, Odunluk Caddesi No:78 D:4'
+    ]
+  };
   
   // Load companies and suppliers on component mount
   useEffect(() => {
