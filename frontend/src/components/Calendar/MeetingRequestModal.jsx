@@ -210,9 +210,11 @@ const MeetingRequestModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
             location: requestForm.meeting_type === 'physical' ? requestForm.location : requestForm.platform,
             event_type: 'meeting',
             visibility: 'public',
-            organizer_id: currentUser.id,
+            organizer_id: currentUser?.id || 'system',
             attendee_ids: requestForm.attendee_ids || []
           };
+          
+          console.log('📅 Creating calendar event:', calendarEventData);
           
           const calendarResponse = await fetch(`${BACKEND_URL}/api/calendar/events`, {
             method: 'POST',
