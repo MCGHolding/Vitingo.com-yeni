@@ -154,13 +154,15 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Ülke</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.country || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Şehir</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.city || '-'}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Ülke</label>
+                      <p className="text-base text-gray-700 mt-1">{customer.country || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Şehir</label>
+                      <p className="text-base text-gray-700 mt-1">{customer.city || '-'}</p>
+                    </div>
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Adres</label>
