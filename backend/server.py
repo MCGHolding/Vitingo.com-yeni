@@ -1217,6 +1217,60 @@ async def delete_city(city_id: str):
         logger.error(f"Error deleting city: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== PHONE CODES ====================
+@api_router.get("/library/phone-codes", response_model=List[LibraryPhoneCode])
+async def get_phone_codes():
+    """Get all phone codes"""
+    try:
+        phone_codes = await db.phone_codes.find().sort("country", 1).collation({"locale": "tr"}).to_list(None)
+        return [LibraryPhoneCode(**code) for code in phone_codes]
+    except Exception as e:
+        logger.error(f"Error getting phone codes: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/phone-codes", response_model=LibraryPhoneCode)
+async def create_phone_code(phone_code: LibraryPhoneCode):
+    """Create a new phone code"""
+    try:
+        code_dict = phone_code.dict()
+        result = await db.phone_codes.insert_one(code_dict)
+        return phone_code
+    except Exception as e:
+        logger.error(f"Error creating phone code: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/phone-codes/{code_id}")
+async def update_phone_code(code_id: str, phone_code: LibraryPhoneCode):
+    """Update a phone code"""
+    try:
+        code_dict = phone_code.dict()
+        result = await db.phone_codes.update_one(
+            {"id": code_id}, 
+            {"$set": code_dict}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Phone code not found")
+        return {"message": "Phone code updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating phone code: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/phone-codes/{code_id}")
+async def delete_phone_code(code_id: str):
+    """Delete a phone code"""
+    try:
+        result = await db.phone_codes.delete_one({"id": code_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Phone code not found")
+        return {"message": "Phone code deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting phone code: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/library/countries/bulk-import")
 async def bulk_import_countries(data: dict):
     """Bulk import countries and cities"""
