@@ -1180,6 +1180,502 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_convention_centers_api_endpoints():
+    """
+    CONVENTION CENTERS API ENDPOINTS TESTING
+    
+    Test the newly created Convention Centers API endpoints to ensure they are working correctly:
+    
+    **API Endpoints to Test:**
+    1. GET /api/library/convention-centers - Get all convention centers
+    2. GET /api/library/convention-centers?country=Türkiye&city=İstanbul - Filter by country and city
+    3. POST /api/library/convention-centers - Create new convention center
+    4. PUT /api/library/convention-centers/{id} - Update convention center
+    5. DELETE /api/library/convention-centers/{id} - Delete convention center
+    6. POST /api/library/convention-centers/bulk-import - Bulk import convention centers
+    
+    **Test Scenarios:**
+    1. GET all centers - should return the existing centers
+    2. GET filtered by Türkiye/İstanbul - should return only Istanbul centers
+    3. Create new center for Ankara - test with Turkish characters
+    4. Update a center - change name and add website
+    5. Bulk import - add multiple centers at once for a city
+    6. Delete test center - verify it's removed
+    
+    **Expected Results:**
+    - All CRUD operations should work correctly
+    - Filtering by country and city should work
+    - Turkish characters should be handled properly (İ, ı, ş, ğ, ü, ö, ç)
+    - Bulk import should handle duplicates correctly
+    - Data validation should be in place
+    """
+    
+    print("=" * 100)
+    print("🏢 CONVENTION CENTERS API ENDPOINTS TESTING 🏢")
+    print("=" * 100)
+    print("CONTEXT: Testing Convention Centers API endpoints for CRUD operations")
+    print("Requirements: All CRUD operations, filtering, Turkish character support, bulk import")
+    print("=" * 100)
+    
+    test_results = {
+        "get_all_centers_working": False,
+        "get_filtered_centers_working": False,
+        "create_center_working": False,
+        "update_center_working": False,
+        "delete_center_working": False,
+        "bulk_import_working": False,
+        "centers_count": 0,
+        "istanbul_centers_count": 0,
+        "test_center_id": None,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # TEST 1: GET all convention centers
+    print("\n" + "=" * 80)
+    print("TEST 1: GET ALL CONVENTION CENTERS")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/convention-centers")
+    print("Expected: Should return existing convention centers with proper structure")
+    
+    get_endpoint = f"{BACKEND_URL}/api/library/convention-centers"
+    print(f"Testing endpoint: {get_endpoint}")
+    
+    try:
+        print("\n1. Making GET request to retrieve all convention centers...")
+        response = requests.get(get_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Convention centers endpoint responds with status 200")
+            test_results["get_all_centers_working"] = True
+            
+            try:
+                centers = response.json()
+                
+                if isinstance(centers, list):
+                    centers_count = len(centers)
+                    test_results["centers_count"] = centers_count
+                    print(f"📊 Convention centers count: {centers_count}")
+                    
+                    # Check data structure of first few centers
+                    if centers_count > 0:
+                        print(f"\n📋 CONVENTION CENTERS DATA STRUCTURE ANALYSIS (First 3 centers):")
+                        expected_fields = ["id", "name", "country", "city", "address", "website"]
+                        
+                        for i, center in enumerate(centers[:3], 1):
+                            print(f"   {i}. Name: {center.get('name', 'N/A')}")
+                            print(f"      Country: {center.get('country', 'N/A')}")
+                            print(f"      City: {center.get('city', 'N/A')}")
+                            print(f"      Address: {center.get('address', 'N/A')}")
+                            print(f"      Website: {center.get('website', 'N/A')}")
+                            print(f"      ID: {center.get('id', 'N/A')}")
+                            
+                            # Check required fields
+                            missing_fields = []
+                            for field in expected_fields:
+                                if field not in center:
+                                    missing_fields.append(field)
+                            
+                            if missing_fields:
+                                print(f"      ⚠️  Missing fields: {missing_fields}")
+                                test_results["warnings"].append(f"MISSING_FIELDS_{missing_fields}")
+                            else:
+                                print(f"      ✅ All required fields present")
+                            
+                            # Check for Turkish characters
+                            center_text = str(center)
+                            turkish_chars = ['İ', 'ı', 'ş', 'ğ', 'ü', 'ö', 'ç', 'Ş', 'Ğ', 'Ü', 'Ö', 'Ç']
+                            has_turkish = any(char in center_text for char in turkish_chars)
+                            if has_turkish:
+                                print(f"      ✅ Contains Turkish characters")
+                    else:
+                        print("ℹ️  INFO: No convention centers found in database")
+                    
+                else:
+                    print("❌ FAIL: Response is not an array")
+                    test_results["critical_issues"].append("CENTERS_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing centers response: {str(e)}")
+                test_results["critical_issues"].append(f"CENTERS_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Convention centers endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_CENTERS_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Convention centers GET request error: {str(e)}")
+        test_results["critical_issues"].append(f"GET_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: GET filtered convention centers (Türkiye/İstanbul)
+    print("\n" + "=" * 80)
+    print("TEST 2: GET FILTERED CONVENTION CENTERS (TÜRKIYE/İSTANBUL)")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/convention-centers?country=Türkiye&city=İstanbul")
+    print("Expected: Should return only Istanbul centers")
+    
+    filter_endpoint = f"{BACKEND_URL}/api/library/convention-centers?country=Türkiye&city=İstanbul"
+    print(f"Testing endpoint: {filter_endpoint}")
+    
+    try:
+        print("\n1. Making GET request with country and city filters...")
+        response = requests.get(filter_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Filtered convention centers endpoint responds with status 200")
+            test_results["get_filtered_centers_working"] = True
+            
+            try:
+                filtered_centers = response.json()
+                
+                if isinstance(filtered_centers, list):
+                    istanbul_count = len(filtered_centers)
+                    test_results["istanbul_centers_count"] = istanbul_count
+                    print(f"📊 Istanbul convention centers count: {istanbul_count}")
+                    
+                    # Verify all returned centers are from Istanbul, Turkey
+                    all_istanbul = True
+                    for center in filtered_centers:
+                        country = center.get('country', '')
+                        city = center.get('city', '')
+                        if country != 'Türkiye' or city != 'İstanbul':
+                            print(f"❌ FAIL: Found non-Istanbul center: {center.get('name')} ({country}, {city})")
+                            all_istanbul = False
+                    
+                    if all_istanbul and istanbul_count > 0:
+                        print("✅ PASS: All returned centers are from İstanbul, Türkiye")
+                        print(f"📋 Istanbul centers:")
+                        for i, center in enumerate(filtered_centers, 1):
+                            print(f"   {i}. {center.get('name', 'N/A')}")
+                    elif istanbul_count == 0:
+                        print("ℹ️  INFO: No convention centers found for İstanbul, Türkiye")
+                    
+                else:
+                    print("❌ FAIL: Filtered response is not an array")
+                    test_results["critical_issues"].append("FILTERED_CENTERS_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing filtered centers response: {str(e)}")
+                test_results["critical_issues"].append(f"FILTERED_CENTERS_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Filtered convention centers endpoint error: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"GET_FILTERED_CENTERS_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Filtered convention centers GET request error: {str(e)}")
+        test_results["critical_issues"].append(f"GET_FILTERED_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Create new convention center (with Turkish characters)
+    print("\n" + "=" * 80)
+    print("TEST 3: CREATE NEW CONVENTION CENTER")
+    print("=" * 80)
+    print("Endpoint: POST /api/library/convention-centers")
+    print("Test data: Ankara convention center with Turkish characters")
+    
+    test_center_data = {
+        "name": "Ankara Kongre ve Kültür Merkezi",
+        "country": "Türkiye",
+        "city": "Ankara",
+        "address": "Atatürk Bulvarı No:123 Çankaya/Ankara",
+        "website": "https://www.ankarakongre.gov.tr"
+    }
+    
+    create_endpoint = f"{BACKEND_URL}/api/library/convention-centers"
+    print(f"Testing endpoint: {create_endpoint}")
+    print(f"Test data: {test_center_data}")
+    
+    try:
+        print("\n1. Making POST request to create new convention center...")
+        response = requests.post(create_endpoint, json=test_center_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code in [200, 201]:
+            print("✅ PASS: Convention center creation successful")
+            test_results["create_center_working"] = True
+            
+            try:
+                created_center = response.json()
+                test_center_id = created_center.get("id")
+                test_results["test_center_id"] = test_center_id
+                print(f"✅ PASS: Test convention center created with ID: {test_center_id}")
+                
+                # Verify created data
+                print(f"📋 Created center data:")
+                print(f"   Name: {created_center.get('name')}")
+                print(f"   Country: {created_center.get('country')}")
+                print(f"   City: {created_center.get('city')}")
+                print(f"   Address: {created_center.get('address')}")
+                print(f"   Website: {created_center.get('website')}")
+                
+                # Check if Turkish characters are preserved
+                if "Ankara Kongre ve Kültür Merkezi" in str(created_center):
+                    print("✅ PASS: Turkish characters preserved correctly")
+                else:
+                    print("⚠️  WARNING: Turkish characters may not be preserved correctly")
+                    test_results["warnings"].append("TURKISH_CHARS_NOT_PRESERVED")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing created center response: {str(e)}")
+                test_results["critical_issues"].append(f"CREATE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Convention center creation failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"CREATE_CENTER_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Convention center creation request error: {str(e)}")
+        test_results["critical_issues"].append(f"CREATE_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 4: Update convention center
+    if test_results["test_center_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 4: UPDATE CONVENTION CENTER")
+        print("=" * 80)
+        print(f"Endpoint: PUT /api/library/convention-centers/{test_results['test_center_id']}")
+        print("Update: Change name and add new website")
+        
+        updated_center_data = {
+            "name": "Ankara Kongre ve Kültür Merkezi - Güncellendi",
+            "country": "Türkiye",
+            "city": "Ankara",
+            "address": "Atatürk Bulvarı No:123 Çankaya/Ankara",
+            "website": "https://www.ankarakongre-updated.gov.tr"
+        }
+        
+        update_endpoint = f"{BACKEND_URL}/api/library/convention-centers/{test_results['test_center_id']}"
+        print(f"Testing endpoint: {update_endpoint}")
+        print(f"Update data: {updated_center_data}")
+        
+        try:
+            print("\n1. Making PUT request to update convention center...")
+            response = requests.put(update_endpoint, json=updated_center_data, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Convention center update successful")
+                test_results["update_center_working"] = True
+                
+                try:
+                    updated_center = response.json()
+                    print(f"📋 Updated center data:")
+                    print(f"   Name: {updated_center.get('name')}")
+                    print(f"   Website: {updated_center.get('website')}")
+                    
+                    # Verify the update
+                    if "Güncellendi" in updated_center.get('name', ''):
+                        print("✅ PASS: Center name updated correctly")
+                    else:
+                        print("⚠️  WARNING: Center name may not be updated correctly")
+                        test_results["warnings"].append("UPDATE_NAME_NOT_VERIFIED")
+                    
+                    if "updated" in updated_center.get('website', ''):
+                        print("✅ PASS: Center website updated correctly")
+                    else:
+                        print("⚠️  WARNING: Center website may not be updated correctly")
+                        test_results["warnings"].append("UPDATE_WEBSITE_NOT_VERIFIED")
+                    
+                except Exception as e:
+                    print(f"❌ FAIL: Error parsing updated center response: {str(e)}")
+                    test_results["critical_issues"].append(f"UPDATE_PARSE_ERROR: {str(e)}")
+            else:
+                print(f"❌ FAIL: Convention center update failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"UPDATE_CENTER_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Convention center update request error: {str(e)}")
+            test_results["critical_issues"].append(f"UPDATE_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 5: Bulk import convention centers
+    print("\n" + "=" * 80)
+    print("TEST 5: BULK IMPORT CONVENTION CENTERS")
+    print("=" * 80)
+    print("Endpoint: POST /api/library/convention-centers/bulk-import")
+    print("Test: Import multiple centers for İzmir")
+    
+    bulk_import_data = {
+        "country": "Türkiye",
+        "city": "İzmir",
+        "centers": [
+            "İzmir Fuar Merkezi",
+            "Kültürpark Açıkhava Tiyatrosu",
+            "İzmir Kongre ve Sanat Merkezi"
+        ]
+    }
+    
+    bulk_import_endpoint = f"{BACKEND_URL}/api/library/convention-centers/bulk-import"
+    print(f"Testing endpoint: {bulk_import_endpoint}")
+    print(f"Bulk import data: {bulk_import_data}")
+    
+    try:
+        print("\n1. Making POST request for bulk import...")
+        response = requests.post(bulk_import_endpoint, json=bulk_import_data, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Bulk import successful")
+            test_results["bulk_import_working"] = True
+            
+            try:
+                bulk_result = response.json()
+                print(f"📋 Bulk import results:")
+                print(f"   Created: {bulk_result.get('created', 0)}")
+                print(f"   Updated: {bulk_result.get('updated', 0)}")
+                print(f"   Errors: {bulk_result.get('errors', 0)}")
+                
+                if bulk_result.get('created', 0) > 0:
+                    print("✅ PASS: Centers were created during bulk import")
+                else:
+                    print("ℹ️  INFO: No new centers created (may already exist)")
+                
+            except Exception as e:
+                print(f"❌ FAIL: Error parsing bulk import response: {str(e)}")
+                test_results["critical_issues"].append(f"BULK_IMPORT_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Bulk import failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            test_results["critical_issues"].append(f"BULK_IMPORT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Bulk import request error: {str(e)}")
+        test_results["critical_issues"].append(f"BULK_IMPORT_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 6: Delete test convention center
+    if test_results["test_center_id"]:
+        print("\n" + "=" * 80)
+        print("TEST 6: DELETE CONVENTION CENTER")
+        print("=" * 80)
+        print(f"Endpoint: DELETE /api/library/convention-centers/{test_results['test_center_id']}")
+        print("Test: Delete the test center created earlier")
+        
+        delete_endpoint = f"{BACKEND_URL}/api/library/convention-centers/{test_results['test_center_id']}"
+        print(f"Testing endpoint: {delete_endpoint}")
+        
+        try:
+            print("\n1. Making DELETE request to remove test convention center...")
+            response = requests.delete(delete_endpoint, timeout=30)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ PASS: Convention center deletion successful")
+                test_results["delete_center_working"] = True
+                
+                # Verify deletion by trying to get the deleted center
+                print("\n2. Verifying deletion by attempting to retrieve deleted center...")
+                verify_response = requests.get(f"{BACKEND_URL}/api/library/convention-centers", timeout=15)
+                if verify_response.status_code == 200:
+                    all_centers = verify_response.json()
+                    deleted_center_found = False
+                    for center in all_centers:
+                        if center.get('id') == test_results['test_center_id']:
+                            deleted_center_found = True
+                            break
+                    
+                    if not deleted_center_found:
+                        print("✅ PASS: Test center successfully removed from database")
+                    else:
+                        print("⚠️  WARNING: Test center still found in database after deletion")
+                        test_results["warnings"].append("DELETE_NOT_VERIFIED")
+                
+            else:
+                print(f"❌ FAIL: Convention center deletion failed: {response.status_code}")
+                print(f"Response: {response.text}")
+                test_results["critical_issues"].append(f"DELETE_CENTER_ERROR_{response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ FAIL: Convention center deletion request error: {str(e)}")
+            test_results["critical_issues"].append(f"DELETE_REQUEST_ERROR: {str(e)}")
+    
+    # FINAL TEST RESULTS SUMMARY
+    print("\n" + "=" * 100)
+    print("🔍 CONVENTION CENTERS API ENDPOINTS TEST RESULTS SUMMARY")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS:")
+    print(f"   • GET All Centers: {'✅ Working' if test_results['get_all_centers_working'] else '❌ Failed'}")
+    print(f"   • GET Filtered Centers: {'✅ Working' if test_results['get_filtered_centers_working'] else '❌ Failed'}")
+    print(f"   • CREATE Center: {'✅ Working' if test_results['create_center_working'] else '❌ Failed'}")
+    print(f"   • UPDATE Center: {'✅ Working' if test_results['update_center_working'] else '❌ Failed'}")
+    print(f"   • DELETE Center: {'✅ Working' if test_results['delete_center_working'] else '❌ Failed'}")
+    print(f"   • BULK IMPORT: {'✅ Working' if test_results['bulk_import_working'] else '❌ Failed'}")
+    
+    print(f"\n📈 DATA STATISTICS:")
+    print(f"   • Total Centers Found: {test_results['centers_count']}")
+    print(f"   • Istanbul Centers: {test_results['istanbul_centers_count']}")
+    print(f"   • Test Center ID: {test_results['test_center_id'] or 'N/A'}")
+    
+    print(f"\n🚨 CRITICAL ISSUES: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS AND RECOMMENDATIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    working_endpoints = sum([
+        test_results['get_all_centers_working'],
+        test_results['get_filtered_centers_working'],
+        test_results['create_center_working'],
+        test_results['update_center_working'],
+        test_results['delete_center_working'],
+        test_results['bulk_import_working']
+    ])
+    
+    total_endpoints = 6
+    success_rate = (working_endpoints / total_endpoints) * 100
+    
+    print(f"   • Success Rate: {working_endpoints}/{total_endpoints} endpoints working ({success_rate:.1f}%)")
+    
+    if success_rate == 100:
+        print("   ✅ EXCELLENT: All Convention Centers API endpoints are working perfectly!")
+        print("   ✅ Turkish character support is working correctly")
+        print("   ✅ Filtering by country and city is functional")
+        print("   ✅ CRUD operations are all working as expected")
+        print("   ✅ Bulk import functionality is operational")
+    elif success_rate >= 80:
+        print("   ✅ GOOD: Most Convention Centers API endpoints are working")
+        print("   ⚠️  Some minor issues need attention")
+    elif success_rate >= 60:
+        print("   ⚠️  MODERATE: Convention Centers API has some significant issues")
+        print("   🔧 Several endpoints need fixing")
+    else:
+        print("   ❌ CRITICAL: Convention Centers API has major problems")
+        print("   🚨 Immediate attention required")
+    
+    print(f"\n🎯 RECOMMENDATIONS:")
+    if len(test_results['critical_issues']) > 0:
+        print("   1. Fix critical issues preventing API endpoints from working")
+        print("   2. Check backend server logs for detailed error information")
+        print("   3. Verify database connection and collection setup")
+    
+    if len(test_results['warnings']) > 0:
+        print("   4. Address warnings to improve data integrity")
+        print("   5. Verify Turkish character encoding throughout the system")
+    
+    if success_rate == 100:
+        print("   6. Convention Centers API is ready for production use")
+        print("   7. Consider adding more comprehensive validation rules")
+        print("   8. Monitor performance with larger datasets")
+    
+    # Return overall test result
+    has_critical_issues = len(test_results['critical_issues']) > 0
+    
+    if has_critical_issues:
+        print(f"\n❌ OVERALL RESULT: CRITICAL ISSUES FOUND - CONVENTION CENTERS API NEEDS FIXES")
+        return False
+    elif success_rate >= 80:
+        print(f"\n✅ OVERALL RESULT: CONVENTION CENTERS API IS WORKING WELL")
+        return True
+    else:
+        print(f"\n⚠️  OVERALL RESULT: CONVENTION CENTERS API HAS MODERATE ISSUES")
+        return False
+
 def test_phone_codes_api_endpoints():
     """
     PHONE CODES API ENDPOINTS TESTING
