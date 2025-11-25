@@ -76,6 +76,35 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [selectedCountryCode, setSelectedCountryCode] = useState('');
   const [projectTypes, setProjectTypes] = useState([]);
   
+  // Realistic test data samples
+  const testDataSamples = {
+    titles: [
+      'Mobilya İhracat Projesi',
+      'Tekstil Ürünleri Tedarik Anlaşması', 
+      'Gıda Ürünleri Distribütörlüğü',
+      'Makine Ekipman Satışı',
+      'Turizm Tesisi Konsept Geliştirme',
+      'Restoran Zinciri Franchise Anlaşması',
+      'Otomotiv Yan Sanayi Tedarik',
+      'İnşaat Malzemeleri Toptan Satış'
+    ],
+    sources: ['trade-show', 'referral', 'website', 'cold-call', 'partner'],
+    businessTypes: ['b2b', 'b2c', 'retail', 'wholesale', 'manufacturing'],
+    descriptions: [
+      'Müşteri firmanın yıllık ihtiyaçlarını karşılayacak kapsamlı bir tedarik anlaşması.',
+      'Uzun vadeli iş birliği potansiyeli olan stratejik proje.',
+      'Bölgesel distribütörlük anlaşması görüşmeleri devam ediyor.',
+      'Fuar görüşmesinde tanışılan firma ile somut teklif aşamasına gelindi.'
+    ],
+    amounts: ['50000', '125000', '250000', '500000', '750000', '1000000'],
+    tradeshows: [
+      'İstanbul Mobilya Fuarı 2025',
+      'Bursa Tekstil Expo',
+      'İzmir Gıda Teknolojileri Fuarı',
+      'Ankara İnşaat ve Yapı Malzemeleri'
+    ]
+  };
+  
   // Static options
   const currencies = [
     { value: 'TRY', label: '₺ Türk Lirası' },
