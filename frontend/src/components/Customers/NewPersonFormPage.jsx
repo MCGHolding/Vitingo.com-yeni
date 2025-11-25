@@ -59,9 +59,27 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   
-  // Country and city data from countriesAndCities.js
+  // Countries and cities from library (SAME AS NewCustomerForm)
   const [ulkeler, setUlkeler] = useState([]);
   const [sehirler, setSehirler] = useState([]);
+  const [tumUlkeler, setTumUlkeler] = useState([]);
+  
+  // Load countries from library (SAME AS NewCustomerForm)
+  const loadUlkeler = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/countries`);
+      const data = await response.json();
+      
+      if (Array.isArray(data)) {
+        const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
+        setUlkeler(ulkeIsimleri);
+        setTumUlkeler(data);
+      }
+    } catch (error) {
+      console.error('Ülkeler yüklenemedi:', error);
+    }
+  };
 
   // Realistic Turkish names and data for test
   const testDataSamples = {
@@ -81,23 +99,27 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   
   // Load countries on component mount
   useEffect(() => {
-    const countryNames = Object.values(countriesData).map(c => c.name).sort();
-    setUlkeler(countryNames);
+    loadUlkeler();
   }, []);
 
-  // Update cities when country changes
+  // Filter cities when country changes (SAME AS NewCustomerForm)
   useEffect(() => {
-    if (formData.country) {
-      const countryEntry = Object.values(countriesData).find(c => c.name === formData.country);
-      if (countryEntry && countryEntry.cities) {
-        setSehirler(countryEntry.cities);
+    if (formData.country && tumUlkeler.length > 0) {
+      const secilenUlke = tumUlkeler.find(u => u.name === formData.country);
+      
+      if (secilenUlke && secilenUlke.cities) {
+        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
+        setSehirler(sehirListesi);
       } else {
         setSehirler([]);
       }
+      
+      // Reset city when country changes
+      setFormData(prev => ({ ...prev, city: '' }));
     } else {
       setSehirler([]);
     }
-  }, [formData.country]);
+  }, [formData.country, tumUlkeler]);
 
   // Load companies and suppliers on component mount
   useEffect(() => {
