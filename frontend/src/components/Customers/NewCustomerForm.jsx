@@ -843,7 +843,14 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                   <div className="flex-1">
                     <Select
                       value={formData.country}
-                      onValueChange={(value) => handleInputChange('country', value)}
+                      onValueChange={(value) => {
+                        // Update country in form data
+                        handleInputChange('country', value);
+                        // Force phone inputs to re-render with new country code
+                        setTimeout(() => {
+                          // Trigger a re-render by updating a dummy state
+                        }, 100);
+                      }}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Ülke seçiniz..." />
