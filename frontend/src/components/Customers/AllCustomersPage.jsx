@@ -75,9 +75,19 @@ const ActionMenuPopover = ({ customer, onAction }) => {
     
     if (!isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      
+      // Menü yüksekliği (7 item * ~40px per item = ~280px)
+      const menuHeight = menuItems.length * 40 + 20; // Adding padding
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      // Eğer altta yeterli yer varsa alta aç, yoksa üste aç
+      const shouldOpenUpward = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+      
       setPosition({
-        top: rect.bottom + 4,
-        right: window.innerWidth - rect.right
+        top: shouldOpenUpward ? rect.top - menuHeight - 4 : rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+        openUpward: shouldOpenUpward
       });
     }
     
