@@ -134,6 +134,25 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     }
   };
   
+  // Load cities from library for a specific country
+  const loadSehirler = async (countryName) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/cities?country=${encodeURIComponent(countryName)}`);
+      const data = await response.json();
+      
+      if (Array.isArray(data)) {
+        const sehirIsimleri = data.map(d => d.name).filter(n => n).sort();
+        setSehirler(sehirIsimleri);
+      } else {
+        setSehirler([]);
+      }
+    } catch (error) {
+      console.error('Şehirler yüklenemedi:', error);
+      setSehirler([]);
+    }
+  };
+  
   // Helper function to get country dial code
   const getCountryDialCode = (countryName) => {
     if (!countryName) return 'tr'; // Default to Turkey
