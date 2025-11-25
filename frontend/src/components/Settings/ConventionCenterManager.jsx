@@ -530,16 +530,16 @@ const ConventionCenterManager = () => {
                     {filteredCenters.map((center) => (
                       <Card key={center.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
+                          <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-2">
-                                <Building2 className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                                <span className="font-semibold text-gray-900 truncate">{center.name}</span>
+                              <div className="flex items-start space-x-2 mb-2">
+                                <Building2 className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                                <h3 className="font-semibold text-gray-900 break-words">{center.name}</h3>
                               </div>
                               {center.address && (
                                 <p className="text-sm text-gray-600 mb-1 flex items-start">
                                   <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
-                                  {center.address}
+                                  <span className="break-words">{center.address}</span>
                                 </p>
                               )}
                               {center.website && (
@@ -547,14 +547,14 @@ const ConventionCenterManager = () => {
                                   href={center.website}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-600 hover:underline flex items-center"
+                                  className="text-sm text-blue-600 hover:underline flex items-start break-all"
                                 >
-                                  <Globe className="h-4 w-4 mr-1" />
-                                  {center.website}
+                                  <Globe className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                                  <span>{center.website}</span>
                                 </a>
                               )}
                             </div>
-                            <div className="flex space-x-1 ml-2">
+                            <div className="flex flex-col space-y-1 flex-shrink-0">
                               <button
                                 onClick={() => {
                                   setEditingCenter(center);
@@ -566,12 +566,14 @@ const ConventionCenterManager = () => {
                                   setShowEditModal(true);
                                 }}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                title="Düzenle"
                               >
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => deleteCenter(center.id, center.name)}
                                 className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                title="Sil"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
