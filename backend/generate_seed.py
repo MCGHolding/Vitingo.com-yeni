@@ -230,6 +230,49 @@ output.append("# Complete 195 UN Member Countries with major cities")
 output.append("# Generated automatically - DO NOT EDIT MANUALLY")
 output.append("")
 
+# Continent mapping
+CONTINENT_MAP = {
+  'AF': 'Asya', 'AL': 'Avrupa', 'DZ': 'Afrika', 'AD': 'Avrupa', 'AO': 'Afrika',
+  'AG': 'Kuzey Amerika', 'AR': 'Güney Amerika', 'AM': 'Asya', 'AU': 'Okyanusya', 'AT': 'Avrupa',
+  'AZ': 'Asya', 'BS': 'Kuzey Amerika', 'BH': 'Asya', 'BD': 'Asya', 'BB': 'Kuzey Amerika',
+  'BY': 'Avrupa', 'BE': 'Avrupa', 'BZ': 'Kuzey Amerika', 'BJ': 'Afrika', 'BT': 'Asya',
+  'BO': 'Güney Amerika', 'BA': 'Avrupa', 'BW': 'Afrika', 'BR': 'Güney Amerika', 'BN': 'Asya',
+  'BG': 'Avrupa', 'BF': 'Afrika', 'BI': 'Afrika', 'CV': 'Afrika', 'KH': 'Asya',
+  'CM': 'Afrika', 'CA': 'Kuzey Amerika', 'CF': 'Afrika', 'TD': 'Afrika', 'CL': 'Güney Amerika',
+  'CN': 'Asya', 'CO': 'Güney Amerika', 'KM': 'Afrika', 'CG': 'Afrika', 'CR': 'Kuzey Amerika',
+  'HR': 'Avrupa', 'CU': 'Kuzey Amerika', 'CY': 'Asya', 'CZ': 'Avrupa', 'CD': 'Afrika',
+  'DK': 'Avrupa', 'DJ': 'Afrika', 'DM': 'Kuzey Amerika', 'DO': 'Kuzey Amerika', 'EC': 'Güney Amerika',
+  'EG': 'Afrika', 'SV': 'Kuzey Amerika', 'GQ': 'Afrika', 'ER': 'Afrika', 'EE': 'Avrupa',
+  'SZ': 'Afrika', 'ET': 'Afrika', 'FJ': 'Okyanusya', 'FI': 'Avrupa', 'FR': 'Avrupa',
+  'GA': 'Afrika', 'GM': 'Afrika', 'GE': 'Asya', 'DE': 'Avrupa', 'GH': 'Afrika',
+  'GR': 'Avrupa', 'GD': 'Kuzey Amerika', 'GT': 'Kuzey Amerika', 'GN': 'Afrika', 'GW': 'Afrika',
+  'GY': 'Güney Amerika', 'HT': 'Kuzey Amerika', 'VA': 'Avrupa', 'HN': 'Kuzey Amerika', 'HU': 'Avrupa',
+  'IS': 'Avrupa', 'IN': 'Asya', 'ID': 'Asya', 'IR': 'Asya', 'IQ': 'Asya',
+  'IE': 'Avrupa', 'IL': 'Asya', 'IT': 'Avrupa', 'CI': 'Afrika', 'JM': 'Kuzey Amerika',
+  'JP': 'Asya', 'JO': 'Asya', 'KZ': 'Asya', 'KE': 'Afrika', 'KI': 'Okyanusya',
+  'KW': 'Asya', 'KG': 'Asya', 'LA': 'Asya', 'LV': 'Avrupa', 'LB': 'Asya',
+  'LS': 'Afrika', 'LR': 'Afrika', 'LY': 'Afrika', 'LI': 'Avrupa', 'LT': 'Avrupa',
+  'LU': 'Avrupa', 'MG': 'Afrika', 'MW': 'Afrika', 'MY': 'Asya', 'MV': 'Asya',
+  'ML': 'Afrika', 'MT': 'Avrupa', 'MH': 'Okyanusya', 'MR': 'Afrika', 'MU': 'Afrika',
+  'MX': 'Kuzey Amerika', 'FM': 'Okyanusya', 'MD': 'Avrupa', 'MC': 'Avrupa', 'MN': 'Asya',
+  'ME': 'Avrupa', 'MA': 'Afrika', 'MZ': 'Afrika', 'MM': 'Asya', 'NA': 'Afrika',
+  'NR': 'Okyanusya', 'NP': 'Asya', 'NL': 'Avrupa', 'NZ': 'Okyanusya', 'NI': 'Kuzey Amerika',
+  'NE': 'Afrika', 'NG': 'Afrika', 'KP': 'Asya', 'MK': 'Avrupa', 'NO': 'Avrupa',
+  'OM': 'Asya', 'PK': 'Asya', 'PW': 'Okyanusya', 'PS': 'Asya', 'PA': 'Kuzey Amerika',
+  'PG': 'Okyanusya', 'PY': 'Güney Amerika', 'PE': 'Güney Amerika', 'PH': 'Asya', 'PL': 'Avrupa',
+  'PT': 'Avrupa', 'QA': 'Asya', 'RO': 'Avrupa', 'RU': 'Avrupa', 'RW': 'Afrika',
+  'KN': 'Kuzey Amerika', 'LC': 'Kuzey Amerika', 'VC': 'Kuzey Amerika', 'WS': 'Okyanusya', 'SM': 'Avrupa',
+  'ST': 'Afrika', 'SA': 'Asya', 'SN': 'Afrika', 'RS': 'Avrupa', 'SC': 'Afrika',
+  'SL': 'Afrika', 'SG': 'Asya', 'SK': 'Avrupa', 'SI': 'Avrupa', 'SB': 'Okyanusya',
+  'SO': 'Afrika', 'ZA': 'Afrika', 'KR': 'Asya', 'SS': 'Afrika', 'ES': 'Avrupa',
+  'LK': 'Asya', 'SD': 'Afrika', 'SR': 'Güney Amerika', 'SE': 'Avrupa', 'CH': 'Avrupa',
+  'SY': 'Asya', 'TJ': 'Asya', 'TZ': 'Afrika', 'TH': 'Asya', 'TL': 'Asya',
+  'TG': 'Afrika', 'TO': 'Okyanusya', 'TT': 'Kuzey Amerika', 'TN': 'Afrika', 'TR': 'Asya',
+  'TM': 'Asya', 'TV': 'Okyanusya', 'UG': 'Afrika', 'UA': 'Avrupa', 'AE': 'Asya',
+  'GB': 'Avrupa', 'US': 'Kuzey Amerika', 'UY': 'Güney Amerika', 'UZ': 'Asya', 'VU': 'Okyanusya',
+  'VE': 'Güney Amerika', 'VN': 'Asya', 'YE': 'Asya', 'ZM': 'Afrika', 'ZW': 'Afrika'
+}
+
 # Countries list
 output.append("COUNTRIES_195 = [")
 countries_list = [
@@ -252,7 +295,7 @@ countries_list = [
     ('IE', 'İrlanda'), ('IL', 'İsrail'), ('IT', 'İtalya'), ('CI', 'Fildişi Sahili'), ('JM', 'Jamaika'),
     ('JP', 'Japonya'), ('JO', 'Ürdün'), ('KZ', 'Kazakistan'), ('KE', 'Kenya'), ('KI', 'Kiribati'),
     ('KW', 'Kuveyt'), ('KG', 'Kırgızistan'), ('LA', 'Laos'), ('LV', 'Letonya'), ('LB', 'Lübnan'),
-    ('LS', 'Lesotho'), ('LR', 'Liberya'), ('LY', 'Libya'), ('LI', 'Lihtenştayn'), ('LT', 'Litvanya'),
+    ('LS', 'Lesotho'), ('LR', 'Liberya'), ('LY': 'Libya'), ('LI', 'Lihtenştayn'), ('LT', 'Litvanya'),
     ('LU', 'Lüksemburg'), ('MG', 'Madagaskar'), ('MW', 'Malavi'), ('MY', 'Malezya'), ('MV', 'Maldivler'),
     ('ML', 'Mali'), ('MT', 'Malta'), ('MH', 'Marshall Adaları'), ('MR', 'Moritanya'), ('MU', 'Mauritius'),
     ('MX', 'Meksika'), ('FM', 'Mikronezya'), ('MD', 'Moldova'), ('MC', 'Monako'), ('MN', 'Moğolistan'),
@@ -275,7 +318,8 @@ countries_list = [
 ]
 
 for code, name in countries_list:
-    output.append(f'    {{"id": "{code}", "name": "{name}", "code": "{code}"}},')
+    continent = CONTINENT_MAP.get(code, '')
+    output.append(f'    {{"id": "{code}", "name": "{name}", "code": "{code}", "continent": "{continent}"}},')
 output.append("]")
 output.append("")
 
