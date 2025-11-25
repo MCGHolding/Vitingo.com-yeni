@@ -18,29 +18,32 @@ export default function ArchivedMeetingsPage({ onBack }) {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
-      // Get all calendar events
-      const response = await fetch(`${backendUrl}/api/calendar/events`);
-      if (response.ok) {
-        const allEvents = await response.json();
-        
-        // Filter past events (end_datetime < now)
-        const now = new Date();
-        const pastEvents = allEvents.filter(event => {
-          const endDate = new Date(event.end_datetime);
-          return endDate < now;
+      // First, trigger automatic archiving of past events
+      try {
+        await fetch(`${backendUrl}/api/calendar/events/archive-past`, {
+          method: 'POST'
         });
+        console.log('✅ Past events archived automatically');
+      } catch (archiveError) {
+        console.warn('Archive endpoint failed:', archiveError);
+      }
+      
+      // Get archived events only
+      const response = await fetch(`${backendUrl}/api/calendar/events?archived_only=true`);
+      if (response.ok) {
+        const archivedEvents = await response.json();
         
         // Sort by date (newest first)
-        pastEvents.sort((a, b) => new Date(b.end_datetime) - new Date(a.end_datetime));
+        archivedEvents.sort((a, b) => new Date(b.end_datetime) - new Date(a.end_datetime));
         
         // Calculate pagination
-        const total = Math.ceil(pastEvents.length / itemsPerPage);
+        const total = Math.ceil(archivedEvents.length / itemsPerPage);
         setTotalPages(total);
         
         // Get current page items
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const pageItems = pastEvents.slice(startIndex, endIndex);
+        const pageItems = archivedEvents.slice(startIndex, endIndex);
         
         setArchivedMeetings(pageItems);
         setCurrentPage(page);
