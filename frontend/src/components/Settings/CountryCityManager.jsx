@@ -495,8 +495,16 @@ const CountryCityManager = () => {
                   value={citySearch}
                   onChange={(e) => setCitySearch(e.target.value)}
                   placeholder="Şehir ara..."
-                  className="pl-10"
+                  className="pl-10 pr-10"
                 />
+                {citySearch && (
+                  <button
+                    onClick={() => setCitySearch('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
 
