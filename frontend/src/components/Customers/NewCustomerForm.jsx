@@ -448,10 +448,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       email: '', 
       position: '', 
       tags: [],
-      address: '',
+      address: formData.address || '', // Firma bilgilerinden adresi al
       country: formData.country || '', // Firma bilgilerinden ülkeyi al
-      city: formData.city || '' // Firma bilgilerinden şehri al
+      city: formData.city || '', // Firma bilgilerinden şehri al
+      is_accounting_responsible: false
     }]);
+    // Yeni eklenen contact'i otomatik aç
+    setExpandedContacts([...expandedContacts, contacts.length]);
   };
 
   const handleRemoveContact = (index) => {
