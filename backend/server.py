@@ -5978,6 +5978,7 @@ class Opportunity(BaseModel):
     trade_show_dates: Optional[str] = ""
     expected_revenue: float = 0.0
     probability: int = 50
+    is_favorite: bool = False  # Favori fırsat işaretlemesi
     tags: List[str] = Field(default_factory=list)
     design_files: List[str] = Field(default_factory=list)
     sample_files: List[str] = Field(default_factory=list)
