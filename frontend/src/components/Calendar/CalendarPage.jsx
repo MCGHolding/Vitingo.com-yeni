@@ -51,8 +51,16 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
       );
       if (response.ok) {
         const eventsData = await response.json();
+        
+        // Filter out past events - only show current and future meetings
+        const now = new Date();
+        const currentAndFutureEvents = eventsData.filter(event => {
+          const endDate = new Date(event.end_datetime);
+          return endDate >= now;
+        });
+        
         // Transform events for FullCalendar
-        const transformedEvents = eventsData.map(event => ({
+        const transformedEvents = currentAndFutureEvents.map(event => ({
           id: event.id,
           title: event.title,
           start: event.start_datetime,
