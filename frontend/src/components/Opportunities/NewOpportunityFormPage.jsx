@@ -69,10 +69,12 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [fairs, setFairs] = useState([]);
   const [dynamicStatuses, setDynamicStatuses] = useState([]);
   const [dynamicStages, setDynamicStages] = useState([]);
-  const [countries, setCountries] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [selectedCountryCode, setSelectedCountryCode] = useState('');
   const [projectTypes, setProjectTypes] = useState([]);
+  
+  // Countries and cities from library (SAME AS NewCustomerForm)
+  const [ulkeler, setUlkeler] = useState([]);
+  const [sehirler, setSehirler] = useState([]);
+  const [tumUlkeler, setTumUlkeler] = useState([]);
   
   // Realistic test data samples
   const testDataSamples = {
