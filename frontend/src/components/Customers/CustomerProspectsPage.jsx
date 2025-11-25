@@ -419,15 +419,7 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
               className="bg-green-600 hover:bg-green-700 px-6"
             >
               <FileText className="h-4 w-4 mr-2" />
-              Excel Aktarım
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onBackToDashboard}
-              className="px-6"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Kapat
+              Dışarı Aktar
             </Button>
           </div>
         </div>
