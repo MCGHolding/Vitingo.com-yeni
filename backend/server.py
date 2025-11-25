@@ -1126,7 +1126,7 @@ async def get_cities(country: Optional[str] = None):
             query["country"] = country
             logger.info(f"Fetching cities for country: '{country}'")
         
-        cities = await db.cities.find(query).sort("name", 1).to_list(1000)
+        cities = await db.cities.find(query).sort("name", 1).to_list(None)
         logger.info(f"Found {len(cities)} cities" + (f" for country '{country}'" if country else ""))
         return [LibraryCity(**city) for city in cities]
     except Exception as e:
