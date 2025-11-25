@@ -1271,6 +1271,35 @@ async def delete_phone_code(code_id: str):
         logger.error(f"Error deleting phone code: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/library/phone-codes/initialize")
+async def initialize_phone_codes():
+    """Initialize phone codes with default data"""
+    try:
+        from phone_codes_seed import PHONE_CODES
+        
+        # Check if already initialized
+        existing_count = await db.phone_codes.count_documents({})
+        if existing_count > 0:
+            return {
+                "message": "Phone codes already initialized",
+                "count": existing_count
+            }
+        
+        # Add id to each phone code
+        for code in PHONE_CODES:
+            code['id'] = code['country_code']
+        
+        # Insert all phone codes
+        result = await db.phone_codes.insert_many(PHONE_CODES)
+        
+        return {
+            "message": "Phone codes initialized successfully",
+            "count": len(result.inserted_ids)
+        }
+    except Exception as e:
+        logger.error(f"Error initializing phone codes: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/library/countries/bulk-import")
 async def bulk_import_countries(data: dict):
     """Bulk import countries and cities"""
