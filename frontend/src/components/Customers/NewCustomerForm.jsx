@@ -211,16 +211,12 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   useEffect(() => {
     if (formData.country) {
       loadSehirler(formData.country);
-    } else {
-      setSehirler([]);
-      }
-      
       // Reset city when country changes
       setFormData(prev => ({ ...prev, city: '' }));
     } else {
       setSehirler([]);
     }
-  }, [formData.country, tumUlkeler]);
+  }, [formData.country]);
   
   // Filter cities for contacts when their country changes
   useEffect(() => {
