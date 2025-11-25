@@ -127,20 +127,23 @@ export default function PassiveCustomersPage({ customers = [], onBackToDashboard
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
-            <UserX className="h-6 w-6" />
-            <span>Pasif Müşteriler</span>
-          </h1>
-          <p className="text-gray-600 mt-1">Son 3 ayda hareket görmemiş müşteriler</p>
+      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
+              <UserX className="h-8 w-8 text-gray-600" />
+              <span>Pasif Müşteriler</span>
+            </h1>
+            <p className="text-gray-600 mt-1">Son 3 ayda hareket görmemiş müşteriler</p>
+          </div>
         </div>
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
