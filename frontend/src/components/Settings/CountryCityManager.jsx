@@ -171,7 +171,7 @@ const CountryCityManager = () => {
   const [selectedContinent, setSelectedContinent] = useState('Tümü');
   const [editingCountry, setEditingCountry] = useState(null);
   const [editingCity, setEditingCity] = useState(null);
-  const [newCountryData, setNewCountryData] = useState({ name: '', code: '' });
+  const [newCountryData, setNewCountryData] = useState({ name: '', code: '', continent: '' });
   const [newCityData, setNewCityData] = useState({ name: '' });
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
