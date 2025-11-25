@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, MapPin, Globe, Plus, Trash2, Search, Upload, X, Edit2 } from 'lucide-react';
+import { Building2, Upload, Trash2, Search, X, Edit2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent } from '../ui/card';
@@ -7,21 +7,14 @@ import { useToast } from '../../hooks/use-toast';
 
 const ConventionCenterManager = () => {
   const { toast } = useToast();
-  const [countries, setCountries] = useState([]);
-  const [cities, setCities] = useState([]);
   const [centers, setCenters] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [countrySearch, setCountrySearch] = useState('');
-  const [citySearch, setCitySearch] = useState('');
-  const [centerSearch, setCenterSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showAddCenterModal, setShowAddCenterModal] = useState(false);
-  const [showEditCenterModal, setShowEditCenterModal] = useState(false);
-  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editingCenter, setEditingCenter] = useState(null);
-  const [newCenterData, setNewCenterData] = useState({ name: '', address: '', website: '' });
-  const [bulkImportText, setBulkImportText] = useState('');
+  const [editData, setEditData] = useState({ name: '', address: '', website: '' });
+  const [importText, setImportText] = useState('');
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
