@@ -589,7 +589,229 @@ const CountryCityManager = () => {
         )}
       </div>
 
-      {/* Modals will be added here */}
+      {/* Add Country Modal */}
+      {showAddCountryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Yeni Ülke Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Adı</label>
+                <Input
+                  value={newCountryData.name}
+                  onChange={(e) => setNewCountryData({...newCountryData, name: e.target.value})}
+                  placeholder="Örn: Türkiye"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Kodu</label>
+                <Input
+                  value={newCountryData.code}
+                  onChange={(e) => setNewCountryData({...newCountryData, code: e.target.value.toUpperCase()})}
+                  placeholder="Örn: TR"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" onClick={() => {
+                setShowAddCountryModal(false);
+                setNewCountryData({ name: '', code: '' });
+              }}>
+                İptal
+              </Button>
+              <Button onClick={async () => {
+                try {
+                  const response = await fetch(`${BACKEND_URL}/api/library/countries`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: newCountryData.code, name: newCountryData.name, code: newCountryData.code })
+                  });
+                  if (response.ok) {
+                    toast({ title: "Başarılı", description: "Ülke eklendi" });
+                    setShowAddCountryModal(false);
+                    setNewCountryData({ name: '', code: '' });
+                    loadCountries();
+                  } else {
+                    throw new Error('Failed to add country');
+                  }
+                } catch (error) {
+                  toast({ title: "Hata", description: "Ülke eklenirken hata oluştu", variant: "destructive" });
+                }
+              }}>
+                Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Country Modal */}
+      {showEditCountryModal && editingCountry && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Ülke Düzenle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Adı</label>
+                <Input
+                  value={newCountryData.name}
+                  onChange={(e) => setNewCountryData({...newCountryData, name: e.target.value})}
+                  placeholder="Örn: Türkiye"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Kodu</label>
+                <Input
+                  value={newCountryData.code}
+                  onChange={(e) => setNewCountryData({...newCountryData, code: e.target.value.toUpperCase()})}
+                  placeholder="Örn: TR"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" onClick={() => {
+                setShowEditCountryModal(false);
+                setEditingCountry(null);
+                setNewCountryData({ name: '', code: '' });
+              }}>
+                İptal
+              </Button>
+              <Button onClick={async () => {
+                try {
+                  const response = await fetch(`${BACKEND_URL}/api/library/countries/${editingCountry.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: editingCountry.id, name: newCountryData.name, code: newCountryData.code })
+                  });
+                  if (response.ok) {
+                    toast({ title: "Başarılı", description: "Ülke güncellendi" });
+                    setShowEditCountryModal(false);
+                    setEditingCountry(null);
+                    setNewCountryData({ name: '', code: '' });
+                    loadCountries();
+                  } else {
+                    throw new Error('Failed to update country');
+                  }
+                } catch (error) {
+                  toast({ title: "Hata", description: "Ülke güncellenirken hata oluştu", variant: "destructive" });
+                }
+              }}>
+                Güncelle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add City Modal */}
+      {showAddCityModal && selectedCountry && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">{selectedCountry.name} için Şehir Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Şehir Adı</label>
+                <Input
+                  value={newCityData.name}
+                  onChange={(e) => setNewCityData({...newCityData, name: e.target.value})}
+                  placeholder="Örn: İstanbul"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" onClick={() => {
+                setShowAddCityModal(false);
+                setNewCityData({ name: '' });
+              }}>
+                İptal
+              </Button>
+              <Button onClick={async () => {
+                try {
+                  const cityId = `${selectedCountry.code}-${Date.now()}`;
+                  const response = await fetch(`${BACKEND_URL}/api/library/cities`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                      id: cityId, 
+                      name: newCityData.name, 
+                      country: selectedCountry.name 
+                    })
+                  });
+                  if (response.ok) {
+                    toast({ title: "Başarılı", description: "Şehir eklendi" });
+                    setShowAddCityModal(false);
+                    setNewCityData({ name: '' });
+                    loadCities(selectedCountry.name);
+                    loadCountries(); // Refresh city counts
+                  } else {
+                    throw new Error('Failed to add city');
+                  }
+                } catch (error) {
+                  toast({ title: "Hata", description: "Şehir eklenirken hata oluştu", variant: "destructive" });
+                }
+              }}>
+                Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit City Modal */}
+      {showEditCityModal && editingCity && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Şehir Düzenle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Şehir Adı</label>
+                <Input
+                  value={newCityData.name}
+                  onChange={(e) => setNewCityData({...newCityData, name: e.target.value})}
+                  placeholder="Örn: İstanbul"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button variant="outline" onClick={() => {
+                setShowEditCityModal(false);
+                setEditingCity(null);
+                setNewCityData({ name: '' });
+              }}>
+                İptal
+              </Button>
+              <Button onClick={async () => {
+                try {
+                  const response = await fetch(`${BACKEND_URL}/api/library/cities/${editingCity.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                      id: editingCity.id, 
+                      name: newCityData.name, 
+                      country: editingCity.country 
+                    })
+                  });
+                  if (response.ok) {
+                    toast({ title: "Başarılı", description: "Şehir güncellendi" });
+                    setShowEditCityModal(false);
+                    setEditingCity(null);
+                    setNewCityData({ name: '' });
+                    loadCities(selectedCountry.name);
+                  } else {
+                    throw new Error('Failed to update city');
+                  }
+                } catch (error) {
+                  toast({ title: "Hata", description: "Şehir güncellenirken hata oluştu", variant: "destructive" });
+                }
+              }}>
+                Güncelle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
