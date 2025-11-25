@@ -84,6 +84,15 @@ const ActionMenuPopover = ({ customer, onAction }) => {
       // Eğer altta yeterli yer varsa alta aç, yoksa üste aç
       const shouldOpenUpward = spaceBelow < menuHeight && spaceAbove > spaceBelow;
       
+      console.log('Menu position calc:', {
+        spaceBelow,
+        spaceAbove,
+        menuHeight,
+        shouldOpenUpward,
+        rectBottom: rect.bottom,
+        rectTop: rect.top
+      });
+      
       setPosition({
         top: shouldOpenUpward ? rect.top - menuHeight - 4 : rect.bottom + 4,
         right: window.innerWidth - rect.right,
@@ -91,6 +100,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
       });
     }
     
+    console.log('Toggle popover - isOpen will be:', !isOpen);
     setIsOpen(!isOpen);
   };
 
