@@ -133,6 +133,32 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     }
   };
   
+  // Helper function to get country dial code
+  const getCountryDialCode = (countryName) => {
+    if (!countryName || tumUlkeler.length === 0) return 'tr'; // Default to Turkey
+    
+    const secilenUlke = tumUlkeler.find(u => u.name === countryName);
+    if (secilenUlke && secilenUlke.dial_code) {
+      return secilenUlke.dial_code.toLowerCase().replace('+', '');
+    }
+    
+    // Fallback country codes
+    const countryCodeMap = {
+      'Turkey': 'tr',
+      'Türkiye': 'tr',
+      'United States': 'us',
+      'Amerika Birleşik Devletleri': 'us',
+      'Germany': 'de',
+      'Almanya': 'de',
+      'France': 'fr',
+      'Fransa': 'fr',
+      'United Kingdom': 'gb',
+      'İngiltere': 'gb'
+    };
+    
+    return countryCodeMap[countryName] || 'tr';
+  };
+  
   // Filter cities when country changes
   useEffect(() => {
     if (formData.country && tumUlkeler.length > 0) {
