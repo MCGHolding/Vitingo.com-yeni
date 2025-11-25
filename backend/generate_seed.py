@@ -241,7 +241,7 @@ countries_list = [
     ('BG', 'Bulgaristan'), ('BF', 'Burkina Faso'), ('BI', 'Burundi'), ('CV', 'Yeşil Burun Adaları'), ('KH', 'Kamboçya'),
     ('CM', 'Kamerun'), ('CA', 'Kanada'), ('CF', 'Orta Afrika Cumhuriyeti'), ('TD', 'Çad'), ('CL', 'Şili'),
     ('CN', 'Çin'), ('CO', 'Kolombiya'), ('KM', 'Komorlar'), ('CG', 'Kongo Cumhuriyeti'), ('CR', 'Kosta Rika'),
-    ('HR', 'Hırvatistan'), ('CU', 'Küba'), ('CY', 'Kıbrıs'), ('CZ', 'Çek Cumhuriyeti'), ('CD', 'Kongo Demokratik Cumhuriyeti'),
+    ('HR', 'Hırvatistan'), ('CU', 'Küba'), ('CY', 'Kıbrıs'), ('CZ', 'Çek Cumhuriyeti'), ('CD', 'Kongo'),
     ('DK', 'Danimarka'), ('DJ', 'Cibuti'), ('DM', 'Dominika'), ('DO', 'Dominik Cumhuriyeti'), ('EC', 'Ekvador'),
     ('EG', 'Mısır'), ('SV', 'El Salvador'), ('GQ', 'Ekvator Ginesi'), ('ER', 'Eritre'), ('EE', 'Estonya'),
     ('SZ', 'Esvatini'), ('ET', 'Etiyopya'), ('FJ', 'Fiji'), ('FI', 'Finlandiya'), ('FR', 'Fransa'),
