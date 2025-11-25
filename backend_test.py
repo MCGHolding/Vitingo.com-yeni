@@ -1180,20 +1180,41 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
-def test_countries_and_cities_seed_data():
+def test_final_countries_cities_seed_data():
     """
-    Ülke & Şehir Seed Data Test
-    
-    Test edilecek endpoint'ler:
-    1. POST /api/library/countries/initialize-defaults - 195 ülke ve şehirleri seed data'dan yüklemek
-    2. GET /api/library/countries - Yüklenen tüm ülkeleri getirmek
-    3. GET /api/library/cities?country=Türkiye - Türkiye'nin şehirlerini getirmek
-    4. GET /api/library/cities?country=Amerika Birleşik Devletleri - ABD'nin şehirlerini getirmek
-    
-    Beklenen Sonuçlar:
-    - Initialize endpoint başarılı çalışmalı
-    - Ülkeler ve şehirler seed data'dan yüklenmeli
-    - Ülkelere göre şehir filtreleme doğru çalışmalı
+    **Final Ülke & Şehir Seed Data Test**
+
+    ## Test 1: Veritabanını Temizle ve Yeniden Yükle
+    **Endpoint:** POST `/api/library/countries/initialize-defaults`
+    **Test:**
+    1. POST request gönder
+    2. Kaç ülke ve şehir yüklendiğini logla
+    3. Response'daki total_countries = 195 olmalı
+    4. Response'daki total_cities ~400 olmalı
+
+    ## Test 2: Ülke Sayısını Doğrula
+    **Endpoint:** GET `/api/library/countries`
+    **Test:**
+    1. GET request gönder
+    2. Dönen ülke sayısı EXACTLY 195 olmalı
+    3. Duplicate kontrol: Her ülke adı sadece 1 kez olmalı
+    4. "Fransa" ve "Türkiye"nin listede olduğunu doğrula
+
+    ## Test 3: Türkiye Şehirleri
+    **Endpoint:** GET `/api/library/cities?country=Türkiye`
+    **Test:**
+    1. GET request gönder
+    2. 20 şehir olmalı
+    3. İstanbul, Ankara, İzmir'in olduğunu doğrula
+
+    ## Test 4: İtalya Şehirleri
+    **Endpoint:** GET `/api/library/cities?country=İtalya`
+    **Test:**
+    1. GET request gönder
+    2. 20 şehir olmalı
+    3. Roma, Milano, Napoli'nin olduğunu doğrula
+
+    **Kritik Kontrol:** Ülke sayısı TAM 195 olmalı, duplicate olmamalı!
     """
     
     print("=" * 100)
