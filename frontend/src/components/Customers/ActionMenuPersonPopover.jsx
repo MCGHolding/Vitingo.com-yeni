@@ -53,9 +53,19 @@ export default function ActionMenuPersonPopover({ person, onDelete, onShare, onM
   const togglePopover = () => {
     if (!isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      
+      // Menü yüksekliği (4 item + header = ~240px)
+      const menuHeight = 240;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      // Eğer altta yeterli yer varsa alta aç, yoksa üste aç
+      const shouldOpenUpward = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+      
       setPosition({
-        top: rect.bottom + 8,
-        right: window.innerWidth - rect.right
+        top: shouldOpenUpward ? rect.top - menuHeight - 8 : rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+        openUpward: shouldOpenUpward
       });
     }
     setIsOpen(!isOpen);
