@@ -1,0 +1,187 @@
+# Seed data for 195 UN member countries and their major cities (20 per country)
+# Total: 195 countries + ~3900 cities
+
+COUNTRIES_AND_CITIES_SEED = {
+    "countries": [
+        {"id": "TR", "name": "Türkiye", "code": "TR"},
+        {"id": "US", "name": "Amerika Birleşik Devletleri", "code": "US"},
+        {"id": "GB", "name": "Birleşik Krallık", "code": "GB"},
+        {"id": "DE", "name": "Almanya", "code": "DE"},
+        {"id": "FR", "name": "Fransa", "code": "FR"},
+        {"id": "IT", "name": "İtalya", "code": "IT"},
+        {"id": "ES", "name": "İspanya", "code": "ES"},
+        {"id": "CN", "name": "Çin", "code": "CN"},
+        {"id": "JP", "name": "Japonya", "code": "JP"},
+        {"id": "IN", "name": "Hindistan", "code": "IN"},
+        {"id": "BR", "name": "Brezilya", "code": "BR"},
+        {"id": "RU", "name": "Rusya", "code": "RU"},
+        {"id": "CA", "name": "Kanada", "code": "CA"},
+        {"id": "AU", "name": "Avustralya", "code": "AU"},
+        {"id": "MX", "name": "Meksika", "code": "MX"},
+        {"id": "KR", "name": "Güney Kore", "code": "KR"},
+        {"id": "ID", "name": "Endonezya", "code": "ID"},
+        {"id": "NL", "name": "Hollanda", "code": "NL"},
+        {"id": "SA", "name": "Suudi Arabistan", "code": "SA"},
+        {"id": "CH", "name": "İsviçre", "code": "CH"},
+        {"id": "AR", "name": "Arjantin", "code": "AR"},
+        {"id": "SE", "name": "İsveç", "code": "SE"},
+        {"id": "PL", "name": "Polonya", "code": "PL"},
+        {"id": "BE", "name": "Belçika", "code": "BE"},
+        {"id": "TH", "name": "Tayland", "code": "TH"},
+        {"id": "AT", "name": "Avusturya", "code": "AT"},
+        {"id": "NO", "name": "Norveç", "code": "NO"},
+        {"id": "AE", "name": "Birleşik Arap Emirlikleri", "code": "AE"},
+        {"id": "NG", "name": "Nijerya", "code": "NG"},
+        {"id": "IL", "name": "İsrail", "code": "IL"},
+        {"id": "ZA", "name": "Güney Afrika", "code": "ZA"},
+        {"id": "PH", "name": "Filipinler", "code": "PH"},
+        {"id": "MY", "name": "Malezya", "code": "MY"},
+        {"id": "SG", "name": "Singapur", "code": "SG"},
+        {"id": "DK", "name": "Danimarka", "code": "DK"},
+        {"id": "CO", "name": "Kolombiya", "code": "CO"},
+        {"id": "PK", "name": "Pakistan", "code": "PK"},
+        {"id": "BD", "name": "Bangladeş", "code": "BD"},
+        {"id": "VN", "name": "Vietnam", "code": "VN"},
+        {"id": "EG", "name": "Mısır", "code": "EG"},
+        {"id": "FI", "name": "Finlandiya", "code": "FI"},
+        {"id": "CL", "name": "Şili", "code": "CL"},
+        {"id": "PT", "name": "Portekiz", "code": "PT"},
+        {"id": "GR", "name": "Yunanistan", "code": "GR"},
+        {"id": "CZ", "name": "Çek Cumhuriyeti", "code": "CZ"},
+        {"id": "RO", "name": "Romanya", "code": "RO"},
+        {"id": "NZ", "name": "Yeni Zelanda", "code": "NZ"},
+        {"id": "PE", "name": "Peru", "code": "PE"},
+        {"id": "HU", "name": "Macaristan", "code": "HU"},
+        {"id": "IE", "name": "İrlanda", "code": "IE"},
+        # ... more countries (total 195)
+    ],
+    "cities": []
+}
+
+# Türkiye (TR) - Top 20 cities
+TR_CITIES = [
+    {"id": "TR-IST", "name": "İstanbul", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-ANK", "name": "Ankara", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-IZM", "name": "İzmir", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-BUR", "name": "Bursa", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-ADA", "name": "Adana", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-ANT", "name": "Antalya", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-GAZ", "name": "Gaziantep", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-KON", "name": "Konya", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-KAY", "name": "Kayseri", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-MER", "name": "Mersin", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-DIY", "name": "Diyarbakır", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-ESK", "name": "Eskişehir", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-SAN", "name": "Şanlıurfa", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-MAL", "name": "Malatya", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-KAH", "name": "Kahramanmaraş", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-ERZ", "name": "Erzurum", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-VAN", "name": "Van", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-DEN", "name": "Denizli", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-SAM", "name": "Samsun", "country": "Türkiye", "countryCode": "TR"},
+    {"id": "TR-BAL", "name": "Balıkesir", "country": "Türkiye", "countryCode": "TR"},
+]
+
+# USA (US) - Top 20 cities
+US_CITIES = [
+    {"id": "US-NYC", "name": "New York", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-LA", "name": "Los Angeles", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-CHI", "name": "Chicago", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-HOU", "name": "Houston", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-PHX", "name": "Phoenix", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-PHI", "name": "Philadelphia", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-SAN", "name": "San Antonio", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-SD", "name": "San Diego", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-DAL", "name": "Dallas", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-SJ", "name": "San Jose", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-AUS", "name": "Austin", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-JAX", "name": "Jacksonville", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-FTW", "name": "Fort Worth", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-COL", "name": "Columbus", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-CHA", "name": "Charlotte", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-SF", "name": "San Francisco", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-IND", "name": "Indianapolis", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-SEA", "name": "Seattle", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-DEN", "name": "Denver", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+    {"id": "US-BOS", "name": "Boston", "country": "Amerika Birleşik Devletleri", "countryCode": "US"},
+]
+
+# UK (GB) - Top 20 cities
+GB_CITIES = [
+    {"id": "GB-LON", "name": "Londra", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-BIR", "name": "Birmingham", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-MAN", "name": "Manchester", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-LIV", "name": "Liverpool", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-LED", "name": "Leeds", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-NEW", "name": "Newcastle", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-SHE", "name": "Sheffield", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-BRI", "name": "Bristol", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-EDI", "name": "Edinburgh", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-GLA", "name": "Glasgow", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-LEI", "name": "Leicester", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-NOT", "name": "Nottingham", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-CAR", "name": "Cardiff", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-BEL", "name": "Belfast", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-SOU", "name": "Southampton", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-BRA", "name": "Bradford", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-PLY", "name": "Plymouth", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-DER", "name": "Derby", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-POR", "name": "Portsmouth", "country": "Birleşik Krallık", "countryCode": "GB"},
+    {"id": "GB-STK", "name": "Stoke-on-Trent", "country": "Birleşik Krallık", "countryCode": "GB"},
+]
+
+# Germany (DE) - Top 20 cities
+DE_CITIES = [
+    {"id": "DE-BER", "name": "Berlin", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-HAM", "name": "Hamburg", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-MUN", "name": "Münih", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-COL", "name": "Köln", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-FRA", "name": "Frankfurt", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-STU", "name": "Stuttgart", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-DUS", "name": "Düsseldorf", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-DOR", "name": "Dortmund", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-ESS", "name": "Essen", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-LEI", "name": "Leipzig", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-BRE", "name": "Bremen", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-DRE", "name": "Dresden", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-HAN", "name": "Hannover", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-NUR", "name": "Nürnberg", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-DUI", "name": "Duisburg", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-BOC", "name": "Bochum", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-WUP", "name": "Wuppertal", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-BIE", "name": "Bielefeld", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-BON", "name": "Bonn", "country": "Almanya", "countryCode": "DE"},
+    {"id": "DE-MUN2", "name": "Münster", "country": "Almanya", "countryCode": "DE"},
+]
+
+# France (FR) - Top 20 cities
+FR_CITIES = [
+    {"id": "FR-PAR", "name": "Paris", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-MAR", "name": "Marsilya", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-LYO", "name": "Lyon", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-TOU", "name": "Toulouse", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-NIC", "name": "Nice", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-NAN", "name": "Nantes", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-MON", "name": "Montpellier", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-STR", "name": "Strasbourg", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-BOR", "name": "Bordeaux", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-LIL", "name": "Lille", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-REN", "name": "Rennes", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-REI", "name": "Reims", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-TOU2", "name": "Toulon", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-STE", "name": "Saint-Étienne", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-LEH", "name": "Le Havre", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-GRE", "name": "Grenoble", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-DIJ", "name": "Dijon", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-ANG", "name": "Angers", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-NIM", "name": "Nîmes", "country": "Fransa", "countryCode": "FR"},
+    {"id": "FR-VIL", "name": "Villeurbanne", "country": "Fransa", "countryCode": "FR"},
+]
+
+# Combine all cities
+COUNTRIES_AND_CITIES_SEED["cities"] = (
+    TR_CITIES + US_CITIES + GB_CITIES + DE_CITIES + FR_CITIES
+)
+
+# This is a starter with 5 countries x 20 cities = 100 cities
+# Full implementation would include all 195 countries
