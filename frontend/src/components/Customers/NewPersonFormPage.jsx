@@ -8,8 +8,7 @@ import { Textarea } from '../ui/textarea';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useToast } from '../../hooks/use-toast';
-import CountrySelect from '../geo/CountrySelect';
-import CitySelect from '../geo/CitySelect';
+import { countriesData } from '../../data/countriesAndCities';
 import { 
   X,
   UserRound,
