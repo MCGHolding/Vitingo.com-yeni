@@ -188,7 +188,16 @@ MAJOR_COUNTRIES_CITIES = {
     "Trinidad ve Tobago": ["Port of Spain", "Chaguanas", "San Fernando", "Arima", "Marabella", "Point Fortin", "Couva", "Princes Town", "Sangre Grande", "Tunapuna", "Diego Martin", "Penal", "Debe", "Siparia", "Rio Claro", "Scarborough", "Arouca", "Gasparillo", "Cunupia", "San Juan"],
     "Tunus": ["Tunus", "Sfax", "Sousse", "Kairouan", "Bizerte", "Gabès", "Ariana", "Gafsa", "La Marsa", "Monastir", "Ben Arous", "Kasserine", "Nabeul", "Menzel Bourguiba", "Béja", "Medenine", "Tozeur", "Jendouba", "Tataouine", "Mahdia"],
     "Türkmenistan": ["Aşkabat", "Türkmenabat", "Daşoguz", "Mary", "Balkanabat", "Türkmenbaşy", "Tejen", "Serdar", "Abadan", "Gökdepe", "Baharly", "Saýat", "Magdanly", "Gowurdak", "Köneürgench", "Gumdag", "Gazojak", "Baýramaly", "Kerki", "Farap"],
-    "Tuvalu": ["Funafuti", "Vaiaku", "Alapi", "Tanrake", "Toga", "Asau", "Savave", "Vaitupu", "Nanumea", "Nanumaga", "Niutao", "Nui", "Niulakita", "Nukufetau", "Nukulaelae", "Fongafale", "Teava", "Senala", "Lolua", "Motulalo"]
+    "Tuvalu": ["Funafuti", "Vaiaku", "Alapi", "Tanrake", "Toga", "Asau", "Savave", "Vaitupu", "Nanumea", "Nanumaga", "Niutao", "Nui", "Niulakita", "Nukufetau", "Nukulaelae", "Fongafale", "Teava", "Senala", "Lolua", "Motulalo"],
+    # Eksik ülkeler - kullanıcı isteği
+    "Fas": ["Rabat", "Kazablanka", "Fes", "Tanca", "Marakeş", "Sale", "Meknes", "Oujda", "Kenitra", "Agadir", "Tetouan", "Temara", "Safi", "Mohammedia", "Khouribga", "El Jadida", "Beni Mellal", "Nador", "Taza", "Settat"],
+    "Kamboçya": ["Phnom Penh", "Takéo", "Siem Reap", "Battambang", "Sihanoukville", "Poi Pet", "Kampong Cham", "Ta Khmau", "Pursat", "Kampong Speu", "Kampong Chhnang", "Prey Veng", "Svay Rieng", "Kratie", "Stung Treng", "Kampot", "Koh Kong", "Pailin", "Banlung", "Senmonorom"],
+    "Kamerun": ["Douala", "Yaoundé", "Garoua", "Bamenda", "Bafoussam", "Maroua", "Nkongsamba", "Ngaoundéré", "Bertoua", "Kumba", "Edéa", "Foumban", "Limbe", "Buea", "Ebolowa", "Kribi", "Kumbo", "Mbalmayo", "Mbouda", "Dschang"],
+    "Karadağ": ["Podgorica", "Nikšić", "Pljevlja", "Bijelo Polje", "Cetinje", "Bar", "Herceg Novi", "Berane", "Budva", "Ulcinj", "Tivat", "Rožaje", "Kotor", "Danilovgrad", "Mojkovac", "Plav", "Kolašin", "Andrijevica", "Plužine", "Šavnik"],
+    "Küba": ["Havana", "Santiago de Cuba", "Camagüey", "Holguín", "Santa Clara", "Guantánamo", "Las Tunas", "Bayamo", "Cienfuegos", "Pinar del Río", "Matanzas", "Ciego de Ávila", "Sancti Spíritus", "Manzanillo", "Cárdenas", "Palma Soriano", "Artemisa", "Moa", "Contramaestre", "Güines"],
+    "Lübnan": ["Beyrut", "Trablus", "Sayda", "Tire", "Nabatiye", "Zahle", "Baalbek", "Jounieh", "Byblos", "Aley", "Baabda", "Halba", "Jezzine", "Batrun", "Bint Jbeil", "Marjeyoun", "Rachaya", "Hasbaiya", "Bikfaya", "Amioun"],
+    "Orta Afrika Cumhuriyeti": ["Bangui", "Bimbo", "Berbérati", "Carnot", "Bambari", "Bouar", "Bossangoa", "Bria", "Bangassou", "Nola", "Kaga-Bandoro", "Zemio", "Mobaye", "Gamboula", "Paoua", "Sibut", "Bozoum", "Batangafo", "Obo", "Rafaï"],
+    "Suriye": ["Şam", "Halep", "Humus", "Lazkiye", "Hama", "Rakka", "Deir ez-Zor", "Haseke", "Kamışlı", "Tartus", "Daraa", "İdlib", "Cebele", "Sweida", "Münbiç", "Afrin", "Azaz", "Jarablus", "Tel Abyad", "Kobani"]
 }
 
 # Generate Python code
