@@ -1065,9 +1065,10 @@ async def delete_payment_profile(profile_id: str):
 # Countries Endpoints
 @api_router.get("/library/countries", response_model=List[LibraryCountry])
 async def get_countries():
-    """Get all countries"""
+    """Get all countries with Turkish locale sorting"""
     try:
-        countries = await db.countries.find().sort("name", 1).to_list(1000)
+        # Use Turkish locale collation for proper alphabetical sorting
+        countries = await db.countries.find().sort("name", 1).collation({"locale": "tr"}).to_list(None)
         return [LibraryCountry(**country) for country in countries]
     except Exception as e:
         logger.error(f"Error getting countries: {str(e)}")
