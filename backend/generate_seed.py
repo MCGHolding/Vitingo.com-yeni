@@ -197,7 +197,9 @@ MAJOR_COUNTRIES_CITIES = {
     "Küba": ["Havana", "Santiago de Cuba", "Camagüey", "Holguín", "Santa Clara", "Guantánamo", "Las Tunas", "Bayamo", "Cienfuegos", "Pinar del Río", "Matanzas", "Ciego de Ávila", "Sancti Spíritus", "Manzanillo", "Cárdenas", "Palma Soriano", "Artemisa", "Moa", "Contramaestre", "Güines"],
     "Lübnan": ["Beyrut", "Trablus", "Sayda", "Tire", "Nabatiye", "Zahle", "Baalbek", "Jounieh", "Byblos", "Aley", "Baabda", "Halba", "Jezzine", "Batrun", "Bint Jbeil", "Marjeyoun", "Rachaya", "Hasbaiya", "Bikfaya", "Amioun"],
     "Orta Afrika Cumhuriyeti": ["Bangui", "Bimbo", "Berbérati", "Carnot", "Bambari", "Bouar", "Bossangoa", "Bria", "Bangassou", "Nola", "Kaga-Bandoro", "Zemio", "Mobaye", "Gamboula", "Paoua", "Sibut", "Bozoum", "Batangafo", "Obo", "Rafaï"],
-    "Suriye": ["Şam", "Halep", "Humus", "Lazkiye", "Hama", "Rakka", "Deir ez-Zor", "Haseke", "Kamışlı", "Tartus", "Daraa", "İdlib", "Cebele", "Sweida", "Münbiç", "Afrin", "Azaz", "Jarablus", "Tel Abyad", "Kobani"]
+    "Suriye": ["Şam", "Halep", "Humus", "Lazkiye", "Hama", "Rakka", "Deir ez-Zor", "Haseke", "Kamışlı", "Tartus", "Daraa", "İdlib", "Cebele", "Sweida", "Münbiç", "Afrin", "Azaz", "Jarablus", "Tel Abyad", "Kobani"],
+    "Finlandiya": ["Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu", "Turku", "Jyväskylä", "Lahti", "Kuopio", "Pori", "Kouvola", "Joensuu", "Lappeenranta", "Hämeenlinna", "Vaasa", "Seinäjoki", "Rovaniemi", "Mikkeli", "Kotka", "Salo"],
+    "Gürcistan": ["Tiflis", "Kutaisi", "Batumi", "Rustavi", "Zugdidi", "Gori", "Poti", "Khashuri", "Samtredia", "Senaki", "Zestafoni", "Marneuli", "Telavi", "Akhaltsikhe", "Kobuleti", "Ozurgeti", "Kaspi", "Chiatura", "Tskaltubo", "Sagarejo"]
 }
 
 # Generate Python code
