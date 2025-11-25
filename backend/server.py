@@ -6027,6 +6027,7 @@ class OpportunityUpdate(BaseModel):
     trade_show_dates: Optional[str] = None
     expected_revenue: Optional[float] = None
     probability: Optional[int] = None
+    is_favorite: Optional[bool] = None  # Favori güncelleme
     tags: Optional[List[str]] = None
     design_files: Optional[List[str]] = None
     sample_files: Optional[List[str]] = None
