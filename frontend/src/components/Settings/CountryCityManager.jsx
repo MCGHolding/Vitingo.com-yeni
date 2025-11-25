@@ -167,25 +167,41 @@ const CountryCityManager = () => {
     }
   };
 
-  // Initialize with default data
+  // Initialize with default data from backend seed
   const initializeDefaults = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/library/countries/bulk-import`, {
+      const response = await fetch(`${BACKEND_URL}/api/library/countries/initialize-defaults`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(DEFAULT_COUNTRIES_AND_CITIES)
+        headers: { 'Content-Type': 'application/json' }
       });
       
       if (response.ok) {
         const result = await response.json();
-        toast({
-          title: "Başarılı",
-          description: `${result.countries_imported} ülke ve ${result.cities_imported} şehir yüklendi`
-        });
+        if (result.status === 'already_initialized') {
+          toast({
+            title: "Bilgi",
+            description: `Zaten ${result.countries_count} ülke ve ${result.cities_count} şehir mevcut`
+          });
+        } else {
+          toast({
+            title: "Başarılı",
+            description: `${result.countries_imported} ülke ve ${result.cities_imported} şehir yüklendi! Toplam: ${result.total_countries} ülke, ${result.total_cities} şehir`
+          });
+        }
         loadCountries();
+      } else {
+        throw new Error('Initialization failed');
       }
     } catch (error) {
       console.error('Error initializing defaults:', error);
+      toast({
+        title: "Hata",
+        description: "Varsayılan veriler yüklenirken hata oluştu",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
