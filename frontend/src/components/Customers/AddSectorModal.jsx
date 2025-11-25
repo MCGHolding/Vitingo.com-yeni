@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { X, Plus, CheckCircle } from 'lucide-react';
 
-const AddSectorModal = ({ onClose, onSave }) => {
+const AddSectorModal = ({ onClose, onSave, onSuccess }) => {
   const [sectorName, setSectorName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
