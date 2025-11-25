@@ -3863,6 +3863,23 @@ async def get_customer_types():
         logger.error(f"Error getting customer types: {str(e)}")
         return []
 
+@api_router.delete("/customer-types/{customer_type_id}")
+async def delete_customer_type(customer_type_id: str):
+    """Delete a customer type"""
+    try:
+        result = await db.customer_types.delete_one({"id": customer_type_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Müşteri türü bulunamadı")
+        
+        return {"message": "Müşteri türü başarıyla silindi", "id": customer_type_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting customer type: {str(e)}")
+        raise HTTPException(status_code=500, detail="Müşteri türü silinirken hata oluştu")
+
 # ===================== SECTORS ENDPOINTS =====================
 
 class Sector(BaseModel):
