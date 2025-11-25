@@ -619,6 +619,14 @@ export default function Sidebar({
       return;
     }
     
+    if (subItem && subItem.name === 'Arşiv') {
+      console.log('Arşiv clicked - calling onArchivedMeetings handler');
+      if (onArchivedMeetings) {
+        onArchivedMeetings();
+      }
+      return;
+    }
+    
     if (subItem && subItem.name === 'Tüm Teklifler') {
       if (onAllQuotes) {
         onAllQuotes();
