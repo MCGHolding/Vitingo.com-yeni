@@ -545,6 +545,33 @@ export default function CustomerProspectsPage({ onBackToDashboard, refreshCustom
             <p className="text-gray-600 mt-1">Potansiyel müşterilerin listesi ve yönetimi</p>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Import CSV */}
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleImportCSV}
+              style={{ display: 'none' }}
+              id="csv-upload-prospects"
+            />
+            <Button
+              onClick={() => document.getElementById('csv-upload-prospects').click()}
+              className="bg-blue-600 hover:bg-blue-700 px-6"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              İçeri Aktar
+            </Button>
+            
+            {/* Download Sample CSV */}
+            <Button
+              onClick={downloadSampleCSV}
+              variant="outline"
+              className="px-6"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Örnek İndir
+            </Button>
+            
+            {/* Export CSV */}
             <Button
               onClick={exportToExcel}
               className="bg-green-600 hover:bg-green-700 px-6"
