@@ -1272,25 +1272,37 @@ async def delete_phone_code(code_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/library/phone-codes/initialize")
-async def initialize_phone_codes():
+async def initialize_phone_codes(force: bool = False):
     """Initialize phone codes with default data"""
     try:
         from phone_codes_seed import PHONE_CODES
         
         # Check if already initialized
         existing_count = await db.phone_codes.count_documents({})
-        if existing_count > 0:
+        if existing_count > 0 and not force:
             return {
                 "message": "Phone codes already initialized",
                 "count": existing_count
             }
         
-        # Add id to each phone code
+        # If force, delete existing data
+        if force:
+            await db.phone_codes.delete_many({})
+        
+        # Add id to each phone code and prepare data
+        phone_codes_to_insert = []
         for code in PHONE_CODES:
-            code['id'] = code['country_code']
+            phone_code_data = {
+                'id': code['country_code'],
+                'country': code['country'],
+                'country_code': code['country_code'],
+                'phone_code': code['phone_code'],
+                'flag': code.get('flag', '')
+            }
+            phone_codes_to_insert.append(phone_code_data)
         
         # Insert all phone codes
-        result = await db.phone_codes.insert_many(PHONE_CODES)
+        result = await db.phone_codes.insert_many(phone_codes_to_insert)
         
         return {
             "message": "Phone codes initialized successfully",
