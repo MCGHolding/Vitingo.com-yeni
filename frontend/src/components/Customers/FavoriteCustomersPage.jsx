@@ -162,7 +162,8 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
