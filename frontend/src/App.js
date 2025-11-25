@@ -1866,6 +1866,7 @@ const Dashboard = () => {
         onNewMeeting={handleNewMeeting}
         onMeetingInvitations={handleMeetingInvitations}
         onMeetingRequests={handleMeetingRequests}
+        onArchivedMeetings={handleArchivedMeetings}
       />
       
       {/* Header */}
