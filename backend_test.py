@@ -25415,41 +25415,6 @@ def test_customer_field_level_editing_backend():
     # Return overall test result
     return all_tests_passed or test_results["individual_field_updates_working"]
 
-if __name__ == "__main__":
-    print("🚀 Starting Backend API Testing Suite...")
-    print(f"Backend URL: {BACKEND_URL}")
-    print("=" * 80)
-    
-    # Run Manuel Şablon Oluşturma Testing (Primary Focus)
-    print("\n" + "🔧" * 40)
-    print("RUNNING MANUEL ŞABLON OLUŞTURMA TESTING (PRIMARY FOCUS)")
-    print("🔧" * 40)
-    
-    manuel_sablon_test_passed = test_manuel_sablon_olusturma()
-    
-    # Final Results
-    print("\n" + "=" * 100)
-    print("🏁 MANUEL ŞABLON OLUŞTURMA TEST RESULTS")
-    print("=" * 100)
-    
-    if manuel_sablon_test_passed:
-        print("✅ MANUEL ŞABLON OLUŞTURMA TEST PASSED - Manual template creation is working correctly!")
-        print("\n📋 SUMMARY:")
-        print("   • Manual template creation endpoint is functional")
-        print("   • Different field types are supported and saved correctly")
-        print("   • Unit parameters for number_unit fields are preserved")
-        print("   • Templates appear in listing with correct field structure")
-        print("   • Field keys (slugs) are properly formatted")
-        print("   • Professional design achieved (no more 'ugly blue tones')")
-        sys.exit(0)
-    else:
-        print("❌ BANK EMAIL TEMPLATE TEST FAILED - Issues found with email template functionality")
-        print("\n📋 ISSUES DETECTED:")
-        print("   • Check email template HTML structure")
-        print("   • Verify purple-blue gradient implementation")
-        print("   • Confirm company name integration")
-        print("   • Review single/multiple bank mode functionality")
-        sys.exit(1)
 
 def test_opportunity_statuses_get_endpoint():
     """
