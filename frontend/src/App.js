@@ -1084,6 +1084,7 @@ const Dashboard = () => {
               returnToInvoice={sessionStorage.getItem('returnToInvoiceAfterCustomer') === 'true'}
               onCustomerAdded={handleCustomerAdded}
               refreshCustomers={loadCustomers}
+              initialIsProspect={newCustomerInitialState.isProspect || false}
             />
           </div>
         );
