@@ -205,11 +205,11 @@ export default function SearchableSelect({
             )}
           </div>
 
-          {/* Add New Button */}
+          {/* Add New Button - Outside scrollable area */}
           {showAddNew && onAddNew && (
-            <div className="border-t border-gray-100">
+            <div className="border-t border-gray-100 bg-white">
               <button
-                className="w-full text-left px-3 py-2 text-sm hover:bg-green-50 flex items-center space-x-2 text-green-600 font-medium"
+                className="w-full text-left px-3 py-2.5 text-sm hover:bg-green-50 flex items-center space-x-2 text-green-600 font-medium transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsOpen(false);
@@ -224,7 +224,7 @@ export default function SearchableSelect({
 
           {/* Footer */}
           {filteredOptions.length > 0 && !showAddNew && (
-            <div className="p-2 border-t border-gray-100 text-xs text-gray-400 text-center">
+            <div className="p-2 border-t border-gray-100 text-xs text-gray-400 text-center bg-white">
               {filteredOptions.length} seçenek gösteriliyor
             </div>
           )}
