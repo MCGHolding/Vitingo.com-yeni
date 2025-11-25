@@ -1586,20 +1586,32 @@ def test_final_countries_cities_seed_data():
     
     # FINAL TEST REPORT
     print("\n" + "=" * 100)
-    print("🔍 ÜLKE & ŞEHİR SEED DATA TEST RAPORU")
+    print("🔍 FINAL ÜLKE & ŞEHİR SEED DATA TEST RAPORU")
     print("=" * 100)
     
-    print(f"📊 TEST SONUÇLARI:")
-    print(f"   • Initialize Endpoint: {'✅ Çalışıyor' if test_results['initialize_working'] else '❌ Çalışmıyor'}")
-    print(f"   • Countries Endpoint: {'✅ Çalışıyor' if test_results['countries_endpoint_working'] else '❌ Çalışmıyor'}")
-    print(f"   • Turkey Cities: {'✅ Çalışıyor' if test_results['turkey_cities_working'] else '❌ Çalışmıyor'}")
-    print(f"   • USA Cities: {'✅ Çalışıyor' if test_results['usa_cities_working'] else '❌ Çalışmıyor'}")
+    print(f"📊 TEST 1 - Initialize Countries/Cities:")
+    print(f"   • Endpoint Working: {'✅' if test_results['test1_initialize_working'] else '❌'}")
+    print(f"   • Total Countries: {test_results['test1_total_countries']} (195 olmalı)")
+    print(f"   • Total Cities: {test_results['test1_total_cities']} (~400 olmalı)")
     
-    print(f"\n📊 VERİ İSTATİSTİKLERİ:")
-    print(f"   • Toplam Ülke Sayısı: {test_results['countries_loaded']}")
-    print(f"   • Toplam Şehir Sayısı: {test_results['cities_loaded']}")
-    print(f"   • Türkiye Şehir Sayısı: {test_results['turkey_cities_count']}")
-    print(f"   • ABD Şehir Sayısı: {test_results['usa_cities_count']}")
+    print(f"\n📊 TEST 2 - Country Count Validation:")
+    print(f"   • Countries Count: {test_results['test2_countries_count']}")
+    print(f"   • Exactly 195: {'✅' if test_results['test2_exact_195'] else '❌'}")
+    print(f"   • No Duplicates: {'✅' if test_results['test2_no_duplicates'] else '❌'}")
+    print(f"   • Fransa Found: {'✅' if test_results['test2_fransa_found'] else '❌'}")
+    print(f"   • Türkiye Found: {'✅' if test_results['test2_turkiye_found'] else '❌'}")
+    
+    print(f"\n📊 TEST 3 - Turkey Cities:")
+    print(f"   • Cities Count: {test_results['test3_turkey_cities_count']} (20 olmalı)")
+    print(f"   • İstanbul Found: {'✅' if test_results['test3_istanbul_found'] else '❌'}")
+    print(f"   • Ankara Found: {'✅' if test_results['test3_ankara_found'] else '❌'}")
+    print(f"   • İzmir Found: {'✅' if test_results['test3_izmir_found'] else '❌'}")
+    
+    print(f"\n📊 TEST 4 - Italy Cities:")
+    print(f"   • Cities Count: {test_results['test4_italy_cities_count']} (20 olmalı)")
+    print(f"   • Roma Found: {'✅' if test_results['test4_roma_found'] else '❌'}")
+    print(f"   • Milano Found: {'✅' if test_results['test4_milano_found'] else '❌'}")
+    print(f"   • Napoli Found: {'✅' if test_results['test4_napoli_found'] else '❌'}")
     
     print(f"\n🚨 KRİTİK SORUNLAR: {len(test_results['critical_issues'])}")
     for issue in test_results['critical_issues']:
@@ -1609,30 +1621,12 @@ def test_final_countries_cities_seed_data():
     for warning in test_results['warnings']:
         print(f"   • {warning}")
     
-    # CONCLUSIONS
-    print(f"\n📋 SONUÇLAR:")
-    
-    if not test_results['initialize_working']:
-        print("🚨 KRİTİK: Initialize endpoint çalışmıyor!")
-        print("   ÖNERİ: Backend server durumunu ve seed data dosyasını kontrol edin")
-        
-    elif not test_results['countries_endpoint_working']:
-        print("🚨 KRİTİK: Countries endpoint çalışmıyor!")
-        print("   ÖNERİ: Backend API routing ve database bağlantısını kontrol edin")
-        
-    elif not test_results['turkey_cities_working'] or not test_results['usa_cities_working']:
-        print("🚨 KRİTİK: Şehir filtreleme endpoint'leri çalışmıyor!")
-        print("   ÖNERİ: Cities endpoint query parameter işlemesini kontrol edin")
-        
-    elif test_results['countries_loaded'] < 50:
-        print("🚨 KRİTİK: Yeterli ülke yüklenmemiş!")
-        print("   ÖNERİ: Seed data dosyasının doğru olduğunu ve tam yüklendiğini kontrol edin")
-        
+    # CRITICAL CONTROL: Ülke sayısı TAM 195 olmalı, duplicate olmamalı!
+    print(f"\n🎯 KRİTİK KONTROL:")
+    if test_results['test2_exact_195'] and test_results['test2_no_duplicates']:
+        print("✅ BAŞARILI: Ülke sayısı TAM 195 ve duplicate yok!")
     else:
-        print("✅ BAŞARILI: Tüm endpoint'ler çalışıyor ve veriler doğru yüklenmiş!")
-        print("   • Initialize endpoint başarılı çalışıyor")
-        print("   • Ülkeler ve şehirler seed data'dan yüklenmiş")
-        print("   • Ülkelere göre şehir filtreleme doğru çalışıyor")
+        print("❌ BAŞARISIZ: Ülke sayısı TAM 195 değil veya duplicate var!")
     
     # Return overall test result
     has_critical_issues = len(test_results['critical_issues']) > 0
