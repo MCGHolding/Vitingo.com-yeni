@@ -1180,6 +1180,336 @@ def test_currency_conversion_endpoint():
         print(f"\n❌ FAIL: Unexpected error occurred: {str(e)}")
         return False
 
+def test_country_city_module_finlandiya_gurcistan():
+    """
+    Country & City Module Backend Testing - Finlandiya ve Gürcistan Şehir Verilerini Doğrula
+    
+    Test Hedefleri:
+    1. Veritabanında tam olarak 195 ülke olduğunu doğrula
+    2. Finlandiya'nın tam 20 şehri olduğunu ve tüm şehir isimlerinin doğru olduğunu doğrula
+    3. Gürcistan'ın tam 20 şehri olduğunu ve tüm şehir isimlerinin doğru olduğunu doğrula
+    4. Toplam şehir sayısının doğru olduğunu doğrula
+
+    Test Senaryoları:
+    Test 1: Ülke Sayısı Kontrolü - GET /api/library/countries endpoint'ini çağır
+    Test 2: Finlandiya Şehirleri - GET /api/library/cities?country=Finlandiya endpoint'ini çağır
+    Test 3: Gürcistan Şehirleri - GET /api/library/cities?country=Gürcistan endpoint'ini çağır
+    Test 4: Toplam Şehir Sayısı - GET /api/library/countries/initialize-defaults endpoint'ini çağır
+    """
+    
+    print("=" * 100)
+    print("🌍 COUNTRY & CITY MODULE BACKEND TESTING - FİNLANDİYA VE GÜRCİSTAN 🌍")
+    print("=" * 100)
+    print("CONTEXT: Testing Finland and Georgia city data validation as per review request")
+    print("Testing requirements: 195 countries, Finland 20 cities, Georgia 20 cities, total cities ~3500")
+    print("=" * 100)
+    
+    test_results = {
+        "test1_countries_count": 0,
+        "test1_exact_195": False,
+        "test2_finland_cities_count": 0,
+        "test2_finland_cities_correct": False,
+        "test3_georgia_cities_count": 0,
+        "test3_georgia_cities_correct": False,
+        "test4_total_cities": 0,
+        "test4_cities_around_3500": False,
+        "critical_issues": [],
+        "warnings": []
+    }
+    
+    # Expected Finland cities (20 cities)
+    expected_finland_cities = [
+        "Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu", "Turku", "Jyväskylä", 
+        "Lahti", "Kuopio", "Pori", "Kouvola", "Joensuu", "Lappeenranta", 
+        "Hämeenlinna", "Vaasa", "Seinäjoki", "Rovaniemi", "Mikkeli", "Kotka", "Salo"
+    ]
+    
+    # Expected Georgia cities (20 cities)
+    expected_georgia_cities = [
+        "Tiflis", "Kutaisi", "Batumi", "Rustavi", "Zugdidi", "Gori", "Poti", 
+        "Khashuri", "Samtredia", "Senaki", "Zestafoni", "Marneuli", "Telavi", 
+        "Akhaltsikhe", "Kobuleti", "Ozurgeti", "Kaspi", "Chiatura", "Tskaltubo", "Sagarejo"
+    ]
+    
+    # TEST 1: Ülke Sayısı Kontrolü
+    print("\n" + "=" * 80)
+    print("TEST 1: ÜLKE SAYISI KONTROLÜ")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/countries")
+    print("Beklenen: Response'un array olduğunu ve tam 195 ülke içerdiğini doğrula")
+    
+    countries_endpoint = f"{BACKEND_URL}/api/library/countries"
+    print(f"Testing endpoint: {countries_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(countries_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Countries endpoint başarıyla yanıt verdi")
+            
+            try:
+                countries = response.json()
+                
+                if isinstance(countries, list):
+                    country_count = len(countries)
+                    test_results["test1_countries_count"] = country_count
+                    print(f"📊 Bulunan ülke sayısı: {country_count}")
+                    
+                    # Test: Tam olarak 195 ülke olmalı
+                    if country_count == 195:
+                        print("✅ PASS: Veritabanında tam olarak 195 ülke var")
+                        test_results["test1_exact_195"] = True
+                    else:
+                        print(f"❌ FAIL: Ülke sayısı {country_count}, 195 olmalıydı")
+                        test_results["critical_issues"].append(f"COUNTRIES_NOT_195_GOT_{country_count}")
+                else:
+                    print("❌ FAIL: Response array formatında değil")
+                    test_results["critical_issues"].append("COUNTRIES_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Countries response parse hatası: {str(e)}")
+                test_results["critical_issues"].append(f"COUNTRIES_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Countries endpoint hata döndü: {response.status_code}")
+            test_results["critical_issues"].append(f"COUNTRIES_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Countries endpoint request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"COUNTRIES_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 2: Finlandiya Şehirleri
+    print("\n" + "=" * 80)
+    print("TEST 2: FİNLANDİYA ŞEHİRLERİ")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/cities?country=Finlandiya")
+    print("Beklenen: Response'un array olduğunu ve tam 20 şehir içerdiğini doğrula")
+    print(f"Beklenen şehirler: {', '.join(expected_finland_cities)}")
+    
+    finland_endpoint = f"{BACKEND_URL}/api/library/cities?country=Finlandiya"
+    print(f"Testing endpoint: {finland_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(finland_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Finland cities endpoint başarıyla yanıt verdi")
+            
+            try:
+                finland_cities = response.json()
+                
+                if isinstance(finland_cities, list):
+                    finland_count = len(finland_cities)
+                    test_results["test2_finland_cities_count"] = finland_count
+                    print(f"📊 Finlandiya şehir sayısı: {finland_count}")
+                    
+                    # Test: Tam olarak 20 şehir olmalı
+                    if finland_count == 20:
+                        print("✅ PASS: Finlandiya'da tam olarak 20 şehir var")
+                        
+                        # Şehir isimlerini kontrol et
+                        found_cities = [city.get("name", "") for city in finland_cities]
+                        print(f"📋 Bulunan şehirler: {', '.join(found_cities)}")
+                        
+                        missing_cities = []
+                        for expected_city in expected_finland_cities:
+                            if expected_city not in found_cities:
+                                missing_cities.append(expected_city)
+                        
+                        if not missing_cities:
+                            print("✅ PASS: Tüm beklenen Finlandiya şehirleri mevcut")
+                            test_results["test2_finland_cities_correct"] = True
+                        else:
+                            print(f"❌ FAIL: Eksik Finlandiya şehirleri: {', '.join(missing_cities)}")
+                            test_results["critical_issues"].append(f"FINLAND_MISSING_CITIES: {missing_cities}")
+                    else:
+                        print(f"❌ FAIL: Finlandiya şehir sayısı {finland_count}, 20 olmalıydı")
+                        test_results["critical_issues"].append(f"FINLAND_NOT_20_CITIES_GOT_{finland_count}")
+                else:
+                    print("❌ FAIL: Finland cities response array formatında değil")
+                    test_results["critical_issues"].append("FINLAND_CITIES_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Finland cities response parse hatası: {str(e)}")
+                test_results["critical_issues"].append(f"FINLAND_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Finland cities endpoint hata döndü: {response.status_code}")
+            test_results["critical_issues"].append(f"FINLAND_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Finland cities endpoint request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"FINLAND_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 3: Gürcistan Şehirleri
+    print("\n" + "=" * 80)
+    print("TEST 3: GÜRCİSTAN ŞEHİRLERİ")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/cities?country=Gürcistan")
+    print("Beklenen: Response'un array olduğunu ve tam 20 şehir içerdiğini doğrula")
+    print(f"Beklenen şehirler: {', '.join(expected_georgia_cities)}")
+    
+    # URL encode Gürcistan
+    georgia_endpoint = f"{BACKEND_URL}/api/library/cities?country=G%C3%BCrcistan"
+    print(f"Testing endpoint: {georgia_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(georgia_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Georgia cities endpoint başarıyla yanıt verdi")
+            
+            try:
+                georgia_cities = response.json()
+                
+                if isinstance(georgia_cities, list):
+                    georgia_count = len(georgia_cities)
+                    test_results["test3_georgia_cities_count"] = georgia_count
+                    print(f"📊 Gürcistan şehir sayısı: {georgia_count}")
+                    
+                    # Test: Tam olarak 20 şehir olmalı
+                    if georgia_count == 20:
+                        print("✅ PASS: Gürcistan'da tam olarak 20 şehir var")
+                        
+                        # Şehir isimlerini kontrol et
+                        found_cities = [city.get("name", "") for city in georgia_cities]
+                        print(f"📋 Bulunan şehirler: {', '.join(found_cities)}")
+                        
+                        missing_cities = []
+                        for expected_city in expected_georgia_cities:
+                            if expected_city not in found_cities:
+                                missing_cities.append(expected_city)
+                        
+                        if not missing_cities:
+                            print("✅ PASS: Tüm beklenen Gürcistan şehirleri mevcut")
+                            test_results["test3_georgia_cities_correct"] = True
+                        else:
+                            print(f"❌ FAIL: Eksik Gürcistan şehirleri: {', '.join(missing_cities)}")
+                            test_results["critical_issues"].append(f"GEORGIA_MISSING_CITIES: {missing_cities}")
+                    else:
+                        print(f"❌ FAIL: Gürcistan şehir sayısı {georgia_count}, 20 olmalıydı")
+                        test_results["critical_issues"].append(f"GEORGIA_NOT_20_CITIES_GOT_{georgia_count}")
+                else:
+                    print("❌ FAIL: Georgia cities response array formatında değil")
+                    test_results["critical_issues"].append("GEORGIA_CITIES_NOT_ARRAY")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Georgia cities response parse hatası: {str(e)}")
+                test_results["critical_issues"].append(f"GEORGIA_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Georgia cities endpoint hata döndü: {response.status_code}")
+            test_results["critical_issues"].append(f"GEORGIA_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Georgia cities endpoint request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"GEORGIA_REQUEST_ERROR: {str(e)}")
+    
+    # TEST 4: Toplam Şehir Sayısı
+    print("\n" + "=" * 80)
+    print("TEST 4: TOPLAM ŞEHİR SAYISI")
+    print("=" * 80)
+    print("Endpoint: GET /api/library/countries/initialize-defaults")
+    print("Beklenen: Response'da total_cities sayısının ~3500 civarında olduğunu doğrula")
+    
+    initialize_endpoint = f"{BACKEND_URL}/api/library/countries/initialize-defaults"
+    print(f"Testing endpoint: {initialize_endpoint}")
+    
+    try:
+        print("\n1. GET request gönderiliyor...")
+        response = requests.get(initialize_endpoint, timeout=30)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print("✅ PASS: Initialize endpoint başarıyla yanıt verdi")
+            
+            try:
+                result = response.json()
+                total_cities = result.get("total_cities", 0)
+                test_results["test4_total_cities"] = total_cities
+                print(f"📊 Toplam şehir sayısı: {total_cities}")
+                
+                # Test: ~3500 civarında olmalı (3000-4000 arası)
+                if 3000 <= total_cities <= 4000:
+                    print(f"✅ PASS: Toplam şehir sayısı {total_cities} (~3500 civarında)")
+                    test_results["test4_cities_around_3500"] = True
+                else:
+                    print(f"❌ FAIL: Toplam şehir sayısı {total_cities}, ~3500 civarında olmalıydı")
+                    test_results["critical_issues"].append(f"TOTAL_CITIES_NOT_AROUND_3500_GOT_{total_cities}")
+                    
+            except Exception as e:
+                print(f"❌ FAIL: Initialize response parse hatası: {str(e)}")
+                test_results["critical_issues"].append(f"INITIALIZE_PARSE_ERROR: {str(e)}")
+        else:
+            print(f"❌ FAIL: Initialize endpoint hata döndü: {response.status_code}")
+            test_results["critical_issues"].append(f"INITIALIZE_ENDPOINT_ERROR_{response.status_code}")
+            
+    except Exception as e:
+        print(f"❌ FAIL: Initialize endpoint request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"INITIALIZE_REQUEST_ERROR: {str(e)}")
+    
+    # FINAL TEST REPORT
+    print("\n" + "=" * 100)
+    print("🔍 FINAL TEST REPORT - COUNTRY & CITY MODULE BACKEND TESTING")
+    print("=" * 100)
+    
+    print(f"📊 TEST RESULTS SUMMARY:")
+    print(f"   • Test 1 - Ülke Sayısı: {test_results['test1_countries_count']} ({'✅ PASS' if test_results['test1_exact_195'] else '❌ FAIL'})")
+    print(f"   • Test 2 - Finlandiya Şehirleri: {test_results['test2_finland_cities_count']} ({'✅ PASS' if test_results['test2_finland_cities_correct'] else '❌ FAIL'})")
+    print(f"   • Test 3 - Gürcistan Şehirleri: {test_results['test3_georgia_cities_count']} ({'✅ PASS' if test_results['test3_georgia_cities_correct'] else '❌ FAIL'})")
+    print(f"   • Test 4 - Toplam Şehir Sayısı: {test_results['test4_total_cities']} ({'✅ PASS' if test_results['test4_cities_around_3500'] else '❌ FAIL'})")
+    
+    print(f"\n🚨 CRITICAL ISSUES FOUND: {len(test_results['critical_issues'])}")
+    for issue in test_results['critical_issues']:
+        print(f"   • {issue}")
+    
+    print(f"\n⚠️  WARNINGS: {len(test_results['warnings'])}")
+    for warning in test_results['warnings']:
+        print(f"   • {warning}")
+    
+    # CONCLUSIONS
+    print(f"\n📋 CONCLUSIONS:")
+    
+    all_tests_passed = (
+        test_results['test1_exact_195'] and 
+        test_results['test2_finland_cities_correct'] and 
+        test_results['test3_georgia_cities_correct'] and 
+        test_results['test4_cities_around_3500']
+    )
+    
+    if all_tests_passed:
+        print("🎉 ALL TESTS PASSED - Country & City Module Backend is working correctly!")
+        print("   ✅ Veritabanında tam olarak 195 ülke var")
+        print("   ✅ Finlandiya'nın tam 20 şehri var ve tüm şehir isimleri doğru")
+        print("   ✅ Gürcistan'ın tam 20 şehri var ve tüm şehir isimleri doğru")
+        print("   ✅ Toplam şehir sayısı doğru (~3500 civarında)")
+    else:
+        print("❌ SOME TESTS FAILED - Country & City Module Backend has issues!")
+        if not test_results['test1_exact_195']:
+            print("   ❌ Ülke sayısı 195 değil")
+        if not test_results['test2_finland_cities_correct']:
+            print("   ❌ Finlandiya şehirleri eksik veya yanlış")
+        if not test_results['test3_georgia_cities_correct']:
+            print("   ❌ Gürcistan şehirleri eksik veya yanlış")
+        if not test_results['test4_cities_around_3500']:
+            print("   ❌ Toplam şehir sayısı beklenen aralıkta değil")
+    
+    print(f"\n🎯 NEXT STEPS:")
+    if not all_tests_passed:
+        print("   1. Seed data'yı kontrol et ve eksik ülke/şehirleri ekle")
+        print("   2. Finlandiya ve Gürcistan şehir listelerini doğrula")
+        print("   3. Veritabanı initialize işlemini tekrar çalıştır")
+        print("   4. Duplicate ülke/şehir kontrolü yap")
+    else:
+        print("   1. Tüm testler başarılı - sistem hazır")
+        print("   2. Frontend entegrasyonu test edilebilir")
+    
+    # Return overall test result
+    return all_tests_passed
+
 def test_final_countries_cities_seed_data():
     """
     **Final Ülke & Şehir Seed Data Test**
