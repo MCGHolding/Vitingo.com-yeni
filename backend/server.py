@@ -165,6 +165,17 @@ class LibraryPhoneCode(BaseModel):
     class Config:
         extra = "ignore"
     
+class LibraryConventionCenter(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    country: str
+    city: str
+    address: Optional[str] = ""
+    website: Optional[str] = ""
+    
+    class Config:
+        extra = "ignore"
+
 class LibraryCurrency(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     code: str
