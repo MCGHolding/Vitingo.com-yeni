@@ -27352,17 +27352,17 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Run the specific test requested in the review
-    print("\n🔍 Running Phone Codes API Endpoints Test...")
+    print("\n🔍 Running Convention Centers API Endpoints Test...")
     try:
-        result = test_phone_codes_api_endpoints()
+        result = test_convention_centers_api_endpoints()
         if result:
-            print("\n🎉 PHONE CODES API ENDPOINTS TEST PASSED!")
+            print("\n🎉 CONVENTION CENTERS API ENDPOINTS TEST PASSED!")
             sys.exit(0)
         else:
-            print("\n❌ PHONE CODES API ENDPOINTS TEST FAILED!")
+            print("\n❌ CONVENTION CENTERS API ENDPOINTS TEST FAILED!")
             sys.exit(1)
     except Exception as e:
-        print(f"❌ Phone Codes API Endpoints test failed with error: {str(e)}")
+        print(f"❌ Convention Centers API Endpoints test failed with error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
