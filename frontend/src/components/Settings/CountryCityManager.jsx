@@ -692,12 +692,28 @@ const CountryCityManager = () => {
                   maxLength={2}
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Kıta</label>
+                <select
+                  value={newCountryData.continent}
+                  onChange={(e) => setNewCountryData({...newCountryData, continent: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Kıta Seçin</option>
+                  <option value="Afrika">Afrika</option>
+                  <option value="Asya">Asya</option>
+                  <option value="Avrupa">Avrupa</option>
+                  <option value="Kuzey Amerika">Kuzey Amerika</option>
+                  <option value="Güney Amerika">Güney Amerika</option>
+                  <option value="Okyanusya">Okyanusya</option>
+                </select>
+              </div>
             </div>
             <div className="flex justify-end space-x-2 mt-6">
               <Button variant="outline" onClick={() => {
                 setShowEditCountryModal(false);
                 setEditingCountry(null);
-                setNewCountryData({ name: '', code: '' });
+                setNewCountryData({ name: '', code: '', continent: '' });
               }}>
                 İptal
               </Button>
@@ -706,13 +722,18 @@ const CountryCityManager = () => {
                   const response = await fetch(`${BACKEND_URL}/api/library/countries/${editingCountry.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: editingCountry.id, name: newCountryData.name, code: newCountryData.code })
+                    body: JSON.stringify({ 
+                      id: editingCountry.id, 
+                      name: newCountryData.name, 
+                      code: newCountryData.code,
+                      continent: newCountryData.continent
+                    })
                   });
                   if (response.ok) {
                     toast({ title: "Başarılı", description: "Ülke güncellendi" });
                     setShowEditCountryModal(false);
                     setEditingCountry(null);
-                    setNewCountryData({ name: '', code: '' });
+                    setNewCountryData({ name: '', code: '', continent: '' });
                     loadCountries();
                   } else {
                     throw new Error('Failed to update country');
