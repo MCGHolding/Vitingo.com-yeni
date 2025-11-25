@@ -1,0 +1,105 @@
+# Script to generate comprehensive seed data for 195 UN countries
+
+# Major countries with 20 cities each
+MAJOR_COUNTRIES_CITIES = {
+    "Türkiye": ["İstanbul", "Ankara", "İzmir", "Bursa", "Adana", "Antalya", "Gaziantep", "Konya", "Kayseri", "Mersin", "Diyarbakır", "Eskişehir", "Şanlıurfa", "Malatya", "Kahramanmaraş", "Erzurum", "Van", "Denizli", "Samsun", "Balıkesir"],
+    "Amerika Birleşik Devletleri": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston"],
+    "Birleşik Krallık": ["Londra", "Birmingham", "Manchester", "Liverpool", "Leeds", "Newcastle", "Sheffield", "Bristol", "Edinburgh", "Glasgow", "Leicester", "Nottingham", "Cardiff", "Belfast", "Southampton", "Bradford", "Plymouth", "Derby", "Portsmouth", "Stoke-on-Trent"],
+    "Almanya": ["Berlin", "Hamburg", "Münih", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf", "Dortmund", "Essen", "Leipzig", "Bremen", "Dresden", "Hannover", "Nürnberg", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster"],
+    "Fransa": ["Paris", "Marsilya", "Lyon", "Toulouse", "Nice", "Nantes", "Montpellier", "Strasbourg", "Bordeaux", "Lille", "Rennes", "Reims", "Toulon", "Saint-Étienne", "Le Havre", "Grenoble", "Dijon", "Angers", "Nîmes", "Villeurbanne"],
+    "İtalya": ["Roma", "Milano", "Napoli", "Torino", "Palermo", "Cenova", "Bologna", "Floransa", "Bari", "Catania", "Verona", "Venedik", "Messina", "Padova", "Trieste", "Taranto", "Brescia", "Parma", "Prato", "Modena"],
+    "İspanya": ["Madrid", "Barselona", "Valencia", "Sevilla", "Zaragoza", "Malaga", "Murcia", "Palma", "Las Palmas", "Bilbao", "Alicante", "Córdoba", "Valladolid", "Vigo", "Gijón", "L'Hospitalet", "Granada", "Vitoria", "Elche", "Oviedo"],
+    "Çin": ["Şangay", "Pekin", "Guangzhou", "Shenzhen", "Chengdu", "Tianjin", "Chongqing", "Wuhan", "Hangzhou", "Nanjing", "Xi'an", "Shenyang", "Harbin", "Qingdao", "Jinan", "Dalian", "Zhengzhou", "Kunming", "Changsha", "Taiyuan"],
+    "Japonya": ["Tokyo", "Yokohama", "Osaka", "Nagoya", "Sapporo", "Fukuoka", "Kobe", "Kyoto", "Kawasaki", "Saitama", "Hiroshima", "Sendai", "Chiba", "Kitakyushu", "Sakai", "Niigata", "Hamamatsu", "Kumamoto", "Sagamihara", "Shizuoka"],
+    "Hindistan": ["Mumbai", "Delhi", "Bangalore", "Haydarabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat", "Lucknow", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara"],
+    "Brezilya": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus", "Curitiba", "Recife", "Porto Alegre", "Belém", "Goiânia", "Guarulhos", "Campinas", "São Luís", "São Gonçalo", "Maceió", "Duque de Caxias", "Natal", "Campo Grande"],
+    "Rusya": ["Moskova", "Sankt Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan", "Nizhny Novgorod", "Chelyabinsk", "Samara", "Omsk", "Rostov-on-Don", "Ufa", "Krasnoyarsk", "Voronezh", "Perm", "Volgograd", "Krasnodar", "Saratov", "Tyumen", "Tolyatti", "Izhevsk"],
+    "Kanada": ["Toronto", "Montreal", "Vancouver", "Calgary", "Edmonton", "Ottawa", "Winnipeg", "Quebec City", "Hamilton", "Kitchener", "London", "Victoria", "Halifax", "Oshawa", "Windsor", "Saskatoon", "Regina", "Sherbrooke", "St. John's", "Barrie"],
+    "Avustralya": ["Sidney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Newcastle", "Canberra", "Sunshine Coast", "Wollongong", "Hobart", "Geelong", "Townsville", "Cairns", "Darwin", "Toowoomba", "Ballarat", "Bendigo", "Albury", "Launceston"],
+    "Meksika": ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "León", "Juárez", "Zapopan", "Mérida", "San Luis Potosí", "Aguascalientes", "Hermosillo", "Saltillo", "Mexicali", "Culiacán", "Querétaro", "Chihuahua", "Morelia", "Toluca", "Cancún"],
+    "Güney Kore": ["Seul", "Busan", "Incheon", "Daegu", "Daejeon", "Gwangju", "Suwon", "Ulsan", "Goyang", "Yongin", "Seongnam", "Changwon", "Bucheon", "Cheongju", "Ansan", "Jeonju", "Anyang", "Pohang", "Cheonan", "Namyangju"],
+    "Endonezya": ["Jakarta", "Surabaya", "Bandung", "Bekasi", "Medan", "Depok", "Tangerang", "Palembang", "Semarang", "Makassar", "South Tangerang", "Batam", "Bogor", "Pekanbaru", "Bandar Lampung", "Padang", "Malang", "Denpasar", "Surakarta", "Balikpapan"],
+    "Hollanda": ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven", "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen", "Enschede", "Haarlem", "Arnhem", "Zaanstad", "Amersfoort", "Apeldoorn", "s-Hertogenbosch", "Hoofddorp", "Maastricht", "Leiden"],
+    "Suudi Arabistan": ["Riyad", "Cidde", "Mekke", "Medine", "Dammam", "Taif", "Buraidah", "Tabük", "Khamis Mushayt", "Hofuf", "Haradh", "Khobar", "Jubail", "Hafar Al-Batin", "Yanbu", "Abha", "Najran", "Arar", "Sakaka", "Jizan"],
+    "İsviçre": ["Zürih", "Cenevre", "Basel", "Bern", "Lozan", "Winterthur", "Lucerne", "St. Gallen", "Lugano", "Biel", "Thun", "Köniz", "La Chaux-de-Fonds", "Schaffhausen", "Fribourg", "Vernier", "Chur", "Neuchâtel", "Uster", "Sion"]
+}
+
+# Generate Python code
+output = []
+output.append("# Complete 195 UN Member Countries with major cities")
+output.append("# Generated automatically - DO NOT EDIT MANUALLY")
+output.append("")
+
+# Countries list
+output.append("COUNTRIES_195 = [")
+countries_list = [
+    ('AF', 'Afganistan'), ('AL', 'Arnavutluk'), ('DZ', 'Cezayir'), ('AD', 'Andorra'), ('AO', 'Angola'),
+    ('AG', 'Antigua ve Barbuda'), ('AR', 'Arjantin'), ('AM', 'Ermenistan'), ('AU', 'Avustralya'), ('AT', 'Avusturya'),
+    ('AZ', 'Azerbaycan'), ('BS', 'Bahamalar'), ('BH', 'Bahreyn'), ('BD', 'Bangladeş'), ('BB', 'Barbados'),
+    ('BY', 'Belarus'), ('BE', 'Belçika'), ('BZ', 'Belize'), ('BJ', 'Benin'), ('BT', 'Butan'),
+    ('BO', 'Bolivya'), ('BA', 'Bosna-Hersek'), ('BW', 'Botsvana'), ('BR', 'Brezilya'), ('BN', 'Brunei'),
+    ('BG', 'Bulgaristan'), ('BF', 'Burkina Faso'), ('BI', 'Burundi'), ('CV', 'Yeşil Burun Adaları'), ('KH', 'Kamboçya'),
+    ('CM', 'Kamerun'), ('CA', 'Kanada'), ('CF', 'Orta Afrika Cumhuriyeti'), ('TD', 'Çad'), ('CL', 'Şili'),
+    ('CN', 'Çin'), ('CO', 'Kolombiya'), ('KM', 'Komorlar'), ('CG', 'Kongo Cumhuriyeti'), ('CR', 'Kosta Rika'),
+    ('HR', 'Hırvatistan'), ('CU', 'Küba'), ('CY', 'Kıbrıs'), ('CZ', 'Çek Cumhuriyeti'), ('CD', 'Kongo Demokratik Cumhuriyeti'),
+    ('DK', 'Danimarka'), ('DJ', 'Cibuti'), ('DM', 'Dominika'), ('DO', 'Dominik Cumhuriyeti'), ('EC', 'Ekvador'),
+    ('EG', 'Mısır'), ('SV', 'El Salvador'), ('GQ', 'Ekvator Ginesi'), ('ER', 'Eritre'), ('EE', 'Estonya'),
+    ('SZ', 'Esvatini'), ('ET', 'Etiyopya'), ('FJ', 'Fiji'), ('FI', 'Finlandiya'), ('FR', 'Fransa'),
+    ('GA', 'Gabon'), ('GM', 'Gambiya'), ('GE', 'Gürcistan'), ('DE', 'Almanya'), ('GH', 'Gana'),
+    ('GR', 'Yunanistan'), ('GD', 'Grenada'), ('GT', 'Guatemala'), ('GN', 'Gine'), ('GW', 'Gine-Bissau'),
+    ('GY', 'Guyana'), ('HT', 'Haiti'), ('VA', 'Vatikan'), ('HN', 'Honduras'), ('HU', 'Macaristan'),
+    ('IS', 'İzlanda'), ('IN', 'Hindistan'), ('ID', 'Endonezya'), ('IR', 'İran'), ('IQ', 'Irak'),
+    ('IE', 'İrlanda'), ('IL', 'İsrail'), ('IT', 'İtalya'), ('CI', 'Fildişi Sahili'), ('JM', 'Jamaika'),
+    ('JP', 'Japonya'), ('JO', 'Ürdün'), ('KZ', 'Kazakistan'), ('KE', 'Kenya'), ('KI', 'Kiribati'),
+    ('KW', 'Kuveyt'), ('KG', 'Kırgızistan'), ('LA', 'Laos'), ('LV', 'Letonya'), ('LB', 'Lübnan'),
+    ('LS', 'Lesotho'), ('LR', 'Liberya'), ('LY', 'Libya'), ('LI', 'Lihtenştayn'), ('LT', 'Litvanya'),
+    ('LU', 'Lüksemburg'), ('MG', 'Madagaskar'), ('MW', 'Malavi'), ('MY', 'Malezya'), ('MV', 'Maldivler'),
+    ('ML', 'Mali'), ('MT', 'Malta'), ('MH', 'Marshall Adaları'), ('MR', 'Moritanya'), ('MU', 'Mauritius'),
+    ('MX', 'Meksika'), ('FM', 'Mikronezya'), ('MD', 'Moldova'), ('MC', 'Monako'), ('MN', 'Moğolistan'),
+    ('ME', 'Karadağ'), ('MA', 'Fas'), ('MZ', 'Mozambik'), ('MM', 'Myanmar'), ('NA', 'Namibya'),
+    ('NR', 'Nauru'), ('NP', 'Nepal'), ('NL', 'Hollanda'), ('NZ', 'Yeni Zelanda'), ('NI', 'Nikaragua'),
+    ('NE', 'Nijer'), ('NG', 'Nijerya'), ('KP', 'Kuzey Kore'), ('MK', 'Kuzey Makedonya'), ('NO', 'Norveç'),
+    ('OM', 'Umman'), ('PK', 'Pakistan'), ('PW', 'Palau'), ('PS', 'Filistin'), ('PA', 'Panama'),
+    ('PG', 'Papua Yeni Gine'), ('PY', 'Paraguay'), ('PE', 'Peru'), ('PH', 'Filipinler'), ('PL', 'Polonya'),
+    ('PT', 'Portekiz'), ('QA', 'Katar'), ('RO', 'Romanya'), ('RU', 'Rusya'), ('RW', 'Ruanda'),
+    ('KN', 'Saint Kitts ve Nevis'), ('LC', 'Saint Lucia'), ('VC', 'Saint Vincent ve Grenadinler'), ('WS', 'Samoa'), ('SM', 'San Marino'),
+    ('ST', 'São Tomé ve Príncipe'), ('SA', 'Suudi Arabistan'), ('SN', 'Senegal'), ('RS', 'Sırbistan'), ('SC', 'Seyşeller'),
+    ('SL', 'Sierra Leone'), ('SG', 'Singapur'), ('SK', 'Slovakya'), ('SI', 'Slovenya'), ('SB', 'Solomon Adaları'),
+    ('SO', 'Somali'), ('ZA', 'Güney Afrika'), ('KR', 'Güney Kore'), ('SS', 'Güney Sudan'), ('ES', 'İspanya'),
+    ('LK', 'Sri Lanka'), ('SD', 'Sudan'), ('SR', 'Surinam'), ('SE', 'İsveç'), ('CH', 'İsviçre'),
+    ('SY', 'Suriye'), ('TJ', 'Tacikistan'), ('TZ', 'Tanzanya'), ('TH', 'Tayland'), ('TL', 'Doğu Timor'),
+    ('TG', 'Togo'), ('TO', 'Tonga'), ('TT', 'Trinidad ve Tobago'), ('TN', 'Tunus'), ('TR', 'Türkiye'),
+    ('TM', 'Türkmenistan'), ('TV', 'Tuvalu'), ('UG', 'Uganda'), ('UA', 'Ukrayna'), ('AE', 'Birleşik Arap Emirlikleri'),
+    ('GB', 'Birleşik Krallık'), ('US', 'Amerika Birleşik Devletleri'), ('UY', 'Uruguay'), ('UZ', 'Özbekistan'), ('VU', 'Vanuatu'),
+    ('VE', 'Venezuela'), ('VN', 'Vietnam'), ('YE', 'Yemen'), ('ZM', 'Zambiya'), ('ZW', 'Zimbabve')
+]
+
+for code, name in countries_list:
+    output.append(f'    {{"id": "{code}", "name": "{name}", "code": "{code}"}},')
+output.append("]")
+output.append("")
+
+# Cities list
+output.append("ALL_CITIES = [")
+city_id_counter = 1
+for country_name, cities in MAJOR_COUNTRIES_CITIES.items():
+    code = [c[0] for c in countries_list if c[1] == country_name][0] if country_name in [c[1] for c in countries_list] else "XX"
+    output.append(f"    # {country_name} ({code}) - {len(cities)} major cities")
+    for city in cities:
+        output.append(f'    {{"id": "{code}-{city_id_counter}", "name": "{city}", "country": "{country_name}", "countryCode": "{code}"}},')
+        city_id_counter += 1
+    output.append("")
+
+output.append("]")
+output.append("")
+output.append("COUNTRIES_AND_CITIES_SEED = {")
+output.append('    "countries": COUNTRIES_195,')
+output.append('    "cities": ALL_CITIES')
+output.append("}")
+
+# Write to file
+with open('/app/backend/seed_data.py', 'w', encoding='utf-8') as f:
+    f.write('\n'.join(output))
+
+print(f"✅ Generated seed_data.py with {len(countries_list)} countries and cities for {len(MAJOR_COUNTRIES_CITIES)} major countries")
+print(f"Total cities: ~{sum(len(cities) for cities in MAJOR_COUNTRIES_CITIES.values())}")
