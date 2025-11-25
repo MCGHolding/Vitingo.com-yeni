@@ -1494,97 +1494,95 @@ def test_final_countries_cities_seed_data():
         print(f"❌ FAIL: Turkey cities endpoint request hatası: {str(e)}")
         test_results["critical_issues"].append(f"TURKEY_CITIES_REQUEST_ERROR: {str(e)}")
     
-    # TEST 4: ABD'nin Şehirlerini Çekme - GET /api/library/cities?country=Amerika Birleşik Devletleri
+    # TEST 4: İtalya Şehirleri
     print("\n" + "=" * 80)
-    print("TEST 4: ABD'NİN ŞEHİRLERİNİ ÇEKME")
+    print("TEST 4: İTALYA ŞEHİRLERİ")
     print("=" * 80)
-    print("Endpoint: GET /api/library/cities?country=Amerika Birleşik Devletleri")
-    print("Amaç: ABD'nin şehirlerini getirmek")
+    print("Endpoint: GET /api/library/cities?country=İtalya")
+    print("Test: 1. GET request gönder")
+    print("      2. 20 şehir olmalı")
+    print("      3. Roma, Milano, Napoli'nin olduğunu doğrula")
     
-    usa_cities_endpoint = f"{BACKEND_URL}/api/library/cities?country=Amerika Birleşik Devletleri"
-    print(f"Testing endpoint: {usa_cities_endpoint}")
+    italy_cities_endpoint = f"{BACKEND_URL}/api/library/cities?country=İtalya"
+    print(f"Testing endpoint: {italy_cities_endpoint}")
     
     try:
         print("\n1. GET request gönderiliyor...")
-        response = requests.get(usa_cities_endpoint, timeout=30)
+        response = requests.get(italy_cities_endpoint, timeout=30)
         print(f"Status Code: {response.status_code}")
         
         if response.status_code == 200:
-            print("✅ PASS: USA cities endpoint başarıyla yanıt verdi")
-            test_results["usa_cities_working"] = True
+            print("✅ PASS: Italy cities endpoint başarıyla yanıt verdi")
             
             try:
                 cities = response.json()
-                print(f"Response type: {type(cities)}")
                 
                 if isinstance(cities, list):
                     city_count = len(cities)
-                    test_results["usa_cities_count"] = city_count
-                    print(f"📊 Dönen şehir sayısı: {city_count}")
+                    test_results["test4_italy_cities_count"] = city_count
+                    print(f"2. Dönen şehir sayısı: {city_count}")
                     
+                    # Test: 20 şehir olmalı
                     if city_count == 20:
-                        print("✅ PASS: ABD şehir sayısı tam olarak 20")
-                    elif city_count >= 15:
-                        print(f"✅ PASS: ABD şehir sayısı yeterli: {city_count} (15+ olmalı)")
+                        print("✅ PASS: İtalya şehir sayısı TAM OLARAK 20")
                     else:
-                        print(f"❌ FAIL: ABD şehir sayısı yetersiz: {city_count} (20 olmalı)")
-                        test_results["critical_issues"].append(f"INSUFFICIENT_USA_CITIES_{city_count}")
+                        print(f"❌ FAIL: İtalya şehir sayısı {city_count}, 20 olmalıydı")
+                        test_results["critical_issues"].append(f"ITALY_CITIES_NOT_20_GOT_{city_count}")
                     
-                    # Check for New York and Los Angeles
-                    print("\n2. New York ve Los Angeles'ın listede olduğunu doğrulama...")
-                    new_york_found = False
-                    los_angeles_found = False
+                    # Test 3: Roma, Milano, Napoli'nin olduğunu doğrula
+                    roma_found = False
+                    milano_found = False
+                    napoli_found = False
                     
                     for city in cities:
                         city_name = city.get("name", "")
-                        country = city.get("country", "")
-                        
-                        if "New York" in city_name:
-                            new_york_found = True
-                            print(f"✅ PASS: New York bulundu: {city_name}")
-                        
-                        if "Los Angeles" in city_name or "LA" in city_name:
-                            los_angeles_found = True
-                            print(f"✅ PASS: Los Angeles bulundu: {city_name}")
-                        
-                        # Verify country
-                        if country != "Amerika Birleşik Devletleri":
-                            print(f"      ⚠️  WARNING: Şehir ülkesi ABD değil: {country}")
+                        if "Roma" in city_name or "Rome" in city_name:
+                            roma_found = True
+                            test_results["test4_roma_found"] = True
+                            print(f"✅ PASS: Roma bulundu: {city_name}")
+                        if "Milano" in city_name or "Milan" in city_name:
+                            milano_found = True
+                            test_results["test4_milano_found"] = True
+                            print(f"✅ PASS: Milano bulundu: {city_name}")
+                        if "Napoli" in city_name or "Naples" in city_name:
+                            napoli_found = True
+                            test_results["test4_napoli_found"] = True
+                            print(f"✅ PASS: Napoli bulundu: {city_name}")
                     
-                    if new_york_found and los_angeles_found:
-                        print("✅ PASS: New York ve Los Angeles her ikisi de listede")
-                    elif new_york_found:
-                        print("⚠️  WARNING: New York bulundu ama Los Angeles bulunamadı")
-                        test_results["warnings"].append("LOS_ANGELES_NOT_FOUND")
-                    elif los_angeles_found:
-                        print("⚠️  WARNING: Los Angeles bulundu ama New York bulunamadı")
-                        test_results["warnings"].append("NEW_YORK_NOT_FOUND")
-                    else:
-                        print("❌ FAIL: New York ve Los Angeles her ikisi de bulunamadı")
-                        test_results["critical_issues"].append("MAJOR_USA_CITIES_NOT_FOUND")
+                    if not roma_found:
+                        print("❌ FAIL: Roma İtalya şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("ROMA_NOT_FOUND")
                     
-                    # Log some cities
-                    print(f"\n3. İlk 5 ABD şehrini loglama...")
-                    for i, city in enumerate(cities[:5], 1):
+                    if not milano_found:
+                        print("❌ FAIL: Milano İtalya şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("MILANO_NOT_FOUND")
+                    
+                    if not napoli_found:
+                        print("❌ FAIL: Napoli İtalya şehirleri listesinde bulunamadı")
+                        test_results["critical_issues"].append("NAPOLI_NOT_FOUND")
+                    
+                    # Log all cities for debugging
+                    print(f"\n3. Tüm İtalya şehirleri:")
+                    for i, city in enumerate(cities, 1):
                         name = city.get("name", "N/A")
                         country = city.get("country", "N/A")
                         print(f"   {i}. {name} (Ülke: {country})")
                         
                 else:
                     print("❌ FAIL: Response bir liste olmalı")
-                    test_results["critical_issues"].append("USA_CITIES_RESPONSE_NOT_LIST")
+                    test_results["critical_issues"].append("ITALY_CITIES_RESPONSE_NOT_LIST")
                     
             except Exception as e:
-                print(f"❌ FAIL: USA cities response'u parse edilemedi: {str(e)}")
-                test_results["critical_issues"].append(f"USA_CITIES_RESPONSE_PARSE_ERROR: {str(e)}")
+                print(f"❌ FAIL: Italy cities response parse hatası: {str(e)}")
+                test_results["critical_issues"].append(f"ITALY_CITIES_RESPONSE_PARSE_ERROR: {str(e)}")
         else:
-            print(f"❌ FAIL: USA cities endpoint'i hata döndü: {response.status_code}")
+            print(f"❌ FAIL: Italy cities endpoint hata döndü: {response.status_code}")
             print(f"Response: {response.text}")
-            test_results["critical_issues"].append(f"USA_CITIES_ENDPOINT_ERROR_{response.status_code}")
+            test_results["critical_issues"].append(f"ITALY_CITIES_ENDPOINT_ERROR_{response.status_code}")
             
     except Exception as e:
-        print(f"❌ FAIL: USA cities endpoint'i request hatası: {str(e)}")
-        test_results["critical_issues"].append(f"USA_CITIES_REQUEST_ERROR: {str(e)}")
+        print(f"❌ FAIL: Italy cities endpoint request hatası: {str(e)}")
+        test_results["critical_issues"].append(f"ITALY_CITIES_REQUEST_ERROR: {str(e)}")
     
     # FINAL TEST REPORT
     print("\n" + "=" * 100)
