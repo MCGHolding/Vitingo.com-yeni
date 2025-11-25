@@ -28,6 +28,7 @@ import requests
 import xml.etree.ElementTree as ET
 from decimal import Decimal
 import re
+import shutil
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
