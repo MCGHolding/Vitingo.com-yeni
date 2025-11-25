@@ -409,6 +409,7 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
             </Card>
           ))
         )}
+        </div>
       </div>
     </div>
   );
