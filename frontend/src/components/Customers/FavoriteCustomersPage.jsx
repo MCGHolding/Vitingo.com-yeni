@@ -226,10 +226,10 @@ export default function FavoriteCustomersPage({ customers = [], onBackToDashboar
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
+        {/* Filters */}
+        <Card className="mb-6">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
