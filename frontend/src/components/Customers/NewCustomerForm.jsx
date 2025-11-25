@@ -224,17 +224,31 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   
   // Filter cities for contacts when their country changes
   useEffect(() => {
-    const newContactSehirler = {};
     contacts.forEach((contact, index) => {
-      if (contact.country && tumUlkeler.length > 0) {
-        const secilenUlke = tumUlkeler.find(u => u.name === contact.country);
-        if (secilenUlke && secilenUlke.cities) {
-          newContactSehirler[index] = [...new Set(secilenUlke.cities.filter(c => c))].sort();
-        }
+      if (contact.country) {
+        loadContactSehirler(contact.country, index);
       }
     });
-    setContactSehirler(newContactSehirler);
-  }, [contacts, tumUlkeler]);
+  }, [contacts.map(c => c.country).join(',')]);
+  
+  // Load cities for a specific contact
+  const loadContactSehirler = async (countryName, contactIndex) => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/cities?country=${encodeURIComponent(countryName)}`);
+      const data = await response.json();
+      
+      if (Array.isArray(data)) {
+        const sehirIsimleri = data.map(d => d.name).filter(n => n).sort();
+        setContactSehirler(prev => ({
+          ...prev,
+          [contactIndex]: sehirIsimleri
+        }));
+      }
+    } catch (error) {
+      console.error('Contact şehirleri yüklenemedi:', error);
+    }
+  };
 
   // Firma bilgileri değiştiğinde TÜM contact'lerin ülke, şehir ve adres bilgilerini güncelle
   useEffect(() => {
