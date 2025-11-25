@@ -1238,9 +1238,25 @@ async def get_phone_codes():
 async def create_phone_code(phone_code: LibraryPhoneCode):
     """Create a new phone code"""
     try:
+        # Check for duplicates
+        existing = await db.phone_codes.find_one({
+            "$or": [
+                {"country": phone_code.country},
+                {"country_code": phone_code.country_code}
+            ]
+        })
+        
+        if existing:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Bu ülke veya ülke kodu zaten mevcut: {phone_code.country}"
+            )
+        
         code_dict = phone_code.dict()
         result = await db.phone_codes.insert_one(code_dict)
         return phone_code
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error creating phone code: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
