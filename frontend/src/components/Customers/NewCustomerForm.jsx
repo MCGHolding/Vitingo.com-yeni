@@ -185,7 +185,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       'Russia': 'ru', 'Rusya': 'ru',
       'South Korea': 'kr', 'Güney Kore': 'kr',
       'Saudi Arabia': 'sa', 'Suudi Arabistan': 'sa',
-      'UAE': 'ae', 'Birleşik Arap Emirlikleri': 'ae',
+      'UAE': 'ae', 'Birleşik Arap Emirlikleri': 'ae', 'BAE': 'ae',
       'Egypt': 'eg', 'Mısır': 'eg',
       'South Africa': 'za', 'Güney Afrika': 'za',
       'Netherlands': 'nl', 'Hollanda': 'nl',
@@ -207,7 +207,53 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       'Kuwait': 'kw', 'Kuveyt': 'kw',
       'Bahrain': 'bh', 'Bahreyn': 'bh',
       'Oman': 'om', 'Umman': 'om',
-      'Yemen': 'ye', 'Yemen': 'ye'
+      'Yemen': 'ye', 'Yemen': 'ye',
+      // Latin Amerika
+      'Argentina': 'ar', 'Arjantin': 'ar',
+      'Chile': 'cl', 'Şili': 'cl',
+      'Colombia': 'co', 'Kolombiya': 'co',
+      'Peru': 'pe', 'Peru': 'pe',
+      'Venezuela': 've', 'Venezuela': 've',
+      'Ecuador': 'ec', 'Ekvador': 'ec',
+      'Uruguay': 'uy', 'Uruguay': 'uy',
+      'Paraguay': 'py', 'Paraguay': 'py',
+      'Bolivia': 'bo', 'Bolivya': 'bo',
+      // Asya
+      'Thailand': 'th', 'Tayland': 'th',
+      'Vietnam': 'vn', 'Vietnam': 'vn',
+      'Indonesia': 'id', 'Endonezya': 'id',
+      'Malaysia': 'my', 'Malezya': 'my',
+      'Singapore': 'sg', 'Singapur': 'sg',
+      'Philippines': 'ph', 'Filipinler': 'ph',
+      'Taiwan': 'tw', 'Tayvan': 'tw',
+      // Avrupa
+      'Portugal': 'pt', 'Portekiz': 'pt',
+      'Sweden': 'se', 'İsveç': 'se',
+      'Norway': 'no', 'Norveç': 'no',
+      'Denmark': 'dk', 'Danimarka': 'dk',
+      'Finland': 'fi', 'Finlandiya': 'fi',
+      'Ireland': 'ie', 'İrlanda': 'ie',
+      'Czech Republic': 'cz', 'Çekya': 'cz',
+      'Hungary': 'hu', 'Macaristan': 'hu',
+      'Romania': 'ro', 'Romanya': 'ro',
+      'Bulgaria': 'bg', 'Bulgaristan': 'bg',
+      'Croatia': 'hr', 'Hırvatistan': 'hr',
+      'Serbia': 'rs', 'Sırbistan': 'rs',
+      'Slovenia': 'si', 'Slovenya': 'si',
+      'Slovakia': 'sk', 'Slovakya': 'sk',
+      'Lithuania': 'lt', 'Litvanya': 'lt',
+      'Latvia': 'lv', 'Letonya': 'lv',
+      'Estonia': 'ee', 'Estonya': 'ee',
+      // Afrika
+      'Nigeria': 'ng', 'Nijerya': 'ng',
+      'Kenya': 'ke', 'Kenya': 'ke',
+      'Ghana': 'gh', 'Gana': 'gh',
+      'Morocco': 'ma', 'Fas': 'ma',
+      'Tunisia': 'tn', 'Tunus': 'tn',
+      'Ethiopia': 'et', 'Etiyopya': 'et',
+      'Angola': 'ao', 'Angola': 'ao',
+      // Okyanusya
+      'New Zealand': 'nz', 'Yeni Zelanda': 'nz'
     };
     
     return countryCodeMap[countryName] || 'tr';
