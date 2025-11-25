@@ -227,9 +227,14 @@ const CountryCityManager = () => {
 
   useEffect(() => {
     if (selectedCountry) {
-      loadCities(selectedCountry.name);
+      if (selectedCountry.code === 'ALL') {
+        // Show all cities
+        setCities(allCities);
+      } else {
+        loadCities(selectedCountry.name);
+      }
     }
-  }, [selectedCountry]);
+  }, [selectedCountry, allCities]);
 
   // Delete country
   const deleteCountry = async (id, name) => {
