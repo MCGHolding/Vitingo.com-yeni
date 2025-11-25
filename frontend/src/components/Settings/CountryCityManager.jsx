@@ -415,27 +415,6 @@ const CountryCityManager = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
-              {/* "Tüm Ülkeler" option at the top */}
-              <div
-                className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b-2 border-gray-200 ${
-                  selectedCountry?.code === 'ALL' ? 'bg-blue-50 border-l-4 border-blue-600' : ''
-                }`}
-                onClick={() => setSelectedCountry({ id: 'ALL', name: 'Tüm Ülkeler', code: 'ALL' })}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Globe className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <div className="font-bold text-gray-900">Tüm Ülkeler</div>
-                      <div className="text-sm text-gray-500">Tüm şehirleri görüntüle</div>
-                    </div>
-                  </div>
-                  <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {allCities.length}
-                  </div>
-                </div>
-              </div>
-
               {/* Individual countries */}
               {filteredCountries.map((country) => (
                 <div
