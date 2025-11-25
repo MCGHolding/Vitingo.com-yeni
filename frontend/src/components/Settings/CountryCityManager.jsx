@@ -1016,11 +1016,10 @@ const CountryCityManager = () => {
                   loadCountries(); // Refresh city counts
                   
                 } catch (error) {
-                  console.error('Bulk import error:', error);
+                  console.error('❌ Bulk import error:', error);
                   toast({ title: "Hata", description: "Toplu içe aktarma sırasında hata oluştu", variant: "destructive" });
                 }
               }}
-              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
               >
                 İçe Aktar
               </button>
