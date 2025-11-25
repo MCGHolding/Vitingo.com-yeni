@@ -1294,10 +1294,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 {(!showAccordion || isExpanded) && (
                 <div className="p-4 pt-0 space-y-4">
 
+                {/* Ad Soyad ve Görev yan yana */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ad Soyadı <span className="text-red-500">*</span>
+                      Adı Soyadı <span className="text-red-500">*</span>
                     </label>
                     <Input
                       value={contact.full_name}
@@ -1306,12 +1307,26 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Görevi <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      value={contact.position}
+                      onChange={(e) => handleContactChange(contactIndex, 'position', e.target.value)}
+                      placeholder="Örn: İş Geliştirme Müdürü"
+                    />
+                  </div>
+                </div>
+
+                {/* Cep Telefonu ve Email yan yana */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Cep Telefonu <span className="text-red-500">*</span>
                     </label>
                     <PhoneInput
-                      key={`contact-${contactIndex}-mobile-${contact.country || 'tr'}`}
-                      country={contact.country || "tr"}
+                      key={`contact-${contactIndex}-mobile-${formData.country || contact.country || 'tr'}`}
+                      country={getCountryDialCode(formData.country || contact.country)}
                       value={contact.mobile}
                       onChange={(value) => handleContactChange(contactIndex, 'mobile', value)}
                       enableSearch={true}
@@ -1329,16 +1344,20 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                       placeholder="ornek@email.com"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Görevi <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                      value={contact.position}
-                      onChange={(e) => handleContactChange(contactIndex, 'position', e.target.value)}
-                      placeholder="Örn: İş Geliştirme Müdürü"
-                    />
-                  </div>
+                </div>
+
+                {/* Muhasebe Sorumlusu Checkbox */}
+                <div className="flex items-center space-x-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id={`accounting-${contactIndex}`}
+                    checked={contact.is_accounting_responsible || false}
+                    onChange={(e) => handleContactChange(contactIndex, 'is_accounting_responsible', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor={`accounting-${contactIndex}`} className="text-sm font-medium text-gray-700 cursor-pointer">
+                    Bu kişi firmanın muhasebe işlerinden sorumludur (Fatura, ödeme takibi vb. bu kişiye iletilecek)
+                  </label>
                 </div>
 
                 {/* Address and Location Information */}
