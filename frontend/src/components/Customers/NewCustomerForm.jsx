@@ -911,7 +911,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </label>
                 <PhoneInput
                   key={`phone-${formData.country || 'tr'}`}
-                  country={formData.country || "tr"}
+                  country={getCountryDialCode(formData.country)}
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
                   enableSearch={true}
@@ -926,7 +926,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </label>
                 <PhoneInput
                   key={`mobile-${formData.country || 'tr'}`}
-                  country={formData.country || "tr"}
+                  country={getCountryDialCode(formData.country)}
                   value={formData.mobile}
                   onChange={(value) => handleInputChange('mobile', value)}
                   enableSearch={true}
