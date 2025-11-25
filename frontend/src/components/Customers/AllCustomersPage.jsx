@@ -758,76 +758,105 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                       key={customer.id}
                       className={`border-b border-gray-100 hover:bg-blue-50 transition-all duration-200 ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } hover:shadow-md`}
+                      }`}
                     >
-                      <td className="py-3 px-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-medium">
-                            {String(index + 1).padStart(3, '0')}
+                      {/* NO */}
+                      <td className="py-4 px-4">
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-bold text-center min-w-[40px]">
+                          {String(index + 1).padStart(3, '0')}
+                        </div>
+                      </td>
+                      
+                      {/* ŞİRKET ADI */}
+                      <td className="py-4 px-4">
+                        <div className="space-y-1">
+                          <div className="font-bold text-gray-900 text-sm flex items-center space-x-2">
+                            <Building className="h-4 w-4 text-blue-600" />
+                            <span>{customer.companyName || customer.company_short_name || 'Şirket Adı Yok'}</span>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {customer.company_title || 'Ünvan bilgisi yok'}
                           </div>
                         </div>
                       </td>
                       
-                      <td className="py-3 px-3">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="space-y-1">
-                                <div className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-150 text-sm max-w-[160px] truncate flex items-center space-x-2">
-                                  <Building className="h-3 w-3 text-gray-400" />
-                                  <span>{customer.companyName}</span>
-                                </div>
-                                <div className="text-xs text-gray-500 max-w-[160px] truncate flex items-center space-x-1">
-                                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                                  <span>{customer.country}</span>
-                                </div>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs">
-                                {customer.companyName}<br/>
-                                İletişim: {customer.contactPerson}<br/>
-                                Email: {customer.email}<br/>
-                                Müşteri: {formatDate(customer.customerSince)}<br/>
-                                Son aktivite: {formatDate(customer.lastActivity)}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </td>
-                      
-                      <td className="py-3 px-3">
-                        <div className="flex items-center space-x-1">
-                          <span className="font-semibold text-green-600 text-sm">
-                            {formatCurrency(customer.totalRevenue, customer.currency)}
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {customer.totalOrders} sipariş
+                      {/* İLETİŞİM */}
+                      <td className="py-4 px-4">
+                        <div className="space-y-1">
+                          {customer.phone && (
+                            <div className="flex items-center space-x-2 text-xs text-gray-700">
+                              <Phone className="h-3 w-3 text-green-600" />
+                              <span>{customer.phone}</span>
+                            </div>
+                          )}
+                          {customer.email && (
+                            <div className="flex items-center space-x-2 text-xs text-gray-600">
+                              <Mail className="h-3 w-3 text-blue-600" />
+                              <span className="truncate max-w-[150px]">{customer.email}</span>
+                            </div>
+                          )}
+                          {!customer.phone && !customer.email && (
+                            <span className="text-xs text-gray-400">İletişim bilgisi yok</span>
+                          )}
                         </div>
                       </td>
                       
-                      <td className="py-3 px-3">
-                        <div className="text-center">
-                          <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                            {customer.totalProjects || 0}
-                          </span>
-                          <div className="text-xs text-gray-500 mt-1">
-                            proje
-                          </div>
+                      {/* ADRES/ŞEHİR */}
+                      <td className="py-4 px-4">
+                        <div className="space-y-1">
+                          {customer.city && (
+                            <div className="flex items-center space-x-2 text-xs text-gray-700">
+                              <MapPin className="h-3 w-3 text-red-500" />
+                              <span className="font-medium">{customer.city}</span>
+                            </div>
+                          )}
+                          {customer.country && (
+                            <div className="text-xs text-gray-500 flex items-center space-x-1 ml-5">
+                              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                              <span>{customer.country}</span>
+                            </div>
+                          )}
+                          {!customer.city && !customer.country && (
+                            <span className="text-xs text-gray-400">Adres bilgisi yok</span>
+                          )}
                         </div>
                       </td>
                       
-                      <td className="py-3 px-3">
-                        <div className="flex flex-wrap gap-1 max-w-xs">
-                          {customer.tags && customer.tags.map((tag, tagIndex) => (
+                      {/* SEKTÖR */}
+                      <td className="py-4 px-4">
+                        {customer.sector ? (
+                          <Badge variant="outline" className="text-xs">
+                            {customer.sector}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
+                      </td>
+                      
+                      {/* MÜŞTERİ TİPİ */}
+                      <td className="py-4 px-4">
+                        {customer.customer_type ? (
+                          <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                            {customer.customer_type}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
+                      </td>
+                      
+                      {/* ETİKETLER */}
+                      <td className="py-4 px-4">
+                        <div className="flex flex-wrap gap-1 max-w-[150px]">
+                          {customer.tags && customer.tags.length > 0 ? customer.tags.map((tag, tagIndex) => (
                             <Badge
                               key={tagIndex}
-                              className={`text-[9px] px-1 py-0.5 ${customerTagColors[tag] || 'bg-gray-500 text-white'} border-0`}
+                              className={`text-[10px] px-1.5 py-0.5 ${customerTagColors[tag] || 'bg-gray-500 text-white'} border-0`}
                             >
                               {tag}
                             </Badge>
-                          ))}
+                          )) : (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
                         </div>
                       </td>
                       
