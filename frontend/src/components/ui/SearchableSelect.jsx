@@ -16,6 +16,9 @@ import { ChevronDown, Search, X, User } from 'lucide-react';
  * - disabled: Boolean
  * - className: Additional CSS classes
  * - emptyMessage: Message when no options found
+ * - showAddNew: Boolean - Show "+Yeni Ekle" button at bottom
+ * - onAddNew: () => void - Callback when add new button clicked
+ * - addNewLabel: String - Label for add new button (default: "+ Yeni Ekle")
  */
 export default function SearchableSelect({
   options = [],
@@ -26,7 +29,10 @@ export default function SearchableSelect({
   searchPlaceholder = "Ara...",
   disabled = false,
   className = "",
-  emptyMessage = "Seçenek bulunamadı"
+  emptyMessage = "Seçenek bulunamadı",
+  showAddNew = false,
+  onAddNew,
+  addNewLabel = "+ Yeni Ekle"
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
