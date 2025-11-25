@@ -560,7 +560,14 @@ const Dashboard = () => {
   };
 
   // Customer Management Handlers
-  const handleNewCustomer = (returnToInvoice = false) => {
+  const [newCustomerInitialState, setNewCustomerInitialState] = useState({});
+
+  const handleNewCustomer = (options = {}) => {
+    const { returnToInvoice = false, isProspect = false } = typeof options === 'boolean' ? { returnToInvoice: options } : options;
+    
+    // Set initial state for form
+    setNewCustomerInitialState({ isProspect });
+    
     setCurrentView('new-customer');
     // Fatura sayfasından gelme durumunu işaretlemek için
     if (returnToInvoice) {
