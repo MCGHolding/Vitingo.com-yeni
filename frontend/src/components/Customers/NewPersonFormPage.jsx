@@ -79,6 +79,26 @@ export default function NewPersonFormPage({ onClose, onSave }) {
     ]
   };
   
+  // Load countries on component mount
+  useEffect(() => {
+    const countryNames = Object.values(countriesData).map(c => c.name).sort();
+    setUlkeler(countryNames);
+  }, []);
+
+  // Update cities when country changes
+  useEffect(() => {
+    if (formData.country) {
+      const countryEntry = Object.values(countriesData).find(c => c.name === formData.country);
+      if (countryEntry && countryEntry.cities) {
+        setSehirler(countryEntry.cities);
+      } else {
+        setSehirler([]);
+      }
+    } else {
+      setSehirler([]);
+    }
+  }, [formData.country]);
+
   // Load companies and suppliers on component mount
   useEffect(() => {
     loadCompanies();
