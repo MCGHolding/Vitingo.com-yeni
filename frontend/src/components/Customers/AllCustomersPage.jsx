@@ -565,23 +565,6 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
             </h1>
             <p className="text-gray-600 mt-1">Sistemdeki tüm müşterilerin kapsamlı görünümü</p>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={exportToExcel}
-              className="bg-green-600 hover:bg-green-700 px-6"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Excel Aktarım
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onBackToDashboard}
-              className="px-6"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Kapat
-            </Button>
-          </div>
         </div>
       </div>
 
