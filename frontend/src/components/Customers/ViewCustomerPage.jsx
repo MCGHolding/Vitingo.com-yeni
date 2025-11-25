@@ -109,12 +109,12 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </CardContent>
             </Card>
 
-            {/* Contact Information */}
+            {/* Company Contact Information */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
                 <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
                   <Phone className="h-6 w-6 text-green-600" />
-                  <span>İletişim Bilgileri</span>
+                  <span>Firma İletişim Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -127,7 +127,14 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-blue-600" />
+                    <Phone className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Firma Cep Telefonu</label>
+                      <p className="text-base text-gray-700">{formatPhone(customer.mobile)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Mail className="h-5 w-5 text-red-600" />
                     <div>
                       <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">E-posta</label>
                       <p className="text-base text-gray-700">{customer.email || '-'}</p>
