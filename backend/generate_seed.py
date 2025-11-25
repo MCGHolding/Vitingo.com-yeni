@@ -84,7 +84,27 @@ MAJOR_COUNTRIES_CITIES = {
     # D harfi ile başlayan ülkeler (eksikler)
     "Dominika": ["Roseau", "Portsmouth", "Marigot", "Berekua", "Mahaut", "Saint Joseph", "Wesley", "Soufrière", "Salisbury", "Castle Bruce", "La Plaine", "Colihaut", "Calibishie", "Pointe Michel", "Grand Bay", "Woodford Hill", "Vieille Case", "Petite Savanne", "Penville", "Pichelin"],
     "Dominik Cumhuriyeti": ["Santo Domingo", "Santiago de los Caballeros", "La Romana", "San Pedro de Macorís", "San Cristóbal", "Puerto Plata", "San Francisco de Macorís", "La Vega", "Higüey", "Concepción de La Vega", "Moca", "Baní", "Bonao", "San Juan de la Maguana", "Azua", "Barahona", "Hato Mayor", "Monte Plata", "Cotuí", "Esperanza"],
-    "Doğu Timor": ["Dili", "Baucau", "Maliana", "Suai", "Liquiçá", "Aileu", "Manatuto", "Same", "Lospalos", "Gleno", "Viqueque", "Ermera", "Ainaro", "Bazartete", "Maubara", "Atsabe", "Bobonaro", "Lautem", "Covalima", "Oecusse"]
+    "Doğu Timor": ["Dili", "Baucau", "Maliana", "Suai", "Liquiçá", "Aileu", "Manatuto", "Same", "Lospalos", "Gleno", "Viqueque", "Ermera", "Ainaro", "Bazartete", "Maubara", "Atsabe", "Bobonaro", "Lautem", "Covalima", "Oecusse"],
+    # E harfi ile başlayan ülkeler (eksikler)
+    "Ekvator Ginesi": ["Malabo", "Bata", "Ebebiyin", "Aconibe", "Añisoc", "Luba", "Evinayong", "Mongomo", "Mengomeyén", "Pale", "Mbini", "Rebola", "Santiago de Baney", "San Antonio de Palé", "Riaba", "Baney", "Moca", "Ureca", "Bilelipa", "Kogo"],
+    "El Salvador": ["San Salvador", "Soyapango", "Santa Ana", "San Miguel", "Mejicanos", "Santa Tecla", "Apopa", "Delgado", "Sonsonate", "Ahuachapán", "San Marcos", "Usulután", "Cojutepeque", "Ilopango", "Zacatecoluca", "Chalatenango", "La Unión", "Sensuntepeque", "San Vicente", "Metapán"],
+    "Eritre": ["Asmara", "Keren", "Massawa", "Assab", "Mendefera", "Barentu", "Adi Keyh", "Adi Quala", "Dekemhare", "Tesseney", "Areza", "Ghinda", "Mai Habar", "Senafe", "Edd", "Nefasit", "Himbirti", "Segeneiti", "Zula", "Beylul"],
+    "Estonya": ["Tallinn", "Tartu", "Narva", "Pärnu", "Kohtla-Järve", "Viljandi", "Rakvere", "Maardu", "Sillamäe", "Kuressaare", "Võru", "Valga", "Haapsalu", "Jõhvi", "Paide", "Keila", "Kiviõli", "Tapa", "Põlva", "Türi"],
+    "Esvatini": ["Mbabane", "Manzini", "Lobamba", "Big Bend", "Malkerns", "Nhlangano", "Siteki", "Piggs Peak", "Hluti", "Simunye", "Bhunya", "Kwaluseni", "Hlatikulu", "Kubuta", "Lavumisa", "Mankayane", "Ngwempisi", "Vuvulane", "Sidvokodvo", "Lomahasha"],
+    "Etiyopya": ["Addis Ababa", "Dire Dawa", "Mekele", "Gondar", "Awassa", "Bahir Dar", "Jimma", "Bishoftu", "Dessie", "Jijiga", "Shashamane", "Harar", "Dilla", "Nekemte", "Debre Birhan", "Asela", "Debre Markos", "Kombolcha", "Hosaena", "Harar"],
+    # F harfi ile başlayan ülkeler (eksikler)
+    "Fiji": ["Suva", "Nasinu", "Lautoka", "Nadi", "Labasa", "Ba", "Sigatoka", "Tavua", "Rakiraki", "Levuka", "Nausori", "Savusavu", "Korovou", "Vatukoula", "Navua", "Pacific Harbour", "Lami", "Deuba", "Naceva", "Nabua"],
+    "Fildişi Sahili": ["Abidjan", "Bouaké", "Daloa", "Yamoussoukro", "San-Pédro", "Korhogo", "Man", "Divo", "Gagnoa", "Anyama", "Abengourou", "Grand-Bassam", "Dabou", "Agboville", "Bondoukou", "Oumé", "Ferkessédougou", "Séguéla", "Soubré", "Duékoué"],
+    # G harfi ile başlayan ülkeler (eksikler)
+    "Gabon": ["Libreville", "Port-Gentil", "Franceville", "Oyem", "Moanda", "Mouila", "Lambaréné", "Tchibanga", "Koulamoutou", "Makokou", "Bitam", "Gamba", "Mékambo", "Ntoum", "Lastoursville", "Omboué", "Mayumba", "Mitzic", "Ndendé", "Booué"],
+    "Gambiya": ["Banjul", "Serekunda", "Brikama", "Bakau", "Farafenni", "Lamin", "Sukuta", "Gunjur", "Basse Santa Su", "Bansang", "Soma", "Essau", "Kerewan", "Georgetown", "Abuko", "Brufut", "Somita", "Gunjur Koto", "Wellingara", "Yundum"],
+    "Gana": ["Accra", "Kumasi", "Tamale", "Sekondi-Takoradi", "Ashaiman", "Sunyani", "Cape Coast", "Obuasi", "Teshie", "Tema", "Madina", "Koforidua", "Wa", "Techiman", "Ho", "Nungua", "Taifa", "Bolgatanga", "Bawku", "Aflao"],
+    "Grenada": ["St. George's", "Gouyave", "Grenville", "Victoria", "Saint David's", "Sauteurs", "Hillsborough", "Woburn", "Grand Roy", "Hermitage", "Tivoli", "Saint Mark", "Birch Grove", "Marli", "Pearls", "Soubise", "Munich", "Grand Anse", "Beaulieu", "Belmont"],
+    "Guatemala": ["Guatemala City", "Mixco", "Villa Nueva", "Petapa", "San Juan Sacatepéquez", "Quetzaltenango", "Villa Canales", "Escuintla", "Chinautla", "Chimaltenango", "Huehuetenango", "Amatitlán", "Totonicapán", "Santa Lucía Cotzumalguapa", "Coatepeque", "Santa Catarina Pinula", "Chichicastenango", "Jalapa", "Cobán", "Puerto Barrios"],
+    "Gine": ["Conakry", "Nzérékoré", "Kankan", "Kindia", "Labé", "Guéckédou", "Macenta", "Kissidougou", "Mamou", "Siguiri", "Boké", "Dubréka", "Faranah", "Kamsar", "Forecariah", "Coyah", "Pita", "Fria", "Télimélé", "Dabola"],
+    "Gine-Bissau": ["Bissau", "Bafatá", "Gabú", "Bissorã", "Bolama", "Cacheu", "Bubaque", "Catió", "Mansôa", "Buba", "Quebo", "Farim", "Canchungo", "São Domingos", "Quinhámel", "Fulacunda", "Contuboel", "Bambadinca", "Pitche", "Bigene"],
+    "Guyana": ["Georgetown", "Linden", "New Amsterdam", "Anna Regina", "Bartica", "Skeldon", "Rosignol", "Mahaica", "Vreed-en-Hoop", "Parika", "Charity", "Corriverton", "Lethem", "Mabaruma", "Mahdia", "Paradise", "Diamond", "Eccles", "Good Hope", "Uitvlugt"],
+    "Güney Sudan": ["Juba", "Malakal", "Wau", "Yei", "Yambio", "Rumbek", "Bor", "Bentiu", "Aweil", "Kuajok", "Torit", "Maridi", "Nimule", "Tonj", "Kapoeta", "Pibor", "Gogrial", "Akobo", "Mundri", "Renk"]
 }
 
 # Generate Python code
