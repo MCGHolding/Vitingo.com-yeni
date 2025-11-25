@@ -1096,6 +1096,7 @@ const Dashboard = () => {
           onBackToDashboard={handleBackToDashboard} 
           customers={customers} 
           refreshCustomers={loadCustomers}
+          onNewCustomer={handleNewCustomer}
           onViewCustomer={handleViewCustomer}
           onEditCustomer={handleEditCustomerFromPage}
         />;
