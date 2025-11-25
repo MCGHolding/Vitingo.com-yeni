@@ -206,7 +206,7 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
               }}
               initialView="dayGridMonth"
               editable={true}
-              selectable={true}
+              selectable={false}
               selectMirror={true}
               dayMaxEvents={true}
               weekends={true}
