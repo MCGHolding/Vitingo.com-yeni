@@ -156,8 +156,27 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     loadStatuses();
     loadStages();
     loadProjectTypes();
-    loadCountries();
+    loadUlkeler();
   }, []);
+
+  // Filter cities when country changes (SAME AS NewCustomerForm)
+  useEffect(() => {
+    if (formData.country && tumUlkeler.length > 0) {
+      const secilenUlke = tumUlkeler.find(u => u.name === formData.country);
+      
+      if (secilenUlke && secilenUlke.cities) {
+        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
+        setSehirler(sehirListesi);
+      } else {
+        setSehirler([]);
+      }
+      
+      // Reset city when country changes
+      setFormData(prev => ({ ...prev, city: '' }));
+    } else {
+      setSehirler([]);
+    }
+  }, [formData.country, tumUlkeler]);
 
   const loadCustomers = async () => {
     try {
