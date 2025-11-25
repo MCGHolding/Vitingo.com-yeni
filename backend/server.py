@@ -1102,6 +1102,24 @@ async def update_country(country_id: str, country: LibraryCountry):
         logger.error(f"Error updating country: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/library/countries/{country_id}")
+async def update_country(country_id: str, country: LibraryCountry):
+    """Update a country"""
+    try:
+        country_dict = country.dict()
+        result = await db.countries.update_one(
+            {"id": country_id}, 
+            {"$set": country_dict}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Country not found")
+        return {"message": "Country updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating country: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/library/countries/{country_id}")
 async def delete_country(country_id: str):
     """Delete a country"""
