@@ -39,7 +39,18 @@ const MeetingRequestsPage = ({ currentUser = { id: 'demo_user', name: 'Demo User
       const response = await fetch(`${BACKEND_URL}/api/meeting-requests?user_id=${currentUser.id}`);
       if (response.ok) {
         const requests = await response.json();
-        setMeetingRequests(requests);
+        
+        // Filter out past meetings - only show today and future meetings
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        const filteredRequests = requests.filter(request => {
+          const requestDate = new Date(request.date);
+          return requestDate >= today;
+        });
+        
+        setMeetingRequests(filteredRequests);
+        console.log(`✅ Loaded ${filteredRequests.length} upcoming meetings (filtered ${requests.length - filteredRequests.length} past meetings)`);
       }
     } catch (error) {
       console.error('Error loading meeting requests:', error);
