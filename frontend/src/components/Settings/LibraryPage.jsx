@@ -54,7 +54,7 @@ const LibraryPage = ({ onBack }) => {
     setIsLoading(true);
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/sectors`);
+      const response = await fetch(`${backendUrl}/api/library/sectors`);
       if (response.ok) {
         const data = await response.json();
         setSectors(data);
