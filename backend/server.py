@@ -476,6 +476,8 @@ class Customer(BaseModel):
     tags: List[str] = Field(default_factory=list)  # Etiketler
     # Services field
     services: List[str] = Field(default_factory=list)  # Hizmetler
+    # Contacts field - Yetkili Kişiler
+    contacts: List[Dict] = Field(default_factory=list)  # Yetkili Kişiler
 
 class GroupCompany(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -3454,11 +3456,6 @@ async def create_customer(customer_data: dict):
         logger.info(f"Received customer data: {customer_data}")
         logger.info(f"Customer data keys: {list(customer_data.keys())}")
         
-        # Remove contacts field if present (not part of Customer model)
-        if 'contacts' in customer_data:
-            logger.info(f"Removing contacts field: {customer_data['contacts']}")
-            customer_data.pop('contacts')
-        
         # Validate bank information if provided
         if 'iban' in customer_data and customer_data['iban']:
             if not validate_iban(customer_data['iban']):
@@ -3473,6 +3470,7 @@ async def create_customer(customer_data: dict):
         customer_dict = customer.dict()
         
         logger.info(f"Customer model created successfully: {customer.companyName}")
+        logger.info(f"Customer contacts count: {len(customer.contacts)}")
         
         # Insert to MongoDB
         await db.customers.insert_one(customer_dict)
