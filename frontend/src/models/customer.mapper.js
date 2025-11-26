@@ -44,6 +44,8 @@ export function dbToForm(c) {
     // Kategori Seçimi
     customerType: codeToLabel(CUSTOMER_TYPES, c.relationshipType),
     sector: codeToLabel(SECTORS, c.sector),
+    source: c.source || "",
+    status: c.status || "",
     isIndividual: !!c.isIndividual,
     isProspect: !!c.isProspect,
 
