@@ -18,7 +18,8 @@ import {
   CreditCard,
   Briefcase,
   Edit,
-  Eye
+  Eye,
+  CheckCircle
 } from 'lucide-react';
 // Code to Label mapping
 const CUSTOMER_TYPE_LABELS = {
