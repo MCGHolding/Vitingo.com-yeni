@@ -109,6 +109,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     bank_address: '',
     // Customer specific fields
     sector: '',
+    source: '',
+    status: '',
     tags: [],
     notes: '',
     is_candidate: initialIsProspect // Set from prop
