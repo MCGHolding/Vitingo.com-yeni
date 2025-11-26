@@ -1774,32 +1774,15 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       🎯 Projede Rolü
                     </label>
-                    <div className="flex space-x-2">
-                      <div className="flex-1">
-                        <Select
-                          value={contact.project_role || ''}
-                          onValueChange={(value) => handleContactChange(contactIndex, 'project_role', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Proje rolü seçin..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {projectRoles.map(role => (
-                              <SelectItem key={role} value={role}>{role}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowRoleModal(true)}
-                        className="px-3"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <SearchableSelect
+                      options={projectRoles.map(role => ({ value: role, label: role }))}
+                      value={contact.project_role || ''}
+                      onValueChange={(value) => handleContactChange(contactIndex, 'project_role', value)}
+                      placeholder="Proje rolü seçin..."
+                      showAddNew={true}
+                      onAddNew={() => setShowRoleModal(true)}
+                      addNewLabel="+ Yeni Proje Rolü Ekle"
+                    />
                   </div>
 
                 </div>
