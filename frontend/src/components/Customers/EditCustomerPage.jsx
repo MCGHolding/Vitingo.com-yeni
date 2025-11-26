@@ -114,33 +114,50 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     loadUlkeler();
   }, []);
   
-  // Debug customer data
+  // Map customer type code to ID after options load
   useEffect(() => {
-    console.log('=== CUSTOMER DATA ===');
-    console.log('customer.relationshipType:', customer?.relationshipType);
-    console.log('customer.sector:', customer?.sector);
-    console.log('customer.status:', customer?.status);
-    console.log('customer.country:', customer?.country);
-    console.log('customer.tags:', customer?.tags);
+    if (customerTypes.length > 0 && customer.relationshipType) {
+      // Find by value field
+      const matchingType = customerTypes.find(t => t.value === customer.relationshipType);
+      if (matchingType) {
+        console.log('✅ Customer Type Match:', matchingType);
+        setFormData(prev => ({...prev, customer_type_id: matchingType.id}));
+      } else {
+        console.log('❌ No match for relationshipType:', customer.relationshipType);
+      }
+    }
+  }, [customerTypes, customer.relationshipType]);
+  
+  // Map sector code to ID after options load
+  useEffect(() => {
+    if (sectors.length > 0 && customer.sector) {
+      // Find by value field
+      const matchingSector = sectors.find(s => s.value === customer.sector);
+      if (matchingSector) {
+        console.log('✅ Sector Match:', matchingSector);
+        setFormData(prev => ({...prev, specialty_id: matchingSector.id}));
+      } else {
+        console.log('❌ No match for sector:', customer.sector);
+      }
+    }
+  }, [sectors, customer.sector]);
+  
+  // Set status, country and tags directly from customer
+  useEffect(() => {
+    if (customer) {
+      console.log('=== DEBUG REMAINING FIELDS ===');
+      console.log('customer.status:', customer.status);
+      console.log('customer.country:', customer.country);
+      console.log('customer.tags:', customer.tags, 'type:', typeof customer.tags);
+      
+      setFormData(prev => ({
+        ...prev,
+        status: customer.status || 'active',
+        country: customer.country || '',
+        tags: Array.isArray(customer.tags) ? customer.tags : []
+      }));
+    }
   }, [customer]);
-  
-  // Debug dropdown options
-  useEffect(() => {
-    console.log('=== DROPDOWN OPTIONS LOADED ===');
-    console.log('customerTypes:', customerTypes);
-    console.log('sectors:', sectors);
-    console.log('ulkeler:', ulkeler);
-  }, [customerTypes, sectors, ulkeler]);
-  
-  // Debug form data changes
-  useEffect(() => {
-    console.log('=== FORM DATA ===');
-    console.log('formData.customer_type_id:', formData?.customer_type_id);
-    console.log('formData.specialty_id:', formData?.specialty_id);
-    console.log('formData.status:', formData?.status);
-    console.log('formData.country:', formData?.country);
-    console.log('formData.tags:', formData?.tags);
-  }, [formData]);
   
   // Don't use auto-mapping - let form show original values
   // User will select from dropdown if needed
