@@ -981,6 +981,26 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     setContacts(updatedContacts);
   };
 
+  // Customer tags (not contact tags)
+  const handleAddCustomerTag = () => {
+    if (!currentContactTag.trim()) return;
+    
+    const currentTags = Array.isArray(formData.tags) ? formData.tags : [];
+    setFormData({
+      ...formData,
+      tags: [...currentTags, currentContactTag.trim()]
+    });
+    setCurrentContactTag('');
+  };
+
+  const handleRemoveCustomerTag = (tagIndex) => {
+    const currentTags = Array.isArray(formData.tags) ? formData.tags : [];
+    setFormData({
+      ...formData,
+      tags: currentTags.filter((_, i) => i !== tagIndex)
+    });
+  };
+
   const toggleContactExpanded = (contactIndex) => {
     setExpandedContacts(prev => 
       prev.includes(contactIndex)
