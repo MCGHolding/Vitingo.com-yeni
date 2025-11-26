@@ -142,7 +142,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     }
   }, [sectors, customer.sector]);
   
-  // Set status, country and tags directly from customer
+  // Set status and tags directly from customer
   useEffect(() => {
     if (customer) {
       console.log('=== DEBUG REMAINING FIELDS ===');
@@ -153,11 +153,33 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       setFormData(prev => ({
         ...prev,
         status: customer.status || 'active',
-        country: customer.country || '',
         tags: Array.isArray(customer.tags) ? customer.tags : []
       }));
     }
   }, [customer]);
+  
+  // Map country after ulkeler loads
+  useEffect(() => {
+    console.log('=== ÜLKE DEBUG ===');
+    console.log('customer.country:', customer?.country);
+    console.log('ulkeler array:', ulkeler);
+    console.log('ulkeler length:', ulkeler?.length);
+    console.log('formData.country:', formData?.country);
+    
+    if (customer && ulkeler && ulkeler.length > 0 && customer.country) {
+      // ulkeler is a simple string array
+      // customer.country should match directly
+      const countryExists = ulkeler.includes(customer.country);
+      console.log('Country exists in list:', countryExists);
+      
+      if (countryExists) {
+        setFormData(prev => ({
+          ...prev,
+          country: customer.country
+        }));
+      }
+    }
+  }, [customer, ulkeler]);
   
   // Don't use auto-mapping - let form show original values
   // User will select from dropdown if needed
@@ -413,19 +435,11 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Durum
                   </label>
-                  <Select 
-                    value={formData.status || 'active'} 
-                    onValueChange={(value) => handleInputChange('status', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Durum seçin..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Aktif</SelectItem>
-                      <SelectItem value="inactive">Pasif</SelectItem>
-                      <SelectItem value="pending">Beklemede</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    value={formData.status || ''}
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                    placeholder="Durum"
+                  />
                 </div>
               </div>
             </CardContent>
@@ -486,19 +500,17 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Ülke <span className="text-red-500">*</span>
                   </label>
-                  <Select 
-                    value={formData.country} 
-                    onValueChange={(value) => handleInputChange('country', value)}
+                  <select 
+                    value={formData.country || ''} 
+                    onChange={(e) => handleInputChange('country', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Ülke seçiniz..." />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {Array.isArray(ulkeler) && ulkeler.map(ulke => (
-                        <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <option value="">Ülke seçiniz...</option>
+                    {Array.isArray(ulkeler) && ulkeler.map(ulke => (
+                      <option key={ulke} value={ulke}>{ulke}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
