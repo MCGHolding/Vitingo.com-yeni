@@ -30,7 +30,8 @@ import {
   Trash2,
   UserPlus,
   Phone,
-  MapPin
+  MapPin,
+  MessageCircle
 } from 'lucide-react';
 // import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
 import DeleteCustomerModal from './DeleteCustomerModal';
