@@ -176,6 +176,14 @@ class LibraryConventionCenter(BaseModel):
     class Config:
         extra = "ignore"
 
+class LibrarySector(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = ""
+    
+    class Config:
+        extra = "ignore"
+
 class LibraryCurrency(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     code: str
