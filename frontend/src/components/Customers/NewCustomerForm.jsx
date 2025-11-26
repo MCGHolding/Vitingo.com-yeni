@@ -642,6 +642,10 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     const randomCustomerType = customerTypes[Math.floor(Math.random() * customerTypes.length)]?.value || 'mevcut_musteri';
     const randomServices = testServices.slice(0, Math.floor(Math.random() * 3) + 1);
     
+    // Random source and status
+    const randomSource = sources[Math.floor(Math.random() * sources.length)];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+    
     const testData = {
       company_short_name: randomCompanyName.replace(' A.Ş.', '').replace(' Ltd.', ''),
       company_title: randomCompanyName,
