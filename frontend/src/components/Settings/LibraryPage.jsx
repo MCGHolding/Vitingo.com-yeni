@@ -496,26 +496,77 @@ const LibraryPage = ({ onBack }) => {
               filteredSectors.map((sector) => (
                 <Card key={sector.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Building className="h-5 w-5 text-purple-600" />
-                          <h3 className="font-semibold text-gray-900">{sector.name}</h3>
+                    {editingSectorId === sector.id ? (
+                      // Edit Mode
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-xs text-gray-600">Sektör Adı</Label>
+                          <Input
+                            value={editingSector.name}
+                            onChange={(e) => setEditingSector({...editingSector, name: e.target.value})}
+                            placeholder="Sektör adı"
+                            className="mt-1"
+                          />
                         </div>
-                        <p className="text-sm text-gray-500">Kod: {sector.value}</p>
-                        {sector.description && (
-                          <p className="text-sm text-gray-600 mt-2">{sector.description}</p>
-                        )}
+                        <div>
+                          <Label className="text-xs text-gray-600">Açıklama</Label>
+                          <Input
+                            value={editingSector.description}
+                            onChange={(e) => setEditingSector({...editingSector, description: e.target.value})}
+                            placeholder="Açıklama (opsiyonel)"
+                            className="mt-1"
+                          />
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => updateSector(sector.id)}
+                            size="sm"
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            Kaydet
+                          </Button>
+                          <Button
+                            onClick={cancelEditSector}
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            İptal
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteSector(sector.id, sector.name)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    ) : (
+                      // View Mode
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Building className="h-5 w-5 text-purple-600" />
+                            <h3 className="font-semibold text-gray-900">{sector.name}</h3>
+                          </div>
+                          {sector.description && (
+                            <p className="text-sm text-gray-600 mt-2">{sector.description}</p>
+                          )}
+                        </div>
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => startEditSector(sector)}
+                            className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteSector(sector.id, sector.name)}
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))
