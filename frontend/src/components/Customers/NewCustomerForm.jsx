@@ -81,6 +81,25 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   ]);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [newRole, setNewRole] = useState('');
+  
+  const [sources, setSources] = useState([
+    'Saha Data Toplama',
+    'Apollo, Rocket Reach vs',
+    'Kurulum Sırasında',
+    'Tavsiye',
+    'Web Sitesinden',
+    'Dijital Reklamlar',
+    'Sosyal Medya'
+  ]);
+  const [statuses, setStatuses] = useState([
+    'Soğuk Takip',
+    'İlgili',
+    'İlgisiz'
+  ]);
+  const [showSourceModal, setShowSourceModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [newSource, setNewSource] = useState('');
+  const [newStatus, setNewStatus] = useState('');
 
   const [formData, setFormData] = useState({
     company_short_name: '',
