@@ -479,6 +479,9 @@ class Customer(BaseModel):
     services: List[str] = Field(default_factory=list)  # Hizmetler
     # Contacts field - Yetkili Kişiler
     contacts: List[Dict] = Field(default_factory=list)  # Yetkili Kişiler
+    # Timestamps
+    createdAt: str = ""  # Oluşturulma Tarihi
+    updatedAt: str = ""  # Son Güncelleme Tarihi
 
 class GroupCompany(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
