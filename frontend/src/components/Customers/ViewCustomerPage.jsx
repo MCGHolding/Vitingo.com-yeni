@@ -27,7 +27,14 @@ const CUSTOMER_TYPE_LABELS = {
   'bireysel': 'Bireysel',
   'vip_musteri': 'VIP Müşteri',
   'kurumsal': 'Kurumsal',
-  'mevcut_musteri': 'Mevcut Müşteri'
+  'mevcut_musteri': 'Mevcut Müşteri',
+  'yeni_musteri': 'Yeni Müşteri',
+  'dernek_vakif': 'Dernek veya Vakıf',
+  'devlet_kurumu': 'Devlet Kurumu',
+  'holding_sirketi': 'Holding Şirketi',
+  'vakif_sirketi': 'Vakıf Şirketi',
+  'kuzen_irketi': 'Kuzen Şirketi',
+  'kuzen_sirketi': 'Kuzen Şirketi'
 };
 
 const SECTOR_LABELS = {
@@ -39,8 +46,15 @@ const SECTOR_LABELS = {
   'imalat': 'İmalat',
   'lojistik': 'Lojistik',
   'enerji': 'Enerji',
+  'bankacilik': 'Bankacılık',
+  'gida_icecek': 'Gıda-İçecek',
+  'otomotiv': 'Otomotiv',
+  'turizm': 'Turizm',
+  'tekstil': 'Tekstil',
   'fuar_stand_irketi': 'Fuar Stand Şirketi',
   'fuar_stand_sirketi': 'Fuar Stand Şirketi',
+  'yatirim_portfoy': 'Yatırım ve Portföy Yönetimi',
+  'yatirim_ve_portfoy_yonetimi': 'Yatırım ve Portföy Yönetimi',
   'diger': 'Diğer'
 };
 
