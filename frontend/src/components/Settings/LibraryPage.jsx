@@ -138,6 +138,118 @@ const LibraryPage = ({ onBack }) => {
     }
   };
 
+  // Start editing customer type
+  const startEditCustomerType = (type) => {
+    setEditingCustomerTypeId(type.id);
+    setEditingCustomerType({
+      name: type.name,
+      value: type.value,
+      description: type.description || ''
+    });
+  };
+
+  // Cancel editing customer type
+  const cancelEditCustomerType = () => {
+    setEditingCustomerTypeId(null);
+    setEditingCustomerType({ name: '', value: '', description: '' });
+  };
+
+  // Update customer type
+  const updateCustomerType = async (id) => {
+    if (!editingCustomerType.name.trim() || !editingCustomerType.value.trim()) {
+      toast({
+        title: "Uyarı",
+        description: "Müşteri türü adı ve değeri boş olamaz",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/customer-types/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingCustomerType)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Müşteri türü güncellendi"
+        });
+        cancelEditCustomerType();
+        loadCustomerTypes();
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || 'Update failed');
+      }
+    } catch (error) {
+      console.error('Error updating customer type:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Müşteri türü güncellenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Start editing sector
+  const startEditSector = (sector) => {
+    setEditingSectorId(sector.id);
+    setEditingSector({
+      name: sector.name,
+      description: sector.description || ''
+    });
+  };
+
+  // Cancel editing sector
+  const cancelEditSector = () => {
+    setEditingSectorId(null);
+    setEditingSector({ name: '', description: '' });
+  };
+
+  // Update sector
+  const updateSector = async (id) => {
+    if (!editingSector.name.trim()) {
+      toast({
+        title: "Uyarı",
+        description: "Sektör adı boş olamaz",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/sectors/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingSector)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Sektör güncellendi"
+        });
+        cancelEditSector();
+        loadSectors();
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || 'Update failed');
+      }
+    } catch (error) {
+      console.error('Error updating sector:', error);
+      toast({
+        title: "Hata",
+        description: error.message || "Sektör güncellenirken hata oluştu",
+        variant: "destructive"
+      });
+    }
+  };
+
+
   // Filter items based on search
   const filteredCustomerTypes = customerTypes.filter(type =>
     type.name.toLowerCase().includes(searchTerm.toLowerCase())
