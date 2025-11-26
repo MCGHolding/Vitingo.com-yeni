@@ -1240,16 +1240,16 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
               </div>
             </div>
 
-            {/* Hizmetler (Etiket Sistemi) */}
+            {/* Ürün ve Servisler (Etiket Sistemi) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hizmetler
+                Ürün ve Servisler
               </label>
               <div className="flex space-x-2 mb-2">
                 <Input
                   value={currentService}
                   onChange={(e) => setCurrentService(e.target.value)}
-                  placeholder="Hizmet adı girin..."
+                  placeholder="Ürün veya servis adı girin..."
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddService())}
                 />
                 <Button type="button" onClick={handleAddService} size="sm" variant="outline">
