@@ -452,6 +452,7 @@ class Customer(BaseModel):
     contactPerson: str = ""
     contactPersonId: str = ""
     phone: str = ""
+    mobile: str = ""  # Cep Telefonu
     countryCode: str = "TR"
     email: str = ""
     website: str = ""
