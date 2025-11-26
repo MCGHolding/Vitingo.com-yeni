@@ -167,42 +167,101 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </CardContent>
             </Card>
 
-            {/* Company Contact Information */}
+            {/* Firma Bilgileri - Consolidated Company Information */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
                 <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
-                  <Phone className="h-6 w-6 text-green-600" />
-                  <span>Firma İletişim Bilgileri</span>
+                  <Building2 className="h-6 w-6 text-green-600" />
+                  <span>Firma Bilgileri</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-green-600" />
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Telefon</label>
-                      <p className="text-base text-gray-700">{formatPhone(customer.phone)}</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* İletişim Bilgileri */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">İletişim</h3>
+                    
+                    {customer.phone && (
+                      <div className="flex items-start space-x-3">
+                        <Phone className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Telefon</label>
+                          <p className="text-sm text-gray-900 font-medium">{formatPhone(customer.phone)}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {customer.mobile && (
+                      <div className="flex items-start space-x-3">
+                        <Phone className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Cep Telefonu</label>
+                          <p className="text-sm text-gray-900 font-medium">{formatPhone(customer.mobile)}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {customer.email && (
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">E-posta</label>
+                          <p className="text-sm text-gray-900 font-medium break-all">{customer.email}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {customer.website && (
+                      <div className="flex items-start space-x-3">
+                        <Globe className="h-5 w-5 text-purple-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Website</label>
+                          <p className="text-sm text-blue-600 font-medium break-all hover:underline">
+                            <a href={customer.website.startsWith('http') ? customer.website : `https://${customer.website}`} target="_blank" rel="noopener noreferrer">
+                              {customer.website}
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Firma Cep Telefonu</label>
-                      <p className="text-base text-gray-700">{formatPhone(customer.mobile)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-red-600" />
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">E-posta</label>
-                      <p className="text-base text-gray-700">{customer.email || '-'}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Globe className="h-5 w-5 text-purple-600" />
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Website</label>
-                      <p className="text-base text-gray-700">{customer.website || '-'}</p>
+
+                  {/* Adres Bilgileri */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">Adres</h3>
+                    
+                    <div className="flex items-start space-x-3">
+                      <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
+                      <div className="space-y-2">
+                        {customer.address && (
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Adres</label>
+                            <p className="text-sm text-gray-900">{customer.address}</p>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center space-x-2">
+                          {customer.city && (
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
+                              <p className="text-sm text-gray-900 font-medium">{customer.city}</p>
+                            </div>
+                          )}
+                          {customer.country && (
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
+                              <p className="text-sm text-gray-900 font-medium">{customer.country}</p>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {customer.postalCode && (
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Posta Kodu</label>
+                            <p className="text-sm text-gray-900">{customer.postalCode}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
