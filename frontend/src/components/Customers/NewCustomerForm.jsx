@@ -651,6 +651,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       company_title: randomCompanyName,
       customer_type_id: randomCustomerType,
       specialty_id: randomSector,
+      source: randomSource,
+      status: randomStatus,
       phone: '+90 212 555 ' + Math.floor(Math.random() * 9000 + 1000),
       mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
       email: 'info@' + randomCompanyName.toLowerCase()
