@@ -156,6 +156,8 @@ export function getEmptyForm() {
   return {
     customerType: "",
     sector: "",
+    source: "",
+    status: "",
     isIndividual: false,
     isProspect: false,
 
