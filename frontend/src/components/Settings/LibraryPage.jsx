@@ -3,13 +3,13 @@ import { ArrowLeft, Plus, Edit2, Trash2, Tag, Building, Search, Globe } from 'lu
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { useToast } from '../../hooks/use-toast';
 import AddCustomerTypeModal from '../Customers/AddCustomerTypeModal';
 import AddSectorModal from '../Customers/AddSectorModal';
 import CountryCityManager from './CountryCityManager';
 import PhoneCodeManager from './PhoneCodeManager';
 import ConventionCenterManager from './ConventionCenterManager';
-import SectorManager from './SectorManager';
 
 const LibraryPage = ({ onBack }) => {
   const { toast } = useToast();
