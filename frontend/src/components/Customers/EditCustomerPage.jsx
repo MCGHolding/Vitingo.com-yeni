@@ -30,33 +30,33 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Form data initialized from customer - KEEP IT SIMPLE
-  const [formData, setFormData] = useState(() => {
-    return {
-      company_short_name: customer.companyName || '',
-      company_title: customer.companyTitle || '',
-      customer_type_id: customer.relationshipType || '',
-      specialty_id: customer.sector || '',
-      source: customer.source || '',
-      status: customer.status || 'active',
-      address: customer.address || '',
-      country: customer.country || '',
-      city: customer.city || '',
-      phone: customer.phone || '',
-      mobile: customer.mobile || '',
-      email: customer.email || '',
-      tax_office: customer.taxOffice || '',
-      tax_number: customer.taxNumber || '',
-      services: customer.services || [],
-      tags: customer.tags || [],
-      notes: customer.notes || ''
-    };
+  // Initialize from customer directly
+  const [formData, setFormData] = useState({
+    company_short_name: customer.companyName || '',
+    company_title: customer.companyTitle || '',
+    customer_type_id: customer.relationshipType || '',
+    specialty_id: customer.sector || '',
+    source: customer.source || '',
+    status: customer.status || 'active',
+    address: customer.address || '',
+    country: customer.country || '',
+    city: customer.city || '',
+    phone: customer.phone || '',
+    mobile: customer.mobile || '',
+    email: customer.email || '',
+    tax_office: customer.taxOffice || '',
+    tax_number: customer.taxNumber || '',
+    services: customer.services || [],
+    tags: customer.tags || [],
+    notes: customer.notes || ''
   });
   
-  const [originalFormData] = useState(JSON.stringify({
+  // Store original for comparison
+  const originalData = JSON.stringify({
     ...formData,
     contacts: customer.contacts || []
-  }));
+  });
+  const [originalFormData] = useState(originalData);
   
   // Modal state
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
