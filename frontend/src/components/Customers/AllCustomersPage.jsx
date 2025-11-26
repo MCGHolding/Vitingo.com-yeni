@@ -745,12 +745,11 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">No.</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Şirket Adı</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">İletişim</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Adres/Şehir</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Sektör</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Müşteri Tipi</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Etiketler</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Şirket Adı/Ünvanı</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">İletişim</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Ülke/Şehir</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">Yetkili Kişi</th>
                     <th className="text-center py-3 px-4 font-semibold text-gray-700 text-xs uppercase tracking-wider">İşlemler</th>
                   </tr>
                 </thead>
