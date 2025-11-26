@@ -1112,6 +1112,41 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 />
               </div>
             </div>
+
+            {/* Kaynak ve Durum */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {/* Kaynak */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📊 Kaynak
+                </label>
+                <SearchableSelect
+                  options={sources.map(source => ({ value: source, label: source }))}
+                  value={formData.source}
+                  onValueChange={(value) => handleInputChange('source', value)}
+                  placeholder="Kaynak seçin..."
+                  showAddNew={true}
+                  onAddNew={() => setShowSourceModal(true)}
+                  addNewLabel="+ Yeni Kaynak Ekle"
+                />
+              </div>
+
+              {/* Durum */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  🎯 Durum
+                </label>
+                <SearchableSelect
+                  options={statuses.map(status => ({ value: status, label: status }))}
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange('status', value)}
+                  placeholder="Durum seçin..."
+                  showAddNew={true}
+                  onAddNew={() => setShowStatusModal(true)}
+                  addNewLabel="+ Yeni Durum Ekle"
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
