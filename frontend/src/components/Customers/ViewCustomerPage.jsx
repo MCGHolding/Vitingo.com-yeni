@@ -289,38 +289,6 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </Card>
             )}
 
-            {/* Address Information */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b">
-                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
-                  <MapPin className="h-6 w-6 text-red-600" />
-                  <span>Adres Bilgileri</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Ülke</label>
-                      <p className="text-base text-gray-700 mt-1">{customer.country || '-'}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Şehir</label>
-                      <p className="text-base text-gray-700 mt-1">{customer.city || '-'}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Adres</label>
-                    <div className="mt-1 p-3 bg-gray-50 rounded-lg border">
-                      <p className="text-base text-gray-700 leading-relaxed">
-                        {customer.address || 'Adres bilgisi bulunmuyor.'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Financial Information */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
