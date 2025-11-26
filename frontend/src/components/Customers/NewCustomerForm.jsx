@@ -73,6 +73,14 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   const [contactSehirler, setContactSehirler] = useState({});
   const [expandedContacts, setExpandedContacts] = useState([0]); // İlk contact açık
   const [showBankDetails, setShowBankDetails] = useState(false);
+  const [projectRoles, setProjectRoles] = useState([
+    'Karar Verici',
+    'Ödemelerle ilgili kişi',
+    'Teknik destek',
+    'Tasarımla ilgili kişi'
+  ]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [newRole, setNewRole] = useState('');
 
   const [formData, setFormData] = useState({
     company_short_name: '',
