@@ -625,41 +625,87 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     
     console.log('✅ Data loaded, filling test data...');
 
+    // Daha gerçekçi ve çeşitli şirket isimleri
     const testCompanyNames = [
-      'Global Teknoloji Çözümleri A.Ş.',
-      'Vertex Digital Medya Ltd.',
-      'Optima Danışmanlık Hizmetleri A.Ş.',
-      'Phoenix Yazılım ve Teknoloji A.Ş.',
-      'Atlas İnşaat ve Ticaret Ltd. Şti.',
-      'Meridian Lojistik Sistemleri A.Ş.',
-      'Nova Enerji ve Çevre Teknolojileri',
-      'Zenith Finans ve Yatırım A.Ş.',
-      'Quantum Endüstriyel Çözümler Ltd.',
-      'Stellar Otomotiv Sanayi A.Ş.',
-      'Nexus İletişim ve Reklam Ajansı',
-      'Apex Gıda Sanayi ve Ticaret A.Ş.',
-      'Prime Medikal Cihazlar Ltd.',
-      'Titan İnsan Kaynakları A.Ş.',
-      'Horizon Turizm ve Otelcilik Ltd.'
+      'Borusan Holding A.Ş.',
+      'Arçelik Ticaret A.Ş.',
+      'Turkcell Teknoloji A.Ş.',
+      'Doğuş Otomotiv Servis ve Ticaret A.Ş.',
+      'Migros Ticaret A.Ş.',
+      'Kibar Holding A.Ş.',
+      'Zorlu Enerji Elektrik Üretim A.Ş.',
+      'İGA İstanbul Havalimanı İşletmesi A.Ş.',
+      'Netaş Telekomünikasyon A.Ş.',
+      'Vestel Elektronik San. ve Tic. A.Ş.',
+      'Eczacıbaşı Holding A.Ş.',
+      'Tekfen Holding A.Ş.',
+      'Sabancı Holding A.Ş.',
+      'Koç Holding A.Ş.',
+      'Aselsan Elektronik Sanayi ve Ticaret A.Ş.',
+      'Turk Hava Yolları A.Ş.',
+      'Aygaz A.Ş.',
+      'Şişecam Holding A.Ş.',
+      'Enerjisa Enerji A.Ş.',
+      'Tofaş Türk Otomobil Fabrikası A.Ş.',
+      'Erdemir Demir Çelik A.Ş.',
+      'Akbank T.A.Ş.',
+      'Garanti BBVA Bankası A.Ş.',
+      'İş Bankası A.Ş.',
+      'Yapı Kredi Bankası A.Ş.',
+      'Türk Telekom A.Ş.',
+      'Halkbank T.A.Ş.',
+      'Vakıfbank T.A.Ş.',
+      'Petkim Petrokimya Holding A.Ş.',
+      'Ülker Bisküvi Sanayi A.Ş.'
     ];
     
-    const testServices = ['Web Tasarım', 'Mobil Uygulama', 'SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'Grafik Tasarım', 'Kurumsal Danışmanlık', 'Yazılım Geliştirme', 'E-Ticaret Çözümleri'];
+    const testServices = [
+      'Stand Tasarımı ve Üretimi',
+      'Fuar Organizasyonu',
+      'Etkinlik Yönetimi',
+      'Kurumsal İletişim Danışmanlığı',
+      'Dijital Pazarlama',
+      'Web Tasarım',
+      'Mobil Uygulama',
+      'SEO Optimizasyonu',
+      'Sosyal Medya Yönetimi',
+      'Grafik Tasarım',
+      'Video Prodüksiyon',
+      'Fotoğraf Çekimi',
+      'Baskı ve Matbaa Hizmetleri'
+    ];
     
     const testCountriesCities = [
-      { country: 'Türkiye', city: 'İstanbul' },
-      { country: 'Türkiye', city: 'Ankara' },
-      { country: 'Türkiye', city: 'İzmir' },
-      { country: 'Almanya', city: 'Berlin' },
-      { country: 'Almanya', city: 'München' },
-      { country: 'İngiltere', city: 'Londra' },
-      { country: 'Fransa', city: 'Paris' },
-      { country: 'İspanya', city: 'Barcelona' },
-      { country: 'İtalya', city: 'Milano' },
-      { country: 'Hollanda', city: 'Amsterdam' },
-      { country: 'ABD', city: 'New York' },
-      { country: 'ABD', city: 'Los Angeles' },
-      { country: 'Kanada', city: 'Toronto' },
-      { country: 'Avustralya', city: 'Sidney' }
+      { country: 'Türkiye', city: 'İstanbul', taxOffice: 'Kadıköy Vergi Dairesi', area: 'Kadıköy' },
+      { country: 'Türkiye', city: 'Ankara', taxOffice: 'Çankaya Vergi Dairesi', area: 'Çankaya' },
+      { country: 'Türkiye', city: 'İzmir', taxOffice: 'Konak Vergi Dairesi', area: 'Alsancak' },
+      { country: 'Türkiye', city: 'Bursa', taxOffice: 'Nilüfer Vergi Dairesi', area: 'Nilüfer' },
+      { country: 'Türkiye', city: 'Antalya', taxOffice: 'Muratpaşa Vergi Dairesi', area: 'Lara' },
+      { country: 'Almanya', city: 'Berlin', taxOffice: 'Berlin Tax Office', area: 'Mitte' },
+      { country: 'Almanya', city: 'München', taxOffice: 'Munich Tax Office', area: 'Schwabing' },
+      { country: 'Almanya', city: 'Frankfurt', taxOffice: 'Frankfurt Tax Office', area: 'Westend' },
+      { country: 'İngiltere', city: 'Londra', taxOffice: 'London Tax Office', area: 'Westminster' },
+      { country: 'İngiltere', city: 'Manchester', taxOffice: 'Manchester Tax Office', area: 'City Centre' },
+      { country: 'Fransa', city: 'Paris', taxOffice: 'Paris Tax Office', area: 'La Défense' },
+      { country: 'Fransa', city: 'Lyon', taxOffice: 'Lyon Tax Office', area: 'Part-Dieu' },
+      { country: 'İspanya', city: 'Barcelona', taxOffice: 'Barcelona Tax Office', area: 'Eixample' },
+      { country: 'İspanya', city: 'Madrid', taxOffice: 'Madrid Tax Office', area: 'Salamanca' },
+      { country: 'İtalya', city: 'Milano', taxOffice: 'Milan Tax Office', area: 'Centro' },
+      { country: 'İtalya', city: 'Roma', taxOffice: 'Rome Tax Office', area: 'EUR' },
+      { country: 'Hollanda', city: 'Amsterdam', taxOffice: 'Amsterdam Tax Office', area: 'Zuidas' },
+      { country: 'Hollanda', city: 'Rotterdam', taxOffice: 'Rotterdam Tax Office', area: 'Centrum' },
+      { country: 'ABD', city: 'New York', taxOffice: 'New York Tax Office', area: 'Manhattan' },
+      { country: 'ABD', city: 'Los Angeles', taxOffice: 'LA Tax Office', area: 'Downtown' },
+      { country: 'ABD', city: 'Chicago', taxOffice: 'Chicago Tax Office', area: 'Loop' },
+      { country: 'Kanada', city: 'Toronto', taxOffice: 'Toronto Tax Office', area: 'Financial District' },
+      { country: 'Kanada', city: 'Vancouver', taxOffice: 'Vancouver Tax Office', area: 'Downtown' },
+      { country: 'Avustralya', city: 'Sidney', taxOffice: 'Sydney Tax Office', area: 'CBD' },
+      { country: 'Avustralya', city: 'Melbourne', taxOffice: 'Melbourne Tax Office', area: 'CBD' },
+      { country: 'Birleşik Arap Emirlikleri', city: 'Dubai', taxOffice: 'Dubai Tax Office', area: 'DIFC' },
+      { country: 'Singapur', city: 'Singapur', taxOffice: 'Singapore Tax Office', area: 'Marina Bay' },
+      { country: 'Japonya', city: 'Tokyo', taxOffice: 'Tokyo Tax Office', area: 'Shibuya' },
+      { country: 'Güney Kore', city: 'Seul', taxOffice: 'Seoul Tax Office', area: 'Gangnam' },
+      { country: 'Çin', city: 'Şangay', taxOffice: 'Shanghai Tax Office', area: 'Pudong' }
     ];
     
     const testTags = [
@@ -670,68 +716,150 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       'Teknoloji Lideri',
       'Uzun Vadeli İşbirliği',
       'Referans Müşteri',
-      'İnovatif'
+      'İnovatif',
+      'Uluslararası',
+      'Kurumsal',
+      'Öncelikli'
+    ];
+    
+    const testContactNames = [
+      { firstName: 'Ahmet', lastName: 'Yılmaz', gender: 'Erkek' },
+      { firstName: 'Mehmet', lastName: 'Kaya', gender: 'Erkek' },
+      { firstName: 'Ayşe', lastName: 'Demir', gender: 'Kadın' },
+      { firstName: 'Fatma', lastName: 'Şahin', gender: 'Kadın' },
+      { firstName: 'Ali', lastName: 'Çelik', gender: 'Erkek' },
+      { firstName: 'Zeynep', lastName: 'Arslan', gender: 'Kadın' },
+      { firstName: 'Mustafa', lastName: 'Öztürk', gender: 'Erkek' },
+      { firstName: 'Elif', lastName: 'Yıldız', gender: 'Kadın' },
+      { firstName: 'Hüseyin', lastName: 'Aydın', gender: 'Erkek' },
+      { firstName: 'Merve', lastName: 'Özkan', gender: 'Kadın' },
+      { firstName: 'Can', lastName: 'Türk', gender: 'Erkek' },
+      { firstName: 'Selin', lastName: 'Akın', gender: 'Kadın' },
+      { firstName: 'Burak', lastName: 'Koç', gender: 'Erkek' },
+      { firstName: 'Deniz', lastName: 'Acar', gender: 'Kadın' },
+      { firstName: 'Emre', lastName: 'Kurt', gender: 'Erkek' }
+    ];
+    
+    const testPositions = [
+      'Genel Müdür',
+      'Genel Müdür Yardımcısı',
+      'Satış Direktörü',
+      'Pazarlama Müdürü',
+      'İhracat Müdürü',
+      'Proje Müdürü',
+      'Operasyon Müdürü',
+      'İnsan Kaynakları Müdürü',
+      'Mali İşler Müdürü',
+      'Satış Müdürü',
+      'Kurumsal İletişim Müdürü',
+      'İş Geliştirme Müdürü',
+      'Ürün Müdürü',
+      'Satın Alma Müdürü',
+      'Etkinlik Koordinatörü'
     ];
     
     const randomCompanyName = testCompanyNames[Math.floor(Math.random() * testCompanyNames.length)];
+    const randomLocation = testCountriesCities[Math.floor(Math.random() * testCountriesCities.length)];
+    const randomContact = testContactNames[Math.floor(Math.random() * testContactNames.length)];
+    const randomPosition = testPositions[Math.floor(Math.random() * testPositions.length)];
+    
     // Use actual loaded data for sectors and customer types
     const randomSector = sectors[Math.floor(Math.random() * sectors.length)]?.value || 'teknoloji';
     const randomCustomerType = customerTypes[Math.floor(Math.random() * customerTypes.length)]?.value || 'mevcut_musteri';
-    const randomServices = testServices.slice(0, Math.floor(Math.random() * 3) + 1);
+    const randomServices = testServices.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 4) + 2);
     
     // Random source and status
     const randomSource = sources[Math.floor(Math.random() * sources.length)];
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
     
+    // Random 2-4 tags
+    const randomTags = testTags.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 2);
+    
+    // Create realistic email domain from company name
+    const emailDomain = randomCompanyName.toLowerCase()
+      .replace(/türk /g, 'turk')
+      .replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u')
+      .replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/ı/g, 'i')
+      .replace(/ a\.ş\./g, '').replace(/ t\.a\.ş\./g, '')
+      .replace(/ holding/g, '').replace(/ bank/g, 'bank')
+      .replace(/[^a-z0-9]/g, '')
+      .substring(0, 20);
+    
+    const phonePrefix = randomLocation.country === 'Türkiye' ? '+90' : 
+                        randomLocation.country === 'Almanya' ? '+49' :
+                        randomLocation.country === 'İngiltere' ? '+44' :
+                        randomLocation.country === 'Fransa' ? '+33' :
+                        randomLocation.country === 'İspanya' ? '+34' :
+                        randomLocation.country === 'İtalya' ? '+39' :
+                        randomLocation.country === 'Hollanda' ? '+31' :
+                        randomLocation.country === 'ABD' ? '+1' :
+                        randomLocation.country === 'Kanada' ? '+1' :
+                        randomLocation.country === 'Avustralya' ? '+61' :
+                        randomLocation.country === 'Birleşik Arap Emirlikleri' ? '+971' :
+                        randomLocation.country === 'Singapur' ? '+65' :
+                        randomLocation.country === 'Japonya' ? '+81' :
+                        randomLocation.country === 'Güney Kore' ? '+82' :
+                        randomLocation.country === 'Çin' ? '+86' : '+90';
+    
     const testData = {
-      company_short_name: randomCompanyName.replace(' A.Ş.', '').replace(' Ltd.', ''),
+      company_short_name: randomCompanyName.replace(' A.Ş.', '').replace(' T.A.Ş.', '').replace(' Ltd.', '').replace(' Holding', ''),
       company_title: randomCompanyName,
       customer_type_id: randomCustomerType,
       specialty_id: randomSector,
       source: randomSource,
       status: randomStatus,
-      phone: '+90 212 555 ' + Math.floor(Math.random() * 9000 + 1000),
-      mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
-      email: 'info@' + randomCompanyName.toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .substring(0, 15) + '.com',
-      address: `${Math.floor(Math.random() * 200) + 1} Sok. No:${Math.floor(Math.random() * 50) + 1} Beşiktaş/İstanbul`,
-      country: 'Turkey',
-      city: 'İstanbul',
-      tax_office: 'Beşiktaş Vergi Dairesi',
+      phone: `${phonePrefix} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 9000 + 1000)}`,
+      mobile: `${phonePrefix} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 9000 + 1000)}`,
+      email: `info@${emailDomain}.com`,
+      address: `${Math.floor(Math.random() * 200) + 1}. Cadde No:${Math.floor(Math.random() * 100) + 1} ${randomLocation.area}/${randomLocation.city}`,
+      country: randomLocation.country === 'Türkiye' ? 'Turkey' : 
+               randomLocation.country === 'Almanya' ? 'Germany' :
+               randomLocation.country === 'İngiltere' ? 'United Kingdom' :
+               randomLocation.country === 'Fransa' ? 'France' :
+               randomLocation.country === 'İspanya' ? 'Spain' :
+               randomLocation.country === 'İtalya' ? 'Italy' :
+               randomLocation.country === 'Hollanda' ? 'Netherlands' :
+               randomLocation.country === 'ABD' ? 'United States' :
+               randomLocation.country === 'Kanada' ? 'Canada' :
+               randomLocation.country === 'Avustralya' ? 'Australia' :
+               randomLocation.country === 'Birleşik Arap Emirlikleri' ? 'United Arab Emirates' :
+               randomLocation.country === 'Singapur' ? 'Singapore' :
+               randomLocation.country === 'Japonya' ? 'Japan' :
+               randomLocation.country === 'Güney Kore' ? 'South Korea' :
+               randomLocation.country === 'Çin' ? 'China' : 'Turkey',
+      city: randomLocation.city,
+      tax_office: randomLocation.taxOffice,
       tax_number: '1' + Math.floor(Math.random() * 900000000 + 100000000),
       services: randomServices,
-      iban: 'TR33 0006 1005 1978 6457 8413 26',
-      bank_name: 'Ziraat Bankası',
-      bank_branch: 'Beşiktaş Şubesi',
+      iban: 'TR' + Math.floor(Math.random() * 90 + 10) + ' ' + Array(4).fill(0).map(() => Math.floor(Math.random() * 9000 + 1000)).join(' '),
+      bank_name: randomLocation.country === 'Türkiye' ? ['Ziraat Bankası', 'İş Bankası', 'Garanti Bankası', 'Yapı Kredi', 'Akbank'][Math.floor(Math.random() * 5)] : 
+                  `${randomLocation.country} National Bank`,
+      bank_branch: `${randomLocation.city} ${randomLocation.area} Şubesi`,
       account_holder_name: randomCompanyName,
-      swift_code: 'TCZBTR2A',
-      notes: 'Test müşterisi - otomatik doldurulmuş veriler'
+      swift_code: emailDomain.substring(0, 4).toUpperCase() + randomLocation.country.substring(0, 2).toUpperCase() + Math.floor(Math.random() * 90 + 10),
+      notes: `Test müşterisi - ${randomLocation.city}, ${randomLocation.country} lokasyonundan otomatik oluşturuldu`
     };
 
     // Contacts için test verisi
-    const testBirthYears = [1975, 1980, 1985, 1990];
+    const testBirthYears = [1970, 1975, 1980, 1982, 1985, 1987, 1990, 1992];
     const randomBirthYear = testBirthYears[Math.floor(Math.random() * testBirthYears.length)];
     const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
     const randomDay = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
-    const randomGender = Math.random() > 0.5 ? 'Erkek' : 'Kadın';
     const randomProjectRole = projectRoles[Math.floor(Math.random() * projectRoles.length)];
     
     const testContacts = [{
-      full_name: 'Ahmet Test Kişisi',
-      mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
-      email: 'ahmet@' + randomCompanyName.toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .substring(0, 15) + '.com',
-      position: 'Genel Müdür',
-      tags: [],
+      full_name: `${randomContact.firstName} ${randomContact.lastName}`,
+      mobile: `${phonePrefix} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 900 + 100)} ${Math.floor(Math.random() * 9000 + 1000)}`,
+      email: `${randomContact.firstName.toLowerCase()}.${randomContact.lastName.toLowerCase()}@${emailDomain}.com`,
+      position: randomPosition,
+      tags: randomTags,
       address: testData.address,
-      country: 'Turkey',
-      city: 'İstanbul',
+      country: testData.country,
+      city: randomLocation.city,
       birthday: `${randomBirthYear}-${randomMonth}-${randomDay}`,
-      gender: randomGender,
+      gender: randomContact.gender,
       project_role: randomProjectRole,
-      is_accounting_responsible: false
+      is_accounting_responsible: Math.random() > 0.7
     }];
 
     // Preserve is_candidate value when filling test data
@@ -743,7 +871,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     
     toast({
       title: "Test Verisi Dolduruldu",
-      description: `${randomCompanyName} test verileri ile form dolduruldu`,
+      description: `${randomCompanyName} - ${randomLocation.city}, ${randomLocation.country}`,
       variant: "default"
     });
   };
