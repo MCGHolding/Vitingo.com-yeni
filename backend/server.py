@@ -1489,6 +1489,230 @@ async def bulk_import_convention_centers(data: dict):
         logger.error(f"Error in bulk import: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ==================== LIBRARY SECTORS ENDPOINTS ====================
+
+@api_router.get("/library/sectors")
+async def get_sectors():
+    """Get all sectors"""
+    try:
+        sectors = await db.sectors.find().to_list(length=None)
+        return [serialize_document(sector) for sector in sectors]
+    except Exception as e:
+        logger.error(f"Error fetching sectors: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/sectors", response_model=LibrarySector)
+async def create_sector(sector: LibrarySector):
+    """Create a new sector"""
+    try:
+        # Check if sector with same name exists
+        existing = await db.sectors.find_one({"name": sector.name})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu sektör zaten mevcut")
+        
+        sector_dict = sector.dict()
+        await db.sectors.insert_one(sector_dict)
+        return sector
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating sector: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/library/sectors/{sector_id}", response_model=LibrarySector)
+async def update_sector(sector_id: str, sector: LibrarySector):
+    """Update a sector"""
+    try:
+        # Check if another sector with same name exists
+        existing = await db.sectors.find_one({"name": sector.name, "id": {"$ne": sector_id}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu sektör adı zaten kullanılıyor")
+        
+        sector_dict = sector.dict()
+        sector_dict["id"] = sector_id
+        
+        result = await db.sectors.update_one(
+            {"id": sector_id},
+            {"$set": sector_dict}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Sektör bulunamadı")
+        
+        return sector
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating sector: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/sectors/{sector_id}")
+async def delete_sector(sector_id: str):
+    """Delete a sector"""
+    try:
+        result = await db.sectors.delete_one({"id": sector_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Sektör bulunamadı")
+        return {"message": "Sektör başarıyla silindi"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting sector: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/sectors/bulk-import")
+async def bulk_import_sectors(data: dict):
+    """Bulk import sectors from comma-separated text"""
+    try:
+        import_text = data.get("import_text", "")
+        
+        if not import_text or not import_text.strip():
+            raise HTTPException(status_code=400, detail="İçe aktarılacak metin gereklidir")
+        
+        success_count = 0
+        update_count = 0
+        error_count = 0
+        errors = []
+        
+        # Parse comma-separated or newline-separated
+        # Split by both comma and newline
+        sectors_text = import_text.replace(',', '\n')
+        lines = sectors_text.strip().split('\n')
+        
+        for line_num, line in enumerate(lines, 1):
+            try:
+                sector_name = line.strip()
+                if not sector_name:
+                    continue
+                
+                # Check if exists
+                existing = await db.sectors.find_one({"name": sector_name})
+                
+                if existing:
+                    # Already exists, skip
+                    update_count += 1
+                else:
+                    # Create new
+                    sector_id = str(uuid.uuid4())
+                    await db.sectors.insert_one({
+                        "id": sector_id,
+                        "name": sector_name,
+                        "description": ""
+                    })
+                    success_count += 1
+                    
+            except Exception as err:
+                logger.error(f"Error processing line {line_num}: {str(err)}")
+                error_count += 1
+                errors.append(f"Satır {line_num}: {str(err)}")
+        
+        return {
+            "message": "Toplu içe aktarma tamamlandı",
+            "created": success_count,
+            "skipped": update_count,
+            "errors": error_count,
+            "error_details": errors[:10]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in bulk import: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/sectors/seed")
+async def seed_default_sectors(force: bool = False):
+    """Seed default sectors for new users"""
+    try:
+        # Check if sectors already exist
+        existing_count = await db.sectors.count_documents({})
+        
+        if existing_count > 0 and not force:
+            return {
+                "message": "Sektörler zaten mevcut",
+                "count": existing_count,
+                "note": "Yeniden yüklemek için force=true parametresini kullanın"
+            }
+        
+        # Default sectors list
+        default_sectors = [
+            "Tarım ve Hayvancılık", "Ormancılık", "Balıkçılık ve Su Ürünleri",
+            "Madencilik ve Maden İşleme", "Gıda Üretimi", "İçecek Üretimi",
+            "Tekstil ve Kumaş", "Hazır Giyim ve Konfeksiyon", "Deri ve Ayakkabı",
+            "Mobilya ve Dekorasyon", "Ağaç ve Orman Ürünleri", "Kağıt ve Ambalaj",
+            "Matbaacılık ve Basım", "Kimya ve Kimyasal Ürünler", "Boya ve Kaplama",
+            "Kozmetik ve Kişisel Bakım Ürünleri", "İlaç ve Ecza", "Biyoteknoloji",
+            "Plastik ve Kauçuk", "Cam ve Cam Ürünleri", "Seramik ve Porselen",
+            "Çimento ve Beton", "Yapı Malzemeleri", "Demir ve Çelik",
+            "Metal İşleme", "Döküm ve Dövme", "Makine ve Ekipman İmalatı",
+            "Endüstriyel Otomasyon", "Elektrik ve Elektronik", "Aydınlatma",
+            "Beyaz Eşya ve Ev Aletleri", "Bilgisayar ve Donanım", "Yarı İletken ve Çip",
+            "Otomotiv", "Otomotiv Yan Sanayi", "Motosiklet ve Bisiklet",
+            "Havacılık ve Uzay", "Gemi ve Yat Yapımı", "Raylı Sistemler",
+            "Savunma Sanayi", "Medikal ve Tıbbi Cihazlar", "Laboratuvar Ekipmanları",
+            "Optik ve Hassas Aletler", "Enerji Üretimi ve Dağıtımı", "Yenilenebilir Enerji",
+            "Petrol ve Doğalgaz", "Nükleer Enerji", "Su Arıtma ve Dağıtımı",
+            "Atık Yönetimi ve Geri Dönüşüm", "Çevre Teknolojileri", "İnşaat ve Müteahhitlik",
+            "Altyapı ve Üstyapı", "Prefabrik ve Modüler Yapılar", "Gayrimenkul Geliştirme",
+            "Gayrimenkul Danışmanlığı", "Mimarlık", "Mühendislik Hizmetleri",
+            "İç Mimarlık ve Tasarım", "Peyzaj ve Çevre Düzenleme", "Taşımacılık ve Nakliye",
+            "Lojistik ve Depolama", "Kurye ve Kargo", "Gümrük ve Dış Ticaret",
+            "Denizcilik ve Liman Hizmetleri", "Toptan Ticaret", "Perakende Ticaret",
+            "E-Ticaret", "İthalat ve İhracat", "Otelcilik ve Konaklama",
+            "Restoran ve Yeme-İçme", "Catering ve Yemek Hizmetleri", "Turizm ve Seyahat",
+            "Eğlence ve Rekreasyon", "Bilgi Teknolojileri", "Yazılım Geliştirme",
+            "Mobil Uygulama", "Bulut Hizmetleri", "Siber Güvenlik",
+            "Yapay Zeka ve Veri Bilimi", "Telekomünikasyon", "İnternet Hizmetleri",
+            "Medya ve Yayıncılık", "Film ve Dizi Yapımı", "Müzik ve Ses Prodüksiyonu",
+            "Oyun ve Dijital Eğlence", "Animasyon ve Görsel Efekt", "Fotoğrafçılık ve Video",
+            "Reklamcılık", "Halkla İlişkiler", "Dijital Pazarlama",
+            "Marka ve Strateji Danışmanlığı", "Grafik ve Tasarım", "Baskı ve Promosyon Ürünleri",
+            "Tabela ve Reklam Panoları", "Fuar ve Stand Hizmetleri", "Sergi ve Müze Sistemleri",
+            "Etkinlik ve Organizasyon", "Kongre ve Toplantı Hizmetleri", "Bankacılık",
+            "Sigortacılık", "Yatırım ve Portföy Yönetimi", "Fintech ve Ödeme Sistemleri",
+            "Leasing ve Faktoring", "Kredi ve Finansman", "Sağlık Hizmetleri",
+            "Hastane ve Klinikler", "Diş Hekimliği", "Veterinerlik",
+            "Eczane ve İlaç Dağıtımı", "Yaşlı ve Hasta Bakımı", "Güzellik ve Estetik",
+            "Eğitim ve Öğretim", "Mesleki Eğitim ve Kurslar", "Dil Eğitimi",
+            "E-Öğrenme", "Araştırma ve Geliştirme (Ar-Ge)", "Danışmanlık (Yönetim)",
+            "Danışmanlık (Teknik)", "Hukuk Hizmetleri", "Muhasebe ve Mali Müşavirlik",
+            "Denetim ve Teftiş", "İnsan Kaynakları ve İşe Alım", "Çeviri ve Tercümanlık",
+            "Güvenlik ve Koruma", "Temizlik Hizmetleri", "Tesis ve Bina Yönetimi",
+            "Peyzaj Bakımı ve Bahçecilik", "Kuru Temizleme ve Çamaşırhane", "Tamir ve Bakım Hizmetleri",
+            "Kuaför ve Berber", "Spor ve Fitness", "Spor Ekipmanları",
+            "Oyuncak ve Oyun", "Hobi ve El Sanatları", "Kuyumculuk ve Mücevher",
+            "Saat ve Aksesuar", "Hediyelik Eşya", "Büro Malzemeleri ve Kırtasiye",
+            "Endüstriyel Sarf Malzemeleri", "Tarım Makineleri ve Ekipmanları", "İklimlendirme ve Havalandırma (HVAC)",
+            "Asansör ve Yürüyen Merdiven", "Yangın ve Güvenlik Sistemleri", "Ölçüm ve Test Cihazları",
+            "Hidrolik ve Pnömatik", "Kaynak ve Kesim Teknolojileri", "Tekstil Makineleri",
+            "Paketleme ve Dolum Makineleri", "Robot ve Otomasyon Sistemleri", "Kamu ve Belediye Hizmetleri",
+            "Sivil Toplum ve STK", "Uluslararası Kuruluşlar"
+        ]
+        
+        if force:
+            # Delete all existing sectors
+            await db.sectors.delete_many({})
+        
+        # Insert all default sectors
+        sectors_to_insert = []
+        for sector_name in default_sectors:
+            sectors_to_insert.append({
+                "id": str(uuid.uuid4()),
+                "name": sector_name,
+                "description": ""
+            })
+        
+        if sectors_to_insert:
+            await db.sectors.insert_many(sectors_to_insert)
+        
+        return {
+            "message": "Default sektörler başarıyla yüklendi",
+            "count": len(sectors_to_insert)
+        }
+    except Exception as e:
+        logger.error(f"Error seeding sectors: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/library/countries/bulk-import")
 async def bulk_import_countries(data: dict):
     """Bulk import countries and cities"""
