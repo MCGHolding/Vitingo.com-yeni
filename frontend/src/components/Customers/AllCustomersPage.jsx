@@ -768,7 +768,18 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                         </div>
                       </td>
                       
-                      {/* ŞİRKET ADI */}
+                      {/* MÜŞTERİ TİPİ */}
+                      <td className="py-4 px-4">
+                        {customer.relationshipType ? (
+                          <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                            {customer.relationshipType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
+                      </td>
+                      
+                      {/* ŞİRKET ADI/ÜNVANI */}
                       <td className="py-4 px-4">
                         <div className="space-y-1">
                           <div className="font-bold text-gray-900 text-sm flex items-center space-x-2">
@@ -776,7 +787,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                             <span>{customer.companyName || customer.company_short_name || 'Şirket Adı Yok'}</span>
                           </div>
                           <div className="text-xs text-gray-500">
-                            {customer.company_title || 'Ünvan bilgisi yok'}
+                            {customer.companyTitle || 'Ünvan bilgisi yok'}
                           </div>
                         </div>
                       </td>
@@ -802,7 +813,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                         </div>
                       </td>
                       
-                      {/* ADRES/ŞEHİR */}
+                      {/* ÜLKE/ŞEHİR */}
                       <td className="py-4 px-4">
                         <div className="space-y-1">
                           {customer.city && (
@@ -823,42 +834,16 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
                         </div>
                       </td>
                       
-                      {/* SEKTÖR */}
+                      {/* YETKİLİ KİŞİ */}
                       <td className="py-4 px-4">
-                        {customer.sector ? (
-                          <Badge variant="outline" className="text-xs">
-                            {customer.sector}
-                          </Badge>
+                        {customer.contactPerson ? (
+                          <div className="flex items-center space-x-2 text-xs text-gray-700">
+                            <User className="h-3 w-3 text-indigo-600" />
+                            <span className="font-medium">{customer.contactPerson}</span>
+                          </div>
                         ) : (
                           <span className="text-xs text-gray-400">-</span>
                         )}
-                      </td>
-                      
-                      {/* MÜŞTERİ TİPİ */}
-                      <td className="py-4 px-4">
-                        {customer.customer_type ? (
-                          <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
-                            {customer.customer_type}
-                          </Badge>
-                        ) : (
-                          <span className="text-xs text-gray-400">-</span>
-                        )}
-                      </td>
-                      
-                      {/* ETİKETLER */}
-                      <td className="py-4 px-4">
-                        <div className="flex flex-wrap gap-1 max-w-[150px]">
-                          {customer.tags && customer.tags.length > 0 ? customer.tags.map((tag, tagIndex) => (
-                            <Badge
-                              key={tagIndex}
-                              className={`text-[10px] px-1.5 py-0.5 ${customerTagColors[tag] || 'bg-gray-500 text-white'} border-0`}
-                            >
-                              {tag}
-                            </Badge>
-                          )) : (
-                            <span className="text-xs text-gray-400">-</span>
-                          )}
-                        </div>
                       </td>
                       
                       <td className="py-3 px-3 text-center">
