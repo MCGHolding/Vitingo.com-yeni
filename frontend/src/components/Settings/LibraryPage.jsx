@@ -9,6 +9,7 @@ import AddSectorModal from '../Customers/AddSectorModal';
 import CountryCityManager from './CountryCityManager';
 import PhoneCodeManager from './PhoneCodeManager';
 import ConventionCenterManager from './ConventionCenterManager';
+import SectorManager from './SectorManager';
 
 const LibraryPage = ({ onBack }) => {
   const { toast } = useToast();
