@@ -2903,10 +2903,7 @@ frontend:
 
 test_plan:
   current_focus:
-    - "WebSocket Connection Test"
-    - "WebSocket Chat Message Flow Test"
-    - "WebSocket Real-time Broadcasting Test"
-    - "WebSocket MongoDB Integration Test"
+    - "Enhanced Test Verisi Doldur Button Functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
