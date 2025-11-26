@@ -341,155 +341,127 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
           {/* Right Column */}
           <div className="space-y-6">
 
-            {/* Authorized Persons - Consolidated Contact Information */}
-            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
-                <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
-                  <User className="h-6 w-6 text-purple-600" />
-                  <span>Yetkili Kişiler</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                {customer.contacts && customer.contacts.length > 0 ? (
-                  <div className="space-y-6">
-                    {customer.contacts.map((contact, index) => (
-                      <div key={index} className="border-b last:border-b-0 pb-6 last:pb-0">
-                        {/* Kişi Başlığı */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-purple-100 rounded-lg">
-                              <User className="h-5 w-5 text-purple-600" />
+            {/* Yetkili Kişiler - Yeni Temiz Tasarım */}
+            {customer.contacts && customer.contacts.length > 0 && customer.contacts.map((contact, index) => (
+              <Card key={index} className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
+                  <CardTitle className="text-xl font-bold text-gray-800 flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <User className="h-6 w-6 text-purple-600" />
+                      <span>Yetkili Kişi #{index + 1}</span>
+                    </div>
+                    {contact.is_accounting_responsible && (
+                      <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                        Muhasebe Sorumlusu
+                      </Badge>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  {/* İsim ve Pozisyon */}
+                  <div className="mb-6 pb-4 border-b">
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {contact.fullName || contact.full_name || contact.name || '-'}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {contact.position || contact.title || 'Pozisyon belirtilmemiş'}
+                    </p>
+                  </div>
+
+                  {/* İki Sütun */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Sol Sütun - İletişim */}
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">İletişim</h4>
+                      
+                      <div className="flex items-start space-x-3">
+                        <Phone className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Cep Telefonu</label>
+                          <p className="text-sm text-gray-900 font-medium">{contact.mobile || contact.phone || '-'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <Mail className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">E-posta</label>
+                          <p className="text-sm text-gray-900 font-medium break-all">{contact.email || '-'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <Calendar className="h-5 w-5 text-pink-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Doğum Günü</label>
+                          <p className="text-sm text-gray-900 font-medium">{contact.birthday ? formatDate(contact.birthday) : '-'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <User className="h-5 w-5 text-indigo-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Cinsiyet</label>
+                          <p className="text-sm text-gray-900 font-medium">{contact.gender || '-'}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sağ Sütun - Adres */}
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">Adres ve Diğer</h4>
+                      
+                      <div className="flex items-start space-x-3">
+                        <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
+                        <div className="space-y-2 flex-1">
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Adres</label>
+                            <p className="text-sm text-gray-900">{contact.address || '-'}</p>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
+                              <p className="text-sm text-gray-900 font-medium">{contact.city || '-'}</p>
                             </div>
                             <div>
-                              <h3 className="font-bold text-gray-900 text-lg">
-                                {contact.fullName || contact.full_name || contact.name || '-'}
-                              </h3>
-                              {(contact.position || contact.title) && (
-                                <p className="text-sm text-gray-600 font-medium">
-                                  {contact.position || contact.title}
-                                </p>
-                              )}
+                              <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
+                              <p className="text-sm text-gray-900 font-medium">{contact.country || '-'}</p>
                             </div>
                           </div>
-                          {contact.is_accounting_responsible && (
-                            <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                              Muhasebe Sorumlusu
-                            </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <Briefcase className="h-5 w-5 text-teal-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Projede Rolü</label>
+                          <p className="text-sm text-gray-900 font-medium">{contact.project_role || '-'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <Tag className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                          <label className="text-xs font-semibold text-gray-500 uppercase">Etiketler</label>
+                          {contact.tags && contact.tags.length > 0 ? (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {contact.tags.map((tag, tagIndex) => (
+                                <Badge key={tagIndex} className="bg-blue-100 text-blue-800 text-xs border-0">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-900 font-medium">-</p>
                           )}
                         </div>
-
-                        {/* İki Sütunlu İçerik */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {/* Sol Sütun - İletişim Bilgileri */}
-                          <div className="space-y-4">
-                            <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2">İletişim</h4>
-                            
-                            <div className="flex items-start space-x-3">
-                              <Phone className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">Cep Telefonu</label>
-                                <p className="text-sm text-gray-900 font-medium">{contact.mobile || contact.phone || '-'}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-start space-x-3">
-                              <Mail className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">E-posta</label>
-                                <p className="text-sm text-gray-900 font-medium break-all">{contact.email || '-'}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-start space-x-3">
-                              <Calendar className="h-5 w-5 text-pink-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">Doğum Günü</label>
-                                <p className="text-sm text-gray-900 font-medium">{contact.birthday ? formatDate(contact.birthday) : '-'}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-start space-x-3">
-                              <User className="h-5 w-5 text-indigo-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">Cinsiyet</label>
-                                <p className="text-sm text-gray-900 font-medium">{contact.gender || '-'}</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Sağ Sütun - Adres ve Diğer Bilgiler */}
-                          <div className="space-y-4">
-                            <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2">Adres ve Diğer</h4>
-                            
-                            <div className="flex items-start space-x-3">
-                              <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
-                              <div className="space-y-2 flex-1">
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Adres</label>
-                                  <p className="text-sm text-gray-900">{contact.address || '-'}</p>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-2">
-                                  <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
-                                    <p className="text-sm text-gray-900 font-medium">{contact.city || '-'}</p>
-                                  </div>
-                                  <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
-                                    <p className="text-sm text-gray-900 font-medium">{contact.country || '-'}</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-start space-x-3">
-                              <Briefcase className="h-5 w-5 text-teal-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">Projede Rolü</label>
-                                <p className="text-sm text-gray-900 font-medium">{contact.project_role || '-'}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-start space-x-3">
-                              <Tag className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                              <div>
-                                <label className="text-xs font-semibold text-gray-500 uppercase">Etiketler</label>
-                                {contact.tags && contact.tags.length > 0 ? (
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    {contact.tags.map((tag, tagIndex) => (
-                                      <Badge key={tagIndex} className="bg-blue-100 text-blue-800 text-xs border-0">
-                                        {tag}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-sm text-gray-900 font-medium">-</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : customer.contactPerson ? (
-                  <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg border hover:shadow-md transition-all duration-200">
-                    <div className="flex items-start space-x-3">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <User className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-gray-900 text-lg">
-                          {customer.contactPerson}
-                        </p>
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-4">Yetkili kişi bilgisi bulunmuyor.</p>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
 
             {/* Tags - Always show */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
