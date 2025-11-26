@@ -3533,6 +3533,10 @@ async def update_customer(customer_id: str, customer_data: dict):
             if not validate_swift_code(customer_data['swiftCode']):
                 raise HTTPException(status_code=400, detail="Geçersiz Swift kodu formatı")
         
+        # Update timestamp
+        from datetime import datetime, timezone
+        customer_data['updatedAt'] = datetime.now(timezone.utc).isoformat()
+        
         # Update in MongoDB
         result = await db.customers.update_one(
             {"id": customer_id},
