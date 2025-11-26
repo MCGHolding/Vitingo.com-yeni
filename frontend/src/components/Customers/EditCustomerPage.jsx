@@ -485,6 +485,36 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                     isRequired={true}
                     sectors={sectors}
                   />
+
+                  <EditableField
+                    label="Kaynak"
+                    value={formData.source}
+                    fieldName="source"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="text"
+                    placeholder="Kaynak"
+                  />
+
+                  <EditableField
+                    label="Durum"
+                    value={formData.status}
+                    fieldName="status"
+                    editingField={editingField}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveField={saveField}
+                    tempValue={tempValue}
+                    setTempValue={setTempValue}
+                    handleFieldKeyPress={handleFieldKeyPress}
+                    type="text"
+                    placeholder="Durum"
+                  />
                 </div>
               </CardContent>
             </Card>
