@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://librarycrm.preview.emergentagent.com"
+BACKEND_URL = "https://turk-customer-mgmt.preview.emergentagent.com"
 
 def test_contract_create_page_dropdown_apis():
     """

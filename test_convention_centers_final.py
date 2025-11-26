@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://librarycrm.preview.emergentagent.com"
+BACKEND_URL = "https://turk-customer-mgmt.preview.emergentagent.com"
 
 def test_convention_centers_final():
     """Final comprehensive test of convention centers API with known issues documented"""
