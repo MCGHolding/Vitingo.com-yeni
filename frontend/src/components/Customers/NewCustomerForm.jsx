@@ -673,6 +673,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     };
 
     // Contacts için test verisi
+    const testBirthYears = [1975, 1980, 1985, 1990];
+    const randomBirthYear = testBirthYears[Math.floor(Math.random() * testBirthYears.length)];
+    const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+    const randomDay = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
+    const randomGender = Math.random() > 0.5 ? 'Erkek' : 'Kadın';
+    const randomProjectRole = projectRoles[Math.floor(Math.random() * projectRoles.length)];
+    
     const testContacts = [{
       full_name: 'Ahmet Test Kişisi',
       mobile: '+90 532 ' + Math.floor(Math.random() * 900 + 100) + ' ' + Math.floor(Math.random() * 9000 + 1000),
@@ -683,7 +690,11 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       tags: [],
       address: testData.address,
       country: 'Turkey',
-      city: 'İstanbul'
+      city: 'İstanbul',
+      birthday: `${randomBirthYear}-${randomMonth}-${randomDay}`,
+      gender: randomGender,
+      project_role: randomProjectRole,
+      is_accounting_responsible: false
     }];
 
     // Preserve is_candidate value when filling test data
