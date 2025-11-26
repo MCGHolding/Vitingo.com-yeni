@@ -506,6 +506,28 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
       return;
     }
 
+    if (action === 'whatsapp') {
+      // WhatsApp'tan iletişim kur
+      const phoneNumber = customer.phone || customer.mobile;
+      if (phoneNumber) {
+        // Telefon numarasını temizle (sadece rakamlar)
+        const cleanPhone = phoneNumber.replace(/\D/g, '');
+        // WhatsApp Web link'i aç
+        window.open(`https://wa.me/${cleanPhone}`, '_blank');
+        toast({
+          title: "WhatsApp Açılıyor",
+          description: `${customer.companyName || customer.contactPerson} ile WhatsApp üzerinden iletişime geçiliyor...`
+        });
+      } else {
+        toast({
+          title: "Telefon Numarası Bulunamadı",
+          description: `${customer.companyName || 'Bu müşteri'} için telefon numarası kayıtlı değil.`,
+          variant: "destructive"
+        });
+      }
+      return;
+    }
+
     if (action === 'favorite') {
       handleToggleFavorite(customer);
       return;
