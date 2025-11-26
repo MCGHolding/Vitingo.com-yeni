@@ -390,26 +390,87 @@ const LibraryPage = ({ onBack }) => {
               filteredCustomerTypes.map((type) => (
                 <Card key={type.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Tag className="h-5 w-5 text-blue-600" />
-                          <h3 className="font-semibold text-gray-900">{type.name}</h3>
+                    {editingCustomerTypeId === type.id ? (
+                      // Edit Mode
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-xs text-gray-600">Müşteri Türü Adı</Label>
+                          <Input
+                            value={editingCustomerType.name}
+                            onChange={(e) => setEditingCustomerType({...editingCustomerType, name: e.target.value})}
+                            placeholder="Müşteri türü adı"
+                            className="mt-1"
+                          />
                         </div>
-                        <p className="text-sm text-gray-500">Kod: {type.value}</p>
-                        {type.description && (
-                          <p className="text-sm text-gray-600 mt-2">{type.description}</p>
-                        )}
+                        <div>
+                          <Label className="text-xs text-gray-600">Değer (Kod)</Label>
+                          <Input
+                            value={editingCustomerType.value}
+                            onChange={(e) => setEditingCustomerType({...editingCustomerType, value: e.target.value})}
+                            placeholder="Örn: firma, ajans"
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600">Açıklama</Label>
+                          <Input
+                            value={editingCustomerType.description}
+                            onChange={(e) => setEditingCustomerType({...editingCustomerType, description: e.target.value})}
+                            placeholder="Açıklama (opsiyonel)"
+                            className="mt-1"
+                          />
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            onClick={() => updateCustomerType(type.id)}
+                            size="sm"
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            Kaydet
+                          </Button>
+                          <Button
+                            onClick={cancelEditCustomerType}
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            İptal
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteCustomerType(type.id, type.name)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    ) : (
+                      // View Mode
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Tag className="h-5 w-5 text-blue-600" />
+                            <h3 className="font-semibold text-gray-900">{type.name}</h3>
+                          </div>
+                          <p className="text-sm text-gray-500">Kod: {type.value}</p>
+                          {type.description && (
+                            <p className="text-sm text-gray-600 mt-2">{type.description}</p>
+                          )}
+                        </div>
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => startEditCustomerType(type)}
+                            className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteCustomerType(type.id, type.name)}
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))
