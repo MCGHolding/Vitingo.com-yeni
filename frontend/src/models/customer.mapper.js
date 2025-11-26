@@ -100,6 +100,8 @@ export function formToDb(v) {
     // Kategori → DB codes
     relationshipType: labelToCode(CUSTOMER_TYPES, v.customerType) || v.customer_type_id || "mevcut_musteri",
     sector: labelToCode(SECTORS, v.sector) || v.specialty_id || "",
+    source: v.source || "",
+    status: v.status || "",
     
     // Firma Bilgileri
     companyName: v.company_short_name?.trim() || "",
