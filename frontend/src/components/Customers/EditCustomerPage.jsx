@@ -86,9 +86,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     try {
       const response = await fetch(`${BACKEND_URL}/api/ulkeler`);
       const data = await response.json();
-      setUlkeler(data);
+      setUlkeler(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading countries:', error);
+      setUlkeler([]);
     }
   };
   
