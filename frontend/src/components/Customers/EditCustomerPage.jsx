@@ -160,23 +160,52 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   
   // Map country after ulkeler loads
   useEffect(() => {
-    console.log('=== ÜLKE DEBUG ===');
+    console.log('🔵 ÜLKE MAPPING useEffect');
+    console.log('customer:', customer);
     console.log('customer.country:', customer?.country);
     console.log('ulkeler array:', ulkeler);
     console.log('ulkeler length:', ulkeler?.length);
-    console.log('formData.country:', formData?.country);
     
-    if (customer && ulkeler && ulkeler.length > 0 && customer.country) {
-      // ulkeler is a simple string array
-      // customer.country should match directly
-      const countryExists = ulkeler.includes(customer.country);
-      console.log('Country exists in list:', countryExists);
-      
-      if (countryExists) {
-        setFormData(prev => ({
-          ...prev,
-          country: customer.country
-        }));
+    if (!customer) {
+      console.log('❌ customer yok');
+      return;
+    }
+    
+    if (!ulkeler || ulkeler.length === 0) {
+      console.log('❌ ulkeler boş veya yüklenmedi');
+      return;
+    }
+    
+    const rawCountry = customer.country || '';
+    console.log('rawCountry:', rawCountry);
+    
+    if (!rawCountry) {
+      console.log('❌ rawCountry boş');
+      return;
+    }
+    
+    // ulkeler is array of objects with {id, name, code, value}
+    const foundCountry = ulkeler.find(c => 
+      c.name === rawCountry ||
+      c.name?.toLowerCase() === rawCountry?.toLowerCase() ||
+      c.code === rawCountry ||
+      c.value === rawCountry ||
+      c.id === rawCountry
+    );
+    
+    console.log('foundCountry:', foundCountry);
+    
+    if (foundCountry) {
+      // Set the country name (since options use name as value)
+      setFormData(prev => ({
+        ...prev,
+        country: foundCountry.name
+      }));
+      console.log('✅ Country set to:', foundCountry.name);
+    } else {
+      console.log('❌ Ülke bulunamadı! rawCountry:', rawCountry);
+      if (ulkeler.length > 0) {
+        console.log('İlk 5 ülke:', ulkeler.slice(0, 5).map(c => c.name));
       }
     }
   }, [customer, ulkeler]);
@@ -206,8 +235,9 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   
   const loadUlkeler = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/ulkeler`);
+      const response = await fetch(`${BACKEND_URL}/api/library/countries`);
       const data = await response.json();
+      console.log('🟢 Countries API Response:', data);
       setUlkeler(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading countries:', error);
@@ -508,7 +538,9 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   >
                     <option value="">Ülke seçiniz...</option>
                     {Array.isArray(ulkeler) && ulkeler.map(ulke => (
-                      <option key={ulke} value={ulke}>{ulke}</option>
+                      <option key={ulke.id || ulke.name} value={ulke.name}>
+                        {ulke.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -698,19 +730,18 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             Ülke
                           </label>
-                          <Select 
-                            value={contact.country} 
-                            onValueChange={(value) => handleContactChange(index, 'country', value)}
+                          <select 
+                            value={contact.country || ''} 
+                            onChange={(e) => handleContactChange(index, 'country', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Ülke seçiniz..." />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60">
-                              {Array.isArray(ulkeler) && ulkeler.map(ulke => (
-                                <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            <option value="">Ülke seçiniz...</option>
+                            {Array.isArray(ulkeler) && ulkeler.map(ulke => (
+                              <option key={ulke.id || ulke.name} value={ulke.name}>
+                                {ulke.name}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
