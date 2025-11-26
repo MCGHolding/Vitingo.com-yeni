@@ -82,6 +82,46 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     loadUlkeler();
   }, []);
   
+  // Map backend codes to dropdown IDs after data loads
+  useEffect(() => {
+    if (customerTypes.length > 0 && formData.customer_type_id) {
+      // Try to find matching customer type by code or name
+      const codeToNameMap = {
+        'bebek_irketi': 'Bebek Şirketi',
+        'anne_irketi': 'Anne Şirketi',
+        'baba_irketi': 'Baba Şirketi',
+        'ajans': 'Ajans',
+        'firma': 'Firma',
+        // Add more mappings as needed
+      };
+      
+      const targetName = codeToNameMap[formData.customer_type_id];
+      if (targetName) {
+        const matchingType = customerTypes.find(t => t.name === targetName);
+        if (matchingType) {
+          setFormData(prev => ({ ...prev, customer_type_id: matchingType.id }));
+        }
+      }
+    }
+  }, [customerTypes]);
+  
+  useEffect(() => {
+    if (sectors.length > 0 && formData.specialty_id) {
+      // Try to find matching sector by code
+      const codeToNameMap = {
+        'kimya': 'Kimya',
+        'teknoloji': 'Teknoloji',
+        // Add more mappings as needed
+      };
+      
+      const targetName = codeToNameMap[formData.specialty_id] || formData.specialty_id;
+      const matchingSector = sectors.find(s => s.name.toLowerCase() === targetName.toLowerCase());
+      if (matchingSector) {
+        setFormData(prev => ({ ...prev, specialty_id: matchingSector.id }));
+      }
+    }
+  }, [sectors]);
+  
   const loadCustomerTypes = async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/customer-types`);
