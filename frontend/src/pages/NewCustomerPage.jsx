@@ -38,10 +38,17 @@ const NewCustomerPage = () => {
     }
   };
 
+  const handleClose = () => {
+    navigate('/customers/all');
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4">Yeni Müşteri Formu</h2>
-      <NewCustomerForm onSave={handleSaveCustomer} />
+      <NewCustomerForm 
+        onSave={handleSaveCustomer} 
+        onClose={handleClose}
+      />
     </div>
   );
 };
