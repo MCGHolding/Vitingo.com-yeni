@@ -1,4 +1,4 @@
 // Runtime configuration for React app
 window.ENV = {
-  REACT_APP_BACKEND_URL: 'https://turk-customer-mgmt.preview.emergentagent.com'
+  REACT_APP_BACKEND_URL: 'https://contact-showcase-2.preview.emergentagent.com'
 };

@@ -1,86 +1,142 @@
-<analysis>
-The trajectory details an intensive, iterative development process focused on enhancing a CRM application for a Turkish-speaking user. All future communication must be in **Turkish**.
+<analysis>**original_problem_statement:**
+The user initially requested the creation of a new Sektörler (Sectors) management module under the Kütüphane (Library) section. This module needed to support full CRUD (Create, Read, Update, Delete) operations, an edit feature, and a bulk import function from a comma-separated text. The user also provided a default list of 155 sectors to be seeded.
 
-The work began by debugging and completing a Phone Codes management module, fixing data mismatches between the FastAPI backend and React frontend, and cleaning up duplicate code. This involved re-seeding the database and correcting Pydantic models.
+During development, the user reported several critical issues and requested further enhancements:
+1.  **UI/UX Inconsistency:** The new Sectors UI should be identical to the Müşteri Türleri (Customer Types) UI. An edit feature was also requested for Customer Types.
+2.  **Data Not Displaying:** After creating a new customer, many fields filled in the form were not showing up on the customer detail (view/preview) and edit pages. This included Kaynak (Source), Durum (Status), and several fields for the contact person.
+3.  **Data Saving Bugs:** The Kaynak (Source) and Durum (Status) fields were not being saved to the database when a new customer was created.
+4.  **Incorrect Data Formatting:** The customer detail page was showing internal codes/slugs (e.g., , ) instead of the proper, user-friendly labels with correct Turkish characters and capitalization (e.g., Fuar Stand Şirketi, Ajans).
+5.  **UI Refactoring:** The user requested that the customer detail page () be reorganized. All company-related information (address, phone, email) should be consolidated into a single card, and all Yetkili Kişi (Authorized Person) details should be consolidated into another card with a matching design.
+6.  **Broken Test Verisi Doldur Button:** The Fill Test Data button was not working correctly, causing issues with saving new customers.
+7.  **Broken Customer Save:** At one point, saving a customer was completely broken due to a frontend error ().
+8.  **UI Text Changes:** The main navigation link Tüm Müşteriler needed to be changed to Müşteriler.
+9.  **New Feature:** Add a WhatsApp button to the actions menu on the customer list page.
 
-The main effort then shifted to a new Convention Center module. The initial implementation was misunderstood, leading to a complete refactor. The user first requested a simple bulk-import tool, which was built. Subsequently, the user provided massive datasets of convention centers across the globe (USA, Europe, Asia, Africa, Oceania), which were imported via the bulk-import endpoint. Following the data import, the user requested a sophisticated, three-panel UI (Country -> City -> Center) with statistics and filters, leading to another major rewrite of the  component.
+**User's preferred language**: Turkish
 
-The final phase involved extensive enhancements to the , including making fields optional, adding new dynamic dropdowns (Projede Rolü, Kaynak, Durum) with + Yeni Ekle modals, and adding Cinsiyet and Doğum Günü fields. This phase also included debugging a complex issue where phone codes didn't update correctly based on the selected country, which required creating a large mapping object. The most recent task was a request to improve the realism of the Fill Test Data button.
-</analysis>
+**what currently exists?**
+The application is a full-stack CRM with a React frontend and a FastAPI backend. It features a Library for managing dynamic data like Customer Types, Phone Codes, Convention Centers, and now Sectors. The core functionality revolves around creating, listing, viewing, and editing customers.
 
-<product_requirements>
-The application is a comprehensive CRM tool designed for dynamic data management. The core requirement is to empower users to manage business-critical data directly from the UI, eliminating hard-coded values.
+The agent has implemented the Sectors module, added edit capabilities to Customer Types, fixed numerous data-saving and data-display bugs, and refactored parts of the customer detail page. However, the last change introduced a critical regression.
 
-**1. Library Module:** A central Library in the settings area serves as the hub for all dynamic data.
-    - **Phone Codes:** A fully functional CRUD module for managing international phone codes, seeded with initial data.
-    - **Convention Centers:** A global database of convention centers. The user must be able to import data in bulk () and manage it through a three-panel UI (Country > City > Center) with statistics, search, and filter capabilities. The system now contains over 580 centers across 95 countries.
+**Last working item**:
+-   **Last item agent was working:** Fixing the Yetkili Kişiler (Authorized Persons) section on the customer detail page (). The user reported that after a previous fix, the contact person details were completely gone. The agent's last action was to rewrite the component section again, adding a fallback to ensure the card displays even if the customer has no contacts.
+-   **Status:** **BLOCKED**
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent
+-   **User Testing Done:** Y (User provided screenshots confirming the entire Yetkili Kişiler section is missing on the view page, even after adding contacts to a new customer.)
 
-**2. New Customer Form:** The New Customer creation form must be highly detailed and customizable.
-    - **Required Fields:** The form logic was updated to make Company Mobile Phone and Contact Person Address optional.
-    - **Field Renaming:** The Services field was renamed to Ürün ve Servisler (Products and Services).
-    - **New Contact Fields:** For each contact person, new fields were added: Doğum Günü (Birthday, optional), Cinsiyet (Gender, dropdown), and a Projede Rolü (Project Role) dynamic dropdown with a modal to add new roles.
-    - **New Category Fields:** Two new dynamic dropdown fields, Kaynak (Source) and Durum (Status), were added to the main customer category section, both with modals for adding new options.
-</product_requirements>
+**All Pending/In progress Issue list**:
+-   **Issue 1: Yetkili Kişiler (Authorized Persons) section is completely missing on the Customer View Page (P0)**
+    -   **Attempted fixes:** The agent refactored this UI section twice. The first attempt had incorrect conditional rendering, causing data not to show. The second attempt (a complete rewrite from scratch) resulted in the entire section disappearing from the page, which is the current state. The changes were made in .
+    -   **Next debug checklist:**
+        1.  In , add  at the top of the component to verify the structure of the  object being received, specifically checking the  array.
+        2.  Carefully review the JSX mapping over . The entire card might be incorrectly wrapped in a conditional that is evaluating to false (e.g., ).
+        3.  Check the  hook that fetches the customer data on page load to ensure it's retrieving the complete object, including the contacts.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical CRM function. Users cannot see the contact details they have entered for a customer, making the application unusable for managing contacts.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
 
-<key_technical_concepts>
-- **Backend:** FastAPI (Python), Pydantic for data validation.
-- **Frontend:** React, Tailwind CSS,  for icons, .
-- **Database:** MongoDB.
-- **Architecture:** Monorepo (React/FastAPI).
-- **Core Patterns:**
-    - API-driven data seeding and re-seeding.
-    - Bulk import endpoints for CSV-like data.
-    - Dynamic, searchable dropdown components with Add New modals.
-    - UI state management to prevent duplicate submissions ().
-    - Extensive client-side mapping to resolve data inconsistencies (e.g., Turkish country names to  country codes).
-</key_technical_concepts>
+**In progress Task List**:
+None. The agent is blocked by the issue above.
 
-<code_architecture>
-The application follows a standard monorepo structure with a React frontend and a FastAPI backend.
+**Upcoming and Future Tasks**
+None specified by the user. The current priority is to fix the blocking issue.
+
+**Completed work in this session**
+-   List of all completed tasks with file and method name:
+    -   **Sectors Module:** Implemented a full CRUD + bulk import module for Sectors.
+        -   Backend: Added  model and endpoints () in .
+        -   Frontend: Integrated management UI directly into  for a consistent look and feel.
+    -   **Customer Type Edit:** Added edit functionality for Customer Types in  and the corresponding  endpoint in .
+    -   **Data Persistence & Mapping Fixes:**
+        -   Ensured Kaynak (Source) and Durum (Status) are saved by updating the  model in  and the mapping functions (, ) in .
+        -   Fixed data display to show user-friendly labels instead of system codes (e.g., Fuar Stand Şirketi instead of ) on .
+    -   **UI Refactoring & Fixes:**
+        -   Consolidated all company contact and address information into a single, organized Firma Bilgileri card on .
+        -   Changed navigation link text from Tüm Müşteriler to Müşteriler in  and .
+        -   Fixed a critical  crash on the new customer page ().
+    -   **New Features:**
+        -   Added a WhatsApp action to the customer list menu in .
+
+**Earlier issues found/mentioned but not fixed**
+None. All other reported issues were addressed, but the fix for the Yetkili Kişiler section led to the current P0 bug.
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:** Data consistency issues between the form, backend, and view pages are a recurring theme. Bugs often originate in the data mapping layer () or from incorrect conditional rendering in React components.
+-   **Recurrence count:** High (at least 3-4 instances this session).
+-   **Status:** IN PROGRESS (The current P0 bug is another instance of this).
+
+**Code Architecture**
 
 
+**Key Technical Concepts**
+-   **Backend:** FastAPI, Pydantic
+-   **Frontend:** React, Tailwind CSS, 
+-   **Database:** MongoDB
+-   **Architecture:** Monorepo with a central data mapping layer.
+-   **Core Patterns:**
+    -   **Brittle Data Mapping:** A  file handles transformations between frontend and backend models. This file has been a frequent source of bugs due to stale, hardcoded values and missing fields.
+    -   **UI Consistency:** The user has a strong preference for consistent UI patterns across different management pages (e.g., Sectors UI must match Customer Types UI).
+    -   **Conditional Rendering:** UI components heavily rely on conditional rendering (), which has led to bugs where entire sections disappear if data is missing or in an unexpected format.
 
--   ****
-    -   **Importance:** The core FastAPI application containing all API endpoints and business logic.
-    -   **Summary of Changes:** This file was heavily modified. Duplicate  models and endpoints were found and removed. A data mismatch between the DB schema and Pydantic models was resolved by correcting the  GET endpoint. A  parameter was added to an initialization endpoint to allow re-seeding. A complete set of CRUD and bulk-import endpoints () was created. A check to prevent duplicate phone code creation was added to the POST endpoint.
+**key DB schema**
+-   **customers collection:** The document schema was updated to include .
 
--   ****
-    -   **Importance:** The primary form for data entry, making it a critical user-facing component.
-    -   **Summary of Changes:** This file received the most extensive updates.
-        -   **Validation Removal:** Required flags and validation logic were removed for  and the contact's .
-        -   **New State & Fields:** State was added for , , and . Corresponding UI for Doğum Günü (Birthday), Cinsiyet (Gender), Projede Rolü (Project Role), Kaynak (Source), and Durum (Status) was implemented, including dynamic  dropdowns with modals to add new options.
-        -   **Phone Code Fix:** A large mapping object was added to the  helper function to correctly map Turkish country names to the  library's two-letter country codes, fixing a major bug where phone codes would not update.
-        -   **Test Data Function:** The  function was updated to populate all the newly added fields.
+**changes in tech stack**
+None.
 
--   ****
-    -   **Importance:** The UI for the new Convention Center module.
-    -   **Summary of Changes:** This component underwent a full-scale redesign. It was initially a simple import tool. It was then completely rewritten into a sophisticated three-panel layout (Countries > Cities > Centers) inspired by . This new version includes statistic cards at the top (Total Centers, Countries, Cities), search/filter functionality, and a multi-column list view for a professional user experience. A CSS fix (, ) was added to prevent long names from breaking the layout.
+**All files**
+-   ****: Heavily modified to add the Sectors module, add an edit endpoint for Customer Types, and add the  field to the  model.
+-   ****: **CRITICAL/BROKEN**. Heavily refactored to reorganize UI into consolidated cards. The Yetkili Kişiler section is currently broken and not rendering.
+-   ****: **CRITICAL**. Updated multiple times to fix data saving/loading bugs by adding  and  fields. This file is central to data flow and a likely area for bugs.
+-   ****: Heavily modified to implement a unified UI for managing Customer Types and Sectors, including add, edit, and delete functionality.
+-   ****: Modified to add missing Kaynak and Durum fields.
+-   ****: Modified to change the page title and add a WhatsApp action.
+-   ****: Modified to rename the Customers navigation link.
+-   ****: Modified to fix a prop-passing crash ().
 
--   ****
-    -   **Importance:** Manages the phone codes library.
-    -   **Summary of Changes:** To fix a duplicate entry bug, an  state was added to disable the Add and Save buttons during API calls, preventing users from clicking multiple times. A frontend check was also added to see if a code already exists before attempting to add it.
-</code_architecture>
+**Areas that need refactoring**:
+-   ****: This file uses outdated, hardcoded dictionaries to map data labels. The backend now supports dynamic data from the API. The mapper should be refactored to use this live data instead of hardcoded objects to prevent future data inconsistency bugs.
+-   ****: The component is fragile and prone to breaking during refactoring. The rendering logic for the Yetkili Kişiler section needs to be simplified and made more robust to handle cases with and without data.
 
-<pending_tasks>
-- **Enhance Test Data Generation:** The user has requested that the Test Verisi Doldur (Fill Test Data) button in  be updated to generate more realistic and varied data. This includes more believable company names, titles, and ensuring that a different country/city is selected each time, along with adding tags.
-</pending_tasks>
+**key api endpoints**
+-   
+-   
+-   
+-   
 
-<current_work>
-The immediate previous task was a series of significant enhancements to the . The user requested four main changes:
-1.  Make Company Mobile Phone and Contact Address non-mandatory.
-2.  Rename the Services label to Ürün ve Servisler.
-3.  Add an optional Birthday field for contacts.
-4.  Add Gender and Project Role dropdowns for contacts.
-5.  Add Source and Status dropdowns for the customer.
-6.  Update the Fill Test Data button to include these new fields.
+**Critical Info for New Agent**
+-   **TOP PRIORITY:** The user is frustrated because the Yetkili Kişiler (Authorized Persons) section on the customer view page is completely broken and not displaying, despite data being entered. This is a regression and must be fixed first.
+-   **Data Flow:** Pay close attention to the data flow from the form to the database, especially through , as it has been the source of multiple bugs.
+-   **User Expectations:** The user values UI consistency and expects all data entered on a form to be visible on the corresponding view and edit pages. Double-check this on all fields after any change.
 
-All of these points were addressed. The validation was removed, labels were changed, and the new stateful fields and dynamic dropdowns (with modals for adding new options) were implemented. The test data function was also updated.
+**documents created in this job**
+None.
 
-Immediately after confirming these changes were done, the user made a follow-up request to improve the quality of the generated test data.
+**Last 5 User Messages and any pending user messages**
+1.  **User:** Reports that after a fix, the Authorized Person information is completely gone.
+2.  **User:** Provides 5 screenshots showing them adding two new contacts and the final view page where the Authorized Persons card is missing, asking the agent to compare and see the problem.
+3.  **User:** After a different fix, reports that Kaynak is still not showing, and there are Turkish character and capitalization issues with other fields.
+4.  **User:** This is OK. Now, create a new area in the preview that shows all company information...in a single area. (This led to the major refactor of ).
+5.  **User:** After the company info refactor: This is OK. Now do the same for the authorized person information...the design should be the same as the company info.
 
-**The last action taken by the AI was acknowledging this final request.** The AI was about to start modifying the  function inside  to make the generated data more realistic.
-</current_work>
+**Project Health Check:**
+-   **Broken:**
+    -   : The Yetkili Kişiler section does not render, making it impossible to view contact information.
+-   **Mocked:**
+    -   None.
 
-<optional_next_step>
-Modify the  function in  to generate more realistic data, as requested. This will involve creating more varied fake data for company names, randomly selecting from the full list of countries/cities, and adding tags.
-</optional_next_step>
+**Testing status**
+-   **Testing agent used after significant changes:** YES
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None
+-   **Known regressions:** The Yetkili Kişiler section on  has regressed and is now completely non-functional.
+
+**Credentials to test flow:**
+N/A
+
+**What agent forgot to execute**
+-   The agent failed to properly test the  component after the final refactor of the Authorized Persons section. Their last check was insufficient and missed the fact that the entire component section was no longer rendering, leading to a critical regression reported by the user.</analysis>
