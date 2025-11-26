@@ -342,7 +342,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
           <div className="space-y-6">
 
             {/* Yetkili Kişiler - Yeni Temiz Tasarım */}
-            {customer.contacts && customer.contacts.length > 0 && customer.contacts.map((contact, index) => (
+            {customer.contacts && customer.contacts.length > 0 ? customer.contacts.map((contact, index) => (
               <Card key={index} className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                 <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
                   <CardTitle className="text-xl font-bold text-gray-800 flex items-center justify-between">
