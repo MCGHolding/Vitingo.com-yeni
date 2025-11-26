@@ -61,6 +61,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     country: '',
     city: '',
     birthday: '',
+    gender: '',
+    project_role: '',
     is_accounting_responsible: false
   }]);
   
