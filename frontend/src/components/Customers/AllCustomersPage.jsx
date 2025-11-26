@@ -61,6 +61,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
   const menuItems = [
     { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800 hover:bg-blue-50', action: 'message' },
     { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800 hover:bg-green-50', action: 'email' },
+    { label: 'WhatsApp', icon: MessageCircle, color: 'text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50', action: 'whatsapp' },
     { label: 'Teklif', icon: FileUser, color: 'text-purple-600 hover:text-purple-800 hover:bg-purple-50', action: 'quote' },
     { label: 'Fatura', icon: Receipt, color: 'text-orange-600 hover:text-orange-800 hover:bg-orange-50', action: 'invoice' },
     { label: 'Pasif', icon: UserX, color: 'text-red-600 hover:text-red-800 hover:bg-red-50', action: 'inactive' },
