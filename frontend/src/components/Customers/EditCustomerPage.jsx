@@ -33,6 +33,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Form data initialized from customer
   const initialFormData = dbToForm(customer);
   const [formData, setFormData] = useState(initialFormData);
+  const [originalFormData] = useState(initialFormData); // Keep original for comparison
+  
+  // Modal state
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   
   // Dropdown options
   const [customerTypes, setCustomerTypes] = useState([]);
@@ -82,45 +86,47 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     loadUlkeler();
   }, []);
   
-  // Map backend codes to dropdown IDs after data loads
+  // Initialize form with proper data after dropdowns load
   useEffect(() => {
-    if (customerTypes.length > 0 && formData.customer_type_id) {
-      // Try to find matching customer type by code or name
+    if (customerTypes.length > 0 && customer.relationshipType) {
+      // Map backend code to customer type ID
       const codeToNameMap = {
         'bebek_irketi': 'Bebek Şirketi',
-        'anne_irketi': 'Anne Şirketi',
         'baba_irketi': 'Baba Şirketi',
+        'anne_irketi': 'Anne Şirketi',
         'ajans': 'Ajans',
         'firma': 'Firma',
-        // Add more mappings as needed
+        'holding_sirketi': 'Holding Şirketi',
+        'kardes_sirketi': 'Kardeş Şirketi',
+        'kuzen_sirketi': 'Kuzen Şirketi',
       };
       
-      const targetName = codeToNameMap[formData.customer_type_id];
+      const targetName = codeToNameMap[customer.relationshipType];
       if (targetName) {
         const matchingType = customerTypes.find(t => t.name === targetName);
-        if (matchingType) {
+        if (matchingType && formData.customer_type_id !== matchingType.id) {
           setFormData(prev => ({ ...prev, customer_type_id: matchingType.id }));
         }
       }
     }
-  }, [customerTypes]);
+  }, [customerTypes, customer.relationshipType]);
   
   useEffect(() => {
-    if (sectors.length > 0 && formData.specialty_id) {
-      // Try to find matching sector by code
-      const codeToNameMap = {
-        'kimya': 'Kimya',
-        'teknoloji': 'Teknoloji',
-        // Add more mappings as needed
-      };
+    if (sectors.length > 0 && customer.sector) {
+      // Map backend code to sector ID - try exact match first
+      let matchingSector = sectors.find(s => s.name.toLowerCase() === customer.sector.toLowerCase());
       
-      const targetName = codeToNameMap[formData.specialty_id] || formData.specialty_id;
-      const matchingSector = sectors.find(s => s.name.toLowerCase() === targetName.toLowerCase());
-      if (matchingSector) {
+      if (!matchingSector) {
+        // Try capitalize
+        const capitalized = customer.sector.charAt(0).toUpperCase() + customer.sector.slice(1);
+        matchingSector = sectors.find(s => s.name === capitalized);
+      }
+      
+      if (matchingSector && formData.specialty_id !== matchingSector.id) {
         setFormData(prev => ({ ...prev, specialty_id: matchingSector.id }));
       }
     }
-  }, [sectors]);
+  }, [sectors, customer.sector]);
   
   const loadCustomerTypes = async () => {
     try {
@@ -181,8 +187,58 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     });
   };
   
+  // Check if form has changes
+  const hasChanges = () => {
+    // Don't check on first render
+    if (!originalFormData) return false;
+    
+    // Simple comparison - check key fields only
+    const keyFields = ['company_short_name', 'company_title', 'phone', 'email', 'address', 'city', 'country'];
+    
+    for (const field of keyFields) {
+      if (formData[field] !== originalFormData[field]) {
+        return true;
+      }
+    }
+    
+    // Check tags
+    const currentTags = JSON.stringify(formData.tags || []);
+    const originalTags = JSON.stringify(originalFormData.tags || []);
+    if (currentTags !== originalTags) return true;
+    
+    // Check contacts count
+    if (contacts.length !== (originalFormData.contacts || []).length) {
+      return true;
+    }
+    
+    return false;
+  };
+  
+  // Handle back button click
+  const handleBackClick = () => {
+    if (hasChanges()) {
+      setShowUnsavedModal(true);
+    } else {
+      onBack();
+    }
+  };
+  
+  // Save and go back
+  const handleSaveAndBack = async () => {
+    await handleSubmit(new Event('submit'));
+    setShowUnsavedModal(false);
+  };
+  
+  // Discard changes and go back
+  const handleDiscardAndBack = () => {
+    setShowUnsavedModal(false);
+    onBack();
+  };
+  
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     setIsLoading(true);
     
     try {
@@ -215,6 +271,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         onSave(result.customer || result);
       }
       
+      return true;
+      
     } catch (error) {
       console.error('Error updating customer:', error);
       toast({
@@ -222,6 +280,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         description: "Müşteri güncellenirken bir hata oluştu.",
         variant: "destructive",
       });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -235,7 +294,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
-              onClick={onBack}
+              onClick={handleBackClick}
               className="flex items-center space-x-2"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -743,7 +802,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
             <Button
               type="button"
               variant="outline"
-              onClick={onBack}
+              onClick={handleBackClick}
             >
               İptal
             </Button>
@@ -766,6 +825,53 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
           </div>
         </form>
       </div>
+      
+      {/* Unsaved Changes Modal */}
+      {showUnsavedModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <Save className="h-6 w-6 text-yellow-600" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Kaydedilmemiş Değişiklikler
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  Yaptığınız değişiklikleri kaydetmek istiyor musunuz?
+                </p>
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={handleSaveAndBack}
+                    disabled={isLoading}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+                  </Button>
+                  <Button
+                    onClick={handleDiscardAndBack}
+                    variant="outline"
+                    className="flex-1"
+                    disabled={isLoading}
+                  >
+                    Kaydetme
+                  </Button>
+                  <Button
+                    onClick={() => setShowUnsavedModal(false)}
+                    variant="ghost"
+                    disabled={isLoading}
+                  >
+                    İptal
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
