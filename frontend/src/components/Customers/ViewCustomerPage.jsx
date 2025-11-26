@@ -324,6 +324,33 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                                 {contact.country || '-'} / {contact.city || '-'}
                               </p>
                             )}
+                            {contact.birthday && (
+                              <p className="text-sm text-gray-600 flex items-center space-x-2">
+                                <Calendar className="h-4 w-4 text-pink-600" />
+                                <span>Doğum Günü: {formatDate(contact.birthday)}</span>
+                              </p>
+                            )}
+                            {contact.gender && (
+                              <p className="text-sm text-gray-600">
+                                <User className="h-4 w-4 inline mr-1 text-indigo-600" />
+                                Cinsiyet: {contact.gender}
+                              </p>
+                            )}
+                            {contact.project_role && (
+                              <p className="text-sm text-gray-600">
+                                <Briefcase className="h-4 w-4 inline mr-1 text-teal-600" />
+                                Projede Rolü: {contact.project_role}
+                              </p>
+                            )}
+                            {contact.tags && contact.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {contact.tags.map((tag, tagIndex) => (
+                                  <Badge key={tagIndex} className="bg-blue-100 text-blue-800 text-xs border-0">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
