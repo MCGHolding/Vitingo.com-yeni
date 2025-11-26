@@ -863,7 +863,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Final Countries and Cities Seed Data Testing"
+    - "Updated ViewCustomerPage with New Fields Testing"
   stuck_tasks:
     - "Final Countries and Cities Seed Data Testing"
   completed_tests:
