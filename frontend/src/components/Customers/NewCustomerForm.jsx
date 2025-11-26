@@ -2234,6 +2234,108 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         </div>
       )}
 
+      {/* Add Source Modal */}
+      {showSourceModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Yeni Kaynak Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kaynak Adı
+                </label>
+                <Input
+                  value={newSource}
+                  onChange={(e) => setNewSource(e.target.value)}
+                  placeholder="Örn: LinkedIn"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddSource()}
+                />
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Mevcut Kaynaklar:</strong>
+                </p>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
+                  {sources.map(source => (
+                    <li key={source}>• {source}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowSourceModal(false);
+                  setNewSource('');
+                }}
+              >
+                İptal
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddSource}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Status Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Yeni Durum Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Durum Adı
+                </label>
+                <Input
+                  value={newStatus}
+                  onChange={(e) => setNewStatus(e.target.value)}
+                  placeholder="Örn: Görüşme Yapıldı"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddStatus()}
+                />
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Mevcut Durumlar:</strong>
+                </p>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
+                  {statuses.map(status => (
+                    <li key={status}>• {status}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowStatusModal(false);
+                  setNewStatus('');
+                }}
+              >
+                İptal
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddStatus}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Customer Type Modal */}
       {showAddCustomerTypeModal && (
         <AddCustomerTypeModal
