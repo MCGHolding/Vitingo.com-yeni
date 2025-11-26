@@ -1637,13 +1637,26 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <MapPin className="inline w-4 h-4 mr-1" />
-                    Adres <span className="text-red-500">*</span>
+                    Adres
                   </label>
                   <textarea
                     value={contact.address}
                     onChange={(e) => handleContactChange(contactIndex, 'address', e.target.value)}
-                    placeholder="Bireysel müşteri adresi..."
+                    placeholder="Yetkili kişi adresi (opsiyonel)..."
                     className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                {/* Birthday (Opsiyonel) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    🎂 Doğum Günü
+                  </label>
+                  <Input
+                    type="date"
+                    value={contact.birthday || ''}
+                    onChange={(e) => handleContactChange(contactIndex, 'birthday', e.target.value)}
+                    placeholder="Doğum günü seçin..."
                   />
                 </div>
 
