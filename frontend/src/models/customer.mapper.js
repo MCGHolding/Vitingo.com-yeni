@@ -101,12 +101,12 @@ export function dbToForm(c) {
 
 // --- FORM -> DB (Create kaydet / Edit patch) ---
 export function formToDb(v) {
-  return {
+  const data = {
     // Kategori → DB codes
     relationshipType: labelToCode(CUSTOMER_TYPES, v.customerType) || v.customer_type_id || "mevcut_musteri",
     sector: labelToCode(SECTORS, v.sector) || v.specialty_id || "",
     source: v.source || "",
-    status: v.status || "",
+    status: v.status || "active",
     
     // Firma Bilgileri
     companyName: v.company_short_name?.trim() || "",
@@ -168,6 +168,12 @@ export function formToDb(v) {
     isIndividual: !!v.isIndividual,
     isProspect: !!v.isProspect,
   };
+  
+  // Remove _id and other MongoDB internal fields
+  delete data._id;
+  delete data.__v;
+  
+  return data;
 }
 
 // --- Boş form default değerleri ---
