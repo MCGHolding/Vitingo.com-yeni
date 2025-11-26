@@ -821,8 +821,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position
       : formData.company_short_name && formData.company_title && formData.customer_type_id && 
         formData.specialty_id && formData.email && formData.phone && 
-        formData.mobile && formData.address &&  // Company basic info required
-        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position; // Contact person required
+        formData.address &&  // Company basic info required (mobile removed)
+        contacts[0]?.full_name && contacts[0]?.email && contacts[0]?.mobile && contacts[0]?.position; // Contact person required (address removed)
     
     if (!requiredFieldsValid) {
       toast({
