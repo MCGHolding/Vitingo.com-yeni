@@ -559,8 +559,8 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   const loadSectors = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      console.log('Loading sectors from:', `${backendUrl}/api/sectors`);
-      const response = await fetch(`${backendUrl}/api/sectors`);
+      console.log('Loading sectors from:', `${backendUrl}/api/library/sectors`);
+      const response = await fetch(`${backendUrl}/api/library/sectors`);
       if (response.ok) {
         const data = await response.json();
         console.log('Sectors loaded:', data);
