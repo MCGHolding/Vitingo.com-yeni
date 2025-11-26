@@ -27,6 +27,9 @@ import { dbToForm, formToDb } from '../../models/customer.mapper';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function EditCustomerPage({ customer, onBack, onSave }) {
+  console.log('=== COMPONENT RENDERED ===');
+  console.log('Customer prop:', customer);
+  
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -50,6 +53,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     tags: customer.tags || [],
     notes: customer.notes || ''
   });
+  
+  console.log('Initial formData:', formData);
   
   // Store original for comparison
   const originalData = JSON.stringify({
@@ -108,6 +113,34 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     loadSectors();
     loadUlkeler();
   }, []);
+  
+  // Debug customer data
+  useEffect(() => {
+    console.log('=== CUSTOMER DATA ===');
+    console.log('customer.relationshipType:', customer?.relationshipType);
+    console.log('customer.sector:', customer?.sector);
+    console.log('customer.status:', customer?.status);
+    console.log('customer.country:', customer?.country);
+    console.log('customer.tags:', customer?.tags);
+  }, [customer]);
+  
+  // Debug dropdown options
+  useEffect(() => {
+    console.log('=== DROPDOWN OPTIONS LOADED ===');
+    console.log('customerTypes:', customerTypes);
+    console.log('sectors:', sectors);
+    console.log('ulkeler:', ulkeler);
+  }, [customerTypes, sectors, ulkeler]);
+  
+  // Debug form data changes
+  useEffect(() => {
+    console.log('=== FORM DATA ===');
+    console.log('formData.customer_type_id:', formData?.customer_type_id);
+    console.log('formData.specialty_id:', formData?.specialty_id);
+    console.log('formData.status:', formData?.status);
+    console.log('formData.country:', formData?.country);
+    console.log('formData.tags:', formData?.tags);
+  }, [formData]);
   
   // Don't use auto-mapping - let form show original values
   // User will select from dropdown if needed
