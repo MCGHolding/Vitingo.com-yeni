@@ -20,6 +20,12 @@ const LibraryPage = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAddCustomerTypeModal, setShowAddCustomerTypeModal] = useState(false);
   const [showAddSectorModal, setShowAddSectorModal] = useState(false);
+  
+  // Edit states
+  const [editingCustomerTypeId, setEditingCustomerTypeId] = useState(null);
+  const [editingCustomerType, setEditingCustomerType] = useState({ name: '', value: '', description: '' });
+  const [editingSectorId, setEditingSectorId] = useState(null);
+  const [editingSector, setEditingSector] = useState({ name: '', description: '' });
 
   // Load customer types
   const loadCustomerTypes = async () => {
