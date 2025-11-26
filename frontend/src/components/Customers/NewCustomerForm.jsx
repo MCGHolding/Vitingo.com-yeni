@@ -2120,6 +2120,57 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
         )}
       </form>
 
+      {/* Add Project Role Modal */}
+      {showRoleModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Yeni Proje Rolü Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rol Adı
+                </label>
+                <Input
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value)}
+                  placeholder="Örn: Proje Yöneticisi"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddProjectRole()}
+                />
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Mevcut Roller:</strong>
+                </p>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
+                  {projectRoles.map(role => (
+                    <li key={role}>• {role}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowRoleModal(false);
+                  setNewRole('');
+                }}
+              >
+                İptal
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddProjectRole}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Ekle
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Customer Type Modal */}
       {showAddCustomerTypeModal && (
         <AddCustomerTypeModal
