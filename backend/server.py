@@ -4430,6 +4430,36 @@ async def get_customer_types():
         logger.error(f"Error getting customer types: {str(e)}")
         return []
 
+
+@api_router.put("/customer-types/{customer_type_id}", response_model=CustomerType)
+async def update_customer_type(customer_type_id: str, customer_type_data: CustomerTypeCreate):
+    """Update a customer type"""
+    try:
+        # Check if another customer type with same value exists
+        existing = await db.customer_types.find_one({"value": customer_type_data.value, "id": {"$ne": customer_type_id}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Bu müşteri türü değeri zaten kullanılıyor")
+        
+        customer_type = CustomerType(id=customer_type_id, **customer_type_data.dict())
+        customer_type_dict = customer_type.dict()
+        
+        result = await db.customer_types.update_one(
+            {"id": customer_type_id},
+            {"$set": customer_type_dict}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Müşteri türü bulunamadı")
+        
+        logger.info(f"Customer type updated: {customer_type.name}")
+        return customer_type
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating customer type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.delete("/customer-types/{customer_type_id}")
 async def delete_customer_type(customer_type_id: str):
     """Delete a customer type"""
