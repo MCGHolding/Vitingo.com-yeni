@@ -626,15 +626,52 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     console.log('✅ Data loaded, filling test data...');
 
     const testCompanyNames = [
-      'Teknoloji Çözümleri A.Ş.',
-      'İnovasyon Medya Ltd.',
-      'Dijital Pazarlama Ajansı',
-      'Yaratıcı Tasarım Studio',
-      'E-Ticaret Uzmanları A.Ş.',
-      'Mobil Uygulama Geliştiricileri'
+      'Global Teknoloji Çözümleri A.Ş.',
+      'Vertex Digital Medya Ltd.',
+      'Optima Danışmanlık Hizmetleri A.Ş.',
+      'Phoenix Yazılım ve Teknoloji A.Ş.',
+      'Atlas İnşaat ve Ticaret Ltd. Şti.',
+      'Meridian Lojistik Sistemleri A.Ş.',
+      'Nova Enerji ve Çevre Teknolojileri',
+      'Zenith Finans ve Yatırım A.Ş.',
+      'Quantum Endüstriyel Çözümler Ltd.',
+      'Stellar Otomotiv Sanayi A.Ş.',
+      'Nexus İletişim ve Reklam Ajansı',
+      'Apex Gıda Sanayi ve Ticaret A.Ş.',
+      'Prime Medikal Cihazlar Ltd.',
+      'Titan İnsan Kaynakları A.Ş.',
+      'Horizon Turizm ve Otelcilik Ltd.'
     ];
     
-    const testServices = ['Web Tasarım', 'Mobil Uygulama', 'SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'Grafik Tasarım'];
+    const testServices = ['Web Tasarım', 'Mobil Uygulama', 'SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'Grafik Tasarım', 'Kurumsal Danışmanlık', 'Yazılım Geliştirme', 'E-Ticaret Çözümleri'];
+    
+    const testCountriesCities = [
+      { country: 'Türkiye', city: 'İstanbul' },
+      { country: 'Türkiye', city: 'Ankara' },
+      { country: 'Türkiye', city: 'İzmir' },
+      { country: 'Almanya', city: 'Berlin' },
+      { country: 'Almanya', city: 'München' },
+      { country: 'İngiltere', city: 'Londra' },
+      { country: 'Fransa', city: 'Paris' },
+      { country: 'İspanya', city: 'Barcelona' },
+      { country: 'İtalya', city: 'Milano' },
+      { country: 'Hollanda', city: 'Amsterdam' },
+      { country: 'ABD', city: 'New York' },
+      { country: 'ABD', city: 'Los Angeles' },
+      { country: 'Kanada', city: 'Toronto' },
+      { country: 'Avustralya', city: 'Sidney' }
+    ];
+    
+    const testTags = [
+      'VIP Müşteri',
+      'Yüksek Potansiyel',
+      'Stratejik Ortak',
+      'Hızlı Büyüyen',
+      'Teknoloji Lideri',
+      'Uzun Vadeli İşbirliği',
+      'Referans Müşteri',
+      'İnovatif'
+    ];
     
     const randomCompanyName = testCompanyNames[Math.floor(Math.random() * testCompanyNames.length)];
     // Use actual loaded data for sectors and customer types
