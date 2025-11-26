@@ -1191,7 +1191,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
               {/* Cep Telefonu */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Firma Cep Telefonu <span className="text-red-500">*</span>
+                  Firma Cep Telefonu
                 </label>
                 <PhoneInput
                   key={`mobile-${formData.country || 'tr'}`}
