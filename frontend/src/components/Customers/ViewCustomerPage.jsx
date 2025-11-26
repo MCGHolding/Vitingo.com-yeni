@@ -122,11 +122,22 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri Türü</label>
-                    <p className="text-base text-gray-700 mt-1">{CUSTOMER_TYPE_LABELS[customer.relationshipType || customer.customerType || customer.customer_type] || customer.relationshipType || customer.customerType || customer.customer_type || '-'}</p>
+                    <p className="text-base text-gray-700 mt-1">
+                      {CUSTOMER_TYPE_LABELS[customer.relationshipType] || 
+                       customer.relationshipType?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
+                       customer.customerType || 
+                       customer.customer_type || 
+                       '-'}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Sektör</label>
-                    <p className="text-base text-gray-700 mt-1">{SECTOR_LABELS[customer.sector || customer.specialty] || customer.sector || customer.specialty || '-'}</p>
+                    <p className="text-base text-gray-700 mt-1">
+                      {SECTOR_LABELS[customer.sector] || 
+                       customer.sector?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
+                       customer.specialty || 
+                       '-'}
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
