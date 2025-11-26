@@ -163,7 +163,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
   const getCountryDialCode = (countryName) => {
     if (!countryName) return 'tr'; // Default to Turkey
     
-    // Comprehensive country code mapping
+    // Complete country code mapping - Tüm ülkeler için telefon kodu eşleştirmesi
     const countryCodeMap = {
       'Turkey': 'tr', 'Türkiye': 'tr',
       'Afghanistan': 'af', 'Afganistan': 'af',
