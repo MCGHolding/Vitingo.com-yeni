@@ -1737,6 +1737,71 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                       </Button>
                     </div>
                   </div>
+
+                  {/* Doğum Günü ve Cinsiyet */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      🎂 Doğum Günü
+                    </label>
+                    <Input
+                      type="date"
+                      value={contact.birthday || ''}
+                      onChange={(e) => handleContactChange(contactIndex, 'birthday', e.target.value)}
+                      placeholder="Doğum günü seçin..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      👤 Cinsiyet
+                    </label>
+                    <Select
+                      value={contact.gender || ''}
+                      onValueChange={(value) => handleContactChange(contactIndex, 'gender', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Cinsiyet seçin..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Kadın">Kadın</SelectItem>
+                        <SelectItem value="Erkek">Erkek</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Projede Rolü */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      🎯 Projede Rolü
+                    </label>
+                    <div className="flex space-x-2">
+                      <div className="flex-1">
+                        <Select
+                          value={contact.project_role || ''}
+                          onValueChange={(value) => handleContactChange(contactIndex, 'project_role', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Proje rolü seçin..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {projectRoles.map(role => (
+                              <SelectItem key={role} value={role}>{role}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowRoleModal(true)}
+                        className="px-3"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
                 </div>
                 </div>
                 )}
