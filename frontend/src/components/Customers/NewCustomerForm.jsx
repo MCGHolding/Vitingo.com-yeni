@@ -60,6 +60,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     address: '',
     country: '',
     city: '',
+    birthday: '',
     is_accounting_responsible: false
   }]);
   
