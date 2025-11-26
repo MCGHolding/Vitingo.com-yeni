@@ -882,6 +882,7 @@ test_plan:
     - "ViewCustomerPage and EditCustomerPage Integration Testing"
     - "NewCustomerForm Backend Integration Issue Testing"
     - "User Management APIs Testing"
+    - "Updated ViewCustomerPage with New Fields Testing"
   test_all: false
   test_priority: "high_first"
   completed_tests:
