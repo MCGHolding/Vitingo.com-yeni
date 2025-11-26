@@ -384,115 +384,77 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                           <div className="space-y-4">
                             <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2">İletişim</h4>
                             
-                            {(contact.mobile || contact.phone) && (
-                              <div className="flex items-start space-x-3">
-                                <Phone className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Cep Telefonu</label>
-                                  <p className="text-sm text-gray-900 font-medium">{contact.mobile || contact.phone}</p>
-                                </div>
+                            <div className="flex items-start space-x-3">
+                              <Phone className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Cep Telefonu</label>
+                                <p className="text-sm text-gray-900 font-medium">{contact.mobile || contact.phone || '-'}</p>
                               </div>
-                            )}
+                            </div>
                             
-                            {contact.email && (
-                              <div className="flex items-start space-x-3">
-                                <Mail className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">E-posta</label>
-                                  <p className="text-sm text-gray-900 font-medium break-all">{contact.email}</p>
-                                </div>
+                            <div className="flex items-start space-x-3">
+                              <Mail className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">E-posta</label>
+                                <p className="text-sm text-gray-900 font-medium break-all">{contact.email || '-'}</p>
                               </div>
-                            )}
+                            </div>
                             
-                            {contact.birthday && (
-                              <div className="flex items-start space-x-3">
-                                <Calendar className="h-5 w-5 text-pink-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Doğum Günü</label>
-                                  <p className="text-sm text-gray-900 font-medium">{formatDate(contact.birthday)}</p>
-                                </div>
+                            <div className="flex items-start space-x-3">
+                              <Calendar className="h-5 w-5 text-pink-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Doğum Günü</label>
+                                <p className="text-sm text-gray-900 font-medium">{contact.birthday ? formatDate(contact.birthday) : '-'}</p>
                               </div>
-                            )}
+                            </div>
                             
-                            {contact.gender && (
-                              <div className="flex items-start space-x-3">
-                                <User className="h-5 w-5 text-indigo-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Cinsiyet</label>
-                                  <p className="text-sm text-gray-900 font-medium">{contact.gender}</p>
-                                </div>
+                            <div className="flex items-start space-x-3">
+                              <User className="h-5 w-5 text-indigo-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Cinsiyet</label>
+                                <p className="text-sm text-gray-900 font-medium">{contact.gender || '-'}</p>
                               </div>
-                            )}
+                            </div>
                           </div>
 
                           {/* Sağ Sütun - Adres ve Diğer Bilgiler */}
                           <div className="space-y-4">
                             <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2">Adres ve Diğer</h4>
                             
-                            {contact.address && (
-                              <div className="flex items-start space-x-3">
-                                <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
-                                <div className="space-y-2">
+                            <div className="flex items-start space-x-3">
+                              <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
+                              <div className="space-y-2 flex-1">
+                                <div>
+                                  <label className="text-xs font-semibold text-gray-500 uppercase">Adres</label>
+                                  <p className="text-sm text-gray-900">{contact.address || '-'}</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-2">
                                   <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase">Adres</label>
-                                    <p className="text-sm text-gray-900">{contact.address}</p>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
+                                    <p className="text-sm text-gray-900 font-medium">{contact.city || '-'}</p>
                                   </div>
-                                  
-                                  {(contact.country || contact.city) && (
-                                    <div className="flex items-center space-x-2">
-                                      {contact.city && (
-                                        <div>
-                                          <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
-                                          <p className="text-sm text-gray-900 font-medium">{contact.city}</p>
-                                        </div>
-                                      )}
-                                      {contact.country && (
-                                        <div>
-                                          <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
-                                          <p className="text-sm text-gray-900 font-medium">{contact.country}</p>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
+                                  <div>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
+                                    <p className="text-sm text-gray-900 font-medium">{contact.country || '-'}</p>
+                                  </div>
                                 </div>
                               </div>
-                            )}
+                            </div>
                             
-                            {!contact.address && (contact.country || contact.city) && (
-                              <div className="flex items-start space-x-3">
-                                <MapPin className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
-                                <div className="flex items-center space-x-2">
-                                  {contact.city && (
-                                    <div>
-                                      <label className="text-xs font-semibold text-gray-500 uppercase">Şehir</label>
-                                      <p className="text-sm text-gray-900 font-medium">{contact.city}</p>
-                                    </div>
-                                  )}
-                                  {contact.country && (
-                                    <div>
-                                      <label className="text-xs font-semibold text-gray-500 uppercase">Ülke</label>
-                                      <p className="text-sm text-gray-900 font-medium">{contact.country}</p>
-                                    </div>
-                                  )}
-                                </div>
+                            <div className="flex items-start space-x-3">
+                              <Briefcase className="h-5 w-5 text-teal-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Projede Rolü</label>
+                                <p className="text-sm text-gray-900 font-medium">{contact.project_role || '-'}</p>
                               </div>
-                            )}
+                            </div>
                             
-                            {contact.project_role && (
-                              <div className="flex items-start space-x-3">
-                                <Briefcase className="h-5 w-5 text-teal-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Projede Rolü</label>
-                                  <p className="text-sm text-gray-900 font-medium">{contact.project_role}</p>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {contact.tags && contact.tags.length > 0 && (
-                              <div className="flex items-start space-x-3">
-                                <Tag className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                                <div>
-                                  <label className="text-xs font-semibold text-gray-500 uppercase">Etiketler</label>
+                            <div className="flex items-start space-x-3">
+                              <Tag className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                              <div>
+                                <label className="text-xs font-semibold text-gray-500 uppercase">Etiketler</label>
+                                {contact.tags && contact.tags.length > 0 ? (
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {contact.tags.map((tag, tagIndex) => (
                                       <Badge key={tagIndex} className="bg-blue-100 text-blue-800 text-xs border-0">
@@ -500,9 +462,11 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                                       </Badge>
                                     ))}
                                   </div>
-                                </div>
+                                ) : (
+                                  <p className="text-sm text-gray-900 font-medium">-</p>
+                                )}
                               </div>
-                            )}
+                            </div>
                           </div>
                         </div>
                       </div>
