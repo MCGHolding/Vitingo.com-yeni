@@ -563,7 +563,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-3">
               <Building className="h-8 w-8 text-blue-600" />
-              <span>Tüm Müşteriler</span>
+              <span>Müşteriler</span>
             </h1>
             <p className="text-gray-600 mt-1">Sistemdeki tüm müşterilerin kapsamlı görünümü</p>
           </div>
