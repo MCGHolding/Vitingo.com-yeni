@@ -20,6 +20,29 @@ import {
   Edit,
   Eye
 } from 'lucide-react';
+// Code to Label mapping
+const CUSTOMER_TYPE_LABELS = {
+  'ajans': 'Ajans',
+  'firma': 'Firma',
+  'bireysel': 'Bireysel',
+  'vip_musteri': 'VIP Müşteri',
+  'kurumsal': 'Kurumsal',
+  'mevcut_musteri': 'Mevcut Müşteri'
+};
+
+const SECTOR_LABELS = {
+  'teknoloji': 'Teknoloji',
+  'finans': 'Finans',
+  'saglik': 'Sağlık',
+  'egitim': 'Eğitim',
+  'insaat': 'İnşaat',
+  'imalat': 'İmalat',
+  'lojistik': 'Lojistik',
+  'enerji': 'Enerji',
+  'fuar_stand_irketi': 'Fuar Stand Şirketi',
+  'fuar_stand_sirketi': 'Fuar Stand Şirketi',
+  'diger': 'Diğer'
+};
 
 export default function ViewCustomerPage({ customer, onBack, onEdit }) {
   if (!customer) return null;
