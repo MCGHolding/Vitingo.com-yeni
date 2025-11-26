@@ -3469,6 +3469,12 @@ async def create_customer(customer_data: dict):
             if not validate_swift_code(customer_data['swiftCode']):
                 raise HTTPException(status_code=400, detail="Geçersiz Swift kodu formatı")
         
+        # Add timestamps
+        from datetime import datetime, timezone
+        current_time = datetime.now(timezone.utc).isoformat()
+        customer_data['createdAt'] = current_time
+        customer_data['updatedAt'] = current_time
+        
         # Convert dict to Customer model
         customer = Customer(**customer_data)
         customer_dict = customer.dict()
