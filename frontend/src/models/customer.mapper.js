@@ -45,11 +45,11 @@ export function dbToForm(c) {
     customerType: codeToLabel(CUSTOMER_TYPES, c.relationshipType),
     sector: codeToLabel(SECTORS, c.sector),
     source: c.source || "",
-    status: c.status || "",
+    status: c.status || "active",
     isIndividual: !!c.isIndividual,
     isProspect: !!c.isProspect,
 
-    // Firma Bilgileri
+    // Firma Bilgileri - Backend'den gelen code değil, direkt value kullan
     company_short_name: safe(c.companyName, ""),
     company_title: safe(c.companyTitle, ""),
     customer_type_id: c.relationshipType || "mevcut_musteri",
@@ -70,7 +70,7 @@ export function dbToForm(c) {
     mobile: c.mobile || "",
     email: c.email || "",
 
-    // İletişim Kişisi Detayları
+    // İletişim Kişisi Detayları (legacy)
     contactPerson: c.contactPerson || "",
     contact_mobile: c.contactMobile || "",
     contact_email: c.contactEmail || "",
@@ -90,6 +90,9 @@ export function dbToForm(c) {
     // Diğer
     tags: Array.isArray(c.tags) ? c.tags : [],
     notes: c.notes || "",
+    
+    // Contacts array - Yetkili Kişiler
+    contacts: Array.isArray(c.contacts) ? c.contacts : []
   };
 
   console.log("FORM INIT:", formData);
