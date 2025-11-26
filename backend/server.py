@@ -459,6 +459,7 @@ class Customer(BaseModel):
     country: str = "TR"
     city: str = ""
     sector: str = ""
+    source: str = ""  # Kaynak
     notes: str = ""
     logo: Optional[str] = ""  # Allow None and default to empty string
     status: str = "active"
