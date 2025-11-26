@@ -31,7 +31,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [isLoading, setIsLoading] = useState(false);
   
   // Form data initialized from customer
-  const [formData, setFormData] = useState(dbToForm(customer));
+  const initialFormData = dbToForm(customer);
+  const [formData, setFormData] = useState(initialFormData);
   
   // Dropdown options
   const [customerTypes, setCustomerTypes] = useState([]);
@@ -39,21 +40,40 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [ulkeler, setUlkeler] = useState([]);
   const [sehirler, setSehirler] = useState([]);
   
-  // Tags and contacts
+  // Tags and contacts - Initialize from customer data
   const [currentTag, setCurrentTag] = useState('');
-  const [contacts, setContacts] = useState(customer.contacts || [{
-    full_name: '',
-    position: '',
-    mobile: '',
-    email: '',
-    address: '',
-    country: '',
-    city: '',
-    birthday: '',
-    gender: '',
-    project_role: '',
-    is_accounting_responsible: false
-  }]);
+  const [contacts, setContacts] = useState(() => {
+    // Use contacts from formData if available, otherwise from customer, otherwise empty array
+    const contactsData = initialFormData.contacts || customer.contacts || [];
+    if (contactsData.length === 0) {
+      return [{
+        full_name: '',
+        position: '',
+        mobile: '',
+        email: '',
+        address: '',
+        country: '',
+        city: '',
+        birthday: '',
+        gender: '',
+        project_role: '',
+        is_accounting_responsible: false
+      }];
+    }
+    return contactsData.map(contact => ({
+      full_name: contact.fullName || contact.full_name || '',
+      position: contact.position || '',
+      mobile: contact.mobile || '',
+      email: contact.email || '',
+      address: contact.address || '',
+      country: contact.country || '',
+      city: contact.city || '',
+      birthday: contact.birthday || '',
+      gender: contact.gender || '',
+      project_role: contact.project_role || '',
+      is_accounting_responsible: contact.is_accounting_responsible || false
+    }));
+  });
   
   // Load dropdown data
   useEffect(() => {
