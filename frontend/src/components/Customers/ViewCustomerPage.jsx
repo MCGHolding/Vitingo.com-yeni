@@ -61,6 +61,10 @@ const SECTOR_LABELS = {
 export default function ViewCustomerPage({ customer, onBack, onEdit }) {
   if (!customer) return null;
 
+  console.log('ViewCustomerPage - Customer data:', customer);
+  console.log('ViewCustomerPage - Contacts:', customer.contacts);
+  console.log('ViewCustomerPage - Contacts length:', customer.contacts ? customer.contacts.length : 'undefined');
+
   const formatPhone = (phone) => {
     if (!phone) return '-';
     return phone;
