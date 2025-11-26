@@ -2098,7 +2098,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
               />
             </div>
 
-            {/* Etiketler (Yetkili Kişilerden taşındı) */}
+            {/* Etiketler (Müşteri Etiketleri) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Etiketler
@@ -2111,19 +2111,15 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
-                      if (currentContactTag.trim() && contacts.length > 0) {
-                        handleAddContactTag(0); // İlk contact'e ekle
+                      if (currentContactTag.trim()) {
+                        handleAddCustomerTag();
                       }
                     }
                   }}
                 />
                 <Button 
                   type="button" 
-                  onClick={() => {
-                    if (contacts.length > 0) {
-                      handleAddContactTag(0); // İlk contact'e ekle
-                    }
-                  }} 
+                  onClick={handleAddCustomerTag} 
                   size="sm" 
                   variant="outline"
                 >
@@ -2131,16 +2127,16 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {contacts.length > 0 && (contacts[0].tags || []).map((tag, tagIndex) => (
+                {(formData.tags || []).map((tag, tagIndex) => (
                   <span
                     key={tagIndex}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800"
                   >
                     {tag}
                     <button
                       type="button"
-                      onClick={() => handleRemoveContactTag(0, tagIndex)}
-                      className="ml-2 text-green-600 hover:text-green-800"
+                      onClick={() => handleRemoveCustomerTag(tagIndex)}
+                      className="ml-2 text-orange-600 hover:text-orange-800"
                     >
                       <X className="h-3 w-3" />
                     </button>
