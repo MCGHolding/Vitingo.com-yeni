@@ -145,6 +145,22 @@ export function formToDb(v) {
     tags: Array.isArray(v.tags) ? v.tags : [],
     notes: v.notes || "",
     
+    // Contacts array - Yetkili Kişiler
+    contacts: Array.isArray(v.contacts) ? v.contacts.map(contact => ({
+      fullName: contact.full_name || contact.fullName || "",
+      position: contact.position || "",
+      email: contact.email || "",
+      mobile: contact.mobile || "",
+      address: contact.address || "",
+      city: contact.city || "",
+      country: contact.country || "",
+      birthday: contact.birthday || "",
+      gender: contact.gender || "",
+      project_role: contact.project_role || "",
+      tags: Array.isArray(contact.tags) ? contact.tags : [],
+      is_accounting_responsible: !!contact.is_accounting_responsible
+    })) : [],
+    
     // Meta
     isIndividual: !!v.isIndividual,
     isProspect: !!v.isProspect,

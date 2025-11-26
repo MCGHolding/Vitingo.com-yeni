@@ -1129,17 +1129,19 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
       
       console.log(`Creating ${isProspect ? 'lead' : 'customer'} via ${endpoint}`);
       
-      // Use mapper to convert form data to DB format including contact person details
+      // Use mapper to convert form data to DB format including contact person details and contacts array
       const dataToSave = formToDb({
         ...baseCustomerData,
         contactPerson: contacts[0]?.full_name || '',
-        // Contact person details from contacts array
+        // Contact person details from contacts array (legacy fields)
         contact_mobile: contacts[0]?.mobile || '',
         contact_email: contacts[0]?.email || '', 
         contact_position: contacts[0]?.position || '',
         contact_address: contacts[0]?.address || '',
         contact_country: contacts[0]?.country || '',
         contact_city: contacts[0]?.city || '',
+        // Pass full contacts array for new structure
+        contacts: contacts
       });
       
       // Always save to backend first (do NOT call onSave yet - wait for modal)
