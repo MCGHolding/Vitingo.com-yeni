@@ -836,7 +836,24 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                   `${randomLocation.country} National Bank`,
       bank_branch: `${randomLocation.city} ${randomLocation.area} Şubesi`,
       account_holder_name: randomCompanyName,
-      swift_code: emailDomain.substring(0, 4).toUpperCase() + randomLocation.country.substring(0, 2).toUpperCase() + Math.floor(Math.random() * 90 + 10),
+      swift_code: emailDomain.substring(0, 4).toUpperCase().padEnd(4, 'X') + 
+                  (randomLocation.country === 'Türkiye' ? 'TR' : 
+                   randomLocation.country === 'Almanya' ? 'DE' :
+                   randomLocation.country === 'İngiltere' ? 'GB' :
+                   randomLocation.country === 'Fransa' ? 'FR' :
+                   randomLocation.country === 'İspanya' ? 'ES' :
+                   randomLocation.country === 'İtalya' ? 'IT' :
+                   randomLocation.country === 'Hollanda' ? 'NL' :
+                   randomLocation.country === 'ABD' ? 'US' :
+                   randomLocation.country === 'Kanada' ? 'CA' :
+                   randomLocation.country === 'Avustralya' ? 'AU' :
+                   randomLocation.country === 'Birleşik Arap Emirlikleri' ? 'AE' :
+                   randomLocation.country === 'Singapur' ? 'SG' :
+                   randomLocation.country === 'Japonya' ? 'JP' :
+                   randomLocation.country === 'Güney Kore' ? 'KR' :
+                   randomLocation.country === 'Çin' ? 'CN' : 'TR') + 
+                  String.fromCharCode(65 + Math.floor(Math.random() * 26)) + 
+                  String.fromCharCode(65 + Math.floor(Math.random() * 26)),
       notes: `Test müşterisi - ${randomLocation.city}, ${randomLocation.country} lokasyonundan otomatik oluşturuldu`
     };
 
