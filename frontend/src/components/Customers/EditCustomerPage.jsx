@@ -30,10 +30,33 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Form data initialized from customer
-  const initialFormData = dbToForm(customer);
-  const [formData, setFormData] = useState(initialFormData);
-  const [originalFormData] = useState(initialFormData); // Keep original for comparison
+  // Form data initialized from customer - KEEP IT SIMPLE
+  const [formData, setFormData] = useState(() => {
+    return {
+      company_short_name: customer.companyName || '',
+      company_title: customer.companyTitle || '',
+      customer_type_id: customer.relationshipType || '',
+      specialty_id: customer.sector || '',
+      source: customer.source || '',
+      status: customer.status || 'active',
+      address: customer.address || '',
+      country: customer.country || '',
+      city: customer.city || '',
+      phone: customer.phone || '',
+      mobile: customer.mobile || '',
+      email: customer.email || '',
+      tax_office: customer.taxOffice || '',
+      tax_number: customer.taxNumber || '',
+      services: customer.services || [],
+      tags: customer.tags || [],
+      notes: customer.notes || ''
+    };
+  });
+  
+  const [originalFormData] = useState(JSON.stringify({
+    ...formData,
+    contacts: customer.contacts || []
+  }));
   
   // Modal state
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
@@ -47,8 +70,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Tags and contacts - Initialize from customer data
   const [currentTag, setCurrentTag] = useState('');
   const [contacts, setContacts] = useState(() => {
-    // Use contacts from formData if available, otherwise from customer, otherwise empty array
-    const contactsData = initialFormData.contacts || customer.contacts || [];
+    // Use contacts from customer
+    const contactsData = customer.contacts || [];
     if (contactsData.length === 0) {
       return [{
         full_name: '',
@@ -86,47 +109,8 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     loadUlkeler();
   }, []);
   
-  // Initialize form with proper data after dropdowns load
-  useEffect(() => {
-    if (customerTypes.length > 0 && customer.relationshipType) {
-      // Map backend code to customer type ID
-      const codeToNameMap = {
-        'bebek_irketi': 'Bebek Şirketi',
-        'baba_irketi': 'Baba Şirketi',
-        'anne_irketi': 'Anne Şirketi',
-        'ajans': 'Ajans',
-        'firma': 'Firma',
-        'holding_sirketi': 'Holding Şirketi',
-        'kardes_sirketi': 'Kardeş Şirketi',
-        'kuzen_sirketi': 'Kuzen Şirketi',
-      };
-      
-      const targetName = codeToNameMap[customer.relationshipType];
-      if (targetName) {
-        const matchingType = customerTypes.find(t => t.name === targetName);
-        if (matchingType && formData.customer_type_id !== matchingType.id) {
-          setFormData(prev => ({ ...prev, customer_type_id: matchingType.id }));
-        }
-      }
-    }
-  }, [customerTypes, customer.relationshipType]);
-  
-  useEffect(() => {
-    if (sectors.length > 0 && customer.sector) {
-      // Map backend code to sector ID - try exact match first
-      let matchingSector = sectors.find(s => s.name.toLowerCase() === customer.sector.toLowerCase());
-      
-      if (!matchingSector) {
-        // Try capitalize
-        const capitalized = customer.sector.charAt(0).toUpperCase() + customer.sector.slice(1);
-        matchingSector = sectors.find(s => s.name === capitalized);
-      }
-      
-      if (matchingSector && formData.specialty_id !== matchingSector.id) {
-        setFormData(prev => ({ ...prev, specialty_id: matchingSector.id }));
-      }
-    }
-  }, [sectors, customer.sector]);
+  // Don't use auto-mapping - let form show original values
+  // User will select from dropdown if needed
   
   const loadCustomerTypes = async () => {
     try {
@@ -187,31 +171,31 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     });
   };
   
-  // Check if form has changes
+  // Check if form has changes - Simple string comparison
   const hasChanges = () => {
-    // Don't check on first render
-    if (!originalFormData) return false;
-    
-    // Simple comparison - check key fields only
-    const keyFields = ['company_short_name', 'company_title', 'phone', 'email', 'address', 'city', 'country'];
-    
-    for (const field of keyFields) {
-      if (formData[field] !== originalFormData[field]) {
-        return true;
-      }
+    try {
+      // Create clean objects for comparison
+      const currentData = {
+        ...formData,
+        tags: formData.tags || [],
+        contacts: contacts
+      };
+      
+      const originalData = {
+        ...originalFormData,
+        tags: originalFormData.tags || [],
+        contacts: originalFormData.contacts || []
+      };
+      
+      // Compare as strings
+      const currentStr = JSON.stringify(currentData);
+      const originalStr = JSON.stringify(originalData);
+      
+      return currentStr !== originalStr;
+    } catch (error) {
+      console.error('Error checking changes:', error);
+      return false;
     }
-    
-    // Check tags
-    const currentTags = JSON.stringify(formData.tags || []);
-    const originalTags = JSON.stringify(originalFormData.tags || []);
-    if (currentTags !== originalTags) return true;
-    
-    // Check contacts count
-    if (contacts.length !== (originalFormData.contacts || []).length) {
-      return true;
-    }
-    
-    return false;
   };
   
   // Handle back button click
