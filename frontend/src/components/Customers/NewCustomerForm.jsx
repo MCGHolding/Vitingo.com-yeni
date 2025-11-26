@@ -690,6 +690,18 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     }));
   };
 
+  const handleAddProjectRole = () => {
+    if (newRole.trim() && !projectRoles.includes(newRole.trim())) {
+      setProjectRoles(prev => [...prev, newRole.trim()]);
+      setNewRole('');
+      setShowRoleModal(false);
+      toast({
+        title: "Başarılı",
+        description: "Yeni proje rolü eklendi"
+      });
+    }
+  };
+
   const handleContactChange = (index, field, value) => {
     const updatedContacts = [...contacts];
     updatedContacts[index] = {
