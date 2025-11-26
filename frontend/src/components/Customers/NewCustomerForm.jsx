@@ -723,6 +723,30 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
     }
   };
 
+  const handleAddSource = () => {
+    if (newSource.trim() && !sources.includes(newSource.trim())) {
+      setSources(prev => [...prev, newSource.trim()]);
+      setNewSource('');
+      setShowSourceModal(false);
+      toast({
+        title: "Başarılı",
+        description: "Yeni kaynak eklendi"
+      });
+    }
+  };
+
+  const handleAddStatus = () => {
+    if (newStatus.trim() && !statuses.includes(newStatus.trim())) {
+      setStatuses(prev => [...prev, newStatus.trim()]);
+      setNewStatus('');
+      setShowStatusModal(false);
+      toast({
+        title: "Başarılı",
+        description: "Yeni durum eklendi"
+      });
+    }
+  };
+
   const handleContactChange = (index, field, value) => {
     const updatedContacts = [...contacts];
     updatedContacts[index] = {
