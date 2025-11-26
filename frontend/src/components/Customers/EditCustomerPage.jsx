@@ -340,7 +340,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                       <SelectValue placeholder="Ülke seçiniz..." />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      {ulkeler.map(ulke => (
+                      {Array.isArray(ulkeler) && ulkeler.map(ulke => (
                         <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
                       ))}
                     </SelectContent>
@@ -540,7 +540,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                               <SelectValue placeholder="Ülke seçiniz..." />
                             </SelectTrigger>
                             <SelectContent className="max-h-60">
-                              {ulkeler.map(ulke => (
+                              {Array.isArray(ulkeler) && ulkeler.map(ulke => (
                                 <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
                               ))}
                             </SelectContent>
