@@ -461,7 +461,19 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )) : (
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
+                  <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
+                    <User className="h-6 w-6 text-purple-600" />
+                    <span>Yetkili Kişiler</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <p className="text-gray-500 text-center py-4">Yetkili kişi bilgisi bulunmuyor.</p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Tags - Always show */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
