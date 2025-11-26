@@ -161,6 +161,27 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
               </CardContent>
             </Card>
 
+            {/* Services and Products */}
+            {customer.services && customer.services.length > 0 && (
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 border-b">
+                  <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
+                    <Briefcase className="h-6 w-6 text-orange-600" />
+                    <span>Ürün ve Servisler</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {customer.services.map((service, index) => (
+                      <Badge key={index} className="bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 px-3 py-1">
+                        {service}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Address Information */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b">
