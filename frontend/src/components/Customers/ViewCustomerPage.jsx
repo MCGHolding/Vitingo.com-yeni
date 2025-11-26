@@ -116,7 +116,7 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
           {/* Left Column */}
           <div className="space-y-6">
             
-            {/* Basic Information */}
+            {/* Basic Information - Yeniden Tasarlandı */}
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                 <CardTitle className="text-xl font-bold text-gray-800 flex items-center space-x-2">
@@ -125,42 +125,68 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri Adı</label>
-                    <p className="text-xl font-bold text-gray-900 mt-1">{customer.companyName || customer.name || customer.fullName || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Firma Ünvanı</label>
-                    <p className="text-base text-gray-700 mt-1">{customer.companyTitle || customer.company_title || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Müşteri Türü</label>
-                    <p className="text-base text-gray-700 mt-1">
-                      {CUSTOMER_TYPE_LABELS[customer.relationshipType] || 
-                       customer.relationshipType?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
-                       customer.customerType || 
-                       customer.customer_type || 
-                       '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Sektör</label>
-                    <p className="text-base text-gray-700 mt-1">
-                      {SECTOR_LABELS[customer.sector] || 
-                       customer.sector?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
-                       customer.specialty || 
-                       '-'}
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Kaynak</label>
-                      <p className="text-base text-gray-700 mt-1">{customer.source || '-'}</p>
+                {/* Firma Adı ve Ünvanı */}
+                <div className="mb-6 pb-4 border-b">
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {customer.companyName || customer.name || customer.fullName || '-'}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {customer.companyTitle || customer.company_title || 'Ünvan belirtilmemiş'}
+                  </p>
+                </div>
+
+                {/* İki Sütun Layout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Sol Sütun */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">Kategori Bilgileri</h4>
+                    
+                    <div className="flex items-start space-x-3">
+                      <Users className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase">Müşteri Türü</label>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {CUSTOMER_TYPE_LABELS[customer.relationshipType] || 
+                           customer.relationshipType?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
+                           customer.customerType || 
+                           customer.customer_type || 
+                           '-'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Durum</label>
-                      <p className="text-base text-gray-700 mt-1">{customer.status || '-'}</p>
+                    
+                    <div className="flex items-start space-x-3">
+                      <Briefcase className="h-5 w-5 text-indigo-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase">Sektör</label>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {SECTOR_LABELS[customer.sector] || 
+                           customer.sector?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 
+                           customer.specialty || 
+                           '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sağ Sütun */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide border-b pb-2 mb-4">Durum ve Kaynak</h4>
+                    
+                    <div className="flex items-start space-x-3">
+                      <Tag className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase">Kaynak</label>
+                        <p className="text-sm text-gray-900 font-medium">{customer.source || '-'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <CheckCircle className="h-5 w-5 text-emerald-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase">Durum</label>
+                        <p className="text-sm text-gray-900 font-medium">{customer.status || '-'}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
