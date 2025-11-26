@@ -1656,7 +1656,7 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 </div>
 
                 {/* Address and Location Information */}
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <MapPin className="inline w-4 h-4 mr-1" />
                     Adres
@@ -1666,19 +1666,6 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                     onChange={(e) => handleContactChange(contactIndex, 'address', e.target.value)}
                     placeholder="Yetkili kişi adresi (opsiyonel)..."
                     className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                {/* Birthday (Opsiyonel) */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    🎂 Doğum Günü
-                  </label>
-                  <Input
-                    type="date"
-                    value={contact.birthday || ''}
-                    onChange={(e) => handleContactChange(contactIndex, 'birthday', e.target.value)}
-                    placeholder="Doğum günü seçin..."
                   />
                 </div>
 
