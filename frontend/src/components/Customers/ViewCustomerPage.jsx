@@ -191,6 +191,32 @@ export default function ViewCustomerPage({ customer, onBack, onEdit }) {
                     </div>
                   </div>
                 </div>
+
+                {/* Tarih Bilgileri - Alt kısım */}
+                {(customer.createdAt || customer.updatedAt) && (
+                  <div className="mt-6 pt-4 border-t">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {customer.createdAt && (
+                        <div className="flex items-start space-x-3">
+                          <Calendar className="h-5 w-5 text-gray-500 mt-1 flex-shrink-0" />
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Oluşturulma Tarihi</label>
+                            <p className="text-sm text-gray-700 font-medium">{formatDate(customer.createdAt)}</p>
+                          </div>
+                        </div>
+                      )}
+                      {customer.updatedAt && (
+                        <div className="flex items-start space-x-3">
+                          <Calendar className="h-5 w-5 text-gray-500 mt-1 flex-shrink-0" />
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase">Son Güncelleme</label>
+                            <p className="text-sm text-gray-700 font-medium">{formatDate(customer.updatedAt)}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
