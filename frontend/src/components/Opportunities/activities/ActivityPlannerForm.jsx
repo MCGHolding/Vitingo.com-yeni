@@ -321,9 +321,7 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                           {type.label}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {type.value === 'email' && 'Müşteriye e-posta gönderme hatırlatıcısı'}
-                          {type.value === 'phone' && 'Müşteri ile telefon görüşmesi hatırlatıcısı'}
-                          {type.value === 'proposal' && 'Teklif hazırlama ve gönderme hatırlatıcısı'}
+                          {type.description}
                         </p>
                       </div>
                     </div>
