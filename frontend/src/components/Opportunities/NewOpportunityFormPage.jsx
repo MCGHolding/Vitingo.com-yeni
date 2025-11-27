@@ -1239,7 +1239,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stand Büyüklüğü <span className="text-red-500">*</span>
+                    Stand Büyüklüğü
                   </label>
                   <div className="flex gap-2">
                     <Input
