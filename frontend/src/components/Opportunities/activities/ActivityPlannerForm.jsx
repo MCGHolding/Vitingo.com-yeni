@@ -459,24 +459,21 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
 
                 {formData.has_reminder && (
                   <>
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">
-                        Hatırlatıcı Zamanı
+                    <div className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                      <label className="text-xs font-medium text-gray-700 mb-1 block">
+                        ⏱️ Zaman
                       </label>
                       <Select 
                         value={formData.reminder_minutes} 
                         onValueChange={(value) => handleInputChange('reminder_minutes', value)}
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Hatırlatıcı zamanını seçin" />
+                        <SelectTrigger className="h-8 text-sm">
+                          <SelectValue placeholder="Seçin" />
                         </SelectTrigger>
                         <SelectContent>
                           {REMINDER_OPTIONS.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-lg">{option.icon}</span>
-                                <span>{option.label}</span>
-                              </div>
+                              <span className="text-sm">{option.icon} {option.label}</span>
                             </SelectItem>
                           ))}
                         </SelectContent>
