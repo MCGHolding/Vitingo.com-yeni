@@ -515,7 +515,19 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         });
       }
 
-      // Add additional contacts if they exist (assuming they might be in an array)
+      // Add contacts from customer.contacts array (backend format)
+      if (customer.contacts && Array.isArray(customer.contacts)) {
+        customer.contacts.forEach(contact => {
+          contacts.push({
+            name: contact.fullName || contact.name || '',
+            title: contact.position || contact.title || 'İletişim Kişisi',
+            email: contact.email || '',
+            phone: contact.mobile || contact.phone || ''
+          });
+        });
+      }
+      
+      // Also check for additionalContacts (alternative format)
       if (customer.additionalContacts && Array.isArray(customer.additionalContacts)) {
         customer.additionalContacts.forEach(contact => {
           contacts.push({
@@ -528,7 +540,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
       }
 
       setAvailableContacts(contacts);
-      console.log('🔄 Available contacts for', customerName, ':', contacts);
+      console.log('🔄 Available contacts for', customerName, ':', contacts.length, 'contacts found');
     } else {
       setAvailableContacts([]);
     }
