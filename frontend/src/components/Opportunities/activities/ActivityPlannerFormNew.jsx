@@ -132,6 +132,7 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         type: 'activity_planner',
         title: formData.title,
         description: formData.description || '',
+        priority: formData.priority,
         data: {
           activity_type: selectedType,
           custom_activity_name: selectedType === 'custom' ? formData.customName : null,
