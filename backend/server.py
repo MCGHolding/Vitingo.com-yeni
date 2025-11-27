@@ -1923,6 +1923,50 @@ async def delete_fair_center(center_id: str):
         logger.error(f"Error deleting fair center: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== LIBRARY POSITIONS ENDPOINTS ====================
+
+@api_router.get("/library/positions")
+async def get_positions():
+    """Get all positions from library"""
+    try:
+        positions = await db.library.find({"category": "position"}).to_list(length=None)
+        return positions
+    except Exception as e:
+        logger.error(f"Error getting positions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/library/positions")
+async def create_position(position_data: dict):
+    """Create a new position in library"""
+    try:
+        position = {
+            "_id": ObjectId(),
+            "id": str(uuid.uuid4()),
+            "category": "position",
+            "name": position_data.get("name"),
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.library.insert_one(position)
+        return {"success": True, "message": "Position created", "position": position}
+    except Exception as e:
+        logger.error(f"Error creating position: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/library/positions/{position_id}")
+async def delete_position(position_id: str):
+    """Delete a position from library"""
+    try:
+        result = await db.library.delete_one({"id": position_id, "category": "position"})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Position not found")
+        return {"success": True, "message": "Position deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting position: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============== END LIBRARY ENDPOINTS ==============
 
 # Import Data Endpoints
