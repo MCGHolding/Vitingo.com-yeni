@@ -151,6 +151,19 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
     }));
   };
 
+  const handleReminderMethodToggle = (method) => {
+    setFormData(prev => {
+      const methods = prev.reminder_methods.includes(method)
+        ? prev.reminder_methods.filter(m => m !== method)
+        : [...prev.reminder_methods, method];
+      
+      return {
+        ...prev,
+        reminder_methods: methods
+      };
+    });
+  };
+
   const getActivityTitle = () => {
     if (!formData.activity_type) return '';
     
