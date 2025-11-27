@@ -120,23 +120,26 @@ export default function DesignVersionsPage() {
   };
 
   const handleCreateVersion = async () => {
-    if (!versionName.trim()) {
-      alert('Lütfen versiyon adı girin');
-      return;
-    }
-    
     if (uploadedFiles.length === 0) {
       alert('Lütfen en az bir dosya yükleyin');
       return;
     }
     
     try {
+      // Calculate next version number
+      const nextVersionNumber = versions.length > 0 
+        ? Math.max(...versions.map(v => v.versionNumber)) + 1 
+        : 1;
+      
+      // Auto-generate version name
+      const autoVersionName = `Versiyon ${nextVersionNumber}`;
+      
       const response = await fetch(`${API_URL}/api/customers/${customerId}/designs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerId,
-          versionName,
+          versionName: autoVersionName,
           files: uploadedFiles,
           notes
         })
@@ -148,7 +151,6 @@ export default function DesignVersionsPage() {
       }
       
       // Reset form
-      setVersionName('');
       setNotes('');
       setUploadedFiles([]);
       
