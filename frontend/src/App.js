@@ -1092,6 +1092,9 @@ const Dashboard = () => {
     
     console.log('New opportunity saved:', newOpportunity);
     
+    // Reload opportunities to ensure fresh data from API
+    await loadOpportunities();
+    
     // Navigate back to dashboard (success modal handled by form)
     setCurrentView('dashboard');
   };
