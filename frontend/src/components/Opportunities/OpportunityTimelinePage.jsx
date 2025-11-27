@@ -640,6 +640,12 @@ export default function OpportunityTimelinePage({
       return;
     }
     
+    // Special handling for design upload - navigate to design versions page
+    if (activityType === 'design_upload' && customerId) {
+      navigate(`/customers/${customerId}/designs`);
+      return;
+    }
+    
     setActiveModal(activityType);
     setModalData({
       opportunityId,
