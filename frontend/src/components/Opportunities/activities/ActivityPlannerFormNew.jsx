@@ -203,9 +203,20 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
       {/* Aktivite Tipi Grid - Responsive */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Aktivite Tipi
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Aktivite Tipi
+          </label>
+          <button
+            type="button"
+            onClick={fillTestData}
+            className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all shadow-sm flex items-center gap-1.5"
+          >
+            <span>⚡</span>
+            <span className="hidden sm:inline">Test Verisi Doldur</span>
+            <span className="sm:hidden">Test</span>
+          </button>
+        </div>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
           {ACTIVITY_TYPES.map(type => (
             <button
