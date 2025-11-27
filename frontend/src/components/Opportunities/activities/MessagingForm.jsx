@@ -222,16 +222,11 @@ export default function MessagingForm({ opportunityId, opportunityTitle, onSave,
       </div>
 
       {/* Messages Container */}
-      <Card className="h-[500px] flex flex-col">
-        <CardHeader className="bg-gradient-to-r from-pink-500 to-purple-600 text-white flex-shrink-0">
+      <Card className="h-[450px] flex flex-col border shadow-sm">
+        <CardHeader className="bg-gradient-to-r from-pink-500 to-purple-500 text-white flex-shrink-0 py-2.5 px-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <MessageSquare className="h-5 w-5" />
-              <span>Mesajlaşma</span>
-            </CardTitle>
-            <div className="text-sm opacity-90">
-              Son görülme: 2 dakika önce
-            </div>
+            <div className="text-sm font-medium">Ahmet Yılmaz</div>
+            <div className="text-xs opacity-80">Son görülme: 2 dk önce</div>
           </div>
         </CardHeader>
 
