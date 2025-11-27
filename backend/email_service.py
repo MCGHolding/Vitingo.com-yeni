@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
-        # Get SendGrid API key from environment or use direct key for testing
-        self.api_key = os.environ.get('SENDGRID_API_KEY') or "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"
+        # Get SendGrid API key from environment
+        self.api_key = os.environ.get('SENDGRID_API_KEY')
         if not self.api_key:
             logger.warning("SENDGRID_API_KEY not found in environment variables")
         else:
