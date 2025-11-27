@@ -80,28 +80,32 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         description: 'Proje ilerlemesi hakkında bilgi almak için arama yap',
         date: today.toISOString().split('T')[0], // Bugün
         time: '10:30',
-        customName: ''
+        customName: '',
+        priority: 'high'
       },
       proposal: {
         title: 'Fiyat teklifi hazırla',
         description: 'Stand kurulumu için detaylı fiyat teklifi oluştur ve gönder',
         date: new Date(today.getTime() + 259200000).toISOString().split('T')[0], // 3 gün sonra
         time: '15:00',
-        customName: ''
+        customName: '',
+        priority: 'normal'
       },
       design: {
         title: 'Stand tasarımı paylaş',
         description: '3D tasarım görselleri hazırla ve müşteri ile paylaş',
         date: new Date(today.getTime() + 604800000).toISOString().split('T')[0], // 1 hafta sonra
         time: '11:00',
-        customName: ''
+        customName: '',
+        priority: 'normal'
       },
       custom: {
         title: 'Toplantı organize et',
         description: 'Proje kickoff toplantısı için tarih ve yer ayarla',
         date: new Date(today.getTime() + 86400000).toISOString().split('T')[0], // Yarın
         time: '09:00',
-        customName: 'Proje Başlangıç Toplantısı'
+        customName: 'Proje Başlangıç Toplantısı',
+        priority: 'high'
       }
     };
 
