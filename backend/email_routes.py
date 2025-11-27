@@ -400,7 +400,9 @@ async def handle_inbound_email(request: Request):
         customer_id = None
         all_recipients = f"{to_emails},{cc_emails}"
         
-        match = re.search(rf'customer_([a-f0-9\-]+)@{INBOUND_DOMAIN.replace(".", r"\.")}', all_recipients)
+        escaped_domain = INBOUND_DOMAIN.replace(".", r"\.")
+        pattern = rf'customer_([a-f0-9\-]+)@{escaped_domain}'
+        match = re.search(pattern, all_recipients)
         if match:
             customer_id = match.group(1)
         
