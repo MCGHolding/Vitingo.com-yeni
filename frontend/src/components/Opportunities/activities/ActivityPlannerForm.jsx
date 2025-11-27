@@ -117,31 +117,53 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
     setSaving(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const activityTitle = formData.title || getActivityTitle();
+      const scheduledDateTime = `${formData.scheduled_date}T${formData.scheduled_time}:00`;
       
-      const activityPlan = {
+      // Prepare activity data for backend
+      const activityData = {
         type: 'activity_planner',
-        opportunity_id: opportunityId,
+        title: activityTitle,
+        description: formData.description || `${getActivityTitle()} - ${opportunityTitle}`,
         data: {
-          ...formData,
-          title: formData.title || getActivityTitle(),
-          scheduled_datetime: `${formData.scheduled_date}T${formData.scheduled_time}:00`
-        },
-        created_at: new Date().toISOString(),
-        id: Date.now().toString()
+          activity_type: formData.activity_type,
+          scheduled_datetime: scheduledDateTime,
+          has_reminder: formData.has_reminder,
+          reminder_minutes: formData.has_reminder ? parseInt(formData.reminder_minutes) : null,
+          notes: formData.notes,
+          status: 'planned'
+        }
       };
 
+      // Make API call to backend
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(activityData)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('API isteği başarısız oldu');
+      }
+
+      const savedActivity = await response.json();
+
       toast({
-        title: "Başarılı",
-        description: "Aktivite başarıyla planlandı",
+        title: "✅ Başarılı",
+        description: `${activityTitle} başarıyla planlandı`,
       });
 
-      onSave(activityPlan);
+      onSave(savedActivity);
     } catch (error) {
+      console.error('Activity save error:', error);
       toast({
-        title: "Hata",
-        description: "Aktivite planlanırken hata oluştu",
+        title: "❌ Hata",
+        description: "Aktivite planlanırken bir hata oluştu. Lütfen tekrar deneyin.",
         variant: "destructive"
       });
     } finally {
