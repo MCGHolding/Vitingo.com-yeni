@@ -462,6 +462,57 @@ export default function DesignUploadForm({ opportunityId, opportunityTitle, onSa
           )}
         </Button>
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && previewFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+              <div className="flex items-center space-x-3">
+                <Eye className="h-5 w-5 text-blue-600" />
+                <div>
+                  <h3 className="font-semibold text-gray-900">{previewFile.name}</h3>
+                  <p className="text-xs text-gray-500">{previewFile.size}</p>
+                </div>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => {
+                  setShowPreview(false);
+                  setPreviewFile(null);
+                }}
+                className="h-8 w-8 p-0"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="p-6 overflow-auto max-h-[calc(90vh-100px)] bg-gray-100 flex items-center justify-center">
+              {previewFile.type === 'image' ? (
+                <img 
+                  src={previewFile.url || (previewFile.file ? URL.createObjectURL(previewFile.file) : '')} 
+                  alt={previewFile.name}
+                  className="max-w-full max-h-full rounded shadow-lg"
+                />
+              ) : previewFile.type === 'pdf' ? (
+                <div className="w-full h-[600px] bg-white rounded shadow-lg">
+                  <iframe 
+                    src={previewFile.url || (previewFile.file ? URL.createObjectURL(previewFile.file) : '')}
+                    className="w-full h-full"
+                    title={previewFile.name}
+                  />
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">Bu dosya türü için önizleme desteklenmiyor</p>
+                  <p className="text-sm text-gray-500 mt-2">{previewFile.name}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
