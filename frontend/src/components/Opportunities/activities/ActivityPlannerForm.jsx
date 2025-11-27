@@ -15,7 +15,10 @@ import {
   X,
   AlertTriangle,
   Plus,
-  Minus
+  Minus,
+  Upload,
+  MessageSquare,
+  Check
 } from 'lucide-react';
 import { useToast } from '../../../hooks/use-toast';
 
