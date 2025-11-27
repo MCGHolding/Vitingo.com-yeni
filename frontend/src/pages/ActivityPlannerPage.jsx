@@ -56,12 +56,33 @@ export default function ActivityPlannerPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Activity Creation Form */}
         <ActivityPlannerFormNew
           opportunityId={opportunityId || customerId}
           opportunityTitle="Müşteri"
           onSave={handleSave}
           onCancel={handleCancel}
         />
+
+        {/* Divider */}
+        <div className="border-t border-gray-200 my-8" />
+
+        {/* Activity List */}
+        <ActivityList
+          opportunityId={opportunityId || customerId}
+          refreshTrigger={refreshTrigger}
+          onEdit={handleEdit}
+        />
+
+        {/* Edit Modal */}
+        {editingActivity && (
+          <EditActivityModal
+            activity={editingActivity}
+            opportunityId={opportunityId || customerId}
+            onClose={() => setEditingActivity(null)}
+            onSaved={handleEditSaved}
+          />
+        )}
       </div>
     </div>
   );
