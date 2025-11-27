@@ -47,14 +47,33 @@ const ACTIVITY_TYPES = [
 ];
 
 const REMINDER_OPTIONS = [
-  { value: '15', label: '15 dakika önce' },
-  { value: '30', label: '30 dakika önce' },
-  { value: '60', label: '1 saat önce' },
-  { value: '120', label: '2 saat önce' },
-  { value: '240', label: '4 saat önce' },
-  { value: '1440', label: '1 gün önce' },
-  { value: '2880', label: '2 gün önce' },
-  { value: '10080', label: '1 hafta önce' }
+  { value: '15', label: '15 dakika önce', icon: '⏰' },
+  { value: '30', label: '30 dakika önce', icon: '⏱️' },
+  { value: '60', label: '1 saat önce', icon: '🕐' },
+  { value: '120', label: '2 saat önce', icon: '🕑' },
+  { value: '240', label: '4 saat önce', icon: '🕓' },
+  { value: '1440', label: '1 gün önce', icon: '📅' },
+  { value: '2880', label: '2 gün önce', icon: '📆' },
+  { value: '10080', label: '1 hafta önce', icon: '📋' }
+];
+
+const QUICK_DATE_OPTIONS = [
+  { label: 'Bugün', getValue: () => new Date().toISOString().split('T')[0] },
+  { label: 'Yarın', getValue: () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  }},
+  { label: '3 Gün Sonra', getValue: () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 3);
+    return date.toISOString().split('T')[0];
+  }},
+  { label: '1 Hafta Sonra', getValue: () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().split('T')[0];
+  }}
 ];
 
 export default function ActivityPlannerForm({ opportunityId, opportunityTitle, onSave, onCancel }) {
