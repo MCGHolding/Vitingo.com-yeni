@@ -1021,7 +1021,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Final Countries and Cities Seed Data Testing"
+    - "Design Version Management Page - Full Feature Testing"
   stuck_tasks:
     - "Final Countries and Cities Seed Data Testing"
   completed_tests:
