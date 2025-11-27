@@ -71,6 +71,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   
   // Tags and contacts - Initialize from customer data
   const [currentTag, setCurrentTag] = useState('');
+  const [currentService, setCurrentService] = useState('');
   const [contacts, setContacts] = useState(() => {
     // Use contacts from customer
     const contactsData = customer.contacts || [];
