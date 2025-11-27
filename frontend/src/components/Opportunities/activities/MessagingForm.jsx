@@ -199,33 +199,26 @@ export default function MessagingForm({ opportunityId, opportunityTitle, onSave,
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4 max-w-4xl mx-auto">
       
-      {/* Header Info */}
-      <Card className="bg-pink-50 border-pink-200">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <MessageSquare className="h-8 w-8 text-pink-600" />
-              <div>
-                <h3 className="font-semibold text-pink-900">Müşteri Mesajlaşması</h3>
-                <p className="text-sm text-pink-700">Ahmet Yılmaz ile anlık mesajlaşma</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" className="border-pink-300">
-                <Phone className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="border-pink-300">
-                <Video className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="border-pink-300">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </div>
+      {/* Header with Close Button */}
+      <div className="flex items-center justify-between pb-3 border-b">
+        <div className="flex items-center space-x-2">
+          <MessageSquare className="h-5 w-5 text-pink-600" />
+          <div>
+            <h3 className="font-semibold text-gray-900 text-sm">Müşteri Mesajlaşması</h3>
+            <p className="text-xs text-gray-500">Ahmet Yılmaz ile mesajlaşma</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onCancel}
+          className="h-8 w-8 p-0 hover:bg-gray-100"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
 
       {/* Messages Container */}
       <Card className="h-[500px] flex flex-col">
