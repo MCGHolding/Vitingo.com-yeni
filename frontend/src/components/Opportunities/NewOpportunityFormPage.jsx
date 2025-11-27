@@ -73,10 +73,10 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [dynamicStages, setDynamicStages] = useState([]);
   const [projectTypes, setProjectTypes] = useState([]);
   
-  // Countries and cities from library (SAME AS NewCustomerForm)
-  const [ulkeler, setUlkeler] = useState([]);
-  const [sehirler, setSehirler] = useState([]);
-  const [tumUlkeler, setTumUlkeler] = useState([]);
+  // Countries and cities from react-country-state-city library
+  const [countriesList, setCountriesList] = useState([]);
+  const [statesList, setStatesList] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
   
   // Realistic test data samples
   const testDataSamples = {
