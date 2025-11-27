@@ -33,7 +33,8 @@ import {
   Phone,
   MapPin,
   MessageCircle,
-  Activity
+  Activity,
+  Upload
 } from 'lucide-react';
 // import { customerTagColors } from '../../mock/customersData'; // Removed - using inline colors
 import DeleteCustomerModal from './DeleteCustomerModal';
