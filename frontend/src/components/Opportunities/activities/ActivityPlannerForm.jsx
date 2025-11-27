@@ -78,6 +78,27 @@ const REMINDER_OPTIONS = [
   { value: '10080', label: '1 hafta önce', icon: '📋' }
 ];
 
+const REMINDER_METHODS = [
+  { 
+    value: 'email', 
+    label: 'E-posta', 
+    icon: Mail,
+    description: 'E-posta ile hatırlatıcı gönder'
+  },
+  { 
+    value: 'sms', 
+    label: 'SMS', 
+    icon: MessageSquare,
+    description: 'SMS ile hatırlatıcı gönder'
+  },
+  { 
+    value: 'push', 
+    label: 'Sistem Uyarısı', 
+    icon: Bell,
+    description: 'Uygulama içi bildirim gönder'
+  }
+];
+
 const QUICK_DATE_OPTIONS = [
   { label: 'Bugün', getValue: () => new Date().toISOString().split('T')[0] },
   { label: 'Yarın', getValue: () => {
