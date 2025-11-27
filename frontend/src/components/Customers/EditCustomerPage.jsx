@@ -674,16 +674,16 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </label>
                 <div className="flex space-x-2 mb-2">
                   <Input
-                    value={currentTag}
-                    onChange={(e) => setCurrentTag(e.target.value)}
+                    value={currentService}
+                    onChange={(e) => setCurrentService(e.target.value)}
                     placeholder="Ürün veya servis girin..."
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
-                        if (currentTag.trim()) {
+                        if (currentService.trim()) {
                           const currentServices = Array.isArray(formData.services) ? formData.services : [];
-                          handleInputChange('services', [...currentServices, currentTag.trim()]);
-                          setCurrentTag('');
+                          handleInputChange('services', [...currentServices, currentService.trim()]);
+                          setCurrentService('');
                         }
                       }
                     }}
@@ -691,10 +691,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                   <Button 
                     type="button" 
                     onClick={() => {
-                      if (currentTag.trim()) {
+                      if (currentService.trim()) {
                         const currentServices = Array.isArray(formData.services) ? formData.services : [];
-                        handleInputChange('services', [...currentServices, currentTag.trim()]);
-                        setCurrentTag('');
+                        handleInputChange('services', [...currentServices, currentService.trim()]);
+                        setCurrentService('');
                       }
                     }} 
                     size="sm" 
