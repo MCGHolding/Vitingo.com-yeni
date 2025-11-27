@@ -11787,10 +11787,12 @@ async def delete_opportunity_note(opportunity_id: str, note_id: str):
 async def get_opportunity_activities(opportunity_id: str):
     """Get all activities for a specific opportunity"""
     try:
+        logger.info(f"🟢 [BACKEND] GET activities for opportunity_id: {opportunity_id}")
         activities = await db.opportunity_activities.find({"opportunity_id": opportunity_id}).sort("created_at", -1).to_list(length=None)
+        logger.info(f"🟢 [BACKEND] Found {len(activities)} activities")
         return [OpportunityActivity(**activity) for activity in activities]
     except Exception as e:
-        logger.error(f"Error getting opportunity activities: {str(e)}")
+        logger.error(f"❌ [BACKEND] Error getting opportunity activities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/opportunities/{opportunity_id}/activities", response_model=OpportunityActivity)
