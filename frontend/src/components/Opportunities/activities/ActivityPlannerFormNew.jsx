@@ -37,9 +37,18 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
     description: '',
     date: '',
     time: '',
-    reminder: true,
     customName: '',
-    priority: 'normal'
+    priority: 'normal',
+    reminderEnabled: true,
+    reminderSettings: {
+      timing: '1hour',
+      customMinutes: null,
+      channels: {
+        inApp: true,
+        email: false,
+        sms: false
+      }
+    }
   });
   const [loading, setLoading] = useState(false);
 
