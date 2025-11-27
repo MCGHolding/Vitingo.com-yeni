@@ -3154,8 +3154,10 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Enhanced Test Verisi Doldur Button Functionality"
+    - "Borusan İletişim Kişileri - Stabilizasyon Testi"
   stuck_tasks: []
+  completed_tests:
+    - "Enhanced Test Verisi Doldur Button Functionality"
   test_all: false
   test_priority: "high_first"
 
