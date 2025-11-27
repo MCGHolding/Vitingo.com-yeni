@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useToast } from '../../../hooks/use-toast';
+import ReminderSettings from './ReminderSettings';
 
 const ACTIVITY_TYPES = [
   { id: 'email', icon: '📧', label: 'E-posta', color: 'blue' },
