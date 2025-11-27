@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
 import FileUpload from '../ui/FileUpload';
+import { GetCountries, GetState } from 'react-country-state-city';
+import 'react-country-state-city/dist/react-country-state-city.css';
 import { 
   X,
   Target,
