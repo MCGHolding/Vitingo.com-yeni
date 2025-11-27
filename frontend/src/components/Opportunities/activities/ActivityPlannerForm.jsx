@@ -423,18 +423,18 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-3">
           
           {/* Reminder Settings */}
           {formData.activity_type && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <Bell className="h-5 w-5" />
-                  <span>Hatırlatıcı Ayarları</span>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center space-x-2">
+                  <Bell className="h-4 w-4" />
+                  <span>Hatırlatıcı</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <AlertTriangle className={`h-5 w-5 ${formData.has_reminder ? 'text-yellow-600' : 'text-gray-400'}`} />
