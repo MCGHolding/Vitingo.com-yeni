@@ -989,6 +989,20 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
           onSuccess={handleDeleteSuccess}
         />
       )}
+
+      {/* Activity Tracking Modal */}
+      {activityTrackingOpen && selectedCustomer && (
+        <div className="fixed inset-0 z-50 bg-black/50">
+          <OpportunityTimelinePage
+            opportunityId={selectedCustomer.id}
+            opportunityTitle={selectedCustomer.companyName || selectedCustomer.companyTitle || 'Müşteri'}
+            onBack={() => {
+              setActivityTrackingOpen(false);
+              setSelectedCustomer(null);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
