@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { allPeople } from '../../mock/peopleData';
 
-export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [], onUpdatePerson }) {
+export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = [], refreshPeople, onUpdatePerson }) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [tagSearchTerm, setTagSearchTerm] = useState('');
@@ -38,6 +38,13 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
   
   // Use props people if provided, otherwise fall back to mock data
   const [people, setPeople] = useState(peopleProp.length > 0 ? peopleProp : allPeople);
+
+  // Refresh people on component mount
+  React.useEffect(() => {
+    if (refreshPeople) {
+      refreshPeople();
+    }
+  }, []);
 
   // Update people when props change
   React.useEffect(() => {
