@@ -460,6 +460,16 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         </label>
       </div>
 
+      {/* Hatırlatma Ayarları - Toggle açıksa göster */}
+      <ReminderSettings
+        enabled={formData.reminderEnabled}
+        settings={formData.reminderSettings}
+        onChange={(newSettings) => setFormData(prev => ({
+          ...prev,
+          reminderSettings: newSettings
+        }))}
+      />
+
       {/* Form Butonları */}
       <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t">
         <button
