@@ -289,26 +289,62 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                   />
                 </div>
 
+                {/* Quick Date Selection */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 block">
+                    Hızlı Tarih Seçimi
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {QUICK_DATE_OPTIONS.map((option) => (
+                      <Button
+                        key={option.label}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleInputChange('scheduled_date', option.getValue())}
+                        className={`h-8 text-xs ${
+                          formData.scheduled_date === option.getValue() 
+                            ? 'bg-purple-100 border-purple-300 text-purple-700' 
+                            : ''
+                        }`}
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Tarih
+                    <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center justify-between">
+                      <span>Tarih</span>
+                      {formData.scheduled_date && (
+                        <span className="text-xs text-purple-600">
+                          {new Date(formData.scheduled_date).toLocaleDateString('tr-TR', { 
+                            weekday: 'short', 
+                            day: 'numeric', 
+                            month: 'short' 
+                          })}
+                        </span>
+                      )}
                     </label>
                     <Input
                       type="date"
                       value={formData.scheduled_date}
                       onChange={(e) => handleInputChange('scheduled_date', e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
+                      className="cursor-pointer"
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Saat
+                      Saat ⏰
                     </label>
                     <Input
                       type="time"
                       value={formData.scheduled_time}
                       onChange={(e) => handleInputChange('scheduled_time', e.target.value)}
+                      className="cursor-pointer"
                     />
                   </div>
                 </div>
