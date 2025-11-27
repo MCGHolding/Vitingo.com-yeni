@@ -1929,7 +1929,7 @@ async def delete_fair_center(center_id: str):
 async def get_positions():
     """Get all positions from library"""
     try:
-        positions = await db.library.find({"category": "position"}).to_list(length=None)
+        positions = await db.library.find({"category": "position"}, {"_id": 0}).to_list(length=None)
         return positions
     except Exception as e:
         logger.error(f"Error getting positions: {str(e)}")
