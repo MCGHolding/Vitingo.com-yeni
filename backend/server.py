@@ -11799,11 +11799,15 @@ async def get_opportunity_activities(opportunity_id: str):
 async def create_opportunity_activity(opportunity_id: str, activity_input: OpportunityActivityCreate):
     """Create a new activity for an opportunity"""
     try:
+        logger.info(f"🟡 [BACKEND] POST activity for opportunity_id: {opportunity_id}")
+        logger.info(f"🟡 [BACKEND] Activity input: {activity_input.dict()}")
+        
         # Check if opportunity exists
         opportunity = await db.opportunities.find_one({"id": opportunity_id})
         
         # If opportunity not found, check if it's a customer ID
         if not opportunity:
+            logger.info(f"🟡 [BACKEND] Opportunity not found, checking if it's a customer ID...")
             customer = await db.customers.find_one({"id": opportunity_id})
             if customer:
                 # Create a default opportunity for this customer
@@ -11821,8 +11825,9 @@ async def create_opportunity_activity(opportunity_id: str, activity_input: Oppor
                 await db.opportunities.insert_one(opportunity_data)
                 opportunity = opportunity_data
                 opportunity_id = opportunity["id"]
-                logger.info(f"Created default opportunity for customer {customer.get('id')}")
+                logger.info(f"🟡 [BACKEND] Created default opportunity for customer {customer.get('id')}")
             else:
+                logger.error(f"❌ [BACKEND] Opportunity or Customer not found: {opportunity_id}")
                 raise HTTPException(status_code=404, detail="Opportunity or Customer not found")
         
         activity_data = activity_input.dict()
@@ -11842,18 +11847,21 @@ async def create_opportunity_activity(opportunity_id: str, activity_input: Oppor
         if isinstance(activity_data.get('scheduled_for'), datetime):
             activity_data['scheduled_for'] = activity_data['scheduled_for'].isoformat()
         
+        logger.info(f"🟡 [BACKEND] Inserting activity: {activity_data}")
         result = await db.opportunity_activities.insert_one(activity_data)
         
         if result.inserted_id:
+            logger.info(f"✅ [BACKEND] Activity created with id: {activity_data['id']}")
             created_activity = await db.opportunity_activities.find_one({"id": activity_data["id"]})
             return OpportunityActivity(**created_activity)
         else:
+            logger.error(f"❌ [BACKEND] Failed to create activity")
             raise HTTPException(status_code=500, detail="Failed to create activity")
             
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error creating opportunity activity: {str(e)}")
+        logger.error(f"❌ [BACKEND] Error creating opportunity activity: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/opportunities/{opportunity_id}/activities/{activity_id}", response_model=OpportunityActivity)
