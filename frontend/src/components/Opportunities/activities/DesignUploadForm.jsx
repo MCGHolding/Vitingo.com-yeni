@@ -63,6 +63,8 @@ export default function DesignUploadForm({ opportunityId, opportunityTitle, onSa
   });
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [previewFile, setPreviewFile] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const getNextVersion = () => {
     if (versions.length === 0) return 'V1.0';
