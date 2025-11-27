@@ -63,6 +63,58 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
     return true;
   };
 
+  const fillTestData = () => {
+    const today = new Date();
+    const testDataByType = {
+      email: {
+        title: 'Teklif e-postası gönder',
+        description: 'Müşteriye hazırlanan teklifin detaylarını e-posta ile ilet',
+        date: new Date(today.getTime() + 86400000).toISOString().split('T')[0], // Yarın
+        time: '14:00',
+        customName: ''
+      },
+      phone: {
+        title: 'Müşteri ile telefon görüşmesi',
+        description: 'Proje ilerlemesi hakkında bilgi almak için arama yap',
+        date: today.toISOString().split('T')[0], // Bugün
+        time: '10:30',
+        customName: ''
+      },
+      proposal: {
+        title: 'Fiyat teklifi hazırla',
+        description: 'Stand kurulumu için detaylı fiyat teklifi oluştur ve gönder',
+        date: new Date(today.getTime() + 259200000).toISOString().split('T')[0], // 3 gün sonra
+        time: '15:00',
+        customName: ''
+      },
+      design: {
+        title: 'Stand tasarımı paylaş',
+        description: '3D tasarım görselleri hazırla ve müşteri ile paylaş',
+        date: new Date(today.getTime() + 604800000).toISOString().split('T')[0], // 1 hafta sonra
+        time: '11:00',
+        customName: ''
+      },
+      custom: {
+        title: 'Toplantı organize et',
+        description: 'Proje kickoff toplantısı için tarih ve yer ayarla',
+        date: new Date(today.getTime() + 86400000).toISOString().split('T')[0], // Yarın
+        time: '09:00',
+        customName: 'Proje Başlangıç Toplantısı'
+      }
+    };
+
+    const testData = testDataByType[selectedType] || testDataByType.email;
+    setFormData({
+      ...formData,
+      ...testData
+    });
+
+    toast({
+      title: "✅ Test verisi dolduruldu",
+      description: `${selectedType === 'custom' ? 'Özel' : ACTIVITY_TYPES.find(t => t.id === selectedType)?.label} aktivitesi için örnek veri yüklendi`,
+    });
+  };
+
   const handleSubmit = async () => {
     if (!isFormValid()) {
       toast({
