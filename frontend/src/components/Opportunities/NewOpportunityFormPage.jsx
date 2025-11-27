@@ -1123,14 +1123,16 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   </label>
                   <Select
                     value={formData.country}
-                    onValueChange={(value) => handleInputChange('country', value)}
+                    onValueChange={handleCountryChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Ülke seçiniz..." />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      {ulkeler.map(ulke => (
-                        <SelectItem key={ulke} value={ulke}>{ulke}</SelectItem>
+                      {countriesList.map(country => (
+                        <SelectItem key={country.id} value={country.name}>
+                          {country.emoji} {country.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1144,14 +1146,16 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                   <Select
                     value={formData.city}
                     onValueChange={(value) => handleInputChange('city', value)}
-                    disabled={!formData.country}
+                    disabled={!formData.country || statesList.length === 0}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={!formData.country ? "Önce ülke seçiniz..." : "Şehir seçiniz..."} />
+                      <SelectValue placeholder={!formData.country ? "Önce ülke seçiniz..." : statesList.length === 0 ? "Şehir bilgisi yok" : "Şehir seçiniz..."} />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      {sehirler.map(sehir => (
-                        <SelectItem key={sehir} value={sehir}>{sehir}</SelectItem>
+                      {statesList.map(state => (
+                        <SelectItem key={state.id} value={state.name}>
+                          {state.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
