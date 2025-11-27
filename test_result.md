@@ -410,6 +410,8 @@ backend:
 agent_communication:
     -agent: "testing"
     -message: "✅ AKTIVITE TAKIBI FEATURE TEST COMPLETED SUCCESSFULLY! All 8 test scenarios passed with 100% success rate. The feature is working perfectly: navigation to customers list ✅, three dots menu found ✅, 'Aktivite Takibi' positioned as FIRST menu item ✅, Activity Timeline modal opens with full-screen overlay ✅, 'Geri' button functional ✅, modal closes and returns to customers list ✅. The implementation is production-ready and meets all requirements from the review request."
+    -agent: "testing"
+    -message: "🎉 UPDATED AKTIVITE TAKIBI MODAL TESTING COMPLETED SUCCESSFULLY! All focus points from review request verified with EXCELLENT results: ✅ SCROLL FUNCTIONALITY: Modal content is fully scrollable using proper 'fixed inset-0 z-50 overflow-y-auto' implementation, all sections (Aktivite Ekle, Filtreler, Özet, Zaman Çizelgesi) accessible through scrolling, End/Home keyboard navigation working correctly ✅ SIDEBAR VISIBILITY: Sidebar remains VISIBLE when modal is open (documented current behavior), navigation still accessible while modal is active ✅ CUSTOMER NAME DISPLAY: Modal correctly shows 'Borusan' as selected customer name (not hardcoded), dynamic customer name passing from AllCustomersPage to OpportunityTimelinePage working perfectly. The updated modal implementation is working excellently with no issues found - ready for production use."
 
   - task: "Customer Mobile Phone Field Testing"
     implemented: true
