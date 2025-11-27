@@ -287,12 +287,12 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
                   </SelectTrigger>
                   <SelectContent>
                     {contactPersons.map((person, index) => (
-                      <SelectItem key={index} value={person.name || person}>
+                      <SelectItem key={index} value={person.fullName || person.name || person}>
                         <div className="flex items-center space-x-2">
                           <User className="h-4 w-4 text-blue-600" />
-                          <span>{person.name || person}</span>
-                          {person.phone && (
-                            <span className="text-xs text-gray-500">({person.phone})</span>
+                          <span>{person.fullName || person.name || person}</span>
+                          {(person.mobile || person.phone) && (
+                            <span className="text-xs text-gray-500">({person.mobile || person.phone})</span>
                           )}
                         </div>
                       </SelectItem>
