@@ -624,6 +624,12 @@ export default function OpportunityTimelinePage({
   };
 
   const handleOpenDetailedForm = (activityType) => {
+    // Special handling for email management - navigate to email page
+    if (activityType === 'email_management' && customerId) {
+      navigate(`/customers/${customerId}/emails`);
+      return;
+    }
+    
     setActiveModal(activityType);
     setModalData({
       opportunityId,
