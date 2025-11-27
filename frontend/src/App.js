@@ -644,6 +644,26 @@ const Dashboard = () => {
     }
   };
 
+  // Load all people from API
+  const loadPeople = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://version-control-7.preview.emergentagent.com';
+      
+      const response = await fetch(`${backendUrl}/api/people`);
+      if (response.ok) {
+        const data = await response.json();
+        setPeople(data);
+        console.log('People loaded:', data.length);
+      } else {
+        console.error('Failed to load people');
+      }
+    } catch (error) {
+      console.error('Error loading people:', error);
+    }
+  };
+
   const savePerson = async (personData) => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
@@ -663,6 +683,9 @@ const Dashboard = () => {
         setPeople(prev => [newPerson, ...prev]);
         console.log('New person created:', newPerson);
         
+        // Reload people to ensure fresh data
+        await loadPeople();
+        
         // Navigate back to dashboard (success modal handled by form)
         setCurrentView('dashboard');
       } else {
@@ -677,6 +700,7 @@ const Dashboard = () => {
   };
 
   const handleAllPeople = () => {
+    loadPeople(); // Refresh people data when opening All People page
     setCurrentView('all-people');
   };
 
