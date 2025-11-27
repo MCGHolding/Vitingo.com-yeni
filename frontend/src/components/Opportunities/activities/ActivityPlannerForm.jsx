@@ -298,22 +298,18 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                   <div
                     key={type.value}
                     onClick={() => handleInputChange('activity_type', type.value)}
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      isSelected 
-                        ? `${type.bgColor} ${type.borderColor} shadow-md` 
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    className={`p-2 border-2 rounded-lg cursor-pointer transition-all ${
+                      isSelected
+                        ? `${type.bgColor} ${type.borderColor} shadow-sm`
+                        : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className="flex items-center space-x-3">
-                      <IconComponent className={`h-6 w-6 ${isSelected ? type.color : 'text-gray-400'}`} />
-                      <div>
-                        <p className={`font-medium ${isSelected ? type.color : 'text-gray-700'}`}>
-                          {type.label}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {type.description}
-                        </p>
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <IconComponent className={`h-5 w-5 ${isSelected ? type.color : 'text-gray-400'}`} />
+                      <p className={`text-sm font-medium flex-1 ${isSelected ? type.color : 'text-gray-700'}`}>
+                        {type.label}
+                      </p>
+                      {isSelected && <Check className={`h-4 w-4 ${type.color}`} />}
                     </div>
                   </div>
                 );
