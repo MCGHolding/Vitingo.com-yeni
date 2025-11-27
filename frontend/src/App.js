@@ -1033,7 +1033,7 @@ const Dashboard = () => {
     console.log('User updated:', updatedUser);
   };
 
-  const saveOpportunity = (formData) => {
+  const saveOpportunity = async (formData) => {
     // Generate new ID (get highest existing ID + 1)
     const maxId = Math.max(...opportunities.map(op => op.id));
     const newId = maxId + 1;
