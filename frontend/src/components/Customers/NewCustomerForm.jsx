@@ -1584,13 +1584,13 @@ const NewCustomerForm = ({ onClose, onSave, returnToInvoice, onCustomerAdded, re
                 {(formData.services || []).map((service, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
                   >
                     {service}
                     <button
                       type="button"
                       onClick={() => handleRemoveService(index)}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
+                      className="ml-2 text-green-600 hover:text-green-800"
                     >
                       <X className="h-3 w-3" />
                     </button>
