@@ -343,31 +343,27 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                 )}
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Aktivite Başlığı (İsteğe Bağlı)
+                  <label className="text-xs font-medium text-gray-700 mb-1 block">
+                    Başlık (İsteğe Bağlı)
                   </label>
                   <Input
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder={`Örn: ${getActivityTitle()} - ${opportunityTitle}`}
+                    placeholder={`Örn: ${getActivityTitle()}`}
+                    className="h-8 text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Açıklama
+                  <label className="text-xs font-medium text-gray-700 mb-1 block">
+                    Açıklama (İsteğe Bağlı)
                   </label>
                   <Textarea
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder={
-                      formData.activity_type === 'email' 
-                        ? 'Gönderilecek e-posta içeriği hakkında notlar...'
-                        : formData.activity_type === 'phone'
-                        ? 'Görüşmede konuşulacak konular...'
-                        : 'Teklif detayları ve önemli noktalar...'
-                    }
-                    className="min-h-[100px]"
+                    placeholder="Ek bilgiler..."
+                    rows={2}
+                    className="text-sm"
                   />
                 </div>
 
