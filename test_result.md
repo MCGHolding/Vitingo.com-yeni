@@ -3733,6 +3733,18 @@ agent_communication:
         agent: "testing"
         comment: "🎉 DYNAMIC STAND ELEMENTS MANAGEMENT SYSTEM COMPREHENSIVE TESTING COMPLETE! ✅ Backend API fully operational: GET /api/stand-elements (200 OK, 3 elements: flooring/counter/furniture), POST /api/stand-elements (CRUD working), DELETE /api/stand-elements/{key} (cleanup working). ✅ Data structure perfect: 3-level cascading hierarchy (Zemin→36mm Yükseltilmiş→Halı Kaplama), 13 total third-level options, proper icons/labels. ✅ Admin controls implemented: role-based access, + buttons for admin/super_admin only. ✅ Frontend integration confirmed: API accessible, cascading structure working, real-time updates ready. ✅ All requested features operational: dynamic loading, auto-default creation, admin management, backward compatibility. System is production-ready! 🚀"
 
+  - task: "Borusan İletişim Kişileri - Stabilizasyon Testi"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/Opportunities/NewOpportunityFormPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🎯 BORUSAN İLETİŞİM KİŞİLERİ - STABİLİZASYON TESTİ COMPLETED WITH MIXED RESULTS! Comprehensive testing of New Sales Opportunity Form with Borusan customer selection and contact persons loading completed. ✅ SUCCESSFUL ELEMENTS: 1) Successfully navigated to New Sales Opportunity Form via Satış Fırsatları menu ✅ 2) Successfully selected Borusan as customer from dropdown ✅ 3) Contact loading mechanism is working - contacts are being loaded when customer is selected ✅ 4) No error message 'Bu müşteri için kayıtlı iletişim kişisi bulunamadı' was shown (correct behavior) ✅ 5) Successfully selected 'Can Türk' contact from dropdown ✅ ❌ CRITICAL ISSUE FOUND: The expected 3 contacts with full job titles were NOT found in dropdown: 'Can Türk - Etkinlik Koordinatörü', 'Murat Bucak - Genel Müdür Yardımcısı', 'Test Kişi - Test Müdür'. Instead found basic names: 'Can Türk', 'Murat Bucak', 'Test Kişi' without job titles. ❌ COMPARISON TEST FAILED: Could not complete testing with another customer (Tofaş/Aygaz) due to dropdown timeout issues. 🔍 ROOT CAUSE ANALYSIS: The contact loading mechanism is functional, but either: 1) Contact data in database lacks job titles, 2) Contact display format doesn't include job titles, 3) Expected contacts with specific titles don't exist. Console logs showed no 'Available contacts for Borusan : 3 contacts found' message, suggesting contact loading may not be triggering properly. 📋 RECOMMENDATION: Main agent should verify Borusan customer contact data in database and ensure contact persons have proper job titles (contactPosition field) and that the dropdown displays format includes job titles."
+
   - task: "NewCustomerForm Comprehensive Testing - All Scenarios"
     implemented: true
     working: true
