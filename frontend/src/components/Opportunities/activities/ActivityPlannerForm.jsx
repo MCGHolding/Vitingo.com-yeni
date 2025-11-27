@@ -320,13 +320,13 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
           {/* Activity Details */}
           {formData.activity_type && (
             <Card className={`${selectedActivityType.bgColor} ${selectedActivityType.borderColor} border-2`}>
-              <CardHeader>
-                <CardTitle className={`text-lg ${selectedActivityType.color} flex items-center space-x-2`}>
-                  {React.createElement(selectedActivityType.icon, { className: "h-5 w-5" })}
-                  <span>{selectedActivityType.label} Detayları</span>
+              <CardHeader className="pb-2">
+                <CardTitle className={`text-base ${selectedActivityType.color} flex items-center space-x-2`}>
+                  {React.createElement(selectedActivityType.icon, { className: "h-4 w-4" })}
+                  <span>Detaylar</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* Custom Activity Name (only for custom type) */}
                 {formData.activity_type === 'custom' && (
                   <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
