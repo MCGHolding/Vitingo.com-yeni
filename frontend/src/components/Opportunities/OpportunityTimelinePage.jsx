@@ -1040,18 +1040,7 @@ export default function OpportunityTimelinePage({
         </div>
       )}
 
-      {activeModal === 'activity_planner' && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <ActivityPlannerForm
-              opportunityId={modalData?.opportunityId}
-              opportunityTitle={modalData?.opportunityTitle}
-              onSave={handleActivityCreated}
-              onCancel={handleCloseModal}
-            />
-          </div>
-        </div>
-      )}
+      {/* Activity Planner moved to full page - no longer uses modal */}
 
       {activeModal === 'design_upload' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
