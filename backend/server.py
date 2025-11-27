@@ -52,6 +52,9 @@ load_dotenv(ROOT_DIR / '.env')
 from routes import leads as leads_router
 from routes import projects as projects_router
 
+# Import email routes
+import email_routes
+
 # Validation functions for bank information
 def validate_iban(iban: str) -> bool:
     """Validate IBAN format (Turkish IBAN: TR + 2 digits + 4 bank code + 1 check + 16 account number)"""
