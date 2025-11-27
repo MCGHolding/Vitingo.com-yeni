@@ -1157,6 +1157,7 @@ const Dashboard = () => {
           <AllPeoplePage 
             onBackToDashboard={handleBackToDashboard} 
             people={people}
+            refreshPeople={loadPeople}
             onUpdatePerson={(updatedPerson) => {
               setPeople(prev => prev.map(p => 
                 p.id === updatedPerson.id ? updatedPerson : p
