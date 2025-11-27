@@ -195,7 +195,33 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   };
 
   // Handle country change and update phone numbers accordingly
-  const handleCountryChange = (country) => {
+  const handleCountryChange = (countryName) => {
+    // Find country object from list
+    const selectedCountry = countriesList.find(c => c.name === countryName);
+    
+    if (selectedCountry) {
+      setSelectedCountryId(selectedCountry.id);
+      setFormData(prev => ({ 
+        ...prev, 
+        country: selectedCountry.name,
+        city: '' // Clear city when country changes
+      }));
+      
+      // Load states/cities for selected country
+      loadStates(selectedCountry.id);
+    } else {
+      setSelectedCountryId(null);
+      setStatesList([]);
+      setFormData(prev => ({ 
+        ...prev, 
+        country: '',
+        city: ''
+      }));
+    }
+  };
+  
+  // Old handler - kept for backward compatibility
+  const handleCountryChangeOld = (country) => {
     const countryCode = country ? country.iso2 : '';
     
     // Update all fields in single state update to prevent re-render loop
