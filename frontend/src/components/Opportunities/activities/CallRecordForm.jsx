@@ -94,10 +94,15 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
       const response = await fetch(`${BACKEND_URL}/api/customers`);
       if (response.ok) {
         const customers = await response.json();
-        const customer = customers.find(c => c.name === customerName);
+        // Match by companyName, companyTitle, or contactPerson
+        const customer = customers.find(c => 
+          c.companyName === customerName || 
+          c.companyTitle === customerName ||
+          c.contactPerson === customerName
+        );
         
-        if (customer && customer.contact_persons) {
-          setContactPersons(customer.contact_persons || []);
+        if (customer && customer.contacts) {
+          setContactPersons(customer.contacts || []);
         } else {
           setContactPersons([]);
         }
