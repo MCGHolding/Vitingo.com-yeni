@@ -392,37 +392,28 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center justify-between">
-                      <span>Tarih</span>
-                      {formData.scheduled_date && (
-                        <span className="text-xs text-purple-600">
-                          {new Date(formData.scheduled_date).toLocaleDateString('tr-TR', { 
-                            weekday: 'short', 
-                            day: 'numeric', 
-                            month: 'short' 
-                          })}
-                        </span>
-                      )}
+                    <label className="text-xs font-medium text-gray-700 mb-1 block">
+                      📅 Tarih
                     </label>
                     <Input
                       type="date"
                       value={formData.scheduled_date}
                       onChange={(e) => handleInputChange('scheduled_date', e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="cursor-pointer"
+                      className="cursor-pointer h-8 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Saat ⏰
+                    <label className="text-xs font-medium text-gray-700 mb-1 block">
+                      ⏰ Saat
                     </label>
                     <Input
                       type="time"
                       value={formData.scheduled_time}
                       onChange={(e) => handleInputChange('scheduled_time', e.target.value)}
-                      className="cursor-pointer"
+                      className="cursor-pointer h-8 text-sm"
                     />
                   </div>
                 </div>
