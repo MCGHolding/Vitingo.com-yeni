@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import ActivityPlannerForm from '../components/Opportunities/activities/ActivityPlannerForm';
+import ActivityPlannerFormNew from '../components/Opportunities/activities/ActivityPlannerFormNew';
 
 export default function ActivityPlannerPage() {
   const navigate = useNavigate();
