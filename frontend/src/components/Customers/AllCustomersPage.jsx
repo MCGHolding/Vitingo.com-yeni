@@ -504,6 +504,12 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
       return;
     }
 
+    if (action === 'activity_tracking') {
+      setSelectedCustomer(customer);
+      setActivityTrackingOpen(true);
+      return;
+    }
+
     if (action === 'email') {
       setSelectedCustomer(customer);
       setEmailModalOpen(true);
