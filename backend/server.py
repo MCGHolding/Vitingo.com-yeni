@@ -3794,6 +3794,51 @@ async def convert_prospect_to_customer(customer_id: str):
         logger.error(f"Error converting prospect to customer: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Müşteriye çevirme işlemi sırasında hata oluştu: {str(e)}")
 
+@api_router.post("/customers/{customer_id}/contacts")
+async def add_customer_contact(customer_id: str, contact_data: dict):
+    """Add a new contact person to a customer"""
+    try:
+        from datetime import datetime, timezone
+        
+        # Find customer
+        customer = await db.customers.find_one({"id": customer_id})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Create new contact with timestamp
+        new_contact = {
+            "fullName": contact_data.get("name") or contact_data.get("fullName"),
+            "position": contact_data.get("position", ""),
+            "mobile": contact_data.get("phone") or contact_data.get("mobile", ""),
+            "email": contact_data.get("email", ""),
+            "country": contact_data.get("country", ""),
+            "city": contact_data.get("city", ""),
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Add contact to customer's contacts array
+        result = await db.customers.update_one(
+            {"id": customer_id},
+            {"$push": {"contacts": new_contact}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Yetkili kişi eklenemedi")
+        
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": f"{new_contact['fullName']} yetkili kişi olarak eklendi",
+                "contact": new_contact
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding customer contact: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Yetkili eklenirken hata oluştu: {str(e)}")
+
 @api_router.put("/customers/{customer_id}/deactivate")
 async def deactivate_customer(customer_id: str, request: dict):
     """Deactivate a customer (move to passive customers)"""
