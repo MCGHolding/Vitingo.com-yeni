@@ -11925,9 +11925,22 @@ async def delete_opportunity_activity(opportunity_id: str, activity_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.patch("/opportunities/{opportunity_id}/activities/{activity_id}/status")
-async def update_activity_status(opportunity_id: str, activity_id: str, status: str):
+async def update_activity_status(opportunity_id: str, activity_id: str, request: Request):
     """Update activity status (completed, pending, in_progress, cancelled, overdue)"""
     try:
+        body = await request.json()
+        status = body.get("status")
+        
+        logger.info(f"🔵 [BACKEND] Updating activity status")
+        logger.info(f"🔵 [BACKEND] opportunity_id: {opportunity_id}")
+        logger.info(f"🔵 [BACKEND] activity_id: {activity_id}")
+        logger.info(f"🔵 [BACKEND] status: {status}")
+        logger.info(f"🔵 [BACKEND] body: {body}")
+        
+        if not status:
+            raise HTTPException(status_code=400, detail="Status is required")
+        
+        # First, update the activity's top-level status
         update_data = {
             "status": status,
             "updated_at": datetime.now(timezone.utc).isoformat()
@@ -11936,11 +11949,15 @@ async def update_activity_status(opportunity_id: str, activity_id: str, status: 
         # If marking as completed, set completed_at timestamp
         if status == "completed":
             update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+            # Also update the data.status field
+            update_data["data.status"] = "completed"
         
         result = await db.opportunity_activities.update_one(
             {"id": activity_id, "opportunity_id": opportunity_id},
             {"$set": update_data}
         )
+        
+        logger.info(f"🔵 [BACKEND] Modified count: {result.modified_count}")
         
         if result.modified_count:
             return {"message": f"Activity status updated to {status}"}
@@ -11950,7 +11967,7 @@ async def update_activity_status(opportunity_id: str, activity_id: str, status: 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error updating activity status: {str(e)}")
+        logger.error(f"❌ [BACKEND] Error updating activity status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ===================== MONGODB COLLECTIONS ADMIN API =====================
