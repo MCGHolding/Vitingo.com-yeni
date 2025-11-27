@@ -197,6 +197,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [activityTrackingOpen, setActivityTrackingOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const getSectorCounts = () => {
