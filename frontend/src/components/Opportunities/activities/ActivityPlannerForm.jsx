@@ -592,31 +592,33 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+      {/* Footer Buttons */}
+      <div className="flex justify-end space-x-2 mt-4 pt-3 border-t">
         <Button
           variant="outline"
+          size="sm"
           onClick={onCancel}
           disabled={saving}
-          className="px-6"
+          className="h-9"
         >
-          <X className="h-4 w-4 mr-2" />
+          <X className="h-4 w-4 mr-1" />
           İptal
         </Button>
         <Button
+          size="sm"
           onClick={handleSave}
-          disabled={saving || !formData.activity_type || !formData.scheduled_date || !formData.scheduled_time}
-          className="bg-purple-600 hover:bg-purple-700 px-6"
+          disabled={saving || !formData.activity_type}
+          className="bg-purple-600 hover:bg-purple-700 h-9"
         >
           {saving ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-              Planlanıyor...
+              <Minus className="h-4 w-4 mr-1 animate-spin" />
+              Kaydediliyor...
             </>
           ) : (
             <>
-              <Save className="h-4 w-4 mr-2" />
-              Aktiviteyi Planla
+              <Save className="h-4 w-4 mr-1" />
+              Planla
             </>
           )}
         </Button>
