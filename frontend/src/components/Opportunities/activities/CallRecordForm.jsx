@@ -363,15 +363,17 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
         type: 'call_record',
         title: `Görüşme: ${formData.contact_person}`,
         description: formData.summary || `${formData.call_type === 'outgoing' ? 'Giden' : 'Gelen'} arama - ${formData.call_result}`,
-        call_type: formData.call_type,
-        contact_person: formData.contact_person,
-        call_result: formData.call_result,
-        summary: formData.summary,
-        duration_minutes: parseInt(formData.duration_minutes) || 0,
-        call_date: formData.call_date,
-        call_time: callTime,
-        created_at: new Date().toISOString(),
-        created_by: 'current_user'
+        status: 'completed',
+        priority: 'medium',
+        data: {
+          call_type: formData.call_type,
+          contact_person: formData.contact_person,
+          call_result: formData.call_result,
+          summary: formData.summary,
+          duration_minutes: parseInt(formData.duration_minutes) || 0,
+          call_date: formData.call_date,
+          call_time: callTime
+        }
       };
 
       const response = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}/activities`, {
