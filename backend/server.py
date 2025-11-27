@@ -11783,14 +11783,167 @@ async def delete_opportunity_note(opportunity_id: str, note_id: str):
 
 # ===================== OPPORTUNITY ACTIVITY ENDPOINTS =====================
 
-@api_router.get("/opportunities/{opportunity_id}/activities", response_model=List[OpportunityActivity])
-async def get_opportunity_activities(opportunity_id: str):
-    """Get all activities for a specific opportunity"""
+@api_router.get("/opportunities/{opportunity_id}/activities/upcoming")
+async def get_upcoming_activities(opportunity_id: str):
+    """Get today's and tomorrow's activities"""
     try:
+        from datetime import timedelta
+        
+        logger.info(f"🟢 [BACKEND] GET upcoming activities for opportunity_id: {opportunity_id}")
+        
+        # Get today's start and end
+        now = datetime.now(timezone.utc)
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        tomorrow_start = today_start + timedelta(days=1)
+        day_after_start = today_start + timedelta(days=2)
+        
+        # Query for today's activities
+        today_query = {
+            "opportunity_id": opportunity_id,
+            "$or": [
+                {"status": "pending"},
+                {"data.status": "planned"}
+            ]
+        }
+        
+        today_activities = []
+        tomorrow_activities = []
+        
+        all_activities = await db.opportunity_activities.find(today_query).to_list(length=None)
+        
+        for activity in all_activities:
+            scheduled_datetime = activity.get("data", {}).get("scheduled_datetime")
+            if scheduled_datetime:
+                try:
+                    act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', '+00:00'))
+                    if today_start <= act_date < tomorrow_start:
+                        today_activities.append(activity)
+                    elif tomorrow_start <= act_date < day_after_start:
+                        tomorrow_activities.append(activity)
+                except:
+                    pass
+        
+        # Sort by time
+        today_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
+        tomorrow_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
+        
+        logger.info(f"🟢 [BACKEND] Found {len(today_activities)} today, {len(tomorrow_activities)} tomorrow")
+        
+        return {
+            "today": [OpportunityActivity(**act) for act in today_activities[:10]],
+            "tomorrow": [OpportunityActivity(**act) for act in tomorrow_activities[:10]]
+        }
+    except Exception as e:
+        logger.error(f"❌ [BACKEND] Error getting upcoming activities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/opportunities/{opportunity_id}/activities", response_model=List[OpportunityActivity])
+async def get_opportunity_activities(
+    opportunity_id: str,
+    status: str = None,
+    priority: str = None,
+    activity_type: str = None,
+    tab: str = "thisWeek",
+    search: str = None,
+    page: int = 1,
+    limit: int = 10
+):
+    """Get activities with advanced filtering, search, and pagination"""
+    try:
+        from datetime import timedelta
+        from math import ceil
+        
         logger.info(f"🟢 [BACKEND] GET activities for opportunity_id: {opportunity_id}")
-        activities = await db.opportunity_activities.find({"opportunity_id": opportunity_id}).sort("created_at", -1).to_list(length=None)
-        logger.info(f"🟢 [BACKEND] Found {len(activities)} activities")
+        logger.info(f"🟢 [BACKEND] Filters - status: {status}, priority: {priority}, type: {activity_type}, tab: {tab}, search: {search}, page: {page}")
+        
+        query = {"opportunity_id": opportunity_id}
+        
+        # Status filter
+        if status and status != "all":
+            if status == "planned":
+                query["$or"] = [
+                    {"status": "pending"},
+                    {"data.status": "planned"}
+                ]
+            else:
+                query["status"] = status
+        
+        # Priority filter
+        if priority:
+            query["priority"] = priority
+        
+        # Activity type filter
+        if activity_type and activity_type != "all":
+            query["data.activity_type"] = activity_type
+        
+        # Search filter
+        if search:
+            query["$or"] = [
+                {"title": {"$regex": search, "$options": "i"}},
+                {"description": {"$regex": search, "$options": "i"}}
+            ]
+        
+        # Tab-based date filtering
+        if tab != "all":
+            now = datetime.now(timezone.utc)
+            today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            
+            # Get all activities first, then filter by date
+            temp_activities = await db.opportunity_activities.find(query).to_list(length=None)
+            filtered_activities = []
+            
+            for activity in temp_activities:
+                scheduled_datetime = activity.get("data", {}).get("scheduled_datetime")
+                if not scheduled_datetime:
+                    continue
+                    
+                try:
+                    act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', '+00:00'))
+                    
+                    if tab == "today":
+                        tomorrow = today_start + timedelta(days=1)
+                        if today_start <= act_date < tomorrow:
+                            filtered_activities.append(activity)
+                    elif tab == "thisWeek":
+                        week_end = today_start + timedelta(days=7)
+                        if today_start <= act_date < week_end:
+                            filtered_activities.append(activity)
+                    elif tab == "thisMonth":
+                        month_end = today_start + timedelta(days=30)
+                        if today_start <= act_date < month_end:
+                            filtered_activities.append(activity)
+                    elif tab == "future":
+                        if act_date >= today_start:
+                            filtered_activities.append(activity)
+                except:
+                    pass
+            
+            # Sort by scheduled datetime
+            filtered_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
+            
+            # Pagination
+            total = len(filtered_activities)
+            total_pages = ceil(total / limit) if total > 0 else 1
+            start_idx = (page - 1) * limit
+            end_idx = start_idx + limit
+            activities = filtered_activities[start_idx:end_idx]
+            
+        else:
+            # No date filter, use database sort
+            total = await db.opportunity_activities.count_documents(query)
+            total_pages = ceil(total / limit) if total > 0 else 1
+            activities = await db.opportunity_activities.find(query)\
+                .sort("created_at", -1)\
+                .skip((page - 1) * limit)\
+                .limit(limit)\
+                .to_list(limit)
+        
+        logger.info(f"🟢 [BACKEND] Found {len(activities)} activities (page {page}/{total_pages})")
+        
+        # Return with pagination info in headers (or you can return as object)
         return [OpportunityActivity(**activity) for activity in activities]
+        
     except Exception as e:
         logger.error(f"❌ [BACKEND] Error getting opportunity activities: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
