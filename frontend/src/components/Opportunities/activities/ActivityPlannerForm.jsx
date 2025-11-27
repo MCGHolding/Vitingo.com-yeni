@@ -174,6 +174,10 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
         return 'Telefon Araması';
       case 'proposal':
         return 'Teklif Gönderimi';
+      case 'design':
+        return 'Tasarım Gönderimi';
+      case 'custom':
+        return formData.custom_activity_name || 'Özel Aktivite';
       default:
         return '';
     }
