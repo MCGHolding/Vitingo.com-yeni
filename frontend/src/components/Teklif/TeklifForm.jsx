@@ -134,6 +134,60 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     }
   };
 
+  // Test data function - fills all fields with realistic data
+  const fillTestData = () => {
+    // Select first available satış fırsatı if exists
+    if (satisFiresatlari.length > 0) {
+      const randomFiresat = satisFiresatlari[Math.floor(Math.random() * satisFiresatlari.length)];
+      handleSatisFiresatChange(randomFiresat.id);
+      
+      // Find associated customer
+      const ilgiliMusteri = musteriler.find(m => m.id === randomFiresat.customer_id);
+      
+      // Calculate valid dates
+      const today = new Date();
+      const validUntil = new Date();
+      validUntil.setDate(today.getDate() + 30); // 30 days validity
+      
+      // Test data with real company names
+      const testTitles = [
+        'Kurumsal Stand Tasarım Teklifi',
+        'Fuar Katılım Hizmetleri Teklifi',
+        'Özel Stand Yapım Teklifi',
+        'Modüler Stand Kiralama Teklifi',
+        'VIP Stand Tasarım ve Uygulama Teklifi',
+        'Grafik Tasarım ve Baskı Hizmetleri Teklifi'
+      ];
+      
+      const testNotes = [
+        'Teklif kapsamında stand tasarımı, imalat, kurulum ve söküm işlemleri dahildir. Elektrik ve aydınlatma malzemeleri dahildir.',
+        'Fuara özel hazırlanan bu teklif, premium malzemeler ve profesyonel kurulum ekibi içermektedir. 7/24 teknik destek sağlanacaktır.',
+        'Modüler sistem kullanılarak hazırlanan standımız, farklı fuarlarda yeniden kullanılabilir özelliktedir.',
+        'Teklif, 3D tasarım çizimleri, onay sonrası üretim ve montaj hizmetlerini kapsamaktadır.',
+        'Stand projesi, müşteri logolarının entegrasyonu ve özel grafik uygulamalarını içermektedir.'
+      ];
+      
+      setFormData({
+        satisFiresatId: randomFiresat.id,
+        musteriId: ilgiliMusteri ? ilgiliMusteri.id : (musteriler.length > 0 ? musteriler[0].id : ''),
+        teklifBaslik: testTitles[Math.floor(Math.random() * testTitles.length)],
+        teklifTarihi: today.toISOString().split('T')[0],
+        gecerlilikTarihi: validUntil.toISOString().split('T')[0],
+        notlar: testNotes[Math.floor(Math.random() * testNotes.length)]
+      });
+      
+      if (ilgiliMusteri) {
+        setSecilenMusteri(ilgiliMusteri);
+      } else if (musteriler.length > 0) {
+        setSecilenMusteri(musteriler[0]);
+      }
+      
+      console.log('✅ Test verisi dolduruldu');
+    } else {
+      alert('Test verisi doldurmak için önce satış fırsatı ve müşteri verisi gereklidir.');
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
