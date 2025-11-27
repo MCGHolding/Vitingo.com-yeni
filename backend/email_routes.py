@@ -247,6 +247,7 @@ async def send_email(
         
         try:
             logger.info(f"Attempting to send email with API key: {SENDGRID_API_KEY[:25]}...")
+            logger.info(f"From: {PLATFORM_EMAIL}, To: {email_data.to}, Subject: {email_data.subject}")
             sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
             response = sg.send(message)
             sendgrid_message_id = response.headers.get("X-Message-Id")
@@ -255,6 +256,11 @@ async def send_email(
             # Log detailed error
             import traceback
             logger.error(f"❌ SendGrid send failed: {str(e)}")
+            logger.error(f"Error type: {type(e).__name__}")
+            if hasattr(e, 'body'):
+                logger.error(f"Error body: {e.body}")
+            if hasattr(e, 'reason'):
+                logger.error(f"Error reason: {e.reason}")
             logger.error(f"Full traceback: {traceback.format_exc()}")
             logger.warning(f"Email saved locally for demo.")
             email_status = EmailStatus.SENT  # Keep as SENT for demo purposes
