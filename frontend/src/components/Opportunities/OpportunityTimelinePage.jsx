@@ -11,7 +11,7 @@ import { useToast } from '../../hooks/use-toast';
 import CallRecordForm from './activities/CallRecordForm';
 import EmailManagementForm from './activities/EmailManagementForm';
 import ActivityPlannerForm from './activities/ActivityPlannerForm';
-import DesignUploadForm from './activities/DesignUploadForm';
+// DesignUploadForm removed - now uses dedicated full page
 import MessagingForm from './activities/MessagingForm';
 import { 
   Activity,
