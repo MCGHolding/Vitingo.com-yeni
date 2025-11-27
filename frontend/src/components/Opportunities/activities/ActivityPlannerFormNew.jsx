@@ -435,19 +435,28 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
           ))}
         </div>
 
-        {/* Hatırlatıcı */}
+        {/* Hatırlatıcı Toggle */}
         <label className="flex items-center gap-2 cursor-pointer select-none">
           <span className="text-sm text-gray-600">🔔 Hatırlat</span>
-          <div 
-            onClick={() => setFormData({...formData, reminder: !formData.reminder})}
-            className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${
-              formData.reminder ? 'bg-blue-500' : 'bg-gray-300'
+          <button
+            type="button"
+            onClick={() => setFormData(prev => ({
+              ...prev,
+              reminderEnabled: !prev.reminderEnabled,
+              reminderSettings: !prev.reminderEnabled ? prev.reminderSettings : {
+                timing: '1hour',
+                customMinutes: null,
+                channels: { inApp: true, email: false, sms: false }
+              }
+            }))}
+            className={`w-11 h-6 rounded-full relative transition-colors ${
+              formData.reminderEnabled ? 'bg-blue-500' : 'bg-gray-300'
             }`}
           >
-            <div className={`absolute w-4 h-4 bg-white rounded-full top-0.5 shadow-sm transition-transform ${
-              formData.reminder ? 'right-0.5' : 'left-0.5'
+            <span className={`absolute w-5 h-5 bg-white rounded-full top-0.5 shadow transition-transform ${
+              formData.reminderEnabled ? 'right-0.5' : 'left-0.5'
             }`} />
-          </div>
+          </button>
         </label>
       </div>
 
