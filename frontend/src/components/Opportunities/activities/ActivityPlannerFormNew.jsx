@@ -72,7 +72,8 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         description: 'Müşteriye hazırlanan teklifin detaylarını e-posta ile ilet',
         date: new Date(today.getTime() + 86400000).toISOString().split('T')[0], // Yarın
         time: '14:00',
-        customName: ''
+        customName: '',
+        priority: 'high'
       },
       phone: {
         title: 'Müşteri ile telefon görüşmesi',
