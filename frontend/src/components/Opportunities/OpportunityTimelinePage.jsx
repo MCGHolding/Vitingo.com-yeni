@@ -245,25 +245,25 @@ function QuickActivityAddUnit({ opportunityId, opportunityTitle, onActivityAdded
   // Simple component - just buttons to open detailed forms
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm mb-6">
-      <div className="p-4 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-900 flex items-center space-x-2">
-          <Activity className="h-4 w-4 text-purple-600" />
-          <span>Aktivite Ekle</span>
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+      <div className="px-3 py-2 border-b border-gray-100">
+        <h3 className="text-xs font-semibold text-gray-700 flex items-center space-x-1.5">
+          <Plus className="h-3.5 w-3.5 text-purple-600" />
+          <span>Yeni Aktivite</span>
         </h3>
       </div>
 
-      <div className="p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="p-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
           {Object.entries(QUICK_ACTIVITY_TYPES).map(([type, config]) => (
             <Button
               key={type}
               variant="outline"
               onClick={() => handleActivityTypeClick(type)}
-              className={`h-auto p-4 flex flex-col items-center space-y-2 ${config.borderColor} hover:${config.bgColor} transition-all duration-200 hover:shadow-md`}
+              className={`h-auto py-2 px-2 flex flex-col items-center space-y-1 text-xs ${config.borderColor} hover:${config.bgColor} transition-colors`}
             >
-              <config.icon className={`h-6 w-6 ${config.color}`} />
-              <span className="text-sm font-medium text-gray-700">{config.label}</span>
+              <config.icon className={`h-4 w-4 ${config.color}`} />
+              <span className="text-[10px] font-medium text-gray-600 leading-tight text-center">{config.label}</span>
             </Button>
           ))}
         </div>
