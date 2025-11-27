@@ -399,7 +399,7 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-wrap gap-1">
-                          {person.tags.map((tag, tagIndex) => (
+                          {(person.tags || []).map((tag, tagIndex) => (
                             <Badge key={tagIndex} variant="outline" className="text-xs">
                               {tag}
                             </Badge>
