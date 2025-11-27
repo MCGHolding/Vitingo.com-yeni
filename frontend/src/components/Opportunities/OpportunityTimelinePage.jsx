@@ -473,9 +473,11 @@ const PRIORITY_CONFIG = {
 export default function OpportunityTimelinePage({ 
   onBack, 
   opportunityId, 
-  opportunityTitle 
+  opportunityTitle,
+  customerId 
 }) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
