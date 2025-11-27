@@ -527,18 +527,19 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
           {/* Additional Notes */}
           {formData.activity_type && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <FileText className="h-5 w-5" />
-                  <span>Ek Notlar</span>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center space-x-2">
+                  <FileText className="h-4 w-4" />
+                  <span>Notlar</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Aktivite ile ilgili ek notlar, önemli hatırlatmalar..."
-                  className="min-h-[120px]"
+                  placeholder="Önemli notlar..."
+                  rows={3}
+                  className="text-sm"
                 />
               </CardContent>
             </Card>
