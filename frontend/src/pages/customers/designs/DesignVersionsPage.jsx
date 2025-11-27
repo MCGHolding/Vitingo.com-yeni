@@ -373,7 +373,7 @@ export default function DesignVersionsPage() {
             {/* Create Button */}
             <button
               onClick={handleCreateVersion}
-              disabled={uploading || !versionName.trim() || uploadedFiles.length === 0}
+              disabled={uploading || uploadedFiles.length === 0}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Versiyon Oluştur
