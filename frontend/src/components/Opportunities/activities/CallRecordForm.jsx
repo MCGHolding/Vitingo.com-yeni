@@ -117,8 +117,8 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
     // Add new contact to the list
     setContactPersons(prev => [...prev, newContact]);
     
-    // Automatically select the new contact
-    handleInputChange('contact_person', newContact.name);
+    // Automatically select the new contact (use fullName field)
+    handleInputChange('contact_person', newContact.fullName || newContact.name);
     
     // Close modal
     setShowNewContactModal(false);
