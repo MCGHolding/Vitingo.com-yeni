@@ -115,28 +115,7 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   };
   
   // Load countries on component mount
-  useEffect(() => {
-    loadUlkeler();
-  }, []);
-
-  // Filter cities when country changes (SAME AS NewCustomerForm)
-  useEffect(() => {
-    if (formData.country && tumUlkeler.length > 0) {
-      const secilenUlke = tumUlkeler.find(u => u.name === formData.country);
-      
-      if (secilenUlke && secilenUlke.cities) {
-        const sehirListesi = [...new Set(secilenUlke.cities.filter(c => c))].sort();
-        setSehirler(sehirListesi);
-      } else {
-        setSehirler([]);
-      }
-      
-      // Reset city when country changes
-      setFormData(prev => ({ ...prev, city: '' }));
-    } else {
-      setSehirler([]);
-    }
-  }, [formData.country, tumUlkeler]);
+  // Old useEffect removed - now using react-country-state-city library
 
   // Load companies and suppliers on component mount
   useEffect(() => {
