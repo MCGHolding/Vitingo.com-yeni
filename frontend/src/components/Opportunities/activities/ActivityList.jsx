@@ -177,11 +177,11 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
   }
 
   return (
-    <div className="mt-8">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          📋 Planlanan Aktiviteler
+      <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+        <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+          📋 <span className="hidden sm:inline">Planlanan</span> Aktiviteler
           <span className="text-sm font-normal text-gray-500">
             ({activities.length})
           </span>
@@ -192,7 +192,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-xs sm:text-sm border border-gray-300 rounded-lg px-2 sm:px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">Tümü</option>
             <option value="email">E-posta</option>
@@ -205,14 +205,14 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
       </div>
 
       {/* List */}
-      {activities.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
-          <span className="text-4xl block mb-2">📭</span>
-          <p className="text-gray-500">Planlanmış aktivite yok</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {activities.map(activity => {
+      <div className="divide-y divide-gray-100">
+        {activities.length === 0 ? (
+          <div className="text-center py-10 sm:py-12 text-gray-500">
+            <span className="text-3xl sm:text-4xl block mb-2">📭</span>
+            <p className="text-sm">Planlanmış aktivite yok</p>
+          </div>
+        ) : (
+          activities.map(activity => {
             const activityType = activity.data?.activity_type || 'custom';
             const isCompleted = activity.data?.status === 'completed';
             const isPastDue = isPast(activity.data?.scheduled_datetime) && !isCompleted;
@@ -221,17 +221,16 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
               <div
                 key={activity.id}
                 className={`
-                  flex items-center justify-between p-4 bg-white border rounded-xl
-                  hover:shadow-sm transition-shadow
+                  flex items-center justify-between p-3 sm:p-4 hover:bg-gray-50 transition-colors
                   ${isCompleted ? 'opacity-60' : ''}
-                  ${isPastDue ? 'border-red-200 bg-red-50' : 'border-gray-200'}
+                  ${isPastDue ? 'bg-red-50' : ''}
                 `}
               >
                 {/* Left - Icon and Info */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {/* Type Icon */}
                   <div className={`
-                    w-10 h-10 rounded-lg flex items-center justify-center text-xl
+                    w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-lg sm:text-xl
                     ${activityType === 'email' ? 'bg-blue-100' : ''}
                     ${activityType === 'phone' ? 'bg-green-100' : ''}
                     ${activityType === 'proposal' ? 'bg-purple-100' : ''}
@@ -244,7 +243,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
                   {/* Title and Description */}
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`font-medium ${
+                      <span className={`text-sm font-medium ${
                         isCompleted ? 'line-through text-gray-500' : ''
                       }`}>
                         {activityType === 'custom' && activity.data?.custom_activity_name
@@ -258,16 +257,16 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
                       {activity.title}
                     </p>
                   </div>
                 </div>
 
                 {/* Right - Date and Actions */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   {/* Date */}
-                  <div className="text-right">
+                  <div className="text-right hidden sm:block">
                     <div className={`text-sm font-medium ${
                       isPastDue ? 'text-red-600' : 'text-gray-700'
                     }`}>
@@ -280,7 +279,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
 
                   {/* Reminder Icon */}
                   <span 
-                    className="text-lg" 
+                    className="text-base sm:text-lg" 
                     title={activity.data?.has_reminder ? 'Hatırlatıcı Açık' : 'Hatırlatıcı Kapalı'}
                   >
                     {activity.data?.has_reminder ? '🔔' : '🔕'}
@@ -293,19 +292,19 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
                         {/* Complete */}
                         <button
                           onClick={() => handleComplete(activity.id)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Tamamlandı İşaretle"
                         >
-                          <span className="text-lg">✓</span>
+                          <span className="text-base sm:text-lg">✓</span>
                         </button>
 
                         {/* Edit */}
                         <button
                           onClick={() => onEdit(activity)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Düzenle"
                         >
-                          <span className="text-base">✏️</span>
+                          <span className="text-sm sm:text-base">✏️</span>
                         </button>
                       </>
                     )}
@@ -313,29 +312,31 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
                     {/* Delete */}
                     <button
                       onClick={() => setDeleteConfirm(activity.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Sil"
                     >
-                      <span className="text-base">🗑️</span>
+                      <span className="text-sm sm:text-base">🗑️</span>
                     </button>
                   </div>
                 </div>
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
 
-      {/* Show Completed Toggle */}
-      <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
-        <input
-          type="checkbox"
-          checked={showCompleted}
-          onChange={(e) => setShowCompleted(e.target.checked)}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-        />
-        <span className="text-sm text-gray-600">Tamamlananları göster</span>
-      </label>
+      {/* Footer */}
+      <div className="p-3 sm:p-4 border-t bg-gray-50">
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={showCompleted}
+            onChange={(e) => setShowCompleted(e.target.checked)}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-xs sm:text-sm text-gray-600">Tamamlananları göster</span>
+        </label>
+      </div>
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (

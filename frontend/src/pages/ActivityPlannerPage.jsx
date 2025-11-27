@@ -31,31 +31,23 @@ export default function ActivityPlannerPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCancel}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Geri</span>
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Aktivite Planlama</h1>
-                <p className="text-sm text-gray-600">Yeni aktivite ve hatırlatıcı oluştur</p>
-              </div>
-            </div>
+      {/* Tek Container - Her şey aynı genişlikte */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            onClick={handleCancel}
+            className="p-2 -ml-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Aktivite Planlama</h1>
+            <p className="text-xs sm:text-sm text-gray-500">Yeni aktivite ve hatırlatıcı oluştur</p>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Activity Creation Form */}
         <ActivityPlannerFormNew
           opportunityId={opportunityId || customerId}
@@ -63,9 +55,6 @@ export default function ActivityPlannerPage() {
           onSave={handleSave}
           onCancel={handleCancel}
         />
-
-        {/* Divider */}
-        <div className="border-t border-gray-200 my-8" />
 
         {/* Activity List */}
         <ActivityList

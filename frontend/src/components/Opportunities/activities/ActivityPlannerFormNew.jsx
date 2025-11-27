@@ -113,6 +113,17 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         description: `${formData.title} başarıyla planlandı`,
       });
 
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        reminder: true,
+        customName: ''
+      });
+      setSelectedType('email');
+
       onSave(savedActivity);
     } catch (error) {
       console.error('Activity save error:', error);
@@ -127,31 +138,33 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      {/* Aktivite Tipi Grid */}
-      <div className="mb-5">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6 mb-6">
+      {/* Aktivite Tipi Grid - Responsive */}
+      <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Aktivite Tipi
         </label>
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
           {ACTIVITY_TYPES.map(type => (
             <button
               key={type.id}
               type="button"
               onClick={() => setSelectedType(type.id)}
               className={`
-                relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all
-                ${selectedType === type.id 
-                  ? 'border-blue-500 bg-blue-50 shadow-sm' 
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                relative flex flex-col items-center justify-center 
+                p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 transition-all
+                ${
+                  selectedType === type.id 
+                    ? 'border-blue-500 bg-blue-50 shadow-sm' 
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }
               `}
             >
-              <span className="text-2xl mb-1">{type.icon}</span>
-              <span className="text-xs font-medium text-gray-700">{type.label}</span>
+              <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1">{type.icon}</span>
+              <span className="text-[10px] sm:text-xs font-medium text-gray-700">{type.label}</span>
               {selectedType === type.id && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">✓</span>
+                <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-[10px] sm:text-xs font-bold">✓</span>
                 </span>
               )}
             </button>
@@ -161,7 +174,7 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
 
       {/* Özel Aktivite Adı (conditional) */}
       {selectedType === 'custom' && (
-        <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+        <div className="mb-4 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg sm:rounded-xl">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             🏷️ Özel Aktivite Adı <span className="text-red-500">*</span>
           </label>
@@ -170,31 +183,30 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
             value={formData.customName}
             onChange={(e) => setFormData({...formData, customName: e.target.value})}
             placeholder="Örn: Toplantı Organize Et, Demo Hazırla"
-            className="w-full px-3 py-2 border border-amber-300 rounded-lg bg-white focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            className="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
         </div>
       )}
 
-      {/* Form Card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-        {/* Row 1: Başlık + Tarih/Saat */}
-        <div className="grid grid-cols-5 gap-4 mb-4">
-          {/* Başlık - 3 columns */}
-          <div className="col-span-3">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Başlık <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              placeholder="Aktivite başlığı"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+      {/* Form Grid - Responsive */}
+      <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-6 sm:gap-4 mb-4">
+        {/* Başlık */}
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Başlık <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            placeholder="Aktivite başlığı"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
 
-          {/* Tarih - 1 column */}
-          <div>
+        {/* Tarih ve Saat - Mobile: yan yana, Desktop: ayrı kolonlar */}
+        <div className="grid grid-cols-2 gap-3 sm:col-span-3 sm:grid-cols-3">
+          <div className="col-span-1 sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               📅 Tarih <span className="text-red-500">*</span>
             </label>
@@ -203,11 +215,9 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
               value={formData.date}
               onChange={(e) => setFormData({...formData, date: e.target.value})}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-
-          {/* Saat - 1 column */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               ⏰ Saat
@@ -215,7 +225,7 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
             <select
               value={formData.time}
               onChange={(e) => setFormData({...formData, time: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">--:--</option>
               {generateTimeOptions().map(time => (
@@ -224,66 +234,66 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
             </select>
           </div>
         </div>
-
-        {/* Row 2: Açıklama - Full Width */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Açıklama
-          </label>
-          <textarea
-            value={formData.description}
-            onChange={(e) => setFormData({...formData, description: e.target.value})}
-            placeholder="Ek bilgiler..."
-            rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        {/* Row 3: Quick Date + Reminder Toggle */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          {/* Quick Date Buttons */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">⚡</span>
-            {QUICK_DATE_OPTIONS.map(option => (
-              <button
-                key={option.days}
-                type="button"
-                onClick={() => setQuickDate(option.days)}
-                className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                  isQuickDateSelected(option.days)
-                    ? 'bg-blue-100 text-blue-700 font-medium'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Reminder Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <span className="text-sm text-gray-600">🔔 Hatırlat</span>
-            <div 
-              onClick={() => setFormData({...formData, reminder: !formData.reminder})}
-              className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${
-                formData.reminder ? 'bg-blue-500' : 'bg-gray-300'
-              }`}
-            >
-              <div className={`absolute w-4 h-4 bg-white rounded-full top-0.5 shadow-sm transition-transform ${
-                formData.reminder ? 'right-0.5' : 'left-0.5'
-              }`} />
-            </div>
-          </label>
-        </div>
       </div>
 
-      {/* Footer Buttons */}
-      <div className="flex items-center justify-end gap-3 mt-6">
+      {/* Açıklama */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Açıklama
+        </label>
+        <textarea
+          value={formData.description}
+          onChange={(e) => setFormData({...formData, description: e.target.value})}
+          placeholder="Ek bilgiler..."
+          rows={2}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      {/* Alt Satır - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-100">
+        {/* Hızlı Tarih */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-gray-400">⚡</span>
+          {QUICK_DATE_OPTIONS.map(option => (
+            <button
+              key={option.days}
+              type="button"
+              onClick={() => setQuickDate(option.days)}
+              className={`px-2.5 sm:px-3 py-1 text-xs rounded-full transition-colors ${
+                isQuickDateSelected(option.days)
+                  ? 'bg-blue-100 text-blue-700 font-medium'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Hatırlatıcı */}
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <span className="text-sm text-gray-600">🔔 Hatırlat</span>
+          <div 
+            onClick={() => setFormData({...formData, reminder: !formData.reminder})}
+            className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${
+              formData.reminder ? 'bg-blue-500' : 'bg-gray-300'
+            }`}
+          >
+            <div className={`absolute w-4 h-4 bg-white rounded-full top-0.5 shadow-sm transition-transform ${
+              formData.reminder ? 'right-0.5' : 'left-0.5'
+            }`} />
+          </div>
+        </label>
+      </div>
+
+      {/* Form Butonları */}
+      <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t">
         <button
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+          className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
         >
           İptal
         </button>
@@ -291,14 +301,15 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
           type="button"
           onClick={handleSubmit}
           disabled={!isFormValid() || loading}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+          className="px-4 sm:px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
         >
           {loading ? (
             <span>Kaydediliyor...</span>
           ) : (
             <>
               <span>📋</span>
-              <span>Planla</span>
+              <span className="hidden sm:inline">Planla</span>
+              <span className="sm:hidden">Ekle</span>
             </>
           )}
         </button>
