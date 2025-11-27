@@ -261,19 +261,48 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   };
 
   // Load countries from library (SAME AS NewCustomerForm)
-  const loadUlkeler = async () => {
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/library/countries`);
-      const data = await response.json();
-      
-      if (Array.isArray(data)) {
-        const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
-        setUlkeler(ulkeIsimleri);
-        setTumUlkeler(data);
+  // Load countries from react-country-state-city library
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const countries = await GetCountries();
+        setCountriesList(countries);
+        
+        // Find Turkey by default (code: TR)
+        const turkey = countries.find(c => c.iso2 === 'TR');
+        if (turkey) {
+          setSelectedCountryId(turkey.id);
+          handleInputChange('country', turkey.name);
+          loadStates(turkey.id);
+        }
+      } catch (error) {
+        console.error('Ülkeler yüklenemedi:', error);
       }
+    };
+    
+    loadCountries();
+  }, []);
+  
+  // Load states/cities when country changes
+  const loadStates = async (countryId) => {
+    try {
+      const states = await GetState(countryId);
+      setStatesList(states);
     } catch (error) {
-      console.error('Ülkeler yüklenemedi:', error);
+      console.error('Şehirler yüklenemedi:', error);
+      setStatesList([]);
+    }
+  };
+  
+  // Handle country change
+  const handleCountryChange = (countryName) => {
+    const selectedCountry = countriesList.find(c => c.name === countryName);
+    
+    if (selectedCountry) {
+      setSelectedCountryId(selectedCountry.id);
+      handleInputChange('country', selectedCountry.name);
+      handleInputChange('city', ''); // Clear city
+      loadStates(selectedCountry.id);
     }
   };
 
