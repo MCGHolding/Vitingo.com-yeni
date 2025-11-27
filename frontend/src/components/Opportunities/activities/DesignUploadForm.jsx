@@ -416,14 +416,27 @@ export default function DesignUploadForm({ opportunityId, opportunityTitle, onSa
                         <span className="text-sm font-medium">{file.name}</span>
                         <span className="text-xs text-gray-500">({file.size})</span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(file.id)}
-                        className="h-6 w-6 p-0 hover:bg-red-100"
-                      >
-                        <Trash2 className="h-3 w-3 text-red-600" />
-                      </Button>
+                      <div className="flex items-center space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setPreviewFile(file);
+                            setShowPreview(true);
+                          }}
+                          className="h-6 w-6 p-0 hover:bg-blue-100"
+                        >
+                          <Eye className="h-3 w-3 text-blue-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFile(file.id)}
+                          className="h-6 w-6 p-0 hover:bg-red-100"
+                        >
+                          <Trash2 className="h-3 w-3 text-red-600" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
