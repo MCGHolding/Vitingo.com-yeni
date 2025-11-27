@@ -341,6 +341,25 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Custom Activity Name (only for custom type) */}
+                {formData.activity_type === 'custom' && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center space-x-2">
+                      <span>✏️ Özel Aktivite Adı</span>
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      value={formData.custom_activity_name}
+                      onChange={(e) => handleInputChange('custom_activity_name', e.target.value)}
+                      placeholder="Örn: Toplantı Organize Et, Demo Hazırla, Rapor Gönder..."
+                      className="bg-white"
+                    />
+                    <p className="text-xs text-gray-600 mt-1">
+                      Kendi aktivite tipinizi oluşturun
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-2 block">
                     Aktivite Başlığı (İsteğe Bağlı)
