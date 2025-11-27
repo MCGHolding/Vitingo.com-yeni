@@ -14,7 +14,8 @@ import {
   Image,
   Phone,
   Video,
-  MoreVertical
+  MoreVertical,
+  X
 } from 'lucide-react';
 import { useToast } from '../../../hooks/use-toast';
 
