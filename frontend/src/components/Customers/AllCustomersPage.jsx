@@ -64,6 +64,7 @@ const ActionMenuPopover = ({ customer, onAction }) => {
 
   const menuItems = [
     { label: 'Aktivite Takibi', icon: Activity, color: 'text-purple-600 hover:text-purple-800 hover:bg-purple-50', action: 'activity_tracking' },
+    { label: 'Tasarım Yönetimi', icon: Upload, color: 'text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50', action: 'design_management' },
     { label: 'Mesaj', icon: MessageSquare, color: 'text-blue-600 hover:text-blue-800 hover:bg-blue-50', action: 'message' },
     { label: 'Mail', icon: Mail, color: 'text-green-600 hover:text-green-800 hover:bg-green-50', action: 'email' },
     { label: 'WhatsApp', icon: MessageCircle, color: 'text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50', action: 'whatsapp' },
