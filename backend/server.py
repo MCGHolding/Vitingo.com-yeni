@@ -2631,7 +2631,7 @@ async def send_survey_invitation(
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        base_url = os.environ.get('FRONTEND_URL', 'https://contact-showcase-2.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://contact-save-repair.preview.emergentagent.com')
         survey_link = f"{base_url}/survey/{survey_token}"
         
         # Prepare customer and project data for email
@@ -2827,7 +2827,7 @@ async def send_arbitrary_survey_invitation(request: ArbitrarySurveyRequest):
     try:
         # Generate unique survey token
         survey_token = str(uuid.uuid4())
-        base_url = os.environ.get('FRONTEND_URL', 'https://contact-showcase-2.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://contact-save-repair.preview.emergentagent.com')
         survey_link = f"{base_url}/survey/{survey_token}"
         
         # Prepare customer and project data for email
@@ -2920,7 +2920,7 @@ async def send_handover_form(request: HandoverRequest):
     try:
         # Generate unique handover token
         handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
-        base_url = os.environ.get('FRONTEND_URL', 'https://contact-showcase-2.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://contact-save-repair.preview.emergentagent.com')
         handover_link = f"{base_url}/handover/{handover_token}"
         
         # Prepare customer and project data for email
@@ -2999,7 +2999,7 @@ async def send_arbitrary_handover_form(request: ArbitraryHandoverRequest):
     try:
         # Generate unique handover token
         handover_token = f"ho_{str(uuid.uuid4()).replace('-', '')}"
-        base_url = os.environ.get('FRONTEND_URL', 'https://contact-showcase-2.preview.emergentagent.com')
+        base_url = os.environ.get('FRONTEND_URL', 'https://contact-save-repair.preview.emergentagent.com')
         handover_link = f"{base_url}/handover/{handover_token}"
         
         # Prepare customer and project data for email
@@ -3524,6 +3524,10 @@ async def get_customer(customer_id: str):
 async def update_customer(customer_id: str, customer_data: dict):
     """Update a customer"""
     try:
+        # Remove MongoDB internal fields that shouldn't be updated
+        customer_data.pop('_id', None)
+        customer_data.pop('id', None)  # id is in filter, shouldn't be in $set
+        
         # Validate bank information if provided
         if 'iban' in customer_data and customer_data['iban']:
             if not validate_iban(customer_data['iban']):
@@ -5875,7 +5879,7 @@ async def send_expense_receipt_approval_email(receipt, approval_key):
             return
         
         # Create approval URL
-        frontend_url = os.environ.get('FRONTEND_URL', 'https://contact-showcase-2.preview.emergentagent.com')
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://contact-save-repair.preview.emergentagent.com')
         approval_url = f"{frontend_url}/expense-receipt-approval/{approval_key}"
         
         # Create email content
@@ -7982,7 +7986,7 @@ def generate_collection_email_content(receipt_input, receipt_number, issue_date,
                     <p style="color: #4a5568; margin: 0 0 15px 0;">
                         Aşağıdaki butona basarak tahsilat makbuzunu görüntüleyebilir veya PDF formatında indirebilirsiniz:
                     </p>
-                    <a href="https://contact-showcase-2.preview.emergentagent.com{pdf_link}" 
+                    <a href="https://contact-save-repair.preview.emergentagent.com{pdf_link}" 
                        style="display: inline-block; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); 
                               color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; 
                               font-weight: bold; box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);">

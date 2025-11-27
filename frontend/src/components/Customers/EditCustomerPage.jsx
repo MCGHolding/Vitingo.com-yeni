@@ -34,7 +34,7 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   const [isLoading, setIsLoading] = useState(false);
   
   // Initialize from customer directly
-  const [formData, setFormData] = useState({
+  const initialData = {
     company_short_name: customer.companyName || '',
     company_title: customer.companyTitle || '',
     customer_type_id: customer.relationshipType || '',
@@ -52,16 +52,13 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     services: customer.services || [],
     tags: customer.tags || [],
     notes: customer.notes || ''
-  });
+  };
+  
+  const [formData, setFormData] = useState(initialData);
+  const [initialFormData] = useState(JSON.parse(JSON.stringify(initialData))); // Deep clone
+  const [initialContacts] = useState(JSON.parse(JSON.stringify(customer.contacts || []))); // Store initial contacts
   
   console.log('Initial formData:', formData);
-  
-  // Store original for comparison
-  const originalData = JSON.stringify({
-    ...formData,
-    contacts: customer.contacts || []
-  });
-  const [originalFormData] = useState(originalData);
   
   // Modal state
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
@@ -276,24 +273,16 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   // Check if form has changes - Simple string comparison
   const hasChanges = () => {
     try {
-      // Create clean objects for comparison
-      const currentData = {
-        ...formData,
-        tags: formData.tags || [],
-        contacts: contacts
-      };
+      // Compare formData
+      const formChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData);
       
-      const originalData = {
-        ...originalFormData,
-        tags: originalFormData.tags || [],
-        contacts: originalFormData.contacts || []
-      };
+      // Compare contacts
+      const contactsChanged = JSON.stringify(contacts) !== JSON.stringify(initialContacts);
       
-      // Compare as strings
-      const currentStr = JSON.stringify(currentData);
-      const originalStr = JSON.stringify(originalData);
+      const hasChange = formChanged || contactsChanged;
+      console.log('🔍 Change detection:', { formChanged, contactsChanged, hasChange });
       
-      return currentStr !== originalStr;
+      return hasChange;
     } catch (error) {
       console.error('Error checking changes:', error);
       return false;
@@ -302,7 +291,10 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   
   // Handle back button click
   const handleBackClick = () => {
-    if (hasChanges()) {
+    const hasChange = hasChanges();
+    console.log('🔙 Back button clicked, hasChanges:', hasChange);
+    
+    if (hasChange) {
       setShowUnsavedModal(true);
     } else {
       onBack();
@@ -311,14 +303,39 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
   
   // Save and go back
   const handleSaveAndBack = async () => {
-    await handleSubmit(new Event('submit'));
-    setShowUnsavedModal(false);
+    console.log('💾 handleSaveAndBack called');
+    setIsLoading(true);
+    
+    try {
+      const fakeEvent = { preventDefault: () => {} };
+      const success = await handleSubmit(fakeEvent);
+      console.log('💾 Save result:', success);
+      
+      if (success === true) {
+        console.log('✅ Save successful, closing modal and going back');
+        setShowUnsavedModal(false);
+        setTimeout(() => {
+          onBack();
+        }, 200);
+      } else {
+        console.log('❌ Save failed');
+      }
+    } catch (error) {
+      console.error('❌ Save error:', error);
+    }
   };
   
   // Discard changes and go back
   const handleDiscardAndBack = () => {
+    console.log('💨 Discarding changes');
     setShowUnsavedModal(false);
     onBack();
+  };
+  
+  // Cancel modal
+  const handleCancelModal = () => {
+    console.log('❌ Modal cancelled');
+    setShowUnsavedModal(false);
   };
   
   const handleSubmit = async (e) => {
@@ -328,25 +345,51 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
     setIsLoading(true);
     
     try {
-      // Prepare data with contacts
-      const dataToSave = formToDb({
-        ...formData,
+      // Convert dropdown IDs to values/codes before saving
+      const dataToSave = { ...formData };
+      
+      // Müşteri Türü: ID → value (code)
+      if (dataToSave.customer_type_id && customerTypes.length > 0) {
+        const typeObj = customerTypes.find(t => t.id === dataToSave.customer_type_id);
+        if (typeObj) {
+          dataToSave.customer_type_id = typeObj.value || typeObj.code;
+        }
+      }
+      
+      // Sektör: ID → value (code)
+      if (dataToSave.specialty_id && sectors.length > 0) {
+        const sectorObj = sectors.find(s => s.id === dataToSave.specialty_id);
+        if (sectorObj) {
+          dataToSave.specialty_id = sectorObj.value || sectorObj.code;
+        }
+      }
+      
+      // Prepare data with formToDb mapper
+      const finalData = formToDb({
+        ...dataToSave,
         contacts: contacts
       });
+      
+      console.log('💾 Saving data:', finalData);
       
       const response = await fetch(`${BACKEND_URL}/api/customers/${customer.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataToSave),
+        body: JSON.stringify(finalData),
       });
       
+      console.log('📡 Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to update customer');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Response error:', errorData);
+        throw new Error(errorData.detail || 'Failed to update customer');
       }
       
       const result = await response.json();
+      console.log('✅ Update successful:', result);
       
       toast({
         title: "Başarılı!",
@@ -357,18 +400,18 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
         onSave(result.customer || result);
       }
       
+      setIsLoading(false);
       return true;
       
     } catch (error) {
-      console.error('Error updating customer:', error);
+      console.error('❌ Error updating customer:', error);
       toast({
         title: "Hata!",
-        description: "Müşteri güncellenirken bir hata oluştu.",
+        description: error.message || "Müşteri güncellenirken bir hata oluştu.",
         variant: "destructive",
       });
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
   
@@ -623,16 +666,62 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
                 </div>
               </div>
               
-              {/* Ürün ve Servisler */}
+              {/* Ürün ve Servisler - Tag Style */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Ürün ve Servisler
                 </label>
-                <Input
-                  value={formData.services ? formData.services.join(', ') : ''}
-                  onChange={(e) => handleInputChange('services', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
-                  placeholder="Ürün veya servis adı girin..."
-                />
+                <div className="flex space-x-2 mb-2">
+                  <Input
+                    value={currentTag}
+                    onChange={(e) => setCurrentTag(e.target.value)}
+                    placeholder="Ürün veya servis girin..."
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (currentTag.trim()) {
+                          const currentServices = Array.isArray(formData.services) ? formData.services : [];
+                          handleInputChange('services', [...currentServices, currentTag.trim()]);
+                          setCurrentTag('');
+                        }
+                      }
+                    }}
+                  />
+                  <Button 
+                    type="button" 
+                    onClick={() => {
+                      if (currentTag.trim()) {
+                        const currentServices = Array.isArray(formData.services) ? formData.services : [];
+                        handleInputChange('services', [...currentServices, currentTag.trim()]);
+                        setCurrentTag('');
+                      }
+                    }} 
+                    size="sm" 
+                    variant="outline"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Array.isArray(formData.services) && formData.services.map((service, serviceIndex) => (
+                    <span
+                      key={serviceIndex}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
+                    >
+                      {service}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentServices = Array.isArray(formData.services) ? formData.services : [];
+                          handleInputChange('services', currentServices.filter((_, i) => i !== serviceIndex));
+                        }}
+                        className="ml-2 text-green-600 hover:text-green-800"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -907,44 +996,52 @@ export default function EditCustomerPage({ customer, onBack, onSave }) {
       {showUnsavedModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <Save className="h-6 w-6 text-yellow-600" />
-                </div>
+            {/* Header with Icon */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
               </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Kaydedilmemiş Değişiklikler
-                </h3>
-                <p className="text-sm text-gray-600 mb-6">
-                  Yaptığınız değişiklikleri kaydetmek istiyor musunuz?
-                </p>
-                <div className="flex space-x-3">
-                  <Button
-                    onClick={handleSaveAndBack}
-                    disabled={isLoading}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
-                  </Button>
-                  <Button
-                    onClick={handleDiscardAndBack}
-                    variant="outline"
-                    className="flex-1"
-                    disabled={isLoading}
-                  >
-                    Kaydetme
-                  </Button>
-                  <Button
-                    onClick={() => setShowUnsavedModal(false)}
-                    variant="ghost"
-                    disabled={isLoading}
-                  >
-                    İptal
-                  </Button>
-                </div>
-              </div>
+              <h3 className="text-lg font-bold text-gray-900">
+                Kaydedilmemiş Değişiklikler
+              </h3>
+            </div>
+            
+            {/* Message */}
+            <p className="text-gray-600 mb-6">
+              Yaptığınız değişiklikler kaydedilmedi. Kaydetmek istiyor musunuz?
+            </p>
+            
+            {/* Buttons */}
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleCancelModal}
+                disabled={isLoading}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleDiscardAndBack}
+                disabled={isLoading}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+              >
+                Kaydetme
+              </button>
+              <button
+                onClick={handleSaveAndBack}
+                disabled={isLoading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {isLoading && (
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                )}
+                {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+              </button>
             </div>
           </div>
         </div>
