@@ -120,7 +120,8 @@ export default function ActivityPlannerPageNew() {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    // Navigate to customer timeline page instead of browser back
+    navigate(`/customers/${effectiveId}`);
   };
 
   const handleComplete = async (activityId) => {
