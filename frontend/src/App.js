@@ -36,6 +36,7 @@ import CustomerProspectsPage from './components/Customers/CustomerProspectsPage'
 import ViewCustomerPage from './components/Customers/ViewCustomerPage';
 import EditCustomerPage from './components/Customers/EditCustomerPage';
 import EmailPage from './pages/customers/emails/EmailPage';
+import DesignVersionsPage from './pages/customers/designs/DesignVersionsPage';
 import ActivityPlannerPage from './pages/ActivityPlannerPageNew';
 import UserManagementModal from './components/UserManagement/UserManagementModal';
 import AllUsersPage from './components/UserManagement/AllUsersPage';
