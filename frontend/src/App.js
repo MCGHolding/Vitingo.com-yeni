@@ -387,7 +387,28 @@ const Dashboard = () => {
     setCurrentView('favorite-opportunities');
   };
 
+  // Load all opportunities from API
+  const loadOpportunities = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        'https://version-control-7.preview.emergentagent.com';
+      
+      const response = await fetch(`${backendUrl}/api/opportunities`);
+      if (response.ok) {
+        const data = await response.json();
+        setOpportunities(data);
+        console.log('Opportunities loaded:', data.length);
+      } else {
+        console.error('Failed to load opportunities');
+      }
+    } catch (error) {
+      console.error('Error loading opportunities:', error);
+    }
+  };
+
   const handleAllOpportunities = () => {
+    loadOpportunities(); // Refresh opportunities data when opening All Opportunities page
     setCurrentView('all-opportunities');
   };
 
