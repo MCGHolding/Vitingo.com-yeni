@@ -6593,12 +6593,20 @@ async def create_person(person_data: PersonCreate):
         logger.error(f"Error creating person: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/people", response_model=List[Person])
+@api_router.get("/people")
 async def get_people():
     """Get all people"""
     try:
-        people = await db.people.find().to_list(length=None)
-        return [Person(**person) for person in people]
+        people = await db.people.find({}, {"_id": 0}).to_list(length=None)
+        
+        # Add fullName field for frontend compatibility
+        for person in people:
+            if "first_name" in person and "last_name" in person:
+                person["fullName"] = f"{person['first_name']} {person['last_name']}"
+            elif "firstName" in person and "lastName" in person:
+                person["fullName"] = f"{person['firstName']} {person['lastName']}"
+        
+        return people
         
     except Exception as e:
         logger.error(f"Error getting people: {str(e)}")
