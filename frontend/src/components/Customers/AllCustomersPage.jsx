@@ -997,6 +997,7 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <OpportunityTimelinePage
             opportunityId={selectedCustomer.id}
+            customerId={selectedCustomer.id}
             opportunityTitle={selectedCustomer.companyName || selectedCustomer.companyTitle || selectedCustomer.company_short_name || selectedCustomer.contactPerson || 'Müşteri'}
             onBack={() => {
               setActivityTrackingOpen(false);
