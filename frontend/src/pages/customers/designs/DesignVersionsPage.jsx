@@ -19,7 +19,6 @@ export default function DesignVersionsPage() {
   const [expandedVersion, setExpandedVersion] = useState(null);
   
   // New version form state
-  const [versionName, setVersionName] = useState('');
   const [notes, setNotes] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   
