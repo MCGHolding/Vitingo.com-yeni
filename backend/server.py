@@ -11861,7 +11861,7 @@ async def get_opportunity_activities(
     status: str = None,
     priority: str = None,
     activity_type: str = None,
-    tab: str = "thisWeek",
+    tab: str = "all",
     search: str = None,
     page: int = 1,
     limit: int = 10
@@ -11885,39 +11885,65 @@ async def get_opportunity_activities(
                 ]
             else:
                 query["status"] = status
+        else:
+            # Default: only planned/pending activities
+            query["$or"] = [
+                {"status": "pending"},
+                {"data.status": "planned"}
+            ]
         
         # Priority filter
-        if priority:
+        if priority and priority != "all":
             query["priority"] = priority
         
         # Activity type filter
         if activity_type and activity_type != "all":
             query["data.activity_type"] = activity_type
         
-        # Search filter
-        if search:
-            query["$or"] = [
-                {"title": {"$regex": search, "$options": "i"}},
-                {"description": {"$regex": search, "$options": "i"}}
-            ]
+        # Search filter - must be nested properly with other $or
+        if search and search.strip():
+            # If there's already an $or for status, we need to combine differently
+            if "$or" in query:
+                existing_or = query.pop("$or")
+                query["$and"] = [
+                    {"$or": existing_or},
+                    {"$or": [
+                        {"title": {"$regex": search, "$options": "i"}},
+                        {"description": {"$regex": search, "$options": "i"}}
+                    ]}
+                ]
+            else:
+                query["$or"] = [
+                    {"title": {"$regex": search, "$options": "i"}},
+                    {"description": {"$regex": search, "$options": "i"}}
+                ]
         
-        # Tab-based date filtering
+        # Get all matching activities
+        all_activities = await db.opportunity_activities.find(query).to_list(length=None)
+        logger.info(f"🟢 [BACKEND] Total activities from DB: {len(all_activities)}")
+        
+        # Tab-based date filtering (in Python since we're parsing strings)
+        filtered_activities = []
+        
         if tab != "all":
-            now = datetime.now(timezone.utc)
-            today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            now = datetime.now()
+            today_start = datetime(now.year, now.month, now.day, 0, 0, 0)
             
-            # Get all activities first, then filter by date
-            temp_activities = await db.opportunity_activities.find(query).to_list(length=None)
-            filtered_activities = []
+            logger.info(f"🟢 [BACKEND] Tab filter: {tab}, Today start: {today_start}")
             
-            for activity in temp_activities:
+            for activity in all_activities:
                 scheduled_datetime = activity.get("data", {}).get("scheduled_datetime")
                 if not scheduled_datetime:
                     continue
                     
                 try:
-                    act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', '+00:00'))
+                    # Parse datetime
+                    if 'T' in scheduled_datetime:
+                        act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', ''))
+                    else:
+                        act_date = datetime.strptime(scheduled_datetime, "%Y-%m-%d")
                     
+                    # Apply tab filter
                     if tab == "today":
                         tomorrow = today_start + timedelta(days=1)
                         if today_start <= act_date < tomorrow:
@@ -11931,38 +11957,35 @@ async def get_opportunity_activities(
                         if today_start <= act_date < month_end:
                             filtered_activities.append(activity)
                     elif tab == "future":
-                        if act_date >= today_start:
+                        tomorrow = today_start + timedelta(days=1)
+                        if act_date >= tomorrow:
                             filtered_activities.append(activity)
-                except:
+                except Exception as parse_error:
+                    logger.error(f"  -> Date parse error: {parse_error} for {scheduled_datetime}")
                     pass
-            
-            # Sort by scheduled datetime
-            filtered_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
-            
-            # Pagination
-            total = len(filtered_activities)
-            total_pages = ceil(total / limit) if total > 0 else 1
-            start_idx = (page - 1) * limit
-            end_idx = start_idx + limit
-            activities = filtered_activities[start_idx:end_idx]
-            
         else:
-            # No date filter, use database sort
-            total = await db.opportunity_activities.count_documents(query)
-            total_pages = ceil(total / limit) if total > 0 else 1
-            activities = await db.opportunity_activities.find(query)\
-                .sort("created_at", -1)\
-                .skip((page - 1) * limit)\
-                .limit(limit)\
-                .to_list(limit)
+            filtered_activities = all_activities
         
-        logger.info(f"🟢 [BACKEND] Found {len(activities)} activities (page {page}/{total_pages})")
+        # Sort by scheduled datetime
+        filtered_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
         
-        # Return with pagination info in headers (or you can return as object)
+        logger.info(f"🟢 [BACKEND] After tab filter: {len(filtered_activities)} activities")
+        
+        # Pagination
+        total = len(filtered_activities)
+        total_pages = ceil(total / limit) if total > 0 else 1
+        start_idx = (page - 1) * limit
+        end_idx = start_idx + limit
+        activities = filtered_activities[start_idx:end_idx]
+        
+        logger.info(f"✅ [BACKEND] Returning {len(activities)} activities (page {page}/{total_pages})")
+        
         return [OpportunityActivity(**activity) for activity in activities]
         
     except Exception as e:
         logger.error(f"❌ [BACKEND] Error getting opportunity activities: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/opportunities/{opportunity_id}/activities", response_model=OpportunityActivity)
