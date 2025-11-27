@@ -194,6 +194,26 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
       return;
     }
 
+    // Custom activity validation
+    if (formData.activity_type === 'custom' && !formData.custom_activity_name) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Lütfen özel aktivite adını girin",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Reminder method validation
+    if (formData.has_reminder && formData.reminder_methods.length === 0) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Lütfen en az bir hatırlatıcı yöntemi seçin",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setSaving(true);
     
     try {
