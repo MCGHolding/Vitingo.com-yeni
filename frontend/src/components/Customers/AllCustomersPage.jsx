@@ -514,6 +514,12 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
       return;
     }
 
+    if (action === 'design_management') {
+      // Navigate to Design Version Management Page
+      navigate(`/customers/${customer.id}/designs`);
+      return;
+    }
+
     if (action === 'email') {
       // Navigate to Email Management Page
       navigate(`/customers/${customer.id}/emails`);
