@@ -91,22 +91,30 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         }
       };
 
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(activityData)
-        }
-      );
+      console.log('🔵 [FORM] Gönderilen data:', activityData);
+      console.log('🔵 [FORM] Opportunity ID:', opportunityId);
+      
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities`;
+      console.log('🔵 [FORM] API URL:', url);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(activityData)
+      });
+
+      console.log('🔵 [FORM] Response status:', response.status);
 
       if (!response.ok) {
-        throw new Error('API isteği başarısız oldu');
+        const errorText = await response.text();
+        console.error('❌ [FORM] API error:', errorText);
+        throw new Error(`API isteği başarısız oldu: ${response.status}`);
       }
 
       const savedActivity = await response.json();
+      console.log('✅ [FORM] Kayıt başarılı:', savedActivity);
 
       toast({
         title: "✅ Başarılı",
@@ -124,12 +132,14 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
       });
       setSelectedType('email');
 
+      // Call onSave to trigger list refresh
+      console.log('🔵 [FORM] onSave çağrılıyor...');
       onSave(savedActivity);
     } catch (error) {
-      console.error('Activity save error:', error);
+      console.error('❌ [FORM] Activity save error:', error);
       toast({
         title: "❌ Hata",
-        description: "Aktivite planlanırken bir hata oluştu. Lütfen tekrar deneyin.",
+        description: error.message || "Aktivite planlanırken bir hata oluştu. Lütfen tekrar deneyin.",
         variant: "destructive"
       });
     } finally {

@@ -33,24 +33,38 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
+    console.log('🟢 [LIST] useEffect triggered');
+    console.log('🟢 [LIST] opportunityId:', opportunityId);
+    console.log('🟢 [LIST] refreshTrigger:', refreshTrigger);
+    console.log('🟢 [LIST] filter:', filter);
+    console.log('🟢 [LIST] showCompleted:', showCompleted);
     fetchActivities();
   }, [opportunityId, filter, showCompleted, refreshTrigger]);
 
   const fetchActivities = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities`;
+      console.log('🟢 [LIST] Fetching from:', url);
+      
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (!response.ok) throw new Error('Failed to fetch');
+      console.log('🟢 [LIST] Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ [LIST] API error:', errorText);
+        throw new Error('Failed to fetch');
+      }
 
       const data = await response.json();
+      console.log('🟢 [LIST] Raw API response:', data);
+      console.log('🟢 [LIST] Response is array?', Array.isArray(data));
+      console.log('🟢 [LIST] Data length:', data.length);
       
       // Filter by status
       let filtered = data;
@@ -63,9 +77,11 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
         filtered = filtered.filter(a => a.data?.activity_type === filter);
       }
 
+      console.log('🟢 [LIST] Filtered activities:', filtered.length);
+      console.log('🟢 [LIST] Setting activities state...');
       setActivities(filtered);
     } catch (error) {
-      console.error('Error fetching activities:', error);
+      console.error('❌ [LIST] Error fetching activities:', error);
       toast({
         title: "Hata",
         description: "Aktiviteler yüklenemedi",
@@ -110,6 +126,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
 
   const handleDelete = async (activityId) => {
     try {
+      console.log('🟡 [LIST] Deleting activity:', activityId);
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities/${activityId}`,
         {
@@ -122,6 +139,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
 
       if (!response.ok) throw new Error('Delete failed');
 
+      console.log('✅ [LIST] Delete successful');
       setActivities(prev => prev.filter(a => a.id !== activityId));
       toast({
         title: "✅ Başarılı",
@@ -129,7 +147,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
       });
       setDeleteConfirm(null);
     } catch (error) {
-      console.error('Delete error:', error);
+      console.error('❌ [LIST] Delete error:', error);
       toast({
         title: "❌ Hata",
         description: "Silme işlemi başarısız",
@@ -140,6 +158,7 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
 
   const handleComplete = async (activityId) => {
     try {
+      console.log('🟡 [LIST] Completing activity:', activityId);
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/opportunities/${opportunityId}/activities/${activityId}/status`,
         {
@@ -153,13 +172,14 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
 
       if (!response.ok) throw new Error('Update failed');
 
+      console.log('✅ [LIST] Complete successful, refreshing list...');
       fetchActivities();
       toast({
         title: "✅ Başarılı",
         description: "Aktivite tamamlandı",
       });
     } catch (error) {
-      console.error('Complete error:', error);
+      console.error('❌ [LIST] Complete error:', error);
       toast({
         title: "❌ Hata",
         description: "İşlem başarısız",
@@ -175,6 +195,8 @@ export default function ActivityList({ opportunityId, refreshTrigger, onEdit }) 
       </div>
     );
   }
+
+  console.log('🟢 [LIST] Rendering with', activities.length, 'activities');
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-6">
