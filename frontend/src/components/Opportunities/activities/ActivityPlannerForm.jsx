@@ -412,7 +412,7 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                         {REMINDER_OPTIONS.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             <div className="flex items-center space-x-2">
-                              <Clock className="h-4 w-4 text-yellow-600" />
+                              <span className="text-lg">{option.icon}</span>
                               <span>{option.label}</span>
                             </div>
                           </SelectItem>
