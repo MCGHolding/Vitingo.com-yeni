@@ -288,18 +288,13 @@ export default function DesignVersionsPage() {
           <div className="bg-white rounded-lg shadow p-6 sticky top-6">
             <h2 className="text-xl font-semibold mb-4">Yeni Versiyon Oluştur</h2>
             
-            {/* Version Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Versiyon Adı *
-              </label>
-              <input
-                type="text"
-                value={versionName}
-                onChange={(e) => setVersionName(e.target.value)}
-                placeholder="ör: İlk Tasarım, Revize 1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+            {/* Auto Version Info */}
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800">
+                <span className="font-semibold">Versiyon adı otomatik oluşturulacak:</span>
+                <br />
+                Versiyon {versions.length > 0 ? Math.max(...versions.map(v => v.versionNumber)) + 1 : 1}
+              </p>
             </div>
 
             {/* Notes */}
