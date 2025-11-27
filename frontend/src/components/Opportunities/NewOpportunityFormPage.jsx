@@ -1378,7 +1378,13 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                 </p>
               </div>
               
-              <Button onClick={() => setShowSuccessModal(false)} className="bg-green-600 hover:bg-green-700">
+              <Button onClick={() => {
+                setShowSuccessModal(false);
+                if (onSave) {
+                  onSave(); // Trigger parent callback to refresh opportunities
+                }
+                onBackToDashboard();
+              }} className="bg-green-600 hover:bg-green-700">
                 Tamam
               </Button>
             </div>
