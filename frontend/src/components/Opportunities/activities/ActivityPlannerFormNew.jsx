@@ -120,10 +120,21 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
     };
 
     const testData = testDataByType[selectedType] || testDataByType.email;
-    setFormData({
-      ...formData,
-      ...testData
-    });
+    setFormData(prev => ({
+      ...prev,
+      ...testData,
+      // Keep reminder settings
+      reminderEnabled: true,
+      reminderSettings: {
+        timing: '1hour',
+        customMinutes: null,
+        channels: {
+          inApp: true,
+          email: true,  // Enable email for test
+          sms: false
+        }
+      }
+    }));
 
     toast({
       title: "✅ Test verisi dolduruldu",
