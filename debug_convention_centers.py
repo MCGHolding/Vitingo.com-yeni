@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://sidebar-navigator-2.preview.emergentagent.com"
+BACKEND_URL = "https://version-control-7.preview.emergentagent.com"
 
 def debug_convention_centers():
     """Debug the convention centers DELETE issue"""

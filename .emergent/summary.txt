@@ -1,142 +1,179 @@
 <analysis>**original_problem_statement:**
-The user initially requested the creation of a new Sektörler (Sectors) management module under the Kütüphane (Library) section. This module needed to support full CRUD (Create, Read, Update, Delete) operations, an edit feature, and a bulk import function from a comma-separated text. The user also provided a default list of 155 sectors to be seeded.
+The user's initial request was to build a sophisticated CRM, starting with a tag-based input and evolving through a series of major feature implementations and redesigns. The key requests included:
 
-During development, the user reported several critical issues and requested further enhancements:
-1.  **UI/UX Inconsistency:** The new Sectors UI should be identical to the Müşteri Türleri (Customer Types) UI. An edit feature was also requested for Customer Types.
-2.  **Data Not Displaying:** After creating a new customer, many fields filled in the form were not showing up on the customer detail (view/preview) and edit pages. This included Kaynak (Source), Durum (Status), and several fields for the contact person.
-3.  **Data Saving Bugs:** The Kaynak (Source) and Durum (Status) fields were not being saved to the database when a new customer was created.
-4.  **Incorrect Data Formatting:** The customer detail page was showing internal codes/slugs (e.g., , ) instead of the proper, user-friendly labels with correct Turkish characters and capitalization (e.g., Fuar Stand Şirketi, Ajans).
-5.  **UI Refactoring:** The user requested that the customer detail page () be reorganized. All company-related information (address, phone, email) should be consolidated into a single card, and all Yetkili Kişi (Authorized Person) details should be consolidated into another card with a matching design.
-6.  **Broken Test Verisi Doldur Button:** The Fill Test Data button was not working correctly, causing issues with saving new customers.
-7.  **Broken Customer Save:** At one point, saving a customer was completely broken due to a frontend error ().
-8.  **UI Text Changes:** The main navigation link Tüm Müşteriler needed to be changed to Müşteriler.
-9.  **New Feature:** Add a WhatsApp button to the actions menu on the customer list page.
+1.  Overhauling the Activity Planner into a full-page experience with custom activity types, reminder methods (Email, SMS, System Alert), and a full CRUD list.
+2.  Fixing a layout issue where new full-page components were missing the main application's left-side navigation menu.
+3.  Resolving a layout inconsistency within the Activity Planner page itself.
+4.  Fixing a critical bug where newly created activities failed to appear in the activities list due to a data mismatch between frontend and backend.
+5.  Adding a Test Data button to the Activity Planner for easier debugging and demos.
+6.  Implementing a completely new, scalable design for the Activity Planner to manage hundreds of activities, breaking the view into Upcoming, Priority, and All Activities sections with advanced filtering and pagination.
+7.  Designing and implementing a professional, detailed reminder system UI, allowing users to configure reminder timing (e.g., 10 mins before, 1 hour before, custom) and channels (In-App, Email, SMS).
+8.  Updating the Edit Activity modal to include the new priority and reminder settings, ensuring feature parity with the creation form.
+9.  Fixing the Back button on the Activity Planner to navigate to the correct customer page instead of relying on browser history.
+10. The most recent request is to build a comprehensive, full-page Design Version Management module for uploading, listing, sharing, and managing design files for a customer.
 
 **User's preferred language**: Turkish
 
 **what currently exists?**
-The application is a full-stack CRM with a React frontend and a FastAPI backend. It features a Library for managing dynamic data like Customer Types, Phone Codes, Convention Centers, and now Sectors. The core functionality revolves around creating, listing, viewing, and editing customers.
+The application is a full-stack CRM. The agent has successfully completed a massive overhaul of the Activity Planner feature. It is now a highly functional and scalable full-page module.
 
-The agent has implemented the Sectors module, added edit capabilities to Customer Types, fixed numerous data-saving and data-display bugs, and refactored parts of the customer detail page. However, the last change introduced a critical regression.
+Key existing components:
+-   **Scalable Activity Planner:** A three-section layout featuring Upcoming Activities, Priority Activities, and a filterable/paginated All Activities list.
+-   **Priority System:** Activities can be assigned a High, Normal, or Low priority, which is reflected in the UI.
+-   **Reminder System (UI Only):** A detailed UI in both the creation form and edit modal allows users to enable reminders, set custom timing (e.g., 10 mins before), and choose delivery channels (In-App, Email, SMS). The backend logic for sending these reminders is not yet implemented.
+-   **Bug Fixes & UX:** The agent has fixed a critical data-sync bug, corrected navigation issues, and added a Test Data button for convenience.
+
+The application is stable, and the last major feature (Activity Planner redesign) is complete from a frontend perspective.
 
 **Last working item**:
--   **Last item agent was working:** Fixing the Yetkili Kişiler (Authorized Persons) section on the customer detail page (). The user reported that after a previous fix, the contact person details were completely gone. The agent's last action was to rewrite the component section again, adding a fallback to ensure the card displays even if the customer has no contacts.
--   **Status:** **BLOCKED**
+-   **Last item agent was working:** The agent received a detailed user prompt to build a new Design Version Management page. It acknowledged the complexity, noting that external services like file storage (S3) and messaging APIs (WhatsApp) would need to be mocked initially. The agent was preparing a plan to present to the user for confirmation.
+-   **Status:** NOT STARTED
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent
--   **User Testing Done:** Y (User provided screenshots confirming the entire Yetkili Kişiler section is missing on the view page, even after adding contacts to a new customer.)
+-   **Which testing method agent to use?** Both. The backend testing agent will be needed for the new API endpoints, database schema, and file upload logic. The frontend testing agent will be needed to test the new drag-and-drop UI, version list, and sharing modal.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Yetkili Kişiler (Authorized Persons) section is completely missing on the Customer View Page (P0)**
-    -   **Attempted fixes:** The agent refactored this UI section twice. The first attempt had incorrect conditional rendering, causing data not to show. The second attempt (a complete rewrite from scratch) resulted in the entire section disappearing from the page, which is the current state. The changes were made in .
+-   **Issue 1: Newly Added Contacts Don't Appear Immediately (P2)**
+    -   **Description:** When a new contact is added via the modal in the , the contact is saved to the database but does not appear in the customer's contact list until the page is manually refreshed. This is due to a lack of state synchronization.
+    -   **Attempted fixes:** None.
     -   **Next debug checklist:**
-        1.  In , add  at the top of the component to verify the structure of the  object being received, specifically checking the  array.
-        2.  Carefully review the JSX mapping over . The entire card might be incorrectly wrapped in a conditional that is evaluating to false (e.g., ).
-        3.  Check the  hook that fetches the customer data on page load to ensure it's retrieving the complete object, including the contacts.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical CRM function. Users cannot see the contact details they have entered for a customer, making the application unusable for managing contacts.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
+        1.  Locate the  and the modal responsible for adding contacts.
+        2.  Identify the parent component that displays the contact list.
+        3.  Pass a callback function from the parent component to the modal.
+        4.  Invoke this callback function upon successful contact creation to trigger a data refresh in the parent component.
+    -   **Why fix this issue and what will be achieved with the fix?** To provide immediate user feedback and improve the user experience, avoiding the need for manual page refreshes.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y (This type of state-sync issue has appeared before).
     -   **Should Test frontend/backend/both after fix?** Frontend
     -   **Blocked on other issue:** None
 
 **In progress Task List**:
-None. The agent is blocked by the issue above.
+None.
 
 **Upcoming and Future Tasks**
-None specified by the user. The current priority is to fix the blocking issue.
+-   **Upcoming Task (P0): Implement Design Version Management page**
+    -   **Description:** Build a new full-page feature for uploading, managing, and sharing design versions as per the user's detailed prompt.
+    -   **Phases:**
+        1.  **Backend Setup:** Implement new MongoDB collection () and API endpoints () for CRUD, file upload (mocked storage), and sharing.
+        2.  **Frontend UI:** Build the main page with a  upload form and a list of version cards.
+        3.  **Core Functionality:** Implement version creation, listing (with expandable details), and deletion.
+        4.  **Advanced Features:** Implement file download (as zip), sharing modal (Email, WhatsApp), and share history display.
+-   **Future Task (P1): Implement Backend Logic for Reminders**
+    -   **Description:** The UI for setting activity reminders is complete, but the backend to process them is missing.
+    -   **Implementation:**
+        1.  Create a cron job (e.g., using APScheduler) that runs periodically (e.g., every minute).
+        2.  The job should query the  collection for reminders where  is due.
+        3.  Implement a  to handle sending notifications via the selected channels.
+        4.  Create a  collection and a  component in the UI to display in-app alerts.
+        5.  Integrate with SendGrid (for email) and a service like Twilio (for SMS), confirming API keys with the user.
 
 **Completed work in this session**
--   List of all completed tasks with file and method name:
-    -   **Sectors Module:** Implemented a full CRUD + bulk import module for Sectors.
-        -   Backend: Added  model and endpoints () in .
-        -   Frontend: Integrated management UI directly into  for a consistent look and feel.
-    -   **Customer Type Edit:** Added edit functionality for Customer Types in  and the corresponding  endpoint in .
-    -   **Data Persistence & Mapping Fixes:**
-        -   Ensured Kaynak (Source) and Durum (Status) are saved by updating the  model in  and the mapping functions (, ) in .
-        -   Fixed data display to show user-friendly labels instead of system codes (e.g., Fuar Stand Şirketi instead of ) on .
-    -   **UI Refactoring & Fixes:**
-        -   Consolidated all company contact and address information into a single, organized Firma Bilgileri card on .
-        -   Changed navigation link text from Tüm Müşteriler to Müşteriler in  and .
-        -   Fixed a critical  crash on the new customer page ().
-    -   **New Features:**
-        -   Added a WhatsApp action to the customer list menu in .
+-   **Activity Planner - Complete Redesign & Bug Fixes:**
+    -   Implemented a scalable 3-section layout (Upcoming, Priority, All Activities) with advanced filtering, search, and pagination.
+    -   Added a Priority system (High/Normal/Low) to the creation form and edit modal.
+    -   Fixed a critical bug where newly created activities did not appear in the list.
+    -   Fixed a layout inconsistency, ensuring the form and list have the same width.
+    -   Corrected the Back and Cancel button navigation to point to the specific customer page.
+-   **Reminder System - Frontend Implementation:**
+    -   Created a detailed and reusable  component for setting reminder timing and channels.
+    -   Integrated this component into both the  (creation) and  (editing).
+-   **UX Enhancement:**
+    -   Added a Test Data Doldur button to the Activity Planner form for quick testing and demos.
 
 **Earlier issues found/mentioned but not fixed**
-None. All other reported issues were addressed, but the fix for the Yetkili Kişiler section led to the current P0 bug.
+-   **Issue 1: Newly Added Contacts Don't Appear Immediately (P2)**
+    -   This was mentioned in the initial handoff summary but has not been addressed. It remains a pending task. See All Pending/In progress Issue list for details.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Data consistency issues between the form, backend, and view pages are a recurring theme. Bugs often originate in the data mapping layer () or from incorrect conditional rendering in React components.
--   **Recurrence count:** High (at least 3-4 instances this session).
--   **Status:** IN PROGRESS (The current P0 bug is another instance of this).
+-   **Issue recurrence in previous fork:** Data consistency and mapping issues between frontend and backend.
+-   **Recurrence count:** High.
+-   **Status:** RESOLVED. The agent successfully debugged and fixed a major instance of this (activity creation bug), but the next agent should remain vigilant about ensuring frontend state is correctly synchronized with backend operations.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, Pydantic
--   **Frontend:** React, Tailwind CSS, 
--   **Database:** MongoDB
--   **Architecture:** Monorepo with a central data mapping layer.
--   **Core Patterns:**
-    -   **Brittle Data Mapping:** A  file handles transformations between frontend and backend models. This file has been a frequent source of bugs due to stale, hardcoded values and missing fields.
-    -   **UI Consistency:** The user has a strong preference for consistent UI patterns across different management pages (e.g., Sectors UI must match Customer Types UI).
-    -   **Conditional Rendering:** UI components heavily rely on conditional rendering (), which has led to bugs where entire sections disappear if data is missing or in an unexpected format.
+-   **Scalable UI Design:** Decomposed a potentially long list into context-aware sections (Upcoming, Priority, All) to improve usability.
+-   **Component-Based Architecture:** Broke down a complex page into smaller, reusable components (, , ).
+-   **Advanced State Management:** Utilized React hooks (, , ) to manage a complex UI with multiple data sources, filters, and user interactions.
+-   **API Design:** Created specific, efficient backend endpoints (, ) to support the new UI sections, rather than filtering large datasets on the client.
+-   **Feature Parity:** Diligently ensured new features (priority, reminders) were implemented consistently across both creation and editing workflows.
+-   **Planned Mocking:** Acknowledged the need to mock external services (file storage, messaging APIs) for the next large feature to enable parallel development.
 
 **key DB schema**
--   **customers collection:** The document schema was updated to include .
+-   **activities:**
+    -   : high | normal | low (String)
+    -   : (Object)
+        -   : Boolean
+        -   : String (e.g., 1hour, custom)
+        -   : Number
+        -   : { : Boolean, : Boolean, : Boolean }
+        -   : ISODate (Calculated timestamp for the reminder job)
+        -   : ISODate (null initially)
+-   **design_versions (To be created):**
+    -   , , , : [ { , ,  } ], : [ { , ,  } ], : Boolean
+-   **notifications (To be created):**
+    -   , , , : (pending, read), 
 
 **changes in tech stack**
 None.
 
 **All files**
--   ****: Heavily modified to add the Sectors module, add an edit endpoint for Customer Types, and add the  field to the  model.
--   ****: **CRITICAL/BROKEN**. Heavily refactored to reorganize UI into consolidated cards. The Yetkili Kişiler section is currently broken and not rendering.
--   ****: **CRITICAL**. Updated multiple times to fix data saving/loading bugs by adding  and  fields. This file is central to data flow and a likely area for bugs.
--   ****: Heavily modified to implement a unified UI for managing Customer Types and Sectors, including add, edit, and delete functionality.
--   ****: Modified to add missing Kaynak and Durum fields.
--   ****: Modified to change the page title and add a WhatsApp action.
--   ****: Modified to rename the Customers navigation link.
--   ****: Modified to fix a prop-passing crash ().
+-   **Created:**
+    -   : The new, primary page for managing activities.
+    -   : Displays today's and tomorrow's activities.
+    -   : Displays high-priority activities.
+    -   : The main activity list with tabs, filters, and pagination.
+    -   : A reusable UI component for detailed reminder configuration.
+-   **Updated:**
+    -   : Added new endpoints (, ) and significantly updated the main  endpoint to handle advanced filtering, pagination, and the new data schema for reminders and priority.
+    -   : Integrated the new  and  components.
+    -   : Overhauled to include the full  and  UI.
+    -   : Updated routing to use .
 
 **Areas that need refactoring**:
--   ****: This file uses outdated, hardcoded dictionaries to map data labels. The backend now supports dynamic data from the API. The mapper should be refactored to use this live data instead of hardcoded objects to prevent future data inconsistency bugs.
--   ****: The component is fragile and prone to breaking during refactoring. The rendering logic for the Yetkili Kişiler section needs to be simplified and made more robust to handle cases with and without data.
+-   The old  and its related child components () are now obsolete after the creation of  and its new component structure. These old files should be deleted to avoid confusion and clean up the codebase.
 
 **key api endpoints**
--   
--   
--   
--   
+-   ****: Creates an activity; updated to accept  and detailed  objects.
+-   ****: Updates an activity with the same new fields.
+-   ****: Retrieves activities; heavily updated to support filtering by  (e.g., 'thisWeek'), , , and , along with pagination.
+-   **** (New): Fetches planned activities for today and tomorrow.
+-   **** (New): Fetches top 5 high-priority upcoming activities.
+-   **** (To be implemented): Creates a new design version with file uploads.
 
 **Critical Info for New Agent**
--   **TOP PRIORITY:** The user is frustrated because the Yetkili Kişiler (Authorized Persons) section on the customer view page is completely broken and not displaying, despite data being entered. This is a regression and must be fixed first.
--   **Data Flow:** Pay close attention to the data flow from the form to the database, especially through , as it has been the source of multiple bugs.
--   **User Expectations:** The user values UI consistency and expects all data entered on a form to be visible on the corresponding view and edit pages. Double-check this on all fields after any change.
+-   Your highest priority task (P0) is to implement the **Design Version Management** page. The user has provided a very detailed prompt. You must confirm your plan with the user, especially regarding the need to **mock external services** like S3 for file storage and WhatsApp for messaging, as these integrations are outside the agent's current scope.
+-   The backend for the **Reminder System is not implemented**. The UI is fully functional, but the cron job to process and send notifications is a key future task (P1).
+-   The user is Turkish and provides very specific, detailed feedback. You **must** respond in Turkish and adhere closely to their prompts and designs.
+-   The previous agent created a new set of components for the Activity Planner (, etc.) but did not delete the old ones. Consider cleaning this up as a refactoring task.
 
 **documents created in this job**
 None.
 
 **Last 5 User Messages and any pending user messages**
-1.  **User:** Reports that after a fix, the Authorized Person information is completely gone.
-2.  **User:** Provides 5 screenshots showing them adding two new contacts and the final view page where the Authorized Persons card is missing, asking the agent to compare and see the problem.
-3.  **User:** After a different fix, reports that Kaynak is still not showing, and there are Turkish character and capitalization issues with other fields.
-4.  **User:** This is OK. Now, create a new area in the preview that shows all company information...in a single area. (This led to the major refactor of ).
-5.  **User:** After the company info refactor: This is OK. Now do the same for the authorized person information...the design should be the same as the company info.
+1.  **User:** Requested a complete, scalable redesign of the Activity Planner page with sections for priority, upcoming, and all activities, plus advanced filtering. (Status: **Completed**)
+2.  **User:** Requested a full-featured reminder system UI (timing, channels) to be added to the Activity Planner form. (Status: **Completed**)
+3.  **User:** Pointed out that the Edit Activity Modal was missing the new priority and reminder features and requested they be added. (Status: **Completed**)
+4.  **User:** Reported that the Back button on the Activity Planner was navigating incorrectly and asked for a fix. (Status: **Completed**)
+5.  **User:** Provided a very detailed prompt to build a completely new, full-page Design Version Management feature. (Status: **Pending - This is the highest priority task.**)
 
 **Project Health Check:**
--   **Broken:**
-    -   : The Yetkili Kişiler section does not render, making it impossible to view contact information.
+-   **Broken:** None. All reported bugs were fixed.
 -   **Mocked:**
-    -   None.
+    -   The activity reminder system is UI-only. The backend logic to send notifications is non-existent.
+-   **Planned Mocking:**
+    -   The upcoming Design Version Management feature will require mocking file storage (S3/GCS) and messaging APIs (WhatsApp) to proceed with development.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES
--   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None
--   **Known regressions:** The Yetkili Kişiler section on  has regressed and is now completely non-functional.
+-   **Testing agent used after significant changes:** NO (Agent relied on  and manual log analysis).
+-   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Test files created:** None.
+-   **Known regressions:** None. The previous layout regression was fixed.
 
 **Credentials to test flow:**
 N/A
 
 **What agent forgot to execute**
--   The agent failed to properly test the  component after the final refactor of the Authorized Persons section. Their last check was insufficient and missed the fact that the entire component section was no longer rendering, leading to a critical regression reported by the user.</analysis>
+-   The agent did not remove the old, obsolete files for the previous Activity Planner (, ) after creating their replacements. This is a minor code cleanup task.
+-   The P2 issue regarding the contact list not auto-refreshing, which was carried over from the previous fork, has not yet been addressed.</analysis>

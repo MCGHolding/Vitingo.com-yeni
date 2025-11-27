@@ -315,7 +315,7 @@ const Dashboard = () => {
         // Try runtime config first, fallback to environment variables, then hardcoded  
         const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                           process.env.REACT_APP_BACKEND_URL || 
-                          'https://sidebar-navigator-2.preview.emergentagent.com';
+                          'https://version-control-7.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/fairs`);
         
         if (response.ok) {
@@ -340,7 +340,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://sidebar-navigator-2.preview.emergentagent.com';
+                        'https://version-control-7.preview.emergentagent.com';
       console.log('Loading customers from:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`);
       
@@ -436,7 +436,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://sidebar-navigator-2.preview.emergentagent.com';
+                        'https://version-control-7.preview.emergentagent.com';
       console.log('Updating customer to:', backendUrl);
       
       const response = await fetch(`${backendUrl}/api/customers/${updatedCustomer.id}`, {
@@ -615,7 +615,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://sidebar-navigator-2.preview.emergentagent.com';
+                        'https://version-control-7.preview.emergentagent.com';
       console.log('Saving customer to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`, {
         method: 'POST',
@@ -647,7 +647,7 @@ const Dashboard = () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://sidebar-navigator-2.preview.emergentagent.com';
+                        'https://version-control-7.preview.emergentagent.com';
       console.log('Saving person to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/people`, {
         method: 'POST',

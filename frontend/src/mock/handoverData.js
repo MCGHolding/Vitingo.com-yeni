@@ -59,7 +59,7 @@ export const handoverRecords = [
     completedAt: "2024-11-20T14:45:00Z",
     status: "completed", // pending, completed, expired
     handoverToken: "ho_abc123def456",
-    handoverLink: "https://sidebar-navigator-2.preview.emergentagent.com/handover/ho_abc123def456",
+    handoverLink: "https://version-control-7.preview.emergentagent.com/handover/ho_abc123def456",
     signatureData: {
       customerName: "Ahmet Yılmaz",
       customerTitle: "Genel Müdür",
@@ -84,7 +84,7 @@ export const handoverRecords = [
     completedAt: null,
     status: "pending",
     handoverToken: "ho_xyz789ghi012",
-    handoverLink: "https://sidebar-navigator-2.preview.emergentagent.com/handover/ho_xyz789ghi012",
+    handoverLink: "https://version-control-7.preview.emergentagent.com/handover/ho_xyz789ghi012",
     signatureData: null,
     autoSurveyTriggered: false,
     surveyToken: null
@@ -102,7 +102,7 @@ export const handoverRecords = [
     completedAt: "2024-11-16T11:30:00Z", 
     status: "completed",
     handoverToken: "ho_def345ghi678",
-    handoverLink: "https://sidebar-navigator-2.preview.emergentagent.com/handover/ho_def345ghi678",
+    handoverLink: "https://version-control-7.preview.emergentagent.com/handover/ho_def345ghi678",
     signatureData: {
       customerName: "Mehmet Kaya",
       customerTitle: "CTO",
@@ -127,7 +127,7 @@ export const handoverRecords = [
     completedAt: "2024-10-25T18:45:00Z",
     status: "completed",
     handoverToken: "ho_abc456def789", 
-    handoverLink: "https://sidebar-navigator-2.preview.emergentagent.com/handover/ho_abc456def789",
+    handoverLink: "https://version-control-7.preview.emergentagent.com/handover/ho_abc456def789",
     signatureData: {
       customerName: "Ahmet Yılmaz",
       customerTitle: "General Manager", 
@@ -152,7 +152,7 @@ export const handoverRecords = [
     completedAt: null,
     status: "pending",
     handoverToken: "ho_ghi901jkl234",
-    handoverLink: "https://sidebar-navigator-2.preview.emergentagent.com/handover/ho_ghi901jkl234",
+    handoverLink: "https://version-control-7.preview.emergentagent.com/handover/ho_ghi901jkl234",
     signatureData: null,
     autoSurveyTriggered: false,
     surveyToken: null

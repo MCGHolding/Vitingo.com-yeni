@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://sidebar-navigator-2.preview.emergentagent.com"
+BACKEND_URL = "https://version-control-7.preview.emergentagent.com"
 
 def test_opportunities_endpoints_comprehensive():
     """
