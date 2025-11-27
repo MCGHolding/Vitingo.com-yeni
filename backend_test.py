@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://email-module-crm.preview.emergentagent.com"
+BACKEND_URL = "https://sidebar-navigator-2.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
 def test_sales_opportunities_critical_investigation():

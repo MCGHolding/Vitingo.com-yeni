@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://email-module-crm.preview.emergentagent.com"
+BACKEND_URL = "https://sidebar-navigator-2.preview.emergentagent.com"
 
 def verify_update_issue():
     """Verify the update issue by checking database state"""
