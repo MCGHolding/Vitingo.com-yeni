@@ -282,14 +282,14 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="space-y-3">
           
           {/* Activity Type Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Aktivite Tipi</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">📋 Aktivite Tipi</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-2">
               {ACTIVITY_TYPES.map((type) => {
                 const IconComponent = type.icon;
                 const isSelected = formData.activity_type === type.value;
