@@ -481,11 +481,11 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                     </div>
 
                     {/* Reminder Methods */}
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <label className="text-sm font-medium text-gray-700 mb-3 block">
-                        📢 Hatırlatıcı Yöntemi
+                    <div className="p-2 bg-blue-50 border border-blue-200 rounded">
+                      <label className="text-xs font-medium text-gray-700 mb-1 block">
+                        📢 Yöntem
                       </label>
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         {REMINDER_METHODS.map((method) => {
                           const isSelected = formData.reminder_methods.includes(method.value);
                           const MethodIcon = method.icon;
@@ -494,35 +494,29 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                             <div
                               key={method.value}
                               onClick={() => handleReminderMethodToggle(method.value)}
-                              className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                              className={`p-2 border rounded cursor-pointer transition-all ${
                                 isSelected
-                                  ? 'border-blue-400 bg-blue-100 shadow-sm'
+                                  ? 'border-blue-400 bg-blue-100'
                                   : 'border-gray-200 bg-white hover:border-blue-200'
                               }`}
                             >
-                              <div className="flex items-center space-x-3">
-                                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                              <div className="flex items-center space-x-2">
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${
                                   isSelected 
                                     ? 'bg-blue-500 border-blue-500' 
                                     : 'border-gray-300'
                                 }`}>
                                   {isSelected && <Check className="h-3 w-3 text-white" />}
                                 </div>
-                                <MethodIcon className={`h-5 w-5 ${isSelected ? 'text-blue-600' : 'text-gray-400'}`} />
-                                <div className="flex-1">
-                                  <p className={`text-sm font-medium ${isSelected ? 'text-blue-900' : 'text-gray-700'}`}>
-                                    {method.label}
-                                  </p>
-                                  <p className="text-xs text-gray-500">{method.description}</p>
-                                </div>
+                                <MethodIcon className={`h-4 w-4 ${isSelected ? 'text-blue-600' : 'text-gray-400'}`} />
+                                <p className={`text-xs font-medium flex-1 ${isSelected ? 'text-blue-900' : 'text-gray-700'}`}>
+                                  {method.label}
+                                </p>
                               </div>
                             </div>
                           );
                         })}
                       </div>
-                      <p className="text-xs text-gray-600 mt-2">
-                        * Birden fazla yöntem seçebilirsiniz
-                      </p>
                     </div>
                   </>
                 )}
