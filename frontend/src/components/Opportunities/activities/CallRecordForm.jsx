@@ -64,7 +64,7 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
     try {
       setLoadingContacts(true);
       
-      // Get opportunity details
+      // Try to get opportunity details first
       const oppResponse = await fetch(`${BACKEND_URL}/api/opportunities/${opportunityId}`);
       if (oppResponse.ok) {
         const opportunity = await oppResponse.json();
@@ -75,6 +75,25 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
         
         // Load contact persons for this customer
         await loadContactPersons(opportunity.customer);
+      } else {
+        // If opportunity not found, treat opportunityId as customerId
+        // This happens when opened from AllCustomersPage
+        console.log('Opportunity not found, treating as customer ID');
+        const customersResponse = await fetch(`${BACKEND_URL}/api/customers`);
+        if (customersResponse.ok) {
+          const customers = await customersResponse.json();
+          const customer = customers.find(c => c.id === opportunityId);
+          
+          if (customer) {
+            setCustomerInfo({
+              name: customer.companyName || customer.companyTitle,
+              id: customer.id
+            });
+            
+            // Load contacts directly from customer
+            setContactPersons(customer.contacts || []);
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading opportunity data:', error);
