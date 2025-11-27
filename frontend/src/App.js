@@ -2077,6 +2077,14 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/customers/:customerId/emails" 
+              element={
+                <ProtectedRoute>
+                  <EmailPage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </BrowserRouter>
       </div>
