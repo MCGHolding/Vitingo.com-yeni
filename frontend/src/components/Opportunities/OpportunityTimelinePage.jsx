@@ -630,6 +630,16 @@ export default function OpportunityTimelinePage({
       return;
     }
     
+    // Special handling for activity planner - navigate to full page
+    if (activityType === 'activity_planner') {
+      if (customerId) {
+        navigate(`/customers/${customerId}/activity-planner`);
+      } else {
+        navigate(`/opportunities/${opportunityId}/activity-planner`);
+      }
+      return;
+    }
+    
     setActiveModal(activityType);
     setModalData({
       opportunityId,
