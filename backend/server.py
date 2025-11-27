@@ -11,6 +11,10 @@ from typing import List, Dict, Optional, Union, Any
 import uuid
 import re
 from bson import ObjectId
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Debug environment variables
 print(f"DEBUG: SENDGRID_API_KEY exists: {'SENDGRID_API_KEY' in os.environ}")
 print(f"DEBUG: SENDGRID_API_KEY value: {os.environ.get('SENDGRID_API_KEY', 'NOT_FOUND')[:20]}...")
