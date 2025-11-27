@@ -11791,14 +11791,17 @@ async def get_upcoming_activities(opportunity_id: str):
         
         logger.info(f"🟢 [BACKEND] GET upcoming activities for opportunity_id: {opportunity_id}")
         
-        # Get today's start and end
-        now = datetime.now(timezone.utc)
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        # Get today's start and end (local timezone)
+        now = datetime.now()
+        today_start = datetime(now.year, now.month, now.day, 0, 0, 0)
         tomorrow_start = today_start + timedelta(days=1)
         day_after_start = today_start + timedelta(days=2)
         
-        # Query for today's activities
-        today_query = {
+        logger.info(f"🟢 [BACKEND] Today: {today_start} to {tomorrow_start}")
+        logger.info(f"🟢 [BACKEND] Tomorrow: {tomorrow_start} to {day_after_start}")
+        
+        # Query for planned activities
+        query = {
             "opportunity_id": opportunity_id,
             "$or": [
                 {"status": "pending"},
@@ -11809,25 +11812,37 @@ async def get_upcoming_activities(opportunity_id: str):
         today_activities = []
         tomorrow_activities = []
         
-        all_activities = await db.opportunity_activities.find(today_query).to_list(length=None)
+        all_activities = await db.opportunity_activities.find(query).to_list(length=None)
+        logger.info(f"🟢 [BACKEND] Total activities found: {len(all_activities)}")
         
         for activity in all_activities:
             scheduled_datetime = activity.get("data", {}).get("scheduled_datetime")
             if scheduled_datetime:
                 try:
-                    act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', '+00:00'))
+                    # Parse datetime string
+                    if 'T' in scheduled_datetime:
+                        act_date = datetime.fromisoformat(scheduled_datetime.replace('Z', ''))
+                    else:
+                        act_date = datetime.strptime(scheduled_datetime, "%Y-%m-%d")
+                    
+                    logger.info(f"🟢 [BACKEND] Activity: {activity.get('title')} - Date: {act_date}")
+                    
+                    # Compare dates
                     if today_start <= act_date < tomorrow_start:
                         today_activities.append(activity)
+                        logger.info(f"  -> Added to TODAY")
                     elif tomorrow_start <= act_date < day_after_start:
                         tomorrow_activities.append(activity)
-                except:
+                        logger.info(f"  -> Added to TOMORROW")
+                except Exception as parse_error:
+                    logger.error(f"  -> Parse error: {parse_error}")
                     pass
         
         # Sort by time
         today_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
         tomorrow_activities.sort(key=lambda x: x.get("data", {}).get("scheduled_datetime", ""))
         
-        logger.info(f"🟢 [BACKEND] Found {len(today_activities)} today, {len(tomorrow_activities)} tomorrow")
+        logger.info(f"✅ [BACKEND] Found {len(today_activities)} today, {len(tomorrow_activities)} tomorrow")
         
         return {
             "today": [OpportunityActivity(**act) for act in today_activities[:10]],
@@ -11835,6 +11850,8 @@ async def get_upcoming_activities(opportunity_id: str):
         }
     except Exception as e:
         logger.error(f"❌ [BACKEND] Error getting upcoming activities: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 
