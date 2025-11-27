@@ -13,7 +13,7 @@ import logging
 import uuid
 from typing import Optional, List
 import sendgrid
-from sendgrid.helpers.mail import Mail, Email as SGEmail, To, Content, Bcc
+from sendgrid.helpers.mail import Mail, Email as SGEmail, To, Content, Bcc, ReplyTo, Header
 
 from email_models import (
     Email,
