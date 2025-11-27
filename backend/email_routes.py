@@ -12,8 +12,12 @@ import os
 import logging
 import uuid
 from typing import Optional, List
+from dotenv import load_dotenv
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email as SGEmail, To, Content, Bcc, ReplyTo, Header
+
+# Load environment variables
+load_dotenv()
 
 from email_models import (
     Email,
