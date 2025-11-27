@@ -513,8 +513,8 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
     }
 
     if (action === 'email') {
-      setSelectedCustomer(customer);
-      setEmailModalOpen(true);
+      // Navigate to Email Management Page
+      navigate(`/customers/${customer.id}/emails`);
       return;
     }
 
