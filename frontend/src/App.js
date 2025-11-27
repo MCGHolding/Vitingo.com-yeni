@@ -1108,7 +1108,7 @@ const Dashboard = () => {
       case 'favorite-opportunities':
         return <FavoriteOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-opportunities':
-        return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} onEditOpportunity={handleEditOpportunity} />;
+        return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} onEditOpportunity={handleEditOpportunity} opportunities={opportunities} refreshOpportunities={loadOpportunities} />;
       case 'edit-opportunity':
         return <EditOpportunityPage 
           opportunity={selectedOpportunityForEdit} 
