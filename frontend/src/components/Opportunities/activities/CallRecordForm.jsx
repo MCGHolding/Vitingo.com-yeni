@@ -361,6 +361,8 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
       const callRecord = {
         opportunity_id: opportunityId,
         type: 'call_record',
+        title: `Görüşme: ${formData.contact_person}`,
+        description: formData.summary || `${formData.call_type === 'outgoing' ? 'Giden' : 'Gelen'} arama - ${formData.call_result}`,
         call_type: formData.call_type,
         contact_person: formData.contact_person,
         call_result: formData.call_result,
