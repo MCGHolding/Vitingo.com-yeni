@@ -411,42 +411,48 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
   );
 }
 
-// New Contact Modal Component
+// New Contact Modal Component - Full Detailed Form
 function NewContactModal({ customerName, onSave, onClose }) {
   const { toast } = useToast();
   const [contactData, setContactData] = useState({
-    name: '',
-    phone: '',
+    fullName: '',
+    position: '',
     email: '',
-    position: ''
+    mobile: '',
+    address: '',
+    city: '',
+    country: '',
+    birthday: '',
+    gender: '',
+    project_role: '',
+    tags: [],
+    is_accounting_responsible: false
   });
   const [saving, setSaving] = useState(false);
+  const [currentTag, setCurrentTag] = useState('');
 
   const handleSave = async () => {
     try {
       setSaving(true);
 
-      if (!contactData.name.trim()) {
+      if (!contactData.fullName.trim()) {
         toast({
           title: "Eksik Bilgi",
-          description: "Kişi adı zorunludur.",
+          description: "Ad Soyad zorunludur.",
           variant: "destructive"
         });
         return;
       }
 
-      // In a real implementation, you would add the contact to the customer
-      // For now, we'll just call the callback with the new contact data
+      // Call parent callback with detailed contact data
       onSave({
-        name: contactData.name,
-        phone: contactData.phone,
-        email: contactData.email,
-        position: contactData.position
+        ...contactData,
+        name: contactData.fullName // Add name field for compatibility
       });
 
       toast({
         title: "Başarılı",
-        description: "Yeni kişi başarıyla eklendi.",
+        description: "Yeni yetkili kişi başarıyla eklendi.",
         className: "bg-green-50 border-green-200 text-green-800",
       });
 
@@ -470,84 +476,254 @@ function NewContactModal({ customerName, onSave, onClose }) {
     }));
   };
 
+  const handleAddTag = () => {
+    if (currentTag.trim() && !contactData.tags.includes(currentTag.trim())) {
+      setContactData(prev => ({
+        ...prev,
+        tags: [...prev.tags, currentTag.trim()]
+      }));
+      setCurrentTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setContactData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div className="p-6 border-b">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-            <UserPlus className="h-5 w-5 text-green-600" />
-            <span>Yeni Yetkili Kişi Ekle</span>
-          </h3>
-          <p className="text-sm text-gray-600 mt-1">
-            {customerName} müşterisi için yeni yetkili kişi
-          </p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl my-8">
+        <div className="p-4 border-b flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-semibold text-gray-900 flex items-center space-x-2">
+              <UserPlus className="h-5 w-5 text-green-600" />
+              <span>Yeni Yetkili Kişi Ekle</span>
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {customerName} müşterisi için detaylı kişi bilgileri
+            </p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+            <X className="h-4 w-4" />
+          </Button>
         </div>
         
-        <div className="p-6 space-y-4">
+        <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Ad Soyad <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={contactData.fullName}
+                onChange={(e) => handleInputChange('fullName', e.target.value)}
+                placeholder="Örn: Ahmet Yılmaz"
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Pozisyon
+              </label>
+              <Input
+                value={contactData.position}
+                onChange={(e) => handleInputChange('position', e.target.value)}
+                placeholder="Örn: Satın Alma Müdürü"
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                E-posta
+              </label>
+              <Input
+                type="email"
+                value={contactData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="ornek@sirket.com"
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Mobil Telefon
+              </label>
+              <Input
+                value={contactData.mobile}
+                onChange={(e) => handleInputChange('mobile', e.target.value)}
+                placeholder="+90 555 123 4567"
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Address Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Şehir
+              </label>
+              <Input
+                value={contactData.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+                placeholder="İstanbul"
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Ülke
+              </label>
+              <Input
+                value={contactData.country}
+                onChange={(e) => handleInputChange('country', e.target.value)}
+                placeholder="Türkiye"
+                className="w-full"
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ad Soyad *
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Adres
             </label>
             <Input
-              value={contactData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              placeholder="Yetkili kişinin adı soyadı"
+              value={contactData.address}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+              placeholder="Tam adres"
               className="w-full"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Telefon
-            </label>
-            <Input
-              value={contactData.phone}
-              onChange={(e) => handleInputChange('phone', e.target.value)}
-              placeholder="Telefon numarası"
-              className="w-full"
-            />
+          {/* Personal Info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Doğum Tarihi
+              </label>
+              <Input
+                type="date"
+                value={contactData.birthday}
+                onChange={(e) => handleInputChange('birthday', e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Cinsiyet
+              </label>
+              <Select value={contactData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Erkek">Erkek</SelectItem>
+                  <SelectItem value="Kadın">Kadın</SelectItem>
+                  <SelectItem value="Belirtmek İstemiyorum">Belirtmek İstemiyorum</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Proje Rolü
+              </label>
+              <Select value={contactData.project_role} onValueChange={(value) => handleInputChange('project_role', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Karar Verici">Karar Verici</SelectItem>
+                  <SelectItem value="Etkileyici">Etkileyici</SelectItem>
+                  <SelectItem value="Son Kullanıcı">Son Kullanıcı</SelectItem>
+                  <SelectItem value="Teknik Uzman">Teknik Uzman</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
+          {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              E-posta
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Etiketler
             </label>
-            <Input
-              type="email"
-              value={contactData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="E-posta adresi"
-              className="w-full"
-            />
+            <div className="flex space-x-2 mb-2">
+              <Input
+                value={currentTag}
+                onChange={(e) => setCurrentTag(e.target.value)}
+                placeholder="Etiket ekle"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+              />
+              <Button type="button" onClick={handleAddTag} size="sm" variant="outline">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {contactData.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-blue-100 text-blue-800"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag)}
+                    className="ml-1.5 text-blue-600 hover:text-blue-800"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Pozisyon
-            </label>
-            <Input
-              value={contactData.position}
-              onChange={(e) => handleInputChange('position', e.target.value)}
-              placeholder="Şirket pozisyonu"
-              className="w-full"
+          {/* Accounting Responsible */}
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="accounting"
+              checked={contactData.is_accounting_responsible}
+              onChange={(e) => handleInputChange('is_accounting_responsible', e.target.checked)}
+              className="rounded border-gray-300"
             />
+            <label htmlFor="accounting" className="text-sm text-gray-700">
+              Muhasebe Sorumlusu
+            </label>
           </div>
         </div>
 
-        <div className="p-6 border-t bg-gray-50 rounded-b-xl">
+        <div className="p-4 border-t bg-gray-50 rounded-b-xl">
           <div className="flex items-center justify-end space-x-3">
             <Button
               variant="outline"
               onClick={onClose}
               disabled={saving}
+              size="sm"
             >
-              <X className="h-4 w-4 mr-2" />
               İptal
             </Button>
             <Button
               onClick={handleSave}
-              disabled={saving || !contactData.name.trim()}
+              disabled={saving || !contactData.fullName.trim()}
               className="bg-green-600 hover:bg-green-700"
+              size="sm"
             >
               {saving ? (
                 <>
@@ -557,7 +733,7 @@ function NewContactModal({ customerName, onSave, onClose }) {
               ) : (
                 <>
                   <Plus className="h-4 w-4 mr-2" />
-                  Kişiyi Ekle
+                  Ekle
                 </>
               )}
             </Button>
