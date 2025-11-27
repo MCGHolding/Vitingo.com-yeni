@@ -992,15 +992,24 @@ export default function AllCustomersPage({ onBackToDashboard, customers = [], re
 
       {/* Activity Tracking Modal */}
       {activityTrackingOpen && selectedCustomer && (
-        <div className="fixed inset-0 z-50 bg-black/50">
-          <OpportunityTimelinePage
-            opportunityId={selectedCustomer.id}
-            opportunityTitle={selectedCustomer.companyName || selectedCustomer.companyTitle || 'Müşteri'}
-            onBack={() => {
-              setActivityTrackingOpen(false);
-              setSelectedCustomer(null);
-            }}
-          />
+        <div className="fixed inset-0 z-50 flex">
+          {/* Keep sidebar visible with a semi-transparent overlay on the right */}
+          <div className="fixed inset-0 bg-black/50" onClick={() => {
+            setActivityTrackingOpen(false);
+            setSelectedCustomer(null);
+          }}></div>
+          
+          {/* Modal content - positioned to the right of sidebar */}
+          <div className="relative ml-auto w-full h-full overflow-y-auto bg-white">
+            <OpportunityTimelinePage
+              opportunityId={selectedCustomer.id}
+              opportunityTitle={selectedCustomer.companyName || selectedCustomer.companyTitle || selectedCustomer.company_short_name || selectedCustomer.contactPerson || 'Müşteri'}
+              onBack={() => {
+                setActivityTrackingOpen(false);
+                setSelectedCustomer(null);
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
