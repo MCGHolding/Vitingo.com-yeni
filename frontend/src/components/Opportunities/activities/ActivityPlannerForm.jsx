@@ -26,7 +26,8 @@ const ACTIVITY_TYPES = [
     icon: Mail, 
     color: 'text-green-600',
     bgColor: 'bg-green-50',
-    borderColor: 'border-green-200'
+    borderColor: 'border-green-200',
+    description: 'Müşteriye e-posta gönderme hatırlatıcısı'
   },
   { 
     value: 'phone', 
@@ -34,7 +35,8 @@ const ACTIVITY_TYPES = [
     icon: Phone, 
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200'
+    borderColor: 'border-blue-200',
+    description: 'Müşteri ile telefon görüşmesi hatırlatıcısı'
   },
   { 
     value: 'proposal', 
@@ -42,7 +44,26 @@ const ACTIVITY_TYPES = [
     icon: FileText, 
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200'
+    borderColor: 'border-purple-200',
+    description: 'Teklif hazırlama ve gönderme hatırlatıcısı'
+  },
+  { 
+    value: 'design', 
+    label: 'Tasarım Gönderimi', 
+    icon: Upload, 
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-200',
+    description: 'Tasarım dosyası hazırlama ve gönderme'
+  },
+  { 
+    value: 'custom', 
+    label: 'Özel Aktivite', 
+    icon: Plus, 
+    color: 'text-gray-600',
+    bgColor: 'bg-gray-50',
+    borderColor: 'border-gray-200',
+    description: 'Kendi aktivite tipinizi oluşturun'
   }
 ];
 
