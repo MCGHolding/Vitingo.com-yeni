@@ -1041,6 +1041,7 @@ test_plan:
     - "NewCustomerForm Backend Integration Issue Testing"
     - "User Management APIs Testing"
     - "Updated ViewCustomerPage with New Fields Testing"
+    - "Design Version Management Page - Full Feature Testing"
   test_all: false
   test_priority: "high_first"
   completed_tests:
