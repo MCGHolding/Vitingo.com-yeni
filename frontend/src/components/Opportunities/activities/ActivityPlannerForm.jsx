@@ -368,11 +368,11 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                 </div>
 
                 {/* Quick Date Selection */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 block">
-                    Hızlı Tarih Seçimi
+                <div>
+                  <label className="text-xs font-medium text-gray-700 mb-1 block">
+                    ⚡ Hızlı Tarih
                   </label>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 gap-1">
                     {QUICK_DATE_OPTIONS.map((option) => (
                       <Button
                         key={option.label}
@@ -380,7 +380,7 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                         variant="outline"
                         size="sm"
                         onClick={() => handleInputChange('scheduled_date', option.getValue())}
-                        className={`h-8 text-xs ${
+                        className={`h-7 text-xs px-2 ${
                           formData.scheduled_date === option.getValue() 
                             ? 'bg-purple-100 border-purple-300 text-purple-700' 
                             : ''
