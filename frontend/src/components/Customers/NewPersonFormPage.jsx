@@ -60,25 +60,41 @@ export default function NewPersonFormPage({ onClose, onSave }) {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   
-  // Countries and cities from library (SAME AS NewCustomerForm)
-  const [ulkeler, setUlkeler] = useState([]);
-  const [sehirler, setSehirler] = useState([]);
-  const [tumUlkeler, setTumUlkeler] = useState([]);
+  // Countries and cities from react-country-state-city library
+  const [countriesList, setCountriesList] = useState([]);
+  const [statesList, setStatesList] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
   
-  // Load countries from library (SAME AS NewCustomerForm)
-  const loadUlkeler = async () => {
-    try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/library/countries`);
-      const data = await response.json();
-      
-      if (Array.isArray(data)) {
-        const ulkeIsimleri = data.map(d => d.name).filter(n => n).sort();
-        setUlkeler(ulkeIsimleri);
-        setTumUlkeler(data);
+  // Load countries from react-country-state-city library
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const countries = await GetCountries();
+        setCountriesList(countries);
+        
+        // Find Turkey by default (code: TR)
+        const turkey = countries.find(c => c.iso2 === 'TR');
+        if (turkey) {
+          setSelectedCountryId(turkey.id);
+          setFormData(prev => ({ ...prev, country: turkey.name }));
+          loadStates(turkey.id);
+        }
+      } catch (error) {
+        console.error('Ülkeler yüklenemedi:', error);
       }
+    };
+    
+    loadCountries();
+  }, []);
+  
+  // Load states/cities when country changes
+  const loadStates = async (countryId) => {
+    try {
+      const states = await GetState(countryId);
+      setStatesList(states);
     } catch (error) {
-      console.error('Ülkeler yüklenemedi:', error);
+      console.error('Şehirler yüklenemedi:', error);
+      setStatesList([]);
     }
   };
 
