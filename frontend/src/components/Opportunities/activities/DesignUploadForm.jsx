@@ -285,11 +285,19 @@ export default function DesignUploadForm({ opportunityId, opportunityTitle, onSa
                             <span className="text-xs text-gray-500">({file.size})</span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                              <Eye className="h-3 w-3" />
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 w-6 p-0 hover:bg-blue-100"
+                              onClick={() => {
+                                setPreviewFile({ ...file, url: `https://via.placeholder.com/800x600?text=${file.name}` });
+                                setShowPreview(true);
+                              }}
+                            >
+                              <Eye className="h-3 w-3 text-blue-600" />
                             </Button>
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                              <Download className="h-3 w-3" />
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-green-100">
+                              <Download className="h-3 w-3 text-green-600" />
                             </Button>
                           </div>
                         </div>
