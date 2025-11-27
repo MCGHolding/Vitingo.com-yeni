@@ -2086,6 +2086,22 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/opportunities/:opportunityId/activity-planner" 
+              element={
+                <ProtectedRoute>
+                  <ActivityPlannerPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/customers/:customerId/activity-planner" 
+              element={
+                <ProtectedRoute>
+                  <ActivityPlannerPage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </BrowserRouter>
       </div>
