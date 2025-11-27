@@ -333,16 +333,6 @@ export default function MessagingForm({ opportunityId, opportunityTitle, onSave,
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
-      <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-        <Button
-          variant="outline"
-          onClick={onCancel}
-          className="px-6"
-        >
-          Kapat
-        </Button>
-      </div>
     </div>
   );
 }
