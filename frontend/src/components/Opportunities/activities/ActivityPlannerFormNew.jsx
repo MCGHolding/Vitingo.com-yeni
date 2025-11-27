@@ -37,7 +37,8 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
     date: '',
     time: '',
     reminder: true,
-    customName: ''
+    customName: '',
+    priority: 'normal'
   });
   const [loading, setLoading] = useState(false);
 
