@@ -143,6 +143,24 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
 
     setLoading(true);
     try {
+      // Calculate reminder scheduled time
+      let reminderScheduledFor = null;
+      if (formData.reminderEnabled && formData.date) {
+        const activityDateTime = new Date(`${formData.date}T${formData.time || '09:00'}:00`);
+        let minutesBefore = 60; // Default 1 hour
+        
+        switch (formData.reminderSettings.timing) {
+          case '10min': minutesBefore = 10; break;
+          case '30min': minutesBefore = 30; break;
+          case '1hour': minutesBefore = 60; break;
+          case '3hours': minutesBefore = 180; break;
+          case '1day': minutesBefore = 1440; break;
+          case 'custom': minutesBefore = formData.reminderSettings.customMinutes || 60; break;
+        }
+        
+        reminderScheduledFor = new Date(activityDateTime.getTime() - minutesBefore * 60000);
+      }
+
       const activityData = {
         type: 'activity_planner',
         title: formData.title,
@@ -152,11 +170,19 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
           activity_type: selectedType,
           custom_activity_name: selectedType === 'custom' ? formData.customName : null,
           scheduled_datetime: `${formData.date}T${formData.time || '09:00'}:00`,
-          has_reminder: formData.reminder,
-          reminder_minutes: 60,
-          reminder_methods: ['push'],
+          has_reminder: formData.reminderEnabled,
+          reminder_minutes: 60, // Legacy field
+          reminder_methods: ['push'], // Legacy field
           notes: formData.description,
           status: 'planned'
+        },
+        reminder: {
+          enabled: formData.reminderEnabled,
+          timing: formData.reminderSettings.timing,
+          customMinutes: formData.reminderSettings.customMinutes,
+          channels: formData.reminderSettings.channels,
+          scheduledFor: reminderScheduledFor ? reminderScheduledFor.toISOString() : null,
+          sentAt: null
         }
       };
 
