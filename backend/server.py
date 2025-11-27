@@ -11810,22 +11810,10 @@ async def create_opportunity_activity(opportunity_id: str, activity_input: Oppor
             logger.info(f"🟡 [BACKEND] Opportunity not found, checking if it's a customer ID...")
             customer = await db.customers.find_one({"id": opportunity_id})
             if customer:
-                # Create a default opportunity for this customer
-                opportunity_data = {
-                    "id": str(uuid.uuid4()),
-                    "title": f"{customer.get('companyName', 'Firma')} - Genel Fırsatlar",
-                    "customer": customer.get('companyName'),
-                    "customer_id": customer.get('id'),
-                    "stage": "lead",
-                    "value": 0,
-                    "probability": 50,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                }
-                await db.opportunities.insert_one(opportunity_data)
-                opportunity = opportunity_data
-                opportunity_id = opportunity["id"]
-                logger.info(f"🟡 [BACKEND] Created default opportunity for customer {customer.get('id')}")
+                # DON'T create a new opportunity - use customer ID directly as opportunity_id
+                # This way activities are linked to customer ID, making queries simpler
+                logger.info(f"🟡 [BACKEND] Using customer ID as opportunity_id: {opportunity_id}")
+                # No need to change opportunity_id, keep it as customer ID
             else:
                 logger.error(f"❌ [BACKEND] Opportunity or Customer not found: {opportunity_id}")
                 raise HTTPException(status_code=404, detail="Opportunity or Customer not found")
