@@ -51,6 +51,7 @@ import EditCustomerModal from './EditCustomerModal';
 import ViewPersonModal from './ViewPersonModal';
 import EditPersonModal from './EditPersonModal';
 import CustomerEmailModal from './CustomerEmailModal';
+import OpportunityTimelinePage from '../Opportunities/OpportunityTimelinePage';
 
 // ActionMenuPopover Component - FIXED: Dropdown now appears as overlay
 const ActionMenuPopover = ({ customer, onAction }) => {
