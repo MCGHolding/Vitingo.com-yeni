@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import ActivityPlannerFormNew from '../components/Opportunities/activities/ActivityPlannerFormNew';
+import ActivityList from '../components/Opportunities/activities/ActivityList';
+import EditActivityModal from '../components/Opportunities/activities/EditActivityModal';
 
 export default function ActivityPlannerPage() {
   const navigate = useNavigate();
   const { opportunityId, customerId } = useParams();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [editingActivity, setEditingActivity] = useState(null);
 
   const handleSave = (savedActivity) => {
-    // Activity saved successfully, navigate back
-    navigate(-1);
+    // Activity saved successfully, refresh list
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleEdit = (activity) => {
+    setEditingActivity(activity);
+  };
+
+  const handleEditSaved = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
