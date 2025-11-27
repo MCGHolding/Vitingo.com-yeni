@@ -214,32 +214,28 @@ async def send_email(
         if not SENDGRID_API_KEY:
             raise HTTPException(status_code=500, detail="SendGrid not configured")
         
-        # Create Mail object with proper structure
-        from_email_obj = SGEmail(PLATFORM_EMAIL, user_settings.get("senderName", PLATFORM_NAME) if user_settings else PLATFORM_NAME)
-        to_email_obj = To(email_data.to, email_data.toName or email_data.to)
+        # Create Mail object using the simple working format
+        sender_name = user_settings.get("senderName", PLATFORM_NAME) if user_settings else PLATFORM_NAME
+        recipient_name = email_data.toName or email_data.to
         
         message = Mail(
-            from_email=from_email_obj,
-            to_emails=to_email_obj,
+            from_email=SGEmail(PLATFORM_EMAIL, sender_name),
+            to_emails=To(email_data.to, recipient_name),
             subject=email_data.subject
         )
         
-        # Add content
+        # Add content (text/plain first, then text/html)
         message.add_content(Content("text/plain", email_data.bodyText or ""))
         message.add_content(Content("text/html", email_data.bodyHtml or f"<p>{email_data.bodyText}</p>"))
         
-        # Reply-To: User's email
-        if user_settings and user_settings.get("senderEmail"):
-            from sendgrid.helpers.mail import ReplyTo
-            message.reply_to = ReplyTo(user_settings["senderEmail"], user_settings.get("senderName", ""))
+        # Reply-To: User's email (optional)
+        # if user_settings and user_settings.get("senderEmail"):
+        #     from sendgrid.helpers.mail import ReplyTo
+        #     message.reply_to = ReplyTo(user_settings["senderEmail"], user_settings.get("senderName", ""))
         
-        # BCC: Tracking email (optional - commented out for now)
-        # tracking_email = f"customer_{customer_id}@{INBOUND_DOMAIN}"
-        # message.add_bcc(Bcc(tracking_email))
-        
-        # Custom headers
-        from sendgrid.helpers.mail import Header
-        message.add_header(Header("X-Thread-ID", thread_id))
+        # Custom headers for thread tracking (optional)
+        # from sendgrid.helpers.mail import Header
+        # message.add_header(Header("X-Thread-ID", thread_id))
         
         # Send via SendGrid
         sendgrid_message_id = None
