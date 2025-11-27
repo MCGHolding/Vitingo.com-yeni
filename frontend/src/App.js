@@ -2088,6 +2088,14 @@ function App() {
               } 
             />
             <Route 
+              path="/customers/:customerId/designs" 
+              element={
+                <ProtectedRoute>
+                  <DesignVersionsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/opportunities/:opportunityId/activity-planner" 
               element={
                 <ProtectedRoute>
