@@ -220,15 +220,26 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onBackToDashboard}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Geri Dön</span>
+              </Button>
+            </div>
+            
             <Button
+              type="button"
+              onClick={fillTestData}
               variant="outline"
-              size="sm"
-              onClick={onBackToDashboard}
-              className="flex items-center space-x-2"
+              className="bg-yellow-50 hover:bg-yellow-100 border-yellow-300 text-yellow-800"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Geri Dön</span>
+              🎯 Test Verisi Doldur
             </Button>
           </div>
           
