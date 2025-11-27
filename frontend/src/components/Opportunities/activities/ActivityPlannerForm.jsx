@@ -497,29 +497,76 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
                 </div>
 
                 {formData.has_reminder && (
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Hatırlatıcı Zamanı
-                    </label>
-                    <Select 
-                      value={formData.reminder_minutes} 
-                      onValueChange={(value) => handleInputChange('reminder_minutes', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Hatırlatıcı zamanını seçin" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {REMINDER_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">{option.icon}</span>
-                              <span>{option.label}</span>
+                  <>
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        Hatırlatıcı Zamanı
+                      </label>
+                      <Select 
+                        value={formData.reminder_minutes} 
+                        onValueChange={(value) => handleInputChange('reminder_minutes', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Hatırlatıcı zamanını seçin" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {REMINDER_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg">{option.icon}</span>
+                                <span>{option.label}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Reminder Methods */}
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <label className="text-sm font-medium text-gray-700 mb-3 block">
+                        📢 Hatırlatıcı Yöntemi
+                      </label>
+                      <div className="space-y-2">
+                        {REMINDER_METHODS.map((method) => {
+                          const isSelected = formData.reminder_methods.includes(method.value);
+                          const MethodIcon = method.icon;
+                          
+                          return (
+                            <div
+                              key={method.value}
+                              onClick={() => handleReminderMethodToggle(method.value)}
+                              className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                                isSelected
+                                  ? 'border-blue-400 bg-blue-100 shadow-sm'
+                                  : 'border-gray-200 bg-white hover:border-blue-200'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                                  isSelected 
+                                    ? 'bg-blue-500 border-blue-500' 
+                                    : 'border-gray-300'
+                                }`}>
+                                  {isSelected && <Check className="h-3 w-3 text-white" />}
+                                </div>
+                                <MethodIcon className={`h-5 w-5 ${isSelected ? 'text-blue-600' : 'text-gray-400'}`} />
+                                <div className="flex-1">
+                                  <p className={`text-sm font-medium ${isSelected ? 'text-blue-900' : 'text-gray-700'}`}>
+                                    {method.label}
+                                  </p>
+                                  <p className="text-xs text-gray-500">{method.description}</p>
+                                </div>
+                              </div>
                             </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-gray-600 mt-2">
+                        * Birden fazla yöntem seçebilirsiniz
+                      </p>
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
