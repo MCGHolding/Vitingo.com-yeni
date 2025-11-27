@@ -13084,6 +13084,324 @@ async def get_file(file_id: str):
     """
     raise HTTPException(status_code=404, detail="Dosya bulunamadı")
 
+# ===================== DESIGN VERSION MANAGEMENT =====================
+
+class DesignFileUpload(BaseModel):
+    filename: str
+    url: str
+    size: int
+    uploadedAt: Optional[str] = None
+
+class DesignVersionCreate(BaseModel):
+    customerId: str
+    versionName: str
+    files: List[DesignFileUpload]
+    notes: Optional[str] = None
+
+class ShareRecord(BaseModel):
+    channel: str  # "email" or "whatsapp"
+    recipient: str
+    sentAt: str
+    sentBy: Optional[str] = None
+
+@api_router.post("/customers/{customer_id}/designs")
+async def create_design_version(customer_id: str, design: DesignVersionCreate):
+    """
+    Create a new design version for a customer
+    """
+    try:
+        # Verify customer exists
+        customer = await db.customers.find_one({"id": customer_id}, {"_id": 0})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Get the latest version number for this customer
+        latest_version = await db.design_versions.find_one(
+            {"customerId": customer_id},
+            {"_id": 0, "versionNumber": 1},
+            sort=[("versionNumber", -1)]
+        )
+        
+        next_version_number = (latest_version["versionNumber"] + 1) if latest_version else 1
+        
+        # Mark all previous versions as not latest
+        await db.design_versions.update_many(
+            {"customerId": customer_id, "isLatest": True},
+            {"$set": {"isLatest": False}}
+        )
+        
+        # Create new design version
+        design_version = {
+            "id": str(uuid.uuid4()),
+            "customerId": customer_id,
+            "versionNumber": next_version_number,
+            "versionName": design.versionName,
+            "files": [f.dict() for f in design.files],
+            "notes": design.notes,
+            "shares": [],
+            "isLatest": True,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        result = await db.design_versions.insert_one(design_version)
+        
+        # Remove _id from response
+        design_version.pop("_id", None)
+        
+        return design_version
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating design version: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tasarım versiyonu oluşturulamadı: {str(e)}")
+
+@api_router.get("/customers/{customer_id}/designs")
+async def get_design_versions(customer_id: str):
+    """
+    Get all design versions for a customer
+    """
+    try:
+        # Verify customer exists
+        customer = await db.customers.find_one({"id": customer_id}, {"_id": 0})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Get all design versions for this customer, sorted by version number (newest first)
+        versions = await db.design_versions.find(
+            {"customerId": customer_id},
+            {"_id": 0}
+        ).sort("versionNumber", -1).to_list(100)
+        
+        return versions
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching design versions: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tasarım versiyonları getirilemedi: {str(e)}")
+
+@api_router.get("/customers/{customer_id}/designs/{version_id}")
+async def get_design_version(customer_id: str, version_id: str):
+    """
+    Get a specific design version
+    """
+    try:
+        version = await db.design_versions.find_one(
+            {"id": version_id, "customerId": customer_id},
+            {"_id": 0}
+        )
+        
+        if not version:
+            raise HTTPException(status_code=404, detail="Tasarım versiyonu bulunamadı")
+        
+        return version
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching design version: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tasarım versiyonu getirilemedi: {str(e)}")
+
+@api_router.delete("/customers/{customer_id}/designs/{version_id}")
+async def delete_design_version(customer_id: str, version_id: str):
+    """
+    Delete a design version
+    """
+    try:
+        # Check if version exists
+        version = await db.design_versions.find_one(
+            {"id": version_id, "customerId": customer_id},
+            {"_id": 0}
+        )
+        
+        if not version:
+            raise HTTPException(status_code=404, detail="Tasarım versiyonu bulunamadı")
+        
+        # Delete the version
+        result = await db.design_versions.delete_one({"id": version_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Tasarım versiyonu silinemedi")
+        
+        # If this was the latest version, mark the newest remaining version as latest
+        if version.get("isLatest"):
+            latest_remaining = await db.design_versions.find_one(
+                {"customerId": customer_id},
+                {"_id": 0},
+                sort=[("versionNumber", -1)]
+            )
+            
+            if latest_remaining:
+                await db.design_versions.update_one(
+                    {"id": latest_remaining["id"]},
+                    {"$set": {"isLatest": True}}
+                )
+        
+        return {"success": True, "message": "Tasarım versiyonu silindi"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting design version: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tasarım versiyonu silinemedi: {str(e)}")
+
+@api_router.post("/customers/{customer_id}/designs/{version_id}/share")
+async def share_design_version(
+    customer_id: str, 
+    version_id: str, 
+    share_data: Dict[str, Any]
+):
+    """
+    Share a design version via email or WhatsApp (mocked)
+    """
+    try:
+        # Verify version exists
+        version = await db.design_versions.find_one(
+            {"id": version_id, "customerId": customer_id},
+            {"_id": 0}
+        )
+        
+        if not version:
+            raise HTTPException(status_code=404, detail="Tasarım versiyonu bulunamadı")
+        
+        # Create share record
+        share_record = {
+            "channel": share_data.get("channel"),
+            "recipient": share_data.get("recipient"),
+            "message": share_data.get("message", ""),
+            "sentAt": datetime.now(timezone.utc).isoformat(),
+            "sentBy": share_data.get("sentBy", "System"),
+            "status": "sent"  # Mocked - always successful
+        }
+        
+        # Add share record to version
+        await db.design_versions.update_one(
+            {"id": version_id},
+            {
+                "$push": {"shares": share_record},
+                "$set": {"updatedAt": datetime.now(timezone.utc).isoformat()}
+            }
+        )
+        
+        # Mock sending logic
+        if share_record["channel"] == "email":
+            logger.info(f"[MOCKED] Email sent to {share_record['recipient']}")
+        elif share_record["channel"] == "whatsapp":
+            logger.info(f"[MOCKED] WhatsApp message sent to {share_record['recipient']}")
+        
+        return {
+            "success": True,
+            "message": f"Tasarım {share_record['channel']} ile paylaşıldı",
+            "share": share_record
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sharing design version: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Tasarım paylaşılamadı: {str(e)}")
+
+@api_router.post("/customers/{customer_id}/designs/upload-file")
+async def upload_design_file(customer_id: str, file: UploadFile = File(...)):
+    """
+    Upload a design file (mocked storage)
+    Returns file metadata for use in design version creation
+    """
+    try:
+        # Verify customer exists
+        customer = await db.customers.find_one({"id": customer_id}, {"_id": 0})
+        if not customer:
+            raise HTTPException(status_code=404, detail="Müşteri bulunamadı")
+        
+        # Validate file type (images, PDFs, and common design files)
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.ai', '.psd', '.sketch', '.fig', '.svg']
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        
+        if file_ext not in allowed_extensions:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Desteklenmeyen dosya tipi. İzin verilen: {', '.join(allowed_extensions)}"
+            )
+        
+        # Read file content
+        contents = await file.read()
+        file_size = len(contents)
+        
+        # Generate unique file ID
+        file_id = f"{uuid.uuid4().hex}{file_ext}"
+        
+        # Save to uploads directory (local storage for now)
+        uploads_dir = Path("/app/backend/uploads")
+        uploads_dir.mkdir(exist_ok=True)
+        
+        file_path = uploads_dir / file_id
+        with open(file_path, "wb") as f:
+            f.write(contents)
+        
+        # Mock file metadata (in production, this would be S3 URL)
+        file_metadata = {
+            "filename": file.filename,
+            "url": f"/api/design-files/{file_id}",  # Mock URL
+            "size": file_size,
+            "uploadedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        logger.info(f"[MOCKED STORAGE] File uploaded: {file.filename} -> {file_id}")
+        
+        return file_metadata
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading design file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya yüklenemedi: {str(e)}")
+
+@api_router.get("/design-files/{file_id}")
+async def download_design_file(file_id: str):
+    """
+    Download a design file
+    """
+    try:
+        file_path = Path("/app/backend/uploads") / file_id
+        
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Dosya bulunamadı")
+        
+        # Read file
+        with open(file_path, "rb") as f:
+            file_content = f.read()
+        
+        # Determine content type
+        ext = file_path.suffix.lower()
+        content_type_map = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.pdf': 'application/pdf',
+            '.ai': 'application/postscript',
+            '.psd': 'image/vnd.adobe.photoshop',
+            '.svg': 'image/svg+xml'
+        }
+        
+        content_type = content_type_map.get(ext, 'application/octet-stream')
+        
+        return StreamingResponse(
+            io.BytesIO(file_content),
+            media_type=content_type,
+            headers={
+                "Content-Disposition": f"attachment; filename={file_id}"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading design file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Dosya indirilemedi: {str(e)}")
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
