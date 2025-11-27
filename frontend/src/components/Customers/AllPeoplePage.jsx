@@ -53,33 +53,35 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
     }
   }, [peopleProp]);
 
-  // Calculate stats dynamically
+  // Calculate stats dynamically (with safe checks)
   const peopleStats = {
-    totalPeople: people.length,
-    activePeople: people.filter(p => p.status === 'active').length,
-    customers: people.filter(p => p.relationshipType === 'customer').length,
-    potentialCustomers: people.filter(p => p.relationshipType === 'potential_customer').length,
-    contacts: people.filter(p => p.relationshipType === 'kontak').length,
-    suppliers: people.filter(p => p.relationshipType === 'supplier').length
+    totalPeople: people?.length || 0,
+    activePeople: people?.filter(p => p.status === 'active').length || 0,
+    customers: people?.filter(p => p.relationshipType === 'customer' || p.relationship_type === 'customer').length || 0,
+    potentialCustomers: people?.filter(p => p.relationshipType === 'potential_customer' || p.relationship_type === 'potential_customer').length || 0,
+    contacts: people?.filter(p => p.relationshipType === 'kontak' || p.relationship_type === 'kontak').length || 0,
+    suppliers: people?.filter(p => p.relationshipType === 'supplier' || p.relationship_type === 'supplier').length || 0
   };
 
-  const filteredPeople = people.filter(person => {
+  const filteredPeople = (people || []).filter(person => {
     const matchesSearch = searchTerm === '' || 
-      person.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+      (person.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (person.company || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (person.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (person.jobTitle || person.job_title || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesTagSearch = tagSearchTerm === '' || 
-      person.tags.some(tag => tag.toLowerCase().includes(tagSearchTerm.toLowerCase()));
+      (person.tags || []).some(tag => tag.toLowerCase().includes(tagSearchTerm.toLowerCase()));
     
     const matchesSector = selectedSector === '' || person.sector === selectedSector;
-    const matchesRelationship = selectedRelationship === '' || person.relationshipType === selectedRelationship;
+    const matchesRelationship = selectedRelationship === '' || 
+      person.relationshipType === selectedRelationship || 
+      person.relationship_type === selectedRelationship;
     
     return matchesSearch && matchesTagSearch && matchesSector && matchesRelationship;
   });
 
-  const uniqueSectors = [...new Set(people.map(person => person.sector))];
+  const uniqueSectors = [...new Set((people || []).map(person => person.sector).filter(s => s))];
   const relationshipTypes = [
     { value: 'customer', label: 'Müşteri' },
     { value: 'potential_customer', label: 'Potansiyel Müşteri' },
