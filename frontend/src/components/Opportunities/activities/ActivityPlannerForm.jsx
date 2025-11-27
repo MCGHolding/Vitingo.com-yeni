@@ -123,11 +123,13 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
   const [formData, setFormData] = useState({
     activity_type: '',
     title: '',
+    custom_activity_name: '', // For custom activity type
     description: '',
     scheduled_date: '',
     scheduled_time: '',
     has_reminder: false,
     reminder_minutes: '60',
+    reminder_methods: ['push'], // Default to push notification
     notes: ''
   });
 
