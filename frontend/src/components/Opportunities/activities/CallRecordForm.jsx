@@ -308,8 +308,16 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
       const result = await response.json();
       const savedContact = result.contact;
       
-      // 2. GÖRÜŞÜLEN KİŞİLER LİSTESİNE EKLE
-      setContactPersons(prev => [...prev, savedContact]);
+      // 2. REFRESH CONTACT LIST FROM API (FIX: Auto-refresh after adding contact)
+      // Fetch updated customer data to get the complete, fresh contact list
+      const customerResponse = await fetch(`${BACKEND_URL}/api/customers/${customerInfo.id}`);
+      if (customerResponse.ok) {
+        const updatedCustomer = await customerResponse.json();
+        setContactPersons(updatedCustomer.contacts || []);
+      } else {
+        // Fallback: add to existing list if API fetch fails
+        setContactPersons(prev => [...prev, savedContact]);
+      }
       
       // 3. FORMDA SEÇİLİ HİLE GETİR
       handleInputChange('contact_person', savedContact.fullName || savedContact.name);
