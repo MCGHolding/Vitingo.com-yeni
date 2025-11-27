@@ -277,22 +277,9 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-4">
       
-      {/* Header Info */}
-      <Card className="bg-purple-50 border-purple-200">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-3">
-            <Calendar className="h-8 w-8 text-purple-600" />
-            <div>
-              <h3 className="font-semibold text-purple-900">Aktivite Planlama</h3>
-              <p className="text-sm text-purple-700">Hatırlatıcılı görevler ve aktiviteler oluşturun</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
         {/* Left Column */}
         <div className="space-y-6">
