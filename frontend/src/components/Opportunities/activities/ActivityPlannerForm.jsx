@@ -227,9 +227,11 @@ export default function ActivityPlannerForm({ opportunityId, opportunityTitle, o
         description: formData.description || `${getActivityTitle()} - ${opportunityTitle}`,
         data: {
           activity_type: formData.activity_type,
+          custom_activity_name: formData.activity_type === 'custom' ? formData.custom_activity_name : null,
           scheduled_datetime: scheduledDateTime,
           has_reminder: formData.has_reminder,
           reminder_minutes: formData.has_reminder ? parseInt(formData.reminder_minutes) : null,
+          reminder_methods: formData.has_reminder ? formData.reminder_methods : [],
           notes: formData.notes,
           status: 'planned'
         }
