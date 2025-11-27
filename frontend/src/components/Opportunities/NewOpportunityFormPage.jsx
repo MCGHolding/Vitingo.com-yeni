@@ -680,6 +680,11 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
           stage: selectedStage?.label || formData.stage
         });
         setShowSuccessModal(true);
+        
+        // Call parent callback to refresh opportunities list
+        if (onSave) {
+          onSave(savedData);
+        }
       } else {
         const errorData = await response.json();
         console.error('Failed to save opportunity:', errorData);
