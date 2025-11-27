@@ -546,20 +546,25 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
               <SelectValue placeholder="Arama sonucu seçin" />
             </SelectTrigger>
             <SelectContent>
-              <optgroup label="Görüşüldü">
-                {callResultOptions.gorusuldu.map(result => (
-                  <SelectItem key={result.value} value={result.value}>
-                    {result.label}
-                  </SelectItem>
-                ))}
-              </optgroup>
-              <optgroup label="Görüşülemedi">
-                {callResultOptions.gorusulemedi.map(result => (
-                  <SelectItem key={result.value} value={result.value}>
-                    {result.label}
-                  </SelectItem>
-                ))}
-              </optgroup>
+              {/* Görüşüldü Kategorisi */}
+              <SelectItem value="_gorusuldu_header" disabled className="font-semibold text-gray-900 bg-gray-100">
+                Görüşüldü
+              </SelectItem>
+              {callResultOptions.gorusuldu.map(result => (
+                <SelectItem key={result.value} value={result.value} className="pl-6">
+                  {result.label}
+                </SelectItem>
+              ))}
+              
+              {/* Görüşülemedi Kategorisi */}
+              <SelectItem value="_gorusulemedi_header" disabled className="font-semibold text-gray-900 bg-gray-100 mt-2">
+                Görüşülemedi
+              </SelectItem>
+              {callResultOptions.gorusulemedi.map(result => (
+                <SelectItem key={result.value} value={result.value} className="pl-6">
+                  {result.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <button 
@@ -568,7 +573,7 @@ export default function CallRecordForm({ opportunityId, opportunityTitle, onSave
             className="text-blue-600 text-sm mt-1 hover:underline flex items-center space-x-1"
           >
             <Plus className="h-3 w-3" />
-            <span>Yeni Ekle</span>
+            <span>+ Yeni Ekle</span>
           </button>
         </div>
 
