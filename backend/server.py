@@ -12887,6 +12887,10 @@ app.include_router(leads_router.router)
 # Include project routes
 app.include_router(projects_router.router)
 
+# Include email router
+app.include_router(email_routes.router)
+email_routes.set_database(db)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
