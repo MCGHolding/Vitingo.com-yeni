@@ -326,8 +326,46 @@ export default function ActivityPlannerFormNew({ opportunityId, opportunityTitle
         />
       </div>
 
+      {/* Öncelik */}
+      <div className="mb-4 pb-4 border-b border-gray-100">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          ⭐ Öncelik
+        </label>
+        <div className="flex items-center gap-4">
+          {[
+            { value: 'high', label: 'Yüksek', icon: '⭐', color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-500' },
+            { value: 'normal', label: 'Normal', icon: '○', color: 'text-gray-500', bgColor: 'bg-gray-50', borderColor: 'border-gray-400' },
+            { value: 'low', label: 'Düşük', icon: '↓', color: 'text-gray-400', bgColor: 'bg-gray-50', borderColor: 'border-gray-300' }
+          ].map(priority => (
+            <label key={priority.value} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="priority"
+                value={priority.value}
+                checked={formData.priority === priority.value}
+                onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                className="sr-only"
+              />
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                formData.priority === priority.value 
+                  ? `${priority.borderColor} ${priority.bgColor}` 
+                  : 'border-gray-300 bg-white'
+              }`}>
+                {formData.priority === priority.value && (
+                  <div className={`w-2.5 h-2.5 rounded-full ${
+                    priority.value === 'high' ? 'bg-amber-500' : 'bg-gray-500'
+                  }`} />
+                )}
+              </div>
+              <span className={`text-sm ${priority.color} font-medium`}>{priority.icon}</span>
+              <span className="text-sm text-gray-700">{priority.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
       {/* Alt Satır - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4">
         {/* Hızlı Tarih */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-gray-400">⚡</span>
