@@ -11748,8 +11748,29 @@ async def create_opportunity_activity(opportunity_id: str, activity_input: Oppor
     try:
         # Check if opportunity exists
         opportunity = await db.opportunities.find_one({"id": opportunity_id})
+        
+        # If opportunity not found, check if it's a customer ID
         if not opportunity:
-            raise HTTPException(status_code=404, detail="Opportunity not found")
+            customer = await db.customers.find_one({"id": opportunity_id})
+            if customer:
+                # Create a default opportunity for this customer
+                opportunity_data = {
+                    "id": str(uuid.uuid4()),
+                    "title": f"{customer.get('companyName', 'Firma')} - Genel Fırsatlar",
+                    "customer": customer.get('companyName'),
+                    "customer_id": customer.get('id'),
+                    "stage": "lead",
+                    "value": 0,
+                    "probability": 50,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                await db.opportunities.insert_one(opportunity_data)
+                opportunity = opportunity_data
+                opportunity_id = opportunity["id"]
+                logger.info(f"Created default opportunity for customer {customer.get('id')}")
+            else:
+                raise HTTPException(status_code=404, detail="Opportunity or Customer not found")
         
         activity_data = activity_input.dict()
         activity_data.update({
