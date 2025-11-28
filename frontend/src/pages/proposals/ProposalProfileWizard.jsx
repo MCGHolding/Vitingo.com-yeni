@@ -440,16 +440,18 @@ const ProposalProfileWizard = () => {
   );
 
   const renderStep2 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Modül Seçimi</h2>
-      <p className="text-gray-600">Tekliflerinizde kullanmak istediğiniz modülleri seçin</p>
+    <div className="space-y-3">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-base font-semibold text-gray-900">Modül Seçimi</h2>
+        <span className="text-xs text-gray-500">{selectedModuleIds.length} seçildi</span>
+      </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         {availableModules.map((module) => (
           <div
             key={module.module_id}
             onClick={() => handleModuleToggle(module.module_type)}
-            className={`p-4 border-2 rounded-lg cursor-pointer transition-all
+            className={`p-2 border rounded cursor-pointer transition-all text-sm
               ${selectedModuleIds.includes(module.module_type) 
                 ? 'border-blue-500 bg-blue-50' 
                 : 'border-gray-200 hover:border-gray-300'}`}
@@ -459,24 +461,18 @@ const ProposalProfileWizard = () => {
                 type="checkbox"
                 checked={selectedModuleIds.includes(module.module_type)}
                 onChange={() => {}}
-                className="mt-1 mr-3"
+                className="mt-0.5 mr-2"
               />
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center">
-                  <span className="text-2xl mr-2">{module.icon}</span>
-                  <h3 className="font-semibold text-gray-900">{module.module_name}</h3>
+                  <span className="text-lg mr-1">{module.icon}</span>
+                  <h3 className="font-medium text-gray-900 text-xs truncate">{module.module_name}</h3>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{module.description}</p>
+                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{module.description}</p>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-900">
-          <strong>{selectedModuleIds.length}</strong> modül seçildi
-        </p>
       </div>
     </div>
   );
