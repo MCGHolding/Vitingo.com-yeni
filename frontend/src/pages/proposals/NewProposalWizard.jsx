@@ -110,11 +110,16 @@ const NewProposalWizard = ({ onBack }) => {
 
   const loadSalesOpportunities = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/sales-opportunities?status=open,won`);
+      const response = await fetch(`${BACKEND_URL}/api/opportunities`);
       const data = await response.json();
-      setSalesOpportunities(data || []);
+      // Filter by status if needed
+      const filtered = Array.isArray(data) ? data.filter(op => 
+        op.status === 'open' || op.status === 'won'
+      ) : [];
+      setSalesOpportunities(filtered);
     } catch (error) {
       console.error('Error loading sales opportunities:', error);
+      setSalesOpportunities([]);
     }
   };
 
