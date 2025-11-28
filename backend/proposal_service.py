@@ -244,7 +244,7 @@ class Proposal(BaseModel):
 class ProposalCreate(BaseModel):
     user_id: str
     profile_id: str
-    customer_id: str
+    customer_id: Optional[str] = None
     sales_opportunity_id: Optional[str] = None
     customer_snapshot: CustomerSnapshot
     project_info: Optional[ProjectInfo] = None
