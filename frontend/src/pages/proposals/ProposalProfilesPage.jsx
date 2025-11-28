@@ -648,63 +648,42 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Firma Bilgileri</h3>
                       <div className="space-y-4">
                         
-                        {/* Company Group Selection */}
+                        {/* Company Selection - Single Dropdown */}
                         {companyGroups.length > 0 && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Grup Şirketi
-                              {companyGroups.length > 1 && (
-                                <span className="ml-2 text-xs text-blue-600">
-                                  ({companyGroups.length} grup mevcut)
-                                </span>
-                              )}
-                            </label>
-                            {companyGroups.length === 1 ? (
-                              <input
-                                type="text"
-                                value={companyGroups[0].name}
-                                disabled
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
-                              />
-                            ) : (
-                              <select
-                                value={formData.company_group_id}
-                                onChange={(e) => handleGroupChange(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                              >
-                                <option value="">Grup Seçin</option>
-                                {companyGroups.map(group => (
-                                  <option key={group.id} value={group.id}>
-                                    {group.name}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Company Selection (if group has multiple companies) */}
-                        {selectedGroupCompanies.length > 1 && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Şirket Seçin
-                              <span className="ml-2 text-xs text-blue-600">
-                                ({selectedGroupCompanies.length} şirket mevcut)
-                              </span>
+                              Grup Şirketleri
+                              {(() => {
+                                const totalCompanies = companyGroups.reduce((sum, g) => sum + g.companies.length, 0);
+                                return totalCompanies > 1 ? (
+                                  <span className="ml-2 text-xs text-blue-600">
+                                    ({totalCompanies} şirket mevcut)
+                                  </span>
+                                ) : null;
+                              })()}
                             </label>
                             <select
                               value={formData.selected_company_id}
                               onChange={(e) => {
-                                const company = selectedGroupCompanies.find(c => c.id === e.target.value);
-                                if (company) handleCompanySelection(company);
+                                // Find company across all groups
+                                let selectedCompany = null;
+                                companyGroups.forEach(group => {
+                                  const found = group.companies.find(c => c.id === e.target.value);
+                                  if (found) selectedCompany = found;
+                                });
+                                if (selectedCompany) handleCompanySelection(selectedCompany);
                               }}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             >
                               <option value="">Şirket Seçin</option>
-                              {selectedGroupCompanies.map(company => (
-                                <option key={company.id} value={company.id}>
-                                  {company.name}
-                                </option>
+                              {companyGroups.map(group => (
+                                <optgroup key={group.id} label={group.name}>
+                                  {group.companies.map(company => (
+                                    <option key={company.id} value={company.id}>
+                                      {company.name} {company.country ? `(${company.country})` : ''}
+                                    </option>
+                                  ))}
+                                </optgroup>
                               ))}
                             </select>
                           </div>
