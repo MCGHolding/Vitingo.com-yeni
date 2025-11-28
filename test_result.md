@@ -1091,6 +1091,7 @@ test_plan:
     - "URGENT Sales Opportunities Display Issue Resolution"
     - "Restored Detailed Activity Forms with Modal System Testing - OpportunityTimelinePage"
     - "Customer Management API Endpoints Testing"
+    - "Proposal Wizard Step 2 and Step 4 Rendering Testing"
     - "ViewCustomerPage and EditCustomerPage Integration Testing"
     - "NewCustomerForm Backend Integration Issue Testing"
     - "User Management APIs Testing"
