@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { ArrowLeft, ArrowRight, FileText, Sparkles, Building2, GripVertical, X, Plus, Check, Image, FileBarChart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FileText, Sparkles, Building2, GripVertical, X, Plus, Check, Image, FileBarChart, Save } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
