@@ -872,28 +872,25 @@ const NewProposalWizard = ({ onBack }) => {
           customer_snapshot: {
             company_name: formData.company_name,
             contact_person: formData.contact_person,
-            email: formData.contact_email,
-            phone: formData.contact_phone,
+            contact_email: formData.contact_email,
+            contact_phone: formData.contact_phone,
             address: formData.address
           },
           project_info: {
-            name: formData.project_name,
-            fair_center: formData.fair_center,
-            location: {
-              city: formData.city,
-              country: formData.country
-            },
+            project_name: formData.project_name,
+            fair_name: formData.fair_center,
+            fair_venue: formData.fair_center,
+            fair_city: formData.city,
+            fair_country: formData.country,
             hall_number: formData.hall_number,
             stand_number: formData.stand_number,
-            stand_area: formData.stand_area ? `${formData.stand_area} ${formData.stand_area_unit}` : '',
-            dates: {
-              start: formData.start_date,
-              end: formData.end_date
-            }
+            stand_size: formData.stand_area ? `${formData.stand_area} ${formData.stand_area_unit}` : '',
+            start_date: formData.start_date,
+            end_date: formData.end_date
           },
           settings: {
             page_orientation: formData.page_orientation,
-            currency_code: formData.currency_code,
+            currency: formData.currency_code,
             language: formData.language,
             validity_days: formData.validity_days
           },
