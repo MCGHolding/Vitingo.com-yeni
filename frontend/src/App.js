@@ -1949,6 +1949,7 @@ const Dashboard = () => {
         onPassiveBriefs={handlePassiveBriefs}
         // Teklif handlers
         onNewTeklif={handleNewTeklif}
+        onAllQuotes={handleAllQuotes}
         onRequestBrief={handleRequestBrief}
         // Calendar handlers
         onCalendar={handleCalendar}
