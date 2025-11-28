@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, ContentState, convertToRaw, convertFromHTML } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
