@@ -26,7 +26,7 @@ const ExpenseReceiptApprovalPage = () => {
   useEffect(() => {
     const fetchReceiptData = async () => {
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://propmaker-3.preview.emergentagent.com';
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://offerflow-4.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/expense-receipt-approval/${token}`);
         const data = await response.json();
         
@@ -145,7 +145,7 @@ const ExpenseReceiptApprovalPage = () => {
     setIsSubmitting(true);
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://propmaker-3.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://offerflow-4.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/expense-receipt-approval/${token}`, {
         method: 'POST',
         headers: {
