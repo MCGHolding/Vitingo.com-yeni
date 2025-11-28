@@ -1979,6 +1979,7 @@ const Dashboard = () => {
         // Teklif handlers
         onNewTeklif={handleNewTeklif}
         onAllQuotes={handleAllQuotes}
+        onProposalList={handleProposalList}
         onProposalProfiles={handleProposalProfiles}
         onRequestBrief={handleRequestBrief}
         // Calendar handlers
