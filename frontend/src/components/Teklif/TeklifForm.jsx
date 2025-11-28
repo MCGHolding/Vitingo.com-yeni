@@ -359,7 +359,12 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                 <select
                   value={formData.musteriId}
                   onChange={(e) => handleMusteriChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                    formData.satisFiresatId && satisFiresatlari.find(f => f.id === formData.satisFiresatId)?.customer_id
+                      ? 'border-gray-300 bg-gray-100 cursor-not-allowed text-gray-600'
+                      : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  disabled={formData.satisFiresatId && satisFiresatlari.find(f => f.id === formData.satisFiresatId)?.customer_id}
                   required
                 >
                   <option value="">Müşteri seçiniz...</option>
@@ -370,11 +375,19 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                   ))}
                 </select>
                 <div className="text-xs text-gray-500 mt-1">
-                  {musteriler.length} müşteri bulundu
-                  {secilenMusteri && (
-                    <span className="text-blue-600 ml-2">
-                      → Seçilen: {secilenMusteri.company_name}
+                  {formData.satisFiresatId && satisFiresatlari.find(f => f.id === formData.satisFiresatId)?.customer_id ? (
+                    <span className="text-blue-600">
+                      ℹ️ Müşteri satış fırsatından otomatik olarak seçildi
                     </span>
+                  ) : (
+                    <>
+                      {musteriler.length} müşteri bulundu
+                      {secilenMusteri && (
+                        <span className="text-blue-600 ml-2">
+                          → Seçilen: {secilenMusteri.company_name}
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
