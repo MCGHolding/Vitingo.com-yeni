@@ -223,6 +223,7 @@ class ProposalProfileCreate(BaseModel):
     company_info: CompanyInfo
     branding: Optional[Branding] = None
     defaults: Optional[ProfileDefaults] = None
+    selected_modules: List[ProfileModule] = Field(default_factory=list)
     is_default: bool = False
 
 class ModuleTemplate(BaseModel):
