@@ -2995,7 +2995,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                         backgroundColor: element.backgroundColor
                       }}
                     >
-                      {element.type === 'text' && element.variable}
+                      {element.type === 'text' && replaceVariables(element.variable)}
                       {element.type === 'image' && (
                         <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
                           {element.label}
