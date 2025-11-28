@@ -358,6 +358,109 @@ class Currency(BaseModel):
     is_active: bool = True
     display_order: int = 0
 
+# ===================== AVAILABLE MODULES (System Defaults) =====================
+
+AVAILABLE_MODULES = [
+    {
+        "module_id": "cover_page",
+        "module_name": "Kapak Sayfası",
+        "module_type": "cover_page",
+        "icon": "📄",
+        "description": "Teklif kapak sayfası - logo, başlık, müşteri bilgileri"
+    },
+    {
+        "module_id": "intro",
+        "module_name": "Giriş Sayfası",
+        "module_type": "introduction",
+        "icon": "👋",
+        "description": "Giriş metni ve genel bilgiler"
+    },
+    {
+        "module_id": "company_info",
+        "module_name": "Firma Hakkında",
+        "module_type": "about_company",
+        "icon": "🏢",
+        "description": "Şirket tanıtımı ve hakkında bilgiler"
+    },
+    {
+        "module_id": "company_stats",
+        "module_name": "Firma İstatistikleri",
+        "module_type": "company_statistics",
+        "icon": "📊",
+        "description": "Şirket istatistikleri ve başarılar"
+    },
+    {
+        "module_id": "references",
+        "module_name": "Referanslar",
+        "module_type": "references",
+        "icon": "⭐",
+        "description": "Müşteri referansları ve başarı hikayeleri"
+    },
+    {
+        "module_id": "portfolio",
+        "module_name": "Portföy / Proje Görselleri",
+        "module_type": "portfolio",
+        "icon": "🖼️",
+        "description": "Geçmiş projeler ve portföy görselleri"
+    },
+    {
+        "module_id": "included_services",
+        "module_name": "Dahil Olan Hizmetler",
+        "module_type": "included_services",
+        "icon": "✅",
+        "description": "Teklif kapsamındaki hizmetler"
+    },
+    {
+        "module_id": "excluded_services",
+        "module_name": "Hariç Olan Hizmetler",
+        "module_type": "excluded_services",
+        "icon": "❌",
+        "description": "Teklif kapsamı dışındaki hizmetler"
+    },
+    {
+        "module_id": "technical_specs",
+        "module_name": "Teknik Şartname",
+        "module_type": "technical_specs",
+        "icon": "🔧",
+        "description": "Teknik detaylar ve özellikler"
+    },
+    {
+        "module_id": "timeline",
+        "module_name": "Zaman Çizelgesi",
+        "module_type": "timeline",
+        "icon": "📅",
+        "description": "Proje takvimi ve kilometre taşları"
+    },
+    {
+        "module_id": "payment_terms",
+        "module_name": "Ödeme Koşulları",
+        "module_type": "payment_terms",
+        "icon": "💰",
+        "description": "Ödeme planı ve şartları"
+    },
+    {
+        "module_id": "warranty",
+        "module_name": "Garanti ve Servis",
+        "module_type": "warranty",
+        "icon": "🛡️",
+        "description": "Garanti koşulları ve servis bilgileri"
+    },
+    {
+        "module_id": "terms_conditions",
+        "module_name": "Koşullar ve Şartlar",
+        "module_type": "terms_conditions",
+        "icon": "📋",
+        "description": "Genel şartlar ve koşullar"
+    },
+    {
+        "module_id": "contact",
+        "module_name": "İletişim",
+        "module_type": "contact",
+        "icon": "📞",
+        "description": "İletişim bilgileri ve iletişim formu"
+    }
+]
+
 # ===================== UTILITY FUNCTIONS =====================
 
 async def generate_proposal_number() -> str:
