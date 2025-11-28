@@ -748,12 +748,10 @@ const ProposalProfileWizard = ({ profileId }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <CoverPageDesigner
+      <CoverPageCanvasDesigner
         isOpen={showCoverDesigner}
         onClose={() => setShowCoverDesigner(false)}
         profileData={formData}
-        opportunityData={null}
-        userData={{ name: 'Demo User', title: 'Proje Müdürü' }}
         onSave={handleCoverPageSave}
       />
       
