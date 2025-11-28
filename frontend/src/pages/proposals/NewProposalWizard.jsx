@@ -3030,7 +3030,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             )}
 
             {module.type === 'introduction' && (
-              <div dangerouslySetInnerHTML={{ __html: content.content || '' }} />
+              <div dangerouslySetInnerHTML={{ __html: replaceVariables(content.content || '') }} />
             )}
 
             {module.type === 'about_company' && (
