@@ -2066,6 +2066,269 @@ const NewProposalWizard = ({ onBack }) => {
     );
   };
 
+  const renderStep4 = () => {
+    const formatCurrency = (amount) => {
+      const symbol = formData.currency_code === 'EUR' ? '€' : 
+                     formData.currency_code === 'USD' ? '$' :
+                     formData.currency_code === 'TRY' ? '₺' : '€';
+      return `${symbol}${amount.toFixed(2)}`;
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Header Info */}
+        <Card>
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-4">
+                <span>📋 Teklif No: PRO-{proposalId?.slice(0, 8)}</span>
+                <span>🏢 {formData.company_name}</span>
+                <span>🎪 {formData.project_name}</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span>Para Birimi: {formData.currency_code}</span>
+                <span>KDV: %{taxRate}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Line Items Table */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Fiyat Kalemleri</h3>
+              <Button onClick={addLineItem} size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Kalem Ekle
+              </Button>
+            </div>
+
+            {lineItems.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                <FileBarChart className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 mb-4">Henüz fiyat kalemi eklenmedi</p>
+                <Button onClick={addLineItem} variant="outline">
+                  İlk Kalemi Ekle
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {lineItems.map((item, index) => (
+                  <div key={item.id} className="p-4 border rounded-lg hover:bg-gray-50">
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <div className="col-span-3">
+                        <input
+                          type="text"
+                          value={item.description}
+                          onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                          placeholder="Kalem adı"
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <input
+                          type="text"
+                          value={item.details}
+                          onChange={(e) => updateLineItem(item.id, 'details', e.target.value)}
+                          placeholder="Açıklama"
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => updateLineItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <select
+                          value={item.unit}
+                          onChange={(e) => updateLineItem(item.id, 'unit', e.target.value)}
+                          className="w-full px-2 py-1 text-sm border rounded"
+                        >
+                          <option value="adet">adet</option>
+                          <option value="m²">m²</option>
+                          <option value="m">m</option>
+                          <option value="set">set</option>
+                          <option value="gün">gün</option>
+                        </select>
+                      </div>
+                      <div className="col-span-2">
+                        <input
+                          type="number"
+                          value={item.unit_price}
+                          onChange={(e) => updateLineItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 text-sm border rounded"
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <div className="text-sm font-medium text-right">
+                          {formatCurrency(calculateItemTotal(item))}
+                        </div>
+                      </div>
+                      <div className="col-span-1 text-right">
+                        <button
+                          onClick={() => removeLineItem(item.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Summary */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-3 max-w-md ml-auto">
+              <div className="flex justify-between text-lg">
+                <span>Ara Toplam:</span>
+                <span className="font-medium">{formatCurrency(pricingSummary.subtotal)}</span>
+              </div>
+              <div className="flex justify-between text-lg">
+                <span>KDV (%{taxRate}):</span>
+                <span className="font-medium">{formatCurrency(pricingSummary.tax)}</span>
+              </div>
+              <div className="flex justify-between text-2xl font-bold border-t pt-3">
+                <span>GENEL TOPLAM:</span>
+                <span>{formatCurrency(pricingSummary.total)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+
+  const renderStep5 = () => {
+    return (
+      <div className="grid grid-cols-12 gap-6">
+        {/* Left: Preview Area */}
+        <div className="col-span-8">
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-semibold mb-4">Teklif Önizleme</h3>
+              <div className="border-2 border-dashed rounded-lg p-12 text-center bg-gray-50">
+                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-2">PDF Önizleme</p>
+                <p className="text-sm text-gray-500">
+                  {selectedModules.length} modül • {lineItems.length} kalem
+                </p>
+                <Button variant="outline" className="mt-4">
+                  PDF İndir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right: Send Panel */}
+        <div className="col-span-4">
+          <div className="space-y-4">
+            {/* Summary */}
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="font-semibold mb-4">📋 Teklif Özeti</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Müşteri:</span>
+                    <span className="font-medium">{formData.company_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Proje:</span>
+                    <span className="font-medium">{formData.project_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Toplam:</span>
+                    <span className="font-bold text-lg">{formData.currency_code} {pricingSummary.total.toFixed(2)}</span>
+                  </div>
+                  <div className="pt-2 mt-2 border-t">
+                    <div className="text-yellow-600">🟡 Taslak</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Email Send */}
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="font-semibold mb-4">📧 E-posta ile Gönder</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Alıcı *</label>
+                    <input
+                      type="email"
+                      value={emailForm.to}
+                      onChange={(e) => setEmailForm({...emailForm, to: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-md text-sm"
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Konu</label>
+                    <input
+                      type="text"
+                      value={emailForm.subject}
+                      onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-md text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Mesaj</label>
+                    <textarea
+                      value={emailForm.message}
+                      onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
+                      rows={5}
+                      className="w-full px-3 py-2 border rounded-md text-sm"
+                    />
+                  </div>
+                  <Button onClick={sendProposal} className="w-full">
+                    📧 E-posta Gönder
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Online Link */}
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="font-semibold mb-4">🔗 Online Link</h3>
+                {!publicLink ? (
+                  <Button onClick={generatePublicLink} variant="outline" className="w-full">
+                    Link Oluştur
+                  </Button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="p-2 bg-gray-100 rounded text-xs break-all">
+                      {publicLink}
+                    </div>
+                    <Button 
+                      onClick={() => navigator.clipboard.writeText(publicLink)}
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                    >
+                      📋 Kopyala
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
