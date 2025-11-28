@@ -65,38 +65,57 @@ const COVER_TEMPLATES = [
   }
 ];
 
-const CoverPageDesigner = ({ isOpen, onClose, profileData, opportunityData, onSave }) => {
+const CoverPageDesigner = ({ isOpen, onClose, profileData, opportunityData, onSave, userData }) => {
   const [selectedTemplate, setSelectedTemplate] = useState('modern_minimal');
   const [coverData, setCoverData] = useState({
-    companyLogo: profileData?.branding?.logo_url || '',
-    companyName: profileData?.company_info?.name || '',
-    proposalTitle: opportunityData?.fairName || '',
-    country: opportunityData?.country || '',
-    city: opportunityData?.city || '',
-    startDate: opportunityData?.startDate || '',
-    endDate: opportunityData?.endDate || '',
-    venue: opportunityData?.venue || '',
-    preparedBy: opportunityData?.assignedTo || '',
+    companyLogo: '',
+    companyName: '',
+    proposalTitle: '',
+    country: '',
+    city: '',
+    startDate: '',
+    endDate: '',
+    venue: '',
+    preparedBy: '',
     preparedByTitle: 'Proje Müdürü',
     preparedDate: new Date().toLocaleDateString('tr-TR')
   });
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
 
-  // Auto-fill from opportunity data
+  // Auto-fill from profile, opportunity, and user data
   useEffect(() => {
+    if (!isOpen) return;
+    
+    // Start with profile data
+    const newData = {
+      companyLogo: profileData?.branding?.logo_url || '',
+      companyName: profileData?.company_info?.name || '',
+      proposalTitle: '',
+      country: '',
+      city: '',
+      startDate: '',
+      endDate: '',
+      venue: '',
+      preparedBy: userData?.name || 'Demo User',
+      preparedByTitle: userData?.title || 'Proje Müdürü',
+      preparedDate: new Date().toLocaleDateString('tr-TR')
+    };
+
+    // Override with opportunity data if available
     if (opportunityData) {
-      setCoverData(prev => ({
-        ...prev,
-        proposalTitle: opportunityData.fairName || prev.proposalTitle,
-        country: opportunityData.country || prev.country,
-        city: opportunityData.city || prev.city,
-        startDate: opportunityData.startDate || prev.startDate,
-        endDate: opportunityData.endDate || prev.endDate,
-        venue: opportunityData.venue || opportunityData.fairCenter || prev.venue,
-        preparedBy: opportunityData.assignedTo || prev.preparedBy
-      }));
+      newData.proposalTitle = opportunityData.fairName || opportunityData.projectName || '';
+      newData.country = opportunityData.country || '';
+      newData.city = opportunityData.city || '';
+      newData.startDate = opportunityData.startDate || opportunityData.eventStartDate || '';
+      newData.endDate = opportunityData.endDate || opportunityData.eventEndDate || '';
+      newData.venue = opportunityData.venue || opportunityData.fairCenter || '';
+      if (opportunityData.assignedTo) {
+        newData.preparedBy = opportunityData.assignedTo;
+      }
     }
-  }, [opportunityData]);
+
+    setCoverData(newData);
+  }, [isOpen, profileData, opportunityData, userData]);
 
   const renderTemplatePreview = (templateId, colors) => {
     const { primary_color, secondary_color, accent_color } = colors;
