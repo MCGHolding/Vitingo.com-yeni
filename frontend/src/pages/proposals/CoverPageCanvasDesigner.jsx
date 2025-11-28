@@ -100,6 +100,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
 
   const handleSave = () => {
     const template = {
+      selectedTemplate: selectedTemplate,
       elements: elements,
       canvasWidth: 794, // A4 width in pixels at 96 DPI
       canvasHeight: 1123 // A4 height in pixels at 96 DPI
