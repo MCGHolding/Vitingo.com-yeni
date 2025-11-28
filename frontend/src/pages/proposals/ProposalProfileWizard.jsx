@@ -184,6 +184,22 @@ const ProposalProfileWizard = () => {
     }
   };
 
+  const handlePaletteChange = (paletteId) => {
+    setSelectedPalette(paletteId);
+    const palette = COLOR_PALETTES.find(p => p.id === paletteId);
+    if (palette) {
+      setFormData(prev => ({
+        ...prev,
+        branding: {
+          ...prev.branding,
+          primary_color: palette.primary,
+          secondary_color: palette.secondary,
+          accent_color: palette.accent
+        }
+      }));
+    }
+  };
+
   const handleModuleToggle = (moduleType) => {
     setSelectedModuleIds(prev => {
       if (prev.includes(moduleType)) {
