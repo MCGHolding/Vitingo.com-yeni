@@ -718,6 +718,132 @@ const NewProposalWizard = ({ onBack }) => {
     triggerAutoSave(moduleId);
   };
 
+  // ==================== STEP 4: PRICING ====================
+  
+  const addLineItem = () => {
+    const newItem = {
+      id: Date.now().toString(),
+      category: '',
+      description: '',
+      details: '',
+      quantity: 1,
+      unit: 'adet',
+      unit_price: 0,
+      discount_type: 'none',
+      discount_value: 0,
+      item_type: 'standard',
+      display_order: lineItems.length + 1
+    };
+    setLineItems([...lineItems, newItem]);
+  };
+
+  const updateLineItem = (itemId, field, value) => {
+    setLineItems(items => items.map(item => 
+      item.id === itemId ? { ...item, [field]: value } : item
+    ));
+    calculatePricingSummary();
+  };
+
+  const removeLineItem = (itemId) => {
+    setLineItems(items => items.filter(item => item.id !== itemId));
+    calculatePricingSummary();
+  };
+
+  const calculateItemTotal = (item) => {
+    const subtotal = item.quantity * item.unit_price;
+    let discount = 0;
+    
+    if (item.discount_type === 'percentage') {
+      discount = subtotal * (item.discount_value / 100);
+    } else if (item.discount_type === 'fixed') {
+      discount = item.discount_value;
+    }
+    
+    return subtotal - discount;
+  };
+
+  const calculatePricingSummary = () => {
+    const standardItems = lineItems.filter(item => item.item_type === 'standard');
+    const optionalItems = lineItems.filter(item => item.item_type === 'optional');
+    
+    const subtotal = standardItems.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+    const optional_total = optionalItems.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+    
+    let discount = 0;
+    if (generalDiscount.type === 'percentage') {
+      discount = subtotal * (generalDiscount.value / 100);
+    } else if (generalDiscount.type === 'fixed') {
+      discount = generalDiscount.value;
+    }
+    
+    const afterDiscount = subtotal - discount;
+    const tax = afterDiscount * (taxRate / 100);
+    const total = afterDiscount + tax;
+    
+    setPricingSummary({
+      subtotal,
+      discount,
+      tax,
+      total,
+      optional_total
+    });
+  };
+
+  // ==================== STEP 5: PREVIEW & SEND ====================
+  
+  const generatePublicLink = async () => {
+    if (!proposalId) return;
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/generate-link`, {
+        method: 'POST'
+      });
+      
+      const data = await response.json();
+      setPublicLink(data.public_url);
+    } catch (error) {
+      console.error('Error generating link:', error);
+    }
+  };
+
+  const sendProposal = async () => {
+    if (!proposalId) return;
+    
+    if (!emailForm.to) {
+      alert('Lütfen alıcı e-posta adresi girin');
+      return;
+    }
+    
+    const confirmed = window.confirm(
+      `Teklifi ${emailForm.to} adresine göndermek istediğinize emin misiniz?`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: emailForm.to,
+          cc: emailForm.cc,
+          subject: emailForm.subject,
+          message: emailForm.message
+        })
+      });
+      
+      if (response.ok) {
+        alert('✅ Teklif başarıyla gönderildi!');
+        // Redirect to proposals list or detail page
+      } else {
+        alert('❌ Teklif gönderilirken bir hata oluştu');
+      }
+    } catch (error) {
+      console.error('Error sending proposal:', error);
+      alert('❌ Teklif gönderilirken bir hata oluştu');
+    }
+  };
+
   const handleNext = async () => {
     if (currentStep === 1) {
       if (!validateStep1()) {
