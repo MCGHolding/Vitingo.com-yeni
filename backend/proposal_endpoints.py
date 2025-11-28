@@ -709,6 +709,47 @@ async def reject_proposal(token: str, rejection_data: dict):
         logger.error(f"Error rejecting proposal: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@proposal_router.post("/proposals/{proposal_id}/generate-link")
+async def generate_public_link(proposal_id: str):
+    """Generate or return public link for proposal"""
+    try:
+        proposal = await db.proposals.find_one({"id": proposal_id}, {"_id": 0})
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        
+        # If public_token doesn't exist, create one
+        if not proposal.get("public_token"):
+            public_token = str(uuid.uuid4())
+            await db.proposals.update_one(
+                {"id": proposal_id},
+                {"$set": {"public_token": public_token}}
+            )
+        else:
+            public_token = proposal["public_token"]
+        
+        # Generate public URL
+        base_url = os.environ.get("REACT_APP_BACKEND_URL", "http://localhost:3000")
+        public_url = f"{base_url}/p/{public_token}"
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.LINK_GENERATED,
+            "Public link oluşturuldu",
+            proposal.get("user_id")
+        )
+        
+        return {
+            "public_token": public_token,
+            "public_url": public_url,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating link: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== CURRENCIES ENDPOINTS =====================
 
 @proposal_router.get("/currencies", response_model=List[Currency])
