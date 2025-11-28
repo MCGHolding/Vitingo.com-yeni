@@ -214,11 +214,15 @@ const NewProposalWizard = ({ onBack }) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/opportunities`);
       const data = await response.json();
-      // Filter by status if needed
-      const filtered = Array.isArray(data) ? data.filter(op => 
-        op.status === 'open' || op.status === 'won'
-      ) : [];
-      console.log(`✅ Loaded ${filtered.length} sales opportunities`);
+      // Filter: Include all opportunities except closed/lost/won
+      const filtered = Array.isArray(data) ? data.filter(op => {
+        const status = (op.status || '').toLowerCase();
+        // Exclude closed, lost, won statuses
+        return !status.includes('closed') && 
+               !status.includes('lost') && 
+               !status.includes('won');
+      }) : [];
+      console.log(`✅ Loaded ${filtered.length} sales opportunities (from ${data.length} total)`);
       setSalesOpportunities(filtered);
     } catch (error) {
       console.error('❌ Error loading sales opportunities:', error);
