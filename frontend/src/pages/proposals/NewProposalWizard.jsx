@@ -359,6 +359,174 @@ const NewProposalWizard = ({ onBack }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ==================== STEP 2: MODULE SELECTION ====================
+  
+  const loadModuleTemplates = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/module-templates`);
+      const data = await response.json();
+      
+      // Group templates by module type
+      const grouped = {};
+      data.forEach(template => {
+        if (!grouped[template.module_type]) {
+          grouped[template.module_type] = [];
+        }
+        grouped[template.module_type].push(template);
+      });
+      
+      setAvailableTemplates(grouped);
+    } catch (error) {
+      console.error('Error loading templates:', error);
+    }
+  };
+
+  const handleAddModule = (moduleType) => {
+    // Check if already added
+    if (selectedModules.some(m => m.type === moduleType)) {
+      return;
+    }
+    
+    // Get module info
+    let moduleInfo = null;
+    Object.values(MODULE_CATEGORIES).forEach(cat => {
+      const found = cat.modules.find(m => m.type === moduleType);
+      if (found) moduleInfo = found;
+    });
+    
+    if (!moduleInfo) return;
+    
+    // Get first template for this module type
+    const templates = availableTemplates[moduleType] || [];
+    const defaultTemplate = templates[0];
+    
+    const newModule = {
+      id: Date.now().toString(),
+      type: moduleType,
+      name: moduleInfo.name,
+      icon: moduleInfo.icon,
+      template_id: defaultTemplate?.id || null,
+      template_name: defaultTemplate?.template_name || 'Varsayılan',
+      display_order: selectedModules.length + 1
+    };
+    
+    setSelectedModules([...selectedModules, newModule]);
+  };
+
+  const handleRemoveModule = (index) => {
+    const newModules = selectedModules.filter((_, i) => i !== index);
+    // Update display orders
+    newModules.forEach((m, i) => m.display_order = i + 1);
+    setSelectedModules(newModules);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(selectedModules);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update display orders
+    items.forEach((item, index) => {
+      item.display_order = index + 1;
+    });
+    
+    setSelectedModules(items);
+  };
+
+  const handleChangeTemplate = (index, moduleType) => {
+    setCurrentModuleIndex(index);
+    setCurrentModuleType(moduleType);
+    setShowTemplateModal(true);
+  };
+
+  const handleSelectTemplate = (template) => {
+    if (currentModuleIndex === null) return;
+    
+    const newModules = [...selectedModules];
+    newModules[currentModuleIndex].template_id = template.id;
+    newModules[currentModuleIndex].template_name = template.template_name;
+    setSelectedModules(newModules);
+    
+    setShowTemplateModal(false);
+    setCurrentModuleIndex(null);
+    setCurrentModuleType(null);
+  };
+
+  const handleUseRecommended = () => {
+    const recommended = RECOMMENDED_STRUCTURE.map((moduleType, index) => {
+      let moduleInfo = null;
+      Object.values(MODULE_CATEGORIES).forEach(cat => {
+        const found = cat.modules.find(m => m.type === moduleType);
+        if (found) moduleInfo = found;
+      });
+      
+      if (!moduleInfo) return null;
+      
+      const templates = availableTemplates[moduleType] || [];
+      const defaultTemplate = templates[0];
+      
+      return {
+        id: Date.now().toString() + index,
+        type: moduleType,
+        name: moduleInfo.name,
+        icon: moduleInfo.icon,
+        template_id: defaultTemplate?.id || null,
+        template_name: defaultTemplate?.template_name || 'Varsayılan',
+        display_order: index + 1
+      };
+    }).filter(Boolean);
+    
+    setSelectedModules(recommended);
+  };
+
+  const handleClearAll = () => {
+    if (window.confirm('Tüm seçili modüller kaldırılacak. Emin misiniz?')) {
+      setSelectedModules([]);
+    }
+  };
+
+  const saveModulesToBackend = async () => {
+    if (!proposalId) return;
+    
+    try {
+      // Save each module
+      for (const module of selectedModules) {
+        await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/modules`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            module_type: module.type,
+            template_id: module.template_id,
+            display_order: module.display_order
+          })
+        });
+      }
+      console.log('Modules saved successfully');
+    } catch (error) {
+      console.error('Error saving modules:', error);
+    }
+  };
+
+  const validateStep2 = () => {
+    if (selectedModules.length === 0) {
+      alert('En az bir modül seçmelisiniz');
+      return false;
+    }
+    
+    // Check if pricing module is included
+    const hasPricing = selectedModules.some(m => m.type === 'pricing');
+    if (!hasPricing) {
+      const proceed = window.confirm(
+        'Fiyatlandırma modülü seçilmedi. Bu olmadan devam etmek istiyor musunuz?'
+      );
+      if (!proceed) return false;
+    }
+    
+    return true;
+  };
+
   const handleNext = async () => {
     if (currentStep === 1) {
       if (!validateStep1()) {
