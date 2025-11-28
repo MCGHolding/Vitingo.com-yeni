@@ -302,17 +302,36 @@ const ProposalProfileWizard = () => {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Logo Yükle</label>
           <input
-            type="text"
-            value={formData.branding.logo_url}
-            onChange={(e) => setFormData(prev => ({
-              ...prev,
-              branding: { ...prev.branding, logo_url: e.target.value }
-            }))}
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                // Convert to base64
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setFormData(prev => ({
+                    ...prev,
+                    branding: { ...prev.branding, logo_url: reader.result }
+                  }));
+                  toast.success('Logo yüklendi');
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
             className="w-full px-4 py-2 border rounded-lg"
-            placeholder="https://..."
           />
+          {formData.branding.logo_url && (
+            <div className="mt-2">
+              <img 
+                src={formData.branding.logo_url} 
+                alt="Logo Preview" 
+                className="h-16 object-contain border rounded p-2"
+              />
+            </div>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Ana Renk</label>
