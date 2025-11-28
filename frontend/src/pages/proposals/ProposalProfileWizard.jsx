@@ -314,11 +314,11 @@ const ProposalProfileWizard = ({ profileId }) => {
         selected_modules
       };
 
-      const url = profileId 
-        ? `${API_URL}/api/proposal-profiles/${profileId}`
+      const url = urlProfileId 
+        ? `${API_URL}/api/proposal-profiles/${urlProfileId}`
         : `${API_URL}/api/proposal-profiles`;
       
-      const method = profileId ? 'PUT' : 'POST';
+      const method = urlProfileId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
