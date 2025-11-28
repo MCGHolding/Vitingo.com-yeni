@@ -737,23 +737,13 @@ const ProposalProfileWizard = ({ profileId }) => {
     );
   }
 
-  const handleCoverPageSave = (coverPageData) => {
-    // Generate HTML from cover page design
-    const coverHTML = `
-      <div class="cover-page" data-template="${coverPageData.template}">
-        <h1>${coverPageData.data.proposalTitle}</h1>
-        <div class="company">${coverPageData.data.companyName}</div>
-        <div class="venue">${coverPageData.data.venue}</div>
-        <div class="location">${coverPageData.data.city}, ${coverPageData.data.country}</div>
-        <div class="dates">${coverPageData.data.startDate} - ${coverPageData.data.endDate}</div>
-        <div class="prepared-by">${coverPageData.data.preparedBy} - ${coverPageData.data.preparedByTitle}</div>
-        <div class="prepared-date">${coverPageData.data.preparedDate}</div>
-      </div>
-    `;
+  const handleCoverPageSave = (template) => {
+    // Save canvas template as JSON
+    const templateJSON = JSON.stringify(template);
     
-    handleModuleContentChange('cover_page', 'title', coverPageData.data.proposalTitle);
-    handleModuleContentChange('cover_page', 'body', coverHTML);
-    toast.success('Kapak sayfası tasarımı kaydedildi!');
+    handleModuleContentChange('cover_page', 'title', 'Kapak Sayfası (Canvas Tasarım)');
+    handleModuleContentChange('cover_page', 'body', templateJSON);
+    toast.success('Kapak sayfası şablonu kaydedildi!');
   };
 
   return (
