@@ -926,7 +926,17 @@ const NewProposalWizard = ({ onBack }) => {
       setCurrentStep(3);
     } else if (currentStep === 3) {
       // All content saved via auto-save, just proceed
+      // Initialize email form with default values
+      setEmailForm({
+        to: formData.contact_email || '',
+        cc: '',
+        subject: `${formData.project_name} - Teklif`,
+        message: `Sayın ${formData.contact_person || 'Yetkili'},\n\n${formData.project_name} projesi için hazırladığımız teklifi ekte bulabilirsiniz.\n\nSorularınız için bizimle iletişime geçebilirsiniz.`
+      });
       setCurrentStep(4);
+    } else if (currentStep === 4) {
+      // Pricing done, proceed to preview
+      setCurrentStep(5);
     } else {
       setCurrentStep(prev => prev + 1);
     }
