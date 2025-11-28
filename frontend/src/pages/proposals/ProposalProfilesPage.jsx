@@ -108,34 +108,17 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
       const data = await response.json();
       console.log('✅ Loaded group companies:', data.length);
       
-      // Group companies by groupName
-      const grouped = {};
-      data.forEach(company => {
-        const groupName = company.groupName || 'Diğer Şirketler';
-        if (!grouped[groupName]) {
-          grouped[groupName] = [];
-        }
-        grouped[groupName].push(company);
-      });
+      // Set companies directly - no grouping needed
+      setSelectedGroupCompanies(data);
       
-      // Convert to array format
-      const groupsArray = Object.entries(grouped).map(([name, companies]) => ({
-        id: name,
-        name: name,
-        companies: companies
-      }));
-      
-      setCompanyGroups(groupsArray);
-      console.log('✅ Created', groupsArray.length, 'groups with', data.length, 'total companies');
-      
-      // If only one company total, auto-select and fill form
+      // If only one company, auto-select and fill form
       if (data.length === 1) {
         console.log('✅ Auto-selecting single company:', data[0].name);
         handleCompanySelection(data[0]);
       }
     } catch (error) {
       console.error('Error loading group companies:', error);
-      setCompanyGroups([]);
+      setSelectedGroupCompanies([]);
     }
   };
 
