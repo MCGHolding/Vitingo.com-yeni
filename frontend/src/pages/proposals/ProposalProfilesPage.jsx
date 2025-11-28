@@ -42,6 +42,8 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
   // Form state
   const [formData, setFormData] = useState({
     profile_name: '',
+    company_group_id: '',
+    selected_company_id: '',
     company_info: {
       name: '',
       address: '',
