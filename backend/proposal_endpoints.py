@@ -415,6 +415,250 @@ async def add_module(proposal_id: str, module_input: ProposalModuleCreate):
         module_data["created_at"] = datetime.now(timezone.utc)
         module_data["updated_at"] = datetime.now(timezone.utc)
         
+
+# ===================== LINE ITEMS ENDPOINTS =====================
+
+@proposal_router.post("/proposals/{proposal_id}/line-items", response_model=ProposalLineItem)
+async def add_line_item(proposal_id: str, item_input: ProposalLineItemCreate):
+    """Add a line item to proposal"""
+    try:
+        item_data = item_input.dict()
+        item_data["id"] = str(uuid.uuid4())
+        item_data["proposal_id"] = proposal_id
+        
+        # Calculate totals
+        item_data = await calculate_line_item_totals(item_data)
+        
+        item_data["created_at"] = datetime.now(timezone.utc)
+        item_data["updated_at"] = datetime.now(timezone.utc)
+        
+        await db.proposal_line_items.insert_one(item_data)
+        
+        # Recalculate proposal totals
+        await recalculate_proposal_totals(proposal_id)
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.LINE_ITEM_ADDED,
+            f"Kalem eklendi: {item_data['description']}"
+        )
+        
+        return ProposalLineItem(**item_data)
+    except Exception as e:
+        logger.error(f"Error adding line item: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.put("/proposals/{proposal_id}/line-items/{item_id}", response_model=ProposalLineItem)
+async def update_line_item(proposal_id: str, item_id: str, item_update: dict):
+    """Update a line item"""
+    try:
+        # Calculate totals
+        item_update = await calculate_line_item_totals(item_update)
+        item_update["updated_at"] = datetime.now(timezone.utc)
+        
+        await db.proposal_line_items.update_one(
+            {"id": item_id, "proposal_id": proposal_id},
+            {"$set": item_update}
+        )
+        
+        # Recalculate proposal totals
+        await recalculate_proposal_totals(proposal_id)
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.LINE_ITEM_UPDATED,
+            "Kalem güncellendi"
+        )
+        
+        updated = await db.proposal_line_items.find_one({"id": item_id}, {"_id": 0})
+        return ProposalLineItem(**updated)
+    except Exception as e:
+        logger.error(f"Error updating line item: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.delete("/proposals/{proposal_id}/line-items/{item_id}")
+async def delete_line_item(proposal_id: str, item_id: str):
+    """Delete a line item"""
+    try:
+        result = await db.proposal_line_items.delete_one({"id": item_id, "proposal_id": proposal_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Line item not found")
+        
+        # Recalculate proposal totals
+        await recalculate_proposal_totals(proposal_id)
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.LINE_ITEM_REMOVED,
+            "Kalem silindi"
+        )
+        
+        return {"message": "Line item deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting line item: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== PUBLIC ENDPOINTS =====================
+
+@proposal_router.get("/proposals/public/{token}")
+async def get_public_proposal(token: str):
+    """Public proposal view for customers"""
+    try:
+        proposal = await db.proposals.find_one({"public_token": token}, {"_id": 0})
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        
+        # Get modules
+        modules = await db.proposal_modules.find(
+            {"proposal_id": proposal["id"], "is_active": True},
+            {"_id": 0}
+        ).sort("display_order", 1).to_list(length=None)
+        
+        # Get line items
+        line_items = await db.proposal_line_items.find(
+            {"proposal_id": proposal["id"], "is_active": True},
+            {"_id": 0}
+        ).sort("display_order", 1).to_list(length=None)
+        
+        # Update tracking - first view
+        update_data = {
+            "tracking.view_count": proposal.get("tracking", {}).get("view_count", 0) + 1,
+            "tracking.last_viewed_at": datetime.now(timezone.utc)
+        }
+        
+        if not proposal.get("tracking", {}).get("first_viewed_at"):
+            update_data["tracking.first_viewed_at"] = datetime.now(timezone.utc)
+            update_data["status"] = "viewed"
+        
+        await db.proposals.update_one(
+            {"id": proposal["id"]},
+            {"$set": update_data}
+        )
+        
+        # Log activity
+        await log_activity(
+            proposal["id"],
+            ActivityType.VIEWED,
+            "Teklif görüntülendi (Public)",
+            actor_type="customer"
+        )
+        
+        return {
+            "proposal": proposal,
+            "modules": modules,
+            "line_items": line_items
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching public proposal: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.post("/proposals/public/{token}/accept")
+async def accept_proposal(token: str, acceptance_data: dict):
+    """Customer accepts the proposal"""
+    try:
+        proposal = await db.proposals.find_one({"public_token": token})
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        
+        await db.proposals.update_one(
+            {"id": proposal["id"]},
+            {"$set": {
+                "status": "accepted",
+                "tracking.accepted_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        
+        # Log activity
+        await log_activity(
+            proposal["id"],
+            ActivityType.ACCEPTED,
+            "Teklif kabul edildi",
+            actor_type="customer",
+            metadata=acceptance_data
+        )
+        
+        return {"message": "Proposal accepted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error accepting proposal: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.post("/proposals/public/{token}/reject")
+async def reject_proposal(token: str, rejection_data: dict):
+    """Customer rejects the proposal"""
+    try:
+        proposal = await db.proposals.find_one({"public_token": token})
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        
+        await db.proposals.update_one(
+            {"id": proposal["id"]},
+            {"$set": {
+                "status": "rejected",
+                "tracking.rejected_at": datetime.now(timezone.utc),
+                "tracking.rejection_reason": rejection_data.get("reason", ""),
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        
+        # Log activity
+        await log_activity(
+            proposal["id"],
+            ActivityType.REJECTED,
+            f"Teklif reddedildi: {rejection_data.get('reason', '')}",
+            actor_type="customer",
+            metadata=rejection_data
+        )
+        
+        return {"message": "Proposal rejected"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting proposal: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===================== CURRENCIES ENDPOINTS =====================
+
+@proposal_router.get("/currencies", response_model=List[Currency])
+async def get_currencies():
+    """Get all active currencies"""
+    try:
+        currencies = await db.currencies.find(
+            {"is_active": True},
+            {"_id": 0}
+        ).sort("display_order", 1).to_list(length=None)
+        return [Currency(**c) for c in currencies]
+    except Exception as e:
+        logger.error(f"Error fetching currencies: {str(e)}")
+        return []
+
+@proposal_router.get("/currencies/rates")
+async def get_currency_rates():
+    """Get current exchange rates"""
+    try:
+        currencies = await db.currencies.find(
+            {"is_active": True},
+            {"_id": 0, "code": 1, "symbol": 1, "exchange_rate_to_usd": 1, "last_updated": 1}
+        ).to_list(length=None)
+        
+        return {
+            "rates": currencies,
+            "base": "USD",
+            "last_updated": datetime.now(timezone.utc)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching rates: {str(e)}")
+        return {"rates": [], "base": "USD", "last_updated": datetime.now(timezone.utc)}
+
         if "content" not in module_data or not module_data["content"]:
             module_data["content"] = ModuleContent().dict()
         
