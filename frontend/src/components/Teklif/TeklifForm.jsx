@@ -270,8 +270,33 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
 
     setLoading(true);
     try {
-      // Here would be the API call to create the teklif
-      console.log('Teklif Form Data:', formData);
+      // Create quote via API
+      const quoteData = {
+        opportunity_id: formData.satisFiresatId,
+        customer_id: formData.musteriId,
+        title: formData.teklifBaslik,
+        quote_date: formData.teklifTarihi,
+        validity_date: formData.gecerlilikTarihi,
+        country: formData.country,
+        city: formData.city,
+        status: 'draft',
+        notes: formData.notlar
+      };
+
+      const response = await fetch(`${BACKEND_URL}/api/quotes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quoteData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Teklif kaydedilemedi');
+      }
+
+      const savedQuote = await response.json();
+      console.log('Teklif kaydedildi:', savedQuote);
       
       alert('Teklif başarıyla oluşturuldu.');
 
@@ -280,7 +305,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       
     } catch (error) {
       console.error('Error creating teklif:', error);
-      alert('Teklif oluşturulurken bir hata oluştu.');
+      alert('Teklif oluşturulurken bir hata oluştu: ' + error.message);
     } finally {
       setLoading(false);
     }
