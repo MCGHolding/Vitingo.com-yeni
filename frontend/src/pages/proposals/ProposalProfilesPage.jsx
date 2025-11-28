@@ -406,15 +406,11 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
             <p className="text-gray-600 mt-1">{profiles.length} profil bulundu</p>
           </div>
           <Button
-            onClick={() => {
-              resetForm();
-              setEditingProfile(null);
-              setShowSlideOver(true);
-            }}
+            onClick={handleNewProfile}
             className="flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
-            <span>Yeni Profil</span>
+            <span>Yeni Profil (v2)</span>
           </Button>
         </div>
 
