@@ -747,16 +747,19 @@ const Dashboard = () => {
 
   const handleNewProposal = () => {
     setCurrentView('new-proposal');
+    window.history.pushState({}, '', '/proposals/new');
   };
 
   const handleProposalList = () => {
     setCurrentView('proposal-list');
+    window.history.pushState({}, '', '/proposals');
   };
 
   const handleViewProposal = (proposalId) => {
     console.log('View proposal:', proposalId);
     // TODO: Navigate to proposal detail
     setCurrentView('proposal-detail');
+    window.history.pushState({}, '', `/proposals/${proposalId}`);
   };
 
   // Project Management Handlers
