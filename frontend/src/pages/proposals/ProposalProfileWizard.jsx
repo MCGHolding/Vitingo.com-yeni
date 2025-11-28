@@ -596,10 +596,10 @@ const ProposalProfileWizard = () => {
   };
 
   const renderStep4 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Önizleme ve Kaydet</h2>
+    <div className="space-y-3">
+      <h2 className="text-base font-semibold text-gray-900">Önizleme</h2>
       
-      <div className="bg-white border rounded-lg p-6 space-y-4">
+      <div className="bg-gray-50 border rounded p-3 space-y-3 text-sm">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Profil Bilgileri</h3>
           <div className="mt-2 grid grid-cols-2 gap-4">
