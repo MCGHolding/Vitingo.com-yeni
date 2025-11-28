@@ -1632,6 +1632,9 @@ const Dashboard = () => {
 
       case 'proposal-profiles':
         return <ProposalProfilesPage onBackToDashboard={handleBackToDashboard} />;
+      
+      case 'new-proposal':
+        return <NewProposalWizard onBack={handleBackToDashboard} />;
 
       // Calendar cases
       case 'calendar':
