@@ -383,28 +383,28 @@ const ProposalProfileWizard = () => {
 
       <div className="grid grid-cols-4 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sayfa Yönü</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Sayfa Yönü</label>
           <select
             value={formData.defaults.page_orientation}
             onChange={(e) => setFormData(prev => ({
               ...prev,
               defaults: { ...prev.defaults, page_orientation: e.target.value }
             }))}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-3 py-1.5 text-sm border rounded"
           >
             <option value="portrait">Dikey</option>
             <option value="landscape">Yatay</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Para Birimi</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Para Birimi</label>
           <select
             value={formData.defaults.currency}
             onChange={(e) => setFormData(prev => ({
               ...prev,
               defaults: { ...prev.defaults, currency: e.target.value }
             }))}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-3 py-1.5 text-sm border rounded"
           >
             <option value="TRY">TRY</option>
             <option value="USD">USD</option>
@@ -412,7 +412,19 @@ const ProposalProfileWizard = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Geçerlilik (Gün)</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">İkincil Renk</label>
+          <input
+            type="color"
+            value={formData.branding.secondary_color}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              branding: { ...prev.branding, secondary_color: e.target.value }
+            }))}
+            className="w-full h-8 px-1 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Geçerlilik</label>
           <input
             type="number"
             value={formData.defaults.validity_days}
@@ -420,7 +432,7 @@ const ProposalProfileWizard = () => {
               ...prev,
               defaults: { ...prev.defaults, validity_days: parseInt(e.target.value) || 30 }
             }))}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-3 py-1.5 text-sm border rounded"
           />
         </div>
       </div>
