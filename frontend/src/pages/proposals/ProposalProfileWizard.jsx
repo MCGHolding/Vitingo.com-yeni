@@ -738,11 +738,19 @@ const ProposalProfileWizard = ({ profileId }) => {
   }
 
   const handleCoverPageSave = (template) => {
-    // Save canvas template as JSON
-    const templateJSON = JSON.stringify(template);
+    // Save canvas template with proper structure
+    const coverPageContent = {
+      title: 'Kapak Sayfası',
+      type: 'canvas_design',
+      canvas_template: template, // Contains: selectedTemplate, elements, canvasWidth, canvasHeight
+      body: '' // Keep body empty for canvas-based designs
+    };
     
-    handleModuleContentChange('cover_page', 'title', 'Kapak Sayfası (Canvas Tasarım)');
-    handleModuleContentChange('cover_page', 'body', templateJSON);
+    setModuleContents(prev => ({
+      ...prev,
+      cover_page: coverPageContent
+    }));
+    
     toast.success('Kapak sayfası şablonu kaydedildi!');
   };
 
