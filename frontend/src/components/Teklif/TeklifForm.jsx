@@ -144,8 +144,11 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       
       if (secilenFiresat && secilenFiresat.customer) {
         // Satış fırsatının müşterisi var (customer ismine göre ara)
+        // Backend'den gelen customer field'larını destekle: companyName, company_name, name
         const ilgiliMusteri = musteriler.find(m => 
-          m.company_name === secilenFiresat.customer || 
+          m.companyName === secilenFiresat.customer || 
+          m.company_name === secilenFiresat.customer ||
+          m.name === secilenFiresat.customer ||
           m.id === secilenFiresat.customer
         );
         
@@ -159,6 +162,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
           setSecilenMusteri(ilgiliMusteri);
         } else {
           // Müşteri bulunamadı, sadece fırsatı seç
+          console.warn(`❌ Müşteri bulunamadı: ${secilenFiresat.customer}`);
           setFormData(prev => ({
             ...prev,
             satisFiresatId: satisFiresatId,
