@@ -32,6 +32,8 @@ const LANGUAGES = [
 const ProposalProfilesPage = ({ onBackToDashboard }) => {
   const [profiles, setProfiles] = useState([]);
   const [currencies, setCurrencies] = useState([]);
+  const [companyGroups, setCompanyGroups] = useState([]);
+  const [selectedGroupCompanies, setSelectedGroupCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showSlideOver, setShowSlideOver] = useState(false);
   const [editingProfile, setEditingProfile] = useState(null);
