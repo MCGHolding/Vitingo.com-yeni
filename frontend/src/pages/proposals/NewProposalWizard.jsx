@@ -1396,8 +1396,18 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       await generatePublicLink();
       
       setCurrentStep(5);
-    } else {
-      setCurrentStep(prev => prev + 1);
+    } else if (currentStep === 5) {
+      // Final step - show completion message and redirect
+      setNotification({ 
+        show: true, 
+        message: '✅ Teklif tamamlandı!', 
+        type: 'success' 
+      });
+      setTimeout(() => {
+        setNotification({ show: false, message: '', type: 'success' });
+        // Redirect to proposal list
+        onBack();
+      }, 2000);
     }
   };
 
