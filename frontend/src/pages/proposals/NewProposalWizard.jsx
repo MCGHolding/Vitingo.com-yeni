@@ -1564,6 +1564,351 @@ const NewProposalWizard = ({ onBack }) => {
     );
   };
 
+  const renderStep3 = () => {
+    if (selectedModules.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Modül seçilmedi. Lütfen önceki adıma dönün.</p>
+        </div>
+      );
+    }
+
+    const activeModule = selectedModules[activeModuleIndex];
+    const content = moduleContents[activeModule?.id] || {};
+    const completedCount = Object.keys(moduleContents).length;
+
+    return (
+      <div className="grid grid-cols-12 gap-6">
+        {/* Left Sidebar: Module List */}
+        <div className="col-span-3">
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-4">Modüller</h3>
+              <div className="space-y-1">
+                {selectedModules.map((module, index) => (
+                  <button
+                    key={module.id}
+                    onClick={() => setActiveModuleIndex(index)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                      index === activeModuleIndex
+                        ? 'bg-blue-100 text-blue-900 font-medium'
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className={index === activeModuleIndex ? '●' : '○'}>
+                        {index === activeModuleIndex ? '●' : '○'}
+                      </span>
+                      <span className="flex-1">
+                        {index + 1}. {module.name}
+                      </span>
+                      {moduleContents[module.id] && (
+                        <Check className="w-4 h-4 text-green-600" />
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                  <span>İlerleme</span>
+                  <span>{completedCount}/{selectedModules.length}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all"
+                    style={{ width: `${(completedCount / selectedModules.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Panel: Content Editor */}
+        <div className="col-span-9">
+          <Card>
+            <CardContent className="pt-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-semibold">{activeModule.name}</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Şablon: {activeModule.template_name}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className={`text-sm ${
+                    saveStatus === 'saved' ? 'text-green-600' :
+                    saveStatus === 'saving' ? 'text-yellow-600' :
+                    'text-red-600'
+                  }`}>
+                    {saveStatus === 'saved' ? '✓ Kaydedildi' :
+                     saveStatus === 'saving' ? 'Kaydediliyor...' :
+                     'Kaydetme hatası'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Module-specific forms */}
+              {activeModule.type === 'cover_page' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık *</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                      placeholder="{{project_name}}"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      💡 Değişkenler: {' '}
+                      <span className="text-blue-600 cursor-pointer">{{'{project_name}'}}</span>,{' '}
+                      <span className="text-blue-600 cursor-pointer">{{'{fair_name}'}}</span>
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Alt Başlık</label>
+                    <input
+                      type="text"
+                      value={content.subtitle || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'subtitle', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                      placeholder="Teklif No: {{proposal_number}}"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Logo Pozisyonu</label>
+                    <div className="flex space-x-4">
+                      {['center', 'left', 'right'].map(pos => (
+                        <label key={pos} className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="logo_position"
+                            value={pos}
+                            checked={content.logo_position === pos}
+                            onChange={(e) => handleModuleContentChange(activeModule.id, 'logo_position', e.target.value)}
+                            className="mr-2"
+                          />
+                          <span className="text-sm capitalize">{pos === 'center' ? 'Orta' : pos === 'left' ? 'Sol' : 'Sağ'}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeModule.type === 'introduction' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">İçerik *</label>
+                    <textarea
+                      value={content.content || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'content', e.target.value)}
+                      rows={12}
+                      className="w-full px-3 py-2 border rounded-md font-mono text-sm"
+                      placeholder="Giriş metninizi yazın..."
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      Kullanılabilir değişkenler: {{'{contact_person}'}}, {{'{project_name}'}}, {{'{company_name}'}}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {(activeModule.type === 'included_services' || activeModule.type === 'excluded_services') && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Giriş Metni</label>
+                    <input
+                      type="text"
+                      value={content.intro || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'intro', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Hizmet Listesi</label>
+                    <div className="space-y-2">
+                      {(content.items || []).map((item, idx) => (
+                        <div key={item.id} className="flex items-center space-x-2 p-2 border rounded">
+                          <GripVertical className="w-4 h-4 text-gray-400" />
+                          <input
+                            type="checkbox"
+                            checked={item.checked}
+                            onChange={(e) => updateListItem(activeModule.id, 'items', item.id, { checked: e.target.checked })}
+                          />
+                          <input
+                            type="text"
+                            value={item.text}
+                            onChange={(e) => updateListItem(activeModule.id, 'items', item.id, { text: e.target.value })}
+                            className="flex-1 px-2 py-1 border rounded text-sm"
+                            placeholder="Hizmet açıklaması"
+                          />
+                          <button
+                            onClick={() => removeListItem(activeModule.id, 'items', item.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => addListItem(activeModule.id, 'items')}
+                        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:text-blue-600 text-sm"
+                      >
+                        + Yeni Hizmet Ekle
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeModule.type === 'payment_terms' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Giriş Metni</label>
+                    <input
+                      type="text"
+                      value={content.intro || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'intro', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center space-x-2 mb-4">
+                      <input
+                        type="checkbox"
+                        checked={content.show_bank_info}
+                        onChange={(e) => handleModuleContentChange(activeModule.id, 'show_bank_info', e.target.checked)}
+                      />
+                      <span className="text-sm font-medium">Banka Bilgilerini Göster</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {activeModule.type === 'contact' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Alt Başlık</label>
+                    <input
+                      type="text"
+                      value={content.subtitle || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'subtitle', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={content.use_profile}
+                        onChange={(e) => handleModuleContentChange(activeModule.id, 'use_profile', e.target.checked)}
+                      />
+                      <span className="text-sm">Profilden otomatik al</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Generic form for other modules */}
+              {!['cover_page', 'introduction', 'included_services', 'excluded_services', 'payment_terms', 'contact'].includes(activeModule.type) && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">İçerik</label>
+                    <textarea
+                      value={content.content || ''}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'content', e.target.value)}
+                      rows={10}
+                      className="w-full px-3 py-2 border rounded-md"
+                      placeholder="Modül içeriğini yazın..."
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation buttons within editor */}
+              <div className="flex justify-between mt-8 pt-6 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveModuleIndex(Math.max(0, activeModuleIndex - 1))}
+                  disabled={activeModuleIndex === 0}
+                >
+                  ← Önceki Modül
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveModuleIndex(Math.min(selectedModules.length - 1, activeModuleIndex + 1))}
+                  disabled={activeModuleIndex === selectedModules.length - 1}
+                >
+                  Sonraki Modül →
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
