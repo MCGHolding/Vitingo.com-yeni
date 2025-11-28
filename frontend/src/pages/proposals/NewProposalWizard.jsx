@@ -533,6 +533,170 @@ const NewProposalWizard = ({ onBack }) => {
     return true;
   };
 
+  // ==================== STEP 3: CONTENT EDITING ====================
+  
+  const initializeModuleContents = () => {
+    const contents = {};
+    selectedModules.forEach(module => {
+      contents[module.id] = getDefaultContent(module.type);
+    });
+    setModuleContents(contents);
+  };
+
+  const getDefaultContent = (moduleType) => {
+    const defaults = {
+      cover_page: {
+        title: '{{project_name}}',
+        subtitle: 'Teklif No: {{proposal_number}}',
+        date_format: 'DD.MM.YYYY',
+        show_prepared_for: true,
+        show_prepared_by: true,
+        show_validity: true,
+        logo_position: 'center'
+      },
+      introduction: {
+        title: 'Değerli İş Ortağımız',
+        content: '<p>Sayın {{contact_person}},</p><p>{{project_name}} projesi kapsamında tarafınıza sunduğumuz bu teklif, ihtiyaçlarınız doğrultusunda özenle hazırlanmıştır.</p>'
+      },
+      about_company: {
+        title: 'Hakkımızda',
+        content: '',
+        show_statistics: true,
+        statistics: {
+          founded_year: '',
+          employee_count: '',
+          project_count: '',
+          country_count: ''
+        }
+      },
+      included_services: {
+        title: 'Teklife Dahil Hizmetler',
+        intro: 'Aşağıdaki hizmetler dahildir:',
+        items: []
+      },
+      excluded_services: {
+        title: 'Teklife Dahil Olmayan Hizmetler',
+        intro: 'Aşağıdaki hizmetler kapsam dışıdır:',
+        items: []
+      },
+      payment_terms: {
+        title: 'Ödeme Koşulları',
+        intro: 'Ödeme aşağıdaki şekilde gerçekleştirilecektir:',
+        schedule: [],
+        show_bank_info: true,
+        bank_info: {}
+      },
+      contact: {
+        title: 'İletişim',
+        subtitle: 'Sorularınız için bize ulaşın',
+        use_profile: true,
+        contact_person: {},
+        company_info: {}
+      }
+    };
+    
+    return defaults[moduleType] || { title: '', content: '' };
+  };
+
+  const handleModuleContentChange = (moduleId, field, value) => {
+    setModuleContents(prev => ({
+      ...prev,
+      [moduleId]: {
+        ...prev[moduleId],
+        [field]: value
+      }
+    }));
+    
+    // Trigger auto-save
+    triggerAutoSave(moduleId);
+  };
+
+  const triggerAutoSave = (moduleId) => {
+    setSaveStatus('saving');
+    
+    // Clear existing timeout
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
+    
+    // Set new timeout
+    const timeout = setTimeout(() => {
+      saveModuleContent(moduleId);
+    }, 2000);
+    
+    setAutoSaveTimeout(timeout);
+  };
+
+  const saveModuleContent = async (moduleId) => {
+    if (!proposalId) return;
+    
+    const module = selectedModules.find(m => m.id === moduleId);
+    if (!module) return;
+    
+    const content = moduleContents[moduleId];
+    
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/proposals/${proposalId}/modules/${module.id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: content
+          })
+        }
+      );
+      
+      if (response.ok) {
+        setSaveStatus('saved');
+      } else {
+        setSaveStatus('error');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      setSaveStatus('error');
+    }
+  };
+
+  const addListItem = (moduleId, listField) => {
+    const module = moduleContents[moduleId];
+    const currentItems = module[listField] || [];
+    
+    setModuleContents(prev => ({
+      ...prev,
+      [moduleId]: {
+        ...prev[moduleId],
+        [listField]: [...currentItems, { id: Date.now(), text: '', checked: true }]
+      }
+    }));
+  };
+
+  const updateListItem = (moduleId, listField, itemId, updates) => {
+    setModuleContents(prev => ({
+      ...prev,
+      [moduleId]: {
+        ...prev[moduleId],
+        [listField]: prev[moduleId][listField].map(item =>
+          item.id === itemId ? { ...item, ...updates } : item
+        )
+      }
+    }));
+    
+    triggerAutoSave(moduleId);
+  };
+
+  const removeListItem = (moduleId, listField, itemId) => {
+    setModuleContents(prev => ({
+      ...prev,
+      [moduleId]: {
+        ...prev[moduleId],
+        [listField]: prev[moduleId][listField].filter(item => item.id !== itemId)
+      }
+    }));
+    
+    triggerAutoSave(moduleId);
+  };
+
   const handleNext = async () => {
     if (currentStep === 1) {
       if (!validateStep1()) {
