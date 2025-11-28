@@ -142,9 +142,12 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
       // Find selected satış fırsatı
       const secilenFiresat = satisFiresatlari.find(f => f.id === satisFiresatId);
       
-      if (secilenFiresat && secilenFiresat.customer_id) {
-        // Satış fırsatının müşterisi var - otomatik seç ve lock et
-        const ilgiliMusteri = musteriler.find(m => m.id === secilenFiresat.customer_id);
+      if (secilenFiresat && secilenFiresat.customer) {
+        // Satış fırsatının müşterisi var (customer ismine göre ara)
+        const ilgiliMusteri = musteriler.find(m => 
+          m.company_name === secilenFiresat.customer || 
+          m.id === secilenFiresat.customer
+        );
         
         if (ilgiliMusteri) {
           setFormData(prev => ({
