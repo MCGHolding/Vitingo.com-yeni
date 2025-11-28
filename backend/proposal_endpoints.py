@@ -505,18 +505,31 @@ async def reorder_modules(proposal_id: str, module_orders: List[dict]):
 # ===================== LINE ITEMS ENDPOINTS =====================
 
 @proposal_router.post("/proposals/{proposal_id}/line-items", response_model=ProposalLineItem)
-async def add_line_item(proposal_id: str, item_input: ProposalLineItemCreate):
+async def add_line_item(proposal_id: str, item_input: dict):
     """Add a line item to proposal"""
     try:
-        item_data = item_input.dict()
-        item_data["id"] = str(uuid.uuid4())
-        item_data["proposal_id"] = proposal_id
+        # Build item data from input
+        item_data = {
+            "id": str(uuid.uuid4()),
+            "proposal_id": proposal_id,
+            "item_type": item_input.get("item_type", "standard"),
+            "category": item_input.get("category", ""),
+            "description": item_input.get("description", ""),
+            "details": item_input.get("details", ""),
+            "quantity": item_input.get("quantity", 1.0),
+            "unit": item_input.get("unit", "adet"),
+            "unit_price": item_input.get("unit_price", 0.0),
+            "discount_type": item_input.get("discount_type", "none"),
+            "discount_value": item_input.get("discount_value", 0.0),
+            "tax_rate": item_input.get("tax_rate", 0.0),
+            "display_order": item_input.get("display_order", 0),
+            "notes": item_input.get("notes", ""),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
         
         # Calculate totals
         item_data = await calculate_line_item_totals(item_data)
-        
-        item_data["created_at"] = datetime.now(timezone.utc)
-        item_data["updated_at"] = datetime.now(timezone.utc)
         
         await db.proposal_line_items.insert_one(item_data)
         
