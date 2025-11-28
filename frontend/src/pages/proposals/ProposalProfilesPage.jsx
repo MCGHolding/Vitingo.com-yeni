@@ -553,8 +553,8 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
         </div>
       </div>
 
-      {/* Slide-over Panel - Will be added in next part */}
-      {showSlideOver && (
+      {/* Slide-over Panel - DEPRECATED: Use ProposalProfileWizard instead */}
+      {false && showSlideOver && (
         <div className="fixed inset-0 overflow-hidden z-50">
           <div className="absolute inset-0 overflow-hidden">
             {/* Backdrop */}
