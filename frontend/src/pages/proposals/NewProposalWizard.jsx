@@ -1,9 +1,68 @@
 import React, { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { ArrowLeft, ArrowRight, FileText, Sparkles, Building2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FileText, Sparkles, Building2, GripVertical, X, Plus, Check, Image, FileBarChart } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Module categories and types
+const MODULE_CATEGORIES = {
+  intro: {
+    name: 'Giriş',
+    modules: [
+      { type: 'cover_page', name: 'Kapak Sayfası', icon: '📄', description: 'Teklifin açılış sayfası' },
+      { type: 'introduction', name: 'Giriş Sayfası', icon: '📝', description: 'Karşılama metni' }
+    ]
+  },
+  company: {
+    name: 'Firma Tanıtımı',
+    modules: [
+      { type: 'about_company', name: 'Firma Hakkında', icon: '🏢', description: 'Firma tanıtımı' },
+      { type: 'company_statistics', name: 'Firma İstatistikleri', icon: '📊', description: 'Sayılarla firma' },
+      { type: 'references', name: 'Referanslar', icon: '⭐', description: 'Referans listesi' },
+      { type: 'portfolio', name: 'Portföy / Proje Görselleri', icon: '🖼️', description: 'Geçmiş projeler' }
+    ]
+  },
+  services: {
+    name: 'Hizmet Detayları',
+    modules: [
+      { type: 'included_services', name: 'Dahil Olan Hizmetler', icon: '✅', description: 'Kapsanan hizmetler' },
+      { type: 'excluded_services', name: 'Hariç Olan Hizmetler', icon: '❌', description: 'Kapsam dışı hizmetler' },
+      { type: 'technical_specs', name: 'Teknik Şartname', icon: '📋', description: 'Teknik detaylar' },
+      { type: 'timeline', name: 'Zaman Çizelgesi', icon: '📅', description: 'Proje takvimi' }
+    ]
+  },
+  pricing: {
+    name: 'Fiyat ve Koşullar',
+    modules: [
+      { type: 'pricing', name: 'Fiyatlandırma', icon: '💰', description: 'Fiyat detayları' },
+      { type: 'payment_terms', name: 'Ödeme Koşulları', icon: '💳', description: 'Ödeme şartları' },
+      { type: 'warranty', name: 'Garanti ve Servis', icon: '🛡️', description: 'Garanti bilgileri' },
+      { type: 'terms_conditions', name: 'Koşullar ve Şartlar', icon: '📜', description: 'Genel şartlar' }
+    ]
+  },
+  closing: {
+    name: 'Kapanış',
+    modules: [
+      { type: 'contact', name: 'İletişim', icon: '📞', description: 'İletişim bilgileri' },
+      { type: 'attachments', name: 'Ekler', icon: '📎', description: 'Ek dosyalar' }
+    ]
+  }
+};
+
+// Recommended proposal structure
+const RECOMMENDED_STRUCTURE = [
+  'cover_page',
+  'introduction',
+  'about_company',
+  'included_services',
+  'excluded_services',
+  'pricing',
+  'payment_terms',
+  'terms_conditions',
+  'contact'
+];
 
 // Wizard steps configuration
 const WIZARD_STEPS = [
