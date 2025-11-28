@@ -757,9 +757,11 @@ const Dashboard = () => {
 
   const handleViewProposal = (proposalId) => {
     console.log('View proposal:', proposalId);
-    // TODO: Navigate to proposal detail
-    setCurrentView('proposal-detail');
-    window.history.pushState({}, '', `/proposals/${proposalId}`);
+    // Store proposal ID for wizard to load
+    setSelectedProposalId(proposalId);
+    // Navigate to wizard to edit
+    setCurrentView('new-proposal');
+    window.history.pushState({}, '', `/proposals/edit/${proposalId}`);
   };
 
   // Project Management Handlers
