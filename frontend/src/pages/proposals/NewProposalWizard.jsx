@@ -343,20 +343,6 @@ const NewProposalWizard = ({ onBack }) => {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
     }
-    
-    // Auto-fill when sales opportunity is selected
-    if (field === 'sales_opportunity_id' && value) {
-      // Delay to allow state update
-      setTimeout(() => {
-        setFormData(prev => ({ ...prev, sales_opportunity_id: value }));
-        autoFillFromOpportunity();
-      }, 100);
-    }
-    
-    // Auto-fill when customer is selected  
-    if (field === 'customer_id' && value) {
-      setTimeout(() => autoFillFromCustomer(), 100);
-    }
   };
 
   const validateStep1 = () => {
