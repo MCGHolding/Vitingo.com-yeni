@@ -16,7 +16,7 @@ MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
 client = AsyncIOMotorClient(MONGO_URL)
 db = client['test_database']
 
-company_group_router = APIRouter()
+company_group_router = APIRouter(prefix="/api", tags=["company-groups"])
 
 
 class CompanyInfo(BaseModel):
