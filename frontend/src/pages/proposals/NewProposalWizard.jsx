@@ -316,6 +316,14 @@ const NewProposalWizard = ({ onBack }) => {
         if (customer) {
           console.log('✅ Customer found:', customer.companyName);
           
+          // Set available contacts for dropdown
+          if (customer.contacts && Array.isArray(customer.contacts) && customer.contacts.length > 0) {
+            setAvailableContacts(customer.contacts);
+            console.log(`✅ Found ${customer.contacts.length} contacts for this customer`);
+          } else {
+            setAvailableContacts([]);
+          }
+          
           // Find contact person in contacts array
           if (customer.contacts && Array.isArray(customer.contacts)) {
             const contact = customer.contacts.find(c => 
