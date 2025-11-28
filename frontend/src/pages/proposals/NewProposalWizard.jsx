@@ -824,6 +824,35 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     }
   };
 
+  // Replace dynamic variables in content
+  const replaceDynamicVariables = (content) => {
+    if (!content) return content;
+    
+    const variables = {
+      '{{firma_adı}}': formData.company_name || selectedCustomer?.companyName || '',
+      '{{fuar_adı}}': formData.fair_center || selectedOpportunity?.fairName || '',
+      '{{tarih}}': formData.start_date || '',
+      '{{ülke}}': formData.country || '',
+      '{{şehir}}': formData.city || '',
+      '{{proje_adı}}': formData.project_name || '',
+      '{{yetkili}}': formData.contact_person || '',
+      '{{email}}': formData.contact_email || '',
+      '{{telefon}}': formData.contact_phone || '',
+      '{{başlangıç_tarihi}}': formData.start_date || '',
+      '{{bitiş_tarihi}}': formData.end_date || '',
+      '{{stand_alanı}}': formData.stand_area ? `${formData.stand_area} ${formData.stand_area_unit}` : '',
+      '{{salon}}': formData.hall_number || '',
+      '{{stand_no}}': formData.stand_number || ''
+    };
+    
+    let result = content;
+    Object.entries(variables).forEach(([key, value]) => {
+      result = result.replace(new RegExp(key, 'g'), value);
+    });
+    
+    return result;
+  };
+
   const saveModulesToBackend = async () => {
     if (!proposalId) return;
     
@@ -834,13 +863,23 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       const updatedModules = [];
       
       for (const module of selectedModules) {
+        // Get module content and replace variables
+        const moduleContentRaw = module.content || {};
+        const moduleContent = {
+          title: replaceDynamicVariables(moduleContentRaw.title || ''),
+          body: replaceDynamicVariables(moduleContentRaw.body || ''),
+          sections: moduleContentRaw.sections || [],
+          images: moduleContentRaw.images || []
+        };
+        
         const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/modules`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             module_type: module.type,
             template_id: module.template_id,
-            display_order: module.display_order
+            display_order: module.display_order,
+            content: moduleContent
           })
         });
         
