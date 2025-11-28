@@ -981,8 +981,8 @@ const NewProposalWizard = ({ onBack }) => {
             hall_number: formData.hall_number,
             stand_number: formData.stand_number,
             stand_size: formData.stand_area ? `${formData.stand_area} ${formData.stand_area_unit}` : '',
-            start_date: formData.start_date,
-            end_date: formData.end_date
+            start_date: formData.start_date ? new Date(formData.start_date + 'T00:00:00.000Z').toISOString() : null,
+            end_date: formData.end_date ? new Date(formData.end_date + 'T00:00:00.000Z').toISOString() : null
           },
           settings: {
             page_orientation: formData.page_orientation,
