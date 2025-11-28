@@ -84,6 +84,7 @@ const NewProposalWizard = ({ onBack }) => {
   const [profiles, setProfiles] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [availableContacts, setAvailableContacts] = useState([]); // Contact list from selected customer
   
   // Step 2: Module selection state
   const [availableTemplates, setAvailableTemplates] = useState({});
