@@ -6720,7 +6720,7 @@ class Opportunity(BaseModel):
     status: str = "open"
     stage: str = "lead"
     priority: str = "medium"
-    close_date: str  # YYYY-MM-DD format
+    close_date: Optional[str] = None  # YYYY-MM-DD format
     source: Optional[str] = ""
     description: Optional[str] = ""
     business_type: Optional[str] = ""
