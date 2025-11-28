@@ -104,42 +104,43 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
 
   const loadCompanyGroups = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/company-groups?user_id=demo-user`);
+      const response = await fetch(`${BACKEND_URL}/api/group-companies`);
       const data = await response.json();
-      console.log('✅ Loaded company groups:', data.length);
-      setCompanyGroups(data || []);
+      console.log('✅ Loaded group companies:', data.length);
       
-      // If only one group, auto-select it
-      if (data && data.length === 1) {
-        const group = data[0];
-        setFormData(prev => ({ ...prev, company_group_id: group.id }));
-        loadCompaniesFromGroup(group.id);
+      // Group companies by groupName
+      const grouped = {};
+      data.forEach(company => {
+        const groupName = company.groupName || 'Diğer Şirketler';
+        if (!grouped[groupName]) {
+          grouped[groupName] = [];
+        }
+        grouped[groupName].push(company);
+      });
+      
+      // Convert to array format
+      const groupsArray = Object.entries(grouped).map(([name, companies]) => ({
+        id: name,
+        name: name,
+        companies: companies
+      }));
+      
+      setCompanyGroups(groupsArray);
+      console.log('✅ Created', groupsArray.length, 'groups');
+      
+      // If only one company total, auto-select it
+      if (data.length === 1) {
+        handleCompanySelection(data[0]);
       }
     } catch (error) {
-      console.error('Error loading company groups:', error);
+      console.error('Error loading group companies:', error);
       setCompanyGroups([]);
     }
   };
 
-  const loadCompaniesFromGroup = async (groupId) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/company-groups/${groupId}/companies`);
-      const data = await response.json();
-      console.log('✅ Loaded companies from group:', data.length);
-      setSelectedGroupCompanies(data || []);
-      
-      // If only one company, auto-select it and fill form
-      if (data && data.length === 1) {
-        const company = data[0];
-        handleCompanySelection(company);
-      }
-    } catch (error) {
-      console.error('Error loading companies from group:', error);
-      setSelectedGroupCompanies([]);
-    }
-  };
-
   const handleGroupChange = (groupId) => {
+    const group = companyGroups.find(g => g.id === groupId);
+    
     setFormData(prev => ({ 
       ...prev, 
       company_group_id: groupId,
@@ -158,8 +159,13 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
       }
     }));
     
-    if (groupId) {
-      loadCompaniesFromGroup(groupId);
+    if (group) {
+      setSelectedGroupCompanies(group.companies);
+      
+      // If only one company in group, auto-select it
+      if (group.companies.length === 1) {
+        handleCompanySelection(group.companies[0]);
+      }
     } else {
       setSelectedGroupCompanies([]);
     }
@@ -175,8 +181,8 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
         address: company.address || '',
         city: company.city || '',
         country: company.country || '',
-        phone: company.phone || '',
-        email: company.email || '',
+        phone: company.phone || company.accountant?.phone || '',
+        email: company.email || company.accountant?.email || '',
         website: company.website || '',
         tax_office: company.tax_office || '',
         tax_number: company.tax_number || ''
