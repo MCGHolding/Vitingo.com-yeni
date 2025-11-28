@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { useActivityTracker } from './hooks/useActivityTracker';
+import { Toaster } from 'react-hot-toast';
 import Sidebar from './components/Dashboard/Sidebar';
 import CalendarPage from './components/Calendar/CalendarPage';
 import MeetingRequestsPage from './components/Calendar/MeetingRequestsPage';
