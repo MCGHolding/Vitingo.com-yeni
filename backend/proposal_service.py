@@ -180,7 +180,7 @@ class ModuleContent(BaseModel):
 
 class TemplateContent(BaseModel):
     layout: str
-    default_text: Dict[str, str] = Field(default_factory=dict)
+    default_text: Dict[str, Any] = Field(default_factory=dict)  # Changed to Any to support nested dicts
     placeholders: List[str] = Field(default_factory=list)
     styles: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
