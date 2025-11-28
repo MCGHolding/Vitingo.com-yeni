@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Rnd } from 'react-rnd';
-import { X, Plus, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Palette } from 'lucide-react';
+import { X, Plus, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Palette, Type } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 // Arka Plan Şablonları
