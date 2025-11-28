@@ -31,6 +31,16 @@ const CollectionsPage = () => {
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 
+  // Filter documents based on search term
+  const filteredDocuments = documents.filter(doc => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    const docString = JSON.stringify(doc).toLowerCase();
+    
+    return docString.includes(searchLower);
+  });
+
   // Load collections on mount
   useEffect(() => {
     loadCollections();
