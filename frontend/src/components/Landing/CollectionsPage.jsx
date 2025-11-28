@@ -371,9 +371,22 @@ const CollectionsPage = () => {
                 <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
               ) : documents.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">Bu collection'da doküman yok</div>
+              ) : filteredDocuments.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p className="mb-2">Arama sonucu bulunamadı</p>
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="text-blue-600 hover:text-blue-700 text-sm"
+                  >
+                    Aramayı temizle
+                  </button>
+                </div>
               ) : (
                 <div className="space-y-3">
-                  {documents.map((doc, index) => (
+                  <div className="text-sm text-gray-600 mb-2">
+                    {searchTerm && `${filteredDocuments.length} / ${documents.length} doküman gösteriliyor`}
+                  </div>
+                  {filteredDocuments.map((doc, index) => (
                     <div
                       key={doc._id || doc.id || index}
                       className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
