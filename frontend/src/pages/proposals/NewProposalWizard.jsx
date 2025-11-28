@@ -92,6 +92,12 @@ const NewProposalWizard = ({ onBack }) => {
   const [currentModuleType, setCurrentModuleType] = useState(null);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(null);
   
+  // Step 3: Content editing state
+  const [activeModuleIndex, setActiveModuleIndex] = useState(0);
+  const [moduleContents, setModuleContents] = useState({});
+  const [saveStatus, setSaveStatus] = useState('saved'); // 'saved', 'saving', 'error'
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState(null);
+  
   // Form state
   const [formData, setFormData] = useState({
     // Teklif Kaynağı
