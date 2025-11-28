@@ -76,6 +76,7 @@ const WIZARD_STEPS = [
 const NewProposalWizard = ({ onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [proposalId, setProposalId] = useState(null);
   
   // Dropdown data
   const [salesOpportunities, setSalesOpportunities] = useState([]);
@@ -83,6 +84,13 @@ const NewProposalWizard = ({ onBack }) => {
   const [profiles, setProfiles] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [countries, setCountries] = useState([]);
+  
+  // Step 2: Module selection state
+  const [availableTemplates, setAvailableTemplates] = useState({});
+  const [selectedModules, setSelectedModules] = useState([]);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [currentModuleType, setCurrentModuleType] = useState(null);
+  const [currentModuleIndex, setCurrentModuleIndex] = useState(null);
   
   // Form state
   const [formData, setFormData] = useState({
