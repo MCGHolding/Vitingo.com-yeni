@@ -785,7 +785,7 @@ const ProposalProfileWizard = ({ profileId }) => {
               disabled={loading}
               className="px-6 py-2 bg-green-500 text-white rounded text-sm font-medium hover:bg-green-600 disabled:bg-gray-400"
             >
-              {loading ? 'Kaydediliyor...' : (profileId ? 'Güncelle' : 'Kaydet')}
+              {loading ? 'Kaydediliyor...' : (urlProfileId ? 'Güncelle' : 'Kaydet')}
             </button>
           )}
         </div>
