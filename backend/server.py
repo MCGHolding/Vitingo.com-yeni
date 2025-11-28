@@ -59,6 +59,9 @@ from routes import projects as projects_router
 # Import email routes
 import email_routes
 
+# Import proposal routes
+from proposal_endpoints import proposal_router
+
 # Validation functions for bank information
 def validate_iban(iban: str) -> bool:
     """Validate IBAN format (Turkish IBAN: TR + 2 digits + 4 bank code + 1 check + 16 account number)"""
