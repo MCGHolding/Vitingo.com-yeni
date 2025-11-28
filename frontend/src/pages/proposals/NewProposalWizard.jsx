@@ -284,38 +284,28 @@ const NewProposalWizard = ({ onBack }) => {
 
   const autoFillFromOpportunity = async () => {
     const opportunity = salesOpportunities.find(op => op.id === formData.sales_opportunity_id);
-    if (!opportunity) return;
+    if (!opportunity) {
+      console.warn('⚠️ Opportunity not found');
+      return;
+    }
     
+    console.log('✅ Auto-filling from opportunity:', opportunity.title);
     setSelectedOpportunity(opportunity);
     
-    // Fetch customer details
-    if (opportunity.customer_id) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/customers/${opportunity.customer_id}`);
-        const customer = await response.json();
-        
-        setFormData(prev => ({
-          ...prev,
-          customer_id: customer.id,
-          company_name: customer.companyName || '',
-          contact_person: customer.contactPerson || '',
-          contact_email: customer.email || '',
-          contact_phone: customer.phone || '',
-          address: customer.address || '',
-          project_name: opportunity.project_name || '',
-          fair_center: opportunity.fair_center || '',
-          city: opportunity.city || '',
-          country: opportunity.country || '',
-          hall_number: opportunity.hall_number || '',
-          stand_number: opportunity.stand_number || '',
-          stand_area: opportunity.stand_area || '',
-          start_date: opportunity.start_date || '',
-          end_date: opportunity.end_date || ''
-        }));
-      } catch (error) {
-        console.error('Error fetching customer details:', error);
-      }
-    }
+    // Fill form with opportunity data
+    setFormData(prev => ({
+      ...prev,
+      company_name: opportunity.customer || '',
+      contact_person: opportunity.contact_person || '',
+      project_name: opportunity.title || '',
+      fair_center: opportunity.trade_show || '',
+      city: opportunity.city || '',
+      country: opportunity.country || '',
+      start_date: opportunity.close_date || '',
+      end_date: opportunity.close_date || ''
+    }));
+    
+    console.log('✅ Form auto-filled with opportunity data');
   };
 
   const autoFillFromCustomer = async () => {
