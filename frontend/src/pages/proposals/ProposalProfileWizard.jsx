@@ -598,6 +598,20 @@ const ProposalProfileWizard = ({ profileId }) => {
                   />
                 </div>
 
+                {/* AI Cover Page Designer for Cover Page Module */}
+                {currentEditingModule === 'cover_page' && (
+                  <div className="mb-3">
+                    <button
+                      onClick={() => setShowCoverDesigner(true)}
+                      className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition flex items-center justify-center space-x-2 font-medium"
+                    >
+                      <Sparkles className="w-5 h-5" />
+                      <span>AI ile Profesyonel Kapak Sayfası Oluştur</span>
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1 text-center">10 farklı şablondan birini seçin ve anında önizleyin</p>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">İçerik</label>
                   <div className="border rounded bg-white" style={{ minHeight: '280px' }}>
