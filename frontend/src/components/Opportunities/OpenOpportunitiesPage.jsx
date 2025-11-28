@@ -943,7 +943,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
                       {/* Durum */}
                       <td className="py-3 px-3">
                         <Badge className={`${getStatusBadgeColor(opportunity.statusText)} border-0 text-[10px] px-2 py-1 max-w-[120px] truncate`}>
-                          {opportunity.statusText.replace('Açık - Aktif - ', '')}
+                          {opportunity.statusText ? opportunity.statusText.replace('Açık - Aktif - ', '') : 'Belirsiz'}
                         </Badge>
                       </td>
                       
