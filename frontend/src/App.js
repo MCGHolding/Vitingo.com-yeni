@@ -1706,7 +1706,7 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-6">
                   {/* Navigation Buttons */}
                   <button
-                    onClick={() => setCurrentView('ultra-admin')}
+                    onClick={() => window.location.href = '/ultra-admin'}
                     className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 font-medium"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1717,7 +1717,7 @@ const Dashboard = () => {
                   </button>
                   
                   <button
-                    onClick={() => setCurrentView('landing-page')}
+                    onClick={() => window.location.href = '/landing'}
                     className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
