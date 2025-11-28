@@ -80,6 +80,7 @@ const NewProposalWizard = ({ onBack }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
   
   // Dropdown data
   const [salesOpportunities, setSalesOpportunities] = useState([]);
