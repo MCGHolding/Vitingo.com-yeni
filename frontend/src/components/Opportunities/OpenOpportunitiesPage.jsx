@@ -614,6 +614,7 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
   };
 
   const getStatusBadgeColor = (statusText) => {
+    if (!statusText) return 'bg-gray-100 text-gray-800';
     if (statusText.includes('Teklif Bekleniyor')) return 'bg-yellow-100 text-yellow-800';
     if (statusText.includes('Teklif Gönderildi')) return 'bg-blue-100 text-blue-800';
     if (statusText.includes('Tasarım')) return 'bg-purple-100 text-purple-800';
