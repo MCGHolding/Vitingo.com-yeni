@@ -184,6 +184,23 @@ class TemplateContent(BaseModel):
     placeholders: List[str] = Field(default_factory=list)
     styles: Optional[Dict[str, Any]] = Field(default_factory=dict)
 
+class ProfileModuleContent(BaseModel):
+    """İçerik şablonu - profil modülü için"""
+    title: str = ""
+    body: str = ""  # Rich text/HTML content
+    sections: List[Dict[str, Any]] = Field(default_factory=list)
+    images: List[ImageData] = Field(default_factory=list)
+    variables: List[str] = Field(default_factory=list)  # {{company_name}}, {{event_name}}, etc.
+
+class ProfileModule(BaseModel):
+    """Profil için modül şablonu"""
+    module_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    module_name: str  # 'Kapak Sayfası', 'Giriş Sayfası', etc.
+    module_type: str  # 'cover', 'intro', 'company_info', etc.
+    display_order: int = 0
+    is_active: bool = True
+    content_template: ProfileModuleContent = Field(default_factory=ProfileModuleContent)
+
 # ===================== MAIN MODELS =====================
 
 class ProposalProfile(BaseModel):
@@ -194,6 +211,7 @@ class ProposalProfile(BaseModel):
     company_info: CompanyInfo
     branding: Branding = Field(default_factory=Branding)
     defaults: ProfileDefaults = Field(default_factory=ProfileDefaults)
+    selected_modules: List[ProfileModule] = Field(default_factory=list)  # Yeni: Profildeki modüller
     is_default: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
