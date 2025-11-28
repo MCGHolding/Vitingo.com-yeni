@@ -772,7 +772,14 @@ const NewProposalWizard = ({ onBack }) => {
       
       // Save modules to backend
       await saveModulesToBackend();
+      
+      // Initialize module contents for step 3
+      initializeModuleContents();
+      
       setCurrentStep(3);
+    } else if (currentStep === 3) {
+      // All content saved via auto-save, just proceed
+      setCurrentStep(4);
     } else {
       setCurrentStep(prev => prev + 1);
     }
