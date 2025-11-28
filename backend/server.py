@@ -13527,6 +13527,7 @@ email_routes.set_database(db)
 
 # Include proposal router
 app.include_router(proposal_router)
+app.include_router(company_group_router)
 
 app.add_middleware(
     CORSMiddleware,
