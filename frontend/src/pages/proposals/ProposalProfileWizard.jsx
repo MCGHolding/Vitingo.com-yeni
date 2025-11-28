@@ -691,26 +691,37 @@ const ProposalProfileWizard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => window.location.href = '/proposals/profiles'}
-            className="text-blue-600 hover:text-blue-700 hover:underline mb-4 flex items-center font-medium"
-          >
-            ← Geri Dön
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {profileId ? 'Profil Düzenle' : 'Yeni Teklif Profili Oluştur'}
-          </h1>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => window.location.href = '/proposals/profiles'}
+              className="text-blue-600 hover:text-blue-700 text-sm"
+            >
+              ← Geri
+            </button>
+            <h1 className="text-xl font-semibold text-gray-900">
+              {profileId ? 'Profil Düzenle' : 'Yeni Profil'}
+            </h1>
+          </div>
+          {/* Compact Step Indicator */}
+          <div className="flex items-center space-x-2">
+            {[1, 2, 3, 4].map(step => (
+              <div key={step} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                currentStep === step ? 'bg-blue-500 text-white' : 
+                currentStep > step ? 'bg-green-500 text-white' : 
+                'bg-gray-200 text-gray-600'
+              }`}>
+                {step}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Step Indicator */}
-        {renderStepIndicator()}
-
         {/* Step Content */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <div className="bg-white rounded-lg shadow border border-gray-200 p-5 mb-3">
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
@@ -722,10 +733,10 @@ const ProposalProfileWizard = () => {
           <button
             onClick={prevStep}
             disabled={currentStep === 1}
-            className={`px-6 py-2 rounded-lg font-medium ${
+            className={`px-4 py-2 rounded text-sm font-medium ${
               currentStep === 1
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
             Önceki
@@ -734,7 +745,7 @@ const ProposalProfileWizard = () => {
           {currentStep < 4 ? (
             <button
               onClick={nextStep}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded text-sm font-medium hover:bg-blue-600"
             >
               Sonraki
             </button>
@@ -742,7 +753,7 @@ const ProposalProfileWizard = () => {
             <button
               onClick={handleSave}
               disabled={loading}
-              className="px-8 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-400"
+              className="px-6 py-2 bg-green-500 text-white rounded text-sm font-medium hover:bg-green-600 disabled:bg-gray-400"
             >
               {loading ? 'Kaydediliyor...' : (profileId ? 'Güncelle' : 'Kaydet')}
             </button>
