@@ -498,23 +498,16 @@ const ProposalProfileWizard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">İçerik</label>
-                  <ReactQuill
-                    theme="snow"
+                  <textarea
                     value={currentContent.body}
-                    onChange={(value) => handleModuleContentChange(currentEditingModule, 'body', value)}
-                    className="bg-white"
-                    style={{ height: '300px', marginBottom: '50px' }}
-                    modules={{
-                      toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'align': [] }],
-                        ['link', 'image'],
-                        ['clean']
-                      ]
-                    }}
+                    onChange={(e) => handleModuleContentChange(currentEditingModule, 'body', e.target.value)}
+                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 font-sans"
+                    rows={15}
+                    placeholder="Modül içeriğini buraya yazın... HTML etiketleri kullanabilirsiniz."
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    HTML etiketlerini kullanabilirsiniz: &lt;b&gt;kalın&lt;/b&gt;, &lt;i&gt;italik&lt;/i&gt;, &lt;br&gt; (satır atla)
+                  </p>
                 </div>
 
                 <div className="mt-8 pt-4 border-t">
