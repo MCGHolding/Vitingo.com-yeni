@@ -306,6 +306,122 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     }
   };
 
+  const loadProposalForEdit = async (proposalId) => {
+    console.log('📝 Loading proposal for edit:', proposalId);
+    setLoading(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}`);
+      if (!response.ok) {
+        throw new Error('Proposal not found');
+      }
+      
+      const proposal = await response.json();
+      console.log('✅ Proposal loaded for editing:', proposal.proposal_number);
+      
+      // Set proposal ID
+      setProposalId(proposal.id);
+      
+      // Fill form data from proposal
+      setFormData({
+        creation_type: proposal.sales_opportunity_id ? 'opportunity' : 'scratch',
+        sales_opportunity_id: proposal.sales_opportunity_id || '',
+        profile_id: proposal.profile_id || '',
+        customer_id: proposal.customer_id || '',
+        company_name: proposal.customer_snapshot?.company_name || '',
+        contact_person: proposal.customer_snapshot?.contact_person || '',
+        contact_email: proposal.customer_snapshot?.contact_email || '',
+        contact_phone: proposal.customer_snapshot?.contact_phone || '',
+        address: proposal.customer_snapshot?.address || '',
+        project_name: proposal.project_info?.project_name || '',
+        fair_center: proposal.project_info?.fair_venue || '',
+        city: proposal.project_info?.fair_city || '',
+        country: proposal.project_info?.fair_country || '',
+        hall_number: proposal.project_info?.hall_number || '',
+        stand_number: proposal.project_info?.stand_number || '',
+        stand_area: proposal.project_info?.stand_size ? proposal.project_info.stand_size.split(' ')[0] : '',
+        stand_area_unit: proposal.project_info?.stand_size ? proposal.project_info.stand_size.split(' ')[1] || 'm²' : 'm²',
+        start_date: proposal.project_info?.start_date ? proposal.project_info.start_date.split('T')[0] : '',
+        end_date: proposal.project_info?.end_date ? proposal.project_info.end_date.split('T')[0] : '',
+        page_orientation: proposal.settings?.page_orientation || 'portrait',
+        currency_code: proposal.settings?.currency || 'EUR',
+        language: proposal.settings?.language || 'tr',
+        validity_days: proposal.settings?.validity_days || 30
+      });
+      
+      // Load modules if they exist
+      if (proposal.modules && proposal.modules.length > 0) {
+        const modules = proposal.modules.map(module => ({
+          id: module.id.toString(),
+          type: module.module_type,
+          name: getModuleName(module.module_type),
+          icon: getModuleIcon(module.module_type),
+          template_id: module.template_id,
+          template_name: module.template_name || 'Varsayılan',
+          display_order: module.display_order,
+          backend_id: module.id
+        }));
+        setSelectedModules(modules);
+        
+        // Load module contents
+        const contents = {};
+        proposal.modules.forEach(module => {
+          contents[module.id.toString()] = module.content || getDefaultContent(module.module_type);
+        });
+        setModuleContents(contents);
+      }
+      
+      // Load line items if they exist
+      if (proposal.line_items && proposal.line_items.length > 0) {
+        const items = proposal.line_items.map(item => ({
+          id: item.id.toString(),
+          category: item.category || '',
+          description: item.description || '',
+          details: item.details || '',
+          quantity: item.quantity || 1,
+          unit: item.unit || 'adet',
+          unit_price: item.unit_price || 0,
+          discount_type: item.discount_type || 'none',
+          discount_value: item.discount_value || 0,
+          item_type: item.item_type || 'standard',
+          display_order: item.display_order || 1
+        }));
+        setLineItems(items);
+      }
+      
+      // Load pricing summary if it exists
+      if (proposal.pricing_summary) {
+        setTaxRate(proposal.pricing_summary.tax_rate || 20);
+        setGeneralDiscount({
+          type: proposal.pricing_summary.discount_type || 'none',
+          value: proposal.pricing_summary.discount_value || 0
+        });
+      }
+      
+      setHasUnsavedChanges(false);
+    } catch (error) {
+      console.error('❌ Error loading proposal for edit:', error);
+      alert('Teklif yüklenirken bir hata oluştu: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getModuleName = (moduleType) => {
+    for (const category of Object.values(MODULE_CATEGORIES)) {
+      const module = category.modules.find(m => m.type === moduleType);
+      if (module) return module.name;
+    }
+    return moduleType;
+  };
+
+  const getModuleIcon = (moduleType) => {
+    for (const category of Object.values(MODULE_CATEGORIES)) {
+      const module = category.modules.find(m => m.type === moduleType);
+      if (module) return module.icon;
+    }
+    return '📄';
+  };
+
   const autoFillFromOpportunity = async () => {
     const opportunity = salesOpportunities.find(op => op.id === formData.sales_opportunity_id);
     if (!opportunity) {
