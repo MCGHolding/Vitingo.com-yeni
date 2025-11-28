@@ -944,7 +944,15 @@ const NewProposalWizard = ({ onBack }) => {
       });
       setCurrentStep(4);
     } else if (currentStep === 4) {
-      // Pricing done, proceed to preview
+      // Save line items to backend
+      await saveLineItemsToBackend();
+      
+      // Update proposal pricing summary
+      await updateProposalPricing();
+      
+      // Generate public link for preview
+      await generatePublicLink();
+      
       setCurrentStep(5);
     } else {
       setCurrentStep(prev => prev + 1);
