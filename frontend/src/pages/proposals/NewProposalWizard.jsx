@@ -1173,6 +1173,102 @@ const NewProposalWizard = ({ onBack }) => {
     }
   };
 
+  const saveDraft = async () => {
+    try {
+      setLoading(true);
+      console.log('💾 Saving draft...');
+
+      if (!proposalId) {
+        // Create new draft proposal
+        const payload = {
+          user_id: 'demo-user',
+          profile_id: formData.profile_id,
+          customer_snapshot: {
+            company_name: formData.company_name || 'Taslak',
+            contact_person: formData.contact_person || '',
+            contact_email: formData.contact_email || '',
+            contact_phone: formData.contact_phone || '',
+            address: formData.address || ''
+          },
+          project_info: {
+            project_name: formData.project_name || 'Taslak Proje',
+            fair_name: formData.fair_center || '',
+            fair_venue: formData.fair_center || '',
+            fair_city: formData.city || '',
+            fair_country: formData.country || '',
+            hall_number: formData.hall_number || '',
+            stand_number: formData.stand_number || '',
+            stand_size: formData.stand_area ? `${formData.stand_area} ${formData.stand_area_unit}` : '',
+            start_date: formData.start_date ? new Date(formData.start_date + 'T00:00:00.000Z').toISOString() : null,
+            end_date: formData.end_date ? new Date(formData.end_date + 'T00:00:00.000Z').toISOString() : null
+          },
+          settings: {
+            page_orientation: formData.page_orientation || 'portrait',
+            currency: formData.currency_code || 'EUR',
+            language: formData.language || 'tr',
+            validity_days: formData.validity_days || 30
+          },
+          status: 'draft' // Save as draft
+        };
+
+        const response = await fetch(`${BACKEND_URL}/api/proposals`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const newProposal = await response.json();
+          setProposalId(newProposal.id);
+          setHasUnsavedChanges(false);
+          alert('✅ Taslak kaydedildi!');
+          console.log('✅ Draft saved:', newProposal.proposal_number);
+        }
+      } else {
+        // Update existing draft
+        // Already auto-saved during the process
+        setHasUnsavedChanges(false);
+        alert('✅ Taslak güncellendi!');
+        console.log('✅ Draft updated');
+      }
+    } catch (error) {
+      console.error('❌ Error saving draft:', error);
+      alert('❌ Taslak kaydedilemedi!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExitAttempt = (navigationCallback) => {
+    if (hasUnsavedChanges) {
+      setPendingNavigation(() => navigationCallback);
+      setShowExitModal(true);
+    } else {
+      navigationCallback();
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    await saveDraft();
+    setShowExitModal(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+    }
+  };
+
+  const handleExitWithoutSaving = () => {
+    setShowExitModal(false);
+    setHasUnsavedChanges(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+    }
+  };
+
+  const handleCancelExit = () => {
+    setShowExitModal(false);
+    setPendingNavigation(null);
+  };
+
   const renderStepper = () => (
     <div className="mb-8">
       <div className="flex items-center justify-between">
