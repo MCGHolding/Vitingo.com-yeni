@@ -415,6 +415,83 @@ async def add_module(proposal_id: str, module_input: ProposalModuleCreate):
         module_data["created_at"] = datetime.now(timezone.utc)
         module_data["updated_at"] = datetime.now(timezone.utc)
         
+        if "content" not in module_data or not module_data["content"]:
+            module_data["content"] = ModuleContent().dict()
+        
+        await db.proposal_modules.insert_one(module_data)
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.MODULE_ADDED,
+            f"Modül eklendi: {module_data['module_type']}"
+        )
+        
+        return ProposalModule(**module_data)
+    except Exception as e:
+        logger.error(f"Error adding module: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.put("/proposals/{proposal_id}/modules/{module_id}", response_model=ProposalModule)
+async def update_module(proposal_id: str, module_id: str, module_update: dict):
+    """Update a module"""
+    try:
+        module_update["updated_at"] = datetime.now(timezone.utc)
+        
+        await db.proposal_modules.update_one(
+            {"id": module_id, "proposal_id": proposal_id},
+            {"$set": module_update}
+        )
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.MODULE_UPDATED,
+            f"Modül güncellendi"
+        )
+        
+        updated = await db.proposal_modules.find_one({"id": module_id}, {"_id": 0})
+        return ProposalModule(**updated)
+    except Exception as e:
+        logger.error(f"Error updating module: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.delete("/proposals/{proposal_id}/modules/{module_id}")
+async def delete_module(proposal_id: str, module_id: str):
+    """Delete a module"""
+    try:
+        result = await db.proposal_modules.delete_one({"id": module_id, "proposal_id": proposal_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Module not found")
+        
+        # Log activity
+        await log_activity(
+            proposal_id,
+            ActivityType.MODULE_REMOVED,
+            "Modül silindi"
+        )
+        
+        return {"message": "Module deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting module: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@proposal_router.put("/proposals/{proposal_id}/modules/reorder")
+async def reorder_modules(proposal_id: str, module_orders: List[dict]):
+    """Reorder modules"""
+    try:
+        for item in module_orders:
+            await db.proposal_modules.update_one(
+                {"id": item["module_id"], "proposal_id": proposal_id},
+                {"$set": {"display_order": item["order"]}}
+            )
+        
+        return {"message": "Modules reordered successfully"}
+    except Exception as e:
+        logger.error(f"Error reordering modules: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ===================== LINE ITEMS ENDPOINTS =====================
 
