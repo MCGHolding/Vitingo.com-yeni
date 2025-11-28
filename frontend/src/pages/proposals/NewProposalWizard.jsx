@@ -560,15 +560,60 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
 
   const autoFillFromProfile = () => {
     const profile = profiles.find(p => p.id === formData.profile_id);
-    if (!profile || !profile.defaults) return;
+    if (!profile) return;
     
-    setFormData(prev => ({
-      ...prev,
-      page_orientation: profile.defaults.page_orientation || 'portrait',
-      currency_code: profile.defaults.currency || 'EUR',
-      language: profile.defaults.language || 'tr',
-      validity_days: profile.defaults.validity_days || 30
-    }));
+    // Update form defaults
+    if (profile.defaults) {
+      setFormData(prev => ({
+        ...prev,
+        page_orientation: profile.defaults.page_orientation || 'portrait',
+        currency_code: profile.defaults.currency || 'EUR',
+        language: profile.defaults.language || 'tr',
+        validity_days: profile.defaults.validity_days || 30
+      }));
+    }
+    
+    // Load modules from profile
+    if (profile.selected_modules && profile.selected_modules.length > 0) {
+      console.log('✅ Loading modules from profile:', profile.selected_modules.length);
+      
+      // Map profile modules to wizard format
+      const modules = profile.selected_modules
+        .sort((a, b) => a.display_order - b.display_order)
+        .map(pm => {
+          // Find module info from categories
+          let moduleInfo = null;
+          Object.values(MODULE_CATEGORIES).forEach(category => {
+            const found = category.modules.find(m => m.type === pm.module_type);
+            if (found) moduleInfo = found;
+          });
+          
+          return {
+            type: pm.module_type,
+            name: pm.module_name,
+            icon: moduleInfo?.icon || '📄',
+            template_id: pm.module_id,
+            content: {
+              title: pm.content_template?.title || '',
+              body: pm.content_template?.body || '',
+              sections: pm.content_template?.sections || [],
+              images: pm.content_template?.images || []
+            }
+          };
+        });
+      
+      setSelectedModules(modules);
+      
+      // Initialize module contents
+      const contents = {};
+      modules.forEach((module, index) => {
+        contents[index] = module.content;
+      });
+      setModuleContents(contents);
+      
+      console.log('✅ Modules loaded from profile:', modules.length);
+      showNotification('Profil modülleri yüklendi', 'success');
+    }
   };
 
   const handleInputChange = (field, value) => {
