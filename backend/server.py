@@ -61,6 +61,7 @@ import email_routes
 
 # Import proposal routes
 from proposal_endpoints import proposal_router
+from company_group_endpoints import company_group_router
 
 # Validation functions for bank information
 def validate_iban(iban: str) -> bool:
