@@ -315,7 +315,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
         throw new Error('Proposal not found');
       }
       
-      const proposal = await response.json();
+      const data = await response.json();
+      const proposal = data.proposal; // Backend returns { proposal, modules, line_items }
+      const modules = data.modules || [];
+      const line_items = data.line_items || [];
+      
       console.log('✅ Proposal loaded for editing:', proposal.proposal_number);
       
       // Set proposal ID
