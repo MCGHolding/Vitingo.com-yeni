@@ -2945,7 +2945,45 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
 
           {/* Module Content */}
           <div className="prose max-w-none">
-            {module.type === 'cover_page' && (
+            {module.type === 'cover_page' && content.type === 'canvas_design' && content.canvas_template && (
+              <div className="relative w-full h-full" style={{ minHeight: '700px' }}>
+                {/* Render canvas design */}
+                {content.canvas_template.elements && content.canvas_template.elements.length > 0 ? (
+                  content.canvas_template.elements.map((element, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        position: 'absolute',
+                        left: `${element.x}px`,
+                        top: `${element.y}px`,
+                        width: element.type === 'image' ? `${element.width}px` : 'auto',
+                        height: element.type === 'image' ? `${element.height}px` : 'auto',
+                        fontSize: `${element.fontSize}px`,
+                        fontWeight: element.fontWeight,
+                        fontStyle: element.fontStyle,
+                        textDecoration: element.textDecoration,
+                        color: element.color,
+                        textAlign: element.textAlign,
+                        backgroundColor: element.backgroundColor
+                      }}
+                    >
+                      {element.type === 'text' && element.variable}
+                      {element.type === 'image' && (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                          {element.label}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-gray-400">
+                    <p>Canvas tasarımı boş</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {module.type === 'cover_page' && (!content.type || content.type === 'default' || !content.canvas_template) && (
               <div className="text-center space-y-4">
                 <h1 className="text-4xl font-bold">{content.title || formData.project_name}</h1>
                 <p className="text-xl text-gray-600">{content.subtitle || `Teklif No: ${proposalId || 'DRAFT'}`}</p>
