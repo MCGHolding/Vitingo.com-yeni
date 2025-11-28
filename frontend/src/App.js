@@ -2062,6 +2062,7 @@ const Dashboard = () => {
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" />
       <div className="App">
         <BrowserRouter>
           <Routes>
