@@ -475,22 +475,12 @@ const ProposalProfileWizard = () => {
             }))}
             className="w-full px-3 py-1.5 text-sm border rounded"
           >
-            <option value="TRY">TRY</option>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
+            {CURRENCIES.map(curr => (
+              <option key={curr.code} value={curr.code}>
+                {curr.symbol} {curr.code} - {curr.name}
+              </option>
+            ))}
           </select>
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">İkincil Renk</label>
-          <input
-            type="color"
-            value={formData.branding.secondary_color}
-            onChange={(e) => setFormData(prev => ({
-              ...prev,
-              branding: { ...prev.branding, secondary_color: e.target.value }
-            }))}
-            className="w-full h-8 px-1 border rounded"
-          />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">Geçerlilik</label>
