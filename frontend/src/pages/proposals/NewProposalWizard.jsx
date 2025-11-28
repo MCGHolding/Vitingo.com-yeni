@@ -2920,6 +2920,34 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   };
 
   const renderStep5 = () => {
+    // Replace dynamic variables with actual data
+    const replaceVariables = (text) => {
+      if (!text) return text;
+      
+      const replacements = {
+        '{{company_name}}': formData.company_name || '[Firma Adı]',
+        '{{project_name}}': formData.project_name || '[Proje Adı]',
+        '{{fair_name}}': formData.project_name || '[Fuar Adı]',
+        '{{proposal_number}}': proposalId || 'DRAFT-' + Date.now(),
+        '{{contact_person}}': formData.contact_person || '[Yetkili]',
+        '{{prepared_by}}': 'Murat Bucak', // TODO: Get from user profile
+        '{{prepared_title}}': 'Süper Admin', // TODO: Get from user profile
+        '{{prepared_date}}': new Date().toLocaleDateString('tr-TR'),
+        '{{country}}': formData.country || '[Ülke]',
+        '{{city}}': formData.city || '[Şehir]',
+        '{{venue}}': formData.fair_center || '[Fuar Merkezi]',
+        '{{start_date}}': formData.start_date ? new Date(formData.start_date).toLocaleDateString('tr-TR') : '[Başlangıç]',
+        '{{end_date}}': formData.end_date ? new Date(formData.end_date).toLocaleDateString('tr-TR') : '[Bitiş]'
+      };
+      
+      let result = text;
+      Object.keys(replacements).forEach(key => {
+        result = result.replace(new RegExp(key, 'g'), replacements[key]);
+      });
+      
+      return result;
+    };
+
     const renderModulePage = (module, index) => {
       const content = moduleContents[module.id] || {};
       
