@@ -250,11 +250,629 @@ TEMPLATES = [
         }
     },
     
-    # Continue with remaining templates in next message due to length...
+    
+    # ===================== INCLUDED SERVICES TEMPLATES =====================
+    {
+        "module_type": "included_services",
+        "template_name": "Checklist Formatı",
+        "description": "Tik işaretli liste formatı",
+        "thumbnail_url": "/templates/services_checklist.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "checklist",
+            "default_text": {
+                "tr": {
+                    "title": "Teklife Dahil Hizmetler",
+                    "intro": "Aşağıdaki hizmetler teklif kapsamında sunulmaktadır:",
+                    "items": [
+                        "Konsept tasarım ve 3D görselleştirme",
+                        "Teknik çizimler ve üretim planları",
+                        "Malzeme temini ve üretim",
+                        "Nakliye ve lojistik",
+                        "Sahada montaj ve kurulum",
+                        "Fuar süresince teknik destek",
+                        "Söküm ve geri nakliye"
+                    ]
+                },
+                "en": {
+                    "title": "Services Included",
+                    "intro": "The following services are included in this proposal:",
+                    "items": [
+                        "Concept design and 3D visualization",
+                        "Technical drawings and production plans",
+                        "Material procurement and production",
+                        "Transportation and logistics",
+                        "On-site assembly and installation",
+                        "Technical support during the fair",
+                        "Dismantling and return transport"
+                    ]
+                }
+            },
+            "placeholders": [],
+            "styles": {}
+        }
+    },
+    {
+        "module_type": "included_services",
+        "template_name": "Detaylı Açıklamalı",
+        "description": "Her hizmetin açıklamasıyla birlikte",
+        "thumbnail_url": "/templates/services_detailed.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 2,
+        "content": {
+            "layout": "detailed",
+            "default_text": {
+                "tr": {
+                    "title": "Dahil Olan Hizmetler",
+                    "services": [
+                        {"name": "Tasarım Hizmetleri", "description": "Konsept geliştirme, 3D modelleme, render görselleştirme ve revizyon çalışmaları"},
+                        {"name": "Üretim", "description": "Tüm stand elemanlarının fabrikamızda üretimi, kalite kontrol ve paketleme"},
+                        {"name": "Lojistik", "description": "Fuar alanına nakliye, gümrükleme işlemleri (uluslararası fuarlar için)"},
+                        {"name": "Montaj", "description": "Profesyonel ekibimizle sahada kurulum, elektrik ve aydınlatma bağlantıları"},
+                        {"name": "Destek", "description": "Fuar süresince 7/24 teknik destek hattı"}
+                    ]
+                },
+                "en": {
+                    "title": "Included Services",
+                    "services": [
+                        {"name": "Design Services", "description": "Concept development, 3D modeling, render visualization and revision work"},
+                        {"name": "Production", "description": "Manufacturing of all stand elements in our factory, quality control and packaging"},
+                        {"name": "Logistics", "description": "Transportation to the fair venue, customs procedures (for international fairs)"},
+                        {"name": "Assembly", "description": "On-site installation with our professional team, electrical and lighting connections"},
+                        {"name": "Support", "description": "24/7 technical support line during the fair"}
+                    ]
+                }
+            },
+            "placeholders": [],
+            "styles": {}
+        }
+    },
+    
+    # ===================== EXCLUDED SERVICES TEMPLATES =====================
+    {
+        "module_type": "excluded_services",
+        "template_name": "Standart Hariç Liste",
+        "description": "Teklife dahil olmayan kalemlerin listesi",
+        "thumbnail_url": "/templates/excluded_standard.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "list",
+            "default_text": {
+                "tr": {
+                    "title": "Teklife Dahil Olmayan Kalemler",
+                    "intro": "Aşağıdaki kalemler bu teklif kapsamı dışındadır:",
+                    "items": [
+                        "Fuar katılım ücreti ve stand kirası",
+                        "Elektrik, su ve internet bağlantı ücretleri",
+                        "Mobilya ve aksesuar kiralaması",
+                        "Hostess ve promotör hizmetleri",
+                        "Katalog, broşür ve tanıtım malzemeleri",
+                        "Konaklama ve ulaşım giderleri",
+                        "Sigorta masrafları"
+                    ],
+                    "note": "Yukarıdaki kalemler talep edilmesi halinde ayrıca fiyatlandırılabilir."
+                },
+                "en": {
+                    "title": "Items Not Included",
+                    "intro": "The following items are not included in this proposal:",
+                    "items": [
+                        "Fair participation fee and stand rental",
+                        "Electricity, water and internet connection fees",
+                        "Furniture and accessory rental",
+                        "Hostess and promoter services",
+                        "Catalogs, brochures and promotional materials",
+                        "Accommodation and transportation expenses",
+                        "Insurance costs"
+                    ],
+                    "note": "The above items can be quoted separately upon request."
+                }
+            },
+            "placeholders": [],
+            "styles": {}
+        }
+    },
+    
+    # ===================== REFERENCES TEMPLATES =====================
+    {
+        "module_type": "references",
+        "template_name": "Logo Galeri",
+        "description": "Müşteri logolarının grid görünümü",
+        "thumbnail_url": "/templates/references_logos.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "logo_grid",
+            "default_text": {
+                "tr": {
+                    "title": "Referanslarımız",
+                    "subtitle": "Birlikte çalışmaktan gurur duyduğumuz markalar"
+                },
+                "en": {
+                    "title": "Our References",
+                    "subtitle": "Brands we are proud to work with"
+                }
+            },
+            "placeholders": ["reference_logos"],
+            "styles": {}
+        }
+    },
+    {
+        "module_type": "references",
+        "template_name": "Detaylı Referanslar",
+        "description": "Proje detaylarıyla birlikte referanslar",
+        "thumbnail_url": "/templates/references_detailed.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 2,
+        "content": {
+            "layout": "detailed",
+            "default_text": {
+                "tr": {
+                    "title": "Seçilmiş Projelerimiz",
+                    "references": [
+                        {"client": "[Müşteri Adı]", "project": "[Proje/Fuar Adı]", "year": "[Yıl]", "description": "[Kısa proje açıklaması]"}
+                    ]
+                },
+                "en": {
+                    "title": "Selected Projects",
+                    "references": [
+                        {"client": "[Client Name]", "project": "[Project/Fair Name]", "year": "[Year]", "description": "[Brief project description]"}
+                    ]
+                }
+            },
+            "placeholders": [],
+            "styles": {}
+        }
+    },
+    
+    # ===================== PORTFOLIO TEMPLATES =====================
+    {
+        "module_type": "portfolio",
+        "template_name": "Galeri Görünümü",
+        "description": "Büyük görsellerle proje galerisi",
+        "thumbnail_url": "/templates/portfolio_gallery.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "gallery",
+            "default_text": {
+                "tr": {
+                    "title": "Projelerimizden Örnekler",
+                    "subtitle": "Benzer projelerimizden görüntüler"
+                },
+                "en": {
+                    "title": "Project Examples",
+                    "subtitle": "Images from our similar projects"
+                }
+            },
+            "placeholders": ["portfolio_images"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== TIMELINE TEMPLATES =====================
+    {
+        "module_type": "timeline",
+        "template_name": "Dikey Timeline",
+        "description": "Aşamaları gösteren dikey zaman çizelgesi",
+        "thumbnail_url": "/templates/timeline_vertical.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "vertical",
+            "default_text": {
+                "tr": {
+                    "title": "Proje Takvimi",
+                    "phases": [
+                        {"phase": "Tasarım Onayı", "duration": "1-2 Hafta", "description": "Konsept tasarım, revizyonlar ve final onay"},
+                        {"phase": "Üretim", "duration": "3-4 Hafta", "description": "Stand elemanlarının üretimi ve kalite kontrol"},
+                        {"phase": "Nakliye", "duration": "1 Hafta", "description": "Fuar alanına sevkiyat"},
+                        {"phase": "Montaj", "duration": "2-3 Gün", "description": "Sahada kurulum ve son kontroller"},
+                        {"phase": "Fuar", "duration": "{{fair_duration}}", "description": "Etkinlik süresince destek"},
+                        {"phase": "Söküm", "duration": "1 Gün", "description": "Stand sökümü ve geri nakliye"}
+                    ]
+                },
+                "en": {
+                    "title": "Project Timeline",
+                    "phases": [
+                        {"phase": "Design Approval", "duration": "1-2 Weeks", "description": "Concept design, revisions and final approval"},
+                        {"phase": "Production", "duration": "3-4 Weeks", "description": "Manufacturing of stand elements and quality control"},
+                        {"phase": "Shipping", "duration": "1 Week", "description": "Transportation to fair venue"},
+                        {"phase": "Assembly", "duration": "2-3 Days", "description": "On-site installation and final checks"},
+                        {"phase": "Fair", "duration": "{{fair_duration}}", "description": "Support during the event"},
+                        {"phase": "Dismantling", "duration": "1 Day", "description": "Stand dismantling and return transport"}
+                    ]
+                }
+            },
+            "placeholders": ["fair_duration"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== TECHNICAL SPECS TEMPLATES =====================
+    {
+        "module_type": "technical_specs",
+        "template_name": "Tablo Formatı",
+        "description": "Teknik detayların tablo görünümü",
+        "thumbnail_url": "/templates/specs_table.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "table",
+            "default_text": {
+                "tr": {
+                    "title": "Teknik Şartname",
+                    "sections": [
+                        {
+                            "name": "Stand Ölçüleri",
+                            "specs": [
+                                {"label": "Toplam Alan", "value": "{{stand_size}}"},
+                                {"label": "Yükseklik", "value": "[Belirtiniz]"},
+                                {"label": "Kat Sayısı", "value": "[Belirtiniz]"}
+                            ]
+                        },
+                        {
+                            "name": "Malzeme",
+                            "specs": [
+                                {"label": "Ana Konstrüksiyon", "value": "[Belirtiniz]"},
+                                {"label": "Zemin Kaplama", "value": "[Belirtiniz]"},
+                                {"label": "Duvar Panelleri", "value": "[Belirtiniz]"}
+                            ]
+                        },
+                        {
+                            "name": "Elektrik",
+                            "specs": [
+                                {"label": "Güç İhtiyacı", "value": "[Belirtiniz] kW"},
+                                {"label": "Priz Sayısı", "value": "[Belirtiniz]"},
+                                {"label": "Aydınlatma", "value": "[Belirtiniz]"}
+                            ]
+                        }
+                    ]
+                },
+                "en": {
+                    "title": "Technical Specifications",
+                    "sections": [
+                        {
+                            "name": "Stand Dimensions",
+                            "specs": [
+                                {"label": "Total Area", "value": "{{stand_size}}"},
+                                {"label": "Height", "value": "[Specify]"},
+                                {"label": "Number of Floors", "value": "[Specify]"}
+                            ]
+                        },
+                        {
+                            "name": "Materials",
+                            "specs": [
+                                {"label": "Main Construction", "value": "[Specify]"},
+                                {"label": "Floor Covering", "value": "[Specify]"},
+                                {"label": "Wall Panels", "value": "[Specify]"}
+                            ]
+                        },
+                        {
+                            "name": "Electrical",
+                            "specs": [
+                                {"label": "Power Requirement", "value": "[Specify] kW"},
+                                {"label": "Number of Outlets", "value": "[Specify]"},
+                                {"label": "Lighting", "value": "[Specify]"}
+                            ]
+                        }
+                    ]
+                }
+            },
+            "placeholders": ["stand_size"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== PRICING TEMPLATES =====================
+    {
+        "module_type": "pricing",
+        "template_name": "Detaylı Fiyat Tablosu",
+        "description": "Kalem bazlı detaylı fiyatlandırma tablosu",
+        "thumbnail_url": "/templates/pricing_detailed.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "detailed_table",
+            "default_text": {
+                "tr": {
+                    "title": "Fiyat Teklifi",
+                    "table_headers": ["Kalem", "Açıklama", "Miktar", "Birim", "Birim Fiyat", "Toplam"],
+                    "subtotal_label": "Ara Toplam",
+                    "discount_label": "İskonto",
+                    "tax_label": "KDV (%{{tax_rate}})",
+                    "total_label": "GENEL TOPLAM",
+                    "currency_note": "Tüm fiyatlar {{currency}} cinsindendir.",
+                    "validity_note": "Bu teklif {{validity_date}} tarihine kadar geçerlidir."
+                },
+                "en": {
+                    "title": "Price Quotation",
+                    "table_headers": ["Item", "Description", "Qty", "Unit", "Unit Price", "Total"],
+                    "subtotal_label": "Subtotal",
+                    "discount_label": "Discount",
+                    "tax_label": "VAT ({{tax_rate}}%)",
+                    "total_label": "GRAND TOTAL",
+                    "currency_note": "All prices are in {{currency}}.",
+                    "validity_note": "This proposal is valid until {{validity_date}}."
+                }
+            },
+            "placeholders": ["currency", "tax_rate", "validity_date", "line_items"],
+            "styles": {}
+        }
+    },
+    {
+        "module_type": "pricing",
+        "template_name": "Özet Fiyat",
+        "description": "Sadece toplam tutarı gösteren basit format",
+        "thumbnail_url": "/templates/pricing_summary.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 2,
+        "content": {
+            "layout": "summary",
+            "default_text": {
+                "tr": {
+                    "title": "Teklif Tutarı",
+                    "total_label": "Toplam Yatırım",
+                    "tax_note": "KDV dahil",
+                    "validity_note": "Bu teklif {{validity_date}} tarihine kadar geçerlidir."
+                },
+                "en": {
+                    "title": "Proposal Amount",
+                    "total_label": "Total Investment",
+                    "tax_note": "VAT included",
+                    "validity_note": "This proposal is valid until {{validity_date}}."
+                }
+            },
+            "placeholders": ["total", "currency", "validity_date"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== PAYMENT TERMS TEMPLATES =====================
+    {
+        "module_type": "payment_terms",
+        "template_name": "Standart Ödeme Planı",
+        "description": "Aşamalı ödeme planı",
+        "thumbnail_url": "/templates/payment_staged.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "staged",
+            "default_text": {
+                "tr": {
+                    "title": "Ödeme Koşulları",
+                    "intro": "Ödeme aşağıdaki plan dahilinde gerçekleştirilecektir:",
+                    "stages": [
+                        {"percentage": "50%", "timing": "Sipariş onayında", "description": "Tasarım onayı ve üretim başlangıcı için"},
+                        {"percentage": "30%", "timing": "Nakliye öncesi", "description": "Üretim tamamlandığında, sevkiyat öncesi"},
+                        {"percentage": "20%", "timing": "Montaj sonrası", "description": "Stand kurulumu tamamlandığında"}
+                    ],
+                    "bank_info": {
+                        "title": "Banka Bilgileri",
+                        "bank_name": "[Banka Adı]",
+                        "branch": "[Şube]",
+                        "account_holder": "[Hesap Sahibi]",
+                        "iban": "[IBAN]",
+                        "swift": "[SWIFT Kodu]"
+                    },
+                    "notes": "Ödemeler banka havalesi ile yapılacaktır. Fatura, ödeme alındıktan sonra düzenlenecektir."
+                },
+                "en": {
+                    "title": "Payment Terms",
+                    "intro": "Payment will be made according to the following schedule:",
+                    "stages": [
+                        {"percentage": "50%", "timing": "Upon order confirmation", "description": "For design approval and production start"},
+                        {"percentage": "30%", "timing": "Before shipping", "description": "Upon production completion, before dispatch"},
+                        {"percentage": "20%", "timing": "After assembly", "description": "Upon completion of stand installation"}
+                    ],
+                    "bank_info": {
+                        "title": "Bank Details",
+                        "bank_name": "[Bank Name]",
+                        "branch": "[Branch]",
+                        "account_holder": "[Account Holder]",
+                        "iban": "[IBAN]",
+                        "swift": "[SWIFT Code]"
+                    },
+                    "notes": "Payments shall be made by bank transfer. Invoice will be issued upon receipt of payment."
+                }
+            },
+            "placeholders": [],
+            "styles": {}
+        }
+    },
+    
+    # ===================== WARRANTY TEMPLATES =====================
+    {
+        "module_type": "warranty",
+        "template_name": "Standart Garanti",
+        "description": "Garanti ve satış sonrası destek bilgileri",
+        "thumbnail_url": "/templates/warranty_standard.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "standard",
+            "default_text": {
+                "tr": {
+                    "title": "Garanti ve Satış Sonrası Destek",
+                    "warranty_section": {
+                        "title": "Garanti Kapsamı",
+                        "content": "Üretim ve işçilik hatalarına karşı {{warranty_period}} garanti verilmektedir. Garanti kapsamında tespit edilen hatalar ücretsiz olarak giderilecektir."
+                    },
+                    "support_section": {
+                        "title": "Teknik Destek",
+                        "content": "Fuar süresince 7/24 teknik destek hattımız hizmetinizdedir.\n\nAcil Destek: {{support_phone}}\nE-posta: {{support_email}}"
+                    },
+                    "exclusions": {
+                        "title": "Garanti Dışı Durumlar",
+                        "items": [
+                            "Normal kullanım kaynaklı aşınma ve yıpranma",
+                            "Müşteri kaynaklı hasar",
+                            "Üçüncü şahısların müdahalesi",
+                            "Doğal afetler ve mücbir sebepler"
+                        ]
+                    }
+                },
+                "en": {
+                    "title": "Warranty and After-Sales Support",
+                    "warranty_section": {
+                        "title": "Warranty Coverage",
+                        "content": "A {{warranty_period}} warranty is provided against manufacturing and workmanship defects. Defects identified under warranty will be rectified free of charge."
+                    },
+                    "support_section": {
+                        "title": "Technical Support",
+                        "content": "Our 24/7 technical support line is at your service during the fair.\n\nEmergency Support: {{support_phone}}\nEmail: {{support_email}}"
+                    },
+                    "exclusions": {
+                        "title": "Warranty Exclusions",
+                        "items": [
+                            "Normal wear and tear",
+                            "Customer-caused damage",
+                            "Third-party intervention",
+                            "Natural disasters and force majeure"
+                        ]
+                    }
+                }
+            },
+            "placeholders": ["warranty_period", "support_phone", "support_email"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== TERMS & CONDITIONS TEMPLATES =====================
+    {
+        "module_type": "terms_conditions",
+        "template_name": "Standart Koşullar",
+        "description": "Genel şartlar ve koşullar",
+        "thumbnail_url": "/templates/terms_standard.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "standard",
+            "default_text": {
+                "tr": {
+                    "title": "Genel Şartlar ve Koşullar",
+                    "sections": [
+                        {"title": "1. Teklif Geçerliliği", "content": "Bu teklif, belirtilen geçerlilik tarihine kadar geçerlidir. Bu tarihten sonra fiyatlar ve koşullar değişebilir."},
+                        {"title": "2. Sipariş Onayı", "content": "Sipariş, müşterinin yazılı onayı ve ilk ödemenin alınmasıyla kesinleşir."},
+                        {"title": "3. Tasarım Değişiklikleri", "content": "Tasarım onayından sonra yapılacak değişiklikler ek maliyet ve süre gerektirebilir."},
+                        {"title": "4. Teslimat", "content": "Teslimat tarihleri tahminidir ve mücbir sebepler nedeniyle değişebilir."},
+                        {"title": "5. İptal", "content": "Sipariş iptali durumunda, yapılan çalışma oranında kesinti uygulanır."},
+                        {"title": "6. Fikri Mülkiyet", "content": "Tüm tasarımların fikri mülkiyet hakları ödeme tamamlanana kadar firmamıza aittir."},
+                        {"title": "7. Uyuşmazlıklar", "content": "Anlaşmazlık durumunda {{jurisdiction}} mahkemeleri yetkilidir."}
+                    ]
+                },
+                "en": {
+                    "title": "General Terms and Conditions",
+                    "sections": [
+                        {"title": "1. Proposal Validity", "content": "This proposal is valid until the specified validity date. Prices and conditions may change after this date."},
+                        {"title": "2. Order Confirmation", "content": "The order is confirmed upon written approval by the customer and receipt of the first payment."},
+                        {"title": "3. Design Changes", "content": "Changes requested after design approval may require additional cost and time."},
+                        {"title": "4. Delivery", "content": "Delivery dates are estimates and may change due to force majeure."},
+                        {"title": "5. Cancellation", "content": "In case of order cancellation, deductions will be applied based on the work completed."},
+                        {"title": "6. Intellectual Property", "content": "Intellectual property rights of all designs belong to our company until payment is completed."},
+                        {"title": "7. Disputes", "content": "In case of disputes, {{jurisdiction}} courts shall have jurisdiction."}
+                    ]
+                }
+            },
+            "placeholders": ["jurisdiction"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== CONTACT TEMPLATES =====================
+    {
+        "module_type": "contact",
+        "template_name": "İletişim Kartı",
+        "description": "İletişim bilgileri ve yetkili kişi",
+        "thumbnail_url": "/templates/contact_card.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "card",
+            "default_text": {
+                "tr": {
+                    "title": "İletişim",
+                    "subtitle": "Sorularınız için bize ulaşın",
+                    "contact_person_label": "İlgili Kişi",
+                    "company_label": "Firma",
+                    "address_label": "Adres",
+                    "phone_label": "Telefon",
+                    "email_label": "E-posta",
+                    "website_label": "Web"
+                },
+                "en": {
+                    "title": "Contact",
+                    "subtitle": "Reach out to us for any questions",
+                    "contact_person_label": "Contact Person",
+                    "company_label": "Company",
+                    "address_label": "Address",
+                    "phone_label": "Phone",
+                    "email_label": "Email",
+                    "website_label": "Website"
+                }
+            },
+            "placeholders": ["sales_person_name", "sales_person_title", "sales_person_phone", "sales_person_email", "company_name", "company_address", "company_phone", "company_email", "company_website"],
+            "styles": {}
+        }
+    },
+    
+    # ===================== ATTACHMENTS TEMPLATES =====================
+    {
+        "module_type": "attachments",
+        "template_name": "Ek Dökümanlar",
+        "description": "Ek dosya ve belgelerin listesi",
+        "thumbnail_url": "/templates/attachments_list.png",
+        "is_system": True,
+        "is_active": True,
+        "display_order": 1,
+        "content": {
+            "layout": "list",
+            "default_text": {
+                "tr": {
+                    "title": "Ekler",
+                    "subtitle": "Bu teklife ek olarak sunulan belgeler",
+                    "attachment_types": [
+                        "3D Render Görselleri",
+                        "Teknik Çizimler",
+                        "Malzeme Örnekleri",
+                        "Sertifikalar",
+                        "Referans Mektupları",
+                        "Sigorta Belgeleri"
+                    ]
+                },
+                "en": {
+                    "title": "Attachments",
+                    "subtitle": "Documents provided as appendix to this proposal",
+                    "attachment_types": [
+                        "3D Render Images",
+                        "Technical Drawings",
+                        "Material Samples",
+                        "Certificates",
+                        "Reference Letters",
+                        "Insurance Documents"
+                    ]
+                }
+            },
+            "placeholders": ["attachment_files"],
+            "styles": {}
+        }
+    }
 ]
-
-# Add remaining templates (will be added in implementation)
-# This is Part 1 of the seed file
 
 async def seed_templates():
     """Seed module templates into database"""
