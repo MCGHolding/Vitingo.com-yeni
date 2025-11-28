@@ -1661,7 +1661,7 @@ const Dashboard = () => {
         return <ProposalListPage onNewProposal={handleNewProposal} onViewProposal={handleViewProposal} />;
       
       case 'new-proposal':
-        return <NewProposalWizard onBack={handleProposalList} />;
+        return <NewProposalWizard onBack={handleProposalList} editProposalId={selectedProposalId} />;
 
       // Calendar cases
       case 'calendar':
