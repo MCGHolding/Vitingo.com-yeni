@@ -117,6 +117,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   });
   
   // Step 5: Preview and send state
+  const [currentPreviewPage, setCurrentPreviewPage] = useState(0);
   const [emailForm, setEmailForm] = useState({
     to: '',
     cc: '',
