@@ -169,6 +169,13 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     loadInitialData();
   }, []);
 
+  // Load existing proposal if editing
+  useEffect(() => {
+    if (editProposalId) {
+      loadProposalForEdit(editProposalId);
+    }
+  }, [editProposalId]);
+
   // Auto-fill from sales opportunity
   useEffect(() => {
     if (formData.sales_opportunity_id && formData.creation_type === 'opportunity') {
