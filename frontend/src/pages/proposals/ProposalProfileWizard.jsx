@@ -5,6 +5,8 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { EditorState, ContentState, convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
+import CoverPageDesigner from './CoverPageDesigner';
+import { Sparkles } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
