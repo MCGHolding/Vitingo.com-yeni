@@ -138,38 +138,47 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
 
   // Handle satış fırsatı selection
   const handleSatisFiresatChange = (satisFiresatId) => {
-    setFormData(prev => ({
-      ...prev,
-      satisFiresatId: satisFiresatId,
-      musteriId: '' // Reset müşteri when changing satış fırsatı
-    }));
-    
     if (satisFiresatId) {
       // Find selected satış fırsatı
       const secilenFiresat = satisFiresatlari.find(f => f.id === satisFiresatId);
       
       if (secilenFiresat && secilenFiresat.customer_id) {
-        // Find associated müşteri
+        // Satış fırsatının müşterisi var - otomatik seç ve lock et
         const ilgiliMusteri = musteriler.find(m => m.id === secilenFiresat.customer_id);
         
         if (ilgiliMusteri) {
           setFormData(prev => ({
             ...prev,
+            satisFiresatId: satisFiresatId,
             musteriId: ilgiliMusteri.id,
             teklifBaslik: `${secilenFiresat.title || secilenFiresat.name} - Teklif`
           }));
           setSecilenMusteri(ilgiliMusteri);
-          
-          // if (showToast) {
-          //   showToast({
-          //     type: 'info',
-          //     title: 'Müşteri Otomatik Seçildi',
-          //     text: `${ilgiliMusteri.company_name} otomatik olarak seçildi.`
-          //   });
-          // }
+        } else {
+          // Müşteri bulunamadı, sadece fırsatı seç
+          setFormData(prev => ({
+            ...prev,
+            satisFiresatId: satisFiresatId,
+            musteriId: ''
+          }));
+          setSecilenMusteri(null);
         }
+      } else {
+        // Satış fırsatının müşterisi yok - kullanıcı manuel seçebilir
+        setFormData(prev => ({
+          ...prev,
+          satisFiresatId: satisFiresatId,
+          musteriId: ''
+        }));
+        setSecilenMusteri(null);
       }
     } else {
+      // Satış fırsatı seçimi kaldırıldı
+      setFormData(prev => ({
+        ...prev,
+        satisFiresatId: '',
+        musteriId: ''
+      }));
       setSecilenMusteri(null);
     }
   };
