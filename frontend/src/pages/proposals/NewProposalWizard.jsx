@@ -595,6 +595,14 @@ const NewProposalWizard = ({ onBack }) => {
         console.error('Error saving proposal:', error);
         alert('Teklif kaydedilirken bir hata oluştu: ' + error.message);
       }
+    } else if (currentStep === 2) {
+      if (!validateStep2()) {
+        return;
+      }
+      
+      // Save modules to backend
+      await saveModulesToBackend();
+      setCurrentStep(3);
     } else {
       setCurrentStep(prev => prev + 1);
     }
