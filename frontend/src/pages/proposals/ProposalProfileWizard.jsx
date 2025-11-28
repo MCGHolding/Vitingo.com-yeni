@@ -500,14 +500,14 @@ const ProposalProfileWizard = () => {
               <button
                 key={module.module_type}
                 onClick={() => setCurrentEditingModule(module.module_type)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition-colors
+                className={`w-full text-left px-2 py-2 rounded text-xs transition-colors
                   ${currentEditingModule === module.module_type
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}
               >
                 <div className="flex items-center">
-                  <span className="mr-2">{module.icon}</span>
-                  <span className="text-sm font-medium">{module.module_name}</span>
+                  <span className="mr-1.5 text-sm">{module.icon}</span>
+                  <span className="font-medium truncate">{module.module_name}</span>
                 </div>
               </button>
             ))}
