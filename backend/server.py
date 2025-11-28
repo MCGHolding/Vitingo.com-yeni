@@ -6784,6 +6784,32 @@ class OpportunityUpdate(BaseModel):
     design_files: Optional[List[str]] = None
     sample_files: Optional[List[str]] = None
 
+# Quote/Teklif Models
+class Quote(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    opportunity_id: str  # Hangi satış fırsatından
+    customer_id: str  # Müşteri ID
+    title: str  # Teklif başlığı
+    quote_date: str  # Teklif tarihi (YYYY-MM-DD)
+    validity_date: Optional[str] = None  # Geçerlilik tarihi
+    country: Optional[str] = None
+    city: Optional[str] = None
+    status: str = "draft"  # draft, sent, won, lost
+    notes: Optional[str] = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class QuoteCreate(BaseModel):
+    opportunity_id: str
+    customer_id: str
+    title: str
+    quote_date: str
+    validity_date: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
+    status: str = "draft"
+    notes: Optional[str] = ""
+
 # Opportunity API Endpoints
 @api_router.post("/opportunities", response_model=Opportunity)
 async def create_opportunity(opportunity_input: OpportunityCreate):
