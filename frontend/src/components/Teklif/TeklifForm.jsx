@@ -15,7 +15,9 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     teklifBaslik: '',
     teklifTarihi: new Date().toISOString().split('T')[0],
     gecerlilikTarihi: '',
-    notlar: ''
+    notlar: '',
+    country: '',
+    city: ''
   });
 
   // Data states
@@ -24,6 +26,11 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
   const [secilenMusteri, setSecilenMusteri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Country and City states
+  const [countriesList, setCountriesList] = useState([]);
+  const [statesList, setStatesList] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState(null);
 
   // Load satış fırsatları from backend
   const loadSatisFiresatlari = async () => {
