@@ -1102,6 +1102,291 @@ const NewProposalWizard = ({ onBack }) => {
     </div>
   );
 
+  const renderStep2 = () => {
+    // Get all modules grouped
+    const allModules = [];
+    Object.entries(MODULE_CATEGORIES).forEach(([catKey, category]) => {
+      category.modules.forEach(module => {
+        const templates = availableTemplates[module.type] || [];
+        const isSelected = selectedModules.some(m => m.type === module.type);
+        allModules.push({
+          ...module,
+          category: category.name,
+          templateCount: templates.length,
+          isSelected
+        });
+      });
+    });
+
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Panel: Module Library */}
+        <Card>
+          <CardContent className="pt-6">
+            <h3 className="text-lg font-semibold mb-2">Kullanılabilir Modüller</h3>
+            <p className="text-sm text-gray-500 mb-4">Eklemek istediğiniz modüllere tıklayın</p>
+            
+            <div className="space-y-6">
+              {Object.entries(MODULE_CATEGORIES).map(([catKey, category]) => (
+                <div key={catKey}>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">
+                    {category.name}
+                  </h4>
+                  <div className="space-y-2">
+                    {category.modules.map(module => {
+                      const templates = availableTemplates[module.type] || [];
+                      const isSelected = selectedModules.some(m => m.type === module.type);
+                      
+                      return (
+                        <div
+                          key={module.type}
+                          className={`p-3 border rounded-lg transition-all cursor-pointer ${
+                            isSelected 
+                              ? 'bg-blue-50 border-blue-300' 
+                              : 'hover:border-gray-400 hover:shadow-sm'
+                          }`}
+                          onClick={() => !isSelected && handleAddModule(module.type)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start space-x-2 flex-1">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                readOnly
+                                className="mt-1"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg">{module.icon}</span>
+                                  <span className="font-medium text-sm">{module.name}</span>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">{module.description}</p>
+                                <p className="text-xs text-blue-600 mt-1">
+                                  {templates.length} şablon mevcut
+                                </p>
+                              </div>
+                            </div>
+                            {isSelected ? (
+                              <span className="text-xs text-green-600 font-medium">Eklendi ✓</span>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddModule(module.type);
+                                }}
+                                className="text-blue-600 hover:text-blue-700"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right Panel: Selected Modules */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold">Teklif Yapısı</h3>
+                <p className="text-sm text-gray-500">Modülleri sürükleyerek sıralayın</p>
+              </div>
+              <div className="flex space-x-2">
+                {selectedModules.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearAll}
+                  >
+                    Tümünü Kaldır
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUseRecommended}
+                >
+                  Önerilen Yapı
+                </Button>
+              </div>
+            </div>
+
+            {selectedModules.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium mb-2">Henüz modül seçilmedi</p>
+                <p className="text-sm text-gray-500 mb-4">
+                  Soldan modül ekleyin veya hazır bir şablon kullanın
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={handleUseRecommended}
+                >
+                  Önerilen Yapıyı Kullan
+                </Button>
+              </div>
+            ) : (
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="modules">
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className="space-y-2"
+                    >
+                      {selectedModules.map((module, index) => (
+                        <Draggable
+                          key={module.id}
+                          draggableId={module.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`p-3 bg-white border rounded-lg ${
+                                snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
+                              }`}
+                            >
+                              <div className="flex items-start space-x-3">
+                                <div
+                                  {...provided.dragHandleProps}
+                                  className="mt-1 cursor-move text-gray-400 hover:text-gray-600"
+                                >
+                                  <GripVertical className="w-4 h-4" />
+                                </div>
+                                
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="text-sm font-bold text-gray-500">
+                                        {index + 1}.
+                                      </span>
+                                      <span className="text-lg">{module.icon}</span>
+                                      <span className="font-medium">{module.name}</span>
+                                    </div>
+                                    <button
+                                      onClick={() => handleRemoveModule(index)}
+                                      className="text-gray-400 hover:text-red-600"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  
+                                  <div className="mt-2 flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">
+                                      └─ Şablon: {module.template_name}
+                                    </span>
+                                    <button
+                                      onClick={() => handleChangeTemplate(index, module.type)}
+                                      className="text-blue-600 hover:text-blue-700 text-xs"
+                                    >
+                                      Değiştir
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )}
+
+            {selectedModules.length > 0 && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  💡 İpucu: Modülleri sürükleyerek sırasını değiştirebilirsiniz
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Template Selection Modal */}
+        {showTemplateModal && currentModuleType && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">
+                  {MODULE_CATEGORIES[Object.keys(MODULE_CATEGORIES).find(k => 
+                    MODULE_CATEGORIES[k].modules.some(m => m.type === currentModuleType)
+                  )]?.modules.find(m => m.type === currentModuleType)?.name} Şablonu Seçin
+                </h3>
+                <button
+                  onClick={() => setShowTemplateModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(availableTemplates[currentModuleType] || []).map(template => {
+                  const currentModule = selectedModules[currentModuleIndex];
+                  const isSelected = currentModule?.template_id === template.id;
+                  
+                  return (
+                    <div
+                      key={template.id}
+                      onClick={() => handleSelectTemplate(template)}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        isSelected 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:border-blue-300'
+                      }`}
+                    >
+                      <div className="aspect-video bg-gray-100 rounded mb-3 flex items-center justify-center">
+                        <Image className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-sm">{template.template_name}</span>
+                        <input
+                          type="radio"
+                          checked={isSelected}
+                          readOnly
+                          className="w-4 h-4"
+                        />
+                      </div>
+                      {template.description && (
+                        <p className="text-xs text-gray-500 mt-1">{template.description}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTemplateModal(false)}
+                >
+                  İptal
+                </Button>
+                <Button
+                  onClick={() => setShowTemplateModal(false)}
+                >
+                  Şablonu Seç
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
