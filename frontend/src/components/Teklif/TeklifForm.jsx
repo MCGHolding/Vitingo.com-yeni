@@ -386,7 +386,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                   <option value="">Müşteri seçiniz...</option>
                   {musteriler.map(musteri => (
                     <option key={musteri.id} value={musteri.id}>
-                      {musteri.company_name}
+                      {musteri.companyName || musteri.company_name || musteri.name}
                     </option>
                   ))}
                 </select>
