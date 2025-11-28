@@ -391,6 +391,9 @@ export default function Sidebar({
   onAllQuotes,
   onProposalProfiles,
   onRequestBrief,
+  // New Proposal module handlers
+  onNewProposal,
+  onProposalList,
   // Calendar handlers
   onCalendar,
   onNewMeeting,
