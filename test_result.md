@@ -1079,10 +1079,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Proposal Wizard Step 2 and Step 4 Rendering Testing"
-  stuck_tasks:
-    - "Proposal Wizard Step 2 and Step 4 Rendering Testing"
+  current_focus: []
+  stuck_tasks: []
   completed_tests:
     - "Enhanced CallRecordForm with Dynamic Contact Person Dropdown and New Contact Addition Modal Testing"
     - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
