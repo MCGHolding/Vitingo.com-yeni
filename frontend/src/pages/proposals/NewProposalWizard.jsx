@@ -2731,7 +2731,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                 <p className="text-sm text-gray-500">
                   {selectedModules.length} modül • {lineItems.length} kalem
                 </p>
-                <Button variant="outline" className="mt-4">
+                <Button variant="outline" className="mt-4" onClick={handleDownloadPDF}>
                   PDF İndir
                 </Button>
               </div>
