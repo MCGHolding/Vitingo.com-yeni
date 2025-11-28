@@ -130,7 +130,8 @@ const getNavigation = (userDepartment) => {
         { name: 'Yeni Teklif', href: '/teklifler/new', icon: Plus },
         { name: 'Tüm Teklifler', href: '/teklifler/all', icon: List },
         { name: 'Taslak Teklifler', href: '/teklifler/draft', icon: Edit },
-        { name: 'Gönderilen Teklifler', href: '/teklifler/sent', icon: Send }
+        { name: 'Gönderilen Teklifler', href: '/teklifler/sent', icon: Send },
+        { name: 'Teklif Profilleri', href: '/proposals/profiles', icon: Settings }
       ]
     },
     { 
