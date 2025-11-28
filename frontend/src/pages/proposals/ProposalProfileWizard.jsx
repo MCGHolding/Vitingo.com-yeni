@@ -737,8 +737,35 @@ const ProposalProfileWizard = ({ profileId }) => {
     );
   }
 
+  const handleCoverPageSave = (coverPageData) => {
+    // Generate HTML from cover page design
+    const coverHTML = `
+      <div class="cover-page" data-template="${coverPageData.template}">
+        <h1>${coverPageData.data.proposalTitle}</h1>
+        <div class="company">${coverPageData.data.companyName}</div>
+        <div class="venue">${coverPageData.data.venue}</div>
+        <div class="location">${coverPageData.data.city}, ${coverPageData.data.country}</div>
+        <div class="dates">${coverPageData.data.startDate} - ${coverPageData.data.endDate}</div>
+        <div class="prepared-by">${coverPageData.data.preparedBy} - ${coverPageData.data.preparedByTitle}</div>
+        <div class="prepared-date">${coverPageData.data.preparedDate}</div>
+      </div>
+    `;
+    
+    handleModuleContentChange('cover_page', 'title', coverPageData.data.proposalTitle);
+    handleModuleContentChange('cover_page', 'body', coverHTML);
+    toast.success('Kapak sayfası tasarımı kaydedildi!');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <CoverPageDesigner
+        isOpen={showCoverDesigner}
+        onClose={() => setShowCoverDesigner(false)}
+        profileData={formData}
+        opportunityData={null}
+        onSave={handleCoverPageSave}
+      />
+      
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
