@@ -631,7 +631,9 @@ export default function Sidebar({
     }
     
     if (subItem && subItem.name === 'Tüm Teklifler') {
-      if (onAllQuotes) {
+      if (onProposalList) {
+        onProposalList();
+      } else if (onAllQuotes) {
         onAllQuotes();
       }
       return;
