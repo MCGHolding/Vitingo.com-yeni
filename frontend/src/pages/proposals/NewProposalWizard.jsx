@@ -73,7 +73,7 @@ const WIZARD_STEPS = [
   { id: 5, name: 'Önizleme', key: 'preview' }
 ];
 
-const NewProposalWizard = ({ onBack }) => {
+const NewProposalWizard = ({ onBack, editProposalId }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [proposalId, setProposalId] = useState(null);
