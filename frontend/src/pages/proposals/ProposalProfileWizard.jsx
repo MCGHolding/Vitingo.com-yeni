@@ -53,9 +53,13 @@ const CURRENCIES = [
   { code: 'SAR', name: 'Suudi Arabistan Riyali', symbol: '﷼' }
 ];
 
-const ProposalProfileWizard = () => {
-  const navigate = useNavigate();
-  const { profileId } = useParams();
+const ProposalProfileWizard = ({ profileId }) => {
+  // Get profileId from URL if not passed as prop
+  const urlProfileId = profileId || (() => {
+    const path = window.location.pathname;
+    const match = path.match(/\/proposals\/profiles\/edit\/(.+)/);
+    return match ? match[1] : null;
+  })();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
