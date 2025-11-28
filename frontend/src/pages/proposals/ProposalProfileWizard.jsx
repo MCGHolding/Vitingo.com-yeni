@@ -9,6 +9,51 @@ import htmlToDraft from 'html-to-draftjs';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Hazır Renk Paletleri
+const COLOR_PALETTES = [
+  { id: 'modern', name: 'Modern Mavi', primary: '#1a73e8', secondary: '#34a853', accent: '#fbbc04' },
+  { id: 'professional', name: 'Profesyonel Lacivert', primary: '#1e40af', secondary: '#0891b2', accent: '#f59e0b' },
+  { id: 'elegant', name: 'Zarif Mor', primary: '#7c3aed', secondary: '#a78bfa', accent: '#fbbf24' },
+  { id: 'warm', name: 'Sıcak Turuncu', primary: '#ea580c', secondary: '#fb923c', accent: '#fde047' },
+  { id: 'fresh', name: 'Taze Yeşil', primary: '#059669', secondary: '#10b981', accent: '#fcd34d' },
+  { id: 'classic', name: 'Klasik Gri', primary: '#475569', secondary: '#64748b', accent: '#f59e0b' },
+  { id: 'bold', name: 'Cesur Kırmızı', primary: '#dc2626', secondary: '#ef4444', accent: '#facc15' },
+  { id: 'cool', name: 'Serin Cyan', primary: '#0891b2', secondary: '#06b6d4', accent: '#fde68a' },
+  { id: 'royal', name: 'Kraliyet Mavisi', primary: '#1e3a8a', secondary: '#3b82f6', accent: '#fbbf24' },
+  { id: 'nature', name: 'Doğa Yeşili', primary: '#15803d', secondary: '#22c55e', accent: '#fde047' }
+];
+
+// Dünya Para Birimleri
+const CURRENCIES = [
+  { code: 'TRY', name: 'Türk Lirası', symbol: '₺' },
+  { code: 'USD', name: 'Amerikan Doları', symbol: '$' },
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'GBP', name: 'İngiliz Sterlini', symbol: '£' },
+  { code: 'JPY', name: 'Japon Yeni', symbol: '¥' },
+  { code: 'CNY', name: 'Çin Yuanı', symbol: '¥' },
+  { code: 'CHF', name: 'İsviçre Frangı', symbol: 'Fr' },
+  { code: 'CAD', name: 'Kanada Doları', symbol: 'C$' },
+  { code: 'AUD', name: 'Avustralya Doları', symbol: 'A$' },
+  { code: 'NZD', name: 'Yeni Zelanda Doları', symbol: 'NZ$' },
+  { code: 'SEK', name: 'İsveç Kronu', symbol: 'kr' },
+  { code: 'NOK', name: 'Norveç Kronu', symbol: 'kr' },
+  { code: 'DKK', name: 'Danimarka Kronu', symbol: 'kr' },
+  { code: 'PLN', name: 'Polonya Zlotisi', symbol: 'zł' },
+  { code: 'RUB', name: 'Rus Rublesi', symbol: '₽' },
+  { code: 'INR', name: 'Hint Rupisi', symbol: '₹' },
+  { code: 'BRL', name: 'Brezilya Reali', symbol: 'R$' },
+  { code: 'ZAR', name: 'Güney Afrika Randı', symbol: 'R' },
+  { code: 'MXN', name: 'Meksika Pesosu', symbol: 'Mex$' },
+  { code: 'SGD', name: 'Singapur Doları', symbol: 'S$' },
+  { code: 'HKD', name: 'Hong Kong Doları', symbol: 'HK$' },
+  { code: 'KRW', name: 'Güney Kore Wonu', symbol: '₩' },
+  { code: 'THB', name: 'Tayland Bahtı', symbol: '฿' },
+  { code: 'MYR', name: 'Malezya Ringgiti', symbol: 'RM' },
+  { code: 'IDR', name: 'Endonezya Rupisi', symbol: 'Rp' },
+  { code: 'AED', name: 'BAE Dirhemi', symbol: 'د.إ' },
+  { code: 'SAR', name: 'Suudi Arabistan Riyali', symbol: '﷼' }
+];
+
 const ProposalProfileWizard = () => {
   const navigate = useNavigate();
   const { profileId } = useParams();
@@ -16,6 +61,7 @@ const ProposalProfileWizard = () => {
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [availableModules, setAvailableModules] = useState([]);
+  const [selectedPalette, setSelectedPalette] = useState('modern');
 
   // Form State
   const [formData, setFormData] = useState({
