@@ -98,6 +98,27 @@ const NewProposalWizard = ({ onBack }) => {
   const [saveStatus, setSaveStatus] = useState('saved'); // 'saved', 'saving', 'error'
   const [autoSaveTimeout, setAutoSaveTimeout] = useState(null);
   
+  // Step 4: Pricing state
+  const [lineItems, setLineItems] = useState([]);
+  const [taxRate, setTaxRate] = useState(20);
+  const [generalDiscount, setGeneralDiscount] = useState({ type: 'none', value: 0 });
+  const [pricingSummary, setPricingSummary] = useState({
+    subtotal: 0,
+    discount: 0,
+    tax: 0,
+    total: 0,
+    optional_total: 0
+  });
+  
+  // Step 5: Preview and send state
+  const [emailForm, setEmailForm] = useState({
+    to: '',
+    cc: '',
+    subject: '',
+    message: ''
+  });
+  const [publicLink, setPublicLink] = useState(null);
+  
   // Form state
   const [formData, setFormData] = useState({
     // Teklif Kaynağı
