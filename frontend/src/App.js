@@ -963,11 +963,6 @@ const Dashboard = () => {
     console.log('✅ Current view set to: new-teklif');
   };
 
-  const handleAllQuotes = () => {
-    console.log('📋 handleAllQuotes called - setting view to all-quotes');
-    setCurrentView('all-quotes');
-  };
-
   const handleCalendar = () => {
     console.log('🗓️ handleCalendar called - setting view to calendar');
     setCurrentView('calendar');
