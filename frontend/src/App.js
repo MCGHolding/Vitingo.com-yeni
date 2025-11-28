@@ -200,6 +200,8 @@ const Dashboard = () => {
       '/proposals': 'proposal-list',
       '/proposals/new': 'new-proposal',
       '/proposals/profiles': 'proposal-profiles',
+      '/proposals/profiles/new': 'new-proposal-profile',
+      '/proposals/profiles/edit/:id': 'edit-proposal-profile',
       '/settings': 'settings',
       '/documents': 'documents',
       '/tasks': 'tasks',
