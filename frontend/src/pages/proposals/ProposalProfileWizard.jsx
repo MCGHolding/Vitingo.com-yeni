@@ -104,6 +104,7 @@ const ProposalProfileWizard = ({ profileId }) => {
   const [moduleContents, setModuleContents] = useState({});
   const [currentEditingModule, setCurrentEditingModule] = useState(null);
   const [editorStates, setEditorStates] = useState({});
+  const [showCoverDesigner, setShowCoverDesigner] = useState(false);
 
   // Fetch companies and available modules on mount
   useEffect(() => {
