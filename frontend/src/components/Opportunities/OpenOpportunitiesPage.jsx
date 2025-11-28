@@ -74,17 +74,23 @@ export default function OpenOpportunitiesPage({ onBackToDashboard, opportunities
           console.log('🎯 Filtered open opportunities:', openOps.length);
           
           // Map API response to frontend expected format
-          const mappedOpportunities = openOps.map(op => ({
-            ...op,
-            eventName: op.title, // Map title to eventName
-            contactPerson: op.contact_person || 'Belirtilmemiş', // Map contact_person to contactPerson
-            lastUpdate: op.updated_at || op.created_at, // Map updated_at to lastUpdate
-            statusText: `Açık - Aktif - ${op.stage === 'lead' ? 'Yeni Fırsat' : 
-                         op.stage === 'qualified' ? 'Nitelikli Fırsat' :
-                         op.stage === 'proposal' ? 'Teklif Bekleniyor' :
-                         op.stage === 'negotiation' ? 'Müzakere' : 'Değerlendiriliyor'}`,
-            tags: op.tags || [] // Ensure tags is an array
-          }));
+          const mappedOpportunities = openOps.map(op => {
+            const stageText = op.stage === 'lead' ? 'Yeni Fırsat' : 
+                             op.stage === 'qualified' ? 'Nitelikli Fırsat' :
+                             op.stage === 'proposal' ? 'Teklif Bekleniyor' :
+                             op.stage === 'negotiation' ? 'Müzakere' : 
+                             op.stage === 'contact' ? 'İletişim' :
+                             op.stage ? op.stage : 'Değerlendiriliyor';
+            
+            return {
+              ...op,
+              eventName: op.title || 'İsimsiz Fırsat', // Map title to eventName
+              contactPerson: op.contact_person || 'Belirtilmemiş', // Map contact_person to contactPerson
+              lastUpdate: op.updated_at || op.created_at, // Map updated_at to lastUpdate
+              statusText: `Açık - Aktif - ${stageText}`,
+              tags: op.tags || [] // Ensure tags is an array
+            };
+          });
           
           console.log('🔄 Mapped opportunities:', mappedOpportunities.length);
           setOpenOpportunities(mappedOpportunities);
