@@ -1408,11 +1408,7 @@ const NewProposalWizard = ({ onBack }) => {
         {/* Content */}
         <div className="bg-white rounded-lg shadow p-6">
           {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Adım 2: Modül Seçimi (Henüz hazır değil)</p>
-            </div>
-          )}
+          {currentStep === 2 && renderStep2()}
           {currentStep >= 3 && (
             <div className="text-center py-12">
               <p className="text-gray-500">Adım {currentStep} içeriği henüz hazır değil</p>
