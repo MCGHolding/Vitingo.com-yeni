@@ -514,28 +514,28 @@ const ProposalProfileWizard = () => {
           </div>
 
           {/* Content editor */}
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-2">
             {currentModule && (
               <>
-                <div className="flex items-center space-x-3 mb-4">
-                  <span className="text-3xl">{currentModule.icon}</span>
-                  <h3 className="text-xl font-semibold">{currentModule.module_name}</h3>
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-xl">{currentModule.icon}</span>
+                  <h3 className="text-sm font-semibold">{currentModule.module_name}</h3>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Başlık</label>
                   <input
                     type="text"
                     value={currentContent.title}
                     onChange={(e) => handleModuleContentChange(currentEditingModule, 'title', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-1.5 text-sm border rounded"
                     placeholder="Modül başlığı..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">İçerik</label>
-                  <div className="border rounded-lg bg-white" style={{ minHeight: '400px' }}>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">İçerik</label>
+                  <div className="border rounded bg-white" style={{ minHeight: '280px' }}>
                     <Editor
                       editorState={getEditorState(currentEditingModule)}
                       onEditorStateChange={(editorState) => handleEditorChange(currentEditingModule, editorState)}
