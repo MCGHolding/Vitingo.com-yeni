@@ -158,6 +158,35 @@ const ProposalProfileWizard = () => {
     }));
   };
 
+  const handleEditorChange = (moduleType, editorState) => {
+    setEditorStates(prev => ({
+      ...prev,
+      [moduleType]: editorState
+    }));
+    
+    // Convert to HTML and save
+    const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+    handleModuleContentChange(moduleType, 'body', html);
+  };
+
+  const getEditorState = (moduleType) => {
+    if (editorStates[moduleType]) {
+      return editorStates[moduleType];
+    }
+    
+    // Initialize from existing content
+    const content = moduleContents[moduleType]?.body || '';
+    if (content) {
+      const contentBlock = htmlToDraft(content);
+      if (contentBlock) {
+        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+        return EditorState.createWithContent(contentState);
+      }
+    }
+    
+    return EditorState.createEmpty();
+  };
+
   const validateStep1 = () => {
     if (!formData.profile_name.trim()) {
       toast.error('Profil adı gerekli');
