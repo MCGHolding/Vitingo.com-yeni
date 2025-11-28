@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { toast } from 'react-hot-toast';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
