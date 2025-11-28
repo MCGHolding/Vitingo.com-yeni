@@ -519,15 +519,36 @@ const ProposalProfileWizard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">İçerik</label>
-                  <textarea
-                    value={currentContent.body}
-                    onChange={(e) => handleModuleContentChange(currentEditingModule, 'body', e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 font-sans"
-                    rows={15}
-                    placeholder="Modül içeriğini buraya yazın... HTML etiketleri kullanabilirsiniz."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    HTML etiketlerini kullanabilirsiniz: &lt;b&gt;kalın&lt;/b&gt;, &lt;i&gt;italik&lt;/i&gt;, &lt;br&gt; (satır atla)
+                  <div className="border rounded-lg">
+                    <ReactQuill
+                      theme="snow"
+                      value={currentContent.body || ''}
+                      onChange={(value) => handleModuleContentChange(currentEditingModule, 'body', value)}
+                      style={{ height: '300px', marginBottom: '50px' }}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, 3, false] }],
+                          ['bold', 'italic', 'underline', 'strike'],
+                          [{ 'color': [] }, { 'background': [] }],
+                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                          [{ 'align': [] }],
+                          ['link', 'image'],
+                          ['clean']
+                        ]
+                      }}
+                      formats={[
+                        'header',
+                        'bold', 'italic', 'underline', 'strike',
+                        'color', 'background',
+                        'list', 'bullet',
+                        'align',
+                        'link', 'image'
+                      ]}
+                      placeholder="Modül içeriğini buraya yazın... Bold, italic, resim ekleyebilirsiniz."
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 Değişkenler: Metne <strong>{'{{firma_adı}}'}</strong>, <strong>{'{{fuar_adı}}'}</strong>, <strong>{'{{tarih}}'}</strong> gibi değişkenler ekleyebilirsiniz.
                   </p>
                 </div>
 
