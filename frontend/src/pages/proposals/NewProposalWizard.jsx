@@ -353,8 +353,8 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       });
       
       // Load modules if they exist
-      if (proposal.modules && proposal.modules.length > 0) {
-        const modules = proposal.modules.map(module => ({
+      if (modules && modules.length > 0) {
+        const mappedModules = modules.map(module => ({
           id: module.id.toString(),
           type: module.module_type,
           name: getModuleName(module.module_type),
