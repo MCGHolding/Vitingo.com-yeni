@@ -613,7 +613,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       setModuleContents(contents);
       
       console.log('✅ Modules loaded from profile:', modules.length);
-      showNotification('Profil modülleri yüklendi', 'success');
+      toast.success('Profil modülleri yüklendi');
     }
   };
 
