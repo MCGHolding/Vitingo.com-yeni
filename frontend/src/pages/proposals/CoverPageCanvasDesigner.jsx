@@ -296,123 +296,102 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
           </div>
 
           {/* Right: Properties */}
-          <div className="w-72 border-l bg-gray-50 p-4 overflow-y-auto">
-            <h3 className="font-semibold text-gray-700 mb-3">⚙️ Özellikler</h3>
+          <div className="w-60 border-l bg-gray-50 p-3 overflow-y-auto">
+            <h3 className="font-semibold text-gray-700 text-xs mb-2">⚙️ Özellikler</h3>
             
             {selectedElementData ? (
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Element</p>
-                  <p className="text-sm font-medium">{selectedElementData.label}</p>
+              <div className="space-y-3">
+                <div className="text-xs">
+                  <p className="text-gray-500">Element</p>
+                  <p className="font-medium">{selectedElementData.label}</p>
                 </div>
 
                 {selectedElementData.type === 'text' && (
                   <>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Font Boyutu</label>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Boyut: {selectedElementData.fontSize}px</label>
                       <input
                         type="range"
                         min="8"
                         max="72"
                         value={selectedElementData.fontSize}
                         onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) })}
-                        className="w-full"
+                        className="w-full h-1"
                       />
-                      <span className="text-xs text-gray-500">{selectedElementData.fontSize}px</span>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-2">Stil</label>
-                      <div className="flex space-x-2">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Stil</label>
+                      <div className="flex space-x-1">
                         <button
                           onClick={() => toggleStyle('fontWeight', 'normal', 'bold')}
-                          className={`px-3 py-2 border rounded ${selectedElementData.fontWeight === 'bold' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded text-xs ${selectedElementData.fontWeight === 'bold' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <Bold className="w-4 h-4" />
+                          <Bold className="w-3 h-3 mx-auto" />
                         </button>
                         <button
                           onClick={() => toggleStyle('fontStyle', 'normal', 'italic')}
-                          className={`px-3 py-2 border rounded ${selectedElementData.fontStyle === 'italic' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded text-xs ${selectedElementData.fontStyle === 'italic' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <Italic className="w-4 h-4" />
+                          <Italic className="w-3 h-3 mx-auto" />
                         </button>
                         <button
                           onClick={() => toggleStyle('textDecoration', 'none', 'underline')}
-                          className={`px-3 py-2 border rounded ${selectedElementData.textDecoration === 'underline' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded text-xs ${selectedElementData.textDecoration === 'underline' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <Underline className="w-4 h-4" />
+                          <Underline className="w-3 h-3 mx-auto" />
                         </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-2">Hizalama</label>
-                      <div className="flex space-x-2">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Hizalama</label>
+                      <div className="flex space-x-1">
                         <button
                           onClick={() => updateElement(selectedElement, { textAlign: 'left' })}
-                          className={`px-3 py-2 border rounded ${selectedElementData.textAlign === 'left' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded ${selectedElementData.textAlign === 'left' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <AlignLeft className="w-4 h-4" />
+                          <AlignLeft className="w-3 h-3 mx-auto" />
                         </button>
                         <button
                           onClick={() => updateElement(selectedElement, { textAlign: 'center' })}
-                          className={`px-3 py-2 border rounded ${selectedElementData.textAlign === 'center' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded ${selectedElementData.textAlign === 'center' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <AlignCenter className="w-4 h-4" />
+                          <AlignCenter className="w-3 h-3 mx-auto" />
                         </button>
                         <button
                           onClick={() => updateElement(selectedElement, { textAlign: 'right' })}
-                          className={`px-3 py-2 border rounded ${selectedElementData.textAlign === 'right' ? 'bg-purple-500 text-white' : 'bg-white'}`}
+                          className={`flex-1 py-1.5 border rounded ${selectedElementData.textAlign === 'right' ? 'bg-purple-500 text-white' : 'bg-white'}`}
                         >
-                          <AlignRight className="w-4 h-4" />
+                          <AlignRight className="w-3 h-3 mx-auto" />
                         </button>
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Renk</label>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="color"
-                          value={selectedElementData.color}
-                          onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
-                          className="w-12 h-8 rounded border"
-                        />
-                        <input
-                          type="text"
-                          value={selectedElementData.color}
-                          onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
-                          className="flex-1 px-2 py-1 text-xs border rounded"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Arka Plan</label>
                       <input
                         type="color"
-                        value={selectedElementData.backgroundColor === 'transparent' ? '#ffffff' : selectedElementData.backgroundColor}
-                        onChange={(e) => updateElement(selectedElement, { backgroundColor: e.target.value })}
+                        value={selectedElementData.color}
+                        onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
                         className="w-full h-8 rounded border"
                       />
                     </div>
                   </>
                 )}
 
-                <div className="pt-4 border-t">
-                  <button
-                    onClick={() => deleteElement(selectedElement)}
-                    className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center space-x-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>Sil</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => deleteElement(selectedElement)}
+                  className="w-full px-3 py-1.5 text-xs bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center space-x-1"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  <span>Sil</span>
+                </button>
               </div>
             ) : (
-              <div className="text-center text-gray-400 mt-8">
-                <p className="text-sm">Element seçmek için</p>
-                <p className="text-sm">canvas'taki bir öğeye tıklayın</p>
+              <div className="text-center text-gray-400 mt-6">
+                <p className="text-xs">Canvas'ta bir</p>
+                <p className="text-xs">element seçin</p>
               </div>
             )}
           </div>
