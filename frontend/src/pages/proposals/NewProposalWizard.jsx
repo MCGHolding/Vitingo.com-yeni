@@ -375,8 +375,8 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       }
       
       // Load line items if they exist
-      if (proposal.line_items && proposal.line_items.length > 0) {
-        const items = proposal.line_items.map(item => ({
+      if (line_items && line_items.length > 0) {
+        const items = line_items.map(item => ({
           id: item.id.toString(),
           category: item.category || '',
           description: item.description || '',
