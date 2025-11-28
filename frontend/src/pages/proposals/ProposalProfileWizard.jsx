@@ -733,7 +733,7 @@ const ProposalProfileWizard = ({ profileId }) => {
               ← Geri
             </button>
             <h1 className="text-xl font-semibold text-gray-900">
-              {profileId ? 'Profil Düzenle' : 'Yeni Profil'}
+              {urlProfileId ? 'Profil Düzenle' : 'Yeni Profil'}
             </h1>
           </div>
           {/* Compact Step Indicator */}
