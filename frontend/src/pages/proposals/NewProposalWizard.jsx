@@ -1162,11 +1162,83 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     }
   };
 
+  const handleDownloadPDF = async () => {
+    if (!proposalId) {
+      setNotification({ 
+        show: true, 
+        message: '❌ Lütfen önce teklifi kaydedin!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
+      return;
+    }
+
+    try {
+      console.log('📥 Downloading PDF for proposal:', proposalId);
+      setLoading(true);
+      
+      // Call PDF generation endpoint
+      const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/pdf`, {
+        method: 'GET'
+      });
+      
+      if (response.ok) {
+        // Download the PDF blob
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Teklif-${formData.company_name || 'PRO'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        setNotification({ 
+          show: true, 
+          message: '✅ PDF indirildi!', 
+          type: 'success' 
+        });
+        setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
+      } else {
+        setNotification({ 
+          show: true, 
+          message: '❌ PDF oluşturulamadı (Backend endpoint henüz hazır değil)', 
+          type: 'error' 
+        });
+        setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      setNotification({ 
+        show: true, 
+        message: '❌ PDF indirilemedi!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const sendProposal = async () => {
-    if (!proposalId) return;
+    if (!proposalId) {
+      setNotification({ 
+        show: true, 
+        message: '❌ Lütfen önce teklifi kaydedin!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
+      return;
+    }
     
     if (!emailForm.to) {
-      alert('Lütfen alıcı e-posta adresi girin');
+      setNotification({ 
+        show: true, 
+        message: '❌ Lütfen alıcı e-posta adresi girin!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
       return;
     }
     
@@ -1177,26 +1249,52 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     if (!confirmed) return;
     
     try {
+      setLoading(true);
+      console.log('📧 Sending proposal to:', emailForm.to);
+      
       const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: emailForm.to,
           cc: emailForm.cc,
-          subject: emailForm.subject,
-          message: emailForm.message
+          subject: emailForm.subject || `Teklif: ${formData.project_name}`,
+          message: emailForm.message || 'Teklifimiz ektedir.'
         })
       });
       
       if (response.ok) {
-        alert('✅ Teklif başarıyla gönderildi!');
-        // Redirect to proposals list or detail page
+        setNotification({ 
+          show: true, 
+          message: '✅ Teklif başarıyla gönderildi!', 
+          type: 'success' 
+        });
+        setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
+        
+        // Update proposal status to 'sent'
+        await fetch(`${BACKEND_URL}/api/proposals/${proposalId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'sent' })
+        });
       } else {
-        alert('❌ Teklif gönderilirken bir hata oluştu');
+        setNotification({ 
+          show: true, 
+          message: '❌ E-posta gönderilemedi (Backend endpoint henüz hazır değil)', 
+          type: 'error' 
+        });
+        setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
       }
     } catch (error) {
       console.error('Error sending proposal:', error);
-      alert('❌ Teklif gönderilirken bir hata oluştu');
+      setNotification({ 
+        show: true, 
+        message: '❌ E-posta gönderilemedi!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
+    } finally {
+      setLoading(false);
     }
   };
 
