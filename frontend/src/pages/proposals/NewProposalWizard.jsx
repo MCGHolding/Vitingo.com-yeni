@@ -77,6 +77,9 @@ const NewProposalWizard = ({ onBack }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [proposalId, setProposalId] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(null);
   
   // Dropdown data
   const [salesOpportunities, setSalesOpportunities] = useState([]);
