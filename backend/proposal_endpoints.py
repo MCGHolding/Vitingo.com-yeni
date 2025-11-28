@@ -108,6 +108,12 @@ async def delete_profile(profile_id: str):
 
 # ===================== MODULE TEMPLATES ENDPOINTS =====================
 
+@proposal_router.get("/proposal-modules/available")
+async def get_available_modules():
+    """Get all available proposal modules for profile wizard"""
+    from proposal_service import AVAILABLE_MODULES
+    return {"modules": AVAILABLE_MODULES}
+
 @proposal_router.get("/module-templates", response_model=List[ModuleTemplate])
 async def get_module_templates(user_id: Optional[str] = None):
     """Get all module templates (system + user's)"""
