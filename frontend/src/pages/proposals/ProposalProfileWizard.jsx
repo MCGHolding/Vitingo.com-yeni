@@ -107,10 +107,10 @@ const ProposalProfileWizard = ({ profileId }) => {
   useEffect(() => {
     fetchCompanies();
     fetchAvailableModules();
-    if (profileId) {
-      fetchProfile(profileId);
+    if (urlProfileId) {
+      fetchProfile(urlProfileId);
     }
-  }, [profileId]);
+  }, [urlProfileId]);
 
   const fetchCompanies = async () => {
     try {
