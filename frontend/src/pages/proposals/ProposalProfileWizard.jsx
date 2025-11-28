@@ -763,6 +763,7 @@ const ProposalProfileWizard = ({ profileId }) => {
         onClose={() => setShowCoverDesigner(false)}
         profileData={formData}
         opportunityData={null}
+        userData={{ name: 'Demo User', title: 'Proje Müdürü' }}
         onSave={handleCoverPageSave}
       />
       
