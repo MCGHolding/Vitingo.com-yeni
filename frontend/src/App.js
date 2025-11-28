@@ -746,6 +746,16 @@ const Dashboard = () => {
     setCurrentView('new-proposal');
   };
 
+  const handleProposalList = () => {
+    setCurrentView('proposal-list');
+  };
+
+  const handleViewProposal = (proposalId) => {
+    console.log('View proposal:', proposalId);
+    // TODO: Navigate to proposal detail
+    setCurrentView('proposal-detail');
+  };
+
   // Project Management Handlers
   const handleNewProject = () => {
     setCurrentView('new-project');
