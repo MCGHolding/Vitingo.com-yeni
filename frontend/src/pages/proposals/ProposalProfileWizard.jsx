@@ -622,8 +622,8 @@ const ProposalProfileWizard = () => {
         {/* Header */}
         <div className="mb-8">
           <button
-            onClick={() => navigate('/proposals/profiles')}
-            className="text-blue-600 hover:text-blue-700 mb-4 flex items-center"
+            onClick={() => window.location.href = '/proposals/profiles'}
+            className="text-blue-600 hover:text-blue-700 hover:underline mb-4 flex items-center font-medium"
           >
             ← Geri Dön
           </button>
