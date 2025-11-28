@@ -3035,7 +3035,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
 
             {module.type === 'about_company' && (
               <div>
-                <div dangerouslySetInnerHTML={{ __html: content.content || '' }} />
+                <div dangerouslySetInnerHTML={{ __html: replaceVariables(content.content || '') }} />
                 {content.show_statistics && content.statistics && (
                   <div className="grid grid-cols-2 gap-4 mt-6">
                     {content.statistics.founded_year && (
