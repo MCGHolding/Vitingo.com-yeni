@@ -339,14 +339,13 @@ const ProposalProfileWizard = () => {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Logo Yükle</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Logo</label>
           <input
             type="file"
             accept="image/*"
             onChange={async (e) => {
               const file = e.target.files[0];
               if (file) {
-                // Convert to base64
                 const reader = new FileReader();
                 reader.onloadend = () => {
                   setFormData(prev => ({
@@ -358,20 +357,18 @@ const ProposalProfileWizard = () => {
                 reader.readAsDataURL(file);
               }
             }}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-2 py-1 text-xs border rounded"
           />
           {formData.branding.logo_url && (
-            <div className="mt-2">
-              <img 
-                src={formData.branding.logo_url} 
-                alt="Logo Preview" 
-                className="h-16 object-contain border rounded p-2"
-              />
-            </div>
+            <img 
+              src={formData.branding.logo_url} 
+              alt="Logo" 
+              className="h-10 object-contain border rounded p-1 mt-1"
+            />
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ana Renk</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Ana Renk</label>
           <input
             type="color"
             value={formData.branding.primary_color}
@@ -379,36 +376,12 @@ const ProposalProfileWizard = () => {
               ...prev,
               branding: { ...prev.branding, primary_color: e.target.value }
             }))}
-            className="w-full h-10 px-2 border rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">İkincil Renk</label>
-          <input
-            type="color"
-            value={formData.branding.secondary_color}
-            onChange={(e) => setFormData(prev => ({
-              ...prev,
-              branding: { ...prev.branding, secondary_color: e.target.value }
-            }))}
-            className="w-full h-10 px-2 border rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Vurgu Rengi</label>
-          <input
-            type="color"
-            value={formData.branding.accent_color}
-            onChange={(e) => setFormData(prev => ({
-              ...prev,
-              branding: { ...prev.branding, accent_color: e.target.value }
-            }))}
-            className="w-full h-10 px-2 border rounded-lg"
+            className="w-full h-8 px-1 border rounded"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-3">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Sayfa Yönü</label>
           <select
