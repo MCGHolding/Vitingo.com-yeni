@@ -3013,14 +3013,14 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
 
             {module.type === 'cover_page' && (!content.type || content.type === 'default' || !content.canvas_template) && (
               <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold">{content.title || formData.project_name}</h1>
-                <p className="text-xl text-gray-600">{content.subtitle || `Teklif No: ${proposalId || 'DRAFT'}`}</p>
+                <h1 className="text-4xl font-bold">{replaceVariables(content.title) || formData.project_name}</h1>
+                <p className="text-xl text-gray-600">{replaceVariables(content.subtitle) || `Teklif No: ${proposalId || 'DRAFT-' + Date.now()}`}</p>
                 <div className="mt-8 space-y-2 text-sm text-gray-500">
                   {content.show_prepared_for && (
                     <p><strong>Hazırlanan:</strong> {formData.company_name}</p>
                   )}
                   {content.show_prepared_by && (
-                    <p><strong>Hazırlayan:</strong> {formData.contact_person}</p>
+                    <p><strong>Hazırlayan:</strong> Murat Bucak</p>
                   )}
                   {content.show_validity && (
                     <p><strong>Geçerlilik:</strong> {formData.validity_days} gün</p>
