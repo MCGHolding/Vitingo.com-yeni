@@ -2911,119 +2911,304 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   };
 
   const renderStep5 = () => {
-    return (
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left: Preview Area */}
-        <div className="col-span-8">
-          <Card>
-            <CardContent className="pt-6">
-              <h3 className="text-lg font-semibold mb-4">Teklif Önizleme</h3>
-              <div className="border-2 border-dashed rounded-lg p-12 text-center bg-gray-50">
-                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">PDF Önizleme</p>
-                <p className="text-sm text-gray-500">
-                  {selectedModules.length} modül • {lineItems.length} kalem
-                </p>
-                <Button variant="outline" className="mt-4" onClick={handleDownloadPDF}>
-                  PDF İndir
-                </Button>
+    const [currentPreviewPage, setCurrentPreviewPage] = useState(0);
+
+    const renderModulePage = (module, index) => {
+      const content = moduleContents[module.id] || {};
+      
+      return (
+        <div
+          key={module.id}
+          className="w-full bg-white shadow-lg mx-auto mb-8"
+          style={{ 
+            width: '595px',
+            minHeight: '842px',
+            maxWidth: '100%',
+            padding: '60px 40px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }}
+        >
+          {/* Module Header */}
+          <div className="mb-6 pb-4 border-b-2 border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900">{module.name}</h2>
+            {content.subtitle && (
+              <p className="text-sm text-gray-500 mt-1">{content.subtitle}</p>
+            )}
+          </div>
+
+          {/* Module Content */}
+          <div className="prose max-w-none">
+            {module.type === 'cover_page' && (
+              <div className="text-center space-y-4">
+                <h1 className="text-4xl font-bold">{content.title || formData.project_name}</h1>
+                <p className="text-xl text-gray-600">{content.subtitle || `Teklif No: ${proposalId || 'DRAFT'}`}</p>
+                <div className="mt-8 space-y-2 text-sm text-gray-500">
+                  {content.show_prepared_for && (
+                    <p><strong>Hazırlanan:</strong> {formData.company_name}</p>
+                  )}
+                  {content.show_prepared_by && (
+                    <p><strong>Hazırlayan:</strong> {formData.contact_person}</p>
+                  )}
+                  {content.show_validity && (
+                    <p><strong>Geçerlilik:</strong> {formData.validity_days} gün</p>
+                  )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
 
-        {/* Right: Send Panel */}
-        <div className="col-span-4">
-          <div className="space-y-4">
-            {/* Summary */}
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-4">📋 Teklif Özeti</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Müşteri:</span>
-                    <span className="font-medium">{formData.company_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Proje:</span>
-                    <span className="font-medium">{formData.project_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Toplam:</span>
-                    <span className="font-bold text-lg">{formData.currency_code} {pricingSummary.total.toFixed(2)}</span>
-                  </div>
-                  <div className="pt-2 mt-2 border-t">
-                    <div className="text-yellow-600">🟡 Taslak</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {module.type === 'introduction' && (
+              <div dangerouslySetInnerHTML={{ __html: content.content || '' }} />
+            )}
 
-            {/* Email Send */}
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-4">📧 E-posta ile Gönder</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Alıcı *</label>
-                    <input
-                      type="email"
-                      value={emailForm.to}
-                      onChange={(e) => setEmailForm({...emailForm, to: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-md text-sm"
-                      placeholder="email@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Konu</label>
-                    <input
-                      type="text"
-                      value={emailForm.subject}
-                      onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-md text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Mesaj</label>
-                    <textarea
-                      value={emailForm.message}
-                      onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
-                      rows={5}
-                      className="w-full px-3 py-2 border rounded-md text-sm"
-                    />
-                  </div>
-                  <Button onClick={sendProposal} className="w-full">
-                    📧 E-posta Gönder
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Online Link */}
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-4">🔗 Online Link</h3>
-                {!publicLink ? (
-                  <Button onClick={generatePublicLink} variant="outline" className="w-full">
-                    Link Oluştur
-                  </Button>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="p-2 bg-gray-100 rounded text-xs break-all">
-                      {publicLink}
-                    </div>
-                    <Button 
-                      onClick={() => navigator.clipboard.writeText(publicLink)}
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full"
-                    >
-                      📋 Kopyala
-                    </Button>
+            {module.type === 'about_company' && (
+              <div>
+                <div dangerouslySetInnerHTML={{ __html: content.content || '' }} />
+                {content.show_statistics && content.statistics && (
+                  <div className="grid grid-cols-2 gap-4 mt-6">
+                    {content.statistics.founded_year && (
+                      <div className="text-center p-4 bg-gray-50 rounded">
+                        <div className="text-3xl font-bold text-blue-600">{content.statistics.founded_year}</div>
+                        <div className="text-sm text-gray-600">Kuruluş Yılı</div>
+                      </div>
+                    )}
+                    {content.statistics.employee_count && (
+                      <div className="text-center p-4 bg-gray-50 rounded">
+                        <div className="text-3xl font-bold text-blue-600">{content.statistics.employee_count}</div>
+                        <div className="text-sm text-gray-600">Çalışan Sayısı</div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            )}
+
+            {(module.type === 'included_services' || module.type === 'excluded_services') && (
+              <div>
+                <p className="mb-4">{content.intro || ''}</p>
+                <ul className="space-y-2">
+                  {(content.items || []).map((item, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className={`mr-2 ${module.type === 'included_services' ? 'text-green-600' : 'text-red-600'}`}>
+                        {module.type === 'included_services' ? '✓' : '✗'}
+                      </span>
+                      <span>{item.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {module.type === 'pricing' && (
+              <div>
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2 text-left">Açıklama</th>
+                      <th className="border p-2 text-center">Miktar</th>
+                      <th className="border p-2 text-right">Birim Fiyat</th>
+                      <th className="border p-2 text-right">Toplam</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {lineItems.map((item, idx) => (
+                      <tr key={idx}>
+                        <td className="border p-2">{item.description}</td>
+                        <td className="border p-2 text-center">{item.quantity} {item.unit}</td>
+                        <td className="border p-2 text-right">{formatCurrency(item.unit_price)}</td>
+                        <td className="border p-2 text-right">{formatCurrency(calculateItemTotal(item))}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="bg-gray-50">
+                    <tr>
+                      <td colSpan="3" className="border p-2 text-right font-semibold">Ara Toplam:</td>
+                      <td className="border p-2 text-right">{formatCurrency(pricingSummary.subtotal)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="3" className="border p-2 text-right font-semibold">KDV (%{taxRate}):</td>
+                      <td className="border p-2 text-right">{formatCurrency(pricingSummary.tax)}</td>
+                    </tr>
+                    <tr className="font-bold">
+                      <td colSpan="3" className="border p-2 text-right">GENEL TOPLAM:</td>
+                      <td className="border p-2 text-right">{formatCurrency(pricingSummary.total)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )}
+
+            {module.type === 'payment_terms' && (
+              <div>
+                <p className="mb-4">{content.intro || ''}</p>
+                {(content.schedule || []).map((payment, idx) => (
+                  <div key={idx} className="mb-2">
+                    <strong>{payment.stage}:</strong> %{payment.percentage} ({payment.description})
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {module.type === 'contact' && (
+              <div>
+                <p className="mb-4">{content.subtitle || ''}</p>
+                {content.contact_person && (
+                  <div className="space-y-2">
+                    <p><strong>İletişim Kişisi:</strong> {content.contact_person.name}</p>
+                    <p><strong>E-posta:</strong> {content.contact_person.email}</p>
+                    <p><strong>Telefon:</strong> {content.contact_person.phone}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!['cover_page', 'introduction', 'about_company', 'included_services', 'excluded_services', 'pricing', 'payment_terms', 'contact'].includes(module.type) && (
+              <div dangerouslySetInnerHTML={{ __html: content.content || '<p>İçerik henüz eklenmedi</p>' }} />
+            )}
+          </div>
+
+          {/* Page Footer */}
+          <div className="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-500">
+            Sayfa {index + 1} / {selectedModules.length}
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Toolbar - Fixed at top */}
+        <div className="bg-white border-b shadow-sm p-4 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">Teklif Önizleme</h3>
+              <p className="text-sm text-gray-500">
+                {selectedModules.length} modül • {lineItems.length} fiyat kalemi • Toplam: {formatCurrency(pricingSummary.total)}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="sm" onClick={saveDraft}>
+                <Save className="w-4 h-4 mr-2" />
+                Taslak Kaydet
+              </Button>
+              <Button variant="default" size="sm" onClick={handleDownloadPDF}>
+                <FileText className="w-4 h-4 mr-2" />
+                PDF İndir
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left: Multi-Page Preview */}
+          <div className="col-span-8">
+            <div className="bg-gray-100 p-6 rounded-lg" style={{ maxHeight: '800px', overflowY: 'auto' }}>
+              {selectedModules.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-lg">
+                  <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">Henüz modül seçilmedi</p>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {selectedModules.map((module, index) => renderModulePage(module, index))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Action Panel */}
+          <div className="col-span-4">
+            <div className="space-y-4 sticky top-24">
+              {/* Summary */}
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold mb-4">📋 Teklif Özeti</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Müşteri:</span>
+                      <span className="font-medium">{formData.company_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Proje:</span>
+                      <span className="font-medium">{formData.project_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Toplam:</span>
+                      <span className="font-bold text-lg">{formData.currency_code} {pricingSummary.total.toFixed(2)}</span>
+                    </div>
+                    <div className="pt-2 mt-2 border-t">
+                      <div className="text-yellow-600">🟡 Taslak</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Email Send */}
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold mb-4">📧 E-posta ile Gönder</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Alıcı *</label>
+                      <input
+                        type="email"
+                        value={emailForm.to}
+                        onChange={(e) => setEmailForm({...emailForm, to: e.target.value})}
+                        className="w-full px-3 py-2 border rounded-md text-sm"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Konu</label>
+                      <input
+                        type="text"
+                        value={emailForm.subject}
+                        onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
+                        className="w-full px-3 py-2 border rounded-md text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Mesaj</label>
+                      <textarea
+                        value={emailForm.message}
+                        onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
+                        rows={5}
+                        className="w-full px-3 py-2 border rounded-md text-sm"
+                      />
+                    </div>
+                    <Button onClick={sendProposal} className="w-full">
+                      📧 E-posta Gönder
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Online Link */}
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="font-semibold mb-4">🔗 Online Link</h3>
+                  {!publicLink ? (
+                    <Button onClick={generatePublicLink} variant="outline" className="w-full">
+                      Link Oluştur
+                    </Button>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="p-2 bg-gray-100 rounded text-xs break-all">
+                        {publicLink}
+                      </div>
+                      <Button 
+                        onClick={() => navigator.clipboard.writeText(publicLink)}
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full"
+                      >
+                        📋 Kopyala
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
