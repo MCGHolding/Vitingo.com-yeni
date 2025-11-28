@@ -102,6 +102,88 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
     }
   };
 
+  const loadCompanyGroups = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/company-groups?user_id=demo-user`);
+      const data = await response.json();
+      console.log('✅ Loaded company groups:', data.length);
+      setCompanyGroups(data || []);
+      
+      // If only one group, auto-select it
+      if (data && data.length === 1) {
+        const group = data[0];
+        setFormData(prev => ({ ...prev, company_group_id: group.id }));
+        loadCompaniesFromGroup(group.id);
+      }
+    } catch (error) {
+      console.error('Error loading company groups:', error);
+      setCompanyGroups([]);
+    }
+  };
+
+  const loadCompaniesFromGroup = async (groupId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/company-groups/${groupId}/companies`);
+      const data = await response.json();
+      console.log('✅ Loaded companies from group:', data.length);
+      setSelectedGroupCompanies(data || []);
+      
+      // If only one company, auto-select it and fill form
+      if (data && data.length === 1) {
+        const company = data[0];
+        handleCompanySelection(company);
+      }
+    } catch (error) {
+      console.error('Error loading companies from group:', error);
+      setSelectedGroupCompanies([]);
+    }
+  };
+
+  const handleGroupChange = (groupId) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      company_group_id: groupId,
+      selected_company_id: '',
+      // Reset company info
+      company_info: {
+        name: '',
+        address: '',
+        city: '',
+        country: '',
+        phone: '',
+        email: '',
+        website: '',
+        tax_office: '',
+        tax_number: ''
+      }
+    }));
+    
+    if (groupId) {
+      loadCompaniesFromGroup(groupId);
+    } else {
+      setSelectedGroupCompanies([]);
+    }
+  };
+
+  const handleCompanySelection = (company) => {
+    console.log('✅ Company selected:', company.name);
+    setFormData(prev => ({
+      ...prev,
+      selected_company_id: company.id,
+      company_info: {
+        name: company.name || '',
+        address: company.address || '',
+        city: company.city || '',
+        country: company.country || '',
+        phone: company.phone || '',
+        email: company.email || '',
+        website: company.website || '',
+        tax_office: company.tax_office || '',
+        tax_number: company.tax_number || ''
+      }
+    }));
+  };
+
   const handleInputChange = (field, value) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
