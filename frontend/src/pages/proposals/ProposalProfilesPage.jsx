@@ -501,9 +501,377 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
                     </div>
                   </div>
 
-                  {/* Form Content - Continue in next message due to length */}
-                  <div className="flex-1 px-6 py-6 space-y-6">
-                    <p className="text-gray-600">Form içeriği bir sonraki güncellemede eklenecek...</p>
+                  {/* Form Content */}
+                  <div className="flex-1 px-6 py-6 space-y-8">
+                    
+                    {/* Section 1: Basic Info */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Temel Bilgiler</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Profil Adı *
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.profile_name}
+                            onChange={(e) => handleInputChange('profile_name', e.target.value)}
+                            placeholder="Ana Firma Profili"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          {errors.profile_name && (
+                            <p className="text-red-600 text-sm mt-1">{errors.profile_name}</p>
+                          )}
+                        </div>
+
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.is_default}
+                            onChange={(e) => handleInputChange('is_default', e.target.checked)}
+                            className="h-4 w-4 text-blue-600 rounded"
+                          />
+                          <label className="ml-2 text-sm text-gray-700">
+                            Bu profili varsayılan olarak ayarla
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 2: Company Info */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Firma Bilgileri</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Firma Adı *
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.company_info.name}
+                            onChange={(e) => handleInputChange('company_info.name', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          {errors['company_info.name'] && (
+                            <p className="text-red-600 text-sm mt-1">{errors['company_info.name']}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
+                          <textarea
+                            value={formData.company_info.address}
+                            onChange={(e) => handleInputChange('company_info.address', e.target.value)}
+                            rows={2}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Şehir</label>
+                            <input
+                              type="text"
+                              value={formData.company_info.city}
+                              onChange={(e) => handleInputChange('company_info.city', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Ülke</label>
+                            <input
+                              type="text"
+                              value={formData.company_info.country}
+                              onChange={(e) => handleInputChange('company_info.country', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                            <input
+                              type="text"
+                              value={formData.company_info.phone}
+                              onChange={(e) => handleInputChange('company_info.phone', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
+                            <input
+                              type="email"
+                              value={formData.company_info.email}
+                              onChange={(e) => handleInputChange('company_info.email', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                            {errors['company_info.email'] && (
+                              <p className="text-red-600 text-sm mt-1">{errors['company_info.email']}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                          <input
+                            type="text"
+                            value={formData.company_info.website}
+                            onChange={(e) => handleInputChange('company_info.website', e.target.value)}
+                            placeholder="www.example.com"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                          {errors['company_info.website'] && (
+                            <p className="text-red-600 text-sm mt-1">{errors['company_info.website']}</p>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Vergi Dairesi</label>
+                            <input
+                              type="text"
+                              value={formData.company_info.tax_office}
+                              onChange={(e) => handleInputChange('company_info.tax_office', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Vergi Numarası</label>
+                            <input
+                              type="text"
+                              value={formData.company_info.tax_number}
+                              onChange={(e) => handleInputChange('company_info.tax_number', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 3: Branding */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Marka Kimliği</h3>
+                      
+                      {/* Color Pickers */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Renk Paleti</label>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Ana Renk</label>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="color"
+                                  value={formData.branding.primary_color}
+                                  onChange={(e) => handleInputChange('branding.primary_color', e.target.value)}
+                                  className="h-10 w-16 border rounded cursor-pointer"
+                                />
+                                <input
+                                  type="text"
+                                  value={formData.branding.primary_color}
+                                  onChange={(e) => handleInputChange('branding.primary_color', e.target.value)}
+                                  className="flex-1 px-2 py-1 text-sm border rounded"
+                                  placeholder="#1a73e8"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">İkincil Renk</label>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="color"
+                                  value={formData.branding.secondary_color}
+                                  onChange={(e) => handleInputChange('branding.secondary_color', e.target.value)}
+                                  className="h-10 w-16 border rounded cursor-pointer"
+                                />
+                                <input
+                                  type="text"
+                                  value={formData.branding.secondary_color}
+                                  onChange={(e) => handleInputChange('branding.secondary_color', e.target.value)}
+                                  className="flex-1 px-2 py-1 text-sm border rounded"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Aksan Renk</label>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="color"
+                                  value={formData.branding.accent_color}
+                                  onChange={(e) => handleInputChange('branding.accent_color', e.target.value)}
+                                  className="h-10 w-16 border rounded cursor-pointer"
+                                />
+                                <input
+                                  type="text"
+                                  value={formData.branding.accent_color}
+                                  onChange={(e) => handleInputChange('branding.accent_color', e.target.value)}
+                                  className="flex-1 px-2 py-1 text-sm border rounded"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Color Preview */}
+                        <div className="border rounded-lg p-4 bg-gray-50">
+                          <p className="text-sm font-medium text-gray-700 mb-3">Renk Paletiniz Tekliflerde Böyle Görünecek</p>
+                          <div className="bg-white rounded border overflow-hidden">
+                            <div 
+                              className="h-16 flex items-center px-4 text-white font-semibold"
+                              style={{ backgroundColor: formData.branding.primary_color }}
+                            >
+                              {formData.company_info.name || 'FİRMA ADI'}
+                            </div>
+                            <div 
+                              className="h-1"
+                              style={{ backgroundColor: formData.branding.secondary_color }}
+                            />
+                            <div className="p-4">
+                              <p className="text-gray-700 mb-2">Örnek başlık metni</p>
+                              <button 
+                                className="px-4 py-2 text-white text-sm rounded"
+                                style={{ backgroundColor: formData.branding.accent_color }}
+                              >
+                                Detay Butonu
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Preset Palettes */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Hazır Paletler</label>
+                          <div className="grid grid-cols-4 gap-2">
+                            {COLOR_PALETTES.map((palette, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => applyColorPalette(palette)}
+                                className="border rounded p-2 hover:border-blue-500 transition-colors"
+                                title={palette.name}
+                              >
+                                <div className="flex space-x-1 mb-1">
+                                  <div className="h-6 flex-1 rounded" style={{ backgroundColor: palette.primary }} />
+                                  <div className="h-6 flex-1 rounded" style={{ backgroundColor: palette.secondary }} />
+                                  <div className="h-6 flex-1 rounded" style={{ backgroundColor: palette.accent }} />
+                                </div>
+                                <p className="text-xs text-gray-600 truncate">{palette.name}</p>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section 4: Defaults */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Varsayılan Ayarlar</h3>
+                      <div className="space-y-4">
+                        
+                        {/* Page Orientation */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Sayfa Yönü</label>
+                          <div className="flex space-x-4">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                value="portrait"
+                                checked={formData.defaults.page_orientation === 'portrait'}
+                                onChange={(e) => handleInputChange('defaults.page_orientation', e.target.value)}
+                                className="h-4 w-4"
+                              />
+                              <span className="text-sm">Dikey (Portrait)</span>
+                            </label>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                value="landscape"
+                                checked={formData.defaults.page_orientation === 'landscape'}
+                                onChange={(e) => handleInputChange('defaults.page_orientation', e.target.value)}
+                                className="h-4 w-4"
+                              />
+                              <span className="text-sm">Yatay (Landscape)</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Currency */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Para Birimi</label>
+                          <select
+                            value={formData.defaults.currency}
+                            onChange={(e) => handleInputChange('defaults.currency', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          >
+                            <optgroup label="Popüler">
+                              {currencies.filter(c => c.is_popular).map(c => (
+                                <option key={c.code} value={c.code}>
+                                  {c.symbol} {c.code} - {c.name}
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="Diğer">
+                              {currencies.filter(c => !c.is_popular).map(c => (
+                                <option key={c.code} value={c.code}>
+                                  {c.symbol} {c.code} - {c.name}
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </div>
+
+                        {/* Language */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Dil</label>
+                          <select
+                            value={formData.defaults.language}
+                            onChange={(e) => handleInputChange('defaults.language', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          >
+                            {LANGUAGES.map(lang => (
+                              <option key={lang.code} value={lang.code}>
+                                {lang.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Validity Days */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Teklif Geçerlilik Süresi
+                          </label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="number"
+                              value={formData.defaults.validity_days}
+                              onChange={(e) => handleInputChange('defaults.validity_days', parseInt(e.target.value))}
+                              min="1"
+                              className="w-24 px-3 py-2 border border-gray-300 rounded-md"
+                            />
+                            <span className="text-sm text-gray-600">gün</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Teklif gönderildikten sonra kaç gün geçerli olacak
+                          </p>
+                        </div>
+
+                        {/* Payment Terms */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Varsayılan Ödeme Koşulları
+                          </label>
+                          <textarea
+                            value={formData.defaults.payment_terms}
+                            onChange={(e) => handleInputChange('defaults.payment_terms', e.target.value)}
+                            rows={3}
+                            placeholder="Örn: %50 sipariş onayında, %50 teslimatta"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
                   {/* Footer */}
