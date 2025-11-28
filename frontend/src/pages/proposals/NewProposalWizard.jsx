@@ -364,11 +364,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
           display_order: module.display_order,
           backend_id: module.id
         }));
-        setSelectedModules(modules);
+        setSelectedModules(mappedModules);
         
         // Load module contents
         const contents = {};
-        proposal.modules.forEach(module => {
+        modules.forEach(module => {
           contents[module.id.toString()] = module.content || getDefaultContent(module.module_type);
         });
         setModuleContents(contents);
