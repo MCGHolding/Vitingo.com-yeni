@@ -736,6 +736,10 @@ const Dashboard = () => {
     console.log('All Quotes clicked');
   };
 
+  const handleProposalProfiles = () => {
+    setCurrentView('proposal-profiles');
+  };
+
   // Project Management Handlers
   const handleNewProject = () => {
     setCurrentView('new-project');
