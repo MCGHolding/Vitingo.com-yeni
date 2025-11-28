@@ -1986,6 +1986,7 @@ const Dashboard = () => {
         onNewTeklif={handleNewTeklif}
         onAllQuotes={handleAllQuotes}
         onProposalList={handleProposalList}
+        onNewProposal={handleNewProposal}
         onProposalProfiles={handleProposalProfiles}
         onRequestBrief={handleRequestBrief}
         // Calendar handlers
