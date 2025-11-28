@@ -301,6 +301,19 @@ const ProposalProfileWizard = ({ profileId }) => {
         const moduleInfo = availableModules.find(m => m.module_type === moduleType);
         const content = moduleContents[moduleType] || { title: '', body: '', sections: [], images: [], variables: [] };
         
+        // Debug: Check if canvas_template exists for cover_page
+        if (moduleType === 'cover_page') {
+          console.log('🔍 Cover Page Content:', content);
+          if (content.canvas_template) {
+            console.log('✅ Canvas template found!', {
+              selectedTemplate: content.canvas_template.selectedTemplate,
+              elementsCount: content.canvas_template.elements?.length
+            });
+          } else {
+            console.warn('⚠️ NO canvas_template in cover_page content!');
+          }
+        }
+        
         return {
           module_id: moduleInfo?.module_id || moduleType,
           module_name: moduleInfo?.module_name || moduleType,
