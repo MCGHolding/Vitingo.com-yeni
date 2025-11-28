@@ -1077,9 +1077,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Final Countries and Cities Seed Data Testing"
+    - "Proposal Wizard Step 2 and Step 4 Rendering Testing"
   stuck_tasks:
-    - "Final Countries and Cities Seed Data Testing"
+    - "Proposal Wizard Step 2 and Step 4 Rendering Testing"
   completed_tests:
     - "Enhanced CallRecordForm with Dynamic Contact Person Dropdown and New Contact Addition Modal Testing"
     - "FileText JavaScript Error Resolution Testing - QuickNoteAddUnit Component"
