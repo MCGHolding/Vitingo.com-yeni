@@ -194,6 +194,14 @@ const NewProposalWizard = ({ onBack }) => {
     calculatePricingSummary();
   }, [lineItems, generalDiscount, taxRate]);
 
+  // Track unsaved changes
+  useEffect(() => {
+    // Mark as unsaved when form data changes (after initial load)
+    if (formData.profile_id || formData.company_name || formData.project_name) {
+      setHasUnsavedChanges(true);
+    }
+  }, [formData, selectedModules, lineItems]);
+
   const loadInitialData = async () => {
     console.log('🚀 Loading initial data for wizard...');
     setLoading(true);
