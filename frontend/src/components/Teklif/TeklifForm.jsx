@@ -443,6 +443,54 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                 />
               </div>
 
+              {/* Ülke ve Şehir */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Ülke */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ülke
+                  </label>
+                  <Select
+                    value={formData.country}
+                    onValueChange={handleCountryChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ülke seçiniz..." />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {countriesList.map(country => (
+                        <SelectItem key={country.id} value={country.name}>
+                          {country.emoji} {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Şehir */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Şehir
+                  </label>
+                  <Select
+                    value={formData.city}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, city: value }))}
+                    disabled={!formData.country || statesList.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={!formData.country ? "Önce ülke seçiniz..." : statesList.length === 0 ? "Şehir bilgisi yok" : "Şehir seçiniz..."} />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {statesList.map(state => (
+                        <SelectItem key={state.id} value={state.name}>
+                          {state.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               {/* Tarihler */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
