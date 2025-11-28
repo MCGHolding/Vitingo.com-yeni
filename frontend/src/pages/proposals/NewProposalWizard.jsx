@@ -1547,6 +1547,10 @@ const NewProposalWizard = ({ onBack }) => {
   );
 
   const renderStep2 = () => {
+    console.log('🎨 Rendering Step 2');
+    console.log('Available templates keys:', Object.keys(availableTemplates));
+    console.log('Selected modules:', selectedModules.length);
+    
     // Get all modules grouped
     const allModules = [];
     Object.entries(MODULE_CATEGORIES).forEach(([catKey, category]) => {
