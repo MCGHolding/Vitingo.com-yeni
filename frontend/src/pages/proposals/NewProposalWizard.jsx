@@ -1147,6 +1147,13 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     return subtotal - discount;
   };
 
+  const formatCurrency = (amount) => {
+    const symbol = formData.currency_code === 'EUR' ? '€' : 
+                   formData.currency_code === 'USD' ? '$' :
+                   formData.currency_code === 'TRY' ? '₺' : '€';
+    return `${symbol}${amount.toFixed(2)}`;
+  };
+
   const calculatePricingSummary = () => {
     const standardItems = lineItems.filter(item => item.item_type === 'standard');
     const optionalItems = lineItems.filter(item => item.item_type === 'optional');
