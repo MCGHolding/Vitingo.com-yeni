@@ -431,7 +431,7 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
                 <p className="text-gray-500 mb-6">
                   Teklif oluşturmaya başlamak için ilk profilinizi oluşturun
                 </p>
-                <Button onClick={() => setShowSlideOver(true)}>
+                <Button onClick={handleNewProfile}>
                   <Plus className="h-4 w-4 mr-2" />
                   İlk Profilinizi Oluşturun
                 </Button>
