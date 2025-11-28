@@ -2943,7 +2943,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Yeni Teklif Oluştur</h1>
             <p className="text-gray-600 mt-1">
-              Adım {currentStep}/5 - {WIZARD_STEPS[currentStep - 1].name}
+              Adım {currentStep}/5 - {WIZARD_STEPS[currentStep - 1]?.name || 'Tamamlandı'}
               {hasUnsavedChanges && (
                 <span className="ml-3 text-sm text-amber-600">● Kaydedilmemiş değişiklikler</span>
               )}
