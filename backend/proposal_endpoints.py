@@ -412,17 +412,20 @@ async def get_activities(proposal_id: str):
 # ===================== MODULES ENDPOINTS =====================
 
 @proposal_router.post("/proposals/{proposal_id}/modules", response_model=ProposalModule)
-async def add_module(proposal_id: str, module_input: ProposalModuleCreate):
+async def add_module(proposal_id: str, module_input: dict):
     """Add a module to proposal"""
     try:
-        module_data = module_input.dict()
-        module_data["id"] = str(uuid.uuid4())
-        module_data["proposal_id"] = proposal_id
-        module_data["created_at"] = datetime.now(timezone.utc)
-        module_data["updated_at"] = datetime.now(timezone.utc)
-        
-        if "content" not in module_data or not module_data["content"]:
-            module_data["content"] = ModuleContent().dict()
+        # Build module data from input
+        module_data = {
+            "id": str(uuid.uuid4()),
+            "proposal_id": proposal_id,
+            "module_type": module_input.get("module_type"),
+            "template_id": module_input.get("template_id"),
+            "display_order": module_input.get("display_order", 0),
+            "content": module_input.get("content") or ModuleContent().dict(),
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
         
         await db.proposal_modules.insert_one(module_data)
         
