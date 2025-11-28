@@ -1002,6 +1002,13 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Teklif Profilleri') {
+      if (onProposalProfiles) {
+        onProposalProfiles();
+      }
+      return;
+    }
+
     // Handle Contracts menu actions
     if (item.name === 'Sözleşmeler' && !subItem) {
       console.log('Sözleşmeler clicked');
