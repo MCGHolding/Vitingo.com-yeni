@@ -530,9 +530,13 @@ const NewProposalWizard = ({ onBack }) => {
     if (!proposalId) return;
     
     try {
-      // Save each module
+      console.log('💾 Saving modules to backend...');
+      
+      // Save each module and update with backend ID
+      const updatedModules = [];
+      
       for (const module of selectedModules) {
-        await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/modules`, {
+        const response = await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/modules`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -541,10 +545,23 @@ const NewProposalWizard = ({ onBack }) => {
             display_order: module.display_order
           })
         });
+        
+        if (response.ok) {
+          const savedModule = await response.json();
+          // Update module with backend ID
+          updatedModules.push({
+            ...module,
+            backend_id: savedModule.id // Store backend ID separately
+          });
+        } else {
+          updatedModules.push(module);
+        }
       }
-      console.log('Modules saved successfully');
+      
+      setSelectedModules(updatedModules);
+      console.log('✅ Modules saved successfully');
     } catch (error) {
-      console.error('Error saving modules:', error);
+      console.error('❌ Error saving modules:', error);
     }
   };
 
