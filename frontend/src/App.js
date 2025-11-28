@@ -117,6 +117,7 @@ import NewCollectionForm from './components/Collections/NewCollectionForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
 import TeklifForm from './components/Teklif/TeklifForm';
 import AllQuotesPage from './components/Teklif/AllQuotesPage';
+import ProposalProfilesPage from './pages/proposals/ProposalProfilesPage';
 import NewCustomerPage from './pages/NewCustomerPage';
 import Header from './components/Dashboard/Header';
 import LandingPage from './components/Landing/LandingPage';
