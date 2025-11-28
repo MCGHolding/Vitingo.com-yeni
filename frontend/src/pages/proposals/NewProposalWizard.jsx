@@ -801,6 +801,71 @@ const NewProposalWizard = ({ onBack }) => {
     });
   };
 
+  const saveLineItemsToBackend = async () => {
+    if (!proposalId) return;
+    
+    try {
+      // Delete existing line items first
+      console.log('💾 Saving line items to backend...');
+      
+      // Save each line item
+      for (const item of lineItems) {
+        const payload = {
+          item_type: item.item_type || 'standard',
+          category: item.category || '',
+          description: item.description,
+          details: item.details || '',
+          quantity: item.quantity,
+          unit: item.unit,
+          unit_price: item.unit_price,
+          discount_type: item.discount_type || 'none',
+          discount_value: item.discount_value || 0,
+          display_order: item.display_order
+        };
+        
+        await fetch(`${BACKEND_URL}/api/proposals/${proposalId}/line-items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+      
+      console.log('✅ Line items saved successfully');
+    } catch (error) {
+      console.error('❌ Error saving line items:', error);
+    }
+  };
+
+  const updateProposalPricing = async () => {
+    if (!proposalId) return;
+    
+    try {
+      console.log('💾 Updating proposal pricing summary...');
+      
+      const payload = {
+        pricing_summary: {
+          subtotal: pricingSummary.subtotal,
+          discount_type: generalDiscount.type,
+          discount_value: generalDiscount.value,
+          discount_amount: pricingSummary.discount,
+          tax_rate: taxRate,
+          tax_amount: pricingSummary.tax,
+          total: pricingSummary.total
+        }
+      };
+      
+      await fetch(`${BACKEND_URL}/api/proposals/${proposalId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      console.log('✅ Pricing summary updated');
+    } catch (error) {
+      console.error('❌ Error updating pricing:', error);
+    }
+  };
+
   // ==================== STEP 5: PREVIEW & SEND ====================
   
   const generatePublicLink = async () => {
