@@ -400,7 +400,7 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                       {musteriler.length} müşteri bulundu
                       {secilenMusteri && (
                         <span className="text-blue-600 ml-2">
-                          → Seçilen: {secilenMusteri.company_name}
+                          → Seçilen: {secilenMusteri.companyName || secilenMusteri.company_name || secilenMusteri.name}
                         </span>
                       )}
                     </>
