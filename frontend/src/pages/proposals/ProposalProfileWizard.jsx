@@ -51,6 +51,7 @@ const ProposalProfileWizard = () => {
   const [selectedModuleIds, setSelectedModuleIds] = useState([]);
   const [moduleContents, setModuleContents] = useState({});
   const [currentEditingModule, setCurrentEditingModule] = useState(null);
+  const [editorStates, setEditorStates] = useState({});
 
   // Fetch companies and available modules on mount
   useEffect(() => {
