@@ -1131,7 +1131,7 @@ const NewProposalWizard = ({ onBack }) => {
                     <option value="">Satış Fırsatı Seçin</option>
                     {salesOpportunities.map(op => (
                       <option key={op.id} value={op.id}>
-                        {op.customer_name} - {op.project_name} ({op.fair_date})
+                        {op.customer} - {op.title} {op.close_date ? `(${op.close_date})` : ''}
                       </option>
                     ))}
                   </select>
