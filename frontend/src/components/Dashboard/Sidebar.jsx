@@ -387,6 +387,7 @@ export default function Sidebar({
   // Teklif handlers  
   onNewTeklif,
   onAllQuotes,
+  onProposalProfiles,
   onRequestBrief,
   // Calendar handlers
   onCalendar,
