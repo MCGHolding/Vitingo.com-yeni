@@ -552,36 +552,54 @@ const ProposalProfileWizard = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">İçerik</label>
-                  <div className="border rounded-lg">
-                    <ReactQuill
-                      theme="snow"
-                      value={currentContent.body || ''}
-                      onChange={(value) => handleModuleContentChange(currentEditingModule, 'body', value)}
-                      style={{ height: '300px', marginBottom: '50px' }}
-                      modules={{
-                        toolbar: [
-                          [{ 'header': [1, 2, 3, false] }],
-                          ['bold', 'italic', 'underline', 'strike'],
-                          [{ 'color': [] }, { 'background': [] }],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          [{ 'align': [] }],
-                          ['link', 'image'],
-                          ['clean']
-                        ]
-                      }}
-                      formats={[
-                        'header',
-                        'bold', 'italic', 'underline', 'strike',
-                        'color', 'background',
-                        'list', 'bullet',
-                        'align',
-                        'link', 'image'
-                      ]}
+                  <div className="border rounded-lg bg-white" style={{ minHeight: '400px' }}>
+                    <Editor
+                      editorState={getEditorState(currentEditingModule)}
+                      onEditorStateChange={(editorState) => handleEditorChange(currentEditingModule, editorState)}
+                      wrapperClassName="wrapper-class"
+                      editorClassName="editor-class px-4 py-2"
+                      toolbarClassName="toolbar-class"
                       placeholder="Modül içeriğini buraya yazın... Bold, italic, resim ekleyebilirsiniz."
+                      toolbar={{
+                        options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
+                        inline: {
+                          options: ['bold', 'italic', 'underline']
+                        },
+                        blockType: {
+                          inDropdown: true,
+                          options: ['Normal', 'H1', 'H2', 'H3']
+                        },
+                        list: {
+                          inDropdown: false,
+                          options: ['unordered', 'ordered']
+                        },
+                        textAlign: {
+                          inDropdown: false,
+                          options: ['left', 'center', 'right']
+                        },
+                        link: {
+                          inDropdown: false,
+                          options: ['link']
+                        },
+                        image: {
+                          uploadEnabled: true,
+                          uploadCallback: (file) => {
+                            return new Promise((resolve, reject) => {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                resolve({ data: { link: reader.result } });
+                              };
+                              reader.onerror = reject;
+                              reader.readAsDataURL(file);
+                            });
+                          },
+                          alt: { present: true, mandatory: false }
+                        }
+                      }}
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    💡 Değişkenler: Metne <strong>{'{{firma_adı}}'}</strong>, <strong>{'{{fuar_adı}}'}</strong>, <strong>{'{{tarih}}'}</strong> gibi değişkenler ekleyebilirsiniz.
+                    💡 <strong>Değişkenler:</strong> Metne <code className="bg-gray-100 px-1 rounded">{'{{firma_adı}}'}</code>, <code className="bg-gray-100 px-1 rounded">{'{{fuar_adı}}'}</code>, <code className="bg-gray-100 px-1 rounded">{'{{tarih}}'}</code> gibi değişkenler ekleyebilirsiniz.
                   </p>
                 </div>
 
