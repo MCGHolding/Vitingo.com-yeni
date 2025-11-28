@@ -191,6 +191,7 @@ const NewProposalWizard = ({ onBack }) => {
   }, [lineItems, generalDiscount, taxRate]);
 
   const loadInitialData = async () => {
+    console.log('🚀 Loading initial data for wizard...');
     setLoading(true);
     try {
       await Promise.all([
@@ -200,8 +201,9 @@ const NewProposalWizard = ({ onBack }) => {
         loadCurrencies(),
         loadCountries()
       ]);
+      console.log('✅ Initial data loaded successfully');
     } catch (error) {
-      console.error('Error loading initial data:', error);
+      console.error('❌ Error loading initial data:', error);
     } finally {
       setLoading(false);
     }
