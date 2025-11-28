@@ -327,8 +327,8 @@ const ProposalProfileWizard = ({ profileId }) => {
       });
 
       if (response.ok) {
-        toast.success(profileId ? 'Profil güncellendi' : 'Profil oluşturuldu');
-        navigate('/proposals/profiles');
+        toast.success(urlProfileId ? 'Profil güncellendi' : 'Profil oluşturuldu');
+        window.location.href = '/proposals/profiles';
       } else {
         const error = await response.json();
         toast.error(error.detail || 'Kaydetme başarısız');
