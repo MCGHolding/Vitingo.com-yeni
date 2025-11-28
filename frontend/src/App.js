@@ -1629,6 +1629,9 @@ const Dashboard = () => {
       case 'all-quotes':
         return <AllQuotesPage onBackToDashboard={handleBackToDashboard} onNewTeklif={handleNewTeklif} />;
 
+      case 'proposal-profiles':
+        return <ProposalProfilesPage onBackToDashboard={handleBackToDashboard} />;
+
       // Calendar cases
       case 'calendar':
       case 'new-meeting':
