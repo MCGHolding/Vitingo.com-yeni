@@ -15,6 +15,12 @@ async def create_profile(profile_input: ProposalProfileCreate):
         profile_data["created_at"] = datetime.now(timezone.utc)
         profile_data["updated_at"] = datetime.now(timezone.utc)
         
+        # Set defaults if not provided
+        if not profile_data.get("branding"):
+            profile_data["branding"] = Branding().dict()
+        if not profile_data.get("defaults"):
+            profile_data["defaults"] = ProfileDefaults().dict()
+        
         # If this is set as default, unset others
         if profile_data.get("is_default"):
             await db.proposal_profiles.update_many(
