@@ -600,57 +600,46 @@ const ProposalProfileWizard = () => {
       <h2 className="text-base font-semibold text-gray-900">Önizleme</h2>
       
       <div className="bg-gray-50 border rounded p-3 space-y-3 text-sm">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">Profil Bilgileri</h3>
-          <div className="mt-2 grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Profil Adı:</p>
-              <p className="font-medium">{formData.profile_name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Şirket:</p>
-              <p className="font-medium">{formData.company_info.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Para Birimi:</p>
-              <p className="font-medium">{formData.defaults.currency}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Geçerlilik:</p>
-              <p className="font-medium">{formData.defaults.validity_days} gün</p>
-            </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <p className="text-xs text-gray-500">Profil</p>
+            <p className="font-medium text-sm">{formData.profile_name}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Şirket</p>
+            <p className="font-medium text-sm truncate">{formData.company_info.name}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Para / Geçerlilik</p>
+            <p className="font-medium text-sm">{formData.defaults.currency} / {formData.defaults.validity_days} gün</p>
           </div>
         </div>
 
-        <div className="border-t pt-4">
-          <h3 className="text-lg font-semibold text-gray-900">Seçilen Modüller ({selectedModuleIds.length})</h3>
-          <div className="mt-2 space-y-2">
+        <div className="border-t pt-2">
+          <p className="text-xs font-medium text-gray-700 mb-1">Modüller ({selectedModuleIds.length})</p>
+          <div className="flex flex-wrap gap-1">
             {selectedModuleIds.map(moduleType => {
               const module = availableModules.find(m => m.module_type === moduleType);
               return (
-                <div key={moduleType} className="flex items-center space-x-2 text-sm">
+                <span key={moduleType} className="inline-flex items-center space-x-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">
                   <span>{module?.icon}</span>
                   <span>{module?.module_name}</span>
-                </div>
+                </span>
               );
             })}
           </div>
         </div>
 
-        <div className="border-t pt-4">
-          <h3 className="text-lg font-semibold text-gray-900">Renk Paleti</h3>
-          <div className="mt-2 flex space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded border" style={{ backgroundColor: formData.branding.primary_color }} />
-              <span className="text-sm">Ana</span>
+        <div className="border-t pt-2">
+          <p className="text-xs font-medium text-gray-700 mb-1">Renk Paleti</p>
+          <div className="flex space-x-2">
+            <div className="flex items-center space-x-1">
+              <div className="w-6 h-6 rounded border" style={{ backgroundColor: formData.branding.primary_color }} />
+              <span className="text-xs">Ana</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded border" style={{ backgroundColor: formData.branding.secondary_color }} />
-              <span className="text-sm">İkincil</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded border" style={{ backgroundColor: formData.branding.accent_color }} />
-              <span className="text-sm">Vurgu</span>
+            <div className="flex items-center space-x-1">
+              <div className="w-6 h-6 rounded border" style={{ backgroundColor: formData.branding.secondary_color }} />
+              <span className="text-xs">İkincil</span>
             </div>
           </div>
         </div>
