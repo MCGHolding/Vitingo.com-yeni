@@ -6928,6 +6928,72 @@ async def delete_opportunity(opportunity_id: str):
         logger.error(f"Error deleting opportunity {opportunity_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== QUOTE/TEKLIF API ENDPOINTS =====================
+
+@api_router.post("/quotes", response_model=Quote)
+async def create_quote(quote_input: QuoteCreate):
+    """Create a new quote/teklif"""
+    try:
+        quote_data = quote_input.dict()
+        quote_data["id"] = str(uuid.uuid4())
+        quote_data["created_at"] = datetime.now(timezone.utc)
+        quote_data["updated_at"] = datetime.now(timezone.utc)
+        
+        await db.quotes.insert_one(quote_data)
+        
+        return Quote(**quote_data)
+    except Exception as e:
+        logger.error(f"Error creating quote: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating quote: {str(e)}")
+
+@api_router.get("/quotes", response_model=List[Quote])
+async def get_quotes(status: Optional[str] = None):
+    """Get all quotes with optional status filter"""
+    try:
+        query = {}
+        if status:
+            query["status"] = status
+        
+        quotes = await db.quotes.find(query, {"_id": 0}).sort("created_at", -1).to_list(length=None)
+        return [Quote(**quote) for quote in quotes]
+    except Exception as e:
+        logger.error(f"Error fetching quotes: {str(e)}")
+        return []
+
+@api_router.get("/quotes/{quote_id}", response_model=Quote)
+async def get_quote(quote_id: str):
+    """Get a specific quote by ID"""
+    try:
+        quote = await db.quotes.find_one({"id": quote_id}, {"_id": 0})
+        if not quote:
+            raise HTTPException(status_code=404, detail="Quote not found")
+        return Quote(**quote)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching quote {quote_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/quotes/{quote_id}")
+async def delete_quote(quote_id: str):
+    """Delete a quote"""
+    try:
+        existing = await db.quotes.find_one({"id": quote_id})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Quote not found")
+        
+        result = await db.quotes.delete_one({"id": quote_id})
+        
+        if result.deleted_count == 1:
+            return {"message": "Quote deleted successfully", "id": quote_id}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete quote")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting quote {quote_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== OPPORTUNITY STATUS & STAGE MANAGEMENT =====================
 
 # Status and Stage Models
