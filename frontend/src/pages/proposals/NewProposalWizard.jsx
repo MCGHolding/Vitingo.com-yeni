@@ -1230,19 +1230,41 @@ const NewProposalWizard = ({ onBack }) => {
           const newProposal = await response.json();
           setProposalId(newProposal.id);
           setHasUnsavedChanges(false);
-          alert('✅ Taslak kaydedildi!');
+          setNotification({ 
+            show: true, 
+            message: `✅ Taslak kaydedildi! (${newProposal.proposal_number})`, 
+            type: 'success' 
+          });
           console.log('✅ Draft saved:', newProposal.proposal_number);
+          setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
+        } else {
+          setNotification({ 
+            show: true, 
+            message: '❌ Taslak kaydedilemedi!', 
+            type: 'error' 
+          });
+          setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
         }
       } else {
         // Update existing draft
         // Already auto-saved during the process
         setHasUnsavedChanges(false);
-        alert('✅ Taslak güncellendi!');
+        setNotification({ 
+          show: true, 
+          message: '✅ Taslak güncellendi!', 
+          type: 'success' 
+        });
         console.log('✅ Draft updated');
+        setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
       }
     } catch (error) {
       console.error('❌ Error saving draft:', error);
-      alert('❌ Taslak kaydedilemedi!');
+      setNotification({ 
+        show: true, 
+        message: '❌ Taslak kaydedilemedi!', 
+        type: 'error' 
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 4000);
     } finally {
       setLoading(false);
     }
