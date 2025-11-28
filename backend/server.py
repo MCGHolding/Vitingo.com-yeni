@@ -6746,7 +6746,7 @@ class OpportunityCreate(BaseModel):
     status: str = "open"
     stage: str = "lead"
     priority: str = "medium"
-    close_date: str
+    close_date: Optional[str] = None
     source: Optional[str] = ""
     description: Optional[str] = ""
     business_type: Optional[str] = ""
