@@ -681,13 +681,18 @@ const NewProposalWizard = ({ onBack }) => {
     if (!proposalId) return;
     
     const module = selectedModules.find(m => m.id === moduleId);
-    if (!module) return;
+    if (!module || !module.backend_id) {
+      console.warn('Module backend_id not found, skipping save');
+      return;
+    }
     
     const content = moduleContents[moduleId];
     
     try {
+      console.log(`💾 Auto-saving module ${module.name}...`);
+      
       const response = await fetch(
-        `${BACKEND_URL}/api/proposals/${proposalId}/modules/${module.id}`,
+        `${BACKEND_URL}/api/proposals/${proposalId}/modules/${module.backend_id}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -699,11 +704,13 @@ const NewProposalWizard = ({ onBack }) => {
       
       if (response.ok) {
         setSaveStatus('saved');
+        console.log('✅ Content saved');
       } else {
         setSaveStatus('error');
+        console.error('❌ Save failed');
       }
     } catch (error) {
-      console.error('Save error:', error);
+      console.error('❌ Save error:', error);
       setSaveStatus('error');
     }
   };
