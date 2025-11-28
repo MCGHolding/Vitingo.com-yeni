@@ -237,18 +237,21 @@ const NewProposalWizard = ({ onBack }) => {
   };
 
   const loadProfiles = async () => {
+    console.log('📋 Loading proposal profiles...');
     try {
       const response = await fetch(`${BACKEND_URL}/api/proposal-profiles?user_id=demo-user`);
       const data = await response.json();
+      console.log(`✅ Loaded ${data?.length || 0} profiles`);
       setProfiles(data || []);
       
       // Auto-select default profile
       const defaultProfile = data.find(p => p.is_default);
       if (defaultProfile) {
+        console.log('✅ Auto-selected default profile:', defaultProfile.profile_name);
         setFormData(prev => ({ ...prev, profile_id: defaultProfile.id }));
       }
     } catch (error) {
-      console.error('Error loading profiles:', error);
+      console.error('❌ Error loading profiles:', error);
     }
   };
 
