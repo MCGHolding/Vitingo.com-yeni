@@ -37,7 +37,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
     const loadData = async () => {
       setLoading(true);
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://version-control-7.preview.emergentagent.com';
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://crm-evolution-8.preview.emergentagent.com';
         
         // Load receipts
         const receiptsResponse = await fetch(`${backendUrl}/api/expense-receipts?status=paid`);
@@ -221,7 +221,7 @@ const PaidExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => 
   // Send email
   const sendEmail = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://version-control-7.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://crm-evolution-8.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/send-expense-receipt-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

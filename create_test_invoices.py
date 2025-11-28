@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://version-control-7.preview.emergentagent.com"
+BACKEND_URL = "https://crm-evolution-8.preview.emergentagent.com"
 
 def create_test_invoices():
     """Create test invoices with different statuses for comprehensive testing"""
