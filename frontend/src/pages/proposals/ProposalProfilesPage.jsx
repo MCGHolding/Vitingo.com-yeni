@@ -76,6 +76,7 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
   useEffect(() => {
     loadProfiles();
     loadCurrencies();
+    loadCompanyGroups();
   }, []);
 
   const loadProfiles = async () => {
