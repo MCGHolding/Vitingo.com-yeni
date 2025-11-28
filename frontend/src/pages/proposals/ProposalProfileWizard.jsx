@@ -1,13 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import dynamic from 'next/dynamic';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = typeof window !== 'undefined' ? require('react-quill') : null;
-if (typeof window !== 'undefined') {
-  require('react-quill/dist/quill.snow.css');
-}
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
