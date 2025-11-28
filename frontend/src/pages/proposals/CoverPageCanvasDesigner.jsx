@@ -126,33 +126,48 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
 
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Left: Variables */}
-          <div className="w-64 border-r bg-gray-50 p-4 overflow-y-auto">
-            <h3 className="font-semibold text-gray-700 mb-3 flex items-center">
-              <Plus className="w-4 h-4 mr-2" />
-              Değişkenler Ekle
-            </h3>
-            <div className="space-y-2">
-              {AVAILABLE_VARIABLES.map(variable => (
-                <button
-                  key={variable.id}
-                  onClick={() => handleAddVariable(variable)}
-                  className="w-full text-left px-3 py-2 bg-white border border-gray-200 rounded hover:border-purple-500 hover:bg-purple-50 transition text-sm"
-                >
-                  {variable.label}
-                </button>
-              ))}
+          {/* Left: Templates + Variables */}
+          <div className="w-56 border-r bg-gray-50 overflow-y-auto">
+            {/* Templates */}
+            <div className="p-3 border-b bg-white">
+              <h3 className="font-semibold text-gray-700 text-xs mb-2 flex items-center">
+                <Palette className="w-3 h-3 mr-1" />
+                Şablon
+              </h3>
+              <div className="grid grid-cols-2 gap-1">
+                {TEMPLATES.map(template => (
+                  <button
+                    key={template.id}
+                    onClick={() => applyTemplate(template.id)}
+                    className={`px-2 py-1.5 text-xs rounded border transition ${
+                      selectedTemplate === template.id
+                        ? 'bg-purple-500 text-white border-purple-600'
+                        : 'bg-white border-gray-200 hover:border-purple-300'
+                    }`}
+                  >
+                    {template.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t">
-              <h4 className="font-semibold text-gray-700 text-sm mb-2">💡 Nasıl Kullanılır?</h4>
-              <ul className="text-xs text-gray-600 space-y-1">
-                <li>• Değişkene tıkla → Canvas'a eklenir</li>
-                <li>• Sürükle → Konumu değiştir</li>
-                <li>• Köşelerden → Boyutlandır</li>
-                <li>• Tıkla → Düzenle (sağ panel)</li>
-                <li>• Çöp kutusu → Sil</li>
-              </ul>
+            {/* Variables */}
+            <div className="p-3">
+              <h3 className="font-semibold text-gray-700 text-xs mb-2 flex items-center">
+                <Plus className="w-3 h-3 mr-1" />
+                Değişkenler
+              </h3>
+              <div className="space-y-1">
+                {AVAILABLE_VARIABLES.map(variable => (
+                  <button
+                    key={variable.id}
+                    onClick={() => handleAddVariable(variable)}
+                    className="w-full text-left px-2 py-1.5 bg-white border border-gray-200 rounded hover:border-purple-400 hover:bg-purple-50 transition text-xs"
+                  >
+                    {variable.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
