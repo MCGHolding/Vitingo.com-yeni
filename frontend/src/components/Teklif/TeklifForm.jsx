@@ -79,7 +79,52 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
     console.log('🚀 TeklifForm useEffect triggered - loading data...');
     loadSatisFiresatlari();
     loadMusteriler();
+    loadCountries();
   }, []);
+  
+  // Load countries from react-country-state-city library
+  const loadCountries = async () => {
+    try {
+      const countries = await GetCountries();
+      setCountriesList(countries);
+      
+      // Find Turkey by default (code: TR)
+      const turkey = countries.find(c => c.iso2 === 'TR');
+      if (turkey) {
+        setSelectedCountryId(turkey.id);
+        setFormData(prev => ({ ...prev, country: turkey.name }));
+        loadStates(turkey.id);
+      }
+    } catch (error) {
+      console.error('Ülkeler yüklenemedi:', error);
+    }
+  };
+  
+  // Load states/cities when country changes
+  const loadStates = async (countryId) => {
+    try {
+      const states = await GetState(countryId);
+      setStatesList(states);
+    } catch (error) {
+      console.error('Şehirler yüklenemedi:', error);
+      setStatesList([]);
+    }
+  };
+  
+  // Handle country change
+  const handleCountryChange = (countryName) => {
+    const selectedCountry = countriesList.find(c => c.name === countryName);
+    
+    if (selectedCountry) {
+      setSelectedCountryId(selectedCountry.id);
+      setFormData(prev => ({
+        ...prev,
+        country: selectedCountry.name,
+        city: '' // Clear city
+      }));
+      loadStates(selectedCountry.id);
+    }
+  };
 
   // Debug: log state changes
   useEffect(() => {
