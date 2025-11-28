@@ -440,6 +440,28 @@ const NewProposalWizard = ({ onBack }) => {
       setErrors(prev => ({ ...prev, [field]: null }));
     }
   };
+  
+  const handleContactPersonChange = (contactName) => {
+    // Find the selected contact from availableContacts
+    const selectedContact = availableContacts.find(c => c.fullName === contactName);
+    
+    if (selectedContact) {
+      console.log('✅ Contact selected:', selectedContact.fullName);
+      setFormData(prev => ({
+        ...prev,
+        contact_person: selectedContact.fullName || '',
+        contact_email: selectedContact.email || '',
+        contact_phone: selectedContact.mobile || '',
+        address: selectedContact.address || prev.address // Keep customer address as fallback
+      }));
+    } else {
+      // Manual entry
+      setFormData(prev => ({
+        ...prev,
+        contact_person: contactName
+      }));
+    }
+  };
 
   const validateStep1 = () => {
     const newErrors = {};
