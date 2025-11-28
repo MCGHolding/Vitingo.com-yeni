@@ -2352,11 +2352,8 @@ const NewProposalWizard = ({ onBack }) => {
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
-          {currentStep >= 4 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Adım {currentStep} içeriği henüz hazır değil</p>
-            </div>
-          )}
+          {currentStep === 4 && renderStep4()}
+          {currentStep === 5 && renderStep5()}
         </div>
 
         {/* Navigation Buttons */}
