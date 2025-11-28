@@ -401,9 +401,12 @@ const NewProposalWizard = ({ onBack }) => {
   // ==================== STEP 2: MODULE SELECTION ====================
   
   const loadModuleTemplates = async () => {
+    console.log('📚 Loading module templates...');
     try {
       const response = await fetch(`${BACKEND_URL}/api/module-templates`);
       const data = await response.json();
+      
+      console.log(`✅ Loaded ${data.length} templates`);
       
       // Group templates by module type
       const grouped = {};
@@ -414,9 +417,10 @@ const NewProposalWizard = ({ onBack }) => {
         grouped[template.module_type].push(template);
       });
       
+      console.log(`✅ Grouped into ${Object.keys(grouped).length} module types`);
       setAvailableTemplates(grouped);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error('❌ Error loading templates:', error);
     }
   };
 
