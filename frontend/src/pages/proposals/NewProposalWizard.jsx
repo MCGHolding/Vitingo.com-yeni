@@ -1351,14 +1351,39 @@ const NewProposalWizard = ({ onBack }) => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Yetkili Kişi</label>
-                <input
-                  type="text"
-                  value={formData.contact_person}
-                  onChange={(e) => handleInputChange('contact_person', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-                  disabled={formData.creation_type === 'opportunity'}
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Yetkili Kişi
+                  {availableContacts.length > 1 && (
+                    <span className="ml-2 text-xs text-blue-600">
+                      ({availableContacts.length} kişi mevcut)
+                    </span>
+                  )}
+                </label>
+                
+                {availableContacts.length > 1 ? (
+                  // Multiple contacts - show dropdown
+                  <select
+                    value={formData.contact_person}
+                    onChange={(e) => handleContactPersonChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Yetkili Kişi Seçin</option>
+                    {availableContacts.map((contact, idx) => (
+                      <option key={idx} value={contact.fullName}>
+                        {contact.fullName} {contact.position ? `- ${contact.position}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  // Single or no contacts - show input
+                  <input
+                    type="text"
+                    value={formData.contact_person}
+                    onChange={(e) => handleInputChange('contact_person', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    disabled={formData.creation_type === 'opportunity' && availableContacts.length === 1}
+                  />
+                )}
               </div>
               
               <div>
