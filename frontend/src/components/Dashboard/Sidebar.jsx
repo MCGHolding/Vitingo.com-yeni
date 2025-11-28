@@ -636,10 +636,22 @@ export default function Sidebar({
     }
     
     if (subItem && subItem.name === 'Tüm Teklifler') {
+      if (onAllQuotes) {
+        onAllQuotes();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Yeni Teklif Oluştur (v2)') {
+      if (onNewProposal) {
+        onNewProposal();
+      }
+      return;
+    }
+    
+    if (subItem && subItem.name === 'Teklif Listesi (v2)') {
       if (onProposalList) {
         onProposalList();
-      } else if (onAllQuotes) {
-        onAllQuotes();
       }
       return;
     }
