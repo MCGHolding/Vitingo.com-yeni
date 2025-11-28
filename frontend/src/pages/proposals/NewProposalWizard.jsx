@@ -2694,12 +2694,27 @@ const NewProposalWizard = ({ onBack }) => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Yeni Teklif Oluştur</h1>
-            <p className="text-gray-600 mt-1">Adım {currentStep}/5 - {WIZARD_STEPS[currentStep - 1].name}</p>
+            <p className="text-gray-600 mt-1">
+              Adım {currentStep}/5 - {WIZARD_STEPS[currentStep - 1].name}
+              {hasUnsavedChanges && (
+                <span className="ml-3 text-sm text-amber-600">● Kaydedilmemiş değişiklikler</span>
+              )}
+            </p>
           </div>
-          <Button variant="outline" onClick={onBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            İptal
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={saveDraft}
+              disabled={loading || !formData.profile_id}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Taslak Olarak Kaydet
+            </Button>
+            <Button variant="outline" onClick={() => handleExitAttempt(onBack)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              İptal
+            </Button>
+          </div>
         </div>
 
         {/* Stepper */}
