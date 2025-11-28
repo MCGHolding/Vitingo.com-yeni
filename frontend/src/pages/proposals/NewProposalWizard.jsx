@@ -296,11 +296,62 @@ const NewProposalWizard = ({ onBack }) => {
     console.log('✅ Auto-filling from opportunity:', opportunity.title);
     setSelectedOpportunity(opportunity);
     
+    // Try to find customer by company name and get contact details
+    let contactEmail = '';
+    let contactPhone = '';
+    let contactAddress = '';
+    
+    if (opportunity.customer && opportunity.contact_person) {
+      try {
+        console.log('🔍 Searching for customer:', opportunity.customer);
+        const response = await fetch(`${BACKEND_URL}/api/customers`);
+        const allCustomers = await response.json();
+        
+        // Find customer by company name
+        const customer = allCustomers.find(c => 
+          c.companyName && c.companyName.toLowerCase() === opportunity.customer.toLowerCase()
+        );
+        
+        if (customer) {
+          console.log('✅ Customer found:', customer.companyName);
+          
+          // Find contact person in contacts array
+          if (customer.contacts && Array.isArray(customer.contacts)) {
+            const contact = customer.contacts.find(c => 
+              c.fullName && c.fullName.toLowerCase().includes(opportunity.contact_person.toLowerCase())
+            );
+            
+            if (contact) {
+              console.log('✅ Contact found:', contact.fullName);
+              contactEmail = contact.email || '';
+              contactPhone = contact.mobile || '';
+              contactAddress = contact.address || customer.address || '';
+            } else {
+              // Use customer's main contact info
+              contactEmail = customer.email || '';
+              contactPhone = customer.phone || customer.mobile || '';
+              contactAddress = customer.address || '';
+            }
+          } else {
+            // Use customer's main contact info
+            contactEmail = customer.email || '';
+            contactPhone = customer.phone || customer.mobile || '';
+            contactAddress = customer.address || '';
+          }
+        }
+      } catch (error) {
+        console.error('⚠️ Error fetching customer details:', error);
+      }
+    }
+    
     // Fill form with opportunity data
     setFormData(prev => ({
       ...prev,
       company_name: opportunity.customer || '',
       contact_person: opportunity.contact_person || '',
+      contact_email: contactEmail,
+      contact_phone: contactPhone,
+      address: contactAddress,
       project_name: opportunity.title || '',
       fair_center: opportunity.trade_show || '',
       city: opportunity.city || '',
@@ -309,7 +360,7 @@ const NewProposalWizard = ({ onBack }) => {
       end_date: opportunity.close_date || ''
     }));
     
-    console.log('✅ Form auto-filled with opportunity data');
+    console.log('✅ Form auto-filled with opportunity and customer data');
   };
 
   const autoFillFromCustomer = async () => {
