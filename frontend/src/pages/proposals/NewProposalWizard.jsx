@@ -416,7 +416,12 @@ const NewProposalWizard = ({ onBack }) => {
         const proposal = await response.json();
         console.log('Proposal created:', proposal);
         
-        // TODO: Store proposal ID for next steps
+        // Store proposal ID for next steps
+        setProposalId(proposal.id);
+        
+        // Load templates for step 2
+        await loadModuleTemplates();
+        
         setCurrentStep(2);
       } catch (error) {
         console.error('Error saving proposal:', error);
