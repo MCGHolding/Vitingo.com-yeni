@@ -227,7 +227,7 @@ class Proposal(BaseModel):
     profile_id: str
     proposal_number: str
     sales_opportunity_id: Optional[str] = None
-    customer_id: str
+    customer_id: Optional[str] = None
     customer_snapshot: CustomerSnapshot
     project_info: ProjectInfo = Field(default_factory=ProjectInfo)
     settings: ProposalSettings = Field(default_factory=ProposalSettings)
