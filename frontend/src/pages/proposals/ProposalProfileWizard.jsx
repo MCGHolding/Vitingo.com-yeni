@@ -521,7 +521,7 @@ const ProposalProfileWizard = () => {
 
                 <div className="mt-8 pt-4 border-t">
                   <p className="text-sm text-gray-600 mb-2">
-                    <strong>Değişkenler:</strong> {{'{{'}}firma_adı{{'}}'}}, {{'{{'}}fuar_adı{{'}}'}}, {{'{{'}}tarih{{'}}'}}, {{'{{'}}ülke{{'}}'}}
+                    <strong>Değişkenler:</strong> {'{{'}firma_adı{'}}'}, {'{{'}fuar_adı{'}}'}, {'{{'}tarih{'}}'}, {'{{'}ülke{'}}'}
                   </p>
                 </div>
               </>
