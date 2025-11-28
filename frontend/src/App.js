@@ -235,6 +235,7 @@ const Dashboard = () => {
   };
   
   const [currentView, setCurrentView] = useState(getInitialView());
+  const [selectedProposalId, setSelectedProposalId] = useState(null);
   
   // Update URL when view changes (without reload)
   useEffect(() => {
