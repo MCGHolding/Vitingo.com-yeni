@@ -590,6 +590,12 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             if (found) moduleInfo = found;
           });
           
+          // Parse canvas_template if it exists for cover_page
+          let canvas_template = null;
+          if (pm.module_type === 'cover_page' && pm.content_template?.canvas_template) {
+            canvas_template = pm.content_template.canvas_template;
+          }
+          
           return {
             type: pm.module_type,
             name: pm.module_name,
@@ -599,7 +605,9 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               title: pm.content_template?.title || '',
               body: pm.content_template?.body || '',
               sections: pm.content_template?.sections || [],
-              images: pm.content_template?.images || []
+              images: pm.content_template?.images || [],
+              canvas_template: canvas_template, // Store canvas template for cover_page
+              type: pm.content_template?.type || 'default' // 'canvas_design' or 'default'
             }
           };
         });
