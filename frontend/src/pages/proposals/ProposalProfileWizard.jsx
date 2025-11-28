@@ -490,12 +490,12 @@ const ProposalProfileWizard = () => {
     const currentContent = moduleContents[currentEditingModule] || { title: '', body: '', sections: [], images: [], variables: [] };
 
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-900">Modül İçeriklerini Oluştur</h2>
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-gray-900">Modül İçerikleri</h2>
         
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           {/* Module list sidebar */}
-          <div className="w-64 space-y-2">
+          <div className="w-48 space-y-1">
             {selectedModulesList.map((module) => (
               <button
                 key={module.module_type}
