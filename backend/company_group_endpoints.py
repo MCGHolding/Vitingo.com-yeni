@@ -6,10 +6,15 @@ from typing import List
 from pydantic import BaseModel
 from datetime import datetime
 import logging
-
-from server import db
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
 
 logger = logging.getLogger(__name__)
+
+# MongoDB connection
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
+client = AsyncIOMotorClient(MONGO_URL)
+db = client['test_database']
 
 company_group_router = APIRouter()
 
