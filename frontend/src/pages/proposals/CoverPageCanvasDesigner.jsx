@@ -1,21 +1,35 @@
 import React, { useState, useRef } from 'react';
 import { Rnd } from 'react-rnd';
-import { X, Plus, Trash2, Type, Image as ImageIcon, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { X, Plus, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Palette } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+
+// Arka Plan Şablonları
+const TEMPLATES = [
+  { id: 'minimal', name: 'Minimal', bg: 'bg-white' },
+  { id: 'gradient_blue', name: 'Mavi Gradient', bg: 'bg-gradient-to-br from-blue-50 to-blue-100' },
+  { id: 'gradient_purple', name: 'Mor Gradient', bg: 'bg-gradient-to-br from-purple-50 to-pink-50' },
+  { id: 'sidebar', name: 'Yan Panel', bg: 'bg-white', sidebar: true },
+  { id: 'split', name: 'Bölünmüş', bg: 'bg-white', split: true },
+  { id: 'diagonal', name: 'Çapraz', bg: 'bg-white', diagonal: true },
+  { id: 'geometric', name: 'Geometrik', bg: 'bg-white', geometric: true },
+  { id: 'wave', name: 'Dalga', bg: 'bg-white', wave: true },
+  { id: 'gradient_warm', name: 'Sıcak Gradient', bg: 'bg-gradient-to-br from-orange-50 to-red-50' },
+  { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' }
+];
 
 // Kullanılabilir Değişkenler
 const AVAILABLE_VARIABLES = [
-  { id: 'company_logo', label: '🏢 Şirket Logosu', type: 'image', variable: '{{company_logo}}' },
-  { id: 'company_name', label: '📝 Firma Adı', type: 'text', variable: '{{company_name}}' },
-  { id: 'fair_name', label: '🎯 Fuar Adı', type: 'text', variable: '{{fair_name}}' },
+  { id: 'company_logo', label: '🏢 Logo', type: 'image', variable: '{{company_logo}}' },
+  { id: 'company_name', label: '📝 Firma', type: 'text', variable: '{{company_name}}' },
+  { id: 'fair_name', label: '🎯 Fuar', type: 'text', variable: '{{fair_name}}' },
   { id: 'country', label: '🌍 Ülke', type: 'text', variable: '{{country}}' },
   { id: 'city', label: '🏙️ Şehir', type: 'text', variable: '{{city}}' },
-  { id: 'start_date', label: '📅 Başlangıç Tarihi', type: 'text', variable: '{{start_date}}' },
-  { id: 'end_date', label: '📅 Bitiş Tarihi', type: 'text', variable: '{{end_date}}' },
-  { id: 'venue', label: '🏢 Fuar Merkezi', type: 'text', variable: '{{venue}}' },
+  { id: 'start_date', label: '📅 Başlangıç', type: 'text', variable: '{{start_date}}' },
+  { id: 'end_date', label: '📅 Bitiş', type: 'text', variable: '{{end_date}}' },
+  { id: 'venue', label: '🏢 Merkez', type: 'text', variable: '{{venue}}' },
   { id: 'prepared_by', label: '👤 Hazırlayan', type: 'text', variable: '{{prepared_by}}' },
-  { id: 'prepared_title', label: '💼 Görevi', type: 'text', variable: '{{prepared_title}}' },
-  { id: 'prepared_date', label: '📆 Hazırlanma Tarihi', type: 'text', variable: '{{prepared_date}}' }
+  { id: 'prepared_title', label: '💼 Görev', type: 'text', variable: '{{prepared_title}}' },
+  { id: 'prepared_date', label: '📆 Tarih', type: 'text', variable: '{{prepared_date}}' }
 ];
 
 const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
