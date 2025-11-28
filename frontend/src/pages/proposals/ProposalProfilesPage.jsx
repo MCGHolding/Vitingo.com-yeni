@@ -629,15 +629,82 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Firma Bilgileri</h3>
                       <div className="space-y-4">
+                        
+                        {/* Company Group Selection */}
+                        {companyGroups.length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Grup Şirketi
+                              {companyGroups.length > 1 && (
+                                <span className="ml-2 text-xs text-blue-600">
+                                  ({companyGroups.length} grup mevcut)
+                                </span>
+                              )}
+                            </label>
+                            {companyGroups.length === 1 ? (
+                              <input
+                                type="text"
+                                value={companyGroups[0].name}
+                                disabled
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                              />
+                            ) : (
+                              <select
+                                value={formData.company_group_id}
+                                onChange={(e) => handleGroupChange(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                              >
+                                <option value="">Grup Seçin</option>
+                                {companyGroups.map(group => (
+                                  <option key={group.id} value={group.id}>
+                                    {group.name}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Company Selection (if group has multiple companies) */}
+                        {selectedGroupCompanies.length > 1 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Şirket Seçin
+                              <span className="ml-2 text-xs text-blue-600">
+                                ({selectedGroupCompanies.length} şirket mevcut)
+                              </span>
+                            </label>
+                            <select
+                              value={formData.selected_company_id}
+                              onChange={(e) => {
+                                const company = selectedGroupCompanies.find(c => c.id === e.target.value);
+                                if (company) handleCompanySelection(company);
+                              }}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            >
+                              <option value="">Şirket Seçin</option>
+                              {selectedGroupCompanies.map(company => (
+                                <option key={company.id} value={company.id}>
+                                  {company.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Firma Adı *
+                            {selectedGroupCompanies.length === 1 && (
+                              <span className="ml-2 text-xs text-green-600">● Otomatik yüklendi</span>
+                            )}
                           </label>
                           <input
                             type="text"
                             value={formData.company_info.name}
                             onChange={(e) => handleInputChange('company_info.name', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            disabled={selectedGroupCompanies.length > 0}
                           />
                           {errors['company_info.name'] && (
                             <p className="text-red-600 text-sm mt-1">{errors['company_info.name']}</p>
