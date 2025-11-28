@@ -185,6 +185,11 @@ const NewProposalWizard = ({ onBack }) => {
     }
   }, [formData.profile_id]);
 
+  // Recalculate pricing when line items change
+  useEffect(() => {
+    calculatePricingSummary();
+  }, [lineItems, generalDiscount, taxRate]);
+
   const loadInitialData = async () => {
     setLoading(true);
     try {
