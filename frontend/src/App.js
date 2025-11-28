@@ -1660,6 +1660,12 @@ const Dashboard = () => {
       case 'proposal-profiles':
         return <ProposalProfilesPage onBackToDashboard={handleBackToDashboard} />;
       
+      case 'new-proposal-profile':
+        return <ProposalProfileWizard />;
+      
+      case 'edit-proposal-profile':
+        return <ProposalProfileWizard />;
+      
       case 'proposal-list':
         return <ProposalListPage onNewProposal={handleNewProposal} onViewProposal={handleViewProposal} />;
       
