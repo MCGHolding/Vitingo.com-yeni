@@ -2912,8 +2912,6 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   };
 
   const renderStep5 = () => {
-    const [currentPreviewPage, setCurrentPreviewPage] = useState(0);
-
     const renderModulePage = (module, index) => {
       const content = moduleContents[module.id] || {};
       
