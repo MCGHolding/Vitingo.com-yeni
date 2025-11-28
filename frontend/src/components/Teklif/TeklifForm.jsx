@@ -419,12 +419,12 @@ const TeklifForm = ({ onBackToDashboard, showToast }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium text-gray-700">Şirket:</span>
-                        <span className="ml-2 text-gray-900">{secilenMusteri.company_name}</span>
+                        <span className="ml-2 text-gray-900">{secilenMusteri.companyName || secilenMusteri.company_name || secilenMusteri.name}</span>
                       </div>
-                      {secilenMusteri.contact_person && (
+                      {(secilenMusteri.contactPerson || secilenMusteri.contact_person) && (
                         <div>
                           <span className="font-medium text-gray-700">İletişim Kişisi:</span>
-                          <span className="ml-2 text-gray-900">{secilenMusteri.contact_person}</span>
+                          <span className="ml-2 text-gray-900">{secilenMusteri.contactPerson || secilenMusteri.contact_person}</span>
                         </div>
                       )}
                       {secilenMusteri.email && (
