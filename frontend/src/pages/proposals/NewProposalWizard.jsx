@@ -1886,7 +1886,7 @@ const NewProposalWizard = ({ onBack }) => {
                       placeholder="Giriş metninizi yazın..."
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Kullanılabilir değişkenler: {{'{contact_person}'}}, {{'{project_name}'}}, {{'{company_name}'}}
+                      Kullanılabilir değişkenler: {"{contact_person}"}, {"{project_name}"}, {"{company_name}"}
                     </p>
                   </div>
                 </div>
