@@ -33,10 +33,20 @@ const AVAILABLE_VARIABLES = [
 ];
 
 const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
+  const [selectedTemplate, setSelectedTemplate] = useState('minimal');
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [nextId, setNextId] = useState(1);
   const canvasRef = useRef(null);
+
+  // Apply template
+  const applyTemplate = (templateId) => {
+    setSelectedTemplate(templateId);
+    // Reset elements when changing template
+    setElements([]);
+    setSelectedElement(null);
+    toast.success('Şablon uygulandı');
+  };
 
   // Add element to canvas
   const handleAddVariable = (variable) => {
