@@ -377,14 +377,46 @@ const NewProposalWizard = ({ onBack }) => {
     if (!customer) return;
     
     setSelectedCustomer(customer);
-    setFormData(prev => ({
-      ...prev,
-      company_name: customer.companyName || '',
-      contact_person: customer.contactPerson || '',
-      contact_email: customer.email || '',
-      contact_phone: customer.phone || '',
-      address: customer.address || ''
-    }));
+    
+    // Set available contacts for dropdown
+    if (customer.contacts && Array.isArray(customer.contacts) && customer.contacts.length > 0) {
+      setAvailableContacts(customer.contacts);
+      console.log(`✅ Found ${customer.contacts.length} contacts for selected customer`);
+      
+      // If there's only one contact or a default contact, auto-select it
+      if (customer.contacts.length === 1) {
+        const contact = customer.contacts[0];
+        setFormData(prev => ({
+          ...prev,
+          company_name: customer.companyName || '',
+          contact_person: contact.fullName || '',
+          contact_email: contact.email || '',
+          contact_phone: contact.mobile || '',
+          address: contact.address || customer.address || ''
+        }));
+      } else {
+        // Multiple contacts - just fill company name, let user select contact
+        setFormData(prev => ({
+          ...prev,
+          company_name: customer.companyName || '',
+          contact_person: '',
+          contact_email: '',
+          contact_phone: '',
+          address: customer.address || ''
+        }));
+      }
+    } else {
+      // No contacts array, use customer's main info
+      setAvailableContacts([]);
+      setFormData(prev => ({
+        ...prev,
+        company_name: customer.companyName || '',
+        contact_person: customer.contactPerson || '',
+        contact_email: customer.email || '',
+        contact_phone: customer.phone || customer.mobile || '',
+        address: customer.address || ''
+      }));
+    }
   };
 
   const autoFillFromProfile = () => {
