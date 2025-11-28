@@ -2784,13 +2784,6 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   };
 
   const renderStep4 = () => {
-    const formatCurrency = (amount) => {
-      const symbol = formData.currency_code === 'EUR' ? '€' : 
-                     formData.currency_code === 'USD' ? '$' :
-                     formData.currency_code === 'TRY' ? '₺' : '€';
-      return `${symbol}${amount.toFixed(2)}`;
-    };
-
     return (
       <div className="space-y-6">
         {/* Header Info */}
