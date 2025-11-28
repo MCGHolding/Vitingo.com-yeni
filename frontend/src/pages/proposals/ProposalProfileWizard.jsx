@@ -540,17 +540,13 @@ const ProposalProfileWizard = () => {
                       editorState={getEditorState(currentEditingModule)}
                       onEditorStateChange={(editorState) => handleEditorChange(currentEditingModule, editorState)}
                       wrapperClassName="wrapper-class"
-                      editorClassName="editor-class px-4 py-2"
-                      toolbarClassName="toolbar-class"
-                      placeholder="Modül içeriğini buraya yazın... Bold, italic, resim ekleyebilirsiniz."
+                      editorClassName="editor-class px-2 py-1 text-sm"
+                      toolbarClassName="toolbar-class text-xs"
+                      placeholder="İçerik yazın..."
                       toolbar={{
-                        options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'image', 'history'],
+                        options: ['inline', 'list', 'textAlign', 'link', 'image'],
                         inline: {
                           options: ['bold', 'italic', 'underline']
-                        },
-                        blockType: {
-                          inDropdown: true,
-                          options: ['Normal', 'H1', 'H2', 'H3']
                         },
                         list: {
                           inDropdown: false,
@@ -558,7 +554,7 @@ const ProposalProfileWizard = () => {
                         },
                         textAlign: {
                           inDropdown: false,
-                          options: ['left', 'center', 'right']
+                          options: ['left', 'center']
                         },
                         link: {
                           inDropdown: false,
@@ -576,13 +572,13 @@ const ProposalProfileWizard = () => {
                               reader.readAsDataURL(file);
                             });
                           },
-                          alt: { present: true, mandatory: false }
+                          alt: { present: false, mandatory: false }
                         }
                       }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    💡 <strong>Değişkenler:</strong> Metne <code className="bg-gray-100 px-1 rounded">{'{{firma_adı}}'}</code>, <code className="bg-gray-100 px-1 rounded">{'{{fuar_adı}}'}</code>, <code className="bg-gray-100 px-1 rounded">{'{{tarih}}'}</code> gibi değişkenler ekleyebilirsiniz.
+                  <p className="text-xs text-gray-400 mt-1">
+                    Değişkenler: <code className="bg-gray-50 px-1">{'{{firma_adı}}'}</code>, <code className="bg-gray-50 px-1">{'{{tarih}}'}</code>
                   </p>
                 </div>
 
