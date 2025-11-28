@@ -210,6 +210,7 @@ const NewProposalWizard = ({ onBack }) => {
   };
 
   const loadSalesOpportunities = async () => {
+    console.log('📊 Loading sales opportunities from:', `${BACKEND_URL}/api/opportunities`);
     try {
       const response = await fetch(`${BACKEND_URL}/api/opportunities`);
       const data = await response.json();
@@ -217,9 +218,10 @@ const NewProposalWizard = ({ onBack }) => {
       const filtered = Array.isArray(data) ? data.filter(op => 
         op.status === 'open' || op.status === 'won'
       ) : [];
+      console.log(`✅ Loaded ${filtered.length} sales opportunities`);
       setSalesOpportunities(filtered);
     } catch (error) {
-      console.error('Error loading sales opportunities:', error);
+      console.error('❌ Error loading sales opportunities:', error);
       setSalesOpportunities([]);
     }
   };
