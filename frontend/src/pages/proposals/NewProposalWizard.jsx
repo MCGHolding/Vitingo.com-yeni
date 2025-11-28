@@ -1827,8 +1827,8 @@ const NewProposalWizard = ({ onBack }) => {
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       💡 Değişkenler: {' '}
-                      <span className="text-blue-600 cursor-pointer">{{'{project_name}'}}</span>,{' '}
-                      <span className="text-blue-600 cursor-pointer">{{'{fair_name}'}}</span>
+                      <span className="text-blue-600 cursor-pointer">{'{{project_name}}'}</span>,{' '}
+                      <span className="text-blue-600 cursor-pointer">{'{{fair_name}}'}</span>
                     </p>
                   </div>
                   
