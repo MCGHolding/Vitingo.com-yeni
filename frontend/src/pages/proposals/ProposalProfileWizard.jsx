@@ -430,20 +430,27 @@ const ProposalProfileWizard = () => {
           )}
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Ana Renk</label>
-          <input
-            type="color"
-            value={formData.branding.primary_color}
-            onChange={(e) => setFormData(prev => ({
-              ...prev,
-              branding: { ...prev.branding, primary_color: e.target.value }
-            }))}
-            className="w-full h-8 px-1 border rounded"
-          />
+          <label className="block text-xs font-medium text-gray-700 mb-1">Renk Paleti</label>
+          <select
+            value={selectedPalette}
+            onChange={(e) => handlePaletteChange(e.target.value)}
+            className="w-full px-3 py-1.5 text-sm border rounded"
+          >
+            {COLOR_PALETTES.map(palette => (
+              <option key={palette.id} value={palette.id}>
+                {palette.name}
+              </option>
+            ))}
+          </select>
+          <div className="flex space-x-1 mt-1">
+            <div className="w-6 h-6 rounded border" style={{ backgroundColor: formData.branding.primary_color }} title="Ana Renk" />
+            <div className="w-6 h-6 rounded border" style={{ backgroundColor: formData.branding.secondary_color }} title="İkincil Renk" />
+            <div className="w-6 h-6 rounded border" style={{ backgroundColor: formData.branding.accent_color }} title="Vurgu Rengi" />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">Sayfa Yönü</label>
           <select
