@@ -126,22 +126,11 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
       }));
       
       setCompanyGroups(groupsArray);
-      console.log('✅ Created', groupsArray.length, 'groups');
+      console.log('✅ Created', groupsArray.length, 'groups with', data.length, 'total companies');
       
-      // If only one group, auto-select it and show companies
-      if (groupsArray.length === 1) {
-        const singleGroup = groupsArray[0];
-        setFormData(prev => ({ ...prev, company_group_id: singleGroup.id }));
-        setSelectedGroupCompanies(singleGroup.companies);
-        
-        // If only one company, auto-fill
-        if (singleGroup.companies.length === 1) {
-          handleCompanySelection(singleGroup.companies[0]);
-        }
-      }
-      
-      // If only one company total across all groups, auto-select it
+      // If only one company total, auto-select and fill form
       if (data.length === 1) {
+        console.log('✅ Auto-selecting single company:', data[0].name);
         handleCompanySelection(data[0]);
       }
     } catch (error) {
