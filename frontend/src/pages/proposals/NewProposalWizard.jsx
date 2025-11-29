@@ -2517,7 +2517,10 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
         <div className="col-span-3">
           <Card>
             <CardContent className="pt-6">
-              <h3 className="font-semibold mb-4">Modüller</h3>
+              <h3 className="font-semibold mb-4 text-sm text-gray-700">Modüller ({selectedModules.length})</h3>
+              {selectedModules.length === 0 && (
+                <p className="text-sm text-red-500">⚠️ Modül bulunamadı! Step 2'ye dönün.</p>
+              )}
               <div className="space-y-1">
                 {selectedModules.map((module, index) => (
                   <button
