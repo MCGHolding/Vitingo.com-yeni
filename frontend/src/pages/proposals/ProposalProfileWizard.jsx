@@ -882,23 +882,19 @@ const ProposalProfileWizard = ({ profileId }) => {
       const coverImageContent = {
         title: 'Kapak Sayfası',
         type: 'image_upload',
-        cover_image: reader.result, // Base64 encoded image
+        cover_image: reader.result,
         body: ''
       };
       
-      console.log('📤 Image Upload: Creating content with type:', coverImageContent.type);
+      console.log('📤 Image Upload: Updating state with type:', coverImageContent.type);
       
-      setModuleContents(prev => {
-        const newState = {
-          ...prev,
-          cover_page: coverImageContent
-        };
-        // CRITICAL: Update ref immediately for handleSave
-        moduleContentsRef.current = newState;
-        console.log('📤 Image Upload: Updated moduleContents state AND ref:', Object.keys(newState));
-        return newState;
-      });
+      // Direct state update - React batches this automatically
+      setModuleContents(prev => ({
+        ...prev,
+        cover_page: coverImageContent
+      }));
       
+      console.log('📤 Image Upload: State update queued');
       toast.success('Kapak resmi yüklendi!');
     };
     
