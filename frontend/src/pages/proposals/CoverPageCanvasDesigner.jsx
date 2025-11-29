@@ -174,22 +174,55 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
             <div className="p-3 border-b bg-white">
               <h3 className="font-semibold text-gray-700 text-xs mb-2 flex items-center">
                 <Palette className="w-3 h-3 mr-1" />
-                Şablon
+                Şablonlar
               </h3>
-              <div className="grid grid-cols-2 gap-1">
-                {TEMPLATES.map(template => (
+              
+              {/* Library Templates */}
+              <div className="space-y-2">
+                {libraryTemplates.map(template => (
                   <button
                     key={template.id}
-                    onClick={() => applyTemplate(template.id)}
-                    className={`px-2 py-1.5 text-xs rounded border transition ${
+                    onClick={() => applyTemplate(template)}
+                    className={`w-full rounded border overflow-hidden transition ${
                       selectedTemplate === template.id
-                        ? 'bg-purple-500 text-white border-purple-600'
-                        : 'bg-white border-gray-200 hover:border-purple-300'
+                        ? 'ring-2 ring-purple-500 border-purple-500'
+                        : 'border-gray-200 hover:border-purple-300'
                     }`}
                   >
-                    {template.name}
+                    <img
+                      src={template.image_url}
+                      alt={template.name}
+                      className="w-full h-20 object-cover"
+                    />
+                    <div className="p-1 bg-white text-xs text-gray-700 truncate">
+                      {template.name}
+                    </div>
                   </button>
                 ))}
+                
+                {/* Custom upload option */}
+                <label className="block w-full cursor-pointer">
+                  <div className={`w-full rounded border p-3 text-center transition ${
+                    selectedTemplate === 'custom_upload'
+                      ? 'ring-2 ring-purple-500 border-purple-500 bg-purple-50'
+                      : 'border-dashed border-gray-300 hover:border-purple-300 hover:bg-purple-50'
+                  }`}>
+                    <Upload className="w-5 h-5 mx-auto mb-1 text-gray-400" />
+                    <span className="text-xs text-gray-600">Kendi Resminiz</span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCustomImageUpload}
+                    className="hidden"
+                  />
+                </label>
+                
+                {libraryTemplates.length === 0 && (
+                  <p className="text-xs text-gray-400 text-center py-2">
+                    Şablon yüklenıyor...
+                  </p>
+                )}
               </div>
             </div>
 
