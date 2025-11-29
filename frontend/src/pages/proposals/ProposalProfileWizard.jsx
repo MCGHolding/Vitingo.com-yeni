@@ -713,7 +713,8 @@ const ProposalProfileWizard = ({ profileId }) => {
                     </div>
                     
                     {/* Template Selector for Introduction Module */}
-                    {currentEditingModule === 'introduction' && (
+                    {console.log('DEBUG: currentEditingModule =', currentEditingModule, 'currentModule.type =', currentModule?.module_type)}
+                    {(currentEditingModule === 'introduction' || currentModule?.module_type === 'introduction') && (
                       <div className="mt-3 mb-3">
                         <label className="block text-xs font-medium text-gray-700 mb-2">📝 Hazır Şablon Seç:</label>
                         <div className="grid grid-cols-2 gap-2">
