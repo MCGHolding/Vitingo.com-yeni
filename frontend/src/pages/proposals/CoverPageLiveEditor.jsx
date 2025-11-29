@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 
 const CANVAS_WIDTH = 794;
 const CANVAS_HEIGHT = 1123;
-const SCALE = 0.65;
+const SCALE = 0.7;
 
 const CoverPageLiveEditor = ({ 
   isOpen, 
@@ -16,6 +16,7 @@ const CoverPageLiveEditor = ({
 }) => {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const canvasRef = useRef(null);
 
   useEffect(() => {
