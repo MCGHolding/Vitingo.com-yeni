@@ -637,12 +637,13 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       const contents = {};
       modules.forEach((module) => {
         contents[module.id] = module.content;  // Use module.id instead of index
-        console.log('✅ Module content stored:', module.id, 'type:', module.content.type, 'hasCanvas:', !!module.content.canvas_template);
+        console.log('✅ Module content stored:', module.id, module.name, 'type:', module.content.type, 'hasCanvas:', !!module.content.canvas_template);
       });
       setModuleContents(contents);
       
-      console.log('✅ Modules loaded from profile:', modules.length);
-      toast.success('Profil modülleri yüklendi');
+      console.log('✅ Modules loaded from profile:', modules.length, 'modules:', modules.map(m => m.name));
+      console.log('📦 Selected modules state:', modules);
+      toast.success(`${modules.length} modül yüklendi`);
     }
   };
 
