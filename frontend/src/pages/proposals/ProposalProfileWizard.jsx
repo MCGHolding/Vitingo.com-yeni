@@ -716,7 +716,7 @@ const ProposalProfileWizard = ({ profileId }) => {
                     {console.log('DEBUG: currentEditingModule =', currentEditingModule, 'currentModule.type =', currentModule?.module_type)}
                     {(currentEditingModule === 'introduction' || currentModule?.module_type === 'introduction') && (
                       <div className="mt-3 mb-3">
-                        <label className="block text-xs font-medium text-gray-700 mb-2">📝 Hazır Şablon Seç:</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-2">📝 Giriş Sayfası Şablonları:</label>
                         <div className="grid grid-cols-3 gap-2">
                           {[
                             {
