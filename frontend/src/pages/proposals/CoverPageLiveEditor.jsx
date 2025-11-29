@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Rnd } from 'react-rnd';
 import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Save, Trash2, Minus, Plus, Type } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import Portal from '../../components/Portal';
 
 const CANVAS_WIDTH = 794;
 const CANVAS_HEIGHT = 1123;
