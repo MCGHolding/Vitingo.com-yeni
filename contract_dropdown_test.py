@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://templify-pro.preview.emergentagent.com"
+BACKEND_URL = "https://fair-timeline.preview.emergentagent.com"
 
 def test_contract_create_page_dropdown_apis():
     """

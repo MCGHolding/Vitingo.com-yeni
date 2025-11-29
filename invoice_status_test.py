@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://templify-pro.preview.emergentagent.com"
+BACKEND_URL = "https://fair-timeline.preview.emergentagent.com"
 
 def test_invoice_status_filtering():
     """

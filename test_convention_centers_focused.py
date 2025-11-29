@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://templify-pro.preview.emergentagent.com"
+BACKEND_URL = "https://fair-timeline.preview.emergentagent.com"
 
 def test_convention_centers_focused():
     """Focused test of convention centers with better error handling"""
