@@ -3027,17 +3027,18 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                 {/* Render template background - AYNI Canvas Designer'daki gibi */}
                 {(() => {
                   // Use inline styles instead of Tailwind classes for dynamic backgrounds
+                  // Using more visible gradient colors
                   const TEMPLATES = [
                     { id: 'minimal', name: 'Minimal', bgStyle: { backgroundColor: '#ffffff' } },
-                    { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #eff6ff, #dbeafe)' } },
-                    { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #faf5ff, #fdf2f8)' } },
+                    { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' } },
+                    { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)' } },
                     { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' }, sidebar: true },
                     { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' }, split: true },
                     { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' }, diagonal: true },
                     { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' }, geometric: true },
                     { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' }, wave: true },
-                    { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #fff7ed, #fef2f2)' } },
-                    { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #f0fdf4, #f0fdfa)' } }
+                    { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' } },
+                    { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)' } }
                   ];
                   
                   const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
