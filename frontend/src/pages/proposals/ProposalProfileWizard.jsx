@@ -1096,6 +1096,55 @@ const ProposalProfileWizard = ({ profileId }) => {
     );
   }
 
+  // Variable tag'ına tıklandığında seçili texti variable ile değiştir
+  const handleInsertVariable = (variable, label) => {
+    if (!currentEditingModule) {
+      toast.error('Lütfen önce bir modül seçin');
+      return;
+    }
+    
+    const editorState = editorStates[currentEditingModule];
+    if (!editorState) {
+      toast.error('Editor yüklenemedi');
+      return;
+    }
+    
+    const selection = editorState.getSelection();
+    
+    // Eğer seçili text yoksa uyarı ver
+    if (selection.isCollapsed()) {
+      toast.error('Lütfen değiştirmek istediğiniz metni seçin');
+      return;
+    }
+    
+    // Seçili text'i variable ile değiştir
+    const contentState = editorState.getCurrentContent();
+    const newContentState = Modifier.replaceText(
+      contentState,
+      selection,
+      variable
+    );
+    
+    // Yeni editor state oluştur
+    const newEditorState = EditorState.push(
+      editorState,
+      newContentState,
+      'insert-characters'
+    );
+    
+    // Editor state'i güncelle
+    setEditorStates(prev => ({
+      ...prev,
+      [currentEditingModule]: newEditorState
+    }));
+    
+    // Content'i de güncelle (HTML formatında)
+    const newHtml = draftToHtml(convertToRaw(newContentState));
+    handleModuleContentChange(currentEditingModule, 'body', newHtml);
+    
+    toast.success(`✅ "${label}" eklendi`);
+  };
+  
   // Canvas Designer'dan "Kaydet" tıklandığında çağrılır
   // Direkt tasarımı kaydeder (Live Editor yok artık)
   const handleCoverPageSave = (template) => {
