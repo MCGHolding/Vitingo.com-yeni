@@ -638,7 +638,7 @@ const PaymentTermsModule = ({
                     %{paymentTerms.totalPercentage}
                   </span>
                   <span className="font-bold text-lg text-gray-800">
-                    {formatCurrency(totalAmount || 0)}
+                    {formatCurrency(localPricing.total || 0, localPricing.currency)}
                   </span>
                 </div>
               </div>
