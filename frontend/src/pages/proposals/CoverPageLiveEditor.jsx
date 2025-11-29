@@ -357,7 +357,11 @@ const CoverPageLiveEditor = ({
 
               {/* Delete */}
               <button
-                onClick={() => deleteElement(selectedElement)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteElement(selectedElement);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
                 className="p-2 rounded-lg text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 transition"
                 title="Sil"
               >
