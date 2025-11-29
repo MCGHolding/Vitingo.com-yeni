@@ -117,9 +117,17 @@ const CoverPageLiveEditor = ({
         </div>
 
         {/* Canva-style Top Toolbar */}
-        <div className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm">
+        <div 
+          className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm"
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           {selectedElementData ? (
-            <div className="flex items-center space-x-2 w-full">
+            <div 
+              className="flex items-center space-x-2 w-full"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Font Family */}
               <select
                 value={selectedElementData.fontFamily || 'Inter'}
