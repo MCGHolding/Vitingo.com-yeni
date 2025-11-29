@@ -173,7 +173,12 @@ const CoverPageLiveEditor = ({
               {/* Font Family */}
               <select
                 value={selectedElementData.fontFamily || 'Inter'}
-                onChange={(e) => updateElement(selectedElement, { fontFamily: e.target.value })}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  updateElement(selectedElement, { fontFamily: e.target.value });
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
                 className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition min-w-[140px] font-medium"
               >
                 <option value="Inter">Inter</option>
