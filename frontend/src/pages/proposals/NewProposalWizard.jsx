@@ -2965,6 +2965,16 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     const renderModulePage = (module, index) => {
       const content = moduleContents[module.id] || {};
       
+      // Debug log for Step 5 render
+      console.log('🎨 renderModulePage:', {
+        moduleId: module.id,
+        moduleType: module.type,
+        contentType: content.type,
+        hasCanvasTemplate: !!content.canvas_template,
+        hasCoverImage: !!content.cover_image,
+        contentKeys: Object.keys(content)
+      });
+      
       return (
         <div
           key={module.id}
