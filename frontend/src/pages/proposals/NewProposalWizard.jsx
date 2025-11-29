@@ -593,6 +593,8 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
           // Parse canvas_template and cover_image if they exist for cover_page
           let canvas_template = null;
           let cover_image = null;
+          let contentType = pm.content_template?.type || 'default';
+          
           if (pm.module_type === 'cover_page') {
             if (pm.content_template?.canvas_template) {
               canvas_template = pm.content_template.canvas_template;
@@ -604,11 +606,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             }
           }
           
-          // Generate unique ID for module
-          const moduleId = `profile-${pm.module_id || pm.module_type}-${index}-${Date.now()}`;
+          // Use a stable ID based on module_id and index (NOT timestamp)
+          const moduleId = `profile-${pm.module_id || pm.module_type}-${index}`;
           
-          return {
-            id: moduleId,  // CRITICAL: Add unique ID for module
+          const moduleData = {
+            id: moduleId,  // CRITICAL: Add stable unique ID for module
             type: pm.module_type,
             name: pm.module_name,
             icon: moduleInfo?.icon || '📄',
@@ -620,9 +622,12 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               images: pm.content_template?.images || [],
               canvas_template: canvas_template,
               cover_image: cover_image, // CRITICAL: Store uploaded image
-              type: pm.content_template?.type || 'default'
+              type: contentType
             }
           };
+          
+          console.log('🔧 Module created:', moduleId, 'type:', contentType, 'hasCanvas:', !!canvas_template);
+          return moduleData;
         });
       
       setSelectedModules(modules);
@@ -631,7 +636,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       const contents = {};
       modules.forEach((module) => {
         contents[module.id] = module.content;  // Use module.id instead of index
-        console.log('✅ Module content stored:', module.id, module.content.type);
+        console.log('✅ Module content stored:', module.id, 'type:', module.content.type, 'hasCanvas:', !!module.content.canvas_template);
       });
       setModuleContents(contents);
       
