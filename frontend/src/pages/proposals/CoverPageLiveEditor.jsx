@@ -487,7 +487,7 @@ const CoverPageLiveEditor = ({
         <div className="flex-1 bg-gray-200 overflow-auto flex items-center justify-center p-8">
           <div
             ref={canvasRef}
-            className="relative shadow-2xl bg-white"
+            className="canvas-background-area relative shadow-2xl bg-white"
             style={{
               width: `${CANVAS_WIDTH}px`,
               height: `${CANVAS_HEIGHT}px`,
@@ -495,16 +495,14 @@ const CoverPageLiveEditor = ({
               transformOrigin: 'center',
               backgroundImage: canvasData?.customBackgroundImage ? `url(${canvasData.customBackgroundImage})` : 'none',
               backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundPosition: 'center',
+              pointerEvents: 'auto'
             }}
             onMouseDown={(e) => {
-              // Check if click is on toolbar or element
-              const isToolbar = e.target.closest('[data-toolbar="true"]');
-              const isElement = e.target.closest('[data-element-id]');
-              
-              // Only deselect if clicking on canvas background (not toolbar, not element)
-              if (!isToolbar && !isElement && e.target === e.currentTarget) {
-                clearSelection();
+              // Canvas background'a tıklandıysa seçimi kaldır
+              if (e.target === e.currentTarget || e.target.classList.contains('canvas-background-area')) {
+                console.log('Canvas background clicked - clearing selection');
+                setSelectedElement(null);
               }
             }}
           >
