@@ -135,8 +135,6 @@ const ProposalProfileWizard = ({ profileId }) => {
       const response = await fetch(`${API_URL}/api/proposal-modules/available`);
       if (response.ok) {
         const data = await response.json();
-        console.log('📚 Fetched available modules:', data.modules);
-        console.log('📊 Total modules count:', data.modules?.length);
         setAvailableModules(data.modules || []);
       }
     } catch (error) {
