@@ -106,12 +106,22 @@ const CoverPageLiveEditor = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-2xl w-[95vw] h-[95vh] flex flex-col">
         {/* Header with Title */}
-        <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
+        <div 
+          className="flex items-center justify-between px-4 py-3 border-b bg-gray-50"
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           <div>
             <h2 className="text-lg font-bold text-gray-800">Kapak Sayfası - Son Düzenleme</h2>
             <p className="text-xs text-gray-500">Elementleri sürükleyin, boyutlandırın ve stillerini değiştirin</p>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-200">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }} 
+            className="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-200"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
