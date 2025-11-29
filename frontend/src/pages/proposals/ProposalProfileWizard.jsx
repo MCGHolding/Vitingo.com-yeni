@@ -790,25 +790,45 @@ const ProposalProfileWizard = ({ profileId }) => {
                               <div style={bgStyle}>
                                 {/* Render elements */}
                                 {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
-                                  const scale = 450 / 794;
+                                  // Preview scale: canvas width 450px, gerçek width 794px
+                                  const previewScale = 450 / 794;
+                                  
+                                  // Replace variable with real data
+                                  const realData = {
+                                    '{{company_name}}': formData.company_info?.name || 'Örnek Firma',
+                                    '{{fair_name}}': 'Örnek Fuar 2026',
+                                    '{{country}}': 'Türkiye',
+                                    '{{city}}': 'İstanbul',
+                                    '{{venue}}': 'İstanbul Fuar Merkezi',
+                                    '{{start_date}}': '2026-03-15',
+                                    '{{end_date}}': '2026-03-18',
+                                    '{{prepared_by}}': 'Murat Bucak',
+                                    '{{prepared_title}}': 'Süper Admin',
+                                    '{{project_name}}': 'Örnek Proje'
+                                  };
+                                  
+                                  const displayValue = realData[element.variable] || element.variable;
+                                  
                                   return (
                                     <div
                                       key={idx}
                                       style={{
                                         position: 'absolute',
-                                        left: `${element.x * scale}px`,
-                                        top: `${element.y * scale}px`,
-                                        fontSize: `${(element.fontSize || 24) * scale}px`,
+                                        left: `${element.x * previewScale}px`,
+                                        top: `${element.y * previewScale}px`,
+                                        width: element.width ? `${element.width * previewScale}px` : 'auto',
+                                        fontSize: `${(element.fontSize || 24) * previewScale}px`,
                                         fontFamily: element.fontFamily || 'Inter',
                                         fontWeight: element.fontWeight || 'normal',
                                         fontStyle: element.fontStyle || 'normal',
                                         textDecoration: element.textDecoration || 'none',
                                         color: element.color || '#000000',
                                         textAlign: element.textAlign || 'left',
+                                        padding: '2px 4px',
                                         zIndex: 10
                                       }}
                                     >
-                                      {element.variable}
+                                      {displayValue}
                                     </div>
                                   );
                                 })}
