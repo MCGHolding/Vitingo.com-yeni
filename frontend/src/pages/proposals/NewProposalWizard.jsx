@@ -2684,7 +2684,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                       ℹ️ Bu içerik profil şablonundan geldi. Düzenlemek için profili güncelleyin.
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Dinamik alanlar: {{firma_adi}}, {{yetkili_adi}}, {{email}} otomatik değiştiriliyor
+                      Dinamik alanlar: {`{{firma_adi}}, {{yetkili_adi}}, {{email}}`} otomatik değiştiriliyor
                     </p>
                   </div>
                 </div>
