@@ -324,8 +324,16 @@ const CoverPageLiveEditor = ({
               <div className="w-px h-8 bg-gray-300" />
 
               {/* Color Picker */}
-              <div className="relative group">
-                <label className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
+              <div 
+                className="relative group"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <label 
+                  className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <div 
                     className="w-6 h-6 rounded border-2 border-white shadow-sm"
                     style={{ backgroundColor: selectedElementData.color || '#000000' }}
@@ -334,7 +342,12 @@ const CoverPageLiveEditor = ({
                   <input
                     type="color"
                     value={selectedElementData.color || '#000000'}
-                    onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      updateElement(selectedElement, { color: e.target.value });
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                     className="absolute opacity-0 w-0 h-0"
                   />
                 </label>
