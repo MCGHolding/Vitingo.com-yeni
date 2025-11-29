@@ -47,7 +47,40 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
     // Reset elements when changing template
     setElements([]);
     setSelectedElement(null);
-    toast.success('Şablon uygulandı');
+    
+    // If custom_image template, trigger file upload
+    if (templateId === 'custom_image' && !customBackgroundImage) {
+      document.getElementById('custom-bg-upload').click();
+    } else {
+      toast.success('Şablon uygulandı');
+    }
+  };
+
+  // Handle custom background image upload
+  const handleCustomImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      toast.error('Lütfen bir resim dosyası seçin');
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Resim boyutu 5MB\'dan küçük olmalı');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCustomBackgroundImage(reader.result);
+      setSelectedTemplate('custom_image');
+      toast.success('Arka plan resmi yüklendi!');
+    };
+    reader.onerror = () => {
+      toast.error('Resim yüklenirken hata oluştu');
+    };
+    reader.readAsDataURL(file);
   };
 
   // Add element to canvas
