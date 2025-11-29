@@ -238,23 +238,39 @@ const CoverPageLiveEditor = ({
               <div className="w-px h-8 bg-gray-300" />
 
               {/* Style Buttons */}
-              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
+              <div 
+                className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  onClick={() => updateElement(selectedElement, { fontWeight: selectedElementData.fontWeight === 'bold' ? 'normal' : 'bold' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { fontWeight: selectedElementData.fontWeight === 'bold' ? 'normal' : 'bold' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition ${selectedElementData.fontWeight === 'bold' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Kalın"
                 >
                   <Bold className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => updateElement(selectedElement, { fontStyle: selectedElementData.fontStyle === 'italic' ? 'normal' : 'italic' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { fontStyle: selectedElementData.fontStyle === 'italic' ? 'normal' : 'italic' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition border-l border-gray-300 ${selectedElementData.fontStyle === 'italic' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="İtalik"
                 >
                   <Italic className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => updateElement(selectedElement, { textDecoration: selectedElementData.textDecoration === 'underline' ? 'none' : 'underline' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { textDecoration: selectedElementData.textDecoration === 'underline' ? 'none' : 'underline' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition border-l border-gray-300 ${selectedElementData.textDecoration === 'underline' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Altı Çizili"
                 >
