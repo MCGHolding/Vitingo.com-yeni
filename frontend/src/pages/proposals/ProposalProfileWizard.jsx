@@ -675,26 +675,52 @@ const ProposalProfileWizard = ({ profileId }) => {
                       </label>
                     </div>
                     
-                    {/* Show uploaded image preview */}
+                    {/* Show uploaded image status and preview toggle */}
                     {currentContent.cover_image && (
-                      <div className="relative">
-                        <img 
-                          src={currentContent.cover_image} 
-                          alt="Cover" 
-                          className="w-full h-48 object-cover rounded border-2 border-green-500"
-                        />
-                        <button
-                          onClick={() => handleModuleContentChange(currentEditingModule, 'cover_image', null)}
-                          className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm text-green-700 font-medium">✅ Kapak resmi yüklendi</span>
+                          </div>
+                          <button
+                            onClick={() => handleModuleContentChange(currentEditingModule, 'cover_image', null)}
+                            className="text-red-500 hover:text-red-700 text-xs"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {/* Checkbox to show/hide preview */}
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={showCoverImagePreview}
+                            onChange={(e) => setShowCoverImagePreview(e.target.checked)}
+                            className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">Yüklenen Dosyayı Gör</span>
+                        </label>
+                        
+                        {/* Image preview (expandable) */}
+                        {showCoverImagePreview && (
+                          <div className="relative border-2 border-green-300 rounded-lg overflow-hidden bg-gray-50">
+                            <img 
+                              src={currentContent.cover_image} 
+                              alt="Cover Preview" 
+                              className="w-full object-contain"
+                              style={{ maxHeight: '600px' }}
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                     
-                    <p className="text-xs text-gray-500 text-center">
-                      {currentContent.cover_image ? '✅ Kapak resmi yüklendi' : 'Canvas tasarımı veya kendi resminizi yükleyin'}
-                    </p>
+                    {!currentContent.cover_image && (
+                      <p className="text-xs text-gray-500 text-center">
+                        Canvas tasarımı veya kendi resminizi yükleyin
+                      </p>
+                    )}
                   </div>
                 )}
 
