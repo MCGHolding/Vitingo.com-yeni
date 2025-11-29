@@ -2833,9 +2833,9 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                     <div className="bg-white rounded-lg p-4 shadow-sm">
                       <PaymentTermsModule
                         data={content.paymentTermsData || content.content}
-                        totalAmount={moduleContents.pricing?.totalAmount || 0}
-                        currency={moduleContents.pricing?.currency || 'TRY'}
-                        opportunity={proposalData.opportunity}
+                        totalAmount={pricingSummary?.total || 0}
+                        currency={formData.currency || 'TRY'}
+                        opportunity={salesOpportunities.find(opp => opp._id === formData.sales_opportunity_id) || null}
                         onChange={(paymentTermsData) => {
                           handleModuleContentChange(activeModule.id, 'paymentTermsData', paymentTermsData);
                           handleModuleContentChange(activeModule.id, 'content', JSON.stringify(paymentTermsData));
