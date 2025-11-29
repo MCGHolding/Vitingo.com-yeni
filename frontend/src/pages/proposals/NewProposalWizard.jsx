@@ -3327,7 +3327,150 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               </div>
             )}
 
-            {!['cover_page', 'introduction', 'about_company', 'included_services', 'excluded_services', 'pricing', 'payment_terms', 'contact'].includes(module.type) && (
+            {module.type === 'timeline' && (() => {
+              try {
+                const timelineData = typeof content.timelineData === 'string' 
+                  ? JSON.parse(content.timelineData) 
+                  : (content.timelineData || (typeof content.body === 'string' ? JSON.parse(content.body) : null));
+                
+                if (!timelineData || !timelineData.phases) {
+                  return <p className="text-gray-500">Zaman çizelgesi henüz oluşturulmadı</p>;
+                }
+                
+                return (
+                  <div className="space-y-6">
+                    {/* Fuar Bilgileri */}
+                    {timelineData.eventInfo && (
+                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                        <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                          <span>🎪</span> Fuar Bilgileri
+                        </h3>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          {timelineData.eventInfo.eventName && (
+                            <div><span className="text-gray-600">Fuar:</span> <strong>{timelineData.eventInfo.eventName}</strong></div>
+                          )}
+                          {timelineData.eventInfo.venue && (
+                            <div><span className="text-gray-600">Yer:</span> {timelineData.eventInfo.venue}</div>
+                          )}
+                          {timelineData.eventInfo.hall && (
+                            <div><span className="text-gray-600">Hall:</span> {timelineData.eventInfo.hall}</div>
+                          )}
+                          {timelineData.eventInfo.standNumber && (
+                            <div><span className="text-gray-600">Stand No:</span> {timelineData.eventInfo.standNumber}</div>
+                          )}
+                          {timelineData.eventInfo.eventStartDate && (
+                            <div><span className="text-gray-600">Tarih:</span> {new Date(timelineData.eventInfo.eventStartDate).toLocaleDateString('tr-TR')} - {timelineData.eventInfo.eventEndDate ? new Date(timelineData.eventInfo.eventEndDate).toLocaleDateString('tr-TR') : ''}</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Timeline */}
+                    <div className="relative">
+                      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200" />
+                      
+                      {timelineData.phases?.map((phase, idx) => (
+                        <div key={idx} className="relative mb-6">
+                          <div 
+                            className="absolute left-4 w-5 h-5 rounded-full border-4 border-white shadow-md z-10"
+                            style={{ backgroundColor: phase.color || '#6B7280' }}
+                          />
+                          
+                          <div className={`ml-12 border rounded-lg p-4 ${phase.isMainEvent ? 'border-red-300 bg-red-50' : 'bg-white'}`}>
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-2xl">{phase.icon}</span>
+                              <div>
+                                <h4 className="font-semibold text-gray-800 flex items-center gap-2">
+                                  {phase.name}
+                                  {phase.isMainEvent && (
+                                    <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                                      🎯 ANA HEDEF
+                                    </span>
+                                  )}
+                                </h4>
+                                <p className="text-sm text-gray-500">
+                                  {phase.startDate && new Date(phase.startDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })} - {phase.endDate && new Date(phase.endDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {phase.tasks && phase.tasks.length > 0 && (
+                              <div className="mt-3 space-y-1.5 pl-10">
+                                {phase.tasks.map((task, taskIdx) => (
+                                  <div key={taskIdx} className="flex items-start gap-2 text-sm">
+                                    <span className="text-gray-400 mt-0.5">✓</span>
+                                    <div className="flex-1">
+                                      <span className={task.critical ? 'font-semibold text-red-600' : ''}>{task.name}</span>
+                                      {(task.date || task.duration) && (
+                                        <span className="text-gray-500 ml-2 text-xs">
+                                          ({task.date ? new Date(task.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : task.duration})
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Milestones */}
+                    {timelineData.milestones && timelineData.milestones.length > 0 && (
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <h3 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                          <span>⚠️</span> Kritik Tarihler
+                        </h3>
+                        <div className="space-y-2">
+                          {timelineData.milestones.map((milestone, idx) => (
+                            <div key={idx} className="flex items-center gap-3 text-sm">
+                              <span className="text-lg">
+                                {milestone.type === 'critical' ? '🔴' : ''}
+                                {milestone.type === 'warning' ? '🟡' : ''}
+                                {milestone.type === 'target' ? '🎯' : ''}
+                                {milestone.type === 'payment' ? '💰' : ''}
+                                {!milestone.type ? '📌' : ''}
+                              </span>
+                              <span className="text-gray-600">{milestone.date && new Date(milestone.date).toLocaleDateString('tr-TR')}</span>
+                              <span className="font-medium">{milestone.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Project Manager */}
+                    {timelineData.projectManager && (timelineData.projectManager.name || timelineData.projectManager.phone) && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                          <span>📞</span> Proje Yöneticisi
+                        </h3>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          {timelineData.projectManager.name && (
+                            <div><span className="text-gray-600">Ad Soyad:</span> <strong>{timelineData.projectManager.name}</strong></div>
+                          )}
+                          {timelineData.projectManager.phone && (
+                            <div><span className="text-gray-600">Telefon:</span> {timelineData.projectManager.phone}</div>
+                          )}
+                          {timelineData.projectManager.email && (
+                            <div><span className="text-gray-600">E-posta:</span> {timelineData.projectManager.email}</div>
+                          )}
+                          {timelineData.projectManager.availabilityNote && (
+                            <div className="col-span-2"><span className="text-gray-600">Not:</span> {timelineData.projectManager.availabilityNote}</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              } catch (e) {
+                console.error('Timeline render error:', e);
+                return <p className="text-red-500">Zaman çizelgesi render hatası</p>;
+              }
+            })()}
+
+            {!['cover_page', 'introduction', 'about_company', 'included_services', 'excluded_services', 'pricing', 'payment_terms', 'contact', 'timeline'].includes(module.type) && (
               <div dangerouslySetInnerHTML={{ __html: replaceVariables(content.content || content.body || '<p>İçerik henüz eklenmedi</p>') }} />
             )}
           </div>
