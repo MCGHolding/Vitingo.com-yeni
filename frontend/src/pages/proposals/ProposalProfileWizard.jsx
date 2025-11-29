@@ -876,10 +876,9 @@ const ProposalProfileWizard = ({ profileId }) => {
             )}
           </div>
         </div>
-      </div>
 
-      {/* Module Preview Modal */}
-      {showModulePreview && previewModule && (
+        {/* Module Preview Modal */}
+        {showModulePreview && previewModule && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto m-4">
             <div className="p-6">
