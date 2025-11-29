@@ -877,7 +877,91 @@ const ProposalProfileWizard = ({ profileId }) => {
           </div>
         </div>
       </div>
-    );
+
+      {/* Module Preview Modal */}
+      {showModulePreview && previewModule && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto m-4">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Kapak Sayfası Önizlemesi</h2>
+                <button
+                  onClick={() => setShowModulePreview(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Preview Content */}
+              {(() => {
+                const content = moduleContents[previewModule];
+                if (!content) return null;
+
+                // Canvas design
+                if (content.canvas_template) {
+                  const canvas = content.canvas_template;
+                  return (
+                    <div 
+                      className="relative mx-auto bg-white shadow-xl"
+                      style={{ 
+                        width: '595px',
+                        height: '842px',
+                        maxWidth: '100%',
+                        backgroundImage: canvas.customBackgroundImage ? `url(${canvas.customBackgroundImage})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
+                      {canvas.elements && canvas.elements.map((element, idx) => {
+                        const scale = 0.75;
+                        return (
+                          <div
+                            key={idx}
+                            style={{
+                              position: 'absolute',
+                              left: `${element.x * scale}px`,
+                              top: `${element.y * scale}px`,
+                              fontSize: `${element.fontSize * scale}px`,
+                              fontWeight: element.fontWeight,
+                              fontStyle: element.fontStyle,
+                              color: element.color,
+                              zIndex: 10
+                            }}
+                          >
+                            {element.variable}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                // Uploaded image
+                if (content.cover_image) {
+                  return (
+                    <div className="mx-auto bg-white shadow-xl" style={{ maxWidth: '595px' }}>
+                      <img 
+                        src={content.cover_image} 
+                        alt="Cover Page" 
+                        className="w-full"
+                      />
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="text-center py-12 bg-gray-50 rounded">
+                    <p className="text-gray-500">Önizleme mevcut değil</p>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+    </);
   };
 
   const renderStep4 = () => (
