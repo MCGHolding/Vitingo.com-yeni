@@ -3042,6 +3042,8 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
                   const template = TEMPLATES.find(t => t.id === selectedTemplate);
                   
+                  console.log('🎨 Template rendering:', selectedTemplate, 'bg:', template?.bg);
+                  
                   // Check for custom background image
                   const customBg = content.canvas_template.customBackgroundImage;
                   
