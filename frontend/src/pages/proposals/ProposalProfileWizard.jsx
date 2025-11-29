@@ -935,60 +935,66 @@ const ProposalProfileWizard = ({ profileId }) => {
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">İçerik</label>
-                  <div className="border rounded bg-white" style={{ minHeight: '280px' }}>
-                    <Editor
-                      editorState={getEditorState(currentEditingModule)}
-                      onEditorStateChange={(editorState) => handleEditorChange(currentEditingModule, editorState)}
-                      wrapperClassName="wrapper-class"
-                      editorClassName="editor-class px-2 py-1 text-sm"
-                      toolbarClassName="toolbar-class text-xs"
-                      placeholder="İçerik yazın..."
-                      toolbar={{
-                        options: ['inline', 'list', 'textAlign', 'link', 'image'],
-                        inline: {
-                          options: ['bold', 'italic', 'underline']
-                        },
-                        list: {
-                          inDropdown: false,
-                          options: ['unordered', 'ordered']
-                        },
-                        textAlign: {
-                          inDropdown: false,
-                          options: ['left', 'center']
-                        },
-                        link: {
-                          inDropdown: false,
-                          options: ['link']
-                        },
-                        image: {
-                          uploadEnabled: true,
-                          uploadCallback: (file) => {
-                            return new Promise((resolve, reject) => {
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                resolve({ data: { link: reader.result } });
-                              };
-                              reader.onerror = reject;
-                              reader.readAsDataURL(file);
-                            });
+                {/* Content editor - hide for cover_page module */}
+                {currentEditingModule !== 'cover_page' && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">İçerik</label>
+                    <div className="border rounded bg-white" style={{ minHeight: '280px' }}>
+                      <Editor
+                        editorState={getEditorState(currentEditingModule)}
+                        onEditorStateChange={(editorState) => handleEditorChange(currentEditingModule, editorState)}
+                        wrapperClassName="wrapper-class"
+                        editorClassName="editor-class px-2 py-1 text-sm"
+                        toolbarClassName="toolbar-class text-xs"
+                        placeholder="İçerik yazın..."
+                        toolbar={{
+                          options: ['inline', 'list', 'textAlign', 'link', 'image'],
+                          inline: {
+                            options: ['bold', 'italic', 'underline']
                           },
-                          alt: { present: false, mandatory: false }
-                        }
-                      }}
-                    />
+                          list: {
+                            inDropdown: false,
+                            options: ['unordered', 'ordered']
+                          },
+                          textAlign: {
+                            inDropdown: false,
+                            options: ['left', 'center']
+                          },
+                          link: {
+                            inDropdown: false,
+                            options: ['link']
+                          },
+                          image: {
+                            uploadEnabled: true,
+                            uploadCallback: (file) => {
+                              return new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  resolve({ data: { link: reader.result } });
+                                };
+                                reader.onerror = reject;
+                                reader.readAsDataURL(file);
+                              });
+                            },
+                            alt: { present: false, mandatory: false }
+                          }
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Değişkenler: <code className="bg-gray-50 px-1">{'{{firma_adı}}'}</code>, <code className="bg-gray-50 px-1">{'{{tarih}}'}</code>
+                    </p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Değişkenler: <code className="bg-gray-50 px-1">{'{{firma_adı}}'}</code>, <code className="bg-gray-50 px-1">{'{{tarih}}'}</code>
-                  </p>
-                </div>
+                )}
 
-                <div className="mt-8 pt-4 border-t">
-                  <p className="text-sm text-gray-600 mb-2">
-                    <strong>Değişkenler:</strong> {'{{'}firma_adı{'}}'}, {'{{'}fuar_adı{'}}'}, {'{{'}tarih{'}}'}, {'{{'}ülke{'}}'}
-                  </p>
-                </div>
+                {/* Variables info - hide for cover_page */}
+                {currentEditingModule !== 'cover_page' && (
+                  <div className="mt-8 pt-4 border-t">
+                    <p className="text-sm text-gray-600 mb-2">
+                      <strong>Değişkenler:</strong> {'{{'}firma_adı{'}}'}, {'{{'}fuar_adı{'}}'}, {'{{'}tarih{'}}'}, {'{{'}ülke{'}}'}
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>
