@@ -283,10 +283,12 @@ const CoverPageLiveEditor = ({
               const isSelected = selectedElement === element.id;
               return (
                 <Rnd
-                  key={element.id}
-                  default={{
+                  key={`${element.id}-${element._version || 0}`}
+                  position={{
                     x: element.x || 50,
-                    y: element.y || 50,
+                    y: element.y || 50
+                  }}
+                  size={{
                     width: element.width || 300,
                     height: element.height || 50
                   }}
