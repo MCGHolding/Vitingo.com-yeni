@@ -436,21 +436,8 @@ export default function NewOpportunityForm({ onClose, onSave }) {
               </div>
             </div>
 
-            {/* Row 2: Contact Person and Amount */}
+            {/* Row 3: Amount and Currency */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="contactPerson" className="flex items-center space-x-2">
-                  <User className="h-4 w-4" />
-                  <span>Müşterideki İlgili Kişi</span>
-                </Label>
-                <Input
-                  id="contactPerson"
-                  placeholder="İlgili kişi adını giriniz"
-                  value={formData.contactPerson}
-                  onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                />
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="amount" className="flex items-center space-x-2">
                   <DollarSign className="h-4 w-4" />
@@ -479,6 +466,10 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                 {errors.amount && (
                   <p className="text-sm text-red-600">{errors.amount}</p>
                 )}
+              </div>
+              
+              <div className="space-y-2">
+                {/* Empty space for alignment */}
               </div>
             </div>
 
