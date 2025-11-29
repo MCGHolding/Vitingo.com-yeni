@@ -337,7 +337,8 @@ const LibraryPage = ({ onBack }) => {
     { id: 'sectors', label: 'Sektörler', icon: Building },
     { id: 'countries-cities', label: 'Ülke & Şehir', icon: Globe },
     { id: 'phone-codes', label: 'Telefon Kodları', icon: Tag },
-    { id: 'convention-centers', label: 'Fuar Merkezleri', icon: Building }
+    { id: 'convention-centers', label: 'Fuar Merkezleri', icon: Building },
+    { id: 'designs', label: 'Tasarım', icon: Palette }
   ];
 
   return (
