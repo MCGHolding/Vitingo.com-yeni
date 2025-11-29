@@ -2905,23 +2905,19 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                     />
                   </div>
                   
-                  {/* Import and use TimelineModule component */}
-                  <div className="border rounded-lg p-4 bg-gray-50">
-                    <p className="text-sm text-gray-600 mb-3">
-                      Zaman çizelgesi bu teklif için özel olarak oluşturulacaktır.
+                  <div className="border rounded-lg p-4 bg-gradient-to-br from-purple-50 to-blue-50">
+                    <p className="text-sm text-purple-700 mb-4 font-medium flex items-center gap-2">
+                      <span>⏱️</span>
+                      Bu zaman çizelgesi bu teklif için özel olarak oluşturulacaktır.
                     </p>
-                    {/* We'll need to import TimelineModule and use it here */}
-                    <div className="bg-white rounded p-3">
-                      {React.createElement(
-                        require('../../components/proposals/TimelineModule').default,
-                        {
-                          data: content.timelineData || content.content,
-                          onChange: (timelineData) => {
-                            handleModuleContentChange(activeModule.id, 'timelineData', timelineData);
-                            handleModuleContentChange(activeModule.id, 'content', JSON.stringify(timelineData));
-                          }
-                        }
-                      )}
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <TimelineModule
+                        data={content.timelineData || (content.content && typeof content.content === 'string' ? JSON.parse(content.content) : content.content)}
+                        onChange={(timelineData) => {
+                          handleModuleContentChange(activeModule.id, 'timelineData', timelineData);
+                          handleModuleContentChange(activeModule.id, 'content', JSON.stringify(timelineData));
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
