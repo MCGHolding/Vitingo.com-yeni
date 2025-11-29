@@ -611,19 +611,39 @@ const ProposalProfileWizard = ({ profileId }) => {
           {/* Module list sidebar */}
           <div className="w-48 space-y-1">
             {selectedModulesList.map((module) => (
-              <button
-                key={module.module_type}
-                onClick={() => setCurrentEditingModule(module.module_type)}
-                className={`w-full text-left px-2 py-2 rounded text-xs transition-colors
-                  ${currentEditingModule === module.module_type
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}
-              >
-                <div className="flex items-center">
-                  <span className="mr-1.5 text-sm">{module.icon}</span>
-                  <span className="font-medium truncate">{module.module_name}</span>
-                </div>
-              </button>
+              <div key={module.module_type} className="relative">
+                <button
+                  onClick={() => setCurrentEditingModule(module.module_type)}
+                  className={`w-full text-left px-2 py-2 rounded text-xs transition-colors
+                    ${currentEditingModule === module.module_type
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="mr-1.5 text-sm">{module.icon}</span>
+                      <span className="font-medium truncate">{module.module_name}</span>
+                    </div>
+                    {/* Preview icon for cover page */}
+                    {module.module_type === 'cover_page' && (moduleContents[module.module_type]?.canvas_template || moduleContents[module.module_type]?.cover_image) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewModule(module.module_type);
+                          setShowModulePreview(true);
+                        }}
+                        className="ml-2 p-1 hover:bg-blue-600 rounded"
+                        title="Önizleme"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                </button>
+              </div>
             ))}
           </div>
 
