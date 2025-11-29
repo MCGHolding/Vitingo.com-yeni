@@ -1134,6 +1134,7 @@ const ProposalProfileWizard = ({ profileId }) => {
         onClose={() => setShowCoverDesigner(false)}
         profileData={formData}
         onSave={handleCoverPageSave}
+        initialData={moduleContents[currentEditingModule]?.canvas_template}
       />
       
       <div className="max-w-5xl mx-auto">
