@@ -296,6 +296,10 @@ const ProposalProfileWizard = ({ profileId }) => {
     try {
       setLoading(true);
 
+      // DEBUG: Check entire moduleContents state
+      console.log('💾 SAVING PROFILE - moduleContents state:', JSON.stringify(moduleContents, null, 2));
+      console.log('📋 Selected module IDs:', selectedModuleIds);
+
       // Prepare selected_modules with content
       const selected_modules = selectedModuleIds.map((moduleType, index) => {
         const moduleInfo = availableModules.find(m => m.module_type === moduleType);
@@ -303,14 +307,22 @@ const ProposalProfileWizard = ({ profileId }) => {
         
         // Debug: Check if canvas_template exists for cover_page
         if (moduleType === 'cover_page') {
-          console.log('🔍 Cover Page Content:', content);
+          console.log('🔍 Cover Page Content from state:', JSON.stringify(content, null, 2));
+          console.log('🔍 Content keys:', Object.keys(content));
+          console.log('🔍 Content type:', content.type);
+          console.log('🔍 Has canvas_template:', 'canvas_template' in content);
+          console.log('🔍 Has cover_image:', 'cover_image' in content);
+          
           if (content.canvas_template) {
             console.log('✅ Canvas template found!', {
               selectedTemplate: content.canvas_template.selectedTemplate,
               elementsCount: content.canvas_template.elements?.length
             });
+          } else if (content.cover_image) {
+            console.log('✅ Cover image found! Length:', content.cover_image.length);
           } else {
-            console.warn('⚠️ NO canvas_template in cover_page content!');
+            console.warn('⚠️ NO canvas_template OR cover_image in cover_page content!');
+            console.warn('⚠️ This means Canvas Designer / Image Upload did NOT update state!');
           }
         }
         
