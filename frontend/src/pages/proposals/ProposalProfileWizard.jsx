@@ -67,6 +67,7 @@ const ProposalProfileWizard = ({ profileId }) => {
   const [companies, setCompanies] = useState([]);
   const [availableModules, setAvailableModules] = useState([]);
   const [selectedPalette, setSelectedPalette] = useState('modern');
+  const [showCoverImagePreview, setShowCoverImagePreview] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
