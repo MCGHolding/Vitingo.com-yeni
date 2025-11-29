@@ -114,14 +114,14 @@ const CoverPageLiveEditor = ({
         </div>
 
         {/* Canva-style Top Toolbar */}
-        <div className="flex items-center px-4 py-2 border-b bg-white space-x-3">
+        <div className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm">
           {selectedElementData ? (
-            <>
+            <div className="flex items-center space-x-2 w-full">
               {/* Font Family */}
               <select
                 value={selectedElementData.fontFamily || 'Inter'}
                 onChange={(e) => updateElement(selectedElement, { fontFamily: e.target.value })}
-                className="px-3 py-1.5 text-sm border rounded-lg bg-white hover:bg-gray-50 min-w-[120px]"
+                className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition min-w-[140px] font-medium"
               >
                 <option value="Inter">Inter</option>
                 <option value="Arial">Arial</option>
@@ -132,13 +132,14 @@ const CoverPageLiveEditor = ({
                 <option value="Roboto">Roboto</option>
               </select>
 
-              <div className="w-px h-6 bg-gray-300" />
+              <div className="w-px h-8 bg-gray-300" />
 
               {/* Font Size */}
-              <div className="flex items-center space-x-1 bg-gray-100 rounded-lg px-1">
+              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden hover:border-blue-400 transition">
                 <button
                   onClick={() => changeFontSize(-2)}
-                  className="p-1.5 hover:bg-gray-200 rounded"
+                  className="p-2 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition"
+                  title="Küçült"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
@@ -146,103 +147,113 @@ const CoverPageLiveEditor = ({
                   type="number"
                   value={selectedElementData.fontSize || 24}
                   onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) || 24 })}
-                  className="w-12 text-center text-sm bg-transparent border-0 focus:outline-none"
+                  className="w-14 text-center text-sm font-medium border-0 focus:outline-none focus:bg-blue-50"
+                  min="8"
+                  max="200"
                 />
                 <button
                   onClick={() => changeFontSize(2)}
-                  className="p-1.5 hover:bg-gray-200 rounded"
+                  className="p-2 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition"
+                  title="Büyüt"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="w-px h-6 bg-gray-300" />
-
-              {/* Color */}
-              <div className="flex items-center space-x-1">
-                <input
-                  type="color"
-                  value={selectedElementData.color || '#000000'}
-                  onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
-                  className="w-8 h-8 rounded cursor-pointer border-0"
-                />
-              </div>
-
-              <div className="w-px h-6 bg-gray-300" />
+              <div className="w-px h-8 bg-gray-300" />
 
               {/* Style Buttons */}
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => updateElement(selectedElement, { fontWeight: selectedElementData.fontWeight === 'bold' ? 'normal' : 'bold' })}
-                  className={`p-2 rounded-lg ${selectedElementData.fontWeight === 'bold' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition ${selectedElementData.fontWeight === 'bold' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Kalın"
                 >
                   <Bold className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => updateElement(selectedElement, { fontStyle: selectedElementData.fontStyle === 'italic' ? 'normal' : 'italic' })}
-                  className={`p-2 rounded-lg ${selectedElementData.fontStyle === 'italic' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition border-l border-gray-300 ${selectedElementData.fontStyle === 'italic' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="İtalik"
                 >
                   <Italic className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => updateElement(selectedElement, { textDecoration: selectedElementData.textDecoration === 'underline' ? 'none' : 'underline' })}
-                  className={`p-2 rounded-lg ${selectedElementData.textDecoration === 'underline' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition border-l border-gray-300 ${selectedElementData.textDecoration === 'underline' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Altı Çizili"
                 >
                   <Underline className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="w-px h-6 bg-gray-300" />
+              <div className="w-px h-8 bg-gray-300" />
 
               {/* Alignment */}
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => updateElement(selectedElement, { textAlign: 'left' })}
-                  className={`p-2 rounded-lg ${selectedElementData.textAlign === 'left' || !selectedElementData.textAlign ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition ${selectedElementData.textAlign === 'left' || !selectedElementData.textAlign ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Sola Hizala"
                 >
                   <AlignLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => updateElement(selectedElement, { textAlign: 'center' })}
-                  className={`p-2 rounded-lg ${selectedElementData.textAlign === 'center' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition border-l border-gray-300 ${selectedElementData.textAlign === 'center' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Ortala"
                 >
                   <AlignCenter className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => updateElement(selectedElement, { textAlign: 'right' })}
-                  className={`p-2 rounded-lg ${selectedElementData.textAlign === 'right' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'}`}
+                  className={`p-2 transition border-l border-gray-300 ${selectedElementData.textAlign === 'right' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Sağa Hizala"
                 >
                   <AlignRight className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="w-px h-6 bg-gray-300" />
+              <div className="w-px h-8 bg-gray-300" />
+
+              {/* Color Picker */}
+              <div className="relative group">
+                <label className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
+                  <div 
+                    className="w-6 h-6 rounded border-2 border-white shadow-sm"
+                    style={{ backgroundColor: selectedElementData.color || '#000000' }}
+                  />
+                  <span className="text-sm font-medium text-gray-700">Renk</span>
+                  <input
+                    type="color"
+                    value={selectedElementData.color || '#000000'}
+                    onChange={(e) => updateElement(selectedElement, { color: e.target.value })}
+                    className="absolute opacity-0 w-0 h-0"
+                  />
+                </label>
+              </div>
+
+              <div className="w-px h-8 bg-gray-300" />
 
               {/* Delete */}
               <button
                 onClick={() => deleteElement(selectedElement)}
-                className="p-2 rounded-lg text-red-500 hover:bg-red-50"
+                className="p-2 rounded-lg text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 transition"
                 title="Sil"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
 
               {/* Selected Element Info */}
-              <div className="ml-auto flex items-center space-x-2 text-sm text-gray-500">
+              <div className="ml-auto flex items-center space-x-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
                 <Type className="w-4 h-4" />
-                <span>{selectedElementData.displayValue}</span>
+                <span className="text-sm font-medium max-w-[200px] truncate">{selectedElementData.displayValue}</span>
               </div>
-            </>
+            </div>
           ) : (
-            <div className="text-sm text-gray-400 flex items-center">
-              <Type className="w-4 h-4 mr-2" />
-              Düzenlemek için bir element seçin
+            <div className="text-sm text-gray-500 flex items-center py-1">
+              <Type className="w-4 h-4 mr-2 text-gray-400" />
+              <span className="font-medium">Düzenlemek için bir element seçin</span>
             </div>
           )}
         </div>
