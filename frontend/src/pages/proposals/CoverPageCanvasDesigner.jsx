@@ -218,9 +218,37 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
                 height: '1123px',
                 transform: 'scale(0.65)',
                 transformOrigin: 'center',
-                border: '2px solid #e5e7eb'
+                border: '2px solid #e5e7eb',
+                backgroundImage: selectedTemplate === 'custom_image' && customBackgroundImage ? `url(${customBackgroundImage})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
               }}
             >
+              {/* Custom Image Upload Prompt */}
+              {selectedTemplate === 'custom_image' && !customBackgroundImage && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCustomImageUpload}
+                    className="hidden"
+                    id="custom-bg-upload"
+                  />
+                  <label
+                    htmlFor="custom-bg-upload"
+                    className="cursor-pointer flex flex-col items-center space-y-4"
+                  >
+                    <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-5xl">📤</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-medium text-gray-700">Arka Plan Resmi Yükle</p>
+                      <p className="text-sm text-gray-500 mt-1">JPG, PNG (Max 5MB)</p>
+                    </div>
+                  </label>
+                </div>
+              )}
+              
               {/* Template-specific backgrounds */}
               {TEMPLATES.find(t => t.id === selectedTemplate)?.sidebar && (
                 <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-b from-purple-500 to-pink-500 opacity-90" />
