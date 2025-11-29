@@ -110,8 +110,6 @@ const ProposalProfileWizard = ({ profileId }) => {
   const [currentEditingModule, setCurrentEditingModule] = useState(null);
   const [editorStates, setEditorStates] = useState({});
   const [showCoverDesigner, setShowCoverDesigner] = useState(false);
-  const [showLiveEditor, setShowLiveEditor] = useState(false);
-  const [tempCanvasData, setTempCanvasData] = useState(null);
 
   // Fetch companies and available modules on mount
   useEffect(() => {
