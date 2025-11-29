@@ -3328,7 +3328,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             )}
 
             {!['cover_page', 'introduction', 'about_company', 'included_services', 'excluded_services', 'pricing', 'payment_terms', 'contact'].includes(module.type) && (
-              <div dangerouslySetInnerHTML={{ __html: replaceVariables(content.content || '<p>İçerik henüz eklenmedi</p>') }} />
+              <div dangerouslySetInnerHTML={{ __html: replaceVariables(content.content || content.body || '<p>İçerik henüz eklenmedi</p>') }} />
             )}
           </div>
 
