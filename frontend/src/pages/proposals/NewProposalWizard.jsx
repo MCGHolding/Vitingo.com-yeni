@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { ArrowLeft, ArrowRight, FileText, Sparkles, Building2, GripVertical, X, Plus, Check, Image, FileBarChart, Save } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import TimelineModule from '../../components/proposals/TimelineModule';
+import PaymentTermsModule from '../../components/proposals/PaymentTermsModule';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
