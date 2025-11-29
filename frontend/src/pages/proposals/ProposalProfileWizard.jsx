@@ -1068,8 +1068,7 @@ const ProposalProfileWizard = ({ profileId }) => {
       cover_page: coverPageContent
     }));
     
-    // Auto-show canvas preview
-    setShowCanvasPreview(true);
+    // Canvas preview is always visible in the UI
     
     toast.success('Kapak sayfası kaydedildi!');
   };
