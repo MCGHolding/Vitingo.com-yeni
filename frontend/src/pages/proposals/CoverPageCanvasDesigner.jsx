@@ -274,41 +274,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
                   </div>
                 </div>
               )}
-                  </label>
-                </div>
-              )}
               
-              {/* Template-specific backgrounds */}
-              {TEMPLATES.find(t => t.id === selectedTemplate)?.sidebar && (
-                <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-b from-purple-500 to-pink-500 opacity-90" />
-              )}
-              {TEMPLATES.find(t => t.id === selectedTemplate)?.split && (
-                <>
-                  <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-purple-500 opacity-90" />
-                  <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-white" />
-                </>
-              )}
-              {TEMPLATES.find(t => t.id === selectedTemplate)?.diagonal && (
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-transparent to-white opacity-80" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 40%, 0 60%)' }} />
-              )}
-              {TEMPLATES.find(t => t.id === selectedTemplate)?.geometric && (
-                <>
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 opacity-20 rounded-full" style={{ transform: 'translate(30%, -30%)' }} />
-                  <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500 opacity-10" style={{ transform: 'translate(-40%, 40%) rotate(45deg)' }} />
-                </>
-              )}
-              {TEMPLATES.find(t => t.id === selectedTemplate)?.wave && (
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <path d="M0,30 Q25,20 50,30 T100,30 L100,100 L0,100 Z" fill="url(#waveGradient)" opacity="0.15"/>
-                  <defs>
-                    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#a855f7" />
-                      <stop offset="100%" stopColor="#ec4899" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              )}
-
               {/* Grid background */}
               <div className="absolute inset-0 opacity-5"
                 style={{
