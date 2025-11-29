@@ -2671,15 +2671,52 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   
                   <div>
                     <label className="block text-sm font-medium mb-2">İçerik *</label>
-                    <div className="border rounded-lg p-4 bg-gray-50 min-h-[300px]">
+                    <div className="border rounded-lg p-6 bg-white min-h-[300px]">
                       {/* Render HTML content with replaced variables */}
                       <div 
-                        className="prose prose-sm max-w-none"
+                        className="formatted-content"
+                        style={{
+                          fontSize: '15px',
+                          lineHeight: '1.8',
+                          color: '#1f2937'
+                        }}
                         dangerouslySetInnerHTML={{ 
                           __html: replaceVariables(content.content || content.body || '') 
                         }}
                       />
                     </div>
+                    <style>{`
+                      .formatted-content p {
+                        margin-bottom: 1rem;
+                      }
+                      .formatted-content ul {
+                        list-style-type: disc;
+                        padding-left: 2rem;
+                        margin-bottom: 1rem;
+                      }
+                      .formatted-content ol {
+                        list-style-type: decimal;
+                        padding-left: 2rem;
+                        margin-bottom: 1rem;
+                      }
+                      .formatted-content li {
+                        margin-bottom: 0.5rem;
+                      }
+                      .formatted-content strong {
+                        font-weight: 600;
+                      }
+                      .formatted-content em {
+                        font-style: italic;
+                      }
+                      .formatted-content h1, .formatted-content h2, .formatted-content h3 {
+                        font-weight: 600;
+                        margin-top: 1.5rem;
+                        margin-bottom: 1rem;
+                      }
+                      .formatted-content h1 { font-size: 1.5rem; }
+                      .formatted-content h2 { font-size: 1.25rem; }
+                      .formatted-content h3 { font-size: 1.1rem; }
+                    `}</style>
                     <p className="text-xs text-gray-500 mt-2">
                       ℹ️ Bu içerik profil şablonundan geldi. Düzenlemek için profili güncelleyin.
                     </p>
