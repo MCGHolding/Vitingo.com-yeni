@@ -8,7 +8,16 @@ const PaymentTermsModule = ({
   currency = 'TRY',
   opportunity = null
 }) => {
-  const [paymentTerms, setPaymentTerms] = useState(data || getDefaultPaymentTerms());
+  const [paymentTerms, setPaymentTerms] = useState(() => {
+    if (data && typeof data === 'object') {
+      return {
+        ...getDefaultPaymentTerms(),
+        ...data,
+        payments: Array.isArray(data.payments) ? data.payments : []
+      };
+    }
+    return getDefaultPaymentTerms();
+  });
   const [profiles, setProfiles] = useState([]);
   const [banks, setBanks] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
