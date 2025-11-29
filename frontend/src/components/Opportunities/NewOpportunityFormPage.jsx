@@ -618,6 +618,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
       ...formData,
       title: randomTitle,
       customer: customers.length > 0 ? customers[Math.floor(Math.random() * customers.length)].companyName : 'Örnek Müşteri A.Ş.',
+      lead: '',
       amount: randomAmount,
       currency: ['TRY', 'USD', 'EUR'][Math.floor(Math.random() * 3)],
       status: ['open', 'qualified', 'proposal'][Math.floor(Math.random() * 3)],
