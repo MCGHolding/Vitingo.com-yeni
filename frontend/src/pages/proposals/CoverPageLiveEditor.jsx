@@ -40,7 +40,7 @@ const CoverPageLiveEditor = ({
         displayValue: replaceVariable(el.variable)
       }));
       setElements(mappedElements);
-      setSelectedElement(null);
+      clearSelection();
     }
   }, [isOpen, canvasData, realData]);
 
@@ -48,7 +48,7 @@ const CoverPageLiveEditor = ({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
-        setSelectedElement(null);
+        clearSelection();
       }
     };
     
