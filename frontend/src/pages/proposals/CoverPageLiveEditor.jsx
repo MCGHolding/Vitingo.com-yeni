@@ -103,8 +103,19 @@ const CoverPageLiveEditor = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-[95vw] h-[95vh] flex flex-col">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => {
+        // Close modal only if clicking on the backdrop
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-[95vw] h-[95vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header with Title */}
         <div 
           className="flex items-center justify-between px-4 py-3 border-b bg-gray-50"
