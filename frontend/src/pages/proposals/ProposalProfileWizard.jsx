@@ -1051,31 +1051,20 @@ const ProposalProfileWizard = ({ profileId }) => {
     );
   }
 
-  // Canvas Designer'dan "Düzenle" tıklandığında çağrılır
-  // Live Editor'ı açar
+  // Canvas Designer'dan "Kaydet" tıklandığında çağrılır
+  // Direkt tasarımı kaydeder (Live Editor yok artık)
   const handleCoverPageSave = (template) => {
-    console.log('🎨 Canvas Designer: Opening Live Editor with template...', template);
-    
-    // Store temp canvas data and open Live Editor
-    setTempCanvasData(template);
-    setShowCoverDesigner(false);
-    setShowLiveEditor(true);
-  };
-
-  // Live Editor'dan "Kaydet" tıklandığında çağrılır
-  // Final tasarımı kaydeder
-  const handleLiveEditorSave = (finalTemplate) => {
-    console.log('🎨 Live Editor: Saving final template...', finalTemplate);
+    console.log('🎨 Canvas Designer: Saving template directly...', template);
     
     // Save canvas template with proper structure
     const coverPageContent = {
       title: 'Kapak Sayfası',
       type: 'canvas_design',
-      canvas_template: finalTemplate,
+      canvas_template: template,
       body: ''
     };
     
-    console.log('🎨 Live Editor: Creating content:', coverPageContent);
+    console.log('🎨 Canvas Designer: Creating content:', coverPageContent);
     
     // Direct state update
     setModuleContents(prev => ({
@@ -1085,10 +1074,7 @@ const ProposalProfileWizard = ({ profileId }) => {
     
     // Auto-show canvas preview
     setShowCanvasPreview(true);
-    setShowLiveEditor(false);
-    setTempCanvasData(null);
     
-    console.log('🎨 Live Editor: State update complete');
     toast.success('Kapak sayfası kaydedildi!');
   };
 
