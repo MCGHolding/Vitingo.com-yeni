@@ -806,6 +806,47 @@ const ProposalProfileWizard = ({ profileId }) => {
     toast.success('Kapak sayfası şablonu kaydedildi!');
   };
 
+  const handleCoverImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Lütfen bir resim dosyası seçin');
+      return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Resim boyutu 5MB\'dan küçük olmalı');
+      return;
+    }
+    
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const coverImageContent = {
+        title: 'Kapak Sayfası',
+        type: 'image_upload',
+        cover_image: reader.result, // Base64 encoded image
+        body: ''
+      };
+      
+      setModuleContents(prev => ({
+        ...prev,
+        cover_page: coverImageContent
+      }));
+      
+      toast.success('Kapak resmi yüklendi!');
+    };
+    
+    reader.onerror = () => {
+      toast.error('Resim yüklenirken hata oluştu');
+    };
+    
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <CoverPageCanvasDesigner
