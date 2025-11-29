@@ -966,9 +966,14 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     };
     
     const replacements = {
-      // Firma bilgileri (satış fırsatından)
-      '{{firma_adi}}': formData.company_name || 'TSS United Inc',
-      '{{company_name}}': formData.company_name || 'TSS United Inc',
+      // MÜŞTERİ firma bilgileri (satış fırsatından - teklifi ALAN)
+      '{{firma_adi}}': formData.company_name || '[Müşteri Firma Adı]',
+      '{{musteri_firma}}': formData.company_name || '[Müşteri Firma Adı]',
+      '{{company_name}}': formData.company_name || '[Müşteri Firma Adı]',
+      
+      // BİZİM firma bilgileri (teklifi VEREN - sabit)
+      '{{bizim_firma}}': 'TSS United Inc',
+      '{{our_company}}': 'TSS United Inc',
       
       // Müşteri yetkili bilgileri (satış fırsatından)
       '{{yetkili_adi}}': formData.contact_person || '[Yetkili Adı]',
