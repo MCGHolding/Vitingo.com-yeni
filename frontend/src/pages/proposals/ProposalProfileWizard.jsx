@@ -68,7 +68,6 @@ const ProposalProfileWizard = ({ profileId }) => {
   const [availableModules, setAvailableModules] = useState([]);
   const [selectedPalette, setSelectedPalette] = useState('modern');
   const [showCoverImagePreview, setShowCoverImagePreview] = useState(false);
-  const [showCanvasPreview, setShowCanvasPreview] = useState(false);
   const [showModulePreview, setShowModulePreview] = useState(false);
   const [previewModule, setPreviewModule] = useState(null);
 
