@@ -554,11 +554,7 @@ const ProposalProfileWizard = ({ profileId }) => {
     </div>
   );
 
-  const renderStep2 = () => {
-    console.log('🎨 renderStep2 - availableModules:', availableModules.length, 'modules');
-    console.log('🎨 renderStep2 - modules:', availableModules.map(m => `${m.icon} ${m.module_name}`));
-    
-    return (
+  const renderStep2 = () => (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-base font-semibold text-gray-900">Modül Seçimi</h2>
