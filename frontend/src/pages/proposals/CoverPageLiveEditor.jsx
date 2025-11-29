@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Rnd } from 'react-rnd';
 import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Save, Trash2, Minus, Plus, Type } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -16,25 +16,18 @@ const CoverPageLiveEditor = ({
 }) => {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
-  const [forceUpdate, setForceUpdate] = useState(0);
+  
+  // Refs - re-render'da kaybolmasın
+  const selectedElementRef = useRef(null);
+  const toolbarRef = useRef(null);
   const canvasRef = useRef(null);
-  const selectedRef = useRef(null);
   
-  // Use ref to prevent state loss
-  const setSelection = (id) => {
-    console.log('🔵 setSelection called with:', id);
-    selectedRef.current = id;
-    setSelectedElement(id);
-    setForceUpdate(prev => prev + 1);
-  };
-  
-  const clearSelection = () => {
-    console.log('🔴 clearSelection called');
-    console.trace('clearSelection stack trace');
-    selectedRef.current = null;
-    setSelectedElement(null);
-    setForceUpdate(prev => prev + 1);
-  };
+  // selectedElement değiştiğinde ref'i güncelle ve logla
+  useEffect(() => {
+    selectedElementRef.current = selectedElement;
+    console.log('🎯 selectedElement değişti:', selectedElement?.id || 'null');
+    console.trace('Stack trace:');
+  }, [selectedElement]);
 
   useEffect(() => {
     if (isOpen && canvasData?.elements) {
