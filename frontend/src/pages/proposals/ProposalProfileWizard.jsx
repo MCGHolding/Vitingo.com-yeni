@@ -961,7 +961,7 @@ const ProposalProfileWizard = ({ profileId }) => {
           </div>
         </div>
       )}
-    </);
+    );
   };
 
   const renderStep4 = () => (
