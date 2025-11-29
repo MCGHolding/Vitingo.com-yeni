@@ -690,7 +690,7 @@ const ProposalProfileWizard = ({ profileId }) => {
                       className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition flex items-center justify-center space-x-2 font-medium"
                     >
                       <Sparkles className="w-5 h-5" />
-                      <span>AI ile Profesyonel Kapak Sayfası Oluştur</span>
+                      <span>Hazır Şablonlar Kullanarak Kapak Sayfası Oluştur</span>
                     </button>
                     
                     {/* Option 2: Upload Image */}
