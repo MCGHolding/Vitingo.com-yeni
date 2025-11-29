@@ -911,6 +911,9 @@ const ProposalProfileWizard = ({ profileId }) => {
         cover_page: coverImageContent
       }));
       
+      // Auto-show preview when image is uploaded
+      setShowCoverImagePreview(true);
+      
       console.log('📤 Image Upload: State update queued');
       toast.success('Kapak resmi yüklendi!');
     };
