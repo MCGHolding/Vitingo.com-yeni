@@ -88,16 +88,30 @@ const CoverPageLiveEditor = ({
     }
   };
 
-  // Element seçme - useCallback ile stable referans
-  const handleSelectElement = useCallback((elementId, e) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
+  // Canvas click handler - SADECE CLICK
+  const handleCanvasClick = useCallback((e) => {
+    // Toolbar kilitliyse hiçbir şey yapma
+    if (toolbarLocked) {
+      console.log('Toolbar locked - keeping selection');
+      return;
     }
-    console.log('🔵 Selecting element:', elementId);
-    const element = elements.find(el => el.id === elementId);
-    setSelectedElement(element);
-  }, [elements]);
+    
+    // Element üzerindeyse hiçbir şey yapma
+    if (e.target.closest('[data-element-id]')) {
+      console.log('Click on element');
+      return;
+    }
+    
+    // Toolbar üzerindeyse hiçbir şey yapma
+    if (e.target.closest('.editor-toolbar-portal')) {
+      console.log('Click on toolbar');
+      return;
+    }
+    
+    // Canvas background'a tıklandıysa seçimi kaldır
+    console.log('Canvas background clicked - clearing selection');
+    setSelectedElement(null);
+  }, [toolbarLocked]);
   
   // Element güncelleme
   const handleUpdateElement = useCallback((updates) => {
@@ -105,12 +119,14 @@ const CoverPageLiveEditor = ({
     
     console.log('Updating element:', selectedElement.id, updates);
     
+    const updatedElement = { ...selectedElement, ...updates };
+    
     setElements(prev => prev.map(el => 
-      el.id === selectedElement.id ? { ...el, ...updates } : el
+      el.id === selectedElement.id ? updatedElement : el
     ));
     
     // selectedElement'i de güncelle
-    setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
+    setSelectedElement(updatedElement);
   }, [selectedElement]);
   
   // Element silme
@@ -120,15 +136,9 @@ const CoverPageLiveEditor = ({
     console.log('Deleting element:', selectedElement.id);
     setElements(prev => prev.filter(el => el.id !== selectedElement.id));
     setSelectedElement(null);
+    setToolbarLocked(false);
     toast.success('Element silindi');
   }, [selectedElement]);
-  
-  const changeFontSize = useCallback((delta) => {
-    if (!selectedElement) return;
-    const currentSize = selectedElement.fontSize || 24;
-    const newSize = Math.max(8, Math.min(200, currentSize + delta));
-    handleUpdateElement({ fontSize: newSize });
-  }, [selectedElement, handleUpdateElement]);
 
   const handleSave = () => {
     const savedElements = elements.map(el => ({
