@@ -267,46 +267,52 @@ const CoverPageLiveEditor = ({
             {elements.map(element => (
               <Rnd
                 key={element.id}
-                default={{
-                  x: element.x || 50,
-                  y: element.y || 50,
-                  width: element.width || 300,
-                  height: element.height || 50
-                }}
                 position={{ x: element.x || 50, y: element.y || 50 }}
                 size={{ width: element.width || 300, height: element.height || 50 }}
+                onDragStart={() => setIsDragging(true)}
                 onDragStop={(e, d) => {
-                  updateElement(element.id, { x: d.x, y: d.y });
+                  setIsDragging(false);
+                  // Directly use the coordinates without any scale adjustments
+                  updateElement(element.id, { 
+                    x: Math.round(d.x), 
+                    y: Math.round(d.y) 
+                  });
                 }}
                 onResizeStop={(e, direction, ref, delta, position) => {
                   updateElement(element.id, {
                     width: parseInt(ref.style.width),
                     height: parseInt(ref.style.height),
-                    x: position.x,
-                    y: position.y
+                    x: Math.round(position.x),
+                    y: Math.round(position.y)
                   });
                 }}
-                scale={SCALE}
                 bounds="parent"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedElement(element.id);
+                  if (!isDragging) {
+                    setSelectedElement(element.id);
+                  }
                 }}
-                className={`cursor-move ${
+                className={`cursor-move transition-all ${
                   selectedElement === element.id 
-                    ? 'ring-2 ring-blue-500 ring-offset-2' 
-                    : 'hover:ring-2 hover:ring-blue-300'
+                    ? 'ring-2 ring-blue-500' 
+                    : 'hover:ring-2 hover:ring-blue-300 hover:ring-opacity-50'
                 }`}
                 enableResizing={selectedElement === element.id}
+                disableDragging={false}
                 resizeHandleStyles={{
-                  bottomRight: { cursor: 'se-resize' },
-                  bottomLeft: { cursor: 'sw-resize' },
-                  topRight: { cursor: 'ne-resize' },
-                  topLeft: { cursor: 'nw-resize' }
+                  bottom: { display: selectedElement === element.id ? 'block' : 'none' },
+                  bottomRight: { cursor: 'se-resize', display: selectedElement === element.id ? 'block' : 'none' },
+                  bottomLeft: { cursor: 'sw-resize', display: selectedElement === element.id ? 'block' : 'none' },
+                  top: { display: selectedElement === element.id ? 'block' : 'none' },
+                  topRight: { cursor: 'ne-resize', display: selectedElement === element.id ? 'block' : 'none' },
+                  topLeft: { cursor: 'nw-resize', display: selectedElement === element.id ? 'block' : 'none' },
+                  left: { display: selectedElement === element.id ? 'block' : 'none' },
+                  right: { display: selectedElement === element.id ? 'block' : 'none' }
                 }}
               >
                 <div
-                  className="w-full h-full flex items-center px-2"
+                  className="w-full h-full flex items-center px-2 pointer-events-none"
                   style={{
                     fontSize: `${element.fontSize || 24}px`,
                     fontFamily: element.fontFamily || 'Inter',
@@ -315,7 +321,10 @@ const CoverPageLiveEditor = ({
                     textDecoration: element.textDecoration || 'none',
                     color: element.color || '#000000',
                     textAlign: element.textAlign || 'left',
-                    justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'
+                    justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+                    userSelect: 'none',
+                    overflow: 'hidden',
+                    wordWrap: 'break-word'
                   }}
                 >
                   {element.displayValue || element.variable}
