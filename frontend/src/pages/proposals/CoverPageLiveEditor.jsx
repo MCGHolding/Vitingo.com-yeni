@@ -102,7 +102,7 @@ const CoverPageLiveEditor = ({
 
   const deleteElement = (id) => {
     setElements(elements.filter(el => el.id !== id));
-    setSelectedElement(null);
+    clearSelection();
     toast.success('Element silindi');
   };
 
