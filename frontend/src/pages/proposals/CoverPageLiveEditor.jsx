@@ -327,23 +327,11 @@ const CoverPageLiveEditor = ({
                     e.stopPropagation();
                     setSelectedElement(element.id);
                   }}
-                  onDrag={(e, d) => {
-                    e.stopPropagation();
-                    // Keep element selected during drag
-                    if (selectedElement !== element.id) {
-                      setSelectedElement(element.id);
-                    }
-                    // Update position during drag for immediate feedback
-                    updateElement(element.id, { 
-                      x: Math.round(d.x), 
-                      y: Math.round(d.y) 
-                    });
-                  }}
                   onDragStop={(e, d) => {
                     e.stopPropagation();
                     // Keep selection after drag
                     setSelectedElement(element.id);
-                    // Final position update
+                    // Update position only when drag stops
                     updateElement(element.id, { 
                       x: Math.round(d.x), 
                       y: Math.round(d.y) 
