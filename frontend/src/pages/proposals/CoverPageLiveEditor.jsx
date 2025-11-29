@@ -413,6 +413,7 @@ const CoverPageLiveEditor = ({
               return (
                 <Rnd
                   key={element.id}
+                  data-element-id={element.id}
                   default={{
                     x: element.x || 50,
                     y: element.y || 50,
@@ -445,6 +446,10 @@ const CoverPageLiveEditor = ({
                     });
                   }}
                   bounds="parent"
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    setSelectedElement(element.id);
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedElement(element.id);
