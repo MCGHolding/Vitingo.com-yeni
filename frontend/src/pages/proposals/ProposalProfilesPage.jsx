@@ -1025,6 +1025,104 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
           </div>
         </div>
       )}
+
+      {/* Preview Modal */}
+      {showPreviewModal && previewProfile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{previewProfile.profile_name}</h2>
+                  <p className="text-sm text-gray-500 mt-1">Kapak Sayfası Önizlemesi</p>
+                </div>
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Cover Page Preview */}
+              {(() => {
+                const coverModule = previewProfile.selected_modules?.find(m => m.module_type === 'cover_page');
+                const content = coverModule?.content_template;
+
+                if (!content) {
+                  return (
+                    <div className="text-center py-12 bg-gray-50 rounded">
+                      <p className="text-gray-500">Bu profilde kapak sayfası bulunmuyor</p>
+                    </div>
+                  );
+                }
+
+                // Check if canvas design
+                if (content.canvas_template) {
+                  const canvas = content.canvas_template;
+                  return (
+                    <div 
+                      className="relative mx-auto bg-white shadow-xl"
+                      style={{ 
+                        width: '595px',
+                        height: '842px',
+                        maxWidth: '100%',
+                        backgroundImage: canvas.customBackgroundImage ? `url(${canvas.customBackgroundImage})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
+                      {/* Render elements */}
+                      {canvas.elements && canvas.elements.map((element, idx) => {
+                        const scale = 0.75; // Scale factor
+                        return (
+                          <div
+                            key={idx}
+                            style={{
+                              position: 'absolute',
+                              left: `${element.x * scale}px`,
+                              top: `${element.y * scale}px`,
+                              fontSize: `${element.fontSize * scale}px`,
+                              fontWeight: element.fontWeight,
+                              fontStyle: element.fontStyle,
+                              color: element.color,
+                              zIndex: 10
+                            }}
+                          >
+                            {element.variable}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                // Check if uploaded image
+                if (content.cover_image) {
+                  return (
+                    <div className="mx-auto bg-white shadow-xl" style={{ maxWidth: '595px' }}>
+                      <img 
+                        src={content.cover_image} 
+                        alt="Cover Page" 
+                        className="w-full"
+                      />
+                    </div>
+                  );
+                }
+
+                // Default text-based cover
+                return (
+                  <div className="mx-auto bg-white shadow-xl p-12 text-center" style={{ width: '595px', height: '842px' }}>
+                    <h1 className="text-4xl font-bold mb-4">{content.title || 'Kapak Sayfası'}</h1>
+                    <p className="text-gray-600">{content.body || 'İçerik bulunmuyor'}</p>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
