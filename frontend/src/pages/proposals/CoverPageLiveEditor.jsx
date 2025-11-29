@@ -443,14 +443,10 @@ const CoverPageLiveEditor = ({
                 <Type className="w-4 h-4" />
                 <span className="text-sm font-medium max-w-[200px] truncate">{selectedElement.displayValue}</span>
               </div>
+              </div>
             </div>
-          ) : (
-            <div className="text-sm text-gray-500 flex items-center py-1">
-              <Type className="w-4 h-4 mr-2 text-gray-400" />
-              <span className="font-medium">Düzenlemek için bir element seçin</span>
-            </div>
-          )}
-        </div>
+          </Portal>
+        )}
 
         {/* Main Content - Canvas Area */}
         <div className="flex-1 bg-gray-200 overflow-auto flex items-center justify-center p-8">
