@@ -48,11 +48,11 @@ frontend:
 
   - task: "Proposal Profile Wizard Template Selector Fix Testing"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/proposals/ProposalProfileWizard.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: false
         agent: "testing"
@@ -60,6 +60,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "🎉 PROPOSAL PROFILE WIZARD DEBUGGING COMPLETED SUCCESSFULLY! Comprehensive debugging of the 'Firma İstatistikleri' module issue completed with PERFECT results - issue was NOT with the module itself but with form validation: 🔍 ROOT CAUSE IDENTIFIED: The issue was form validation in Step 1 preventing progression to Step 2. Previous tests failed because React form inputs were not properly triggered with onChange events, causing validateStep1() to fail due to empty formData.profile_name and missing formData.company_group_id. ✅ COMPLETE END-TO-END TEST SUCCESS: Using proper React form interaction (native input value setter + dispatchEvent), successfully completed full workflow: Step 1 form validation passed → Step 2 with 14 modules loaded → Firma İstatistikleri module selection → Step 3 with module appearing in sidebar. ✅ ALL EXPECTED CONSOLE LOGS CAPTURED: '🔄 handleModuleToggle called with: company_statistics' ✅, '📋 selectedModuleIds updated: [company_statistics]' ✅, '🎬 renderStep3 called' ✅, '📋 selectedModuleIds: [company_statistics]' ✅, '✅ selectedModulesList: [company_statistics]' ✅ ✅ VISUAL CONFIRMATION: Final screenshot shows Step 3 active with '📊Firma İstatistikleri' appearing in left sidebar, template selector with 3 options (Şablon 1-Rakamlarla, Şablon 2-Başarılar, Şablon 3-Referanslar), and rich text editor loaded correctly. ✅ API VERIFICATION: Backend API /api/proposal-modules/available returns 14 modules including 'Firma İstatistikleri' (company_statistics) with correct structure. ✅ TEMPLATE SELECTOR WORKING: All 3 company statistics templates are accessible and functional in Step 3. ✅ CONCLUSION: The 'Firma İstatistikleri' module is working correctly and DOES appear in Step 3. The user's reported issue was likely due to not properly filling Step 1 form, causing validation to block progression to Step 2 where modules are displayed. The template selector fix (company_stats → company_statistics) is correctly implemented and fully functional."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL ISSUE IDENTIFIED: Comprehensive re-testing of Firma İstatistikleri templates reveals MAJOR FRONTEND RENDERING PROBLEM: ✅ BACKEND VERIFICATION: API /api/proposal-modules/available correctly returns 'Firma İstatistikleri' module with module_id='company_stats', module_type='company_statistics', and icon='📊' ✅ NETWORK MONITORING: Confirmed modules API is called successfully (200 response) and returns 14 modules including the statistics module ❌ FRONTEND RENDERING FAILURE: Despite successful API response, the 'Firma İstatistikleri' module is NOT appearing in Step 2 module selection grid - only 10 generic cards are rendered instead of the expected 14 module cards ❌ MODULE SELECTION IMPOSSIBLE: Cannot select 'Firma İstatistikleri' module because it's not visible in the UI, making template testing impossible ❌ TEMPLATE SELECTOR INACCESSIBLE: Since module cannot be selected, the template selector with 3 templates (Şablon 1-Sayılarla Başarı, Şablon 2-Kapasite ve Altyapı, Şablon 3-Ödüller ve Başarılar) never appears 🔍 ROOT CAUSE: Frontend module rendering logic in renderStep2() is not properly displaying all modules returned by the API - there's a disconnect between the API data and the UI rendering 🚨 IMPACT: Users cannot access the new Firma İstatistikleri templates because the module itself is not selectable in the wizard interface ⚠️ REQUIRES IMMEDIATE ATTENTION: This is a critical UI rendering bug that prevents the entire feature from being usable, despite the backend and template code being correctly implemented"
 
   - task: "Ürün ve Servisler (Products and Services) Tag Input Functionality Testing"
     implemented: true
