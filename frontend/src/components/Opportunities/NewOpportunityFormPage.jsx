@@ -812,18 +812,24 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                     placeholder="Satış fırsatı başlığı"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Müşteri */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Müşteri <span className="text-red-500">*</span>
+                    Müşteri
                   </label>
                   <Select 
                     value={formData.customer}
-                    onValueChange={handleCustomerChange}
+                    onValueChange={(value) => {
+                      handleCustomerChange(value);
+                      if (value) handleInputChange('lead', ''); // Clear lead when customer is selected
+                    }}
+                    disabled={loadingCustomers || !!formData.lead}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Müşteri seçin..." />
+                      <SelectValue placeholder={loadingCustomers ? "Müşteriler yükleniyor..." : "Müşteri seçin..."} />
                     </SelectTrigger>
                     <SelectContent>
                       {customers
@@ -836,6 +842,46 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
                             </SelectItem>
                           );
                         })}
+                      {customers.filter(customer => (customer.companyName || customer.companyTitle || '').trim() !== '').length === 0 && !loadingCustomers && (
+                        <SelectItem value="no-customers" disabled>
+                          Henüz müşteri bulunmuyor
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Müşteri Adayı */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Müşteri Adayı
+                  </label>
+                  <Select 
+                    value={formData.lead}
+                    onValueChange={(value) => {
+                      handleInputChange('lead', value);
+                      if (value) {
+                        handleInputChange('customer', ''); // Clear customer when lead is selected
+                        setSelectedCustomer(null);
+                        setAvailableContacts([]);
+                      }
+                    }}
+                    disabled={loadingLeads || !!formData.customer}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={loadingLeads ? "Müşteri adayları yükleniyor..." : "Müşteri adayı seçin..."} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {leads.map((lead) => (
+                        <SelectItem key={lead.id} value={lead.companyName || 'İsimsiz Müşteri Adayı'}>
+                          {lead.companyName || 'İsimsiz Müşteri Adayı'}
+                        </SelectItem>
+                      ))}
+                      {leads.length === 0 && !loadingLeads && (
+                        <SelectItem value="no-leads" disabled>
+                          Henüz müşteri adayı bulunmuyor
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
