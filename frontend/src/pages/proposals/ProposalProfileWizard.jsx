@@ -698,16 +698,65 @@ const ProposalProfileWizard = ({ profileId }) => {
                   <h3 className="text-sm font-semibold">{currentModule.module_name}</h3>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Başlık</label>
-                  <input
-                    type="text"
-                    value={currentContent.title}
-                    onChange={(e) => handleModuleContentChange(currentEditingModule, 'title', e.target.value)}
-                    className="w-full px-3 py-1.5 text-sm border rounded"
-                    placeholder="Modül başlığı..."
-                  />
-                </div>
+                {/* Editor for non-cover modules */}
+                {currentEditingModule !== 'cover_page' && (
+                  <>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Başlık</label>
+                      <input
+                        type="text"
+                        value={currentContent.title}
+                        onChange={(e) => handleModuleContentChange(currentEditingModule, 'title', e.target.value)}
+                        className="w-full px-3 py-1.5 text-sm border rounded"
+                        placeholder="Modül başlığı..."
+                      />
+                    </div>
+                    
+                    {/* Template Selector for Introduction Module */}
+                    {currentEditingModule === 'introduction' && (
+                      <div className="mt-3 mb-3">
+                        <label className="block text-xs font-medium text-gray-700 mb-2">📝 Hazır Şablon Seç:</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            {
+                              id: 1,
+                              name: 'Şablon 1 - Resmi',
+                              content: `<p><strong>Sayın {{yetkili_adi}},</strong></p><p>Öncelikle <strong>{{firma_adi}}</strong> göstermiş olduğunuz ilgiye teşekkür ederiz.</p><p><strong>{{project_name}}</strong> projesi için hazırlamış olduğumuz teklifimizi incelemenizi rica ederiz.</p><p>Bu teklif, ihtiyaçlarınız doğrultusunda özenle hazırlanmıştır ve sizlere en uygun çözümleri sunmayı hedeflemektedir.</p><p>Saygılarımızla,<br><strong>{{hazırlayan}}</strong><br>{{unvan}}<br>{{email}}<br>{{telefon}}</p>`
+                            },
+                            {
+                              id: 2,
+                              name: 'Şablon 2 - Samimi',
+                              content: `<p>Merhaba <strong>{{yetkili_adi}}</strong>,</p><p><strong>{{firma_adi}}</strong> ile çalışma fırsatı bulmaktan mutluluk duyuyoruz!</p><p><strong>{{project_name}}</strong> için sizin için özel olarak hazırladığımız teklifimiz ektedir. İhtiyaçlarınıza tam uygun çözümler sunduk.</p><p>Sorularınız için her zaman buradayız. Hemen konuşalım mı?</p><p>Selamlar,<br><strong>{{hazırlayan}}</strong><br>{{unvan}}<br>📧 {{email}}<br>📞 {{telefon}}</p>`
+                            },
+                            {
+                              id: 3,
+                              name: 'Şablon 3 - Kısa & Öz',
+                              content: `<p><strong>{{yetkili_adi}}</strong>,</p><p><strong>{{project_name}}</strong> projesi için hazırladığımız teklifimiz aşağıdadır.</p><p>• Detaylı fiyatlandırma<br>• Teslimat süreleri<br>• Ödeme koşulları</p><p>Sorularınız için iletişime geçin.</p><p><strong>{{hazırlayan}}</strong> | {{email}} | {{telefon}}</p>`
+                            },
+                            {
+                              id: 4,
+                              name: 'Şablon 4 - Detaylı',
+                              content: `<p><strong>Değerli {{yetkili_adi}},</strong></p><p><strong>{{firma_adi}}</strong> ile iş ortaklığı kurmak üzere hazırladığımız bu teklifle karşınızdayız.</p><p><strong>{{project_name}}</strong> kapsamında:</p><ul><li>Kapsamlı analiz yaptık</li><li>İhtiyaçlarınızı değerlendirdik</li><li>En uygun çözümleri belirledik</li></ul><p>Teklifimiz, sektördeki deneyimimiz ve uzmanlığımız ışığında hazırlanmıştır. Her detayı sizinle paylaşmaktan memnuniyet duyarız.</p><p>Ekibimiz her an görüşmeye hazır.</p><p>Saygılarımızla,<br><strong>{{hazırlayan}}</strong><br>{{unvan}}<br>{{email}}<br>{{telefon}}</p>`
+                            }
+                          ].map(template => (
+                            <button
+                              key={template.id}
+                              onClick={() => {
+                                handleModuleContentChange(currentEditingModule, 'body', template.content);
+                                toast.success(`${template.name} yüklendi`);
+                              }}
+                              className="px-3 py-2 text-xs border-2 border-blue-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition text-left"
+                            >
+                              <div className="font-medium text-blue-700">{template.name}</div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">Tıkla ve kullan</div>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra istediğiniz gibi düzenleyebilirsiniz</p>
+                      </div>
+                    )}
+                  </>
+                )}
 
                 {/* Cover Page Options for Cover Page Module */}
                 {currentEditingModule === 'cover_page' && (
