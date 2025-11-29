@@ -275,73 +275,135 @@ const CoverPageLiveEditor = ({
             onClick={() => setSelectedElement(null)}
           >
             {/* Render Elements */}
-            {elements.map(element => (
-              <Rnd
-                key={element.id}
-                position={{ x: element.x || 50, y: element.y || 50 }}
-                size={{ width: element.width || 300, height: element.height || 50 }}
-                onDragStart={() => setIsDragging(true)}
-                onDragStop={(e, d) => {
-                  setIsDragging(false);
-                  // Directly use the coordinates without any scale adjustments
-                  updateElement(element.id, { 
-                    x: Math.round(d.x), 
-                    y: Math.round(d.y) 
-                  });
-                }}
-                onResizeStop={(e, direction, ref, delta, position) => {
-                  updateElement(element.id, {
-                    width: parseInt(ref.style.width),
-                    height: parseInt(ref.style.height),
-                    x: Math.round(position.x),
-                    y: Math.round(position.y)
-                  });
-                }}
-                bounds="parent"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!isDragging) {
+            {elements.map(element => {
+              const isSelected = selectedElement === element.id;
+              return (
+                <Rnd
+                  key={element.id}
+                  default={{
+                    x: element.x || 50,
+                    y: element.y || 50,
+                    width: element.width || 300,
+                    height: element.height || 50
+                  }}
+                  onDragStart={() => {
+                    setIsDragging(true);
                     setSelectedElement(element.id);
-                  }
-                }}
-                className={`cursor-move transition-all ${
-                  selectedElement === element.id 
-                    ? 'ring-2 ring-blue-500' 
-                    : 'hover:ring-2 hover:ring-blue-300 hover:ring-opacity-50'
-                }`}
-                enableResizing={selectedElement === element.id}
-                disableDragging={false}
-                resizeHandleStyles={{
-                  bottom: { display: selectedElement === element.id ? 'block' : 'none' },
-                  bottomRight: { cursor: 'se-resize', display: selectedElement === element.id ? 'block' : 'none' },
-                  bottomLeft: { cursor: 'sw-resize', display: selectedElement === element.id ? 'block' : 'none' },
-                  top: { display: selectedElement === element.id ? 'block' : 'none' },
-                  topRight: { cursor: 'ne-resize', display: selectedElement === element.id ? 'block' : 'none' },
-                  topLeft: { cursor: 'nw-resize', display: selectedElement === element.id ? 'block' : 'none' },
-                  left: { display: selectedElement === element.id ? 'block' : 'none' },
-                  right: { display: selectedElement === element.id ? 'block' : 'none' }
-                }}
-              >
-                <div
-                  className="w-full h-full flex items-center px-2 pointer-events-none"
-                  style={{
-                    fontSize: `${element.fontSize || 24}px`,
-                    fontFamily: element.fontFamily || 'Inter',
-                    fontWeight: element.fontWeight || 'normal',
-                    fontStyle: element.fontStyle || 'normal',
-                    textDecoration: element.textDecoration || 'none',
-                    color: element.color || '#000000',
-                    textAlign: element.textAlign || 'left',
-                    justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-                    userSelect: 'none',
-                    overflow: 'hidden',
-                    wordWrap: 'break-word'
+                  }}
+                  onDragStop={(e, d) => {
+                    setTimeout(() => setIsDragging(false), 100);
+                    updateElement(element.id, { 
+                      x: Math.round(d.x), 
+                      y: Math.round(d.y) 
+                    });
+                  }}
+                  onResizeStop={(e, direction, ref, delta, position) => {
+                    updateElement(element.id, {
+                      width: parseInt(ref.style.width),
+                      height: parseInt(ref.style.height),
+                      x: Math.round(position.x),
+                      y: Math.round(position.y)
+                    });
+                  }}
+                  bounds="parent"
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    if (!isDragging) {
+                      setSelectedElement(element.id);
+                    }
+                  }}
+                  className={`cursor-move ${
+                    isSelected 
+                      ? 'ring-2 ring-blue-500 shadow-lg' 
+                      : 'hover:ring-2 hover:ring-blue-300'
+                  }`}
+                  enableResizing={isSelected}
+                  disableDragging={false}
+                  resizeHandleStyles={{
+                    bottom: { 
+                      display: isSelected ? 'block' : 'none',
+                      background: '#3B82F6',
+                      width: '100%',
+                      height: '6px'
+                    },
+                    bottomRight: { 
+                      cursor: 'se-resize', 
+                      display: isSelected ? 'block' : 'none',
+                      width: '12px',
+                      height: '12px',
+                      background: '#3B82F6',
+                      border: '2px solid white',
+                      borderRadius: '50%'
+                    },
+                    bottomLeft: { 
+                      cursor: 'sw-resize', 
+                      display: isSelected ? 'block' : 'none',
+                      width: '12px',
+                      height: '12px',
+                      background: '#3B82F6',
+                      border: '2px solid white',
+                      borderRadius: '50%'
+                    },
+                    top: { 
+                      display: isSelected ? 'block' : 'none',
+                      background: '#3B82F6',
+                      width: '100%',
+                      height: '6px'
+                    },
+                    topRight: { 
+                      cursor: 'ne-resize', 
+                      display: isSelected ? 'block' : 'none',
+                      width: '12px',
+                      height: '12px',
+                      background: '#3B82F6',
+                      border: '2px solid white',
+                      borderRadius: '50%'
+                    },
+                    topLeft: { 
+                      cursor: 'nw-resize', 
+                      display: isSelected ? 'block' : 'none',
+                      width: '12px',
+                      height: '12px',
+                      background: '#3B82F6',
+                      border: '2px solid white',
+                      borderRadius: '50%'
+                    },
+                    left: { 
+                      display: isSelected ? 'block' : 'none',
+                      background: '#3B82F6',
+                      width: '6px',
+                      height: '100%'
+                    },
+                    right: { 
+                      display: isSelected ? 'block' : 'none',
+                      background: '#3B82F6',
+                      width: '6px',
+                      height: '100%'
+                    }
                   }}
                 >
-                  {element.displayValue || element.variable}
-                </div>
-              </Rnd>
-            ))}
+                  <div
+                    className="w-full h-full flex items-center px-2"
+                    style={{
+                      fontSize: `${element.fontSize || 24}px`,
+                      fontFamily: element.fontFamily || 'Inter',
+                      fontWeight: element.fontWeight || 'normal',
+                      fontStyle: element.fontStyle || 'normal',
+                      textDecoration: element.textDecoration || 'none',
+                      color: element.color || '#000000',
+                      textAlign: element.textAlign || 'left',
+                      justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+                      userSelect: 'none',
+                      overflow: 'hidden',
+                      wordWrap: 'break-word',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {element.displayValue || element.variable}
+                  </div>
+                </Rnd>
+              );
+            })}
           </div>
         </div>
 
