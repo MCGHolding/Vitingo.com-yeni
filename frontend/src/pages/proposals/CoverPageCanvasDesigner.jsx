@@ -368,16 +368,44 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
 
                 {selectedElementData.type === 'text' && (
                   <>
+                    {/* Font Family */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Font</label>
+                      <select
+                        value={selectedElementData.fontFamily || 'Inter'}
+                        onChange={(e) => updateElement(selectedElement, { fontFamily: e.target.value })}
+                        className="w-full px-2 py-1.5 text-xs border rounded"
+                      >
+                        <option value="Inter">Inter</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Courier New">Courier New</option>
+                      </select>
+                    </div>
+
+                    {/* Font Size */}
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">Boyut: {selectedElementData.fontSize}px</label>
-                      <input
-                        type="range"
-                        min="8"
-                        max="72"
-                        value={selectedElementData.fontSize}
-                        onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) })}
-                        className="w-full h-1"
-                      />
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="range"
+                          min="8"
+                          max="120"
+                          value={selectedElementData.fontSize}
+                          onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) })}
+                          className="flex-1 h-1"
+                        />
+                        <input
+                          type="number"
+                          min="8"
+                          max="200"
+                          value={selectedElementData.fontSize}
+                          onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) || 24 })}
+                          className="w-14 px-1 py-0.5 text-xs border rounded text-center"
+                        />
+                      </div>
                     </div>
 
                     <div>
