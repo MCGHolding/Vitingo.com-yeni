@@ -22,12 +22,15 @@ const CoverPageLiveEditor = ({
   
   // Use ref to prevent state loss
   const setSelection = (id) => {
+    console.log('🔵 setSelection called with:', id);
     selectedRef.current = id;
     setSelectedElement(id);
     setForceUpdate(prev => prev + 1);
   };
   
   const clearSelection = () => {
+    console.log('🔴 clearSelection called');
+    console.trace('clearSelection stack trace');
     selectedRef.current = null;
     setSelectedElement(null);
     setForceUpdate(prev => prev + 1);
