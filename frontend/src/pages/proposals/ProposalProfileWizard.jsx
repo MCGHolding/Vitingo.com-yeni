@@ -217,18 +217,13 @@ const ProposalProfileWizard = ({ profileId }) => {
   };
 
   const handleModuleContentChange = (moduleType, field, value) => {
-    setModuleContents(prev => {
-      const newState = {
-        ...prev,
-        [moduleType]: {
-          ...(prev[moduleType] || {}),
-          [field]: value
-        }
-      };
-      // Update ref for immediate access
-      moduleContentsRef.current = newState;
-      return newState;
-    });
+    setModuleContents(prev => ({
+      ...prev,
+      [moduleType]: {
+        ...(prev[moduleType] || {}),
+        [field]: value
+      }
+    }));
   };
 
   const handleEditorChange = (moduleType, editorState) => {
