@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://docgen-pro-9.preview.emergentagent.com"
+BACKEND_URL = "https://quotemake.preview.emergentagent.com"
 
 def test_customer_can_delete_check(customer_id):
     """Test checking if a customer can be deleted (no related records)"""

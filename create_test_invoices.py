@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://docgen-pro-9.preview.emergentagent.com"
+BACKEND_URL = "https://quotemake.preview.emergentagent.com"
 
 def create_test_invoices():
     """Create test invoices with different statuses for comprehensive testing"""

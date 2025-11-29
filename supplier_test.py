@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://docgen-pro-9.preview.emergentagent.com"
+BACKEND_URL = "https://quotemake.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None
