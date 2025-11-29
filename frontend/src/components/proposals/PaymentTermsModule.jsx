@@ -92,7 +92,7 @@ const PaymentTermsModule = ({
   }, []);
   
   useEffect(() => {
-    if (totalAmount && paymentTerms.payments.length > 0) {
+    if (totalAmount && paymentTerms.payments && paymentTerms.payments.length > 0) {
       recalculateAmounts();
     }
   }, [totalAmount]);
