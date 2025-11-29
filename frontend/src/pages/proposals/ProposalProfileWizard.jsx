@@ -940,6 +940,9 @@ const ProposalProfileWizard = ({ profileId }) => {
       cover_page: coverPageContent
     }));
     
+    // Auto-show canvas preview
+    setShowCanvasPreview(true);
+    
     console.log('🎨 Canvas Designer: State update queued');
     toast.success('Kapak sayfası şablonu kaydedildi!');
   };
