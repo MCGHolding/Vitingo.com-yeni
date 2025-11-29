@@ -275,7 +275,12 @@ const CoverPageLiveEditor = ({
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
-            onClick={() => setSelectedElement(null)}
+            onClick={(e) => {
+              // Only deselect if clicking on the canvas background itself
+              if (e.target === e.currentTarget) {
+                setSelectedElement(null);
+              }
+            }}
           >
             {/* Render Elements */}
             {elements.map(element => {
