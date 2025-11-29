@@ -65,7 +65,11 @@ const CoverPageLiveEditor = ({
   };
 
   const updateElement = (id, updates) => {
-    setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
+    setElements(prevElements => 
+      prevElements.map(el => 
+        el.id === id ? { ...el, ...updates, _version: (el._version || 0) + 1 } : el
+      )
+    );
   };
 
   const deleteElement = (id) => {
