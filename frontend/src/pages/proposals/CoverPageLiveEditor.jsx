@@ -281,23 +281,39 @@ const CoverPageLiveEditor = ({
               <div className="w-px h-8 bg-gray-300" />
 
               {/* Alignment */}
-              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
+              <div 
+                className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  onClick={() => updateElement(selectedElement, { textAlign: 'left' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { textAlign: 'left' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition ${selectedElementData.textAlign === 'left' || !selectedElementData.textAlign ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Sola Hizala"
                 >
                   <AlignLeft className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => updateElement(selectedElement, { textAlign: 'center' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { textAlign: 'center' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition border-l border-gray-300 ${selectedElementData.textAlign === 'center' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Ortala"
                 >
                   <AlignCenter className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => updateElement(selectedElement, { textAlign: 'right' })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { textAlign: 'right' });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className={`p-2 transition border-l border-gray-300 ${selectedElementData.textAlign === 'right' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'}`}
                   title="Sağa Hizala"
                 >
