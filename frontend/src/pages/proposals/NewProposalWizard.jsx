@@ -2890,9 +2890,44 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   </div>
                 </div>
               )}
+              
+              {activeModule.type === 'timeline' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Başlık</label>
+                    <input
+                      type="text"
+                      value={content.title || 'Proje Zaman Çizelgesi'}
+                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                      placeholder="Proje Zaman Çizelgesi"
+                    />
+                  </div>
+                  
+                  {/* Import and use TimelineModule component */}
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <p className="text-sm text-gray-600 mb-3">
+                      Zaman çizelgesi bu teklif için özel olarak oluşturulacaktır.
+                    </p>
+                    {/* We'll need to import TimelineModule and use it here */}
+                    <div className="bg-white rounded p-3">
+                      {React.createElement(
+                        require('../../components/proposals/TimelineModule').default,
+                        {
+                          data: content.timelineData || content.content,
+                          onChange: (timelineData) => {
+                            handleModuleContentChange(activeModule.id, 'timelineData', timelineData);
+                            handleModuleContentChange(activeModule.id, 'content', JSON.stringify(timelineData));
+                          }
+                        }
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Generic form for other modules */}
-              {!['cover_page', 'introduction', 'included_services', 'excluded_services', 'payment_terms', 'contact'].includes(activeModule.type) && (
+              {!['cover_page', 'introduction', 'included_services', 'excluded_services', 'payment_terms', 'contact', 'timeline'].includes(activeModule.type) && (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Başlık</label>
