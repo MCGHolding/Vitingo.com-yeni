@@ -3081,7 +3081,18 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               </div>
             )}
 
-            {module.type === 'cover_page' && (!content.type || content.type === 'default' || !content.canvas_template) && (
+            {module.type === 'cover_page' && content.type === 'image_upload' && content.cover_image && (
+              <div className="relative w-full h-full">
+                <img 
+                  src={content.cover_image} 
+                  alt="Cover Page" 
+                  className="w-full h-full object-contain"
+                  style={{ maxHeight: '700px' }}
+                />
+              </div>
+            )}
+
+            {module.type === 'cover_page' && (!content.type || content.type === 'default' || (!content.canvas_template && !content.cover_image)) && (
               <div className="text-center space-y-4">
                 <h1 className="text-4xl font-bold">{replaceVariables(content.title) || formData.project_name}</h1>
                 <p className="text-xl text-gray-600">{replaceVariables(content.subtitle) || `Teklif No: ${proposalId || 'DRAFT-' + Date.now()}`}</p>
