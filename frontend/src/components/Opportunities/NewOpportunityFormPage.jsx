@@ -658,13 +658,14 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     e.preventDefault();
     
     // Enhanced validation - required fields for opportunity
-    const requiredFieldsValid = formData.title.trim() && formData.customer.trim() && 
+    const requiredFieldsValid = formData.title.trim() && 
+        (formData.customer.trim() || formData.lead.trim()) && 
         formData.amount.trim() && formData.closeDate.trim() && formData.stage.trim();
     
     if (!requiredFieldsValid) {
       toast({
         title: "Hata",
-        description: "Zorunlu alanları doldurunuz: Başlık, Müşteri, Tutar, Kapanış Tarihi, Aşama",
+        description: "Zorunlu alanları doldurunuz: Başlık, Müşteri veya Müşteri Adayı, Tutar, Kapanış Tarihi, Aşama",
         variant: "destructive"
       });
       return;
