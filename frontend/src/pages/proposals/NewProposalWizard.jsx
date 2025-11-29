@@ -2587,99 +2587,57 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               {/* Module-specific forms */}
               {activeModule.type === 'cover_page' && (
                 <div className="space-y-4">
-                  {/* Canvas Editor for cover page with real values */}
+                  {/* Canvas Preview for cover page - READ ONLY */}
                   {content.canvas_template && content.canvas_template.customBackgroundImage && (
                     <div className="border rounded-lg overflow-hidden bg-gray-100 p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-semibold text-gray-700">Kapak Sayfası Düzenleyici</h4>
-                        <p className="text-xs text-gray-500">Elementleri sürükleyip düzenleyebilirsiniz</p>
+                        <h4 className="text-sm font-semibold text-gray-700">Kapak Sayfası Önizlemesi</h4>
+                        <p className="text-xs text-gray-500">Şablon profil ayarlarından düzenlenir</p>
                       </div>
                       
-                      {/* Canvas with drag-drop elements */}
+                      {/* Canvas Preview - READ ONLY */}
                       <div 
                         className="relative mx-auto shadow-lg"
                         style={{
-                          width: '500px',
-                          height: '707px',
+                          width: '400px',
+                          height: '566px',
                           backgroundImage: `url(${content.canvas_template.customBackgroundImage})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center'
                         }}
                       >
-                        {/* Editable Elements */}
+                        {/* Elements - READ ONLY display */}
                         {content.canvas_template.elements && content.canvas_template.elements.map((element, idx) => {
-                          const scale = 500 / 794; // Scale from canvas size to preview size
+                          const scale = 400 / 794; // Scale from canvas size to preview size
                           const realValue = replaceVariables(element.variable);
                           
                           return (
-                            <Rnd
+                            <div
                               key={idx}
-                              position={{ 
-                                x: element.x * scale, 
-                                y: element.y * scale 
+                              style={{
+                                position: 'absolute',
+                                left: `${element.x * scale}px`,
+                                top: `${element.y * scale}px`,
+                                fontSize: `${(element.fontSize || 24) * scale}px`,
+                                fontWeight: element.fontWeight || 'normal',
+                                fontStyle: element.fontStyle || 'normal',
+                                textDecoration: element.textDecoration || 'none',
+                                color: element.color || '#000000',
+                                textAlign: element.textAlign || 'left',
+                                zIndex: 10
                               }}
-                              size={{ 
-                                width: element.width ? element.width * scale : 'auto', 
-                                height: element.height ? element.height * scale : 'auto' 
-                              }}
-                              onDragStop={(e, d) => {
-                                // Update element position (convert back to original scale)
-                                const newElements = [...content.canvas_template.elements];
-                                newElements[idx] = {
-                                  ...newElements[idx],
-                                  x: d.x / scale,
-                                  y: d.y / scale
-                                };
-                                handleModuleContentChange(activeModule.id, 'canvas_template', {
-                                  ...content.canvas_template,
-                                  elements: newElements
-                                });
-                              }}
-                              bounds="parent"
-                              className="cursor-move hover:ring-2 hover:ring-blue-500"
-                              style={{ zIndex: 10 }}
                             >
-                              <div
-                                style={{
-                                  fontSize: `${(element.fontSize || 24) * scale}px`,
-                                  fontWeight: element.fontWeight || 'normal',
-                                  fontStyle: element.fontStyle || 'normal',
-                                  color: element.color || '#000000',
-                                  textAlign: element.textAlign || 'left',
-                                  padding: '4px',
-                                  borderRadius: '2px',
-                                  backgroundColor: 'rgba(255,255,255,0.1)'
-                                }}
-                              >
-                                {realValue}
-                              </div>
-                            </Rnd>
+                              {realValue}
+                            </div>
                           );
                         })}
                       </div>
                       
-                      {/* Element Editor Panel */}
-                      <div className="mt-4 p-3 bg-white rounded border">
-                        <h5 className="text-xs font-medium text-gray-600 mb-2">Elementler ({content.canvas_template.elements?.length || 0})</h5>
-                        <div className="flex flex-wrap gap-2">
-                          {content.canvas_template.elements?.map((el, idx) => (
-                            <div key={idx} className="text-xs px-2 py-1 bg-gray-100 rounded flex items-center">
-                              <span className="text-gray-700">{replaceVariables(el.variable)}</span>
-                              <button
-                                onClick={() => {
-                                  const newElements = content.canvas_template.elements.filter((_, i) => i !== idx);
-                                  handleModuleContentChange(activeModule.id, 'canvas_template', {
-                                    ...content.canvas_template,
-                                    elements: newElements
-                                  });
-                                }}
-                                className="ml-2 text-red-400 hover:text-red-600"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Info Panel */}
+                      <div className="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
+                        <p className="text-xs text-blue-700">
+                          💡 Bu şablonu düzenlemek için <strong>Ultra Admin → Kütüphane → Tasarım</strong> bölümünden yeni tasarım yükleyebilir veya <strong>Teklif Profilleri</strong> sayfasından profili düzenleyebilirsiniz.
+                        </p>
                       </div>
                     </div>
                   )}
