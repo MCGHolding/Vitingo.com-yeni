@@ -337,47 +337,6 @@ const PaymentTermsModule = ({
     return <div className="animate-pulse bg-gray-100 rounded-lg h-64" />;
   }
   
-  // Local pricing state for this module
-  const [localPricing, setLocalPricing] = useState({
-    subtotal: 0,
-    taxRate: 18,
-    taxAmount: 0,
-    total: totalAmount || 0,
-    currency: currency || 'TRY'
-  });
-
-  // When local pricing changes, recalculate
-  useEffect(() => {
-    const calculatedTax = (localPricing.subtotal * localPricing.taxRate) / 100;
-    const calculatedTotal = localPricing.subtotal + calculatedTax;
-    
-    setLocalPricing(prev => ({
-      ...prev,
-      taxAmount: calculatedTax,
-      total: calculatedTotal
-    }));
-    
-    // Trigger payment recalculation
-    if (paymentTerms.payments && paymentTerms.payments.length > 0) {
-      setPaymentTerms(prevTerms => ({
-        ...prevTerms,
-        totalAmount: calculatedTotal,
-        payments: prevTerms.payments.map(payment => ({
-          ...payment,
-          amount: Math.round((calculatedTotal * payment.percentage) / 100),
-          currency: localPricing.currency
-        }))
-      }));
-    }
-  }, [localPricing.subtotal, localPricing.taxRate]);
-
-  const formatCurrencyInput = (value) => {
-    return new Intl.NumberFormat('tr-TR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(value);
-  };
-
   return (
     <div className="payment-terms-module space-y-6">
       
