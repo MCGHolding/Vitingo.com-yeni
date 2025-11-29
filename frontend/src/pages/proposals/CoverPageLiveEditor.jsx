@@ -425,7 +425,7 @@ const CoverPageLiveEditor = ({
               
               // Only deselect if clicking on canvas background (not toolbar, not element)
               if (!isToolbar && !isElement && e.target === e.currentTarget) {
-                setSelectedElement(null);
+                clearSelection();
               }
             }}
           >
