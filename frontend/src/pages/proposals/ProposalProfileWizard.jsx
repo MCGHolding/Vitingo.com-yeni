@@ -210,13 +210,12 @@ const ProposalProfileWizard = ({ profileId }) => {
   };
 
   const handleModuleToggle = (moduleType) => {
-    console.log('🔄 handleModuleToggle called with:', moduleType);
     setSelectedModuleIds(prev => {
-      const newIds = prev.includes(moduleType)
-        ? prev.filter(id => id !== moduleType)
-        : [...prev, moduleType];
-      console.log('📋 selectedModuleIds updated:', newIds);
-      return newIds;
+      if (prev.includes(moduleType)) {
+        return prev.filter(id => id !== moduleType);
+      } else {
+        return [...prev, moduleType];
+      }
     });
   };
 
