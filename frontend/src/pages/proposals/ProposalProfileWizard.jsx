@@ -605,6 +605,18 @@ const ProposalProfileWizard = ({ profileId }) => {
     const currentModule = availableModules.find(m => m.module_type === currentEditingModule);
     const currentContent = moduleContents[currentEditingModule] || { title: '', body: '', sections: [], images: [], variables: [] };
 
+    // Auto-show previews if content exists
+    React.useEffect(() => {
+      if (currentEditingModule === 'cover_page') {
+        if (currentContent.canvas_template && !showCanvasPreview) {
+          setShowCanvasPreview(true);
+        }
+        if (currentContent.cover_image && !showCoverImagePreview) {
+          setShowCoverImagePreview(true);
+        }
+      }
+    }, [currentEditingModule, currentContent]);
+
     return (
       <div className="space-y-3">
         <h2 className="text-base font-semibold text-gray-900">Modül İçerikleri</h2>
