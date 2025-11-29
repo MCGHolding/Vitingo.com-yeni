@@ -193,9 +193,17 @@ const CoverPageLiveEditor = ({
               <div className="w-px h-8 bg-gray-300" />
 
               {/* Font Size */}
-              <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden hover:border-blue-400 transition">
+              <div 
+                className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden hover:border-blue-400 transition"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  onClick={() => changeFontSize(-2)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    changeFontSize(-2);
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className="p-2 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition"
                   title="Küçült"
                 >
@@ -204,13 +212,22 @@ const CoverPageLiveEditor = ({
                 <input
                   type="number"
                   value={selectedElementData.fontSize || 24}
-                  onChange={(e) => updateElement(selectedElement, { fontSize: parseInt(e.target.value) || 24 })}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    updateElement(selectedElement, { fontSize: parseInt(e.target.value) || 24 });
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
                   className="w-14 text-center text-sm font-medium border-0 focus:outline-none focus:bg-blue-50"
                   min="8"
                   max="200"
                 />
                 <button
-                  onClick={() => changeFontSize(2)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    changeFontSize(2);
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
                   className="p-2 hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition"
                   title="Büyüt"
                 >
