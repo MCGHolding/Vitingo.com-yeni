@@ -480,23 +480,20 @@ const CoverPageLiveEditor = ({
                     height: element.height || 50
                   }}
                   onDragStart={(e) => {
-                    e.stopPropagation();
                     console.log('Drag started on element:', element.id);
-                    handleSelectElement(element.id);
+                    const el = elements.find(el => el.id === element.id);
+                    setSelectedElement(el);
                   }}
                   onDragStop={(e, d) => {
-                    e.stopPropagation();
-                    console.log('Drag stopped, keeping selection');
-                    // Keep selection and update position
+                    console.log('Drag stopped, position:', d.x, d.y);
+                    const updates = { x: Math.round(d.x), y: Math.round(d.y) };
                     setElements(prev => prev.map(el => 
-                      el.id === element.id ? { ...el, x: Math.round(d.x), y: Math.round(d.y) } : el
+                      el.id === element.id ? { ...el, ...updates } : el
                     ));
-                    // Update selectedElement too
-                    setSelectedElement(prev => prev ? { ...prev, x: Math.round(d.x), y: Math.round(d.y) } : null);
+                    setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
                   }}
                   onResizeStop={(e, direction, ref, delta, position) => {
-                    e.stopPropagation();
-                    console.log('Resize stopped, keeping selection');
+                    console.log('Resize stopped');
                     const updates = {
                       width: parseInt(ref.style.width),
                       height: parseInt(ref.style.height),
@@ -509,14 +506,11 @@ const CoverPageLiveEditor = ({
                     setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
                   }}
                   bounds="parent"
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    console.log('Element mousedown:', element.id);
-                    handleSelectElement(element.id);
-                  }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelectElement(element.id);
+                    console.log('Element clicked:', element.id);
+                    const el = elements.find(el => el.id === element.id);
+                    setSelectedElement(el);
                   }}
                   className={`${
                     isSelected 
