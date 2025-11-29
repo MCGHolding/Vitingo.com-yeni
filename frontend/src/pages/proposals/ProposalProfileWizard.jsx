@@ -788,11 +788,11 @@ const ProposalProfileWizard = ({ profileId }) => {
                                 { id: 'minimal', name: 'Minimal', bgStyle: { backgroundColor: '#ffffff' } },
                                 { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' } },
                                 { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)' } },
-                                { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' } },
-                                { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' } },
-                                { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' } },
-                                { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' } },
-                                { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' }, sidebar: true },
+                                { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' }, split: true },
+                                { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' }, diagonal: true },
+                                { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' }, geometric: true },
+                                { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' }, wave: true },
                                 { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' } },
                                 { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)' } },
                                 { id: 'custom_image', name: 'Kendi Resminiz', bgStyle: { backgroundColor: '#ffffff' } }
@@ -806,6 +806,7 @@ const ProposalProfileWizard = ({ profileId }) => {
                               const bgStyle = {
                                 width: '400px',
                                 height: '565px',
+                                position: 'relative',
                                 ...template?.bgStyle,
                                 ...(customBg ? {
                                   backgroundImage: `url(${customBg})`,
@@ -816,9 +817,87 @@ const ProposalProfileWizard = ({ profileId }) => {
                               
                               return (
                                 <div 
-                                  className="relative mx-auto"
+                                  className="relative mx-auto overflow-hidden"
                                   style={bgStyle}
                                 >
+                                  {/* Decorative elements for special templates */}
+                                  {template?.sidebar && (
+                                    <div style={{
+                                      position: 'absolute',
+                                      left: 0,
+                                      top: 0,
+                                      bottom: 0,
+                                      width: '33.33%',
+                                      background: 'linear-gradient(to bottom, #a855f7, #ec4899)',
+                                      opacity: 0.9
+                                    }} />
+                                  )}
+                                  {template?.split && (
+                                    <>
+                                      <div style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 0,
+                                        bottom: 0,
+                                        width: '50%',
+                                        backgroundColor: '#a855f7',
+                                        opacity: 0.9
+                                      }} />
+                                      <div style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0,
+                                        width: '50%',
+                                        backgroundColor: '#ec4899',
+                                        opacity: 0.9
+                                      }} />
+                                    </>
+                                  )}
+                                  {template?.diagonal && (
+                                    <div style={{
+                                      position: 'absolute',
+                                      inset: 0,
+                                      background: 'linear-gradient(135deg, #a855f7 50%, transparent 50%)',
+                                      opacity: 0.9
+                                    }} />
+                                  )}
+                                  {template?.geometric && (
+                                    <>
+                                      <div style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        top: 0,
+                                        width: '40%',
+                                        height: '40%',
+                                        backgroundColor: '#a855f7',
+                                        opacity: 0.3
+                                      }} />
+                                      <div style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        bottom: 0,
+                                        width: '60%',
+                                        height: '30%',
+                                        backgroundColor: '#ec4899',
+                                        opacity: 0.3
+                                      }} />
+                                    </>
+                                  )}
+                                  {template?.wave && (
+                                    <div style={{
+                                      position: 'absolute',
+                                      left: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      height: '30%',
+                                      background: 'linear-gradient(to top, #a855f7, transparent)',
+                                      opacity: 0.5,
+                                      borderTopLeftRadius: '50%',
+                                      borderTopRightRadius: '50%'
+                                    }} />
+                                  )}
+                                  
                                   {/* Render elements */}
                                   {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
                                     const scale = 400 / 794; // Scale to fit preview
