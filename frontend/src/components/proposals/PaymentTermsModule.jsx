@@ -359,7 +359,7 @@ const PaymentTermsModule = ({
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500"
             >
               <option value="">Profil Seç</option>
-              {profiles.map(profile => (
+              {(profiles || []).map(profile => (
                 <option key={profile._id} value={profile._id}>
                   {profile.name}
                 </option>
