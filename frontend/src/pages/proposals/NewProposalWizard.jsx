@@ -3549,21 +3549,21 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                           )}
                           
                           {/* Project Manager - Compact */}
-                    {timelineData.projectManager && (timelineData.projectManager.name || timelineData.projectManager.phone) && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                          <span>📞</span> Proje Yöneticisi
-                        </h3>
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          {timelineData.projectManager.name && (
-                            <div><span className="text-gray-600">Ad Soyad:</span> <strong>{timelineData.projectManager.name}</strong></div>
-                          )}
-                          {timelineData.projectManager.phone && (
-                            <div><span className="text-gray-600">Telefon:</span> {timelineData.projectManager.phone}</div>
-                          )}
-                          {timelineData.projectManager.email && (
-                            <div><span className="text-gray-600">E-posta:</span> {timelineData.projectManager.email}</div>
-                          )}
+                          {timelineData.projectManager && (timelineData.projectManager.name || timelineData.projectManager.phone) && (
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                              <h3 className="font-semibold text-blue-800 text-sm mb-2 flex items-center gap-2">
+                                <span className="text-base">📞</span> Proje Yöneticisi
+                              </h3>
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                {timelineData.projectManager.name && (
+                                  <div><span className="text-gray-600">Ad Soyad:</span> <strong className="text-xs">{timelineData.projectManager.name}</strong></div>
+                                )}
+                                {timelineData.projectManager.phone && (
+                                  <div><span className="text-gray-600">Telefon:</span> <span className="text-xs">{timelineData.projectManager.phone}</span></div>
+                                )}
+                                {timelineData.projectManager.email && (
+                                  <div><span className="text-gray-600">E-posta:</span> <span className="text-xs">{timelineData.projectManager.email}</span></div>
+                                )}
                           {timelineData.projectManager.availabilityNote && (
                             <div className="col-span-2"><span className="text-gray-600">Not:</span> {timelineData.projectManager.availabilityNote}</div>
                           )}
