@@ -42,25 +42,39 @@ const PaymentTermsModule = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profilesRes, banksRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment-profiles`),
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/settings/banks`)
-        ]);
+        // Fetch profiles
+        const profilesRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment-profiles`);
+        if (profilesRes.ok) {
+          const profilesData = await profilesRes.json();
+          setProfiles(Array.isArray(profilesData) ? profilesData : []);
+          
+          const defaultProfile = Array.isArray(profilesData) ? profilesData.find(p => p.isDefault) : null;
+          if (defaultProfile && !data?.profileId) {
+            applyProfile(defaultProfile);
+          }
+        } else {
+          setProfiles([]);
+        }
         
-        const profilesData = await profilesRes.json();
-        const banksData = await banksRes.json();
-        
-        setProfiles(Array.isArray(profilesData) ? profilesData : []);
-        setBanks(Array.isArray(banksData) ? banksData.filter(b => b.isActive) : []);
-        
-        const defaultProfile = Array.isArray(profilesData) ? profilesData.find(p => p.isDefault) : null;
-        if (defaultProfile && !data?.profileId) {
-          applyProfile(defaultProfile);
+        // Fetch banks - if endpoint doesn't exist, use empty array
+        try {
+          const banksRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/settings/banks`);
+          if (banksRes.ok) {
+            const banksData = await banksRes.json();
+            setBanks(Array.isArray(banksData) ? banksData.filter(b => b.isActive) : []);
+          } else {
+            setBanks([]);
+          }
+        } catch (bankError) {
+          console.warn('Banks API not available:', bankError);
+          setBanks([]);
         }
         
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setProfiles([]);
+        setBanks([]);
         setLoading(false);
       }
     };
