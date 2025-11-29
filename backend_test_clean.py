@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://docwizard-2.preview.emergentagent.com"
+BACKEND_URL = "https://docgen-pro-9.preview.emergentagent.com"
 
 def test_calendar_archive_and_meeting_requests():
     """

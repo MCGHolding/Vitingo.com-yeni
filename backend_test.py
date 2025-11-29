@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://docwizard-2.preview.emergentagent.com"
+BACKEND_URL = "https://docgen-pro-9.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
 def test_sales_opportunities_critical_investigation():
