@@ -21,9 +21,27 @@ const CoverPageLiveEditor = ({
   
   const canvasRef = useRef(null);
   
-  // Debug logging
+  // Debug logging - HER EVENT'İ LOGLA
   useEffect(() => {
-    console.log('🎯 selectedElement değişti:', selectedElement?.id || 'null', 'toolbarLocked:', toolbarLocked);
+    const logEvent = (eventName) => (e) => {
+      console.log(`🔵 ${eventName}:`, e.target.className || e.target.tagName, 'toolbarLocked:', toolbarLocked);
+    };
+    
+    document.addEventListener('mouseup', logEvent('MOUSEUP'), true);
+    document.addEventListener('mousedown', logEvent('MOUSEDOWN'), true);
+    document.addEventListener('click', logEvent('CLICK'), true);
+    
+    return () => {
+      document.removeEventListener('mouseup', logEvent('MOUSEUP'), true);
+      document.removeEventListener('mousedown', logEvent('MOUSEDOWN'), true);
+      document.removeEventListener('click', logEvent('CLICK'), true);
+    };
+  }, [toolbarLocked]);
+  
+  // selectedElement değişimini DETAYLI LOGLA
+  useEffect(() => {
+    console.log('🎯 selectedElement DEĞİŞTİ:', selectedElement?.id || 'NULL', 'toolbarLocked:', toolbarLocked);
+    console.trace('📍 Stack trace - nereden çağrıldı:');
   }, [selectedElement, toolbarLocked]);
 
   useEffect(() => {
