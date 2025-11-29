@@ -662,7 +662,7 @@ const ProposalProfileWizard = ({ profileId }) => {
             {/* Variable Tags Section */}
             <div className="mt-4 pt-3 border-t border-gray-200">
               <h4 className="text-xs font-semibold text-gray-600 mb-2 px-2">📝 Dinamik Alanlar</h4>
-              <p className="text-[10px] text-gray-500 px-2 mb-2">Metinde kelime seçip tag'a tıklayın</p>
+              <p className="text-[10px] text-gray-500 px-2 mb-2">Metinde kelime seçip tag&apos;a tıklayın</p>
               <div className="space-y-1">
                 {[
                   { icon: '🏢', label: 'Firma Adı', variable: '{{firma_adi}}' },
