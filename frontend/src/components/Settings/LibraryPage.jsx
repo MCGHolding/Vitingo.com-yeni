@@ -146,6 +146,7 @@ const LibraryPage = ({ onBack }) => {
   useEffect(() => {
     loadCustomerTypes();
     loadSectors();
+    loadDesignTemplates();
   }, []);
 
   // Delete customer type
