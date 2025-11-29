@@ -766,6 +766,45 @@ const ProposalProfileWizard = ({ profileId }) => {
                         <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra istediğiniz gibi düzenleyebilirsiniz</p>
                       </div>
                     )}
+                    
+                    {/* Template Selector for About Company Module */}
+                    {(currentEditingModule === 'about_company' || currentModule?.module_type === 'about_company') && (
+                      <div className="mt-3 mb-3">
+                        <label className="block text-xs font-medium text-gray-700 mb-2">🏢 Firma Hakkında Şablonları:</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            {
+                              id: 1,
+                              name: 'Şablon 1 - Klasik',
+                              content: `<p><strong>{{bizim_firma}}</strong>, fuar stand tasarımı ve üretimi alanında uzmanlaşmış, sektörde 15 yılı aşkın deneyime sahip öncü bir firmadır.</p><p>Firmamız, ulusal ve uluslararası fuarlarda yüzlerce başarılı projeye imza atmış, markaların en iyi şekilde temsil edilmesini sağlamıştır. Müşteri memnuniyeti odaklı yaklaşımımız ve kaliteden ödün vermeyen çalışma prensibimiz ile sektörde güvenilir bir iş ortağı konumundayız.</p><p><strong>Hizmetlerimiz:</strong></p><ul><li>Fuar stand tasarım ve uygulama</li><li>3D görselleştirme ve proje yönetimi</li><li>Özel yapım mobilya ve dekorasyon</li><li>Grafik tasarım ve baskı hizmetleri</li><li>Montaj, demontaj ve lojistik</li></ul><p>Deneyimli ekibimiz, her projede yaratıcı çözümler üreterek markanızın fuar alanında fark yaratmasını sağlar. Detaycı yaklaşımımız ve zamanında teslimat garantimiz ile projelerinizi güvenle teslim edebiliriz.</p><p>Referanslarımız ve tamamlanmış projelerimiz hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz.</p>`
+                            },
+                            {
+                              id: 2,
+                              name: 'Şablon 2 - Vizyon',
+                              content: `<h3>Vizyonumuz</h3><p><strong>{{bizim_firma}}</strong>, fuar ve etkinlik sektöründe global standartlarda hizmet veren, yenilikçi ve sürdürülebilir çözümler üreten lider firma olmayı hedeflemektedir.</p><h3>Misyonumuz</h3><p>Müşterilerimizin markalarını en etkin şekilde temsil etmelerini sağlayacak, yaratıcı ve işlevsel stand tasarımları sunmak, her projede mükemmeliyeti yakalamak ve uzun vadeli iş ortaklıkları kurmaktır.</p><h3>Değerlerimiz</h3><ul><li><strong>Kalite:</strong> Her aşamada en yüksek standartları uygularız</li><li><strong>Yenilikçilik:</strong> Sürekli gelişim ve yaratıcı çözümler</li><li><strong>Güvenilirlik:</strong> Sözümüzü tutar, zamanında teslim ederiz</li><li><strong>Müşteri Odaklılık:</strong> İhtiyaçlarınız önceliğimizdir</li><li><strong>Sürdürülebilirlik:</strong> Çevre dostu malzeme ve süreçler</li></ul><p>2008 yılından bu yana sektörde edindiğimiz tecrübe ile Türkiye'nin dört bir yanında ve yurtdışında birçok başarılı projeye imza attık. Modern üretim tesisimiz ve deneyimli ekibimizle her ölçekte projeye çözüm üretiyoruz.</p>`
+                            },
+                            {
+                              id: 3,
+                              name: 'Şablon 3 - Başarı',
+                              content: `<p><strong>{{bizim_firma}}</strong> olarak, her projede mükemmelliği hedefleyen, sektörde fark yaratan bir ekibiz.</p><h3>Neden Bizi Tercih Etmelisiniz?</h3><ul><li><strong>500+ Başarılı Proje:</strong> Ulusal ve uluslararası fuarlarda gerçekleştirilen projeler</li><li><strong>Deneyimli Ekip:</strong> Tasarımcı, mimar ve üretim uzmanlarından oluşan profesyonel kadro</li><li><strong>Modern Teknoloji:</strong> Son teknoloji üretim makineleri ve yazılımlar</li><li><strong>Hızlı Teslimat:</strong> Zamanında ve eksiksiz proje teslimi garantisi</li><li><strong>7/24 Destek:</strong> Fuar öncesi, sırası ve sonrasında kesintisiz teknik destek</li></ul><h3>Çalıştığımız Sektörler</h3><p>Otomotiv, teknoloji, gıda, tekstil, sağlık, mobilya ve daha birçok sektörde lider firmalara hizmet veriyoruz. Her sektörün kendine özgü ihtiyaçlarını anlıyor ve buna uygun çözümler üretiyoruz.</p><h3>Üretim Kapasitemiz</h3><p>3.000 m² kapalı üretim alanımızda, ahşap işleme, metal işleme, baskı ve montaj atölyelerimiz bulunmaktadır. Kendi üretimimizi yapmamız sayesinde kalite kontrolü ve maliyet avantajı sağlıyoruz.</p><p>Projeleriniz için detaylı bilgi ve referans çalışmalarımızı görmek isterseniz, showroom'umuzu ziyaret edebilir veya online portfolyomuzu inceleyebilirsiniz.</p>`
+                            }
+                          ].map(template => (
+                            <button
+                              key={template.id}
+                              onClick={() => {
+                                handleModuleContentChange(currentEditingModule, 'body', template.content);
+                                toast.success(`${template.name} yüklendi`);
+                              }}
+                              className="px-3 py-2 text-xs border-2 border-purple-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition text-left"
+                            >
+                              <div className="font-medium text-purple-700">{template.name}</div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">Tıkla ve kullan</div>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra {{bizim_firma}} gibi kodlar ekleyebilirsiniz</p>
+                      </div>
+                    )}
                   </>
                 )}
 
