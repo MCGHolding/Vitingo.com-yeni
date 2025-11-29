@@ -658,6 +658,35 @@ const ProposalProfileWizard = ({ profileId }) => {
                 </button>
               </div>
             ))}
+            
+            {/* Variable Tags Section */}
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <h4 className="text-xs font-semibold text-gray-600 mb-2 px-2">📝 Dinamik Alanlar</h4>
+              <p className="text-[10px] text-gray-500 px-2 mb-2">Metinde kelime seçip tag'a tıklayın</p>
+              <div className="space-y-1">
+                {[
+                  { icon: '🏢', label: 'Firma Adı', variable: '{{firma_adi}}' },
+                  { icon: '👤', label: 'Yetkili Adı', variable: '{{yetkili_adi}}' },
+                  { icon: '📧', label: 'Email', variable: '{{email}}' },
+                  { icon: '📞', label: 'Telefon', variable: '{{telefon}}' },
+                  { icon: '📍', label: 'Adres', variable: '{{adres}}' },
+                  { icon: '🏙️', label: 'Şehir', variable: '{{sehir}}' },
+                  { icon: '🌍', label: 'Ülke', variable: '{{ulke}}' },
+                  { icon: '📮', label: 'Posta Kodu', variable: '{{posta_kodu}}' },
+                  { icon: '💼', label: 'Vergi No', variable: '{{vergi_no}}' }
+                ].map(tag => (
+                  <button
+                    key={tag.variable}
+                    onClick={() => handleInsertVariable(tag.variable, tag.label)}
+                    className="w-full text-left px-2 py-1.5 rounded text-[11px] bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 border border-green-200 hover:border-green-300 transition-all"
+                    title={`Seçili metni ${tag.label} ile değiştir`}
+                  >
+                    <span className="mr-1">{tag.icon}</span>
+                    <span className="font-medium text-gray-700">{tag.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Content editor */}
