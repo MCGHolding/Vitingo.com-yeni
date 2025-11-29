@@ -35,6 +35,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   const [formData, setFormData] = useState({
     title: '',
     customer: '',
+    lead: '',
     contactPerson: '',
     amount: '',
     currency: 'TRY',
@@ -66,6 +67,9 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   
   // Dynamic data states
   const [customers, setCustomers] = useState([]);
+  const [leads, setLeads] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+  const [loadingLeads, setLoadingLeads] = useState(false);
   const [availableContacts, setAvailableContacts] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [fairs, setFairs] = useState([]);
