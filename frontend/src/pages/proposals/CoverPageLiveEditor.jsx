@@ -191,46 +191,39 @@ const CoverPageLiveEditor = ({
           </button>
         </div>
 
-        {/* Canva-style Top Toolbar */}
-        <div 
-          ref={toolbarRef}
-          data-toolbar="true"
-          className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm"
-          style={{ pointerEvents: 'auto', zIndex: 9999, position: 'relative' }}
-          onMouseDown={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            console.log('Toolbar mousedown - preventing');
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onMouseUp={(e) => e.stopPropagation()}
-          onMouseEnter={(e) => {
-            e.stopPropagation();
-            console.log('Mouse entered toolbar');
-          }}
-          onMouseLeave={(e) => {
-            e.stopPropagation();
-            console.log('Mouse left toolbar - NOT clearing selection');
-            // YAPMA: setSelectedElement(null)
-          }}
-          onMouseMove={(e) => e.stopPropagation()}
-        >
-          {selectedElement ? (
-            <div 
-              data-toolbar="true"
-              className="flex items-center space-x-2 w-full"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
+        {/* Toolbar Placeholder */}
+        <div className="h-14 border-b bg-gray-50">
+          {!selectedElement && (
+            <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+              <Type className="w-4 h-4 mr-2" />
+              <span>Düzenlemek için bir element seçin</span>
+            </div>
+          )}
+        </div>
+
+        {/* Portal Toolbar - Fixed Position, Body'ye Render */}
+        {selectedElement && (
+          <Portal>
+            <div
+              className="editor-toolbar-portal"
+              style={{
+                position: 'fixed',
+                top: '200px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 99999,
+                pointerEvents: 'auto'
               }}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
+              onMouseEnter={() => {
+                console.log('🔒 Toolbar mouse enter - LOCKING');
+                setToolbarLocked(true);
+              }}
+              onMouseLeave={() => {
+                console.log('🔓 Toolbar mouse leave - UNLOCKING');
+                setToolbarLocked(false);
               }}
             >
+              <div className="bg-white border-2 border-blue-200 rounded-lg shadow-2xl p-3 flex flex-wrap items-center gap-2">
               {/* Font Family */}
               <select
                 value={selectedElement.fontFamily || 'Inter'}
