@@ -956,7 +956,18 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   const initializeModuleContents = () => {
     const contents = {};
     selectedModules.forEach(module => {
-      contents[module.id] = getDefaultContent(module.type);
+      // CRITICAL: Preserve existing module content if it exists (e.g., from profile)
+      // Only use default content if module has no existing content
+      const existingContent = moduleContents[module.id];
+      if (existingContent && Object.keys(existingContent).length > 0) {
+        // Keep existing content (from profile)
+        contents[module.id] = existingContent;
+        console.log('🔒 Preserving existing content for:', module.id, existingContent.type);
+      } else {
+        // Use default content
+        contents[module.id] = getDefaultContent(module.type);
+        console.log('📝 Using default content for:', module.id);
+      }
     });
     setModuleContents(contents);
   };
