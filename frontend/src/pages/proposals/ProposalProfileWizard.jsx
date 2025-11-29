@@ -613,7 +613,11 @@ const ProposalProfileWizard = ({ profileId }) => {
     }
 
     const currentModule = availableModules.find(m => m.module_type === currentEditingModule);
-    const currentContent = moduleContents[currentEditingModule] || { title: '', body: '', sections: [], images: [], variables: [] };
+    // Use ref to get LATEST content (handles async state updates)
+    const latestModuleContents = moduleContentsRef.current && Object.keys(moduleContentsRef.current).length > 0 
+      ? moduleContentsRef.current 
+      : moduleContents;
+    const currentContent = latestModuleContents[currentEditingModule] || { title: '', body: '', sections: [], images: [], variables: [] };
 
     return (
       <div className="space-y-3">
