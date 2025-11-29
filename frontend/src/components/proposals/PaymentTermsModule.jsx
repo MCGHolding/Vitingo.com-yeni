@@ -548,7 +548,7 @@ const PaymentTermsModule = ({
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             >
               <option value="">Banka hesabı seçin</option>
-              {banks.map(bank => (
+              {(banks || []).map(bank => (
                 <option key={bank._id} value={bank._id}>
                   {bank.bankName} - {bank.iban}
                 </option>
