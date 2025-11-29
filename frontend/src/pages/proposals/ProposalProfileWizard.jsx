@@ -67,6 +67,9 @@ const ProposalProfileWizard = ({ profileId }) => {
   const [companies, setCompanies] = useState([]);
   const [availableModules, setAvailableModules] = useState([]);
   const [selectedPalette, setSelectedPalette] = useState('modern');
+  
+  // Ref to track latest moduleContents for save operation
+  const moduleContentsRef = useRef({});
 
   // Form State
   const [formData, setFormData] = useState({
