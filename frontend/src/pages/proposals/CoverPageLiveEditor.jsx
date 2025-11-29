@@ -435,7 +435,7 @@ const CoverPageLiveEditor = ({
                 >
                   <div 
                     className="w-6 h-6 rounded border-2 border-white shadow-sm"
-                    style={{ backgroundColor: selectedElementData.color || '#000000' }}
+                    style={{ backgroundColor: selectedElement.color || '#000000' }}
                   />
                   <span className="text-sm font-medium text-gray-700">Renk</span>
                   <input
