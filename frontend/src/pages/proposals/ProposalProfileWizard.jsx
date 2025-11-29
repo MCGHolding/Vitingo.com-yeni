@@ -824,10 +824,8 @@ const ProposalProfileWizard = ({ profileId }) => {
                         </div>
                       </div>
                     )}
-                      </div>
-                    )}
                     
-                    {!currentContent.cover_image && !currentContent.canvas_template && (
+                    {!currentContent.cover_image && !currentContent.canvas_template?.customBackgroundImage && (
                       <p className="text-xs text-gray-500 text-center">
                         Canvas tasarımı veya kendi resminizi yükleyin
                       </p>
