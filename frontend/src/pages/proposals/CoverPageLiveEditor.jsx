@@ -67,7 +67,7 @@ const CoverPageLiveEditor = ({
   const updateElement = (id, updates) => {
     setElements(prevElements => 
       prevElements.map(el => 
-        el.id === id ? { ...el, ...updates, _version: (el._version || 0) + 1 } : el
+        el.id === id ? { ...el, ...updates } : el
       )
     );
   };
