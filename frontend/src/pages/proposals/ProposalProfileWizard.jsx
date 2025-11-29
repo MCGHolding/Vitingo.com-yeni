@@ -593,6 +593,18 @@ const ProposalProfileWizard = ({ profileId }) => {
     </div>
   );
 
+  // Auto-show previews when cover_page module is selected
+  useEffect(() => {
+    if (currentEditingModule === 'cover_page' && moduleContents['cover_page']) {
+      if (moduleContents['cover_page'].canvas_template) {
+        setShowCanvasPreview(true);
+      }
+      if (moduleContents['cover_page'].cover_image) {
+        setShowCoverImagePreview(true);
+      }
+    }
+  }, [currentEditingModule, moduleContents]);
+
   const renderStep3 = () => {
     const selectedModulesList = availableModules.filter(m => 
       selectedModuleIds.includes(m.module_type)
@@ -604,18 +616,6 @@ const ProposalProfileWizard = ({ profileId }) => {
 
     const currentModule = availableModules.find(m => m.module_type === currentEditingModule);
     const currentContent = moduleContents[currentEditingModule] || { title: '', body: '', sections: [], images: [], variables: [] };
-
-    // Auto-show previews if content exists
-    React.useEffect(() => {
-      if (currentEditingModule === 'cover_page') {
-        if (currentContent.canvas_template && !showCanvasPreview) {
-          setShowCanvasPreview(true);
-        }
-        if (currentContent.cover_image && !showCoverImagePreview) {
-          setShowCoverImagePreview(true);
-        }
-      }
-    }, [currentEditingModule, currentContent]);
 
     return (
       <div className="space-y-3">
