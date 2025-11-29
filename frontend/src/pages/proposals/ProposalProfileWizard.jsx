@@ -342,17 +342,39 @@ const ProposalProfileWizard = ({ profileId }) => {
         selected_modules
       };
 
+      console.log('🚀 SENDING TO BACKEND:', {
+        url: urlProfileId ? 'UPDATE' : 'CREATE',
+        modulesCount: selected_modules.length,
+        coverPageModule: selected_modules.find(m => m.module_type === 'cover_page')
+      });
+      
+      // Log the actual payload (but truncate images for readability)
+      const logPayload = JSON.parse(JSON.stringify(payload));
+      if (logPayload.selected_modules) {
+        logPayload.selected_modules.forEach(mod => {
+          if (mod.content_template?.cover_image) {
+            const imgLength = mod.content_template.cover_image.length;
+            mod.content_template.cover_image = `[IMAGE DATA - ${imgLength} chars]`;
+          }
+        });
+      }
+      console.log('🚀 Payload (images truncated):', JSON.stringify(logPayload, null, 2));
+
       const url = urlProfileId 
         ? `${API_URL}/api/proposal-profiles/${urlProfileId}`
         : `${API_URL}/api/proposal-profiles`;
       
       const method = urlProfileId ? 'PUT' : 'POST';
 
+      console.log('🚀 Making request to:', url, 'method:', method);
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+
+      console.log('📥 Backend response status:', response.status);
 
       if (response.ok) {
         toast.success(urlProfileId ? 'Profil güncellendi' : 'Profil oluşturuldu');
