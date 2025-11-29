@@ -122,21 +122,47 @@ const CoverPageLiveEditor = ({
     }
   };
 
-  const updateElement = (id, updates) => {
-    setElements(prevElements => 
-      prevElements.map(el => 
-        el.id === id ? { ...el, ...updates } : el
-      )
-    );
-  };
-
-  const deleteElement = (id) => {
-    setElements(elements.filter(el => el.id !== id));
-    clearSelection();
+  // Element seçme - useCallback ile stable referans
+  const handleSelectElement = useCallback((elementId, e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    console.log('🔵 Selecting element:', elementId);
+    const element = elements.find(el => el.id === elementId);
+    setSelectedElement(element);
+  }, [elements]);
+  
+  // Element güncelleme
+  const handleUpdateElement = useCallback((updates) => {
+    if (!selectedElement) return;
+    
+    console.log('Updating element:', selectedElement.id, updates);
+    
+    setElements(prev => prev.map(el => 
+      el.id === selectedElement.id ? { ...el, ...updates } : el
+    ));
+    
+    // selectedElement'i de güncelle
+    setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
+  }, [selectedElement]);
+  
+  // Element silme
+  const handleDeleteElement = useCallback(() => {
+    if (!selectedElement) return;
+    
+    console.log('Deleting element:', selectedElement.id);
+    setElements(prev => prev.filter(el => el.id !== selectedElement.id));
+    setSelectedElement(null);
     toast.success('Element silindi');
-  };
-
-  const selectedElementData = elements.find(el => el.id === selectedElement);
+  }, [selectedElement]);
+  
+  const changeFontSize = useCallback((delta) => {
+    if (!selectedElement) return;
+    const currentSize = selectedElement.fontSize || 24;
+    const newSize = Math.max(8, Math.min(200, currentSize + delta));
+    handleUpdateElement({ fontSize: newSize });
+  }, [selectedElement, handleUpdateElement]);
 
   const handleSave = () => {
     const savedElements = elements.map(el => ({
@@ -150,13 +176,6 @@ const CoverPageLiveEditor = ({
     });
     toast.success('Kapak sayfası kaydedildi!');
     onClose();
-  };
-
-  const changeFontSize = (delta) => {
-    if (!selectedElement) return;
-    const currentSize = selectedElementData?.fontSize || 24;
-    const newSize = Math.max(8, Math.min(200, currentSize + delta));
-    updateElement(selectedElement, { fontSize: newSize });
   };
 
   if (!isOpen) return null;
