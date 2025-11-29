@@ -362,7 +362,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave, initial
                       </div>
                     ) : (
                       <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                        {element.variable}
+                        {replaceVariable(element.variable)}
                       </span>
                     )}
                     
