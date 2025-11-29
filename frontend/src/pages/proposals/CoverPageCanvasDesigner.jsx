@@ -450,7 +450,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
               </div>
             ) : (
               <div className="text-center text-gray-400 mt-6">
-                <p className="text-xs">Canvas'ta bir</p>
+                <p className="text-xs">Canvas&apos;ta bir</p>
                 <p className="text-xs">element seçin</p>
               </div>
             )}
