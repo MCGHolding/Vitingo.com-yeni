@@ -6,7 +6,7 @@ import Portal from '../../components/Portal';
 
 const CANVAS_WIDTH = 794;
 const CANVAS_HEIGHT = 1123;
-const SCALE = 0.7;
+const SCALE = 0.65; // CanvasDesigner ile aynı scale
 
 const CoverPageLiveEditor = ({ 
   isOpen, 
