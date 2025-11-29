@@ -35,6 +35,7 @@ const AVAILABLE_VARIABLES = [
 
 const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
   const [selectedTemplate, setSelectedTemplate] = useState('minimal');
+  const [customBackgroundImage, setCustomBackgroundImage] = useState(null);
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [nextId, setNextId] = useState(1);
