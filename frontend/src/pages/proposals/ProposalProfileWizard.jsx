@@ -1034,8 +1034,8 @@ const ProposalProfileWizard = ({ profileId }) => {
                   </div>
                 )}
 
-                {/* Content editor - hide for cover_page module */}
-                {currentEditingModule !== 'cover_page' && (
+                {/* Content editor - hide for cover_page and timeline modules */}
+                {currentEditingModule !== 'cover_page' && currentEditingModule !== 'timeline' && (
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">İçerik</label>
                     <div className="border rounded bg-white" style={{ minHeight: '280px' }}>
