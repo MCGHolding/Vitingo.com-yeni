@@ -444,12 +444,12 @@ const CoverPageLiveEditor = ({
                   }}
                   onDragStart={(e) => {
                     e.stopPropagation();
-                    setSelectedElement(element.id);
+                    setSelection(element.id);
                   }}
                   onDragStop={(e, d) => {
                     e.stopPropagation();
                     // Keep selection after drag
-                    setSelectedElement(element.id);
+                    setSelection(element.id);
                     // Update position only when drag stops
                     updateElement(element.id, { 
                       x: Math.round(d.x), 
@@ -459,7 +459,7 @@ const CoverPageLiveEditor = ({
                   onResizeStop={(e, direction, ref, delta, position) => {
                     e.stopPropagation();
                     // Keep selection after resize
-                    setSelectedElement(element.id);
+                    setSelection(element.id);
                     updateElement(element.id, {
                       width: parseInt(ref.style.width),
                       height: parseInt(ref.style.height),
@@ -470,11 +470,11 @@ const CoverPageLiveEditor = ({
                   bounds="parent"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    setSelectedElement(element.id);
+                    setSelection(element.id);
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedElement(element.id);
+                    setSelection(element.id);
                   }}
                   className={`${
                     isSelected 
