@@ -416,7 +416,7 @@ const PaymentTermsModule = ({
             </div>
           ) : (
             <div className="space-y-4">
-              {paymentTerms.payments.map((payment, index) => {
+              {(paymentTerms.payments || []).map((payment, index) => {
                 const dueType = DUE_TYPES.find(d => d.value === payment.dueType);
                 const warning = getDueWarning(payment);
                 
