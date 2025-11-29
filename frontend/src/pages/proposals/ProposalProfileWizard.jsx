@@ -830,6 +830,8 @@ const ProposalProfileWizard = ({ profileId }) => {
     const file = event.target.files[0];
     if (!file) return;
     
+    console.log('📤 Image Upload: File selected:', file.name, file.size, 'bytes');
+    
     // Check file type
     if (!file.type.startsWith('image/')) {
       toast.error('Lütfen bir resim dosyası seçin');
@@ -845,6 +847,8 @@ const ProposalProfileWizard = ({ profileId }) => {
     // Convert to base64
     const reader = new FileReader();
     reader.onloadend = () => {
+      console.log('📤 Image Upload: Base64 conversion complete, length:', reader.result.length);
+      
       const coverImageContent = {
         title: 'Kapak Sayfası',
         type: 'image_upload',
@@ -852,15 +856,22 @@ const ProposalProfileWizard = ({ profileId }) => {
         body: ''
       };
       
-      setModuleContents(prev => ({
-        ...prev,
-        cover_page: coverImageContent
-      }));
+      console.log('📤 Image Upload: Creating content with type:', coverImageContent.type);
+      
+      setModuleContents(prev => {
+        const newState = {
+          ...prev,
+          cover_page: coverImageContent
+        };
+        console.log('📤 Image Upload: Updated moduleContents state:', Object.keys(newState));
+        return newState;
+      });
       
       toast.success('Kapak resmi yüklendi!');
     };
     
     reader.onerror = () => {
+      console.error('📤 Image Upload: Error reading file');
       toast.error('Resim yüklenirken hata oluştu');
     };
     
