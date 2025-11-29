@@ -582,7 +582,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       // Map profile modules to wizard format
       const modules = profile.selected_modules
         .sort((a, b) => a.display_order - b.display_order)
-        .map(pm => {
+        .map((pm, index) => {
           // Find module info from categories
           let moduleInfo = null;
           Object.values(MODULE_CATEGORIES).forEach(category => {
@@ -596,13 +596,19 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
           if (pm.module_type === 'cover_page') {
             if (pm.content_template?.canvas_template) {
               canvas_template = pm.content_template.canvas_template;
+              console.log('✅ Loaded canvas_template from profile:', canvas_template.selectedTemplate);
             }
             if (pm.content_template?.cover_image) {
               cover_image = pm.content_template.cover_image;
+              console.log('✅ Loaded cover_image from profile');
             }
           }
           
+          // Generate unique ID for module
+          const moduleId = `profile-${pm.module_id || pm.module_type}-${index}-${Date.now()}`;
+          
           return {
+            id: moduleId,  // CRITICAL: Add unique ID for module
             type: pm.module_type,
             name: pm.module_name,
             icon: moduleInfo?.icon || '📄',
@@ -621,10 +627,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       
       setSelectedModules(modules);
       
-      // Initialize module contents
+      // Initialize module contents using module ID
       const contents = {};
-      modules.forEach((module, index) => {
-        contents[index] = module.content;
+      modules.forEach((module) => {
+        contents[module.id] = module.content;  // Use module.id instead of index
+        console.log('✅ Module content stored:', module.id, module.content.type);
       });
       setModuleContents(contents);
       
