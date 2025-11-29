@@ -807,7 +807,7 @@ const ProposalProfileWizard = ({ profileId }) => {
                     )}
                     
                     {/* Template Selector for Company Stats Module */}
-                    {(currentEditingModule === 'company_stats' || currentModule?.module_type === 'company_stats') && (
+                    {(currentEditingModule === 'company_statistics' || currentModule?.module_type === 'company_statistics') && (
                       <div className="mt-3 mb-3">
                         <label className="block text-xs font-medium text-gray-700 mb-2">📊 İstatistikler ve Başarılar Şablonları:</label>
                         <div className="grid grid-cols-3 gap-2">
