@@ -188,6 +188,9 @@ class ProfileModuleContent(BaseModel):
     """İçerik şablonu - profil modülü için"""
     title: str = ""
     body: str = ""  # Rich text/HTML content
+    type: Optional[str] = None  # 'canvas_design', 'image_upload', 'default'
+    canvas_template: Optional[Dict[str, Any]] = None  # Canvas designer data
+    cover_image: Optional[str] = None  # Base64 image data
     sections: List[Dict[str, Any]] = Field(default_factory=list)
     images: List[ImageData] = Field(default_factory=list)
     variables: List[str] = Field(default_factory=list)  # {{company_name}}, {{event_name}}, etc.
