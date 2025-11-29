@@ -155,9 +155,10 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
     { value: 'other', label: 'Diğer' }
   ];
 
-  // Load customers, fairs, statuses, stages, project types and countries on component mount
+  // Load customers, leads, fairs, statuses, stages, project types and countries on component mount
   useEffect(() => {
     loadCustomers();
+    loadLeads();
     loadFairs();
     loadStatuses();
     loadStages();
@@ -165,6 +166,7 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
   }, []);
 
   const loadCustomers = async () => {
+    setLoadingCustomers(true);
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backendUrl}/api/customers`);
@@ -174,9 +176,50 @@ export default function NewOpportunityFormPage({ onClose, onSave }) {
         setCustomers(data);
       } else {
         console.error('Failed to load customers');
+        toast({
+          title: "Uyarı",
+          description: "Müşteriler yüklenirken sorun oluştu",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error loading customers:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteriler yüklenemedi",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingCustomers(false);
+    }
+  };
+
+  const loadLeads = async () => {
+    setLoadingLeads(true);
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/leads`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Leads loaded for opportunities:', data);
+        setLeads(data);
+      } else {
+        console.error('Failed to load leads');
+        toast({
+          title: "Uyarı",
+          description: "Müşteri adayları yüklenirken sorun oluştu",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error loading leads:', error);
+      toast({
+        title: "Hata",
+        description: "Müşteri adayları yüklenemedi",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingLeads(false);
     }
   };
 
