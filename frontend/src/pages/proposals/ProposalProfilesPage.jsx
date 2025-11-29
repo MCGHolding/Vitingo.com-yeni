@@ -38,6 +38,8 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
   const [showSlideOver, setShowSlideOver] = useState(false);
   const [editingProfile, setEditingProfile] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [previewProfile, setPreviewProfile] = useState(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   
   const handleNewProfile = () => {
     window.location.href = '/proposals/profiles/new';
