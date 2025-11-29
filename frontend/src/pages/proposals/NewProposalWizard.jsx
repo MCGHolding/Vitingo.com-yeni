@@ -2963,48 +2963,118 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
           }}
         >
-          {/* Module Header */}
-          <div className="mb-6 pb-4 border-b-2 border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">{module.name}</h2>
-            {content.subtitle && (
-              <p className="text-sm text-gray-500 mt-1">{content.subtitle}</p>
-            )}
-          </div>
+          {/* Module Content - Canvas Design için başlık YOK */}
+          {module.type !== 'cover_page' || !content.canvas_template ? (
+            <div className="mb-6 pb-4 border-b-2 border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">{module.name}</h2>
+              {content.subtitle && (
+                <p className="text-sm text-gray-500 mt-1">{content.subtitle}</p>
+              )}
+            </div>
+          ) : null}
 
           {/* Module Content */}
-          <div className="prose max-w-none">
+          <div className={module.type === 'cover_page' && content.canvas_template ? '' : 'prose max-w-none'}>
             {module.type === 'cover_page' && content.type === 'canvas_design' && content.canvas_template && (
-              <div className="relative w-full h-full" style={{ minHeight: '700px' }}>
-                {/* Render canvas design */}
-                {content.canvas_template.elements && content.canvas_template.elements.length > 0 ? (
-                  content.canvas_template.elements.map((element, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        position: 'absolute',
-                        left: `${element.x}px`,
-                        top: `${element.y}px`,
-                        width: element.type === 'image' ? `${element.width}px` : 'auto',
-                        height: element.type === 'image' ? `${element.height}px` : 'auto',
-                        fontSize: `${element.fontSize}px`,
-                        fontWeight: element.fontWeight,
-                        fontStyle: element.fontStyle,
-                        textDecoration: element.textDecoration,
-                        color: element.color,
-                        textAlign: element.textAlign,
-                        backgroundColor: element.backgroundColor
-                      }}
-                    >
-                      {element.type === 'text' && replaceVariables(element.variable)}
-                      {element.type === 'image' && (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-                          {element.label}
-                        </div>
+              <div 
+                className="relative overflow-hidden"
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  minHeight: '700px'
+                }}
+              >
+                {/* Render template background - AYNI Canvas Designer'daki gibi */}
+                {(() => {
+                  const TEMPLATES = [
+                    { id: 'minimal', name: 'Minimal', bg: 'bg-white' },
+                    { id: 'gradient_blue', name: 'Mavi Gradient', bg: 'bg-gradient-to-br from-blue-50 to-blue-100' },
+                    { id: 'gradient_purple', name: 'Mor Gradient', bg: 'bg-gradient-to-br from-purple-50 to-pink-50' },
+                    { id: 'sidebar', name: 'Yan Panel', bg: 'bg-white', sidebar: true },
+                    { id: 'split', name: 'Bölünmüş', bg: 'bg-white', split: true },
+                    { id: 'diagonal', name: 'Çapraz', bg: 'bg-white', diagonal: true },
+                    { id: 'geometric', name: 'Geometrik', bg: 'bg-white', geometric: true },
+                    { id: 'wave', name: 'Dalga', bg: 'bg-white', wave: true },
+                    { id: 'gradient_warm', name: 'Sıcak Gradient', bg: 'bg-gradient-to-br from-orange-50 to-red-50' },
+                    { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' }
+                  ];
+                  
+                  const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
+                  const template = TEMPLATES.find(t => t.id === selectedTemplate);
+                  
+                  return (
+                    <div className={`absolute inset-0 ${template?.bg || 'bg-white'}`}>
+                      {/* Template-specific backgrounds - AYNI Canvas Designer'daki gibi */}
+                      {template?.sidebar && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-b from-purple-500 to-pink-500 opacity-90" />
+                      )}
+                      {template?.split && (
+                        <>
+                          <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-purple-500 opacity-90" />
+                          <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-white" />
+                        </>
+                      )}
+                      {template?.diagonal && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-transparent to-white opacity-80" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 40%, 0 60%)' }} />
+                      )}
+                      {template?.geometric && (
+                        <>
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 opacity-20 rounded-full" style={{ transform: 'translate(30%, -30%)' }} />
+                          <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500 opacity-10" style={{ transform: 'translate(-40%, 40%) rotate(45deg)' }} />
+                        </>
+                      )}
+                      {template?.wave && (
+                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                          <path d="M0,30 Q25,20 50,30 T100,30 L100,100 L0,100 Z" fill="url(#waveGradient)" opacity="0.15"/>
+                          <defs>
+                            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#a855f7" />
+                              <stop offset="100%" stopColor="#ec4899" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
                       )}
                     </div>
-                  ))
+                  );
+                })()}
+                
+                {/* Render elements - SCALE edilmiş pozisyonlarla */}
+                {content.canvas_template.elements && content.canvas_template.elements.length > 0 ? (
+                  content.canvas_template.elements.map((element, idx) => {
+                    // Canvas Designer: 794x1123, Preview: 595x842
+                    // Scale factor: 595/794 ≈ 0.75
+                    const scale = 0.75;
+                    
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          position: 'absolute',
+                          left: `${element.x * scale}px`,
+                          top: `${element.y * scale}px`,
+                          width: element.type === 'image' ? `${element.width * scale}px` : 'auto',
+                          height: element.type === 'image' ? `${element.height * scale}px` : 'auto',
+                          fontSize: `${element.fontSize * scale}px`,
+                          fontWeight: element.fontWeight,
+                          fontStyle: element.fontStyle,
+                          textDecoration: element.textDecoration,
+                          color: element.color,
+                          textAlign: element.textAlign,
+                          backgroundColor: element.backgroundColor,
+                          zIndex: 10
+                        }}
+                      >
+                        {element.type === 'text' && replaceVariables(element.variable)}
+                        {element.type === 'image' && (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500" style={{ fontSize: '10px' }}>
+                            {element.label}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
-                  <div className="text-center py-12 text-gray-400">
+                  <div className="text-center py-12 text-gray-400 relative z-10">
                     <p>Canvas tasarımı boş</p>
                   </div>
                 )}
