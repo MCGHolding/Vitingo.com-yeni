@@ -339,25 +339,76 @@ export default function NewOpportunityForm({ onClose, onSave }) {
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Row 1: Customer and Subject */}
+            {/* Row 1: Customer and Lead */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="customer" className="flex items-center space-x-2">
                   <User className="h-4 w-4" />
-                  <span>Müşteri *</span>
+                  <span>Müşteri</span>
                 </Label>
-                <Input
-                  id="customer"
-                  placeholder="Müşteri adını giriniz"
-                  value={formData.customer}
-                  onChange={(e) => handleInputChange('customer', e.target.value)}
-                  className={errors.customer ? 'border-red-500' : ''}
-                />
+                <Select 
+                  value={formData.customer} 
+                  onValueChange={(value) => {
+                    handleInputChange('customer', value);
+                    if (value) handleInputChange('lead', ''); // Clear lead when customer is selected
+                  }}
+                  disabled={loadingCustomers || !!formData.lead}
+                >
+                  <SelectTrigger className={errors.customer ? 'border-red-500' : ''}>
+                    <SelectValue placeholder={loadingCustomers ? "Müşteriler yükleniyor..." : "Müşteri seçiniz"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.companyName || customer.name || 'İsimsiz Müşteri'}
+                      </SelectItem>
+                    ))}
+                    {customers.length === 0 && !loadingCustomers && (
+                      <SelectItem value="no-customers" disabled>
+                        Henüz müşteri bulunmuyor
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
                 {errors.customer && (
                   <p className="text-sm text-red-600">{errors.customer}</p>
                 )}
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="lead" className="flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>Müşteri Adayı</span>
+                </Label>
+                <Select 
+                  value={formData.lead} 
+                  onValueChange={(value) => {
+                    handleInputChange('lead', value);
+                    if (value) handleInputChange('customer', ''); // Clear customer when lead is selected
+                  }}
+                  disabled={loadingLeads || !!formData.customer}
+                >
+                  <SelectTrigger className={errors.customer ? 'border-red-500' : ''}>
+                    <SelectValue placeholder={loadingLeads ? "Müşteri adayları yükleniyor..." : "Müşteri adayı seçiniz"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {leads.map((lead) => (
+                      <SelectItem key={lead.id} value={lead.id}>
+                        {lead.companyName || 'İsimsiz Müşteri Adayı'}
+                      </SelectItem>
+                    ))}
+                    {leads.length === 0 && !loadingLeads && (
+                      <SelectItem value="no-leads" disabled>
+                        Henüz müşteri adayı bulunmuyor
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Row 2: Subject and Contact Person */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="subject" className="flex items-center space-x-2">
                   <FileText className="h-4 w-4" />
@@ -368,6 +419,19 @@ export default function NewOpportunityForm({ onClose, onSave }) {
                   placeholder="Fırsat konusunu giriniz"
                   value={formData.subject}
                   onChange={(e) => handleInputChange('subject', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactPerson" className="flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>Müşterideki İlgili Kişi</span>
+                </Label>
+                <Input
+                  id="contactPerson"
+                  placeholder="İlgili kişi adını giriniz"
+                  value={formData.contactPerson}
+                  onChange={(e) => handleInputChange('contactPerson', e.target.value)}
                 />
               </div>
             </div>
