@@ -440,13 +440,14 @@ const CoverPageLiveEditor = ({
                   <span className="text-sm font-medium text-gray-700">Renk</span>
                   <input
                     type="color"
-                    value={selectedElementData.color || '#000000'}
+                    value={selectedElement.color || '#000000'}
                     onChange={(e) => {
                       e.stopPropagation();
-                      updateElement(selectedElement, { color: e.target.value });
+                      handleUpdateElement({ color: e.target.value });
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    onFocus={(e) => e.stopPropagation()}
                     className="absolute opacity-0 w-0 h-0"
                   />
                 </label>
