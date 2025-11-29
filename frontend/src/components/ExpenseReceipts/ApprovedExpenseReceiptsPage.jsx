@@ -38,7 +38,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
     const loadData = async () => {
       setLoading(true);
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://quotemake.preview.emergentagent.com';
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://templify-pro.preview.emergentagent.com';
         
         // Load receipts
         const receiptsResponse = await fetch(`${backendUrl}/api/expense-receipts?status=approved`);
@@ -217,7 +217,7 @@ const ApprovedExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt })
   // Confirm payment
   const confirmPayment = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://quotemake.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://templify-pro.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}/payment`, {
         method: 'POST'
       });
@@ -311,7 +311,7 @@ Swift: ${info.swift_code}`;
   // Confirm delete
   const confirmDelete = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://quotemake.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://templify-pro.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/expense-receipts/${selectedReceipt.id}`, {
         method: 'DELETE'
       });
@@ -345,7 +345,7 @@ Swift: ${info.swift_code}`;
   // Send email
   const sendEmail = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://quotemake.preview.emergentagent.com';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://templify-pro.preview.emergentagent.com';
       const response = await fetch(`${backendUrl}/api/send-expense-receipt-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
