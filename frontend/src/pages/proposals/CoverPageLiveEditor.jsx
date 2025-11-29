@@ -146,18 +146,29 @@ const CoverPageLiveEditor = ({
 
         {/* Canva-style Top Toolbar */}
         <div 
+          data-toolbar="true"
           className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm"
-          onMouseDown={(e) => e.stopPropagation()}
-          onMouseMove={(e) => e.stopPropagation()}
-          onMouseEnter={(e) => e.stopPropagation()}
-          onMouseLeave={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
         >
           {selectedElementData ? (
             <div 
+              data-toolbar="true"
               className="flex items-center space-x-2 w-full"
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
             >
               {/* Font Family */}
               <select
