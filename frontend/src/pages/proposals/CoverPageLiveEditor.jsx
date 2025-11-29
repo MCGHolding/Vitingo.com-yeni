@@ -17,6 +17,13 @@ const CoverPageLiveEditor = ({
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const canvasRef = useRef(null);
+  
+  // Prevent selection from being cleared
+  const selectionRef = useRef(null);
+  
+  useEffect(() => {
+    selectionRef.current = selectedElement;
+  }, [selectedElement]);
 
   useEffect(() => {
     if (isOpen && canvasData?.elements) {
