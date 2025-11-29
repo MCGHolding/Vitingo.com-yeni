@@ -328,9 +328,122 @@ const PaymentTermsModule = ({
     return <div className="animate-pulse bg-gray-100 rounded-lg h-64" />;
   }
   
+  // Local pricing state for this module
+  const [localPricing, setLocalPricing] = useState({
+    subtotal: 0,
+    taxRate: 18,
+    taxAmount: 0,
+    total: totalAmount || 0,
+    currency: currency || 'TRY'
+  });
+
+  // When local pricing changes, recalculate
+  useEffect(() => {
+    const calculatedTax = (localPricing.subtotal * localPricing.taxRate) / 100;
+    const calculatedTotal = localPricing.subtotal + calculatedTax;
+    
+    setLocalPricing(prev => ({
+      ...prev,
+      taxAmount: calculatedTax,
+      total: calculatedTotal
+    }));
+    
+    // Trigger payment recalculation
+    if (paymentTerms.payments && paymentTerms.payments.length > 0) {
+      setPaymentTerms(prevTerms => ({
+        ...prevTerms,
+        totalAmount: calculatedTotal,
+        payments: prevTerms.payments.map(payment => ({
+          ...payment,
+          amount: Math.round((calculatedTotal * payment.percentage) / 100),
+          currency: localPricing.currency
+        }))
+      }));
+    }
+  }, [localPricing.subtotal, localPricing.taxRate]);
+
+  const formatCurrencyInput = (value) => {
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
   return (
     <div className="payment-terms-module space-y-6">
       
+      {/* FİYAT FORMU - EN ÜSTTE */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-5">
+        <h3 className="font-semibold text-green-800 mb-4 flex items-center gap-2 text-lg">
+          <span>💰</span>
+          Fiyat Bilgileri
+        </h3>
+        
+        <div className="bg-white rounded-lg p-4 space-y-4">
+          {/* Para Birimi */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Para Birimi</label>
+            <select
+              value={localPricing.currency}
+              onChange={(e) => setLocalPricing(prev => ({ ...prev, currency: e.target.value }))}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+            >
+              <option value="TRY">TRY - Türk Lirası</option>
+              <option value="USD">USD - Amerikan Doları</option>
+              <option value="EUR">EUR - Euro</option>
+            </select>
+          </div>
+          
+          {/* Ara Toplam */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Ara Toplam (KDV Hariç)</label>
+            <input
+              type="number"
+              value={localPricing.subtotal}
+              onChange={(e) => setLocalPricing(prev => ({ ...prev, subtotal: parseFloat(e.target.value) || 0 }))}
+              placeholder="0"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-lg font-semibold"
+            />
+          </div>
+          
+          {/* KDV Oranı */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı (%)</label>
+            <select
+              value={localPricing.taxRate}
+              onChange={(e) => setLocalPricing(prev => ({ ...prev, taxRate: parseFloat(e.target.value) }))}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+            >
+              <option value="0">%0 - KDV Yok</option>
+              <option value="1">%1</option>
+              <option value="8">%8</option>
+              <option value="10">%10</option>
+              <option value="18">%18</option>
+              <option value="20">%20</option>
+            </select>
+          </div>
+          
+          {/* Özet */}
+          <div className="pt-4 border-t border-gray-200">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Ara Toplam:</span>
+                <span className="font-medium">{formatCurrency(localPricing.subtotal, localPricing.currency)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">KDV (%{localPricing.taxRate}):</span>
+                <span className="font-medium">{formatCurrency(localPricing.taxAmount, localPricing.currency)}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold border-t pt-2">
+                <span className="text-gray-800">TOPLAM:</span>
+                <span className="text-green-600">{formatCurrency(localPricing.total, localPricing.currency)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* ÖDEME KOŞULLARI BAŞLIK */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Başlık</label>
         <input
