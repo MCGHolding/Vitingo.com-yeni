@@ -441,7 +441,11 @@ const CoverPageLiveEditor = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+        <div 
+          className="flex items-center justify-between px-4 py-3 border-t bg-gray-50"
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">{elements.length} element</span>
             {/* Element Pills */}
