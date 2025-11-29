@@ -369,7 +369,7 @@ AVAILABLE_MODULES = [
         "module_name": "Kapak Sayfası",
         "module_type": "cover_page",
         "icon": "📄",
-        "description": "Teklif kapak sayfası - logo, başlık, müşteri bilgileri"
+        "description": "Özel kapak sayfası tasarlayın"
     },
     {
         "module_id": "intro",
