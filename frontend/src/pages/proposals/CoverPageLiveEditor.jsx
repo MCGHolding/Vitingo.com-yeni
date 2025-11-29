@@ -624,9 +624,8 @@ const CoverPageLiveEditor = ({
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelectElement(el.id);
+                    setSelectedElement(el);
                   }}
-                  onMouseDown={(e) => e.stopPropagation()}
                   className={`px-2 py-1 text-xs rounded-full transition ${
                     selectedElement?.id === el.id
                       ? 'bg-blue-500 text-white'
