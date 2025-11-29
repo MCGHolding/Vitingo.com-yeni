@@ -17,7 +17,7 @@ db = client['crm_db']
 class PaymentItem(BaseModel):
     order: int = Field(..., ge=1)
     percentage: int = Field(..., ge=1, le=100)
-    dueType: str = Field(..., regex="^(contract_date|setup_start|event_delivery|after_delivery|custom)$")
+    dueType: str = Field(..., pattern="^(contract_date|setup_start|event_delivery|after_delivery|custom)$")
     dueDays: Optional[int] = Field(None, ge=0, le=365)
 
 class PaymentProfileCreate(BaseModel):
