@@ -3026,35 +3026,42 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               >
                 {/* Render template background - AYNI Canvas Designer'daki gibi */}
                 {(() => {
+                  // Use inline styles instead of Tailwind classes for dynamic backgrounds
                   const TEMPLATES = [
-                    { id: 'minimal', name: 'Minimal', bg: 'bg-white' },
-                    { id: 'gradient_blue', name: 'Mavi Gradient', bg: 'bg-gradient-to-br from-blue-50 to-blue-100' },
-                    { id: 'gradient_purple', name: 'Mor Gradient', bg: 'bg-gradient-to-br from-purple-50 to-pink-50' },
-                    { id: 'sidebar', name: 'Yan Panel', bg: 'bg-white', sidebar: true },
-                    { id: 'split', name: 'Bölünmüş', bg: 'bg-white', split: true },
-                    { id: 'diagonal', name: 'Çapraz', bg: 'bg-white', diagonal: true },
-                    { id: 'geometric', name: 'Geometrik', bg: 'bg-white', geometric: true },
-                    { id: 'wave', name: 'Dalga', bg: 'bg-white', wave: true },
-                    { id: 'gradient_warm', name: 'Sıcak Gradient', bg: 'bg-gradient-to-br from-orange-50 to-red-50' },
-                    { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' }
+                    { id: 'minimal', name: 'Minimal', bgStyle: { backgroundColor: '#ffffff' } },
+                    { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #eff6ff, #dbeafe)' } },
+                    { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #faf5ff, #fdf2f8)' } },
+                    { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' }, sidebar: true },
+                    { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' }, split: true },
+                    { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' }, diagonal: true },
+                    { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' }, geometric: true },
+                    { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' }, wave: true },
+                    { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #fff7ed, #fef2f2)' } },
+                    { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(to bottom right, #f0fdf4, #f0fdfa)' } }
                   ];
                   
                   const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
                   const template = TEMPLATES.find(t => t.id === selectedTemplate);
                   
-                  console.log('🎨 Template rendering:', selectedTemplate, 'bg:', template?.bg);
+                  console.log('🎨 Template rendering:', selectedTemplate, 'bgStyle:', template?.bgStyle);
                   
                   // Check for custom background image
                   const customBg = content.canvas_template.customBackgroundImage;
                   
+                  // Merge background styles
+                  const backgroundStyle = {
+                    ...template?.bgStyle,
+                    ...(selectedTemplate === 'custom_image' && customBg ? {
+                      backgroundImage: `url(${customBg})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    } : {})
+                  };
+                  
                   return (
                     <div 
-                      className={`absolute inset-0 ${template?.bg || 'bg-white'}`}
-                      style={{
-                        backgroundImage: selectedTemplate === 'custom_image' && customBg ? `url(${customBg})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
+                      className="absolute inset-0"
+                      style={backgroundStyle}
                     >
                       {/* Template-specific backgrounds - AYNI Canvas Designer'daki gibi */}
                       {template?.sidebar && (
