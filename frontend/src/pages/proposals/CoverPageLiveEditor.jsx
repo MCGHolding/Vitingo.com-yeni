@@ -394,12 +394,15 @@ const CoverPageLiveEditor = ({
               transformOrigin: 'center',
               backgroundImage: canvasData?.customBackgroundImage ? `url(${canvasData.customBackgroundImage})` : 'none',
               backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              pointerEvents: 'auto'
+              backgroundPosition: 'center'
             }}
             onMouseDown={(e) => {
-              // Only deselect if clicking on the canvas background itself
-              if (e.target === e.currentTarget) {
+              // Check if click is on toolbar or element
+              const isToolbar = e.target.closest('[data-toolbar="true"]');
+              const isElement = e.target.closest('[data-element-id]');
+              
+              // Only deselect if clicking on canvas background (not toolbar, not element)
+              if (!isToolbar && !isElement && e.target === e.currentTarget) {
                 setSelectedElement(null);
               }
             }}
