@@ -18,7 +18,7 @@ const AVAILABLE_VARIABLES = [
   { id: 'prepared_date', label: '📆 Tarih', type: 'text', variable: '{{prepared_date}}' }
 ];
 
-const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
+const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave, initialData }) => {
   const [libraryTemplates, setLibraryTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [customBackgroundImage, setCustomBackgroundImage] = useState(null);
@@ -27,7 +27,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
   const [nextId, setNextId] = useState(1);
   const canvasRef = useRef(null);
 
-  // Load templates from library on mount
+  // Load templates from library on mount AND restore initial data if editing
   useEffect(() => {
     const loadLibraryTemplates = async () => {
       try {
@@ -36,8 +36,17 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
         if (response.ok) {
           const data = await response.json();
           setLibraryTemplates(data);
-          // Select first template by default if available
-          if (data.length > 0) {
+          
+          // If we have initial data (editing existing), restore it
+          if (initialData && initialData.customBackgroundImage) {
+            setSelectedTemplate(initialData.selectedTemplate || 'custom');
+            setCustomBackgroundImage(initialData.customBackgroundImage);
+            setElements(initialData.elements || []);
+            // Set nextId to max element id + 1
+            const maxId = Math.max(0, ...(initialData.elements || []).map(el => parseInt(el.id?.split('_')[1] || 0)));
+            setNextId(maxId + 1);
+          } else if (data.length > 0) {
+            // No initial data - select first template by default
             setSelectedTemplate(data[0].id);
             setCustomBackgroundImage(data[0].image_url);
           }
@@ -46,10 +55,17 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
         console.error('Error loading library templates:', error);
       }
     };
+    
     if (isOpen) {
       loadLibraryTemplates();
+    } else {
+      // Reset when closed
+      setElements([]);
+      setSelectedElement(null);
+      setSelectedTemplate(null);
+      setCustomBackgroundImage(null);
     }
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   // Apply template
   const applyTemplate = (template) => {
