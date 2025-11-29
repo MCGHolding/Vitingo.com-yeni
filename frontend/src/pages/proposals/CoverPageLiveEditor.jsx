@@ -148,6 +148,9 @@ const CoverPageLiveEditor = ({
         <div 
           className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm"
           onMouseDown={(e) => e.stopPropagation()}
+          onMouseMove={(e) => e.stopPropagation()}
+          onMouseEnter={(e) => e.stopPropagation()}
+          onMouseLeave={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
           {selectedElementData ? (
