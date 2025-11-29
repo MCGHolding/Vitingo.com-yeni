@@ -840,23 +840,19 @@ const ProposalProfileWizard = ({ profileId }) => {
     const coverPageContent = {
       title: 'Kapak Sayfası',
       type: 'canvas_design',
-      canvas_template: template, // Contains: selectedTemplate, elements, canvasWidth, canvasHeight
-      body: '' // Keep body empty for canvas-based designs
+      canvas_template: template,
+      body: ''
     };
     
     console.log('🎨 Canvas Designer: Creating content:', coverPageContent);
     
-    setModuleContents(prev => {
-      const newState = {
-        ...prev,
-        cover_page: coverPageContent
-      };
-      // CRITICAL: Update ref immediately for handleSave
-      moduleContentsRef.current = newState;
-      console.log('🎨 Canvas Designer: Updated moduleContents state AND ref:', newState);
-      return newState;
-    });
+    // Direct state update - React will handle this properly
+    setModuleContents(prev => ({
+      ...prev,
+      cover_page: coverPageContent
+    }));
     
+    console.log('🎨 Canvas Designer: State update queued');
     toast.success('Kapak sayfası şablonu kaydedildi!');
   };
 
