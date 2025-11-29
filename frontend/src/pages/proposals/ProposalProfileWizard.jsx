@@ -845,20 +845,6 @@ const ProposalProfileWizard = ({ profileId }) => {
                         <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Rakamları ve referansları kendi firmanıza göre düzenleyebilirsiniz</p>
                       </div>
                     )}
-                    
-                    {/* Timeline Module - Special Component */}
-                    {(currentEditingModule === 'timeline' || currentModule?.module_type === 'timeline') && (
-                      <div className="mt-4">
-                        <TimelineModule
-                          data={currentContent.timelineData || currentContent.body}
-                          onChange={(timelineData) => {
-                            handleModuleContentChange(currentEditingModule, 'timelineData', timelineData);
-                            // Also save as JSON string in body for backward compatibility
-                            handleModuleContentChange(currentEditingModule, 'body', JSON.stringify(timelineData));
-                          }}
-                        />
-                      </div>
-                    )}
                   </>
                 )}
 
