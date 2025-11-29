@@ -1154,29 +1154,7 @@ const ProposalProfileWizard = ({ profileId }) => {
         }}
       />
       
-      {/* Live Editor - Son düzenleme modalı */}
-      <CoverPageLiveEditor
-        isOpen={showLiveEditor}
-        onClose={() => {
-          setShowLiveEditor(false);
-          setTempCanvasData(null);
-        }}
-        onSave={handleLiveEditorSave}
-        canvasData={tempCanvasData}
-        realData={{
-          company_name: formData.company_info?.name || 'Örnek Firma',
-          fair_name: 'Örnek Fuar 2026',
-          project_name: 'Örnek Proje',
-          country: 'Türkiye',
-          city: 'İstanbul',
-          venue: 'İstanbul Fuar Merkezi',
-          start_date: '2026-03-15',
-          end_date: '2026-03-18',
-          prepared_by: 'Murat Bucak',
-          prepared_title: 'Süper Admin',
-          proposal_number: `TKL-${Date.now().toString().slice(-6)}`
-        }}
-      />
+      {/* Live Editor removed - Canvas Designer now saves directly */}
       
       <div className="max-w-5xl mx-auto">
         {/* Header */}
