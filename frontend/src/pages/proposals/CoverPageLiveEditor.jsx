@@ -498,17 +498,27 @@ const CoverPageLiveEditor = ({
                     height: element.height || 50
                   }}
                   onDragStart={(e) => {
-                    console.log('Drag started on element:', element.id);
+                    console.log('🟢 DRAG START on element:', element.id);
                     const el = elements.find(el => el.id === element.id);
                     setSelectedElement(el);
                   }}
+                  onDrag={(e, d) => {
+                    // Real-time update during drag - SEÇİMİ KORU
+                    console.log('🔄 DRAGGING:', d.x, d.y);
+                  }}
                   onDragStop={(e, d) => {
-                    console.log('Drag stopped, position:', d.x, d.y);
+                    console.log('🔴 DRAG STOP, position:', d.x, d.y);
                     const updates = { x: Math.round(d.x), y: Math.round(d.y) };
+                    const el = elements.find(el => el.id === element.id);
+                    const updated = { ...el, ...updates };
+                    
                     setElements(prev => prev.map(el => 
-                      el.id === element.id ? { ...el, ...updates } : el
+                      el.id === element.id ? updated : el
                     ));
-                    setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
+                    
+                    // SEÇİMİ KORU - null yapma!
+                    setSelectedElement(updated);
+                    console.log('✅ Drag stop - element STILL SELECTED:', updated.id);
                   }}
                   onResizeStop={(e, direction, ref, delta, position) => {
                     console.log('Resize stopped');
