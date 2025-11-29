@@ -296,6 +296,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
     // Reset form
     setFormData({
       customer: '',
+      lead: '',
       subject: '',
       contactPerson: '',
       amount: '',
