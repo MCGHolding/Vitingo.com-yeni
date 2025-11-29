@@ -437,13 +437,11 @@ const LibraryPage = ({ onBack }) => {
               {designTemplates.map((template) => (
                 <div
                   key={template.id}
-                  className="relative group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition"
+                  className="relative group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer"
+                  onClick={() => setSelectedImage(template)}
                 >
                   {/* Thumbnail */}
-                  <div
-                    className="aspect-[3/4] cursor-pointer"
-                    onClick={() => setSelectedImage(template)}
-                  >
+                  <div className="aspect-[3/4]">
                     <img
                       src={template.image_url}
                       alt={template.name}
@@ -451,19 +449,13 @@ const LibraryPage = ({ onBack }) => {
                     />
                   </div>
 
-                  {/* Overlay with actions */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  {/* Overlay with delete button only */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
                     <button
-                      onClick={() => setSelectedImage(template)}
-                      className="p-2 bg-white rounded-full shadow-lg mr-2 hover:bg-gray-100"
-                    >
-                      <ZoomIn className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button
-                      onClick={() => deleteDesignTemplate(template.id)}
+                      onClick={(e) => { e.stopPropagation(); deleteDesignTemplate(template.id); }}
                       className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50"
                     >
-                      <Trash2 className="w-5 h-5 text-red-500" />
+                      <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
 
