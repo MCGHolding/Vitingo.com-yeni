@@ -805,6 +805,45 @@ const ProposalProfileWizard = ({ profileId }) => {
                         <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra {`{{bizim_firma}}`} gibi kodlar ekleyebilirsiniz</p>
                       </div>
                     )}
+                    
+                    {/* Template Selector for Company Stats Module */}
+                    {(currentEditingModule === 'company_stats' || currentModule?.module_type === 'company_stats') && (
+                      <div className="mt-3 mb-3">
+                        <label className="block text-xs font-medium text-gray-700 mb-2">📊 İstatistikler ve Başarılar Şablonları:</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            {
+                              id: 1,
+                              name: 'Şablon 1 - Rakamlarla',
+                              content: `<h3>Rakamlarla {{bizim_firma}}</h3><p>Sektördeki başarımızı rakamlarla kanıtlıyoruz:</p><div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0;"><div style="text-align: center; padding: 20px; background: #f0f9ff; border-radius: 10px;"><h2 style="color: #0369a1; font-size: 36px; margin: 0;">500+</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Tamamlanan Proje</p></div><div style="text-align: center; padding: 20px; background: #f0fdf4; border-radius: 10px;"><h2 style="color: #15803d; font-size: 36px; margin: 0;">15+</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Yıllık Deneyim</p></div><div style="text-align: center; padding: 20px; background: #fef3c7; border-radius: 10px;"><h2 style="color: #b45309; font-size: 36px; margin: 0;">200+</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Mutlu Müşteri</p></div><div style="text-align: center; padding: 20px; background: #fce7f3; border-radius: 10px;"><h2 style="color: #be185d; font-size: 36px; margin: 0;">50+</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Farklı Sektör</p></div><div style="text-align: center; padding: 20px; background: #ede9fe; border-radius: 10px;"><h2 style="color: #6b21a8; font-size: 36px; margin: 0;">25+</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Ülke Deneyimi</p></div><div style="text-align: center; padding: 20px; background: #fff7ed; border-radius: 10px;"><h2 style="color: #c2410c; font-size: 36px; margin: 0;">100%</h2><p style="margin: 10px 0 0 0; font-weight: 600;">Müşteri Memnuniyeti</p></div></div><p>Bu rakamlar, müşterilerimize sunduğumuz kaliteli hizmetin ve sektördeki güçlü konumumuzun bir göstergesidir. Her proje bizim için yeni bir başarı hikayesidir.</p>`
+                            },
+                            {
+                              id: 2,
+                              name: 'Şablon 2 - Başarılar',
+                              content: `<h3>Başarı Hikayelerimiz</h3><p><strong>{{bizim_firma}}</strong> olarak gerçekleştirdiğimiz projeler ve kazandığımız başarılar:</p><h4>🏆 Ödüller ve Sertifikalar</h4><ul><li><strong>Best Stand Design Award 2023</strong> - İstanbul Furniture Fair</li><li><strong>ISO 9001:2015</strong> Kalite Yönetim Sistemi Sertifikası</li><li><strong>TSE Hizmet Yeterlilik Belgesi</strong></li><li><strong>Çevre Dostu Üretim Sertifikası</strong></li></ul><h4>✨ Öne Çıkan Projeler</h4><ul><li><strong>CNR Expo 2024:</strong> 500 m² modüler stand tasarımı ve uygulaması</li><li><strong>Automechanika 2023:</strong> İki katlı VIP stand projesi</li><li><strong>IFAT Germany:</strong> Uluslararası çevre teknolojileri fuarı stand yapımı</li><li><strong>Gulfood Dubai:</strong> 300 m² gıda sektörü özel stand</li></ul><h4>💼 Kurumsal İş Ortaklıkları</h4><p>Fortune 500 listesinde yer alan 20'den fazla şirket ile uzun soluklu iş birliklerimiz devam etmektedir. Referans listelerimiz ve tamamlanan proje portföyümüz tarafınıza sunulabilir.</p><h4>🌍 Uluslararası Deneyim</h4><p>Türkiye, Almanya, Birleşik Arap Emirlikleri, İtalya, Fransa ve daha birçok ülkede başarıyla tamamlanmış projelerimiz bulunmaktadır.</p>`
+                            },
+                            {
+                              id: 3,
+                              name: 'Şablon 3 - Referanslar',
+                              content: `<h3>Referanslarımız ve Güven</h3><p><strong>{{bizim_firma}}</strong>, sektörün önde gelen firmalarına hizmet vermenin gururunu yaşamaktadır.</p><h4>🎯 Ana Müşterilerimiz</h4><p><em>(Sektör lideri firmaların logoları ve isimleri buraya eklenebilir)</em></p><ul><li>Otomotiv: Bosch, Continental, Michelin</li><li>Teknoloji: Samsung, Arçelik, Vestel</li><li>Gıda: Ülker, Eti, Pınar</li><li>İnşaat: Rönesans Holding, Nurol İnşaat</li><li>Tekstil: LC Waikiki, Koton, Defacto</li></ul><h4>📜 Kalite ve Güvenlik Belgeleri</h4><ul><li>ISO 9001:2015 - Kalite Yönetim Sistemi</li><li>ISO 14001 - Çevre Yönetim Sistemi</li><li>OHSAS 18001 - İş Sağlığı ve Güvenliği</li><li>TSE Hizmet Yeterlilik Belgesi</li><li>CE Uygunluk Belgesi</li></ul><h4>🤝 Müşteri Memnuniyeti</h4><p>"Referans mektuplarımız ve müşteri görüşleri, hizmet kalitemizin en önemli kanıtıdır. Her projede %100 müşteri memnuniyetini hedefliyor ve bunu başarıyoruz."</p><blockquote style="border-left: 4px solid #0ea5e9; padding-left: 20px; margin: 20px 0; font-style: italic; color: #475569;">"{{bizim_firma}} ile çalışmak büyük bir keyifti. Profesyonel ekip, zamanında teslimat ve mükemmel sonuç. Kesinlikle tavsiye ederiz." <br><strong>- Fortune 500 Şirketi Yetkilisi</strong></blockquote><p>Detaylı referans listesi ve müşteri görüşleri için bizimle iletişime geçebilirsiniz.</p>`
+                            }
+                          ].map(template => (
+                            <button
+                              key={template.id}
+                              onClick={() => {
+                                handleModuleContentChange(currentEditingModule, 'body', template.content);
+                                toast.success(`${template.name} yüklendi`);
+                              }}
+                              className="px-3 py-2 text-xs border-2 border-green-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition text-left"
+                            >
+                              <div className="font-medium text-green-700">{template.name}</div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">Tıkla ve kullan</div>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Rakamları ve referansları kendi firmanıza göre düzenleyebilirsiniz</p>
+                      </div>
+                    )}
                   </>
                 )}
 
