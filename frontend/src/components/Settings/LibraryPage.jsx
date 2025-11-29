@@ -393,7 +393,7 @@ const LibraryPage = ({ onBack }) => {
       </div>
 
       {/* Content */}
-      <div className={activeTab === 'countries-cities' || activeTab === 'phone-codes' || activeTab === 'convention-centers' ? '' : 'px-6 py-6'}>
+      <div className={activeTab === 'countries-cities' || activeTab === 'phone-codes' || activeTab === 'convention-centers' || activeTab === 'designs' ? '' : 'px-6 py-6'}>
         {/* Country & City Manager (Full Width) */}
         {activeTab === 'countries-cities' && (
           <CountryCityManager />
@@ -409,8 +409,106 @@ const LibraryPage = ({ onBack }) => {
           <ConventionCenterManager />
         )}
 
+        {/* Design Templates Manager */}
+        {activeTab === 'designs' && (
+          <div className="px-6 py-6">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Teklif Kapak Tasarımları</h2>
+              <p className="text-sm text-gray-500">Teklif kapak sayfaları için hazır tasarım şablonları</p>
+            </div>
+
+            {/* Upload Button */}
+            <div className="mb-6">
+              <label className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition">
+                <Upload className="w-4 h-4 mr-2" />
+                <span>{uploadingDesign ? 'Yükleniyor...' : 'Yeni Tasarım Yükle'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleDesignUpload}
+                  className="hidden"
+                  disabled={uploadingDesign}
+                />
+              </label>
+            </div>
+
+            {/* Design Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {designTemplates.map((template) => (
+                <div
+                  key={template.id}
+                  className="relative group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition"
+                >
+                  {/* Thumbnail */}
+                  <div
+                    className="aspect-[3/4] cursor-pointer"
+                    onClick={() => setSelectedImage(template)}
+                  >
+                    <img
+                      src={template.image_url}
+                      alt={template.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Overlay with actions */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <button
+                      onClick={() => setSelectedImage(template)}
+                      className="p-2 bg-white rounded-full shadow-lg mr-2 hover:bg-gray-100"
+                    >
+                      <ZoomIn className="w-5 h-5 text-gray-700" />
+                    </button>
+                    <button
+                      onClick={() => deleteDesignTemplate(template.id)}
+                      className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50"
+                    >
+                      <Trash2 className="w-5 h-5 text-red-500" />
+                    </button>
+                  </div>
+
+                  {/* Name */}
+                  <div className="p-2 border-t">
+                    <p className="text-sm text-gray-700 truncate">{template.name}</p>
+                  </div>
+                </div>
+              ))}
+
+              {designTemplates.length === 0 && (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  <Palette className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Henüz tasarım şablonu eklenmemiş</p>
+                </div>
+              )}
+            </div>
+
+            {/* Image Preview Modal */}
+            {selectedImage && (
+              <div
+                className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
+                onClick={() => setSelectedImage(null)}
+              >
+                <div className="relative max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute -top-10 right-0 text-white hover:text-gray-300"
+                  >
+                    <X className="w-8 h-8" />
+                  </button>
+                  <img
+                    src={selectedImage.image_url}
+                    alt={selectedImage.name}
+                    className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                  />
+                  <p className="text-white text-center mt-4">{selectedImage.name}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Other tabs content */}
-        {activeTab !== 'countries-cities' && activeTab !== 'phone-codes' && activeTab !== 'convention-centers' && (
+        {activeTab !== 'countries-cities' && activeTab !== 'phone-codes' && activeTab !== 'convention-centers' && activeTab !== 'designs' && (
           <>
         {/* Search and Add Button */}
         <div className="flex items-center justify-between mb-6">
