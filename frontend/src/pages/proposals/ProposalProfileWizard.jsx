@@ -299,14 +299,20 @@ const ProposalProfileWizard = ({ profileId }) => {
     try {
       setLoading(true);
 
+      // CRITICAL FIX: Use ref to get LATEST state (handles React async state updates)
+      const currentModuleContents = moduleContentsRef.current && Object.keys(moduleContentsRef.current).length > 0 
+        ? moduleContentsRef.current 
+        : moduleContents;
+      
       // DEBUG: Check entire moduleContents state
-      console.log('💾 SAVING PROFILE - moduleContents state:', JSON.stringify(moduleContents, null, 2));
+      console.log('💾 SAVING PROFILE - moduleContents from REF:', JSON.stringify(currentModuleContents, null, 2));
+      console.log('💾 SAVING PROFILE - moduleContents from STATE:', JSON.stringify(moduleContents, null, 2));
       console.log('📋 Selected module IDs:', selectedModuleIds);
 
       // Prepare selected_modules with content
       const selected_modules = selectedModuleIds.map((moduleType, index) => {
         const moduleInfo = availableModules.find(m => m.module_type === moduleType);
-        const content = moduleContents[moduleType] || { title: '', body: '', sections: [], images: [], variables: [] };
+        const content = currentModuleContents[moduleType] || { title: '', body: '', sections: [], images: [], variables: [] };
         
         // Debug: Check if canvas_template exists for cover_page
         if (moduleType === 'cover_page') {
