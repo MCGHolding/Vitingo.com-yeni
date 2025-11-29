@@ -255,8 +255,8 @@ export default function NewOpportunityForm({ onClose, onSave }) {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.customer.trim()) {
-      newErrors.customer = 'Müşteri adı zorunludur';
+    if (!formData.customer && !formData.lead) {
+      newErrors.customer = 'Müşteri veya Müşteri Adayı seçimi zorunludur';
     }
 
     if (!formData.stage) {
