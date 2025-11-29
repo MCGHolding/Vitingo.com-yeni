@@ -802,7 +802,7 @@ const ProposalProfileWizard = ({ profileId }) => {
                             </button>
                           ))}
                         </div>
-                        <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra {{bizim_firma}} gibi kodlar ekleyebilirsiniz</p>
+                        <p className="text-[10px] text-gray-500 mt-2">💡 İpucu: Şablon seçtikten sonra {`{{bizim_firma}}`} gibi kodlar ekleyebilirsiniz</p>
                       </div>
                     )}
                   </>
