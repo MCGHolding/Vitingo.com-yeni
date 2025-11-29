@@ -3024,77 +3024,27 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   minHeight: '700px'
                 }}
               >
-                {/* Render template background - AYNI Canvas Designer'daki gibi */}
+                {/* Render template background - Kütüphaneden gelen şablon */}
                 {(() => {
-                  // Use inline styles instead of Tailwind classes for dynamic backgrounds
-                  // Using more visible gradient colors
-                  const TEMPLATES = [
-                    { id: 'minimal', name: 'Minimal', bgStyle: { backgroundColor: '#ffffff' } },
-                    { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' } },
-                    { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)' } },
-                    { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' }, sidebar: true },
-                    { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' }, split: true },
-                    { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' }, diagonal: true },
-                    { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' }, geometric: true },
-                    { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' }, wave: true },
-                    { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' } },
-                    { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)' } }
-                  ];
-                  
-                  const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
-                  const template = TEMPLATES.find(t => t.id === selectedTemplate);
-                  
-                  console.log('🎨 Template rendering:', selectedTemplate, 'bgStyle:', template?.bgStyle);
-                  
-                  // Check for custom background image
+                  // Kütüphaneden gelen şablonlarda customBackgroundImage doğrudan kullanılıyor
                   const customBg = content.canvas_template.customBackgroundImage;
                   
-                  // Merge background styles
-                  const backgroundStyle = {
-                    ...template?.bgStyle,
-                    ...(selectedTemplate === 'custom_image' && customBg ? {
-                      backgroundImage: `url(${customBg})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    } : {})
+                  console.log('🎨 Template rendering - customBg:', customBg ? 'exists' : 'missing');
+                  
+                  // Background style - always use customBackgroundImage if available
+                  const backgroundStyle = customBg ? {
+                    backgroundImage: `url(${customBg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  } : {
+                    backgroundColor: '#ffffff'
                   };
                   
                   return (
                     <div 
                       className="absolute inset-0"
                       style={backgroundStyle}
-                    >
-                      {/* Template-specific backgrounds - AYNI Canvas Designer'daki gibi */}
-                      {template?.sidebar && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-b from-purple-500 to-pink-500 opacity-90" />
-                      )}
-                      {template?.split && (
-                        <>
-                          <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-purple-500 opacity-90" />
-                          <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-white" />
-                        </>
-                      )}
-                      {template?.diagonal && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-transparent to-white opacity-80" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 40%, 0 60%)' }} />
-                      )}
-                      {template?.geometric && (
-                        <>
-                          <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 opacity-20 rounded-full" style={{ transform: 'translate(30%, -30%)' }} />
-                          <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500 opacity-10" style={{ transform: 'translate(-40%, 40%) rotate(45deg)' }} />
-                        </>
-                      )}
-                      {template?.wave && (
-                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                          <path d="M0,30 Q25,20 50,30 T100,30 L100,100 L0,100 Z" fill="url(#waveGradient)" opacity="0.15"/>
-                          <defs>
-                            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" stopColor="#a855f7" />
-                              <stop offset="100%" stopColor="#ec4899" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                      )}
-                    </div>
+                    />
                   );
                 })()}
                 
