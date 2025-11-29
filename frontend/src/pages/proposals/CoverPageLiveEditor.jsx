@@ -283,21 +283,25 @@ const CoverPageLiveEditor = ({
               const isSelected = selectedElement === element.id;
               return (
                 <Rnd
-                  key={`${element.id}-${element._version || 0}`}
-                  position={{
+                  key={element.id}
+                  default={{
                     x: element.x || 50,
-                    y: element.y || 50
-                  }}
-                  size={{
+                    y: element.y || 50,
                     width: element.width || 300,
                     height: element.height || 50
                   }}
                   onDragStart={() => {
-                    setIsDragging(true);
                     setSelectedElement(element.id);
                   }}
+                  onDrag={(e, d) => {
+                    // Update position during drag for immediate feedback
+                    updateElement(element.id, { 
+                      x: Math.round(d.x), 
+                      y: Math.round(d.y) 
+                    });
+                  }}
                   onDragStop={(e, d) => {
-                    setTimeout(() => setIsDragging(false), 100);
+                    // Final position update
                     updateElement(element.id, { 
                       x: Math.round(d.x), 
                       y: Math.round(d.y) 
@@ -314,15 +318,14 @@ const CoverPageLiveEditor = ({
                   bounds="parent"
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    if (!isDragging) {
-                      setSelectedElement(element.id);
-                    }
+                    setSelectedElement(element.id);
                   }}
-                  className={`cursor-move ${
+                  className={`${
                     isSelected 
                       ? 'ring-2 ring-blue-500 shadow-lg' 
                       : 'hover:ring-2 hover:ring-blue-300'
                   }`}
+                  style={{ cursor: 'move' }}
                   enableResizing={isSelected}
                   disableDragging={false}
                   resizeHandleStyles={{
