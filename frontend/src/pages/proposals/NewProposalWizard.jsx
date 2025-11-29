@@ -2559,51 +2559,111 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               {/* Module-specific forms */}
               {activeModule.type === 'cover_page' && (
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Başlık *</label>
-                    <input
-                      type="text"
-                      value={content.title || ''}
-                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md"
-                      placeholder="{{project_name}}"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      💡 Değişkenler: {' '}
-                      <span className="text-blue-600 cursor-pointer">{'{{project_name}}'}</span>,{' '}
-                      <span className="text-blue-600 cursor-pointer">{'{{fair_name}}'}</span>
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Alt Başlık</label>
-                    <input
-                      type="text"
-                      value={content.subtitle || ''}
-                      onChange={(e) => handleModuleContentChange(activeModule.id, 'subtitle', e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md"
-                      placeholder="Teklif No: {{proposal_number}}"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Logo Pozisyonu</label>
-                    <div className="flex space-x-4">
-                      {['center', 'left', 'right'].map(pos => (
-                        <label key={pos} className="flex items-center cursor-pointer">
-                          <input
-                            type="radio"
-                            name="logo_position"
-                            value={pos}
-                            checked={content.logo_position === pos}
-                            onChange={(e) => handleModuleContentChange(activeModule.id, 'logo_position', e.target.value)}
-                            className="mr-2"
-                          />
-                          <span className="text-sm capitalize">{pos === 'center' ? 'Orta' : pos === 'left' ? 'Sol' : 'Sağ'}</span>
-                        </label>
-                      ))}
+                  {/* Canvas Editor for cover page with real values */}
+                  {content.canvas_template && content.canvas_template.customBackgroundImage && (
+                    <div className="border rounded-lg overflow-hidden bg-gray-100 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-gray-700">Kapak Sayfası Düzenleyici</h4>
+                        <p className="text-xs text-gray-500">Elementleri sürükleyip düzenleyebilirsiniz</p>
+                      </div>
+                      
+                      {/* Canvas with drag-drop elements */}
+                      <div 
+                        className="relative mx-auto shadow-lg"
+                        style={{
+                          width: '500px',
+                          height: '707px',
+                          backgroundImage: `url(${content.canvas_template.customBackgroundImage})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center'
+                        }}
+                      >
+                        {/* Editable Elements */}
+                        {content.canvas_template.elements && content.canvas_template.elements.map((element, idx) => {
+                          const scale = 500 / 794; // Scale from canvas size to preview size
+                          const realValue = replaceVariables(element.variable);
+                          
+                          return (
+                            <Rnd
+                              key={idx}
+                              position={{ 
+                                x: element.x * scale, 
+                                y: element.y * scale 
+                              }}
+                              size={{ 
+                                width: element.width ? element.width * scale : 'auto', 
+                                height: element.height ? element.height * scale : 'auto' 
+                              }}
+                              onDragStop={(e, d) => {
+                                // Update element position (convert back to original scale)
+                                const newElements = [...content.canvas_template.elements];
+                                newElements[idx] = {
+                                  ...newElements[idx],
+                                  x: d.x / scale,
+                                  y: d.y / scale
+                                };
+                                handleModuleContentChange(activeModule.id, 'canvas_template', {
+                                  ...content.canvas_template,
+                                  elements: newElements
+                                });
+                              }}
+                              bounds="parent"
+                              className="cursor-move hover:ring-2 hover:ring-blue-500"
+                              style={{ zIndex: 10 }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: `${(element.fontSize || 24) * scale}px`,
+                                  fontWeight: element.fontWeight || 'normal',
+                                  fontStyle: element.fontStyle || 'normal',
+                                  color: element.color || '#000000',
+                                  textAlign: element.textAlign || 'left',
+                                  padding: '4px',
+                                  borderRadius: '2px',
+                                  backgroundColor: 'rgba(255,255,255,0.1)'
+                                }}
+                              >
+                                {realValue}
+                              </div>
+                            </Rnd>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Element Editor Panel */}
+                      <div className="mt-4 p-3 bg-white rounded border">
+                        <h5 className="text-xs font-medium text-gray-600 mb-2">Elementler ({content.canvas_template.elements?.length || 0})</h5>
+                        <div className="flex flex-wrap gap-2">
+                          {content.canvas_template.elements?.map((el, idx) => (
+                            <div key={idx} className="text-xs px-2 py-1 bg-gray-100 rounded flex items-center">
+                              <span className="text-gray-700">{replaceVariables(el.variable)}</span>
+                              <button
+                                onClick={() => {
+                                  const newElements = content.canvas_template.elements.filter((_, i) => i !== idx);
+                                  handleModuleContentChange(activeModule.id, 'canvas_template', {
+                                    ...content.canvas_template,
+                                    elements: newElements
+                                  });
+                                }}
+                                className="ml-2 text-red-400 hover:text-red-600"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  
+                  {/* Show message if no canvas template */}
+                  {(!content.canvas_template || !content.canvas_template.customBackgroundImage) && (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      <div className="text-4xl mb-3">📄</div>
+                      <p className="text-gray-600">Kapak sayfası şablonu profilde tanımlı</p>
+                      <p className="text-sm text-gray-400 mt-1">Profil seçiminde kapak sayfası şablonu otomatik yüklenir</p>
+                    </div>
+                  )}
                 </div>
               )}
 
