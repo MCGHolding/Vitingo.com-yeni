@@ -521,17 +521,23 @@ const CoverPageLiveEditor = ({
                     console.log('✅ Drag stop - element STILL SELECTED:', updated.id);
                   }}
                   onResizeStop={(e, direction, ref, delta, position) => {
-                    console.log('Resize stopped');
+                    console.log('🔴 RESIZE STOP');
                     const updates = {
                       width: parseInt(ref.style.width),
                       height: parseInt(ref.style.height),
                       x: Math.round(position.x),
                       y: Math.round(position.y)
                     };
+                    const el = elements.find(el => el.id === element.id);
+                    const updated = { ...el, ...updates };
+                    
                     setElements(prev => prev.map(el => 
-                      el.id === element.id ? { ...el, ...updates } : el
+                      el.id === element.id ? updated : el
                     ));
-                    setSelectedElement(prev => prev ? { ...prev, ...updates } : null);
+                    
+                    // SEÇİMİ KORU - null yapma!
+                    setSelectedElement(updated);
+                    console.log('✅ Resize stop - element STILL SELECTED:', updated.id);
                   }}
                   bounds="parent"
                   onClick={(e) => {
