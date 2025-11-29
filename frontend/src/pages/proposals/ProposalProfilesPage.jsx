@@ -48,6 +48,12 @@ const ProposalProfilesPage = ({ onBackToDashboard }) => {
   const handleEditProfile = (profileId) => {
     window.location.href = `/proposals/profiles/edit/${profileId}`;
   };
+
+  const handlePreviewProfile = (profile) => {
+    setPreviewProfile(profile);
+    setShowPreviewModal(true);
+    setOpenMenuId(null);
+  };
   
   // Form state
   const [formData, setFormData] = useState({
