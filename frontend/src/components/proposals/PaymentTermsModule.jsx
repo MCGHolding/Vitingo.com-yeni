@@ -404,7 +404,7 @@ const PaymentTermsModule = ({
             </button>
           </div>
           
-          {paymentTerms.payments.length === 0 ? (
+          {(!paymentTerms.payments || paymentTerms.payments.length === 0) ? (
             <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
               <p className="text-gray-500 mb-4">Henüz ödeme koşulu eklenmedi</p>
               <button
