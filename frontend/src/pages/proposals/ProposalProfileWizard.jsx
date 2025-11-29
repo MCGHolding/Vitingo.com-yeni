@@ -802,6 +802,8 @@ const ProposalProfileWizard = ({ profileId }) => {
   }
 
   const handleCoverPageSave = (template) => {
+    console.log('🎨 Canvas Designer: Saving template...', template);
+    
     // Save canvas template with proper structure
     const coverPageContent = {
       title: 'Kapak Sayfası',
@@ -810,10 +812,16 @@ const ProposalProfileWizard = ({ profileId }) => {
       body: '' // Keep body empty for canvas-based designs
     };
     
-    setModuleContents(prev => ({
-      ...prev,
-      cover_page: coverPageContent
-    }));
+    console.log('🎨 Canvas Designer: Creating content:', coverPageContent);
+    
+    setModuleContents(prev => {
+      const newState = {
+        ...prev,
+        cover_page: coverPageContent
+      };
+      console.log('🎨 Canvas Designer: Updated moduleContents state:', newState);
+      return newState;
+    });
     
     toast.success('Kapak sayfası şablonu kaydedildi!');
   };
