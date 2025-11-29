@@ -23,6 +23,15 @@ const PaymentTermsModule = ({
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [loading, setLoading] = useState(true);
   
+  // Local pricing state
+  const [localPricing, setLocalPricing] = useState({
+    subtotal: 0,
+    taxRate: 18,
+    taxAmount: 0,
+    total: totalAmount || 0,
+    currency: currency || 'TRY'
+  });
+  
   const DUE_TYPES = [
     { value: 'contract_date', label: 'Sözleşme Tarihinde Peşin', needsDays: false },
     { value: 'setup_start', label: 'Kurulum Başlayınca', needsDays: false },
