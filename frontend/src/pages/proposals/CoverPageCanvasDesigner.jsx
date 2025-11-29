@@ -517,10 +517,10 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave, initial
             </button>
             <button
               onClick={handleSave}
-              disabled={elements.length === 0}
+              disabled={elements.length === 0 || !customBackgroundImage}
               className="px-6 py-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Kaydet ve Kullan
+              Düzenle →
             </button>
           </div>
         </div>
