@@ -890,7 +890,9 @@ const ProposalProfileWizard = ({ profileId }) => {
           ...prev,
           cover_page: coverImageContent
         };
-        console.log('📤 Image Upload: Updated moduleContents state:', Object.keys(newState));
+        // CRITICAL: Update ref immediately for handleSave
+        moduleContentsRef.current = newState;
+        console.log('📤 Image Upload: Updated moduleContents state AND ref:', Object.keys(newState));
         return newState;
       });
       
