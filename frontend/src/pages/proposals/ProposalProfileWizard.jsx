@@ -753,83 +753,77 @@ const ProposalProfileWizard = ({ profileId }) => {
                     )}
                     
                     {/* Canvas Designer Preview */}
-                    {currentContent.canvas_template && (
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded">
+                    {currentContent.canvas_template && currentContent.canvas_template.customBackgroundImage && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded">
                           <div className="flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm text-blue-700 font-medium">✅ Canvas tasarımı oluşturuldu</span>
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-sm text-green-700 font-medium">✅ Kapak sayfası tasarımı hazır</span>
                           </div>
                           <button
-                            onClick={() => handleModuleContentChange(currentEditingModule, 'canvas_template', null)}
-                            className="text-red-500 hover:text-red-700 text-xs"
+                            onClick={() => setShowCoverDesigner(true)}
+                            className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                           >
-                            <X className="w-4 h-4" />
+                            ✏️ Düzenle
                           </button>
                         </div>
                         
-                        {/* Checkbox to show/hide canvas preview */}
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={showCanvasPreview}
-                            onChange={(e) => setShowCanvasPreview(e.target.checked)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">Canvas Önizlemesini Gör</span>
-                        </label>
+                        {/* Canvas preview - ALWAYS VISIBLE */}
+                        <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                          {(() => {
+                            const customBg = currentContent.canvas_template.customBackgroundImage;
+                            
+                            const bgStyle = {
+                              width: '100%',
+                              maxWidth: '450px',
+                              aspectRatio: '794 / 1123',
+                              position: 'relative',
+                              backgroundColor: '#ffffff',
+                              margin: '0 auto',
+                              ...(customBg ? {
+                                backgroundImage: `url(${customBg})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                              } : {})
+                            };
+                            
+                            return (
+                              <div style={bgStyle}>
+                                {/* Render elements */}
+                                {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
+                                  const scale = 450 / 794;
+                                  return (
+                                    <div
+                                      key={idx}
+                                      style={{
+                                        position: 'absolute',
+                                        left: `${element.x * scale}px`,
+                                        top: `${element.y * scale}px`,
+                                        fontSize: `${(element.fontSize || 24) * scale}px`,
+                                        fontFamily: element.fontFamily || 'Inter',
+                                        fontWeight: element.fontWeight || 'normal',
+                                        fontStyle: element.fontStyle || 'normal',
+                                        textDecoration: element.textDecoration || 'none',
+                                        color: element.color || '#000000',
+                                        textAlign: element.textAlign || 'left',
+                                        zIndex: 10
+                                      }}
+                                    >
+                                      {element.variable}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })()}
+                        </div>
                         
-                        {/* Canvas preview (expandable) */}
-                        {showCanvasPreview && (
-                          <div className="relative border-2 border-blue-300 rounded-lg overflow-hidden bg-gray-50">
-                            {(() => {
-                              // Kütüphaneden gelen şablonlar artık customBackgroundImage kullanıyor
-                              const customBg = currentContent.canvas_template.customBackgroundImage;
-                              
-                              // Build background style - always use customBackgroundImage if available
-                              const bgStyle = {
-                                width: '400px',
-                                height: '565px',
-                                position: 'relative',
-                                backgroundColor: '#ffffff',
-                                ...(customBg ? {
-                                  backgroundImage: `url(${customBg})`,
-                                  backgroundSize: 'cover',
-                                  backgroundPosition: 'center'
-                                } : {})
-                              };
-                              
-                              return (
-                                <div 
-                                  className="relative mx-auto overflow-hidden"
-                                  style={bgStyle}
-                                >
-                                  {/* Render elements */}
-                                  {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
-                                    const scale = 400 / 794; // Scale to fit preview
-                                    return (
-                                      <div
-                                        key={idx}
-                                        style={{
-                                          position: 'absolute',
-                                          left: `${element.x * scale}px`,
-                                          top: `${element.y * scale}px`,
-                                          fontSize: `${element.fontSize * scale}px`,
-                                          fontWeight: element.fontWeight,
-                                          fontStyle: element.fontStyle,
-                                          color: element.color,
-                                          zIndex: 10
-                                        }}
-                                      >
-                                        {element.variable}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        )}
+                        {/* Element list */}
+                        <div className="text-xs text-gray-500">
+                          {currentContent.canvas_template.elements?.length || 0} element eklenmiş
+                        </div>
+                      </div>
+                    )}
                       </div>
                     )}
                     
