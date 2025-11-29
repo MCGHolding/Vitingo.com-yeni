@@ -195,7 +195,7 @@ const PaymentTermsModule = ({
     
     const newPayment = {
       id: `pay_${Date.now()}`,
-      order: paymentTerms.payments.length + 1,
+      order: (paymentTerms.payments || []).length + 1,
       percentage: newPercentage,
       amount: totalAmount ? Math.round((totalAmount * newPercentage) / 100) : 0,
       currency: currency,
