@@ -36,21 +36,55 @@ const CoverPageLiveEditor = ({
         displayValue: replaceVariable(el.variable)
       }));
       setElements(mappedElements);
-      clearSelection();
+      setSelectedElement(null);
     }
   }, [isOpen, canvasData, realData]);
 
   // ESC key to deselect
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        clearSelection();
+      if (e.key === 'Escape' && isOpen && selectedElement) {
+        console.log('ESC pressed - clearing selection');
+        setSelectedElement(null);
       }
     };
     
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, selectedElement]);
+  
+  // Canvas dışına tıklama kontrolü - TOOLBAR HARİÇ
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      // Toolbar içindeyse hiçbir şey yapma
+      if (toolbarRef.current && toolbarRef.current.contains(e.target)) {
+        console.log('Click inside toolbar - keeping selection');
+        return;
+      }
+      
+      // Element içindeyse hiçbir şey yapma
+      if (e.target.closest('[data-element-id]')) {
+        console.log('Click on element - keeping selection');
+        return;
+      }
+      
+      // Canvas background'a tıklandıysa seçimi kaldır
+      if (canvasRef.current && canvasRef.current.contains(e.target)) {
+        const isCanvasBackground = e.target === canvasRef.current || 
+                                    e.target.classList.contains('canvas-background-area');
+        if (isCanvasBackground) {
+          console.log('Click on canvas background - clearing selection');
+          setSelectedElement(null);
+        }
+      }
+    };
+    
+    if (isOpen) {
+      // mousedown kullan, click değil
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
