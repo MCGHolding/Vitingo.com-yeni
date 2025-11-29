@@ -959,7 +959,8 @@ const ProposalProfileWizard = ({ profileId }) => {
             </div>
           </div>
         </div>
-      )}
+        )}
+      </div>
     );
   };
 
