@@ -303,13 +303,14 @@ const CoverPageLiveEditor = ({
                 </button>
                 <input
                   type="number"
-                  value={selectedElementData.fontSize || 24}
+                  value={selectedElement.fontSize || 24}
                   onChange={(e) => {
                     e.stopPropagation();
-                    updateElement(selectedElement, { fontSize: parseInt(e.target.value) || 24 });
+                    handleUpdateElement({ fontSize: parseInt(e.target.value) || 24 });
                   }}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
+                  onFocus={(e) => e.stopPropagation()}
                   className="w-14 text-center text-sm font-medium border-0 focus:outline-none focus:bg-blue-50"
                   min="8"
                   max="200"
