@@ -14,7 +14,8 @@ const TEMPLATES = [
   { id: 'geometric', name: 'Geometrik', bg: 'bg-white', geometric: true },
   { id: 'wave', name: 'Dalga', bg: 'bg-white', wave: true },
   { id: 'gradient_warm', name: 'Sıcak Gradient', bg: 'bg-gradient-to-br from-orange-50 to-red-50' },
-  { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' }
+  { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' },
+  { id: 'custom_image', name: '📤 Kendi Resminiz', bg: 'bg-gray-100', custom: true }
 ];
 
 // Kullanılabilir Değişkenler
