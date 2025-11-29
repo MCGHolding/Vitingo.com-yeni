@@ -18,7 +18,29 @@ const AVAILABLE_VARIABLES = [
   { id: 'prepared_date', label: '📆 Tarih', type: 'text', variable: '{{prepared_date}}' }
 ];
 
-const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave, initialData }) => {
+const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave, initialData, realData }) => {
+  
+  // Replace variable with real data
+  const replaceVariable = (variable) => {
+    if (!variable || !realData) return variable;
+    
+    const mapping = {
+      '{{company_name}}': realData.company_name || 'Firma Adı',
+      '{{fair_name}}': realData.fair_name || 'Fuar Adı',
+      '{{country}}': realData.country || 'Ülke',
+      '{{city}}': realData.city || 'Şehir',
+      '{{start_date}}': realData.start_date || 'Başlangıç',
+      '{{end_date}}': realData.end_date || 'Bitiş',
+      '{{venue}}': realData.venue || 'Mekan',
+      '{{prepared_by}}': realData.prepared_by || 'Hazırlayan',
+      '{{prepared_title}}': realData.prepared_title || 'Ünvan',
+      '{{prepared_date}}': realData.prepared_date || 'Tarih',
+      '{{project_name}}': realData.project_name || 'Proje Adı'
+    };
+    
+    return mapping[variable] || variable;
+  };
+  
   const [libraryTemplates, setLibraryTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [customBackgroundImage, setCustomBackgroundImage] = useState(null);
