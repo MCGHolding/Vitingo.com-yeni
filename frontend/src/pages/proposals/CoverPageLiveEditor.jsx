@@ -16,14 +16,22 @@ const CoverPageLiveEditor = ({
 }) => {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
+  const [forceUpdate, setForceUpdate] = useState(0);
   const canvasRef = useRef(null);
+  const selectedRef = useRef(null);
   
-  // Prevent selection from being cleared
-  const selectionRef = useRef(null);
+  // Use ref to prevent state loss
+  const setSelection = (id) => {
+    selectedRef.current = id;
+    setSelectedElement(id);
+    setForceUpdate(prev => prev + 1);
+  };
   
-  useEffect(() => {
-    selectionRef.current = selectedElement;
-  }, [selectedElement]);
+  const clearSelection = () => {
+    selectedRef.current = null;
+    setSelectedElement(null);
+    setForceUpdate(prev => prev + 1);
+  };
 
   useEffect(() => {
     if (isOpen && canvasData?.elements) {
