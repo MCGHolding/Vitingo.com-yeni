@@ -49,12 +49,13 @@ export default function NewOpportunityForm({ onClose, onSave }) {
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [loadingLeads, setLoadingLeads] = useState(false);
 
-  // Load fairs from database on component mount
+  // Load fairs, customers, and leads from database on component mount
   useEffect(() => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
     const loadFairs = async () => {
       setLoadingFairs(true);
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
         const response = await fetch(`${backendUrl}/api/fairs`);
         
         if (response.ok) {
@@ -81,7 +82,67 @@ export default function NewOpportunityForm({ onClose, onSave }) {
       }
     };
 
+    const loadCustomers = async () => {
+      setLoadingCustomers(true);
+      try {
+        const response = await fetch(`${backendUrl}/api/customers`);
+        
+        if (response.ok) {
+          const customersData = await response.json();
+          setCustomers(customersData);
+          console.log('Customers loaded for dropdown:', customersData.length);
+        } else {
+          console.error('Failed to load customers');
+          toast({
+            title: "Uyarı",
+            description: "Müşteriler yüklenirken sorun oluştu",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Error loading customers:', error);
+        toast({
+          title: "Hata",
+          description: "Müşteriler yüklenemedi",
+          variant: "destructive"
+        });
+      } finally {
+        setLoadingCustomers(false);
+      }
+    };
+
+    const loadLeads = async () => {
+      setLoadingLeads(true);
+      try {
+        const response = await fetch(`${backendUrl}/api/leads`);
+        
+        if (response.ok) {
+          const leadsData = await response.json();
+          setLeads(leadsData);
+          console.log('Leads loaded for dropdown:', leadsData.length);
+        } else {
+          console.error('Failed to load leads');
+          toast({
+            title: "Uyarı",
+            description: "Müşteri adayları yüklenirken sorun oluştu",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Error loading leads:', error);
+        toast({
+          title: "Hata",
+          description: "Müşteri adayları yüklenemedi",
+          variant: "destructive"
+        });
+      } finally {
+        setLoadingLeads(false);
+      }
+    };
+
     loadFairs();
+    loadCustomers();
+    loadLeads();
   }, []);
 
   const statusOptions = [
