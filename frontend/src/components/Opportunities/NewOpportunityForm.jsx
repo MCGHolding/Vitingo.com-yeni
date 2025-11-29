@@ -25,6 +25,7 @@ export default function NewOpportunityForm({ onClose, onSave }) {
   
   const [formData, setFormData] = useState({
     customer: '',
+    lead: '',
     subject: '',
     contactPerson: '',
     amount: '',
@@ -43,6 +44,10 @@ export default function NewOpportunityForm({ onClose, onSave }) {
   const [errors, setErrors] = useState({});
   const [fairs, setFairs] = useState([]);
   const [loadingFairs, setLoadingFairs] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [leads, setLeads] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+  const [loadingLeads, setLoadingLeads] = useState(false);
 
   // Load fairs from database on component mount
   useEffect(() => {
