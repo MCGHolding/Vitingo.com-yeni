@@ -3324,16 +3324,114 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               </div>
             )}
 
-            {module.type === 'payment_terms' && (
-              <div>
-                <p className="mb-4">{content.intro || ''}</p>
-                {(content.schedule || []).map((payment, idx) => (
-                  <div key={idx} className="mb-2">
-                    <strong>{payment.stage}:</strong> %{payment.percentage} ({payment.description})
+            {module.type === 'payment_terms' && (() => {
+              try {
+                const paymentData = typeof content.paymentTermsData === 'string'
+                  ? JSON.parse(content.paymentTermsData)
+                  : (content.paymentTermsData || (typeof content.content === 'string' ? JSON.parse(content.content) : null));
+                
+                if (!paymentData || !paymentData.payments || paymentData.payments.length === 0) {
+                  return <p className="text-gray-500 text-sm">Ödeme planı henüz oluşturulmadı</p>;
+                }
+                
+                const formatCurrency = (amount, curr = 'TRY') => {
+                  return new Intl.NumberFormat('tr-TR', {
+                    style: 'currency',
+                    currency: curr,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                  }).format(amount);
+                };
+                
+                const formatDate = (dateStr) => {
+                  if (!dateStr) return null;
+                  return new Date(dateStr).toLocaleDateString('tr-TR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  });
+                };
+                
+                return (
+                  <div className="space-y-4 text-sm">
+                    {/* Intro Text */}
+                    {paymentData.introText && (
+                      <p className="text-gray-700">{paymentData.introText}</p>
+                    )}
+                    
+                    {/* Payment Schedule Table */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Ödeme</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Vade</th>
+                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-600">Yüzde</th>
+                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-600">Tutar</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {paymentData.payments.map((payment, idx) => (
+                            <tr key={idx} className={payment.critical ? 'bg-red-50' : 'bg-white'}>
+                              <td className="px-4 py-3 text-xs">
+                                <strong>{idx + 1}. Ödeme</strong>
+                              </td>
+                              <td className="px-4 py-3 text-xs text-gray-600">
+                                {payment.dueDate ? formatDate(payment.dueDate) : payment.description}
+                              </td>
+                              <td className="px-4 py-3 text-xs text-right font-medium">
+                                %{payment.percentage}
+                              </td>
+                              <td className="px-4 py-3 text-xs text-right font-bold">
+                                {formatCurrency(payment.amount, payment.currency)}
+                              </td>
+                            </tr>
+                          ))}
+                          {/* Total Row */}
+                          <tr className="bg-gray-100 font-bold">
+                            <td className="px-4 py-3 text-xs" colSpan="2">
+                              Toplam
+                            </td>
+                            <td className="px-4 py-3 text-xs text-right">
+                              %{paymentData.totalPercentage}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-right">
+                              {formatCurrency(paymentData.totalAmount, paymentData.payments[0]?.currency || 'TRY')}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    {/* Bank Details */}
+                    {paymentData.showBankDetails && paymentData.bankAccount && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                        <h4 className="font-semibold text-blue-800 text-sm mb-2 flex items-center gap-2">
+                          <span>🏦</span> Banka Bilgileri
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-gray-600">Banka:</span>
+                            <span className="ml-2 font-medium">{paymentData.bankAccount.bankName}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Hesap Adı:</span>
+                            <span className="ml-2 font-medium">{paymentData.bankAccount.accountName}</span>
+                          </div>
+                          <div className="col-span-2">
+                            <span className="text-gray-600">IBAN:</span>
+                            <span className="ml-2 font-medium font-mono">{paymentData.bankAccount.iban}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            )}
+                );
+              } catch (e) {
+                console.error('Payment terms render error:', e);
+                return <p className="text-red-500 text-sm">Ödeme planı render hatası</p>;
+              }
+            })()}
 
             {module.type === 'contact' && (
               <div>
