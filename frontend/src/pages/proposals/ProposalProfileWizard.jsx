@@ -606,9 +606,15 @@ const ProposalProfileWizard = ({ profileId }) => {
   }, [currentEditingModule, moduleContents]);
 
   const renderStep3 = () => {
+    console.log('🎬 renderStep3 called');
+    console.log('📋 selectedModuleIds:', selectedModuleIds);
+    console.log('📚 availableModules count:', availableModules.length);
+    
     const selectedModulesList = availableModules.filter(m => 
       selectedModuleIds.includes(m.module_type)
     );
+    
+    console.log('✅ selectedModulesList:', selectedModulesList.map(m => m.module_type));
 
     if (!currentEditingModule && selectedModulesList.length > 0) {
       setCurrentEditingModule(selectedModulesList[0].module_type);
