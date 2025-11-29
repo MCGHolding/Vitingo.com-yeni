@@ -36,6 +36,20 @@ const CoverPageLiveEditor = ({
     }
   }, [isOpen, canvasData, realData]);
 
+  // ESC key to deselect
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        setSelectedElement(null);
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen]);
+
   const replaceVariable = (variable) => {
     if (!variable) return variable;
     
