@@ -782,41 +782,67 @@ const ProposalProfileWizard = ({ profileId }) => {
                         {/* Canvas preview (expandable) */}
                         {showCanvasPreview && (
                           <div className="relative border-2 border-blue-300 rounded-lg overflow-hidden bg-gray-50">
-                            <div 
-                              className="relative mx-auto"
-                              style={{ 
+                            {(() => {
+                              // Template background styles - same as NewProposalWizard
+                              const TEMPLATES = [
+                                { id: 'minimal', name: 'Minimal', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'gradient_blue', name: 'Mavi Gradient', bgStyle: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' } },
+                                { id: 'gradient_purple', name: 'Mor Gradient', bgStyle: { background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)' } },
+                                { id: 'sidebar', name: 'Yan Panel', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'split', name: 'Bölünmüş', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'diagonal', name: 'Çapraz', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'geometric', name: 'Geometrik', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'wave', name: 'Dalga', bgStyle: { backgroundColor: '#ffffff' } },
+                                { id: 'gradient_warm', name: 'Sıcak Gradient', bgStyle: { background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)' } },
+                                { id: 'gradient_green', name: 'Yeşil Gradient', bgStyle: { background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)' } },
+                                { id: 'custom_image', name: 'Kendi Resminiz', bgStyle: { backgroundColor: '#ffffff' } }
+                              ];
+                              
+                              const selectedTemplate = currentContent.canvas_template.selectedTemplate || 'minimal';
+                              const template = TEMPLATES.find(t => t.id === selectedTemplate);
+                              const customBg = currentContent.canvas_template.customBackgroundImage;
+                              
+                              // Build background style
+                              const bgStyle = {
                                 width: '400px',
                                 height: '565px',
-                                backgroundImage: currentContent.canvas_template.customBackgroundImage 
-                                  ? `url(${currentContent.canvas_template.customBackgroundImage})` 
-                                  : 'none',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundColor: '#fff'
-                              }}
-                            >
-                              {/* Render elements */}
-                              {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
-                                const scale = 400 / 794; // Scale to fit preview
-                                return (
-                                  <div
-                                    key={idx}
-                                    style={{
-                                      position: 'absolute',
-                                      left: `${element.x * scale}px`,
-                                      top: `${element.y * scale}px`,
-                                      fontSize: `${element.fontSize * scale}px`,
-                                      fontWeight: element.fontWeight,
-                                      fontStyle: element.fontStyle,
-                                      color: element.color,
-                                      zIndex: 10
-                                    }}
-                                  >
-                                    {element.variable}
-                                  </div>
-                                );
-                              })}
-                            </div>
+                                ...template?.bgStyle,
+                                ...(customBg ? {
+                                  backgroundImage: `url(${customBg})`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center'
+                                } : {})
+                              };
+                              
+                              return (
+                                <div 
+                                  className="relative mx-auto"
+                                  style={bgStyle}
+                                >
+                                  {/* Render elements */}
+                                  {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
+                                    const scale = 400 / 794; // Scale to fit preview
+                                    return (
+                                      <div
+                                        key={idx}
+                                        style={{
+                                          position: 'absolute',
+                                          left: `${element.x * scale}px`,
+                                          top: `${element.y * scale}px`,
+                                          fontSize: `${element.fontSize * scale}px`,
+                                          fontWeight: element.fontWeight,
+                                          fontStyle: element.fontStyle,
+                                          color: element.color,
+                                          zIndex: 10
+                                        }}
+                                      >
+                                        {element.variable}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
