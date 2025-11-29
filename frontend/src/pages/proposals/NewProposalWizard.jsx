@@ -3009,8 +3009,18 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   const selectedTemplate = content.canvas_template.selectedTemplate || 'minimal';
                   const template = TEMPLATES.find(t => t.id === selectedTemplate);
                   
+                  // Check for custom background image
+                  const customBg = content.canvas_template.customBackgroundImage;
+                  
                   return (
-                    <div className={`absolute inset-0 ${template?.bg || 'bg-white'}`}>
+                    <div 
+                      className={`absolute inset-0 ${template?.bg || 'bg-white'}`}
+                      style={{
+                        backgroundImage: selectedTemplate === 'custom_image' && customBg ? `url(${customBg})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
                       {/* Template-specific backgrounds - AYNI Canvas Designer'daki gibi */}
                       {template?.sidebar && (
                         <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-b from-purple-500 to-pink-500 opacity-90" />
