@@ -3564,13 +3564,16 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                                 {timelineData.projectManager.email && (
                                   <div><span className="text-gray-600">E-posta:</span> <span className="text-xs">{timelineData.projectManager.email}</span></div>
                                 )}
-                          {timelineData.projectManager.availabilityNote && (
-                            <div className="col-span-2"><span className="text-gray-600">Not:</span> {timelineData.projectManager.availabilityNote}</div>
+                                {timelineData.projectManager.availabilityNote && (
+                                  <div className="col-span-2"><span className="text-gray-600">Not:</span> <span className="text-xs">{timelineData.projectManager.availabilityNote}</span></div>
+                                )}
+                              </div>
+                            </div>
                           )}
                         </div>
-                      </div>
+                      </>
                     )}
-                  </div>
+                  </>
                 );
               } catch (e) {
                 console.error('Timeline render error:', e);
