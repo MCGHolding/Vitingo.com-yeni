@@ -17,18 +17,14 @@ const CoverPageLiveEditor = ({
 }) => {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
+  const [toolbarLocked, setToolbarLocked] = useState(false);
   
-  // Refs - re-render'da kaybolmasın
-  const selectedElementRef = useRef(null);
-  const toolbarRef = useRef(null);
   const canvasRef = useRef(null);
   
-  // selectedElement değiştiğinde ref'i güncelle ve logla
+  // Debug logging
   useEffect(() => {
-    selectedElementRef.current = selectedElement;
-    console.log('🎯 selectedElement değişti:', selectedElement?.id || 'null');
-    console.trace('Stack trace:');
-  }, [selectedElement]);
+    console.log('🎯 selectedElement değişti:', selectedElement?.id || 'null', 'toolbarLocked:', toolbarLocked);
+  }, [selectedElement, toolbarLocked]);
 
   useEffect(() => {
     if (isOpen && canvasData?.elements) {
