@@ -590,10 +590,16 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             if (found) moduleInfo = found;
           });
           
-          // Parse canvas_template if it exists for cover_page
+          // Parse canvas_template and cover_image if they exist for cover_page
           let canvas_template = null;
-          if (pm.module_type === 'cover_page' && pm.content_template?.canvas_template) {
-            canvas_template = pm.content_template.canvas_template;
+          let cover_image = null;
+          if (pm.module_type === 'cover_page') {
+            if (pm.content_template?.canvas_template) {
+              canvas_template = pm.content_template.canvas_template;
+            }
+            if (pm.content_template?.cover_image) {
+              cover_image = pm.content_template.cover_image;
+            }
           }
           
           return {
@@ -606,8 +612,9 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               body: pm.content_template?.body || '',
               sections: pm.content_template?.sections || [],
               images: pm.content_template?.images || [],
-              canvas_template: canvas_template, // Store canvas template for cover_page
-              type: pm.content_template?.type || 'default' // 'canvas_design' or 'default'
+              canvas_template: canvas_template,
+              cover_image: cover_image, // CRITICAL: Store uploaded image
+              type: pm.content_template?.type || 'default'
             }
           };
         });
