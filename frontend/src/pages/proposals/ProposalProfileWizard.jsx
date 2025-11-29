@@ -611,9 +611,10 @@ const ProposalProfileWizard = ({ profileId }) => {
                   />
                 </div>
 
-                {/* AI Cover Page Designer for Cover Page Module */}
+                {/* Cover Page Options for Cover Page Module */}
                 {currentEditingModule === 'cover_page' && (
-                  <div className="mb-3">
+                  <div className="mb-3 space-y-2">
+                    {/* Option 1: Canvas Designer */}
                     <button
                       onClick={() => setShowCoverDesigner(true)}
                       className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition flex items-center justify-center space-x-2 font-medium"
@@ -621,7 +622,45 @@ const ProposalProfileWizard = ({ profileId }) => {
                       <Sparkles className="w-5 h-5" />
                       <span>AI ile Profesyonel Kapak Sayfası Oluştur</span>
                     </button>
-                    <p className="text-xs text-gray-500 mt-1 text-center">10 farklı şablondan birini seçin ve anında önizleyin</p>
+                    
+                    {/* Option 2: Upload Image */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverImageUpload}
+                        className="hidden"
+                        id="cover-image-upload"
+                      />
+                      <label
+                        htmlFor="cover-image-upload"
+                        className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:from-green-600 hover:to-teal-600 transition flex items-center justify-center space-x-2 font-medium cursor-pointer"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span>Kendi Kapak Resmini Yükle</span>
+                      </label>
+                    </div>
+                    
+                    {/* Show uploaded image preview */}
+                    {currentContent.cover_image && (
+                      <div className="relative">
+                        <img 
+                          src={currentContent.cover_image} 
+                          alt="Cover" 
+                          className="w-full h-48 object-cover rounded border-2 border-green-500"
+                        />
+                        <button
+                          onClick={() => handleModuleContentChange(currentEditingModule, 'cover_image', null)}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    
+                    <p className="text-xs text-gray-500 text-center">
+                      {currentContent.cover_image ? '✅ Kapak resmi yüklendi' : 'Canvas tasarımı veya kendi resminizi yükleyin'}
+                    </p>
                   </div>
                 )}
 
