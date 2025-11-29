@@ -2825,35 +2825,23 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
 
               {activeModule.type === 'payment_terms' && (
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Başlık</label>
-                    <input
-                      type="text"
-                      value={content.title || ''}
-                      onChange={(e) => handleModuleContentChange(activeModule.id, 'title', e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Giriş Metni</label>
-                    <input
-                      type="text"
-                      value={content.intro || ''}
-                      onChange={(e) => handleModuleContentChange(activeModule.id, 'intro', e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="flex items-center space-x-2 mb-4">
-                      <input
-                        type="checkbox"
-                        checked={content.show_bank_info}
-                        onChange={(e) => handleModuleContentChange(activeModule.id, 'show_bank_info', e.target.checked)}
+                  <div className="border rounded-lg p-4 bg-gradient-to-br from-green-50 to-blue-50">
+                    <p className="text-sm text-green-700 mb-4 font-medium flex items-center gap-2">
+                      <span>💰</span>
+                      Dinamik ödeme planı sistemi - Profil seçin veya özel plan oluşturun
+                    </p>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <PaymentTermsModule
+                        data={content.paymentTermsData || content.content}
+                        totalAmount={moduleContents.pricing?.totalAmount || 0}
+                        currency={moduleContents.pricing?.currency || 'TRY'}
+                        opportunity={proposalData.opportunity}
+                        onChange={(paymentTermsData) => {
+                          handleModuleContentChange(activeModule.id, 'paymentTermsData', paymentTermsData);
+                          handleModuleContentChange(activeModule.id, 'content', JSON.stringify(paymentTermsData));
+                        }}
                       />
-                      <span className="text-sm font-medium">Banka Bilgilerini Göster</span>
-                    </label>
+                    </div>
                   </div>
                 </div>
               )}
