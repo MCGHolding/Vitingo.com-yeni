@@ -1051,20 +1051,33 @@ const ProposalProfileWizard = ({ profileId }) => {
     );
   }
 
+  // Canvas Designer'dan "Düzenle" tıklandığında çağrılır
+  // Live Editor'ı açar
   const handleCoverPageSave = (template) => {
-    console.log('🎨 Canvas Designer: Saving template...', template);
+    console.log('🎨 Canvas Designer: Opening Live Editor with template...', template);
+    
+    // Store temp canvas data and open Live Editor
+    setTempCanvasData(template);
+    setShowCoverDesigner(false);
+    setShowLiveEditor(true);
+  };
+
+  // Live Editor'dan "Kaydet" tıklandığında çağrılır
+  // Final tasarımı kaydeder
+  const handleLiveEditorSave = (finalTemplate) => {
+    console.log('🎨 Live Editor: Saving final template...', finalTemplate);
     
     // Save canvas template with proper structure
     const coverPageContent = {
       title: 'Kapak Sayfası',
       type: 'canvas_design',
-      canvas_template: template,
+      canvas_template: finalTemplate,
       body: ''
     };
     
-    console.log('🎨 Canvas Designer: Creating content:', coverPageContent);
+    console.log('🎨 Live Editor: Creating content:', coverPageContent);
     
-    // Direct state update - React will handle this properly
+    // Direct state update
     setModuleContents(prev => ({
       ...prev,
       cover_page: coverPageContent
@@ -1072,9 +1085,11 @@ const ProposalProfileWizard = ({ profileId }) => {
     
     // Auto-show canvas preview
     setShowCanvasPreview(true);
+    setShowLiveEditor(false);
+    setTempCanvasData(null);
     
-    console.log('🎨 Canvas Designer: State update queued');
-    toast.success('Kapak sayfası şablonu kaydedildi!');
+    console.log('🎨 Live Editor: State update complete');
+    toast.success('Kapak sayfası kaydedildi!');
   };
 
   const handleCoverImageUpload = (event) => {
