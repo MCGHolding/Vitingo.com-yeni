@@ -618,6 +618,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             content: {
               title: pm.content_template?.title || '',
               body: pm.content_template?.body || '',
+              content: pm.content_template?.body || pm.content_template?.content || '', // Map body to content for introduction
               sections: pm.content_template?.sections || [],
               images: pm.content_template?.images || [],
               canvas_template: canvas_template,
