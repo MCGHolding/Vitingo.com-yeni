@@ -717,7 +717,77 @@ const ProposalProfileWizard = ({ profileId }) => {
                       </div>
                     )}
                     
-                    {!currentContent.cover_image && (
+                    {/* Canvas Designer Preview */}
+                    {currentContent.canvas_template && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm text-blue-700 font-medium">✅ Canvas tasarımı oluşturuldu</span>
+                          </div>
+                          <button
+                            onClick={() => handleModuleContentChange(currentEditingModule, 'canvas_template', null)}
+                            className="text-red-500 hover:text-red-700 text-xs"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {/* Checkbox to show/hide canvas preview */}
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={showCanvasPreview}
+                            onChange={(e) => setShowCanvasPreview(e.target.checked)}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">Canvas Önizlemesini Gör</span>
+                        </label>
+                        
+                        {/* Canvas preview (expandable) */}
+                        {showCanvasPreview && (
+                          <div className="relative border-2 border-blue-300 rounded-lg overflow-hidden bg-gray-50">
+                            <div 
+                              className="relative mx-auto"
+                              style={{ 
+                                width: '400px',
+                                height: '565px',
+                                backgroundImage: currentContent.canvas_template.customBackgroundImage 
+                                  ? `url(${currentContent.canvas_template.customBackgroundImage})` 
+                                  : 'none',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundColor: '#fff'
+                              }}
+                            >
+                              {/* Render elements */}
+                              {currentContent.canvas_template.elements && currentContent.canvas_template.elements.map((element, idx) => {
+                                const scale = 400 / 794; // Scale to fit preview
+                                return (
+                                  <div
+                                    key={idx}
+                                    style={{
+                                      position: 'absolute',
+                                      left: `${element.x * scale}px`,
+                                      top: `${element.y * scale}px`,
+                                      fontSize: `${element.fontSize * scale}px`,
+                                      fontWeight: element.fontWeight,
+                                      fontStyle: element.fontStyle,
+                                      color: element.color,
+                                      zIndex: 10
+                                    }}
+                                  >
+                                    {element.variable}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {!currentContent.cover_image && !currentContent.canvas_template && (
                       <p className="text-xs text-gray-500 text-center">
                         Canvas tasarımı veya kendi resminizi yükleyin
                       </p>
