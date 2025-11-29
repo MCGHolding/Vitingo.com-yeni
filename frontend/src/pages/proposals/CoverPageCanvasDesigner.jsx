@@ -308,6 +308,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
                     className="w-full h-full flex items-center justify-center cursor-move relative group"
                     style={{
                       fontSize: `${element.fontSize}px`,
+                      fontFamily: element.fontFamily || 'Inter',
                       fontWeight: element.fontWeight,
                       fontStyle: element.fontStyle,
                       textDecoration: element.textDecoration,
