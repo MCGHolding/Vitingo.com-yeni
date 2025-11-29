@@ -957,17 +957,47 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
   const replaceVariables = (text) => {
     if (!text) return text;
     
+    // Get logged-in user info (you might need to get this from context/auth)
+    const currentUser = {
+      name: 'Murat Bucak',
+      email: 'murat@tssunited.com',
+      phone: '+90 555 123 45 67',
+      title: 'Süper Admin'
+    };
+    
     const replacements = {
-      '{{company_name}}': formData.company_name || '[Firma Adı]',
+      // Firma bilgileri (satış fırsatından)
+      '{{firma_adi}}': formData.company_name || 'TSS United Inc',
+      '{{company_name}}': formData.company_name || 'TSS United Inc',
+      
+      // Müşteri yetkili bilgileri (satış fırsatından)
+      '{{yetkili_adi}}': formData.contact_person || '[Yetkili Adı]',
+      '{{contact_person}}': formData.contact_person || '[Yetkili Adı]',
+      
+      // Login olan kullanıcı bilgileri
+      '{{hazırlayan}}': currentUser.name,
+      '{{prepared_by}}': currentUser.name,
+      '{{email}}': currentUser.email,
+      '{{telefon}}': currentUser.phone,
+      '{{phone}}': currentUser.phone,
+      '{{unvan}}': currentUser.title,
+      '{{prepared_title}}': currentUser.title,
+      
+      // Müşteri firma bilgileri
+      '{{adres}}': formData.address || '[Adres]',
+      '{{address}}': formData.address || '[Adres]',
+      '{{sehir}}': formData.city || '[Şehir]',
+      '{{city}}': formData.city || '[Şehir]',
+      '{{ulke}}': formData.country || '[Ülke]',
+      '{{country}}': formData.country || '[Ülke]',
+      '{{posta_kodu}}': formData.postal_code || '[Posta Kodu]',
+      '{{vergi_no}}': formData.tax_number || '[Vergi No]',
+      
+      // Proje bilgileri
       '{{project_name}}': formData.project_name || '[Proje Adı]',
       '{{fair_name}}': formData.project_name || '[Fuar Adı]',
       '{{proposal_number}}': proposalId || 'DRAFT-' + Date.now(),
-      '{{contact_person}}': formData.contact_person || '[Yetkili]',
-      '{{prepared_by}}': 'Murat Bucak',
-      '{{prepared_title}}': 'Süper Admin',
       '{{prepared_date}}': new Date().toLocaleDateString('tr-TR'),
-      '{{country}}': formData.country || '[Ülke]',
-      '{{city}}': formData.city || '[Şehir]',
       '{{venue}}': formData.fair_center || '[Fuar Merkezi]',
       '{{start_date}}': formData.start_date ? new Date(formData.start_date).toLocaleDateString('tr-TR') : '[Başlangıç]',
       '{{end_date}}': formData.end_date ? new Date(formData.end_date).toLocaleDateString('tr-TR') : '[Bitiş]'
@@ -975,7 +1005,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     
     let result = text;
     Object.keys(replacements).forEach(key => {
-      result = result.replace(new RegExp(key, 'g'), replacements[key]);
+      result = result.replace(new RegExp(key.replace(/[{}]/g, '\\$&'), 'g'), replacements[key]);
     });
     
     return result;
