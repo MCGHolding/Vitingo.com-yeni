@@ -590,8 +590,7 @@ const ProposalProfileWizard = ({ profileId }) => {
         ))}
       </div>
     </div>
-    );
-  };
+  );
 
   // Auto-show previews when cover_page module is selected
   useEffect(() => {
