@@ -3366,113 +3366,189 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   : (content.timelineData || (typeof content.body === 'string' ? JSON.parse(content.body) : null));
                 
                 if (!timelineData || !timelineData.phases) {
-                  return <p className="text-gray-500">Zaman çizelgesi henüz oluşturulmadı</p>;
+                  return <p className="text-gray-500 text-sm">Zaman çizelgesi henüz oluşturulmadı</p>;
                 }
                 
+                // Split phases into pages (3 phases per page for A4)
+                const phasesPerPage = 3;
+                const firstPagePhases = timelineData.phases?.slice(0, phasesPerPage) || [];
+                const secondPagePhases = timelineData.phases?.slice(phasesPerPage) || [];
+                
                 return (
-                  <div className="space-y-6">
-                    {/* Fuar Bilgileri */}
-                    {timelineData.eventInfo && (
-                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                        <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                          <span>🎪</span> Fuar Bilgileri
-                        </h3>
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          {timelineData.eventInfo.eventName && (
-                            <div><span className="text-gray-600">Fuar:</span> <strong>{timelineData.eventInfo.eventName}</strong></div>
-                          )}
-                          {timelineData.eventInfo.venue && (
-                            <div><span className="text-gray-600">Yer:</span> {timelineData.eventInfo.venue}</div>
-                          )}
-                          {timelineData.eventInfo.hall && (
-                            <div><span className="text-gray-600">Hall:</span> {timelineData.eventInfo.hall}</div>
-                          )}
-                          {timelineData.eventInfo.standNumber && (
-                            <div><span className="text-gray-600">Stand No:</span> {timelineData.eventInfo.standNumber}</div>
-                          )}
-                          {timelineData.eventInfo.eventStartDate && (
-                            <div><span className="text-gray-600">Tarih:</span> {new Date(timelineData.eventInfo.eventStartDate).toLocaleDateString('tr-TR')} - {timelineData.eventInfo.eventEndDate ? new Date(timelineData.eventInfo.eventEndDate).toLocaleDateString('tr-TR') : ''}</div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Timeline */}
-                    <div className="relative">
-                      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200" />
-                      
-                      {timelineData.phases?.map((phase, idx) => (
-                        <div key={idx} className="relative mb-6">
-                          <div 
-                            className="absolute left-4 w-5 h-5 rounded-full border-4 border-white shadow-md z-10"
-                            style={{ backgroundColor: phase.color || '#6B7280' }}
-                          />
-                          
-                          <div className={`ml-12 border rounded-lg p-4 ${phase.isMainEvent ? 'border-red-300 bg-red-50' : 'bg-white'}`}>
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className="text-2xl">{phase.icon}</span>
-                              <div>
-                                <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-                                  {phase.name}
-                                  {phase.isMainEvent && (
-                                    <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
-                                      🎯 ANA HEDEF
-                                    </span>
-                                  )}
-                                </h4>
-                                <p className="text-sm text-gray-500">
-                                  {phase.startDate && new Date(phase.startDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })} - {phase.endDate && new Date(phase.endDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            {phase.tasks && phase.tasks.length > 0 && (
-                              <div className="mt-3 space-y-1.5 pl-10">
-                                {phase.tasks.map((task, taskIdx) => (
-                                  <div key={taskIdx} className="flex items-start gap-2 text-sm">
-                                    <span className="text-gray-400 mt-0.5">✓</span>
-                                    <div className="flex-1">
-                                      <span className={task.critical ? 'font-semibold text-red-600' : ''}>{task.name}</span>
-                                      {(task.date || task.duration) && (
-                                        <span className="text-gray-500 ml-2 text-xs">
-                                          ({task.date ? new Date(task.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : task.duration})
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
+                  <>
+                    {/* Page 1: Event Info + First 3 Phases */}
+                    <div className="space-y-4 text-sm">
+                      {/* Fuar Bilgileri - Compact */}
+                      {timelineData.eventInfo && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                          <h3 className="font-semibold text-purple-800 text-sm mb-2 flex items-center gap-2">
+                            <span className="text-base">🎪</span> Fuar Bilgileri
+                          </h3>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            {timelineData.eventInfo.eventName && (
+                              <div><span className="text-gray-600">Fuar:</span> <strong className="text-xs">{timelineData.eventInfo.eventName}</strong></div>
+                            )}
+                            {timelineData.eventInfo.venue && (
+                              <div><span className="text-gray-600">Yer:</span> <span className="text-xs">{timelineData.eventInfo.venue}</span></div>
+                            )}
+                            {timelineData.eventInfo.hall && (
+                              <div><span className="text-gray-600">Hall:</span> <span className="text-xs">{timelineData.eventInfo.hall}</span></div>
+                            )}
+                            {timelineData.eventInfo.standNumber && (
+                              <div><span className="text-gray-600">Stand No:</span> <span className="text-xs">{timelineData.eventInfo.standNumber}</span></div>
+                            )}
+                            {timelineData.eventInfo.eventStartDate && (
+                              <div className="col-span-2"><span className="text-gray-600">Tarih:</span> <span className="text-xs">{new Date(timelineData.eventInfo.eventStartDate).toLocaleDateString('tr-TR')} - {timelineData.eventInfo.eventEndDate ? new Date(timelineData.eventInfo.eventEndDate).toLocaleDateString('tr-TR') : ''}</span></div>
                             )}
                           </div>
                         </div>
-                      ))}
+                      )}
+                      
+                      {/* Timeline - First 3 Phases */}
+                      <div className="relative">
+                        <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
+                        
+                        {firstPagePhases.map((phase, idx) => (
+                          <div key={idx} className="relative mb-4">
+                            <div 
+                              className="absolute left-3.5 w-4 h-4 rounded-full border-3 border-white shadow-sm z-10"
+                              style={{ backgroundColor: phase.color || '#6B7280' }}
+                            />
+                            
+                            <div className={`ml-10 border rounded-lg p-3 ${phase.isMainEvent ? 'border-red-300 bg-red-50' : 'bg-white border-gray-200'}`}>
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <span className="text-lg">{phase.icon}</span>
+                                <div>
+                                  <h4 className="font-semibold text-gray-800 text-sm flex items-center gap-2">
+                                    {phase.name}
+                                    {phase.isMainEvent && (
+                                      <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                                        🎯 ANA HEDEF
+                                      </span>
+                                    )}
+                                  </h4>
+                                  <p className="text-xs text-gray-500">
+                                    {phase.startDate && new Date(phase.startDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })} - {phase.endDate && new Date(phase.endDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              {phase.tasks && phase.tasks.length > 0 && (
+                                <div className="mt-2 space-y-1 pl-7">
+                                  {phase.tasks.slice(0, 4).map((task, taskIdx) => (
+                                    <div key={taskIdx} className="flex items-start gap-1.5 text-xs">
+                                      <span className="text-gray-400 mt-0.5 text-[10px]">✓</span>
+                                      <div className="flex-1">
+                                        <span className={task.critical ? 'font-semibold text-red-600' : ''}>{task.name}</span>
+                                        {(task.date || task.duration) && (
+                                          <span className="text-gray-500 ml-1 text-[10px]">
+                                            ({task.date ? new Date(task.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : task.duration})
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {phase.tasks.length > 4 && (
+                                    <div className="text-[10px] text-gray-400 pl-3">+ {phase.tasks.length - 4} görev daha</div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     
-                    {/* Milestones */}
-                    {timelineData.milestones && timelineData.milestones.length > 0 && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <h3 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                          <span>⚠️</span> Kritik Tarihler
-                        </h3>
-                        <div className="space-y-2">
-                          {timelineData.milestones.map((milestone, idx) => (
-                            <div key={idx} className="flex items-center gap-3 text-sm">
-                              <span className="text-lg">
-                                {milestone.type === 'critical' ? '🔴' : ''}
-                                {milestone.type === 'warning' ? '🟡' : ''}
-                                {milestone.type === 'target' ? '🎯' : ''}
-                                {milestone.type === 'payment' ? '💰' : ''}
-                                {!milestone.type ? '📌' : ''}
-                              </span>
-                              <span className="text-gray-600">{milestone.date && new Date(milestone.date).toLocaleDateString('tr-TR')}</span>
-                              <span className="font-medium">{milestone.title}</span>
-                            </div>
-                          ))}
+                    {/* Page 2: Remaining Phases + Milestones + PM (if content exists) */}
+                    {(secondPagePhases.length > 0 || (timelineData.milestones && timelineData.milestones.length > 0) || timelineData.projectManager?.name) && (
+                      <>
+                        {/* Page Break Indicator */}
+                        <div className="my-4 border-t-2 border-dashed border-gray-300 pt-4">
+                          <p className="text-xs text-gray-400 text-center mb-4">— Sayfa 2 —</p>
                         </div>
-                      </div>
-                    )}
-                    
-                    {/* Project Manager */}
+                        
+                        <div className="space-y-4 text-sm">
+                          {/* Remaining Timeline Phases */}
+                          {secondPagePhases.length > 0 && (
+                            <div className="relative">
+                              <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
+                              
+                              {secondPagePhases.map((phase, idx) => (
+                                <div key={idx} className="relative mb-4">
+                                  <div 
+                                    className="absolute left-3.5 w-4 h-4 rounded-full border-3 border-white shadow-sm z-10"
+                                    style={{ backgroundColor: phase.color || '#6B7280' }}
+                                  />
+                                  
+                                  <div className={`ml-10 border rounded-lg p-3 ${phase.isMainEvent ? 'border-red-300 bg-red-50' : 'bg-white border-gray-200'}`}>
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                      <span className="text-lg">{phase.icon}</span>
+                                      <div>
+                                        <h4 className="font-semibold text-gray-800 text-sm flex items-center gap-2">
+                                          {phase.name}
+                                          {phase.isMainEvent && (
+                                            <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                                              🎯 ANA HEDEF
+                                            </span>
+                                          )}
+                                        </h4>
+                                        <p className="text-xs text-gray-500">
+                                          {phase.startDate && new Date(phase.startDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })} - {phase.endDate && new Date(phase.endDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    
+                                    {phase.tasks && phase.tasks.length > 0 && (
+                                      <div className="mt-2 space-y-1 pl-7">
+                                        {phase.tasks.slice(0, 4).map((task, taskIdx) => (
+                                          <div key={taskIdx} className="flex items-start gap-1.5 text-xs">
+                                            <span className="text-gray-400 mt-0.5 text-[10px]">✓</span>
+                                            <div className="flex-1">
+                                              <span className={task.critical ? 'font-semibold text-red-600' : ''}>{task.name}</span>
+                                              {(task.date || task.duration) && (
+                                                <span className="text-gray-500 ml-1 text-[10px]">
+                                                  ({task.date ? new Date(task.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : task.duration})
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                        {phase.tasks.length > 4 && (
+                                          <div className="text-[10px] text-gray-400 pl-3">+ {phase.tasks.length - 4} görev daha</div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          
+                          {/* Milestones - Compact */}
+                          {timelineData.milestones && timelineData.milestones.length > 0 && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                              <h3 className="font-semibold text-amber-800 text-sm mb-2 flex items-center gap-2">
+                                <span className="text-base">⚠️</span> Kritik Tarihler
+                              </h3>
+                              <div className="space-y-1.5">
+                                {timelineData.milestones.map((milestone, idx) => (
+                                  <div key={idx} className="flex items-center gap-2 text-xs">
+                                    <span className="text-sm">
+                                      {milestone.type === 'critical' ? '🔴' : ''}
+                                      {milestone.type === 'warning' ? '🟡' : ''}
+                                      {milestone.type === 'target' ? '🎯' : ''}
+                                      {milestone.type === 'payment' ? '💰' : ''}
+                                      {!milestone.type ? '📌' : ''}
+                                    </span>
+                                    <span className="text-gray-600 text-[10px] min-w-[70px]">{milestone.date && new Date(milestone.date).toLocaleDateString('tr-TR')}</span>
+                                    <span className="font-medium text-xs">{milestone.title}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Project Manager - Compact */}
                     {timelineData.projectManager && (timelineData.projectManager.name || timelineData.projectManager.phone) && (
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
