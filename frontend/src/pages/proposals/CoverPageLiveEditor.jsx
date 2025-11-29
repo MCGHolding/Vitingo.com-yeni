@@ -217,18 +217,32 @@ const CoverPageLiveEditor = ({
 
         {/* Canva-style Top Toolbar */}
         <div 
+          ref={toolbarRef}
           data-toolbar="true"
           className="flex items-center px-4 py-2.5 border-b bg-gradient-to-b from-white to-gray-50 shadow-sm"
+          style={{ pointerEvents: 'auto', zIndex: 9999, position: 'relative' }}
           onMouseDown={(e) => {
             e.stopPropagation();
             e.preventDefault();
+            console.log('Toolbar mousedown - preventing');
           }}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
           }}
+          onMouseUp={(e) => e.stopPropagation()}
+          onMouseEnter={(e) => {
+            e.stopPropagation();
+            console.log('Mouse entered toolbar');
+          }}
+          onMouseLeave={(e) => {
+            e.stopPropagation();
+            console.log('Mouse left toolbar - NOT clearing selection');
+            // YAPMA: setSelectedElement(null)
+          }}
+          onMouseMove={(e) => e.stopPropagation()}
         >
-          {selectedElementData ? (
+          {selectedElement ? (
             <div 
               data-toolbar="true"
               className="flex items-center space-x-2 w-full"
