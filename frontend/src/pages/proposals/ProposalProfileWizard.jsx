@@ -844,7 +844,9 @@ const ProposalProfileWizard = ({ profileId }) => {
         ...prev,
         cover_page: coverPageContent
       };
-      console.log('🎨 Canvas Designer: Updated moduleContents state:', newState);
+      // CRITICAL: Update ref immediately for handleSave
+      moduleContentsRef.current = newState;
+      console.log('🎨 Canvas Designer: Updated moduleContents state AND ref:', newState);
       return newState;
     });
     
