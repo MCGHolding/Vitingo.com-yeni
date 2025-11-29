@@ -27,6 +27,78 @@ const LibraryPage = ({ onBack }) => {
   const [editingSectorId, setEditingSectorId] = useState(null);
   const [editingSector, setEditingSector] = useState({ name: '', description: '' });
 
+  // Design Templates states
+  const [designTemplates, setDesignTemplates] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [uploadingDesign, setUploadingDesign] = useState(false);
+
+  // Load design templates
+  const loadDesignTemplates = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/design-templates?category=cover_page`);
+      if (response.ok) {
+        const data = await response.json();
+        setDesignTemplates(data);
+      }
+    } catch (error) {
+      console.error('Error loading design templates:', error);
+    }
+  };
+
+  // Upload design template
+  const handleDesignUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingDesign(true);
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', file.name.replace(/\.[^/.]+$/, ''));
+      formData.append('category', 'cover_page');
+
+      const response = await fetch(`${backendUrl}/api/library/design-templates`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        toast({ title: "Başarılı", description: "Tasarım şablonu eklendi" });
+        loadDesignTemplates();
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading design:', error);
+      toast({ title: "Hata", description: "Yükleme başarısız", variant: "destructive" });
+    } finally {
+      setUploadingDesign(false);
+      e.target.value = '';
+    }
+  };
+
+  // Delete design template
+  const deleteDesignTemplate = async (id) => {
+    if (!confirm('Bu tasarımı silmek istediğinizden emin misiniz?')) return;
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/library/design-templates/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        toast({ title: "Başarılı", description: "Tasarım silindi" });
+        loadDesignTemplates();
+      }
+    } catch (error) {
+      console.error('Error deleting design:', error);
+      toast({ title: "Hata", description: "Silme başarısız", variant: "destructive" });
+    }
+  };
+
   // Load customer types
   const loadCustomerTypes = async () => {
     setIsLoading(true);
