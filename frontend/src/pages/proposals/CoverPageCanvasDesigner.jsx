@@ -1,22 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
-import { X, Plus, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Palette, Type, Image as ImageIcon } from 'lucide-react';
+import { X, Plus, Trash2, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Palette, Type, Image as ImageIcon, Upload } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-
-// Arka Plan Şablonları
-const TEMPLATES = [
-  { id: 'minimal', name: 'Minimal', bg: 'bg-white' },
-  { id: 'gradient_blue', name: 'Mavi Gradient', bg: 'bg-gradient-to-br from-blue-50 to-blue-100' },
-  { id: 'gradient_purple', name: 'Mor Gradient', bg: 'bg-gradient-to-br from-purple-50 to-pink-50' },
-  { id: 'sidebar', name: 'Yan Panel', bg: 'bg-white', sidebar: true },
-  { id: 'split', name: 'Bölünmüş', bg: 'bg-white', split: true },
-  { id: 'diagonal', name: 'Çapraz', bg: 'bg-white', diagonal: true },
-  { id: 'geometric', name: 'Geometrik', bg: 'bg-white', geometric: true },
-  { id: 'wave', name: 'Dalga', bg: 'bg-white', wave: true },
-  { id: 'gradient_warm', name: 'Sıcak Gradient', bg: 'bg-gradient-to-br from-orange-50 to-red-50' },
-  { id: 'gradient_green', name: 'Yeşil Gradient', bg: 'bg-gradient-to-br from-green-50 to-teal-50' },
-  { id: 'custom_image', name: '📤 Kendi Resminiz', bg: 'bg-gray-100', custom: true }
-];
 
 // Kullanılabilir Değişkenler
 const AVAILABLE_VARIABLES = [
@@ -34,26 +19,46 @@ const AVAILABLE_VARIABLES = [
 ];
 
 const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState('minimal');
+  const [libraryTemplates, setLibraryTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [customBackgroundImage, setCustomBackgroundImage] = useState(null);
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [nextId, setNextId] = useState(1);
   const canvasRef = useRef(null);
 
+  // Load templates from library on mount
+  useEffect(() => {
+    const loadLibraryTemplates = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/library/design-templates?category=cover_page`);
+        if (response.ok) {
+          const data = await response.json();
+          setLibraryTemplates(data);
+          // Select first template by default if available
+          if (data.length > 0) {
+            setSelectedTemplate(data[0].id);
+            setCustomBackgroundImage(data[0].image_url);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading library templates:', error);
+      }
+    };
+    if (isOpen) {
+      loadLibraryTemplates();
+    }
+  }, [isOpen]);
+
   // Apply template
-  const applyTemplate = (templateId) => {
-    setSelectedTemplate(templateId);
+  const applyTemplate = (template) => {
+    setSelectedTemplate(template.id);
+    setCustomBackgroundImage(template.image_url);
     // Reset elements when changing template
     setElements([]);
     setSelectedElement(null);
-    
-    // If custom_image template, trigger file upload
-    if (templateId === 'custom_image' && !customBackgroundImage) {
-      document.getElementById('custom-bg-upload').click();
-    } else {
-      toast.success('Şablon uygulandı');
-    }
+    toast.success('Şablon uygulandı');
   };
 
   // Handle custom background image upload
@@ -74,7 +79,7 @@ const CoverPageCanvasDesigner = ({ isOpen, onClose, profileData, onSave }) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setCustomBackgroundImage(reader.result);
-      setSelectedTemplate('custom_image');
+      setSelectedTemplate('custom_upload');
       toast.success('Arka plan resmi yüklendi!');
     };
     reader.onerror = () => {
