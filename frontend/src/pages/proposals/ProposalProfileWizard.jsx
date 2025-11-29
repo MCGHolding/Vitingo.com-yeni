@@ -596,7 +596,7 @@ const ProposalProfileWizard = ({ profileId }) => {
   useEffect(() => {
     if (currentEditingModule === 'cover_page' && moduleContents['cover_page']) {
       if (moduleContents['cover_page'].canvas_template) {
-        setShowCanvasPreview(true);
+        // Canvas template exists - preview is always visible in the UI
       }
       if (moduleContents['cover_page'].cover_image) {
         setShowCoverImagePreview(true);
