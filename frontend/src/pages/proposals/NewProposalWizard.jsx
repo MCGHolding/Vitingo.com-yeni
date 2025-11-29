@@ -2671,15 +2671,20 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   
                   <div>
                     <label className="block text-sm font-medium mb-2">İçerik *</label>
-                    <textarea
-                      value={content.content || ''}
-                      onChange={(e) => handleModuleContentChange(activeModule.id, 'content', e.target.value)}
-                      rows={12}
-                      className="w-full px-3 py-2 border rounded-md font-mono text-sm"
-                      placeholder="Giriş metninizi yazın..."
-                    />
+                    <div className="border rounded-lg p-4 bg-gray-50 min-h-[300px]">
+                      {/* Render HTML content with replaced variables */}
+                      <div 
+                        className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ 
+                          __html: replaceVariables(content.content || content.body || '') 
+                        }}
+                      />
+                    </div>
                     <p className="text-xs text-gray-500 mt-2">
-                      Kullanılabilir değişkenler: {"{contact_person}"}, {"{project_name}"}, {"{company_name}"}
+                      ℹ️ Bu içerik profil şablonundan geldi. Düzenlemek için profili güncelleyin.
+                    </p>
+                    <p className="text-xs text-blue-600 mt-1">
+                      Dinamik alanlar: {{firma_adi}}, {{yetkili_adi}}, {{email}} otomatik değiştiriliyor
                     </p>
                   </div>
                 </div>
