@@ -16,7 +16,6 @@ const CoverPageLiveEditor = ({
 }) => {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
   const canvasRef = useRef(null);
 
   useEffect(() => {
