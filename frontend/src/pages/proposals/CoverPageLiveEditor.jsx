@@ -294,10 +294,16 @@ const CoverPageLiveEditor = ({
                     width: element.width || 300,
                     height: element.height || 50
                   }}
-                  onDragStart={() => {
+                  onDragStart={(e) => {
+                    e.stopPropagation();
                     setSelectedElement(element.id);
                   }}
                   onDrag={(e, d) => {
+                    e.stopPropagation();
+                    // Keep element selected during drag
+                    if (selectedElement !== element.id) {
+                      setSelectedElement(element.id);
+                    }
                     // Update position during drag for immediate feedback
                     updateElement(element.id, { 
                       x: Math.round(d.x), 
@@ -305,6 +311,9 @@ const CoverPageLiveEditor = ({
                     });
                   }}
                   onDragStop={(e, d) => {
+                    e.stopPropagation();
+                    // Keep selection after drag
+                    setSelectedElement(element.id);
                     // Final position update
                     updateElement(element.id, { 
                       x: Math.round(d.x), 
@@ -312,6 +321,9 @@ const CoverPageLiveEditor = ({
                     });
                   }}
                   onResizeStop={(e, direction, ref, delta, position) => {
+                    e.stopPropagation();
+                    // Keep selection after resize
+                    setSelectedElement(element.id);
                     updateElement(element.id, {
                       width: parseInt(ref.style.width),
                       height: parseInt(ref.style.height),
@@ -320,7 +332,7 @@ const CoverPageLiveEditor = ({
                     });
                   }}
                   bounds="parent"
-                  onMouseDown={(e) => {
+                  onClick={(e) => {
                     e.stopPropagation();
                     setSelectedElement(element.id);
                   }}
