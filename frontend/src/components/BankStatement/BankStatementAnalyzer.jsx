@@ -996,6 +996,92 @@ const BankStatementAnalyzer = ({ bankId }) => {
         </div>
       )}
       
+      {/* Filtreleme ve Arama Barı */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          {/* Search */}
+          <div className="flex-1 min-w-[200px]">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+              <input
+                type="text"
+                placeholder="Açıklamada ara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          
+          {/* Type Filter */}
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Tür: Tümü</option>
+            {TRANSACTION_TYPES.map(type => (
+              <option key={type.value} value={type.value}>{type.label}</option>
+            ))}
+          </select>
+          
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Durum: Tümü</option>
+            <option value="pending">⏳ Bekliyor</option>
+            <option value="completed">✅ Tamamlandı</option>
+          </select>
+          
+          {/* Clear Filters */}
+          {(searchQuery || typeFilter || statusFilter || quickFilter) && (
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setTypeFilter('');
+                setStatusFilter('');
+                setQuickFilter('');
+              }}
+              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+            >
+              ✕ Temizle
+            </button>
+          )}
+        </div>
+        
+        {/* Quick Filters */}
+        {groupedDescriptions.length > 0 && (
+          <div>
+            <div className="text-xs text-gray-600 mb-2 font-medium">Hızlı Filtreler:</div>
+            <div className="flex flex-wrap gap-2">
+              {groupedDescriptions.map(([normalized, data]) => (
+                <button
+                  key={normalized}
+                  onClick={() => setQuickFilter(quickFilter === normalized ? '' : normalized)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    quickFilter === normalized
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {normalized.slice(0, 30)}{normalized.length > 30 ? '...' : ''} ({data.count})
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Filter Results */}
+        {filteredTransactions.length !== transactions.length && (
+          <div className="mt-3 text-sm text-gray-600">
+            {filteredTransactions.length} / {transactions.length} işlem gösteriliyor
+          </div>
+        )}
+      </div>
+      
       {/* İşlemler Tablosu */}
       <div className="bg-white border rounded-xl overflow-hidden">
         <div className="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
