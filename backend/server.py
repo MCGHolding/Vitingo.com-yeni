@@ -14042,15 +14042,17 @@ class TransactionPattern(BaseModel):
 
 # PDF Parsing Functions
 def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
-    """Parse Wio Bank statement PDF"""
+    """Parse Wio Bank statement PDF with pdfplumber"""
     try:
         pdf_file = BytesIO(pdf_bytes)
-        pdf_reader = PyPDF2.PdfReader(pdf_file)
         
-        # Extract all text
+        # Extract all text using pdfplumber
         text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
+        with pdfplumber.open(pdf_file) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
         
         # Parse header info
         header = {
@@ -14066,67 +14068,82 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
         }
         
         # Regex patterns for Wio Bank
-        patterns = {
-            "periodStart": r"FROM\s+(\d{2}/\d{2}/\d{4})",
-            "periodEnd": r"TO\s+(\d{2}/\d{2}/\d{4})",
-            "accountHolder": r"ACCOUNT HOLDER NAME\s*\n\s*(.+)",
-            "currency": r"CURRENCY\s*\n\s*(\w+)",
-            "interestRate": r"INTEREST RATE\s*\n\s*(\d+%)",
-            "accountType": r"ACCOUNT TYPE\s*\n\s*(\S+)",
-            "accountNumber": r"ACCOUNT NUMBER\s*\n\s*(\d+)",
-            "accountOpened": r"ACCOUNT OPENED\s*\n\s*(\d{2}/\d{2}/\d{4})",
-            "iban": r"IBAN\s*\n\s*([A-Z0-9]+)"
-        }
+        def extract_field(pattern, flags=re.MULTILINE | re.IGNORECASE):
+            match = re.search(pattern, text, flags)
+            return match.group(1).strip() if match else None
         
-        for key, pattern in patterns.items():
-            match = re.search(pattern, text, re.MULTILINE)
-            if match:
-                header[key] = match.group(1).strip()
+        header["periodStart"] = extract_field(r'FROM\s+(\d{2}/\d{2}/\d{4})') or ""
+        header["periodEnd"] = extract_field(r'TO\s+(\d{2}/\d{2}/\d{4})') or ""
+        header["accountHolder"] = extract_field(r'ACCOUNT HOLDER NAME[\s\S]*?([A-Z\s\.]+(?:L\.L\.C|LLC))') or ""
+        header["currency"] = extract_field(r'CURRENCY\s*\n?\s*([A-Z]{3})') or "AED"
+        header["interestRate"] = extract_field(r'INTEREST RATE\s*\n?\s*(\d+%)') or "0%"
+        header["accountType"] = extract_field(r'ACCOUNT TYPE\s*\n?\s*(\w+(?:_\w+)?)') or "CURRENT_ACCOUNT"
+        header["accountNumber"] = extract_field(r'ACCOUNT NUMBER\s*\n?\s*(\d+)') or ""
+        header["accountOpened"] = extract_field(r'ACCOUNT OPENED\s*\n?\s*(\d{2}/\d{2}/\d{4})') or ""
+        header["iban"] = extract_field(r'IBAN\s*\n?\s*([A-Z]{2}\d+)') or ""
         
         # Parse transactions
         transactions = []
         lines = text.split('\n')
         
-        date_pattern = r'^(\d{2}/\d{2}/\d{4})\s+(.+?)\s+([\d,]+\.?\d*)\s+([\d,]+\.?\d*)\s+([\d,]+\.?\d*)$'
+        # Look for date pattern at start of line
+        date_pattern = r'^(\d{2}/\d{2}/\d{4})'
         
+        prev_balance = None
         for line in lines:
-            match = re.match(date_pattern, line.strip())
-            if match:
-                date, desc, col1, col2, col3 = match.groups()
+            line = line.strip()
+            if not line:
+                continue
+            
+            date_match = re.match(date_pattern, line)
+            if date_match:
+                # Parse transaction line
+                # Format: DD/MM/YYYY Description Amount Balance
+                # Split by 2+ spaces
+                parts = re.split(r'\s{2,}', line)
                 
-                # Parse amounts
-                try:
-                    val1 = float(col1.replace(',', ''))
-                    val2 = float(col2.replace(',', ''))
-                    val3 = float(col3.replace(',', ''))
+                if len(parts) >= 3:
+                    date = parts[0]
+                    description = parts[1] if len(parts) > 1 else ""
                     
-                    # Determine debit, credit, balance
-                    # Assuming format: Date | Description | Debit | Credit | Balance
-                    debit = val1 if val1 > 0 else 0
-                    credit = val2 if val2 > 0 else 0
-                    balance = val3
+                    # Extract numbers from the line
+                    numbers = re.findall(r'[\d,]+\.\d{2}', line)
                     
-                    amount = credit if credit > 0 else -debit
-                    
-                    transactions.append({
-                        "id": f"txn_{uuid.uuid4()}",
-                        "date": date,
-                        "description": desc.strip(),
-                        "amount": amount,
-                        "balance": balance,
-                        "type": None,
-                        "categoryId": None,
-                        "subCategoryId": None,
-                        "customerId": None,
-                        "currencyPair": None,
-                        "autoMatched": False,
-                        "matchedPatternId": None,
-                        "confidence": 0.0,
-                        "status": "pending",
-                        "notes": ""
-                    })
-                except:
-                    continue
+                    if len(numbers) >= 2:
+                        # Last number is balance, second to last is amount
+                        amount_str = numbers[-2].replace(',', '')
+                        balance_str = numbers[-1].replace(',', '')
+                        
+                        try:
+                            amount = float(amount_str)
+                            balance = float(balance_str)
+                            
+                            # Determine if debit or credit by comparing with previous balance
+                            if prev_balance is not None:
+                                if balance < prev_balance:
+                                    amount = -amount  # Debit (outgoing)
+                            
+                            transactions.append({
+                                "id": f"txn_{uuid.uuid4()}",
+                                "date": date,
+                                "description": description.strip(),
+                                "amount": amount,
+                                "balance": balance,
+                                "type": None,
+                                "categoryId": None,
+                                "subCategoryId": None,
+                                "customerId": None,
+                                "currencyPair": None,
+                                "autoMatched": False,
+                                "matchedPatternId": None,
+                                "confidence": 0.0,
+                                "status": "pending",
+                                "notes": ""
+                            })
+                            
+                            prev_balance = balance
+                        except ValueError:
+                            continue
         
         return {
             "header": header,
