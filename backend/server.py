@@ -14236,27 +14236,26 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     else:
         result["header"]["interestRate"] = "0%"
     
-    # Account Type - specifically look for CURRENT_ACCOUNT pattern
-    # PDF format: "ACCOUNT TYPE\nCURRENT_ACCOUNT"
-    type_match = re.search(r'ACCOUNT TYPE\s*\n\s*([A-Z]+_[A-Z]+)', full_text, re.MULTILINE)
+    # Account Type - appears on SAME LINE in PDF
+    # PDF format: "ACCOUNT TYPE\nYOUSSEF... CURRENT_ACCOUNT" (YOUSSEF is address, CURRENT_ACCOUNT is what we want)
+    type_match = re.search(r'CURRENT[_\s]ACCOUNT', full_text, re.IGNORECASE)
     if type_match:
-        account_type = type_match.group(1).replace('_', ' ').title()
-        result["header"]["accountType"] = account_type
+        result["header"]["accountType"] = "Current Account"
     else:
-        # Fallback: any word after ACCOUNT TYPE
-        type_match2 = re.search(r'ACCOUNT TYPE\s*\n\s*(\S+)', full_text, re.MULTILINE)
-        if type_match2:
-            result["header"]["accountType"] = type_match2.group(1).replace('_', ' ').title()
-        else:
-            result["header"]["accountType"] = "Current Account"
+        result["header"]["accountType"] = "Current Account"  # Default
     
-    # Account Number - must be on line after "ACCOUNT NUMBER"
-    # PDF format: "ACCOUNT NUMBER\n9368491092"
-    number_match = re.search(r'ACCOUNT NUMBER\s*\n\s*(\d{8,12})', full_text, re.MULTILINE)
+    # Account Number - appears after "ACCOUNT NUMBER" label
+    # Look for 10-digit number after "ACCOUNT NUMBER"
+    number_match = re.search(r'ACCOUNT NUMBER\s+(\d{10})', full_text, re.IGNORECASE)
     if number_match:
         result["header"]["accountNumber"] = number_match.group(1)
     else:
-        result["header"]["accountNumber"] = None
+        # Try alternative: just find 10-digit number after account number keyword
+        number_match2 = re.search(r'ACCOUNT NUMBER.*?(\d{10})', full_text, re.IGNORECASE | re.DOTALL)
+        if number_match2:
+            result["header"]["accountNumber"] = number_match2.group(1)
+        else:
+            result["header"]["accountNumber"] = None
     
     # Account Opened
     opened_match = re.search(r'ACCOUNT OPENED\s*\n?\s*(\d{2}/\d{2}/\d{4})', full_text, re.IGNORECASE)
