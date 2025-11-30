@@ -2439,49 +2439,67 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`p-3 bg-white border rounded-lg cursor-move transition-all ${
-                                snapshot.isDragging ? 'shadow-lg bg-blue-50 scale-105' : 'shadow-sm hover:shadow-md'
+                              style={{
+                                ...provided.draggableProps.style,
+                                opacity: snapshot.isDragging ? 0.8 : 1,
+                              }}
+                              className={`p-3 bg-white border-2 rounded-lg cursor-move transition-shadow ${
+                                snapshot.isDragging 
+                                  ? 'shadow-2xl border-blue-400 bg-blue-50 rotate-2' 
+                                  : 'shadow-sm hover:shadow-md border-gray-200'
                               }`}
                             >
                               <div className="flex items-start space-x-3">
-                                <div className="mt-1 text-gray-400 hover:text-gray-600">
+                                <div className={`mt-1 transition-colors ${
+                                  snapshot.isDragging ? 'text-blue-500' : 'text-gray-400 hover:text-gray-600'
+                                }`}>
                                   <GripVertical className="w-5 h-5" />
                                 </div>
                                 
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
-                                      <span className="text-sm font-bold text-gray-500">
+                                      <span className={`text-sm font-bold ${
+                                        snapshot.isDragging ? 'text-blue-600' : 'text-gray-500'
+                                      }`}>
                                         {index + 1}.
                                       </span>
                                       <span className="text-lg">{module.icon}</span>
-                                      <span className="font-medium">{module.name}</span>
+                                      <span className={`font-medium ${
+                                        snapshot.isDragging ? 'text-blue-900' : 'text-gray-900'
+                                      }`}>
+                                        {module.name}
+                                      </span>
                                     </div>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveModule(index);
-                                      }}
-                                      className="text-gray-400 hover:text-red-600 z-10"
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </button>
+                                    {!snapshot.isDragging && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRemoveModule(index);
+                                        }}
+                                        className="text-gray-400 hover:text-red-600 z-10"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    )}
                                   </div>
                                   
-                                  <div className="mt-2 flex items-center justify-between text-sm">
-                                    <span className="text-gray-600">
-                                      └─ Şablon: {module.template_name}
-                                    </span>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleChangeTemplate(index, module.type);
-                                      }}
-                                      className="text-blue-600 hover:text-blue-700 text-xs z-10"
-                                    >
-                                      Değiştir
-                                    </button>
-                                  </div>
+                                  {!snapshot.isDragging && (
+                                    <div className="mt-2 flex items-center justify-between text-sm">
+                                      <span className="text-gray-600">
+                                        └─ Şablon: {module.template_name}
+                                      </span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleChangeTemplate(index, module.type);
+                                        }}
+                                        className="text-blue-600 hover:text-blue-700 text-xs z-10"
+                                      >
+                                        Değiştir
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
