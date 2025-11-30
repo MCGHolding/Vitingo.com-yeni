@@ -720,6 +720,15 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       setFormData(prev => ({ ...prev, end_date: '2025-12-05' }));
     }
     
+    // Hall No ve Stand No zorunlu
+    if (!formData.hall_number || formData.hall_number.trim() === '') {
+      newErrors.hall_number = 'Bu alanın girilmesi zorunludur';
+    }
+    
+    if (!formData.stand_number || formData.stand_number.trim() === '') {
+      newErrors.stand_number = 'Bu alanın girilmesi zorunludur';
+    }
+    
     // Tarih kontrolü
     if (formData.start_date && formData.end_date && formData.start_date > formData.end_date) {
       newErrors.end_date = 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır';
