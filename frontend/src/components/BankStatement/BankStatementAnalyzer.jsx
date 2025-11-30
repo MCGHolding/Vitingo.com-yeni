@@ -65,15 +65,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
   useEffect(() => {
     loadCategories();
     loadCustomers();
-    
-    // Auto-load the most recent statement for this bank (if exists)
-    loadLatestStatement();
   }, []);
+  
+  // Load statement when currency changes
+  useEffect(() => {
+    loadLatestStatement();
+  }, [selectedCurrency]);
   
   const loadLatestStatement = async () => {
     try {
-      // First, get the list of statements (without transactions)
-      const listResponse = await fetch(`${API_URL}/api/banks/${bankId}/statements`);
+      // Get statements filtered by currency
+      const listResponse = await fetch(`${API_URL}/api/banks/${bankId}/statements?currency=${selectedCurrency}`);
       if (listResponse.ok) {
         const statements = await listResponse.json();
         
@@ -96,6 +98,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
               accountType: fullStatement.accountType,
               accountOpened: fullStatement.accountOpened,
               interestRate: fullStatement.interestRate,
+              openingBalance: fullStatement.openingBalance,
+              closingBalance: fullStatement.closingBalance,
               totalIncoming: fullStatement.totalIncoming,
               totalOutgoing: fullStatement.totalOutgoing,
               netChange: fullStatement.netChange,
@@ -106,7 +110,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
             });
             
             setTransactions(fullStatement.transactions || []);
+            setSaveStatus('saved');
           }
+        } else {
+          // No statement for this currency yet
+          setStatement(null);
+          setTransactions([]);
         }
       }
     } catch (error) {
