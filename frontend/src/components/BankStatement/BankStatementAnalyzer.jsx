@@ -46,6 +46,14 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [availableCurrencies, setAvailableCurrencies] = useState(['AED', 'USD', 'EUR', 'GBP']);
   const [saveStatus, setSaveStatus] = useState('saved'); // 'saved' | 'saving' | 'unsaved'
   
+  // Filtering and bulk operations
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [quickFilter, setQuickFilter] = useState('');
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [bulkAction, setBulkAction] = useState(null);
+  
   // Customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pendingCustomerTxnId, setPendingCustomerTxnId] = useState(null);
