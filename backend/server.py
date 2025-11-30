@@ -14181,75 +14181,326 @@ async def find_matching_pattern(description: str, bank_id: str) -> Optional[dict
     return None
 
 # Extract keywords for learning
-def extract_keywords(description: str) -> List[str]:
-    """Extract keywords from transaction description"""
-    stop_words = {'the', 'a', 'an', 'for', 'to', 'from', 'of', 'in', 'on', 'at', 'by', 'with'}
-    words = re.findall(r'\b\w+\b', description.lower())
-    
-    keywords = [
-        w for w in words
-        if len(w) > 3
-        and w not in stop_words
-        and not w.isdigit()
-    ]
-    
-    return keywords[:5]  # Max 5 keywords
+# ============================================================================
+# PATTERN LEARNING & MATCHING SERVICES
+# ============================================================================
 
-# Learn patterns
-async def learn_patterns(transactions: List[dict], bank_id: str, user_id: str):
-    """Learn patterns from completed transactions"""
-    learned_count = 0
+class PatternMatchingService:
+    """Service for matching transactions against learned patterns"""
     
-    for txn in transactions:
-        if txn.get("status") != "completed" or not txn.get("type"):
-            continue
+    def __init__(self, database):
+        self.db = database
+    
+    async def find_matching_patterns(
+        self, 
+        description: str, 
+        bank_id: str,
+        min_confidence: float = 0.5
+    ) -> List[dict]:
+        """Find patterns that match a transaction description"""
+        desc_lower = description.lower()
         
-        keywords = extract_keywords(txn["description"])
+        # Get active patterns
+        patterns = await self.db.transaction_patterns.find({
+            "isActive": True,
+            "stats.confidence": {"$gte": min_confidence},
+            "scope.bankId": bank_id
+        }).sort("stats.confidence", -1).to_list(100)
         
-        for keyword in keywords:
-            # Check if pattern exists
-            existing = await db.transaction_patterns.find_one({
-                "bankId": bank_id,
-                "pattern": keyword,
-                "transactionType": txn["type"],
-                "categoryId": txn.get("categoryId")
-            })
+        matches = []
+        
+        for pattern in patterns:
+            is_match = False
             
-            if existing:
-                # Update confidence
-                new_confidence = min(0.99, existing["confidence"] + 0.05)
-                await db.transaction_patterns.update_one(
+            if pattern["matchType"] == "exact":
+                is_match = desc_lower == pattern["pattern"]
+            elif pattern["matchType"] == "contains":
+                is_match = pattern["pattern"] in desc_lower
+            elif pattern["matchType"] == "startsWith":
+                is_match = desc_lower.startswith(pattern["pattern"])
+            
+            if is_match:
+                matches.append({
+                    "patternId": pattern["id"],
+                    "pattern": pattern["pattern"],
+                    "matchType": pattern["matchType"],
+                    "learned": pattern["learned"],
+                    "confidence": pattern["stats"]["confidence"],
+                    "matchCount": pattern["stats"]["matchCount"],
+                    "confirmCount": pattern["stats"]["confirmCount"]
+                })
+        
+        # Sort by confidence (highest first)
+        matches.sort(key=lambda x: x["confidence"], reverse=True)
+        return matches
+    
+    async def apply_patterns_to_transactions(
+        self, 
+        transactions: List[dict], 
+        bank_id: str
+    ) -> tuple[List[dict], int, int]:
+        """Apply patterns to transactions. Returns (transactions, auto_matched_count, suggested_count)"""
+        auto_matched = 0
+        suggested = 0
+        
+        for txn in transactions:
+            matches = await self.find_matching_patterns(txn["description"], bank_id)
+            
+            if matches:
+                best_match = matches[0]
+                
+                # High confidence - auto apply
+                if best_match["confidence"] >= 0.9:
+                    txn["type"] = best_match["learned"].get("type", "")
+                    txn["categoryId"] = best_match["learned"].get("categoryId")
+                    txn["subCategoryId"] = best_match["learned"].get("subCategoryId")
+                    txn["customerId"] = best_match["learned"].get("customerId")
+                    txn["currencyPair"] = best_match["learned"].get("currencyPair")
+                    txn["autoMatched"] = True
+                    txn["matchedPatternId"] = best_match["patternId"]
+                    txn["confidence"] = best_match["confidence"]
+                    txn["status"] = self._calculate_status(txn)
+                    auto_matched += 1
+                
+                # Medium confidence - suggest
+                elif best_match["confidence"] >= 0.7:
+                    txn["suggestedMatch"] = best_match
+                    txn["autoMatched"] = False
+                    suggested += 1
+        
+        return transactions, auto_matched, suggested
+    
+    def _calculate_status(self, txn: dict) -> str:
+        if not txn.get("type"):
+            return "pending"
+        if txn["type"] == "collection" and not txn.get("customerId"):
+            return "pending"
+        if txn["type"] in ["fx_buy", "fx_sell"] and not txn.get("currencyPair"):
+            return "pending"
+        return "completed"
+
+
+class PatternLearningService:
+    """Service for learning patterns from transactions"""
+    
+    STOP_WORDS = {'the', 'a', 'an', 'for', 'to', 'from', 'of', 'in', 'on', 'at', 'by', 'with', 
+                  'and', 'or', 'but', 'is', 'are', 'was', 'were', 'been', 'be', 'have', 'has'}
+    
+    def __init__(self, database):
+        self.db = database
+    
+    def _extract_keywords(self, description: str) -> List[str]:
+        """Extract meaningful keywords from description"""
+        desc_lower = description.lower()
+        
+        # Extract words (3+ chars, not numbers)
+        words = re.findall(r'\b[a-z]{3,}\b', desc_lower)
+        
+        # Remove stop words
+        words = [w for w in words if w not in self.STOP_WORDS]
+        
+        keywords = []
+        
+        # Single words
+        keywords.extend(words[:5])
+        
+        # 2-word combinations (bigrams) - useful for phrases
+        for i in range(min(3, len(words) - 1)):
+            bigram = f"{words[i]} {words[i+1]}"
+            keywords.append(bigram)
+        
+        return keywords[:8]  # Max 8 keywords
+    
+    async def learn_from_transaction(
+        self, 
+        transaction: dict, 
+        bank_id: str, 
+        user_id: str
+    ):
+        """Learn patterns from a single completed transaction"""
+        if transaction.get("status") != "completed" or not transaction.get("type"):
+            return
+        
+        description = transaction["description"]
+        keywords = self._extract_keywords(description)
+        
+        learned = {
+            "type": transaction.get("type"),
+            "categoryId": transaction.get("categoryId"),
+            "subCategoryId": transaction.get("subCategoryId"),
+            "customerId": transaction.get("customerId"),
+            "currencyPair": transaction.get("currencyPair")
+        }
+        
+        # Learn from each keyword
+        for keyword in keywords:
+            await self._update_or_create_pattern(
+                keyword, learned, "contains", bank_id, user_id
+            )
+        
+        # Also learn from full description if short (likely company names)
+        if len(description.split()) <= 4:
+            await self._update_or_create_pattern(
+                description.lower(), learned, "exact", bank_id, user_id
+            )
+    
+    async def _update_or_create_pattern(
+        self,
+        pattern_text: str,
+        learned: dict,
+        match_type: str,
+        bank_id: str,
+        user_id: str
+    ):
+        """Update existing pattern or create new one"""
+        
+        # Find existing pattern
+        existing = await self.db.transaction_patterns.find_one({
+            "pattern": pattern_text,
+            "matchType": match_type,
+            "scope.bankId": bank_id
+        })
+        
+        if existing:
+            # Check if learned values match
+            if self._learned_matches(existing["learned"], learned):
+                # Confirm - increase confidence
+                new_confidence = min(0.99, existing["stats"]["confidence"] + 0.05)
+                
+                await self.db.transaction_patterns.update_one(
                     {"id": existing["id"]},
                     {
                         "$set": {
-                            "confidence": new_confidence,
-                            "lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                            "stats.confidence": new_confidence,
+                            "stats.lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                            "stats.lastConfirmedAt": datetime.now(timezone.utc).isoformat(),
                             "updatedAt": datetime.now(timezone.utc).isoformat()
                         },
-                        "$inc": {"matchCount": 1}
+                        "$inc": {
+                            "stats.matchCount": 1,
+                            "stats.confirmCount": 1
+                        }
                     }
                 )
             else:
-                # Create new pattern
-                pattern_id = str(uuid.uuid4())
-                await db.transaction_patterns.insert_one({
-                    "id": pattern_id,
-                    "pattern": keyword,
-                    "matchType": "contains",
-                    "transactionType": txn["type"],
-                    "categoryId": txn.get("categoryId"),
-                    "subCategoryId": txn.get("subCategoryId"),
-                    "customerId": txn.get("customerId"),
-                    "currencyPair": txn.get("currencyPair"),
-                    "confidence": 0.5,
-                    "matchCount": 1,
-                    "lastMatchedAt": datetime.now(timezone.utc).isoformat(),
-                    "bankId": bank_id,
-                    "createdBy": user_id,
-                    "createdAt": datetime.now(timezone.utc).isoformat(),
-                    "updatedAt": datetime.now(timezone.utc).isoformat()
-                })
-                learned_count += 1
+                # Different values - decrease confidence
+                new_confidence = max(0.1, existing["stats"]["confidence"] - 0.15)
+                
+                await self.db.transaction_patterns.update_one(
+                    {"id": existing["id"]},
+                    {
+                        "$set": {
+                            "stats.confidence": new_confidence,
+                            "stats.lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                            "updatedAt": datetime.now(timezone.utc).isoformat()
+                        },
+                        "$inc": {
+                            "stats.matchCount": 1,
+                            "stats.rejectCount": 1
+                        }
+                    }
+                )
+                
+                # Create new pattern for new values
+                await self._create_new_pattern(pattern_text, learned, match_type, bank_id, user_id)
+        else:
+            # New pattern
+            await self._create_new_pattern(pattern_text, learned, match_type, bank_id, user_id)
+    
+    async def _create_new_pattern(
+        self,
+        pattern_text: str,
+        learned: dict,
+        match_type: str,
+        bank_id: str,
+        user_id: str
+    ):
+        """Create a new pattern"""
+        pattern_id = str(uuid.uuid4())
+        
+        await self.db.transaction_patterns.insert_one({
+            "id": pattern_id,
+            "pattern": pattern_text,
+            "matchType": match_type,
+            "learned": learned,
+            "stats": {
+                "confidence": 0.5,
+                "matchCount": 1,
+                "confirmCount": 1,
+                "rejectCount": 0,
+                "lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                "lastConfirmedAt": datetime.now(timezone.utc).isoformat()
+            },
+            "scope": {
+                "bankId": bank_id,
+                "companyId": None
+            },
+            "isActive": True,
+            "createdBy": user_id,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        })
+    
+    def _learned_matches(self, existing: dict, new: dict) -> bool:
+        """Check if two learned objects match"""
+        for key in ["type", "categoryId", "subCategoryId", "customerId", "currencyPair"]:
+            if new.get(key) and existing.get(key):
+                if str(new[key]) != str(existing[key]):
+                    return False
+        return True
+    
+    async def confirm_pattern(self, pattern_id: str):
+        """User confirmed the pattern match"""
+        pattern = await self.db.transaction_patterns.find_one({"id": pattern_id})
+        
+        if pattern:
+            new_confidence = min(0.99, pattern["stats"]["confidence"] + 0.05)
+            
+            await self.db.transaction_patterns.update_one(
+                {"id": pattern_id},
+                {
+                    "$set": {
+                        "stats.confidence": new_confidence,
+                        "stats.lastConfirmedAt": datetime.now(timezone.utc).isoformat(),
+                        "updatedAt": datetime.now(timezone.utc).isoformat()
+                    },
+                    "$inc": {
+                        "stats.confirmCount": 1
+                    }
+                }
+            )
+    
+    async def reject_pattern(self, pattern_id: str):
+        """User rejected the pattern match"""
+        pattern = await self.db.transaction_patterns.find_one({"id": pattern_id})
+        
+        if pattern:
+            new_confidence = max(0.1, pattern["stats"]["confidence"] - 0.15)
+            
+            await self.db.transaction_patterns.update_one(
+                {"id": pattern_id},
+                {
+                    "$set": {
+                        "stats.confidence": new_confidence,
+                        "updatedAt": datetime.now(timezone.utc).isoformat()
+                    },
+                    "$inc": {
+                        "stats.rejectCount": 1
+                    }
+                }
+            )
+
+
+# Legacy function for backward compatibility
+async def learn_patterns(transactions: List[dict], bank_id: str, user_id: str):
+    """Learn patterns from completed transactions (legacy)"""
+    service = PatternLearningService(db)
+    
+    learned_count = 0
+    for txn in transactions:
+        if txn.get("status") == "completed" and txn.get("type"):
+            await service.learn_from_transaction(txn, bank_id, user_id)
+            learned_count += 1
     
     return learned_count
 
