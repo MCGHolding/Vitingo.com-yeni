@@ -1,74 +1,28 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Upload, Download, Save, Check, Clock, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Upload, Download, Copy } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Transaction Types
-const TRANSACTION_TYPES = [
-  { value: '', label: 'Seçiniz', color: 'gray' },
-  { value: 'collection', label: 'Tahsilat', color: 'green', hasCustomer: true },
-  { value: 'payment', label: 'Ödeme', color: 'red' },
-  { value: 'refund', label: 'İade', color: 'orange' },
-  { value: 'cashback', label: 'Cashback', color: 'purple' },
-  { value: 'fx_buy', label: 'Döviz Alım', color: 'blue', hasCurrencyPair: true },
-  { value: 'fx_sell', label: 'Döviz Satım', color: 'blue', hasCurrencyPair: true },
-  { value: 'cash_deposit', label: 'Nakit Yatan', color: 'teal' }
-];
-
-const CURRENCY_PAIRS = [
-  'USD-AED', 'USD-EUR', 'AED-USD', 'AED-EUR', 'EUR-AED', 'EUR-USD'
-];
-
 const BankStatementAnalyzer = ({ bankId }) => {
-  // State
   const [statement, setStatement] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  
-  const [filters, setFilters] = useState({
-    search: '',
-    type: '',
-    category: '',
-    showPendingOnly: false
-  });
-  
-  const [selectedRows, setSelectedRows] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [copySuccess, setCopySuccess] = useState('');
   
-  // Load categories and customers
-  useEffect(() => {
-    loadCategories();
-    loadCustomers();
-  }, []);
-  
-  const loadCategories = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/settings/expense-categories`);
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
-  };
-  
-  const loadCustomers = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/customers`);
-      const data = await response.json();
-      setCustomers(data);
-    } catch (error) {
-      console.error('Failed to load customers:', error);
-    }
-  };
-  
-  // Handle file upload
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
+  // Dosya yükleme
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const file = acceptedFiles[0];
     if (!file) return;
     
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      setError('Sadece PDF dosyaları destekleniyor');
+      return;
+    }
+    
     setUploading(true);
+    setError(null);
+    
     const formData = new FormData();
     formData.append('file', file);
     
@@ -78,330 +32,341 @@ const BankStatementAnalyzer = ({ bankId }) => {
         body: formData
       });
       
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Yükleme başarısız');
+      }
+      
       const data = await response.json();
+      setStatement(data);
       
-      setStatement({
-        id: data.statementId,
-        ...data.headerInfo,
-        ...data.statistics
-      });
-      setTransactions(data.transactions);
-      
-      alert(`✅ ${data.autoMatchedCount} işlem otomatik eşleştirildi!`);
-    } catch (error) {
-      alert('Yükleme hatası: ' + error.message);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setUploading(false);
     }
+  }, [bankId]);
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'application/pdf': ['.pdf'] },
+    maxFiles: 1,
+    disabled: uploading
+  });
+  
+  // Para formatla
+  const formatMoney = (amount, currency = 'AED') => {
+    const absAmount = Math.abs(amount);
+    return new Intl.NumberFormat('en-AE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(absAmount) + ' ' + currency;
   };
   
-  // Update transaction
-  const handleTransactionUpdate = async (txnId, field, value) => {
-    setTransactions(prev => prev.map(txn => {
-      if (txn.id === txnId) {
-        const updated = { ...txn, [field]: value };
-        
-        // Clear dependent fields
-        if (field === 'type') {
-          if (value !== 'collection') updated.customerId = null;
-          if (value !== 'fx_buy' && value !== 'fx_sell') updated.currencyPair = null;
-        }
-        
-        if (field === 'categoryId') {
-          updated.subCategoryId = null;
-        }
-        
-        // Check completion
-        updated.status = checkTransactionComplete(updated) ? 'completed' : 'pending';
-        
-        return updated;
-      }
-      return txn;
-    }));
-    
-    // Update backend
-    try {
-      await fetch(`${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/${txnId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [field]: value })
-      });
-    } catch (error) {
-      console.error('Update failed:', error);
-    }
+  // Yeni ekstre yükle
+  const handleNewUpload = () => {
+    setStatement(null);
+    setError(null);
   };
   
-  const checkTransactionComplete = (txn) => {
-    if (!txn.type) return false;
-    if (txn.type === 'collection' && !txn.customerId) return false;
-    if ((txn.type === 'fx_buy' || txn.type === 'fx_sell') && !txn.currencyPair) return false;
-    return true;
-  };
-  
-  // Save statement
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const response = await fetch(`${API_URL}/api/banks/${bankId}/statements/${statement.id}/complete`, {
-        method: 'POST'
-      });
-      
-      const data = await response.json();
-      alert(`✅ Kaydedildi! ${data.learnedPatterns} yeni pattern öğrenildi.`);
-      
-      setStatement(prev => ({ ...prev, status: 'completed' }));
-    } catch (error) {
-      alert('Kaydetme hatası: ' + error.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-  
-  // Statistics
-  const stats = useMemo(() => {
-    const incoming = transactions.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
-    const outgoing = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
-    const completed = transactions.filter(t => t.status === 'completed').length;
-    const pending = transactions.filter(t => t.status === 'pending').length;
-    
-    return {
-      incoming,
-      outgoing,
-      net: incoming - outgoing,
-      total: transactions.length,
-      completed,
-      pending,
-      completedPercent: transactions.length > 0 ? Math.round((completed / transactions.length) * 100) : 0
-    };
-  }, [transactions]);
-  
-  // Filtered transactions
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter(txn => {
-      if (filters.search && !txn.description.toLowerCase().includes(filters.search.toLowerCase())) {
-        return false;
-      }
-      if (filters.type && txn.type !== filters.type) return false;
-      if (filters.category && txn.categoryId !== filters.category) return false;
-      if (filters.showPendingOnly && txn.status !== 'pending') return false;
-      return true;
+  // Kopyalama
+  const copyToClipboard = (text, fieldName) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopySuccess(fieldName);
+      setTimeout(() => setCopySuccess(''), 2000);
     });
-  }, [transactions, filters]);
+  };
   
-  // UI Components
-  const UploadArea = () => (
-    <div className="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-      <Upload className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-      <h3 className="text-lg font-medium text-gray-900 mb-2">Banka Ekstresi Yükle</h3>
-      <p className="text-gray-500 mb-4">Wio Bank PDF ekstrenizi yükleyin</p>
-      <label className="cursor-pointer">
-        <span className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-block">
-          {uploading ? '⏳ Yükleniyor...' : '📤 Dosya Seç'}
-        </span>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={handleFileUpload}
-          className="hidden"
-          disabled={uploading}
-        />
-      </label>
-    </div>
-  );
+  // Excel export
+  const handleExportExcel = () => {
+    // TODO: Excel export implementation
+    alert('Excel export yakında eklenecek');
+  };
   
-  const HeaderInfoCards = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">📅 DÖNEM</div>
-        <div className="font-medium">{statement.periodStart}</div>
-        <div className="font-medium">{statement.periodEnd}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">🏢 HESAP SAHİBİ</div>
-        <div className="font-medium text-sm">{statement.accountHolder}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">💰 PARA BİRİMİ</div>
-        <div className="font-medium">{statement.currency}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">📊 FAİZ ORANI</div>
-        <div className="font-medium">{statement.interestRate}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">📂 HESAP TÜRÜ</div>
-        <div className="font-medium text-sm">{statement.accountType}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">🔢 HESAP NO</div>
-        <div className="font-medium">{statement.accountNumber}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">🆔 IBAN</div>
-        <div className="font-medium text-xs">{statement.iban}</div>
-      </div>
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-1">📆 AÇILIŞ</div>
-        <div className="font-medium">{statement.accountOpened}</div>
-      </div>
-    </div>
-  );
-  
-  const StatisticsCards = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500">💵 GİREN</span>
-          <TrendingUp className="h-4 w-4 text-green-600" />
-        </div>
-        <div className="text-2xl font-bold text-green-600">
-          {stats.incoming.toLocaleString()}
-        </div>
-        <div className="text-xs text-gray-500">{statement.currency}</div>
-      </div>
-      
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500">💸 ÇIKAN</span>
-          <TrendingDown className="h-4 w-4 text-red-600" />
-        </div>
-        <div className="text-2xl font-bold text-red-600">
-          {stats.outgoing.toLocaleString()}
-        </div>
-        <div className="text-xs text-gray-500">{statement.currency}</div>
-      </div>
-      
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500">📊 NET</span>
-          <Activity className="h-4 w-4 text-blue-600" />
-        </div>
-        <div className={`text-2xl font-bold ${stats.net >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
-          {stats.net >= 0 ? '+' : ''}{stats.net.toLocaleString()}
-        </div>
-        <div className="text-xs text-gray-500">{statement.currency}</div>
-      </div>
-      
-      <div className="bg-white rounded-lg border p-4">
-        <div className="text-sm text-gray-500 mb-2">🔄 İŞLEM</div>
-        <div className="text-2xl font-bold text-gray-700">{stats.total}</div>
-        <div className="text-xs text-gray-500">adet</div>
-      </div>
-      
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500">✅ TAMAM</span>
-          <Check className="h-4 w-4 text-green-600" />
-        </div>
-        <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
-        <div className="text-xs text-gray-500">{stats.completedPercent}%</div>
-      </div>
-      
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500">⏳ BEKLE</span>
-          <Clock className="h-4 w-4 text-yellow-600" />
-        </div>
-        <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-        <div className="text-xs text-gray-500">{100 - stats.completedPercent}%</div>
-      </div>
-    </div>
-  );
-  
+  // Ekstre yüklenmemişse - Upload Area göster
   if (!statement) {
-    return <UploadArea />;
-  }
-  
-  return (
-    <div className="space-y-6">
-      {/* Action Buttons */}
-      <div className="flex gap-3">
-        <label className="cursor-pointer">
-          <span className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex items-center gap-2 text-sm">
-            <Upload className="h-4 w-4" />
-            Yeni Ekstre Yükle
-          </span>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={handleFileUpload}
-            className="hidden"
-            disabled={uploading}
-          />
-        </label>
+    return (
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          🏦 Wio Bank - Hesap Ekstresi
+        </h2>
         
-        <button
-          onClick={handleSave}
-          disabled={saving || stats.pending > 0}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2 text-sm"
+        <div
+          {...getRootProps()}
+          className={`
+            border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition-all
+            ${
+              isDragActive
+                ? 'border-green-500 bg-green-50'
+                : uploading
+                ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+            }
+          `}
         >
-          <Save className="h-4 w-4" />
-          {saving ? 'Kaydediliyor...' : 'Kaydet ve Öğren'}
-        </button>
+          <input {...getInputProps()} />
+          
+          {uploading ? (
+            <div className="space-y-4">
+              <div className="text-6xl animate-bounce">⏳</div>
+              <p className="text-lg font-medium text-gray-700">PDF işleniyor...</p>
+              <p className="text-sm text-gray-500">Ekstre parse ediliyor, lütfen bekleyin</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-7xl">📄</div>
+              <p className="text-2xl font-medium text-gray-700">
+                {isDragActive ? 'Dosyayı bırakın...' : 'PDF Ekstre Yükle'}
+              </p>
+              <p className="text-gray-500">
+                Sürükle & Bırak veya tıklayın
+              </p>
+              <p className="text-sm text-gray-400">
+                Desteklenen format: PDF (Wio Bank)
+              </p>
+            </div>
+          )}
+        </div>
         
-        {stats.pending > 0 && (
-          <span className="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg text-sm inline-flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            {stats.pending} işlem bekliyor
-          </span>
+        {error && (
+          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <p className="font-medium">⚠️ Hata</p>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
         )}
       </div>
-      
-      {/* Header Info */}
-      <HeaderInfoCards />
-      
-      {/* Statistics */}
-      <StatisticsCards />
-      
-      {/* Filters */}
-      <div className="bg-white rounded-lg border p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="🔍 Açıklamada ara..."
-            value={filters.search}
-            onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-            className="px-4 py-2 border rounded-lg"
-          />
-          
-          <select
-            value={filters.type}
-            onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-            className="px-4 py-2 border rounded-lg"
+    );
+  }
+  
+  // Ekstre yüklendiyse - Detayları göster
+  const { headerInfo, statistics, transactions } = statement;
+  const header = headerInfo || {};
+  const stats = statistics || {};
+  
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          🏦 Wio Bank - Hesap Ekstresi
+        </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={handleNewUpload}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
           >
-            <option value="">Tüm Türler</option>
-            {TRANSACTION_TYPES.filter(t => t.value).map(type => (
-              <option key={type.value} value={type.value}>{type.label}</option>
-            ))}
-          </select>
-          
-          <select
-            value={filters.category}
-            onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-            className="px-4 py-2 border rounded-lg"
+            <Upload className="h-4 w-4" />
+            Yeni Ekstre Yükle
+          </button>
+          <button
+            onClick={handleExportExcel}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm font-medium"
           >
-            <option value="">Tüm Kategoriler</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-          
-          <label className="flex items-center gap-2 px-4 py-2 border rounded-lg cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.showPendingOnly}
-              onChange={(e) => setFilters(prev => ({ ...prev, showPendingOnly: e.target.checked }))}
-            />
-            <span>⏳ Sadece Bekleyenler</span>
-          </label>
+            <Download className="h-4 w-4" />
+            Excel İndir
+          </button>
         </div>
       </div>
       
-      {/* Transactions Table - Will be implemented in next part */}
-      <div className="bg-white rounded-lg border p-4">
-        <p className="text-gray-500 text-center py-8">
-          İşlem tablosu yakında eklenecek... ({filteredTransactions.length} işlem)
-        </p>
+      {/* Hesap Bilgileri Kartı */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6">
+        <h3 className="text-sm font-semibold text-purple-800 mb-4">HESAP BİLGİLERİ</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Dönem */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">📅 DÖNEM</div>
+            <div className="font-semibold text-gray-800">{header.periodStart || 'N/A'}</div>
+            <div className="text-gray-400 my-1">─</div>
+            <div className="font-semibold text-gray-800">{header.periodEnd || 'N/A'}</div>
+          </div>
+          
+          {/* Hesap Sahibi */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">🏢 HESAP SAHİBİ</div>
+            <div className="font-semibold text-gray-800 text-sm leading-relaxed">
+              {header.accountHolder || 'N/A'}
+            </div>
+          </div>
+          
+          {/* Para Birimi / Faiz */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">💰 PARA BİRİMİ / FAİZ</div>
+            <div className="font-semibold text-gray-800">{header.currency || 'AED'}</div>
+            <div className="text-sm text-gray-500 mt-1">Faiz: {header.interestRate || '0%'}</div>
+          </div>
+          
+          {/* Hesap Türü */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">📂 HESAP TÜRÜ</div>
+            <div className="font-semibold text-gray-800 text-sm">{header.accountType || 'N/A'}</div>
+            <div className="text-sm text-gray-500 mt-1">Açılış: {header.accountOpened || 'N/A'}</div>
+          </div>
+          
+          {/* Hesap No */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">🔢 HESAP NO</div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-800">{header.accountNumber || 'N/A'}</span>
+              {header.accountNumber && (
+                <button
+                  onClick={() => copyToClipboard(header.accountNumber, 'accountNumber')}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Kopyala"
+                >
+                  {copySuccess === 'accountNumber' ? (
+                    <span className="text-green-600 text-xs">✓</span>
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {/* IBAN */}
+          <div className="bg-white rounded-lg p-4 border shadow-sm">
+            <div className="text-xs text-gray-500 mb-2">🆔 IBAN</div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-800 text-xs">{header.iban || 'N/A'}</span>
+              {header.iban && (
+                <button
+                  onClick={() => copyToClipboard(header.iban, 'iban')}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Kopyala"
+                >
+                  {copySuccess === 'iban' ? (
+                    <span className="text-green-600 text-xs">✓</span>
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* İstatistik Kartları */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* Giren */}
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+          <div className="text-xs text-green-700 mb-1 font-medium">💵 GİREN</div>
+          <div className="text-lg font-bold text-green-700">
+            {formatMoney(stats.totalIncoming || 0, header.currency)}
+          </div>
+        </div>
+        
+        {/* Çıkan */}
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div className="text-xs text-red-700 mb-1 font-medium">💸 ÇIKAN</div>
+          <div className="text-lg font-bold text-red-700">
+            {formatMoney(stats.totalOutgoing || 0, header.currency)}
+          </div>
+        </div>
+        
+        {/* Net */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="text-xs text-blue-700 mb-1 font-medium">📊 NET</div>
+          <div className={`text-lg font-bold ${
+            (stats.netChange || 0) >= 0 ? 'text-blue-700' : 'text-red-700'
+          }`}>
+            {(stats.netChange || 0) >= 0 ? '+' : ''}{formatMoney(stats.netChange || 0, header.currency)}
+          </div>
+        </div>
+        
+        {/* Toplam İşlem */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <div className="text-xs text-gray-700 mb-1 font-medium">🔄 İŞLEM</div>
+          <div className="text-lg font-bold text-gray-700">
+            {stats.transactionCount || 0}
+          </div>
+          <div className="text-xs text-gray-500 mt-0.5">adet</div>
+        </div>
+        
+        {/* Bekleyen */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div className="text-xs text-yellow-700 mb-1 font-medium">⏳ BEKLEYEN</div>
+          <div className="text-lg font-bold text-yellow-700">
+            {stats.pendingCount || 0}
+          </div>
+          <div className="text-xs text-yellow-600 mt-0.5">
+            {stats.transactionCount > 0
+              ? `${Math.round(((stats.pendingCount || 0) / stats.transactionCount) * 100)}%`
+              : '0%'}
+          </div>
+        </div>
+      </div>
+      
+      {/* İşlemler Tablosu (Sadece görüntüleme) */}
+      <div className="bg-white border rounded-xl overflow-hidden">
+        <div className="px-6 py-4 bg-gray-50 border-b">
+          <h3 className="font-semibold text-gray-800">
+            İşlemler ({transactions?.length || 0})
+          </h3>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tarih
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Açıklama
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tutar
+                </th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Bakiye
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {transactions && transactions.length > 0 ? (
+                transactions.map((txn) => (
+                  <tr key={txn.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                      {txn.date}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      {txn.description}
+                    </td>
+                    <td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap ${
+                      txn.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {txn.amount >= 0 ? '+' : ''}{formatMoney(txn.amount, header.currency)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600 text-right whitespace-nowrap">
+                      {formatMoney(txn.balance, header.currency)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
+                    İşlem bulunamadı
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      {/* Bilgi Notu */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+        <span className="text-2xl">ℹ️</span>
+        <div className="flex-1">
+          <p className="text-sm text-blue-700 font-medium mb-1">
+            Ekstre başarıyla yüklendi!
+          </p>
+          <p className="text-sm text-blue-600">
+            Sonraki adımda her işlem için Tür, Kategori ve Alt Kategori seçebileceksiniz.
+          </p>
+        </div>
       </div>
     </div>
   );
