@@ -14715,18 +14715,129 @@ async def complete_statement(bank_id: str, statement_id: str):
         logger.error(f"Error completing statement: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}/confirm-match")
+async def confirm_auto_match(bank_id: str, statement_id: str, txn_id: str):
+    """Confirm automatic pattern match"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        # Find transaction
+        txn = next((t for t in statement["transactions"] if t["id"] == txn_id), None)
+        
+        if not txn:
+            raise HTTPException(404, "Transaction not found")
+        
+        if txn.get("matchedPatternId"):
+            # Confirm pattern
+            learning_service = PatternLearningService(db)
+            await learning_service.confirm_pattern(txn["matchedPatternId"])
+            
+            # Mark transaction as confirmed
+            await db.bank_statement_imports.update_one(
+                {"id": statement_id, "transactions.id": txn_id},
+                {
+                    "$set": {
+                        "transactions.$.matchConfirmed": True,
+                        "updatedAt": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error confirming match: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}/reject-match")
+async def reject_auto_match(bank_id: str, statement_id: str, txn_id: str):
+    """Reject automatic pattern match"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        # Find transaction
+        txn = next((t for t in statement["transactions"] if t["id"] == txn_id), None)
+        
+        if not txn:
+            raise HTTPException(404, "Transaction not found")
+        
+        if txn.get("matchedPatternId"):
+            # Reject pattern
+            learning_service = PatternLearningService(db)
+            await learning_service.reject_pattern(txn["matchedPatternId"])
+            
+            # Reset transaction
+            await db.bank_statement_imports.update_one(
+                {"id": statement_id, "transactions.id": txn_id},
+                {
+                    "$set": {
+                        "transactions.$.type": "",
+                        "transactions.$.categoryId": None,
+                        "transactions.$.subCategoryId": None,
+                        "transactions.$.customerId": None,
+                        "transactions.$.currencyPair": None,
+                        "transactions.$.autoMatched": False,
+                        "transactions.$.matchedPatternId": None,
+                        "transactions.$.confidence": None,
+                        "transactions.$.status": "pending",
+                        "transactions.$.matchConfirmed": False,
+                        "updatedAt": datetime.now(timezone.utc).isoformat()
+                    }
+                }
+            )
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting match: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.get("/banks/{bank_id}/patterns")
-async def list_patterns(bank_id: str):
+async def list_patterns(bank_id: str, skip: int = 0, limit: int = 50):
     """List learned patterns"""
     try:
         patterns = await db.transaction_patterns.find(
-            {"bankId": bank_id},
+            {"scope.bankId": bank_id, "isActive": True},
             {"_id": 0}
-        ).sort("confidence", -1).to_list(None)
+        ).sort("stats.confidence", -1).skip(skip).limit(limit).to_list(limit)
         
         return patterns
     except Exception as e:
         logger.error(f"Error listing patterns: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.delete("/banks/{bank_id}/patterns/{pattern_id}")
+async def delete_pattern(bank_id: str, pattern_id: str):
+    """Delete a learned pattern"""
+    try:
+        result = await db.transaction_patterns.delete_one({
+            "id": pattern_id,
+            "scope.bankId": bank_id
+        })
+        
+        if result.deleted_count == 0:
+            raise HTTPException(404, "Pattern not found")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting pattern: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/banks/{bank_id}/patterns/{pattern_id}")
