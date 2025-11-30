@@ -2419,16 +2419,14 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className={`p-3 bg-white border rounded-lg ${
-                                snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
+                              {...provided.dragHandleProps}
+                              className={`p-3 bg-white border rounded-lg cursor-move transition-all ${
+                                snapshot.isDragging ? 'shadow-lg bg-blue-50 scale-105' : 'shadow-sm hover:shadow-md'
                               }`}
                             >
                               <div className="flex items-start space-x-3">
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="mt-1 cursor-move text-gray-400 hover:text-gray-600"
-                                >
-                                  <GripVertical className="w-4 h-4" />
+                                <div className="mt-1 text-gray-400 hover:text-gray-600">
+                                  <GripVertical className="w-5 h-5" />
                                 </div>
                                 
                                 <div className="flex-1">
@@ -2441,8 +2439,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                                       <span className="font-medium">{module.name}</span>
                                     </div>
                                     <button
-                                      onClick={() => handleRemoveModule(index)}
-                                      className="text-gray-400 hover:text-red-600"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveModule(index);
+                                      }}
+                                      className="text-gray-400 hover:text-red-600 z-10"
                                     >
                                       <X className="w-4 h-4" />
                                     </button>
@@ -2453,8 +2454,11 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                                       └─ Şablon: {module.template_name}
                                     </span>
                                     <button
-                                      onClick={() => handleChangeTemplate(index, module.type)}
-                                      className="text-blue-600 hover:text-blue-700 text-xs"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleChangeTemplate(index, module.type);
+                                      }}
+                                      className="text-blue-600 hover:text-blue-700 text-xs z-10"
                                     >
                                       Değiştir
                                     </button>
