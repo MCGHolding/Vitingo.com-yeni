@@ -2081,25 +2081,35 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Salon No</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Salon No *</label>
                   <input
                     type="text"
                     placeholder="Hall 5"
                     value={formData.hall_number}
                     onChange={(e) => handleInputChange('hall_number', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.hall_number ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
+                  {errors.hall_number && (
+                    <p className="text-sm text-red-600 mt-1">{errors.hall_number}</p>
+                  )}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stand No</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Stand No *</label>
                   <input
                     type="text"
                     placeholder="A-120"
                     value={formData.stand_number}
                     onChange={(e) => handleInputChange('stand_number', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.stand_number ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
+                  {errors.stand_number && (
+                    <p className="text-sm text-red-600 mt-1">{errors.stand_number}</p>
+                  )}
                 </div>
               </div>
               
