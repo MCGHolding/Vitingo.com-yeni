@@ -789,51 +789,51 @@ const BankStatementAnalyzer = ({ bankId }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
         {/* Açılış Bakiyesi */}
         {statement.openingBalance !== undefined && (
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
             <div className="text-xs text-slate-600 mb-1 font-medium">💰 AÇILIŞ</div>
-            <div className="text-xl font-bold text-slate-700">{formatMoney(statement.openingBalance)}</div>
+            <div className="text-base font-bold text-slate-700">{formatMoney(statement.openingBalance)}</div>
             <div className="text-xs text-slate-500">{statement.currency || 'AED'}</div>
           </div>
         )}
         
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
           <div className="text-xs text-green-600 mb-1 font-medium">💵 GİREN</div>
-          <div className="text-lg font-bold text-green-700">
+          <div className="text-base font-bold text-green-700">
             {formatMoney(stats.totalIncoming, header.currency)}
           </div>
         </div>
         
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-center">
           <div className="text-xs text-red-600 mb-1 font-medium">💸 ÇIKAN</div>
-          <div className="text-lg font-bold text-red-700">
+          <div className="text-base font-bold text-red-700">
             {formatMoney(stats.totalOutgoing, header.currency)}
           </div>
         </div>
         
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
           <div className="text-xs text-blue-600 mb-1 font-medium">📊 NET</div>
-          <div className={`text-lg font-bold ${
+          <div className={`text-base font-bold ${
             stats.netChange >= 0 ? 'text-blue-700' : 'text-red-700'
           }`}>
             {stats.netChange >= 0 ? '+' : ''}{formatMoney(stats.netChange, header.currency)}
           </div>
         </div>
         
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
           <div className="text-xs text-gray-600 mb-1 font-medium">🔄 İŞLEM</div>
-          <div className="text-lg font-bold text-gray-700">{stats.transactionCount}</div>
+          <div className="text-base font-bold text-gray-700">{stats.transactionCount}</div>
           <div className="text-xs text-gray-500 mt-0.5">adet</div>
         </div>
         
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
           <div className="text-xs text-green-600 mb-1 font-medium">✅ TAMAM</div>
-          <div className="text-lg font-bold text-green-700">{stats.categorizedCount}</div>
+          <div className="text-base font-bold text-green-700">{stats.categorizedCount}</div>
           <div className="text-xs text-green-600">%{stats.completedPercent}</div>
         </div>
         
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center">
           <div className="text-xs text-yellow-600 mb-1 font-medium">⏳ BEKLE</div>
-          <div className="text-lg font-bold text-yellow-700">{stats.pendingCount}</div>
+          <div className="text-base font-bold text-yellow-700">{stats.pendingCount}</div>
           <div className="text-xs text-yellow-600">%{100 - stats.completedPercent}</div>
         </div>
       </div>
