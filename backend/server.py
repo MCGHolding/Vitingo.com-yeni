@@ -6763,6 +6763,10 @@ class OpportunityCreate(BaseModel):
     city: Optional[str] = ""
     trade_show: Optional[str] = ""
     trade_show_dates: Optional[str] = ""
+    trade_show_start_date: Optional[str] = ""
+    trade_show_end_date: Optional[str] = ""
+    stand_size: Optional[float] = None
+    stand_size_unit: Optional[str] = "m2"
     expected_revenue: Optional[float] = None
     probability: int = 50
     tags: List[str] = Field(default_factory=list)
