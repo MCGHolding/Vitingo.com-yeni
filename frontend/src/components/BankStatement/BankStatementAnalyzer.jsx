@@ -278,30 +278,38 @@ const BankStatementAnalyzer = ({ bankId }) => {
     setCustomerErrors({});
     
     try {
+      // Backend Customer model'e uygun payload oluştur
+      const customerPayload = {
+        companyName: newCustomerData.name.trim(),
+        companyTitle: newCustomerData.company || newCustomerData.name.trim(),
+        email: newCustomerData.email || '',
+        phone: newCustomerData.phone || '',
+        address: newCustomerData.address || '',
+        country: newCustomerData.country || 'UAE',
+        city: newCustomerData.city || 'Dubai',
+        relationshipType: 'Potansiyel Müşteri',
+        status: 'active'
+      };
+      
       const response = await fetch(`${API_URL}/api/customers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newCustomerData.name.trim(),
-          email: newCustomerData.email,
-          phone: newCustomerData.phone,
-          company_name: newCustomerData.company || newCustomerData.name.trim(),
-          address: newCustomerData.address,
-          country: newCustomerData.country,
-          city: newCustomerData.city
-        })
+        body: JSON.stringify(customerPayload)
       });
       
       if (!response.ok) {
-        throw new Error('Kaydetme hatası');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Kaydetme hatası');
       }
       
       const newCustomer = await response.json();
+      
+      // Müşteri listesini güncelle
       setCustomers(prev => [...prev, newCustomer]);
       
       // Pending transaction'a müşteriyi ata
       if (pendingCustomerTxnId) {
-        handleTransactionUpdate(pendingCustomerTxnId, 'customerId', newCustomer.id);
+        await handleTransactionUpdate(pendingCustomerTxnId, 'customerId', newCustomer.id);
         setPendingCustomerTxnId(null);
       }
       
@@ -318,7 +326,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
       });
       
     } catch (error) {
-      setCustomerErrors({ general: error.message });
+      console.error('Customer creation failed:', error);
+      setCustomerErrors({ general: error.message || 'Bir hata oluştu' });
     } finally {
       setSavingCustomer(false);
     }
