@@ -101,6 +101,13 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
     setFilteredBanks(filtered);
   }, [banks, searchQuery, selectedCompany]);
+  
+  // Auto-select first bank when switching to accounts tab
+  useEffect(() => {
+    if (activeMainTab === 'accounts' && banks.length > 0 && !activeBank) {
+      setActiveBank(banks[0].id);
+    }
+  }, [activeMainTab, banks, activeBank]);
 
   // Group banks by company
   const groupedBanks = filteredBanks.reduce((groups, bank) => {
