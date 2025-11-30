@@ -233,13 +233,44 @@ const BankStatementAnalyzer = ({ bankId }) => {
     });
   };
   
-  // Durum hesapla
+  // Calculate status
   const calculateStatus = (txn) => {
     if (!txn.type) return 'pending';
     if (txn.type === 'collection' && !txn.customerId) return 'pending';
-    if (['fx_buy', 'fx_sell'].includes(txn.type) && !txn.currencyPair) return 'pending';
+    if ((txn.type === 'fx_buy' || txn.type === 'fx_sell') && !txn.currencyPair) return 'pending';
+    if (typeRequiresCategory(txn.type) && !txn.categoryId) return 'pending';
     return 'completed';
   };
+  
+  // Normalize description for grouping
+  const normalizeDescription = (desc) => {
+    if (!desc) return '';
+    return desc
+      .replace(/\d{2}\/\d{2}\/\d{4}/g, '')  // Remove dates
+      .replace(/\(rate: [\d.]+\)/gi, '')     // Remove rate info
+      .replace(/for \w+ \d{4}/gi, '')        // Remove "for Jan 2025"
+      .replace(/\d{2}-\d{2}-\d{4}/g, '')     // Remove dates with dashes
+      .replace(/\s+/g, ' ')                  // Normalize spaces
+      .trim();
+  };
+  
+  // Group transactions by normalized description
+  const groupedDescriptions = useMemo(() => {
+    const groups = {};
+    transactions.forEach(txn => {
+      const normalized = normalizeDescription(txn.description);
+      if (!groups[normalized]) {
+        groups[normalized] = { count: 0, ids: [], original: txn.description };
+      }
+      groups[normalized].count++;
+      groups[normalized].ids.push(txn.id);
+    });
+    
+    return Object.entries(groups)
+      .filter(([_, data]) => data.count > 1)  // Only show 2+ occurrences
+      .sort((a, b) => b[1].count - a[1].count)  // Sort by count descending
+      .slice(0, 10);  // Top 10
+  }, [transactions]);
   
   // Kategori gerekli mi?
   const typeRequiresCategory = (type) => {
