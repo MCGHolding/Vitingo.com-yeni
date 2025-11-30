@@ -786,7 +786,16 @@ const BankStatementAnalyzer = ({ bankId }) => {
       </div>
       
       {/* İstatistik Kartları */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+        {/* Açılış Bakiyesi */}
+        {statement.openingBalance !== undefined && (
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center">
+            <div className="text-xs text-slate-600 mb-1 font-medium">💰 AÇILIŞ</div>
+            <div className="text-xl font-bold text-slate-700">{formatMoney(statement.openingBalance)}</div>
+            <div className="text-xs text-slate-500">{statement.currency || 'AED'}</div>
+          </div>
+        )}
+        
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
           <div className="text-xs text-green-600 mb-1 font-medium">💵 GİREN</div>
           <div className="text-lg font-bold text-green-700">
