@@ -2044,9 +2044,7 @@ const Dashboard = () => {
         onAllBriefs={handleAllBriefs}
         onClosedBriefs={handleClosedBriefs}
         onPassiveBriefs={handlePassiveBriefs}
-        // Teklif handlers
-        onNewTeklif={handleNewTeklif}
-        onAllQuotes={handleAllQuotes}
+        // Teklif handlers (v2 - new system)
         onProposalList={handleProposalList}
         onNewProposal={handleNewProposal}
         onProposalProfiles={handleProposalProfiles}
