@@ -2025,22 +2025,6 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Şehir *</label>
-                  <input
-                    type="text"
-                    value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.city ? 'border-red-500' : 'border-gray-300'
-                    } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
-                    disabled={formData.creation_type === 'opportunity'}
-                  />
-                  {errors.city && (
-                    <p className="text-sm text-red-600 mt-1">{errors.city}</p>
-                  )}
-                </div>
-                
-                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ülke *</label>
                   <select
                     value={formData.country}
@@ -2059,6 +2043,22 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                   </select>
                   {errors.country && (
                     <p className="text-sm text-red-600 mt-1">{errors.country}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Şehir *</label>
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.city ? 'border-red-500' : 'border-gray-300'
+                    } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
+                    disabled={formData.creation_type === 'opportunity'}
+                  />
+                  {errors.city && (
+                    <p className="text-sm text-red-600 mt-1">{errors.city}</p>
                   )}
                 </div>
               </div>
