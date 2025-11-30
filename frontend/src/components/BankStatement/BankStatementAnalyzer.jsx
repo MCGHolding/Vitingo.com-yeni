@@ -238,8 +238,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return ['payment', 'refund', ''].includes(type);
   };
   
-  // İşlem güncelle (with backend sync)
+  // İşlem güncelle (with auto-save)
   const handleTransactionUpdate = async (txnId, field, value) => {
+    // Set saving status
+    setSaveStatus('saving');
+    
     // Optimistic update - önce local state'i güncelle
     setTransactions(prev => prev.map(txn => {
       if (txn.id !== txnId) return txn;
@@ -267,7 +270,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
       return updated;
     }));
     
-    // Backend'e kaydet
+    // Backend'e kaydet (auto-save)
     if (statement?.id) {
       setSavingTransactions(prev => ({ ...prev, [txnId]: true }));
       
@@ -296,10 +299,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
           ));
         }
         
+        // Save successful
+        setSaveStatus('saved');
+        
       } catch (err) {
         console.error('Transaction update failed:', err);
-        // Hata durumunda kullanıcıyı bilgilendirmek için toast/notification eklenebilir
-        // Şimdilik console'a yazıyoruz
+        setSaveStatus('unsaved');
       } finally {
         setSavingTransactions(prev => {
           const newState = { ...prev };
