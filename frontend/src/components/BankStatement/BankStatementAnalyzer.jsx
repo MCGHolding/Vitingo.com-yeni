@@ -66,36 +66,41 @@ const BankStatementAnalyzer = ({ bankId }) => {
   
   const loadLatestStatement = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/banks/${bankId}/statements`);
-      if (response.ok) {
-        const data = await response.json();
-        const statements = Array.isArray(data) ? data : (data.statements || []);
+      // First, get the list of statements (without transactions)
+      const listResponse = await fetch(`${API_URL}/api/banks/${bankId}/statements`);
+      if (listResponse.ok) {
+        const statements = await listResponse.json();
         
         if (statements.length > 0) {
-          // Load the most recent statement
-          const latest = statements[0];
+          // Get the full details of the most recent statement (with transactions)
+          const latestId = statements[0].id;
+          const detailResponse = await fetch(`${API_URL}/api/banks/${bankId}/statements/${latestId}`);
           
-          setStatement({
-            id: latest.id,
-            ...latest,
-            periodStart: latest.periodStart,
-            periodEnd: latest.periodEnd,
-            accountHolder: latest.accountHolder,
-            iban: latest.iban,
-            accountNumber: latest.accountNumber,
-            currency: latest.currency,
-            accountType: latest.accountType,
-            accountOpened: latest.accountOpened,
-            interestRate: latest.interestRate,
-            totalIncoming: latest.totalIncoming,
-            totalOutgoing: latest.totalOutgoing,
-            netChange: latest.netChange,
-            transactionCount: latest.transactionCount,
-            categorizedCount: latest.categorizedCount,
-            pendingCount: latest.pendingCount
-          });
-          
-          setTransactions(latest.transactions || []);
+          if (detailResponse.ok) {
+            const fullStatement = await detailResponse.json();
+            
+            setStatement({
+              id: fullStatement.id,
+              periodStart: fullStatement.periodStart,
+              periodEnd: fullStatement.periodEnd,
+              accountHolder: fullStatement.accountHolder,
+              iban: fullStatement.iban,
+              accountNumber: fullStatement.accountNumber,
+              currency: fullStatement.currency || 'AED',
+              accountType: fullStatement.accountType,
+              accountOpened: fullStatement.accountOpened,
+              interestRate: fullStatement.interestRate,
+              totalIncoming: fullStatement.totalIncoming,
+              totalOutgoing: fullStatement.totalOutgoing,
+              netChange: fullStatement.netChange,
+              transactionCount: fullStatement.transactionCount,
+              categorizedCount: fullStatement.categorizedCount,
+              pendingCount: fullStatement.pendingCount,
+              status: fullStatement.status
+            });
+            
+            setTransactions(fullStatement.transactions || []);
+          }
         }
       }
     } catch (error) {
