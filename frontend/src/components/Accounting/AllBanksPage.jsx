@@ -271,8 +271,37 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      {/* Main Tabs */}
+      <div className="border-b mb-6">
+        <nav className="flex gap-4">
+          <button 
+            onClick={() => setActiveMainTab('info')}
+            className={`px-4 py-2 border-b-2 font-medium transition-colors ${
+              activeMainTab === 'info' 
+                ? 'border-green-500 text-green-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            📋 Banka Bilgileri
+          </button>
+          <button 
+            onClick={() => setActiveMainTab('accounts')}
+            className={`px-4 py-2 border-b-2 font-medium transition-colors ${
+              activeMainTab === 'accounts' 
+                ? 'border-green-500 text-green-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            💳 Banka Hesapları
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab Content: Banka Bilgileri */}
+      {activeMainTab === 'info' && (
+        <>
+          {/* Filters */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
