@@ -777,11 +777,6 @@ const Dashboard = () => {
     setShowNewPersonForm(false);
   };
 
-  const handleAllQuotes = () => {
-    setCurrentView('all-quotes');
-    console.log('All Quotes clicked');
-  };
-
   const handleProposalProfiles = () => {
     setCurrentView('proposal-profiles');
   };
