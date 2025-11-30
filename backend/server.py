@@ -14678,6 +14678,8 @@ async def upload_bank_statement(
             "fileUrl": None,
             "importedAt": datetime.now(timezone.utc).isoformat(),
             "importedBy": "current_user",  # TODO: Get from auth
+            "openingBalance": parsed["header"].get("openingBalance"),
+            "closingBalance": parsed["header"].get("closingBalance"),
             "totalIncoming": total_incoming,
             "totalOutgoing": total_outgoing,
             "netChange": total_incoming - total_outgoing,
