@@ -14277,6 +14277,7 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     # Will be set after transactions are parsed
     
     # === TRANSACTIONS PARSE ===
+    # Note: Closing balance will be set from last transaction's balance
     
     # Transaction line pattern:
     # DD/MM/YYYY + space + PXXXXXXXXX + space + description + amount + balance
