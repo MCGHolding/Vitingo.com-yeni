@@ -14521,21 +14521,12 @@ async def upload_bank_statement(
         # Parse PDF
         parsed = parse_wio_bank_pdf(pdf_bytes)
         
-        # Auto-match transactions
-        auto_matched_count = 0
-        for txn in parsed["transactions"]:
-            pattern = await find_matching_pattern(txn["description"], bank_id)
-            if pattern and pattern["confidence"] >= 0.9:
-                txn["type"] = pattern["transactionType"]
-                txn["categoryId"] = pattern.get("categoryId")
-                txn["subCategoryId"] = pattern.get("subCategoryId")
-                txn["customerId"] = pattern.get("customerId")
-                txn["currencyPair"] = pattern.get("currencyPair")
-                txn["autoMatched"] = True
-                txn["matchedPatternId"] = pattern["id"]
-                txn["confidence"] = pattern["confidence"]
-                txn["status"] = "completed" if txn["type"] else "pending"
-                auto_matched_count += 1
+        # Auto-match transactions using Pattern Matching Service
+        pattern_matcher = PatternMatchingService(db)
+        parsed["transactions"], auto_matched_count, suggested_count = await pattern_matcher.apply_patterns_to_transactions(
+            parsed["transactions"],
+            bank_id
+        )
         
         # Calculate statistics
         total_incoming = sum(t["amount"] for t in parsed["transactions"] if t["amount"] > 0)
