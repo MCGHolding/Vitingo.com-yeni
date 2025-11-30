@@ -2422,11 +2422,13 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
             ) : (
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="modules">
-                  {(provided) => (
+                  {(provided, snapshot) => (
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className="space-y-2"
+                      className={`space-y-2 min-h-[100px] rounded-lg transition-colors ${
+                        snapshot.isDraggingOver ? 'bg-blue-50 ring-2 ring-blue-300' : ''
+                      }`}
                     >
                       {selectedModules.map((module, index) => (
                         <Draggable
