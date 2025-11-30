@@ -3305,13 +3305,13 @@ export default function NewBriefForm({ onBackToDashboard }) {
                     <input
                       type="text"
                       readOnly
-                      value={`https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`}
+                      value={`https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
                     />
                     <Button
                       type="button"
                       onClick={() => {
-                        const link = `https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`;
+                        const link = `https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`;
                         navigator.clipboard.writeText(link);
                         showToast('Brief link kopyalandı!', 'success');
                       }}
@@ -3348,7 +3348,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   <Button
                     type="button"
                     onClick={() => {
-                      const briefLink = `https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`;
+                      const briefLink = `https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`;
                       const message = `Stand Brief hazırladım! 🏢\n\nBrief ID: ${stepData.briefId}\nLink: ${briefLink}\n\nDetayları inceleyebilirsiniz.`;
                       const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
                       window.open(whatsappURL, '_blank');
@@ -3615,7 +3615,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                         </div>
                         <div>
                           <p><strong>Durum:</strong> <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Tamamlandı</span></p>
-                          <p><strong>Link:</strong> <a href={`https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} className="text-blue-600 underline text-xs">Brief'i Görüntüle</a></p>
+                          <p><strong>Link:</strong> <a href={`https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} className="text-blue-600 underline text-xs">Brief'i Görüntüle</a></p>
                         </div>
                       </div>
                     </div>
@@ -3686,7 +3686,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                   <textarea
                     value={mailData.message}
                     onChange={(e) => setMailData({...mailData, message: e.target.value})}
-                    placeholder={`Merhaba,\n\nStand brief dosyamı sizinle paylaşıyorum.\n\nBrief ID: ${stepData.briefId}\nLink: https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}\n\nİyi çalışmalar.`}
+                    placeholder={`Merhaba,\n\nStand brief dosyamı sizinle paylaşıyorum.\n\nBrief ID: ${stepData.briefId}\nLink: https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}\n\nİyi çalışmalar.`}
                     rows={6}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
                   />
@@ -3842,7 +3842,7 @@ export default function NewBriefForm({ onBackToDashboard }) {
                 {/* Action Buttons */}
                 <div className="flex justify-between items-center pt-6 border-t">
                   <div className="text-sm text-gray-500">
-                    Brief Link: <a href={`https://fair-timeline.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} 
+                    Brief Link: <a href={`https://sales-opp-enhance.preview.emergentagent.com/dashboard#brief-${stepData.briefId}`} 
                                className="text-blue-600 underline">Brief'i Görüntüle</a>
                   </div>
                   <div className="flex space-x-3">
