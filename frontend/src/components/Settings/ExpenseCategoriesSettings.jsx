@@ -251,9 +251,9 @@ const ExpenseCategoriesSettings = () => {
       
       {/* ========== KATEGORİ LİSTESİ ========== */}
       {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse bg-gray-100 rounded-xl h-24" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <div key={i} className="animate-pulse bg-gray-100 rounded-xl h-48" />
           ))}
         </div>
       ) : categories.length === 0 ? (
@@ -272,7 +272,7 @@ const ExpenseCategoriesSettings = () => {
           )}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map(category => (
             <div
               key={category.id || category.name}
