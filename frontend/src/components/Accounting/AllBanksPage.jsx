@@ -428,6 +428,61 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           })
         )}
       </div>
+        </>
+      )}
+
+      {/* Tab Content: Banka Hesapları */}
+      {activeMainTab === 'accounts' && (
+        <div>
+          {/* Bank Sub-Tabs */}
+          {banks.length > 0 ? (
+            <>
+              <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
+                {banks.map(bank => (
+                  <button
+                    key={bank.id}
+                    onClick={() => setActiveBank(bank.id)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                      activeBank === bank.id 
+                        ? 'bg-green-600 text-white' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {bank.bank_name}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Selected Bank Content */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                {activeBank ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <span className="text-4xl mb-3 block">🏦</span>
+                    <p className="font-medium text-gray-800 mb-2">
+                      {banks.find(b => b.id === activeBank)?.bank_name}
+                    </p>
+                    <p className="text-sm">Hesap bilgileri yakında eklenecek</p>
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <p>Banka seçin</p>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed">
+              <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz banka eklenmemiş</h3>
+              <p className="text-gray-500 mb-4">İlk bankanızı ekleyerek başlayın</p>
+              <Button onClick={onNewBank} className="bg-green-600 hover:bg-green-700">
+                <Building2 className="h-4 w-4 mr-2" />
+                Yeni Banka Ekle
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
