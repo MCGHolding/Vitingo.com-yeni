@@ -1022,13 +1022,6 @@ const Dashboard = () => {
     setCurrentView('new-brief');
   };
 
-  // Teklif handlers
-  const handleNewTeklif = () => {
-    console.log('🎯 handleNewTeklif called - redirecting to new proposal wizard');
-    setCurrentView('new-proposal');
-    console.log('✅ Current view set to: new-proposal');
-  };
-
   const handleCalendar = () => {
     console.log('🗓️ handleCalendar called - setting view to calendar');
     setCurrentView('calendar');
