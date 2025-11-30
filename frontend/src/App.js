@@ -791,6 +791,16 @@ const Dashboard = () => {
     window.history.pushState({}, '', '/proposals');
   };
 
+  const handleDraftQuotes = () => {
+    setCurrentView('proposal-list');
+    window.history.pushState({}, '', '/proposals?status=draft');
+  };
+
+  const handleSentQuotes = () => {
+    setCurrentView('proposal-list');
+    window.history.pushState({}, '', '/proposals?status=sent');
+  };
+
   const handleViewProposal = (proposalId) => {
     console.log('View proposal:', proposalId);
     // Store proposal ID for wizard to load
