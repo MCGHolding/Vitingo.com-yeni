@@ -742,32 +742,28 @@ const BankStatementAnalyzer = ({ bankId }) => {
       </div>
       
       {/* Action Buttons */}
-      <div className="flex items-center justify-end">
-        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-        </h2>
-        <div className="flex gap-2">
-          <button
-            onClick={handleNewUpload}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
-          >
-            <Upload className="h-4 w-4" />
-            Yeni Ekstre Yükle
-          </button>
-          <button
-            onClick={handleExportExcel}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm font-medium"
-          >
-            <Download className="h-4 w-4" />
-            Excel İndir
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving || stats.pendingCount > 0}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
-          >
-            {saving ? '⏳ Kaydediliyor...' : '💾 Kaydet ve Öğren'}
-          </button>
-        </div>
+      <div className="flex items-center justify-end gap-2">
+        <button
+          onClick={handleNewUpload}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
+        >
+          <Upload className="h-4 w-4" />
+          Yeni Ekstre Yükle
+        </button>
+        <button
+          onClick={handleExportExcel}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm font-medium"
+        >
+          <Download className="h-4 w-4" />
+          Excel İndir
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={saving || stats.pendingCount > 0}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
+        >
+          {saving ? '⏳ Kaydediliyor...' : '💾 Kaydet ve Öğren'}
+        </button>
       </div>
       
       {/* Hesap Bilgileri Kartı */}
