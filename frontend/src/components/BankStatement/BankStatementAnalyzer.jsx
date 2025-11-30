@@ -999,13 +999,55 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       
                       {/* Durum */}
                       <td className="px-3 py-3 text-center">
-                        {txn.status === 'completed' ? (
-                          <span className="text-xl">✅</span>
+                        {txn.autoMatched && !txn.matchConfirmed ? (
+                          <span className="text-purple-600 text-xl" title="Otomatik eşleştirildi">🤖</span>
+                        ) : txn.status === 'completed' ? (
+                          <span className="text-green-600 text-xl">✅</span>
                         ) : (
-                          <span className="text-xl">⏳</span>
+                          <span className="text-yellow-600 text-xl">⏳</span>
                         )}
                       </td>
                     </tr>
+                    
+                    {/* Otomatik Eşleştirme Badge */}
+                    {txn.autoMatched && !txn.matchConfirmed && (
+                      <tr className="bg-green-50/50">
+                        <td></td>
+                        <td></td>
+                        <td colSpan={7} className="px-3 py-2">
+                          <AutoMatchBadge
+                            pattern={txn.matchedPatternId ? 'Öğrenilmiş pattern' : ''}
+                            confidence={txn.confidence || 0}
+                            matchCount={0}
+                            confirmCount={0}
+                            isAutoMatched={true}
+                            onConfirm={() => handleConfirmMatch(txn.id, txn.matchedPatternId)}
+                            onReject={() => handleRejectMatch(txn.id, txn.matchedPatternId)}
+                            onEdit={() => handleEditMatch(txn.id)}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                    
+                    {/* Öneri Badge */}
+                    {txn.suggestedMatch && !txn.autoMatched && (
+                      <tr className="bg-yellow-50/50">
+                        <td></td>
+                        <td></td>
+                        <td colSpan={7} className="px-3 py-2">
+                          <AutoMatchBadge
+                            pattern={txn.suggestedMatch.pattern}
+                            confidence={txn.suggestedMatch.confidence || 0}
+                            matchCount={txn.suggestedMatch.matchCount || 0}
+                            confirmCount={txn.suggestedMatch.confirmCount || 0}
+                            isAutoMatched={false}
+                            onConfirm={() => handleApplySuggestion(txn.id)}
+                            onReject={() => handleCloseSuggestion(txn.id)}
+                            onEdit={() => handleCloseSuggestion(txn.id)}
+                          />
+                        </td>
+                      </tr>
+                    )}
                     
                     {/* Koşullu Satır - Müşteri */}
                     {showCustomerField && (
