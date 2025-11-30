@@ -881,12 +881,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
         </div>
         
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
-          <div className="text-xs text-blue-600 mb-1 font-medium">📊 NET</div>
-          <div className={`text-base font-bold ${
-            stats.netChange >= 0 ? 'text-blue-700' : 'text-red-700'
-          }`}>
-            {stats.netChange >= 0 ? '+' : ''}{formatMoney(stats.netChange, header.currency)}
+          <div className="text-xs text-blue-600 mb-1 font-medium">💰 KAPANIŞ</div>
+          <div className="text-base font-bold text-blue-700">
+            {formatMoney(stats.closingBalance)}
           </div>
+          <div className="text-xs text-blue-600">{statement.currency || 'AED'}</div>
         </div>
         
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
