@@ -2071,10 +2071,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                     placeholder="Hall 5"
                     value={formData.hall_number}
                     onChange={(e) => handleInputChange('hall_number', e.target.value)}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''
-                    }`}
-                    disabled={formData.creation_type === 'opportunity'}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
@@ -2085,10 +2082,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                     placeholder="A-120"
                     value={formData.stand_number}
                     onChange={(e) => handleInputChange('stand_number', e.target.value)}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''
-                    }`}
-                    disabled={formData.creation_type === 'opportunity'}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
