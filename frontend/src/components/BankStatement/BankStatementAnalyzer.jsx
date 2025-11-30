@@ -1222,15 +1222,26 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       
                       {/* Tür */}
                       <td className="px-3 py-3">
-                        <select
-                          value={txn.type || ''}
-                          onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
-                          className={`w-full px-2 py-1.5 border rounded-lg text-sm font-medium ${getTypeColor(txn.type)}`}
-                        >
-                          {TRANSACTION_TYPES.map(type => (
-                            <option key={type.value} value={type.value}>{type.label}</option>
-                          ))}
-                        </select>
+                        <div className="relative flex items-center gap-1">
+                          <select
+                            value={txn.type || ''}
+                            onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
+                            className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm font-medium ${getTypeColor(txn.type)}`}
+                          >
+                            {TRANSACTION_TYPES.map(type => (
+                              <option key={type.value} value={type.value}>{type.label}</option>
+                            ))}
+                          </select>
+                          {txn.type && (
+                            <button
+                              onClick={() => handleTransactionUpdate(txn.id, 'type', '')}
+                              className="absolute right-2 text-gray-400 hover:text-red-500 text-sm font-bold"
+                              title="Tür seçimini kaldır"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </td>
                       
                       {/* Kategori */}
