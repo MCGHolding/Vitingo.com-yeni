@@ -38,6 +38,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [saving, setSaving] = useState(false);
   const [showPendingOnly, setShowPendingOnly] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [savingTransactions, setSavingTransactions] = useState({});
   
   // Customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
