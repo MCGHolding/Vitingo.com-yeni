@@ -277,6 +277,56 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return ['payment', 'refund', ''].includes(type);
   };
   
+  // Tüm işlemi sıfırla
+  const resetTransaction = async (txnId) => {
+    setSaveStatus('saving');
+    
+    // Local state'i sıfırla
+    setTransactions(prev => prev.map(txn => {
+      if (txn.id !== txnId) return txn;
+      
+      return {
+        ...txn,
+        type: '',
+        categoryId: null,
+        subCategoryId: null,
+        customerId: null,
+        currencyPair: null,
+        status: 'pending'
+      };
+    }));
+    
+    // Backend'e kaydet
+    if (statement?.id) {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/${txnId}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: '',
+              categoryId: null,
+              subCategoryId: null,
+              customerId: null,
+              currencyPair: null,
+              status: 'pending'
+            })
+          }
+        );
+        
+        if (response.ok) {
+          setSaveStatus('saved');
+        } else {
+          setSaveStatus('unsaved');
+        }
+      } catch (err) {
+        console.error('Reset failed:', err);
+        setSaveStatus('unsaved');
+      }
+    }
+  };
+  
   // İşlem güncelle (with auto-save)
   const handleTransactionUpdate = async (txnId, field, value) => {
     // Set saving status
