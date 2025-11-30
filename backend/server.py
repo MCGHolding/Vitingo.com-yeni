@@ -13637,6 +13637,321 @@ async def seed_default_design_templates():
         logger.error(f"Error seeding design templates: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== EXPENSE CATEGORIES ENDPOINTS =====================
+
+class SubCategory(BaseModel):
+    id: Optional[str] = None
+    name: str
+    slug: Optional[str] = None
+    order: Optional[int] = None
+
+class CategoryCreate(BaseModel):
+    name: str
+    icon: Optional[str] = "📁"
+    color: Optional[str] = None
+    description: Optional[str] = None
+    subCategories: Optional[List[SubCategory]] = []
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    icon: Optional[str] = None
+    color: Optional[str] = None
+    description: Optional[str] = None
+    subCategories: Optional[List[SubCategory]] = None
+
+def slugify(text: str) -> str:
+    """Türkçe karakterleri dönüştür ve slug oluştur"""
+    tr_map = {
+        'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c',
+        'İ': 'i', 'Ğ': 'g', 'Ü': 'u', 'Ş': 's', 'Ö': 'o', 'Ç': 'c'
+    }
+    for tr_char, en_char in tr_map.items():
+        text = text.replace(tr_char, en_char)
+    text = text.lower().strip()
+    text = re.sub(r'[^a-z0-9\s-]', '', text)
+    text = re.sub(r'[\s_]+', '-', text)
+    text = re.sub(r'-+', '-', text)
+    return text.strip('-')
+
+@api_router.get("/settings/expense-categories")
+async def list_categories(
+    search: Optional[str] = None,
+    include_inactive: bool = False
+):
+    """Tüm kategorileri listele"""
+    try:
+        query = {}
+        
+        if not include_inactive:
+            query["isActive"] = True
+        
+        if search:
+            query["$or"] = [
+                {"name": {"$regex": search, "$options": "i"}},
+                {"subCategories.name": {"$regex": search, "$options": "i"}}
+            ]
+        
+        categories = await db.expense_categories.find(query, {"_id": 0}).sort("order", 1).to_list(None)
+        
+        return categories
+    except Exception as e:
+        logger.error(f"Error listing expense categories: {str(e)}")
+        return []
+
+@api_router.post("/settings/expense-categories")
+async def create_category(data: CategoryCreate):
+    """Yeni kategori oluştur"""
+    try:
+        # Aynı isimde kategori var mı kontrol et
+        existing = await db.expense_categories.find_one({
+            "name": {"$regex": f"^{data.name}$", "$options": "i"}
+        })
+        if existing:
+            raise HTTPException(400, "Bu isimde bir kategori zaten mevcut")
+        
+        # Son sıra numarasını bul
+        last_category = await db.expense_categories.find_one(
+            sort=[("order", -1)]
+        )
+        next_order = (last_category.get("order", 0) + 1) if last_category else 1
+        
+        # Alt kategorileri hazırla
+        sub_categories = []
+        for i, sub in enumerate(data.subCategories or []):
+            sub_categories.append({
+                "id": f"sub_{ObjectId()}",
+                "name": sub.name.strip(),
+                "slug": slugify(sub.name),
+                "order": i + 1
+            })
+        
+        category = {
+            "name": data.name.strip(),
+            "slug": slugify(data.name),
+            "icon": data.icon or "📁",
+            "color": data.color,
+            "description": data.description,
+            "subCategories": sub_categories,
+            "isActive": True,
+            "isSystem": False,
+            "order": next_order,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.expense_categories.insert_one(category)
+        category.pop("_id", None)
+        
+        return category
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating expense category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/settings/expense-categories/{category_id}")
+async def get_category(category_id: str):
+    """Kategori detayı"""
+    try:
+        category = await db.expense_categories.find_one({"id": category_id}, {"_id": 0})
+        
+        if not category:
+            raise HTTPException(404, "Kategori bulunamadı")
+        
+        return category
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting expense category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/settings/expense-categories/{category_id}")
+async def update_category(category_id: str, data: CategoryUpdate):
+    """Kategori güncelle"""
+    try:
+        category = await db.expense_categories.find_one({"id": category_id})
+        
+        if not category:
+            raise HTTPException(404, "Kategori bulunamadı")
+        
+        update_data = {"updatedAt": datetime.now(timezone.utc).isoformat()}
+        
+        if data.name is not None:
+            # Aynı isimde başka kategori var mı kontrol et
+            existing = await db.expense_categories.find_one({
+                "id": {"$ne": category_id},
+                "name": {"$regex": f"^{data.name}$", "$options": "i"}
+            })
+            if existing:
+                raise HTTPException(400, "Bu isimde bir kategori zaten mevcut")
+            
+            update_data["name"] = data.name.strip()
+            update_data["slug"] = slugify(data.name)
+        
+        if data.icon is not None:
+            update_data["icon"] = data.icon
+        
+        if data.color is not None:
+            update_data["color"] = data.color
+        
+        if data.description is not None:
+            update_data["description"] = data.description
+        
+        if data.subCategories is not None:
+            sub_categories = []
+            for i, sub in enumerate(data.subCategories):
+                sub_categories.append({
+                    "id": sub.id or f"sub_{ObjectId()}",
+                    "name": sub.name.strip(),
+                    "slug": slugify(sub.name),
+                    "order": i + 1
+                })
+            update_data["subCategories"] = sub_categories
+        
+        await db.expense_categories.update_one(
+            {"id": category_id},
+            {"$set": update_data}
+        )
+        
+        updated = await db.expense_categories.find_one({"id": category_id}, {"_id": 0})
+        
+        return updated
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating expense category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/settings/expense-categories/{category_id}")
+async def delete_category(category_id: str):
+    """Kategori sil"""
+    try:
+        category = await db.expense_categories.find_one({"id": category_id})
+        
+        if not category:
+            raise HTTPException(404, "Kategori bulunamadı")
+        
+        if category.get("isSystem"):
+            raise HTTPException(400, "Sistem kategorileri silinemez")
+        
+        # Bu kategoriye bağlı harcama var mı kontrol et
+        expense_count = 0
+        try:
+            expense_count = await db.expenses.count_documents({
+                "$or": [
+                    {"categoryId": category_id},
+                    {"category": category.get("name")}
+                ]
+            })
+        except Exception as e:
+            logger.debug(f"Expenses collection not found or error: {e}")
+        
+        if expense_count > 0:
+            raise HTTPException(
+                400, 
+                f"Bu kategoriye bağlı {expense_count} harcama kaydı var. Önce harcamaları başka kategoriye taşıyın."
+            )
+        
+        await db.expense_categories.delete_one({"id": category_id})
+        
+        return {"success": True, "message": "Kategori silindi"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting expense category: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/settings/expense-categories/{category_id}/subcategories")
+async def add_subcategory(category_id: str, data: SubCategory):
+    """Alt kategori ekle"""
+    try:
+        category = await db.expense_categories.find_one({"id": category_id})
+        
+        if not category:
+            raise HTTPException(404, "Kategori bulunamadı")
+        
+        # Aynı isimde alt kategori var mı kontrol et
+        existing_subs = category.get("subCategories", [])
+        for sub in existing_subs:
+            if sub["name"].lower() == data.name.strip().lower():
+                raise HTTPException(400, "Bu isimde bir alt kategori zaten mevcut")
+        
+        new_sub = {
+            "id": f"sub_{ObjectId()}",
+            "name": data.name.strip(),
+            "slug": slugify(data.name),
+            "order": len(existing_subs) + 1
+        }
+        
+        await db.expense_categories.update_one(
+            {"id": category_id},
+            {
+                "$push": {"subCategories": new_sub},
+                "$set": {"updatedAt": datetime.now(timezone.utc).isoformat()}
+            }
+        )
+        
+        return new_sub
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error adding subcategory: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/settings/expense-categories/{category_id}/subcategories/{sub_id}")
+async def delete_subcategory(category_id: str, sub_id: str):
+    """Alt kategori sil"""
+    try:
+        category = await db.expense_categories.find_one({"id": category_id})
+        
+        if not category:
+            raise HTTPException(404, "Kategori bulunamadı")
+        
+        # Bu alt kategoriye bağlı harcama var mı kontrol et
+        expense_count = 0
+        try:
+            expense_count = await db.expenses.count_documents({
+                "subCategoryId": sub_id
+            })
+        except Exception as e:
+            logger.debug(f"Expenses collection not found or error: {e}")
+        
+        if expense_count > 0:
+            raise HTTPException(
+                400,
+                f"Bu alt kategoriye bağlı {expense_count} harcama kaydı var."
+            )
+        
+        await db.expense_categories.update_one(
+            {"id": category_id},
+            {
+                "$pull": {"subCategories": {"id": sub_id}},
+                "$set": {"updatedAt": datetime.now(timezone.utc).isoformat()}
+            }
+        )
+        
+        return {"success": True, "message": "Alt kategori silindi"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting subcategory: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/settings/expense-categories/reorder")
+async def reorder_categories(category_ids: List[str]):
+    """Kategorileri yeniden sırala"""
+    try:
+        for i, cat_id in enumerate(category_ids):
+            await db.expense_categories.update_one(
+                {"id": cat_id},
+                {"$set": {"order": i + 1}}
+            )
+        
+        return {"success": True}
+    except Exception as e:
+        logger.error(f"Error reordering categories: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
