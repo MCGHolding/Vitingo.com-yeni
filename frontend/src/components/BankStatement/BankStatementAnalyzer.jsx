@@ -1274,19 +1274,30 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       
                       {/* Alt Kategori */}
                       <td className="px-3 py-3">
-                        <select
-                          value={txn.subCategoryId || ''}
-                          onChange={(e) => handleTransactionUpdate(txn.id, 'subCategoryId', e.target.value || null)}
-                          disabled={!showCategoryFields || !txn.categoryId}
-                          className={`w-full px-2 py-1.5 border rounded-lg text-sm ${
-                            !showCategoryFields || !txn.categoryId ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
-                          }`}
-                        >
-                          <option value="">─</option>
-                          {getSubCategories(txn.categoryId).map(sub => (
-                            <option key={sub.id} value={sub.id}>{sub.name}</option>
-                          ))}
-                        </select>
+                        <div className="relative flex items-center gap-1">
+                          <select
+                            value={txn.subCategoryId || ''}
+                            onChange={(e) => handleTransactionUpdate(txn.id, 'subCategoryId', e.target.value || null)}
+                            disabled={!showCategoryFields || !txn.categoryId}
+                            className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm ${
+                              !showCategoryFields || !txn.categoryId ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
+                            }`}
+                          >
+                            <option value="">─</option>
+                            {getSubCategories(txn.categoryId).map(sub => (
+                              <option key={sub.id} value={sub.id}>{sub.name}</option>
+                            ))}
+                          </select>
+                          {txn.subCategoryId && showCategoryFields && txn.categoryId && (
+                            <button
+                              onClick={() => handleTransactionUpdate(txn.id, 'subCategoryId', null)}
+                              className="absolute right-2 text-gray-400 hover:text-red-500 text-sm font-bold"
+                              title="Alt kategori seçimini kaldır"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </td>
                       
                       {/* Tutar */}
