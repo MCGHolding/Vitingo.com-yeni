@@ -584,10 +584,10 @@ export default function Sidebar({
       return;
     }
     
-    if (subItem && subItem.name === 'Yeni Teklif') {
-      console.log('Yeni Teklif clicked - calling onNewTeklif handler');
-      if (onNewTeklif) {
-        onNewTeklif();
+    if (subItem && subItem.name === '+ Yeni Teklif') {
+      console.log('+ Yeni Teklif clicked - calling onNewProposal handler');
+      if (onNewProposal) {
+        onNewProposal();
       }
       return;
     }
@@ -1011,10 +1011,10 @@ export default function Sidebar({
     }
 
     // Handle Teklif menu actions
-    if (subItem && subItem.name === 'Yeni Teklif') {
-      console.log('Yeni Teklif clicked - calling onNewTeklif handler');
-      if (onNewTeklif) {
-        onNewTeklif();
+    if (subItem && subItem.name === '+ Yeni Teklif') {
+      console.log('+ Yeni Teklif clicked - calling onNewProposal handler');
+      if (onNewProposal) {
+        onNewProposal();
       }
       return;
     }
