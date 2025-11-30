@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://sales-opp-enhance.preview.emergentagent.com"
+BACKEND_URL = "https://statement-tool.preview.emergentagent.com"
 
 def debug_convention_centers():
     """Debug the convention centers DELETE issue"""
