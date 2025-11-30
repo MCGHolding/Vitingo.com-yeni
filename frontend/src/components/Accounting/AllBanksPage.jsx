@@ -462,8 +462,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     const isWioBank = selectedBank?.bank_name?.toLowerCase().includes('wio');
                     
                     if (isWioBank) {
-                      // Dynamically import and render BankStatementAnalyzer
-                      const BankStatementAnalyzer = require('../BankStatement/BankStatementAnalyzer').default;
+                      // Use static import for BankStatementAnalyzer
                       return <BankStatementAnalyzer bankId={activeBank} />;
                     }
                     
