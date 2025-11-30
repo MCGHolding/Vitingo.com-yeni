@@ -455,6 +455,33 @@ const Dashboard = () => {
     setCurrentView('edit-opportunity');
   };
 
+  // New Opportunity view/edit handlers
+  const handleViewOpportunity = (opportunity) => {
+    setSelectedOpportunityForView(opportunity);
+    setCurrentView('view-opportunity');
+  };
+
+  const handleEditOpportunityNew = (opportunity) => {
+    setSelectedOpportunityForEditNew(opportunity);
+    setCurrentView('edit-opportunity-new');
+  };
+
+  const handleBackFromViewOpportunity = () => {
+    setSelectedOpportunityForView(null);
+    setCurrentView('all-opportunities');
+  };
+
+  const handleBackFromEditOpportunityNew = () => {
+    setSelectedOpportunityForEditNew(null);
+    setCurrentView('all-opportunities');
+  };
+
+  const handleEditFromViewOpportunity = (opportunity) => {
+    setSelectedOpportunityForView(null);
+    setSelectedOpportunityForEditNew(opportunity);
+    setCurrentView('edit-opportunity-new');
+  };
+
   // Customer view/edit handlers
   const handleViewCustomer = (customer) => {
     setSelectedCustomerForView(customer);
