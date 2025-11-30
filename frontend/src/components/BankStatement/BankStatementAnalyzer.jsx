@@ -75,9 +75,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
     try {
       const response = await fetch(`${API_URL}/api/customers`);
       const data = await response.json();
-      setCustomers(data.customers || data || []);
+      // Backend'den direkt array dönüyor
+      const customerList = Array.isArray(data) ? data : (data.customers || []);
+      setCustomers(customerList);
     } catch (error) {
       console.error('Failed to load customers:', error);
+      setCustomers([]);
     }
   };
   
