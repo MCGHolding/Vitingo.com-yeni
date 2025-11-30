@@ -1429,18 +1429,29 @@ const BankStatementAnalyzer = ({ bankId }) => {
                         <td colSpan={8} className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <label className="text-xs text-gray-600 font-medium whitespace-nowrap">💱 Döviz Çifti:</label>
-                            <select
-                              value={txn.currencyPair || suggestCurrencyPair(txn.description) || ''}
-                              onChange={(e) => handleTransactionUpdate(txn.id, 'currencyPair', e.target.value || null)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            >
-                              <option value="">Seçiniz...</option>
-                              {CURRENCY_PAIRS.map(pair => (
-                                <option key={pair.value} value={pair.value}>
-                                  {pair.label} {suggestCurrencyPair(txn.description) === pair.value ? '(önerilen)' : ''}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="relative flex-1">
+                              <select
+                                value={txn.currencyPair || suggestCurrencyPair(txn.description) || ''}
+                                onChange={(e) => handleTransactionUpdate(txn.id, 'currencyPair', e.target.value || null)}
+                                className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm"
+                              >
+                                <option value="">Seçiniz...</option>
+                                {CURRENCY_PAIRS.map(pair => (
+                                  <option key={pair.value} value={pair.value}>
+                                    {pair.label} {suggestCurrencyPair(txn.description) === pair.value ? '(önerilen)' : ''}
+                                  </option>
+                                ))}
+                              </select>
+                              {txn.currencyPair && (
+                                <button
+                                  onClick={() => handleTransactionUpdate(txn.id, 'currencyPair', null)}
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 text-sm font-bold"
+                                  title="Döviz çifti seçimini kaldır"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
