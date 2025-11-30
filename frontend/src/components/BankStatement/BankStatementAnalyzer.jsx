@@ -338,24 +338,40 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return null;
   };
   
-  // Kaydet
+  // Kaydet ve Öğren
   const handleSave = async () => {
+    // Önce tüm pending transaction'ları kontrol et
+    const pendingCount = transactions.filter(t => t.status === 'pending').length;
+    
+    if (pendingCount > 0) {
+      alert(`⚠️ Hata: ${pendingCount} işlem henüz tamamlanmadı. Tüm işlemleri kategorize ettikten sonra tekrar deneyin.`);
+      return;
+    }
+    
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/banks/${bankId}/statements/${statement.id}/complete`, {
-        method: 'POST'
-      });
+      // Backend'e complete isteği gönder (pattern learning)
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements/${statement.id}/complete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
       
       if (!response.ok) {
         throw new Error('Kaydetme hatası');
       }
       
       const data = await response.json();
-      alert(`✅ Kaydedildi! ${data.learnedPatterns || 0} yeni pattern öğrenildi.`);
       
+      alert(`✅ Başarıyla kaydedildi!\n\n📚 ${data.learnedPatterns || 0} yeni pattern öğrenildi.\n\nBu pattern'lar gelecek ekstrelerde otomatik eşleştirme için kullanılacak.`);
+      
+      // Statement'ı completed olarak işaretle
       setStatement(prev => ({ ...prev, status: 'completed' }));
+      
     } catch (error) {
-      alert('Kaydetme hatası: ' + error.message);
+      alert(`❌ Kaydetme hatası: ${error.message}`);
     } finally {
       setSaving(false);
     }
