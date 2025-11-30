@@ -671,13 +671,41 @@ const BankStatementAnalyzer = ({ bankId }) => {
     };
   }, [transactions, statement]);
   
-  // Filtreleme
+  // Filtered transactions
   const filteredTransactions = useMemo(() => {
-    if (showPendingOnly) {
-      return transactions.filter(t => t.status === 'pending');
+    let filtered = transactions;
+    
+    // Search query filter
+    if (searchQuery) {
+      filtered = filtered.filter(t => 
+        t.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
-    return transactions;
-  }, [transactions, showPendingOnly]);
+    
+    // Type filter
+    if (typeFilter) {
+      filtered = filtered.filter(t => t.type === typeFilter);
+    }
+    
+    // Status filter
+    if (statusFilter) {
+      filtered = filtered.filter(t => t.status === statusFilter);
+    }
+    
+    // Quick filter (normalized description)
+    if (quickFilter) {
+      filtered = filtered.filter(t => 
+        normalizeDescription(t.description) === quickFilter
+      );
+    }
+    
+    // Pending only toggle
+    if (showPendingOnly) {
+      filtered = filtered.filter(t => t.status === 'pending');
+    }
+    
+    return filtered;
+  }, [transactions, searchQuery, typeFilter, statusFilter, quickFilter, showPendingOnly]);
   
   // Ekstre yüklenmemişse - Upload Area göster
   if (!statement) {
