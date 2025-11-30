@@ -187,8 +187,11 @@ const ExpenseCategoriesSettings = () => {
     setDeleting(true);
     
     try {
+      // Eski kategoriler için name kullan, yeni kategoriler için id kullan
+      const categoryIdentifier = deletingCategory.id || deletingCategory.name;
+      
       const response = await fetch(
-        `${API_URL}/api/settings/expense-categories/${deletingCategory.id}`,
+        `${API_URL}/api/settings/expense-categories/${encodeURIComponent(categoryIdentifier)}`,
         { method: 'DELETE' }
       );
       
