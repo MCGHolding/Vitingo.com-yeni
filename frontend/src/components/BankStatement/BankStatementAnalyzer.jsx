@@ -691,9 +691,59 @@ const BankStatementAnalyzer = ({ bankId }) => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="bg-white border-b px-6 py-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            🏦 Wio Bank - Hesap Ekstresi
+          </h2>
+          
+          {/* Save Status Indicator */}
+          {statement && (
+            <div className="flex items-center gap-2">
+              {saveStatus === 'saved' && (
+                <span className="text-sm text-green-600 flex items-center gap-1">
+                  <span>✅</span> Kaydedildi
+                </span>
+              )}
+              {saveStatus === 'saving' && (
+                <span className="text-sm text-blue-600 flex items-center gap-1">
+                  <span className="animate-spin">🔄</span> Kaydediliyor...
+                </span>
+              )}
+              {saveStatus === 'unsaved' && (
+                <span className="text-sm text-yellow-600 flex items-center gap-1">
+                  <span>⚠️</span> Kaydedilmemiş değişiklikler
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        
+        {/* Currency Tabs */}
+        <div className="flex items-center gap-2">
+          {availableCurrencies.map(currency => (
+            <button
+              key={currency}
+              onClick={() => setSelectedCurrency(currency)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                selectedCurrency === currency
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {currency === 'AED' && '🇦🇪'} 
+              {currency === 'USD' && '🇺🇸'} 
+              {currency === 'EUR' && '🇪🇺'} 
+              {currency === 'GBP' && '🇬🇧'} 
+              {' '}{currency}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end">
         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          🏦 Wio Bank - Hesap Ekstresi
         </h2>
         <div className="flex gap-2">
           <button
