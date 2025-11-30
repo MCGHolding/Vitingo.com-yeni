@@ -330,8 +330,14 @@ export default function AllOpportunitiesPage({ onBackToDashboard, opportunities,
   };
 
   const handleView = (opportunity, index) => {
-    setSelectedOpportunity({ ...opportunity, displayIndex: index + 1 });
-    setViewModalOpen(true);
+    if (onViewOpportunity) {
+      // Yeni sayfa görünümü kullan
+      onViewOpportunity(opportunity);
+    } else {
+      // Eski modal görünümü kullan
+      setSelectedOpportunity({ ...opportunity, displayIndex: index + 1 });
+      setViewModalOpen(true);
+    }
   };
 
   const handleEdit = (opportunity) => {
