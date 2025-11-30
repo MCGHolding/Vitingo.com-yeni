@@ -13962,6 +13962,533 @@ async def reorder_categories(category_ids: List[str]):
         logger.error(f"Error reordering categories: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== BANK STATEMENT ANALYZER =====================
+
+import PyPDF2
+from io import BytesIO
+
+# Pydantic Models
+class Transaction(BaseModel):
+    id: str
+    date: str
+    description: str
+    amount: float
+    balance: float
+    type: Optional[str] = None
+    categoryId: Optional[str] = None
+    subCategoryId: Optional[str] = None
+    customerId: Optional[str] = None
+    currencyPair: Optional[str] = None
+    autoMatched: bool = False
+    matchedPatternId: Optional[str] = None
+    confidence: float = 0.0
+    status: str = "pending"
+    notes: str = ""
+
+class StatementHeaderInfo(BaseModel):
+    accountHolder: str
+    accountNumber: str
+    iban: str
+    accountType: str
+    currency: str
+    interestRate: str
+    accountOpened: str
+    periodStart: str
+    periodEnd: str
+
+class BankStatementImport(BaseModel):
+    id: str
+    bankId: str
+    accountHolder: str
+    accountNumber: str
+    iban: str
+    accountType: str
+    currency: str
+    interestRate: str
+    accountOpened: str
+    periodStart: str
+    periodEnd: str
+    fileName: str
+    fileUrl: Optional[str] = None
+    importedAt: str
+    importedBy: str
+    totalIncoming: float = 0
+    totalOutgoing: float = 0
+    netChange: float = 0
+    transactionCount: int = 0
+    categorizedCount: int = 0
+    pendingCount: int = 0
+    transactions: List[Transaction] = []
+    status: str = "draft"
+    completedAt: Optional[str] = None
+    updatedAt: str
+
+class TransactionPattern(BaseModel):
+    id: str
+    pattern: str
+    matchType: str = "contains"
+    transactionType: str
+    categoryId: Optional[str] = None
+    subCategoryId: Optional[str] = None
+    customerId: Optional[str] = None
+    currencyPair: Optional[str] = None
+    confidence: float = 0.5
+    matchCount: int = 1
+    lastMatchedAt: Optional[str] = None
+    bankId: str
+    createdBy: str
+    createdAt: str
+    updatedAt: str
+
+# PDF Parsing Functions
+def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
+    """Parse Wio Bank statement PDF"""
+    try:
+        pdf_file = BytesIO(pdf_bytes)
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        
+        # Extract all text
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+        
+        # Parse header info
+        header = {
+            "periodStart": "",
+            "periodEnd": "",
+            "accountHolder": "",
+            "currency": "AED",
+            "interestRate": "0%",
+            "accountType": "CURRENT_ACCOUNT",
+            "accountNumber": "",
+            "accountOpened": "",
+            "iban": ""
+        }
+        
+        # Regex patterns for Wio Bank
+        patterns = {
+            "periodStart": r"FROM\s+(\d{2}/\d{2}/\d{4})",
+            "periodEnd": r"TO\s+(\d{2}/\d{2}/\d{4})",
+            "accountHolder": r"ACCOUNT HOLDER NAME\s*\n\s*(.+)",
+            "currency": r"CURRENCY\s*\n\s*(\w+)",
+            "interestRate": r"INTEREST RATE\s*\n\s*(\d+%)",
+            "accountType": r"ACCOUNT TYPE\s*\n\s*(\S+)",
+            "accountNumber": r"ACCOUNT NUMBER\s*\n\s*(\d+)",
+            "accountOpened": r"ACCOUNT OPENED\s*\n\s*(\d{2}/\d{2}/\d{4})",
+            "iban": r"IBAN\s*\n\s*([A-Z0-9]+)"
+        }
+        
+        for key, pattern in patterns.items():
+            match = re.search(pattern, text, re.MULTILINE)
+            if match:
+                header[key] = match.group(1).strip()
+        
+        # Parse transactions
+        transactions = []
+        lines = text.split('\n')
+        
+        date_pattern = r'^(\d{2}/\d{2}/\d{4})\s+(.+?)\s+([\d,]+\.?\d*)\s+([\d,]+\.?\d*)\s+([\d,]+\.?\d*)$'
+        
+        for line in lines:
+            match = re.match(date_pattern, line.strip())
+            if match:
+                date, desc, col1, col2, col3 = match.groups()
+                
+                # Parse amounts
+                try:
+                    val1 = float(col1.replace(',', ''))
+                    val2 = float(col2.replace(',', ''))
+                    val3 = float(col3.replace(',', ''))
+                    
+                    # Determine debit, credit, balance
+                    # Assuming format: Date | Description | Debit | Credit | Balance
+                    debit = val1 if val1 > 0 else 0
+                    credit = val2 if val2 > 0 else 0
+                    balance = val3
+                    
+                    amount = credit if credit > 0 else -debit
+                    
+                    transactions.append({
+                        "id": f"txn_{uuid.uuid4()}",
+                        "date": date,
+                        "description": desc.strip(),
+                        "amount": amount,
+                        "balance": balance,
+                        "type": None,
+                        "categoryId": None,
+                        "subCategoryId": None,
+                        "customerId": None,
+                        "currencyPair": None,
+                        "autoMatched": False,
+                        "matchedPatternId": None,
+                        "confidence": 0.0,
+                        "status": "pending",
+                        "notes": ""
+                    })
+                except:
+                    continue
+        
+        return {
+            "header": header,
+            "transactions": transactions
+        }
+    except Exception as e:
+        logger.error(f"PDF parsing error: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"PDF parsing failed: {str(e)}")
+
+# Pattern matching
+async def find_matching_pattern(description: str, bank_id: str) -> Optional[dict]:
+    """Find matching transaction pattern"""
+    desc_lower = description.lower()
+    
+    # Try exact match first
+    pattern = await db.transaction_patterns.find_one({
+        "bankId": bank_id,
+        "matchType": "exact",
+        "pattern": desc_lower
+    }, {"_id": 0})
+    
+    if pattern:
+        return pattern
+    
+    # Try contains match
+    patterns = await db.transaction_patterns.find({
+        "bankId": bank_id,
+        "matchType": "contains"
+    }, {"_id": 0}).to_list(None)
+    
+    for pattern in patterns:
+        if pattern["pattern"] in desc_lower:
+            return pattern
+    
+    return None
+
+# Extract keywords for learning
+def extract_keywords(description: str) -> List[str]:
+    """Extract keywords from transaction description"""
+    stop_words = {'the', 'a', 'an', 'for', 'to', 'from', 'of', 'in', 'on', 'at', 'by', 'with'}
+    words = re.findall(r'\b\w+\b', description.lower())
+    
+    keywords = [
+        w for w in words
+        if len(w) > 3
+        and w not in stop_words
+        and not w.isdigit()
+    ]
+    
+    return keywords[:5]  # Max 5 keywords
+
+# Learn patterns
+async def learn_patterns(transactions: List[dict], bank_id: str, user_id: str):
+    """Learn patterns from completed transactions"""
+    learned_count = 0
+    
+    for txn in transactions:
+        if txn.get("status") != "completed" or not txn.get("type"):
+            continue
+        
+        keywords = extract_keywords(txn["description"])
+        
+        for keyword in keywords:
+            # Check if pattern exists
+            existing = await db.transaction_patterns.find_one({
+                "bankId": bank_id,
+                "pattern": keyword,
+                "transactionType": txn["type"],
+                "categoryId": txn.get("categoryId")
+            })
+            
+            if existing:
+                # Update confidence
+                new_confidence = min(0.99, existing["confidence"] + 0.05)
+                await db.transaction_patterns.update_one(
+                    {"id": existing["id"]},
+                    {
+                        "$set": {
+                            "confidence": new_confidence,
+                            "lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                            "updatedAt": datetime.now(timezone.utc).isoformat()
+                        },
+                        "$inc": {"matchCount": 1}
+                    }
+                )
+            else:
+                # Create new pattern
+                pattern_id = str(uuid.uuid4())
+                await db.transaction_patterns.insert_one({
+                    "id": pattern_id,
+                    "pattern": keyword,
+                    "matchType": "contains",
+                    "transactionType": txn["type"],
+                    "categoryId": txn.get("categoryId"),
+                    "subCategoryId": txn.get("subCategoryId"),
+                    "customerId": txn.get("customerId"),
+                    "currencyPair": txn.get("currencyPair"),
+                    "confidence": 0.5,
+                    "matchCount": 1,
+                    "lastMatchedAt": datetime.now(timezone.utc).isoformat(),
+                    "bankId": bank_id,
+                    "createdBy": user_id,
+                    "createdAt": datetime.now(timezone.utc).isoformat(),
+                    "updatedAt": datetime.now(timezone.utc).isoformat()
+                })
+                learned_count += 1
+    
+    return learned_count
+
+# API Endpoints
+@api_router.post("/banks/{bank_id}/statements/upload")
+async def upload_bank_statement(
+    bank_id: str,
+    file: UploadFile = File(...)
+):
+    """Upload and parse bank statement PDF"""
+    try:
+        if not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(400, "Only PDF files are supported")
+        
+        # Read PDF
+        pdf_bytes = await file.read()
+        
+        # Parse PDF
+        parsed = parse_wio_bank_pdf(pdf_bytes)
+        
+        # Auto-match transactions
+        auto_matched_count = 0
+        for txn in parsed["transactions"]:
+            pattern = await find_matching_pattern(txn["description"], bank_id)
+            if pattern and pattern["confidence"] >= 0.9:
+                txn["type"] = pattern["transactionType"]
+                txn["categoryId"] = pattern.get("categoryId")
+                txn["subCategoryId"] = pattern.get("subCategoryId")
+                txn["customerId"] = pattern.get("customerId")
+                txn["currencyPair"] = pattern.get("currencyPair")
+                txn["autoMatched"] = True
+                txn["matchedPatternId"] = pattern["id"]
+                txn["confidence"] = pattern["confidence"]
+                txn["status"] = "completed" if txn["type"] else "pending"
+                auto_matched_count += 1
+        
+        # Calculate statistics
+        total_incoming = sum(t["amount"] for t in parsed["transactions"] if t["amount"] > 0)
+        total_outgoing = sum(abs(t["amount"]) for t in parsed["transactions"] if t["amount"] < 0)
+        
+        # Create statement record
+        statement_id = str(uuid.uuid4())
+        statement = {
+            "id": statement_id,
+            "bankId": bank_id,
+            **parsed["header"],
+            "fileName": file.filename,
+            "fileUrl": None,
+            "importedAt": datetime.now(timezone.utc).isoformat(),
+            "importedBy": "current_user",  # TODO: Get from auth
+            "totalIncoming": total_incoming,
+            "totalOutgoing": total_outgoing,
+            "netChange": total_incoming - total_outgoing,
+            "transactionCount": len(parsed["transactions"]),
+            "categorizedCount": auto_matched_count,
+            "pendingCount": len(parsed["transactions"]) - auto_matched_count,
+            "transactions": parsed["transactions"],
+            "status": "draft",
+            "completedAt": None,
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.bank_statement_imports.insert_one(statement)
+        statement.pop("_id", None)
+        
+        return {
+            "statementId": statement_id,
+            "headerInfo": parsed["header"],
+            "transactions": parsed["transactions"],
+            "autoMatchedCount": auto_matched_count,
+            "statistics": {
+                "totalIncoming": total_incoming,
+                "totalOutgoing": total_outgoing,
+                "netChange": total_incoming - total_outgoing,
+                "transactionCount": len(parsed["transactions"]),
+                "categorizedCount": auto_matched_count,
+                "pendingCount": len(parsed["transactions"]) - auto_matched_count
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/banks/{bank_id}/statements")
+async def list_bank_statements(bank_id: str):
+    """List all statements for a bank"""
+    try:
+        statements = await db.bank_statement_imports.find(
+            {"bankId": bank_id},
+            {"_id": 0, "transactions": 0}
+        ).sort("importedAt", -1).to_list(None)
+        
+        return statements
+    except Exception as e:
+        logger.error(f"Error listing statements: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/banks/{bank_id}/statements/{statement_id}")
+async def get_bank_statement(bank_id: str, statement_id: str):
+    """Get statement details"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id},
+            {"_id": 0}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        return statement
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}")
+async def update_transaction(
+    bank_id: str,
+    statement_id: str,
+    txn_id: str,
+    update_data: dict
+):
+    """Update a single transaction"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        # Update transaction
+        transactions = statement["transactions"]
+        updated = False
+        
+        for txn in transactions:
+            if txn["id"] == txn_id:
+                for key, value in update_data.items():
+                    txn[key] = value
+                
+                # Check completion
+                if txn.get("type"):
+                    if txn["type"] == "collection" and not txn.get("customerId"):
+                        txn["status"] = "pending"
+                    elif txn["type"] in ["fx_buy", "fx_sell"] and not txn.get("currencyPair"):
+                        txn["status"] = "pending"
+                    else:
+                        txn["status"] = "completed"
+                else:
+                    txn["status"] = "pending"
+                
+                updated = True
+                break
+        
+        if not updated:
+            raise HTTPException(404, "Transaction not found")
+        
+        # Recalculate statistics
+        categorized_count = sum(1 for t in transactions if t["status"] == "completed")
+        pending_count = sum(1 for t in transactions if t["status"] == "pending")
+        
+        await db.bank_statement_imports.update_one(
+            {"id": statement_id},
+            {
+                "$set": {
+                    "transactions": transactions,
+                    "categorizedCount": categorized_count,
+                    "pendingCount": pending_count,
+                    "updatedAt": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        return {"success": True, "updatedTransaction": txn}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating transaction: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/banks/{bank_id}/statements/{statement_id}/complete")
+async def complete_statement(bank_id: str, statement_id: str):
+    """Complete statement and learn patterns"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        # Learn patterns
+        learned_count = await learn_patterns(
+            statement["transactions"],
+            bank_id,
+            "current_user"  # TODO: Get from auth
+        )
+        
+        # Mark as completed
+        await db.bank_statement_imports.update_one(
+            {"id": statement_id},
+            {
+                "$set": {
+                    "status": "completed",
+                    "completedAt": datetime.now(timezone.utc).isoformat(),
+                    "updatedAt": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        return {
+            "success": True,
+            "learnedPatterns": learned_count
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error completing statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/banks/{bank_id}/patterns")
+async def list_patterns(bank_id: str):
+    """List learned patterns"""
+    try:
+        patterns = await db.transaction_patterns.find(
+            {"bankId": bank_id},
+            {"_id": 0}
+        ).sort("confidence", -1).to_list(None)
+        
+        return patterns
+    except Exception as e:
+        logger.error(f"Error listing patterns: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/banks/{bank_id}/patterns/{pattern_id}")
+async def delete_pattern(bank_id: str, pattern_id: str):
+    """Delete a pattern"""
+    try:
+        result = await db.transaction_patterns.delete_one({
+            "id": pattern_id,
+            "bankId": bank_id
+        })
+        
+        if result.deleted_count == 0:
+            raise HTTPException(404, "Pattern not found")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting pattern: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
