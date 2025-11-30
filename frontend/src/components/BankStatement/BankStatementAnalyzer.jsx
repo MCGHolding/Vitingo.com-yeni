@@ -1307,7 +1307,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       <tr className="bg-green-50/50">
                         <td></td>
                         <td></td>
-                        <td colSpan={7} className="px-3 py-2">
+                        <td colSpan={8} className="px-3 py-2">
                           <AutoMatchBadge
                             pattern={txn.matchedPatternId ? 'Öğrenilmiş pattern' : ''}
                             confidence={txn.confidence || 0}
@@ -1327,7 +1327,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       <tr className="bg-yellow-50/50">
                         <td></td>
                         <td></td>
-                        <td colSpan={7} className="px-3 py-2">
+                        <td colSpan={8} className="px-3 py-2">
                           <AutoMatchBadge
                             pattern={txn.suggestedMatch.pattern}
                             confidence={txn.suggestedMatch.confidence || 0}
