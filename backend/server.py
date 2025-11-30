@@ -14272,10 +14272,9 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     if opening_match:
         result["header"]["openingBalance"] = float(opening_match.group(1).replace(',', ''))
     
-    # Closing Balance  
-    closing_match = re.search(r'CLOSING BALANCE.*?([\d,]+\.?\d{2})', full_text, re.IGNORECASE | re.DOTALL)
-    if closing_match:
-        result["header"]["closingBalance"] = float(closing_match.group(1).replace(',', ''))
+    # Closing Balance - DON'T parse from text, get from last transaction
+    # (Text parsing can pick up IBAN numbers by mistake)
+    # Will be set after transactions are parsed
     
     # === TRANSACTIONS PARSE ===
     
