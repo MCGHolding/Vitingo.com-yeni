@@ -1720,14 +1720,7 @@ const Dashboard = () => {
       case 'all-briefs':
         return <AllBriefsPage onBackToDashboard={handleBackToDashboard} onNewBrief={handleNewBrief} />;
 
-      // Teklif cases
-      case 'new-teklif':
-        console.log('🎉 SUCCESS: Rendering TeklifForm component for currentView:', currentView);
-        return <TeklifForm onBackToDashboard={handleBackToDashboard} />;
-
-      case 'all-quotes':
-        return <AllQuotesPage onBackToDashboard={handleBackToDashboard} onNewTeklif={handleNewTeklif} />;
-
+      // Teklif cases (v2 - new system)
       case 'proposal-profiles':
         return <ProposalProfilesPage onBackToDashboard={handleBackToDashboard} />;
       
