@@ -146,26 +146,39 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
     return formatted;
   };
 
-  const validateIBAN = (iban) => {
+  const validateIBAN = (iban, country) => {
     const cleanIban = iban.replace(/\s/g, '');
     
-    // Check if starts with TR and has correct length (26 characters for Turkey)
-    if (!cleanIban.startsWith('TR')) {
-      return 'IBAN TR ile başlamalıdır';
+    // IBAN validation by country
+    const ibanRules = {
+      'Turkey': { prefix: 'TR', length: 26, name: 'Türkiye' },
+      'UAE': { prefix: 'AE', length: 23, name: 'BAE' },
+      // USA doesn't use IBAN
+    };
+    
+    const rule = ibanRules[country];
+    if (!rule) {
+      return ''; // No validation for countries without IBAN rules
     }
     
-    if (cleanIban.length < 26) {
-      return 'IBAN eksik - 26 karakter olmalıdır';
+    // Check prefix
+    if (!cleanIban.startsWith(rule.prefix)) {
+      return `IBAN ${rule.prefix} ile başlamalıdır (${rule.name})`;
     }
     
-    if (cleanIban.length > 26) {
-      return 'IBAN çok uzun - 26 karakter olmalıdır';
+    // Check length
+    if (cleanIban.length < rule.length) {
+      return `IBAN eksik - ${rule.length} karakter olmalıdır`;
     }
     
-    // Check if contains only TR + numbers
+    if (cleanIban.length > rule.length) {
+      return `IBAN çok uzun - ${rule.length} karakter olmalıdır`;
+    }
+    
+    // Check if contains only country code + numbers
     const numberPart = cleanIban.substring(2);
     if (!/^\d+$/.test(numberPart)) {
-      return 'IBAN sadece TR ve rakamlardan oluşmalıdır';
+      return `IBAN sadece ${rule.prefix} ve rakamlardan oluşmalıdır`;
     }
     
     return '';
