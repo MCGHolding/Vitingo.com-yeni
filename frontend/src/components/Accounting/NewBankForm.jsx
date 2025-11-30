@@ -188,7 +188,7 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
     const formattedValue = formatIBAN(value);
     setFormData(prev => ({ ...prev, iban: formattedValue }));
     
-    const error = validateIBAN(formattedValue);
+    const error = validateIBAN(formattedValue, formData.country);
     setIbanError(error);
   };
 
