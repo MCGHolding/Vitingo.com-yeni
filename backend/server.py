@@ -14267,13 +14267,13 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     if iban_match:
         result["header"]["iban"] = iban_match.group(1)
     
-    # Opening Balance
-    opening_match = re.search(r'OPENING BALANCE\s*\n?\s*([\d,]+\.?\d*)', full_text, re.IGNORECASE)
+    # Opening Balance - may be on same line or separate lines
+    opening_match = re.search(r'OPENING BALANCE.*?([\d,]+\.?\d{2})', full_text, re.IGNORECASE | re.DOTALL)
     if opening_match:
         result["header"]["openingBalance"] = float(opening_match.group(1).replace(',', ''))
     
-    # Closing Balance
-    closing_match = re.search(r'CLOSING BALANCE\s*\n?\s*([\d,]+\.?\d*)', full_text, re.IGNORECASE)
+    # Closing Balance  
+    closing_match = re.search(r'CLOSING BALANCE.*?([\d,]+\.?\d{2})', full_text, re.IGNORECASE | re.DOTALL)
     if closing_match:
         result["header"]["closingBalance"] = float(closing_match.group(1).replace(',', ''))
     
