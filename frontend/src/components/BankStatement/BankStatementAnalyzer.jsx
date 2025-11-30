@@ -1347,7 +1347,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       <tr className="bg-green-50/30 border-t">
                         <td></td>
                         <td></td>
-                        <td colSpan={7} className="px-3 py-3">
+                        <td colSpan={8} className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <label className="text-xs text-gray-600 font-medium whitespace-nowrap">🏢 Müşteri:</label>
                             <select
@@ -1382,7 +1382,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       <tr className="bg-blue-50/30 border-t">
                         <td></td>
                         <td></td>
-                        <td colSpan={7} className="px-3 py-3">
+                        <td colSpan={8} className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <label className="text-xs text-gray-600 font-medium whitespace-nowrap">💱 Döviz Çifti:</label>
                             <select
