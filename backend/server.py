@@ -14222,30 +14222,30 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
         if alt_match:
             result["header"]["accountHolder"] = alt_match.group(1).strip()
     
-    # Currency
-    currency_match = re.search(r'CURRENCY\s*\n?\s*([A-Z]{3})', full_text, re.IGNORECASE)
+    # Currency - daha tolerant regex
+    currency_match = re.search(r'CURRENCY[\s\n:]+([A-Z]{3})\b', full_text, re.IGNORECASE | re.MULTILINE)
     if currency_match:
         result["header"]["currency"] = currency_match.group(1)
     else:
         result["header"]["currency"] = "AED"  # Default
     
     # Interest Rate
-    interest_match = re.search(r'INTEREST RATE\s*\n?\s*(\d+%)', full_text, re.IGNORECASE)
+    interest_match = re.search(r'INTEREST RATE[\s\n:]+(\d+%)', full_text, re.IGNORECASE | re.MULTILINE)
     if interest_match:
         result["header"]["interestRate"] = interest_match.group(1)
     else:
         result["header"]["interestRate"] = "0%"
     
-    # Account Type
-    type_match = re.search(r'ACCOUNT TYPE\s*\n?\s*(\w+(?:_\w+)?)', full_text, re.IGNORECASE)
+    # Account Type - sadece CURRENT_ACCOUNT veya benzeri
+    type_match = re.search(r'ACCOUNT TYPE[\s\n:]+([A-Z_]+(?:ACCOUNT)?)', full_text, re.IGNORECASE | re.MULTILINE)
     if type_match:
         account_type = type_match.group(1).replace('_', ' ').title()
         result["header"]["accountType"] = account_type
     else:
         result["header"]["accountType"] = "Current Account"
     
-    # Account Number
-    number_match = re.search(r'ACCOUNT NUMBER\s*\n?\s*(\d+)', full_text, re.IGNORECASE)
+    # Account Number - 10 haneli numara
+    number_match = re.search(r'ACCOUNT NUMBER[\s\n:]+(\d{10})', full_text, re.IGNORECASE | re.MULTILINE)
     if number_match:
         result["header"]["accountNumber"] = number_match.group(1)
     
