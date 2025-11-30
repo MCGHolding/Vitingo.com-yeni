@@ -29,6 +29,13 @@ const ProposalListPage = ({ onNewProposal, onViewProposal }) => {
 
   useEffect(() => {
     loadProposals();
+    
+    // Check URL for status filter
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    if (status && ['draft', 'sent', 'viewed', 'accepted', 'rejected'].includes(status)) {
+      setStatusFilter(status);
+    }
   }, []);
 
   const loadProposals = async () => {
