@@ -41,6 +41,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [savingTransactions, setSavingTransactions] = useState({});
   
+  // Multi-currency support
+  const [selectedCurrency, setSelectedCurrency] = useState('AED');
+  const [availableCurrencies, setAvailableCurrencies] = useState(['AED', 'USD', 'EUR', 'GBP']);
+  const [saveStatus, setSaveStatus] = useState('saved'); // 'saved' | 'saving' | 'unsaved'
+  
   // Customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pendingCustomerTxnId, setPendingCustomerTxnId] = useState(null);
