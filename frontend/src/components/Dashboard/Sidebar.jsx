@@ -127,12 +127,10 @@ const getNavigation = (userDepartment) => {
       current: false,
       hasSubmenu: true,
       submenu: [
-        { name: 'Yeni Teklif', href: '/teklifler/new', icon: Plus },
-        { name: 'Tüm Teklifler', href: '/teklifler/all', icon: List },
+        { name: '+ Yeni Teklif', href: '/proposals/new', icon: Plus },
+        { name: 'Tüm Teklifler', href: '/proposals', icon: List },
         { name: 'Taslak Teklifler', href: '/teklifler/draft', icon: Edit },
         { name: 'Gönderilen Teklifler', href: '/teklifler/sent', icon: Send },
-        { name: 'Yeni Teklif Oluştur (v2)', href: '/proposals/new', icon: FolderPlus },
-        { name: 'Teklif Listesi (v2)', href: '/proposals', icon: List },
         { name: 'Teklif Profilleri', href: '/proposals/profiles', icon: Settings }
       ]
     },
