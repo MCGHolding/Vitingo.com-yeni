@@ -437,6 +437,150 @@ const BankStatementAnalyzer = ({ bankId }) => {
     }
   };
   
+  // Otomatik eşleşmeyi onayla
+  const handleConfirmMatch = async (txnId, patternId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/${txnId}/confirm-match`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Onaylama hatası');
+      }
+      
+      // UI güncelle
+      setTransactions(prev => prev.map(txn => {
+        if (txn.id === txnId) {
+          return { 
+            ...txn, 
+            matchConfirmed: true,
+            suggestedMatch: null 
+          };
+        }
+        return txn;
+      }));
+      
+      console.log('✅ Pattern onaylandı');
+    } catch (error) {
+      console.error('Pattern onaylama hatası:', error);
+      alert('Pattern onaylanamadı');
+    }
+  };
+  
+  // Otomatik eşleşmeyi reddet
+  const handleRejectMatch = async (txnId, patternId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/${txnId}/reject-match`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Reddetme hatası');
+      }
+      
+      // UI güncelle - işlemi sıfırla
+      setTransactions(prev => prev.map(txn => {
+        if (txn.id === txnId) {
+          return {
+            ...txn,
+            type: '',
+            categoryId: null,
+            subCategoryId: null,
+            customerId: null,
+            currencyPair: null,
+            autoMatched: false,
+            matchedPatternId: null,
+            confidence: null,
+            suggestedMatch: null,
+            status: 'pending',
+            matchConfirmed: false
+          };
+        }
+        return txn;
+      }));
+      
+      console.log('✅ Pattern reddedildi');
+    } catch (error) {
+      console.error('Pattern reddetme hatası:', error);
+      alert('Pattern reddedilemedi');
+    }
+  };
+  
+  // Öneriyi uygula (suggested match)
+  const handleApplySuggestion = async (txnId) => {
+    const txn = transactions.find(t => t.id === txnId);
+    if (!txn?.suggestedMatch) return;
+    
+    const { learned, patternId, confidence } = txn.suggestedMatch;
+    
+    setTransactions(prev => prev.map(t => {
+      if (t.id === txnId) {
+        return {
+          ...t,
+          type: learned.type || '',
+          categoryId: learned.categoryId,
+          subCategoryId: learned.subCategoryId,
+          customerId: learned.customerId,
+          currencyPair: learned.currencyPair,
+          autoMatched: true,
+          matchedPatternId: patternId,
+          confidence: confidence,
+          suggestedMatch: null,
+          status: calculateStatus({
+            ...t,
+            type: learned.type,
+            customerId: learned.customerId,
+            currencyPair: learned.currencyPair
+          })
+        };
+      }
+      return t;
+    }));
+    
+    // Backend'e de kaydet
+    if (statement?.id) {
+      try {
+        await handleTransactionUpdate(txnId, 'type', learned.type || '');
+        if (learned.categoryId) {
+          await handleTransactionUpdate(txnId, 'categoryId', learned.categoryId);
+        }
+        if (learned.subCategoryId) {
+          await handleTransactionUpdate(txnId, 'subCategoryId', learned.subCategoryId);
+        }
+        if (learned.customerId) {
+          await handleTransactionUpdate(txnId, 'customerId', learned.customerId);
+        }
+        if (learned.currencyPair) {
+          await handleTransactionUpdate(txnId, 'currencyPair', learned.currencyPair);
+        }
+      } catch (error) {
+        console.error('Öneri uygulama hatası:', error);
+      }
+    }
+  };
+  
+  // Öneriyi kapat
+  const handleCloseSuggestion = (txnId) => {
+    setTransactions(prev => prev.map(t =>
+      t.id === txnId ? { ...t, suggestedMatch: null } : t
+    ));
+  };
+  
+  // Pattern düzenleme modu
+  const handleEditMatch = (txnId) => {
+    setTransactions(prev => prev.map(t => 
+      t.id === txnId ? { ...t, autoMatched: false, matchConfirmed: true } : t
+    ));
+  };
+  
   // Excel export
   const handleExportExcel = () => {
     alert('Excel export yakında eklenecek');
