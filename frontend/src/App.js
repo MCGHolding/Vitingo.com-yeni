@@ -324,6 +324,10 @@ const Dashboard = () => {
   // Opportunity timeline states
   const [selectedOpportunityForTimeline, setSelectedOpportunityForTimeline] = useState(null);
   
+  // Opportunity view/edit states (New)
+  const [selectedOpportunityForView, setSelectedOpportunityForView] = useState(null);
+  const [selectedOpportunityForEditNew, setSelectedOpportunityForEditNew] = useState(null);
+  
   // Customer view/edit states
   const [selectedCustomerForView, setSelectedCustomerForView] = useState(null);
   const [selectedCustomerForEdit, setSelectedCustomerForEdit] = useState(null);
