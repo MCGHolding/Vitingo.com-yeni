@@ -1383,18 +1383,29 @@ const BankStatementAnalyzer = ({ bankId }) => {
                         <td colSpan={8} className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <label className="text-xs text-gray-600 font-medium whitespace-nowrap">🏢 Müşteri:</label>
-                            <select
-                              value={txn.customerId || ''}
-                              onChange={(e) => handleTransactionUpdate(txn.id, 'customerId', e.target.value || null)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            >
-                              <option value="">Müşteri seçin...</option>
-                              {customers.map(customer => (
-                                <option key={customer.id} value={customer.id}>
-                                  {customer.companyName || customer.name || 'İsimsiz Müşteri'}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="relative flex-1">
+                              <select
+                                value={txn.customerId || ''}
+                                onChange={(e) => handleTransactionUpdate(txn.id, 'customerId', e.target.value || null)}
+                                className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm"
+                              >
+                                <option value="">Müşteri seçin...</option>
+                                {customers.map(customer => (
+                                  <option key={customer.id} value={customer.id}>
+                                    {customer.companyName || customer.name || 'İsimsiz Müşteri'}
+                                  </option>
+                                ))}
+                              </select>
+                              {txn.customerId && (
+                                <button
+                                  onClick={() => handleTransactionUpdate(txn.id, 'customerId', null)}
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 text-sm font-bold"
+                                  title="Müşteri seçimini kaldır"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
                             <button
                               onClick={() => {
                                 setPendingCustomerTxnId(txn.id);
