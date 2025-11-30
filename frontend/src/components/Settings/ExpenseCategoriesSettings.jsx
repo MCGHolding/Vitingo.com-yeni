@@ -320,23 +320,31 @@ const ExpenseCategoriesSettings = () => {
                 
                 {/* Sağ - Aksiyon butonları */}
                 <div className="flex items-center gap-2 ml-4">
-                  <button
-                    onClick={() => openEditModal(category)}
-                    className="px-3 py-1.5 text-green-600 hover:bg-green-50 rounded-lg text-sm font-medium flex items-center gap-1"
-                  >
-                    ✏️ Düzenle
-                  </button>
-                  
-                  {!category.isSystem && (
-                    <button
-                      onClick={() => {
-                        setDeletingCategory(category);
-                        setShowDeleteModal(true);
-                      }}
-                      className="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium flex items-center gap-1"
-                    >
-                      🗑️ Sil
-                    </button>
+                  {!category.id ? (
+                    <div className="text-xs text-yellow-600 italic">
+                      Bu kategoriyi düzenlemek için önce silin ve yeniden oluşturun
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => openEditModal(category)}
+                        className="px-3 py-1.5 text-green-600 hover:bg-green-50 rounded-lg text-sm font-medium flex items-center gap-1"
+                      >
+                        ✏️ Düzenle
+                      </button>
+                      
+                      {!category.isSystem && (
+                        <button
+                          onClick={() => {
+                            setDeletingCategory(category);
+                            setShowDeleteModal(true);
+                          }}
+                          className="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium flex items-center gap-1"
+                        >
+                          🗑️ Sil
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
