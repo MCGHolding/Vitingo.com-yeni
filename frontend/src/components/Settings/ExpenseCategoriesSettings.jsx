@@ -275,7 +275,7 @@ const ExpenseCategoriesSettings = () => {
         <div className="space-y-3">
           {categories.map(category => (
             <div
-              key={category.id}
+              key={category.id || category.name}
               className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
@@ -284,6 +284,11 @@ const ExpenseCategoriesSettings = () => {
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xl">{category.icon || '📁'}</span>
                     <h3 className="font-semibold text-gray-800">{category.name}</h3>
+                    {!category.id && (
+                      <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                        Eski Veri
+                      </span>
+                    )}
                     {category.isSystem && (
                       <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
                         Sistem
