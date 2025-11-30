@@ -6733,6 +6733,10 @@ class Opportunity(BaseModel):
     city: Optional[str] = ""
     trade_show: Optional[str] = ""
     trade_show_dates: Optional[str] = ""
+    trade_show_start_date: Optional[str] = ""
+    trade_show_end_date: Optional[str] = ""
+    stand_size: Optional[float] = None
+    stand_size_unit: Optional[str] = "m2"
     expected_revenue: float = 0.0
     probability: int = 50
     is_favorite: bool = False  # Favori fırsat işaretlemesi
