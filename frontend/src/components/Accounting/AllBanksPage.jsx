@@ -3,6 +3,7 @@ import { ArrowLeft, Building2, Edit, Trash2, Search, Globe, Share2, Mail } from 
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import BankEmailModal from './BankEmailModal';
+import BankStatementAnalyzer from '../BankStatement/BankStatementAnalyzer';
 
 const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [banks, setBanks] = useState([]);
