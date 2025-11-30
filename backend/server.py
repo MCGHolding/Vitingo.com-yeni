@@ -14715,11 +14715,15 @@ async def upload_bank_statement(
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/banks/{bank_id}/statements")
-async def list_bank_statements(bank_id: str):
-    """List all statements for a bank"""
+async def list_bank_statements(bank_id: str, currency: str = None):
+    """Get all statements for a bank, optionally filtered by currency"""
     try:
+        query = {"bankId": bank_id}
+        if currency:
+            query["currency"] = currency
+        
         statements = await db.bank_statement_imports.find(
-            {"bankId": bank_id},
+            query,
             {"_id": 0, "transactions": 0}
         ).sort("importedAt", -1).to_list(None)
         
