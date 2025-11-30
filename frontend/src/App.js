@@ -2057,6 +2057,8 @@ const Dashboard = () => {
         // Teklif handlers (v2 - new system)
         onProposalList={handleProposalList}
         onNewProposal={handleNewProposal}
+        onDraftQuotes={handleDraftQuotes}
+        onSentQuotes={handleSentQuotes}
         onProposalProfiles={handleProposalProfiles}
         onRequestBrief={handleRequestBrief}
         // Calendar handlers
