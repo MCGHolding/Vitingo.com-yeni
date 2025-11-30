@@ -1184,7 +1184,24 @@ const Dashboard = () => {
       case 'favorite-opportunities':
         return <FavoriteOpportunitiesPage onBackToDashboard={handleBackToDashboard} />;
       case 'all-opportunities':
-        return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} onEditOpportunity={handleEditOpportunity} opportunities={opportunities} refreshOpportunities={loadOpportunities} />;
+        return <AllOpportunitiesPage onBackToDashboard={handleBackToDashboard} onEditOpportunity={handleEditOpportunity} onViewOpportunity={handleViewOpportunity} opportunities={opportunities} refreshOpportunities={loadOpportunities} />;
+      case 'view-opportunity':
+        return <OpportunityDetailPage 
+          opportunityId={selectedOpportunityForView?.id}
+          onBack={handleBackFromViewOpportunity}
+          onEdit={handleEditFromViewOpportunity}
+        />;
+      case 'edit-opportunity-new':
+        return <OpportunityEditPageNew 
+          opportunityId={selectedOpportunityForEditNew?.id}
+          onBack={handleBackFromEditOpportunityNew}
+          onSave={(updatedOpportunity) => {
+            console.log('Opportunity updated:', updatedOpportunity);
+            loadOpportunities();
+            setSelectedOpportunityForEditNew(null);
+            setCurrentView('all-opportunities');
+          }}
+        />;
       case 'edit-opportunity':
         return <EditOpportunityPage 
           opportunity={selectedOpportunityForEdit} 
