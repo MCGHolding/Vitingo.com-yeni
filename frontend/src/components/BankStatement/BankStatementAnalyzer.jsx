@@ -804,7 +804,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
                             >
                               <option value="">Müşteri seçin...</option>
                               {customers.map(customer => (
-                                <option key={customer.id} value={customer.id}>{customer.name}</option>
+                                <option key={customer.id} value={customer.id}>
+                                  {customer.companyName || customer.name || 'İsimsiz Müşteri'}
+                                </option>
                               ))}
                             </select>
                             <button
