@@ -14190,126 +14190,122 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     import pdfplumber
     import io
     import re
-    from datetime import datetime
     
-    # Open PDF
-    pdf_file = io.BytesIO(pdf_bytes)
-    
-    header = {}
-    transactions = []
-    
-    with pdfplumber.open(pdf_file) as pdf:
-        for page in pdf.pages:
-            text = page.extract_text()
-            
-            # Extract header info (from first page only)
-            if not header:
-                # Account holder
-                holder_match = re.search(r'Account holder\s+(.*?)(?:\n|$)', text, re.IGNORECASE)
-                if holder_match:
-                    header["accountHolder"] = holder_match.group(1).strip()
-                
-                # IBAN
-                iban_match = re.search(r'IBAN\s+([A-Z]{2}\d+)', text)
-                if iban_match:
-                    header["iban"] = iban_match.group(1).strip()
-                
-                # Account number
-                acc_match = re.search(r'Account number\s+(\d+)', text, re.IGNORECASE)
-                if acc_match:
-                    header["accountNumber"] = acc_match.group(1).strip()
-                
-                # Currency
-                currency_match = re.search(r'Currency\s+([A-Z]{3})', text, re.IGNORECASE)
-                if currency_match:
-                    header["currency"] = currency_match.group(1).strip()
-                else:
-                    header["currency"] = "AED"  # Default
-                
-                # Statement period
-                period_match = re.search(r'(\d{2}/\d{2}/\d{4})\s*-\s*(\d{2}/\d{2}/\d{4})', text)
-                if period_match:
-                    header["periodStart"] = period_match.group(1)
-                    header["periodEnd"] = period_match.group(2)
-                
-                # Additional info
-                header["accountType"] = "Business Current Account"
-                header["accountOpened"] = "2024-01-01"
-                header["interestRate"] = "0%"
-            
-            # Extract transactions from table
-            tables = page.extract_tables()
-            for table in tables:
-                if not table or len(table) < 2:
-                    continue
-                
-                # Try to identify transaction rows
-                for row in table[1:]:  # Skip header
-                    if not row or len(row) < 3:
-                        continue
-                    
-                    # Look for date pattern
-                    date_str = None
-                    for cell in row[:3]:
-                        if cell and re.match(r'\d{2}/\d{2}/\d{4}', str(cell)):
-                            date_str = cell
-                            break
-                    
-                    if not date_str:
-                        continue
-                    
-                    # Extract description and amount
-                    description = ""
-                    amount = 0
-                    balance = 0
-                    
-                    for i, cell in enumerate(row):
-                        if not cell:
-                            continue
-                        
-                        cell_str = str(cell).strip()
-                        
-                        # Check if it's a description (text, not number)
-                        if not re.match(r'^[\d,.\-+\s]+$', cell_str) and len(cell_str) > 3:
-                            if not description or len(cell_str) > len(description):
-                                description = cell_str
-                        
-                        # Check for amount (with + or -)
-                        amount_match = re.search(r'([+-]?\d{1,3}(?:,?\d{3})*\.?\d{0,2})', cell_str)
-                        if amount_match:
-                            try:
-                                val = float(amount_match.group(1).replace(',', ''))
-                                # Determine if it's amount or balance
-                                if abs(val) < 1000000:  # Reasonable transaction amount
-                                    if amount == 0:
-                                        amount = val
-                                    else:
-                                        balance = val
-                            except:
-                                pass
-                    
-                    if description and amount != 0:
-                        txn_id = str(uuid.uuid4())
-                        transactions.append({
-                            "id": txn_id,
-                            "date": date_str,
-                            "description": description,
-                            "amount": amount,
-                            "balance": balance if balance != 0 else None,
-                            "type": "",
-                            "status": "pending",
-                            "categoryId": None,
-                            "subCategoryId": None,
-                            "customerId": None,
-                            "currencyPair": None,
-                            "autoMatched": False,
-                            "confidence": 0
-                        })
-    
-    return {
-        "header": header,
-        "transactions": transactions
+    result = {
+        "header": {},
+        "transactions": []
     }
+    
+    full_text = ""
+    
+    # Extract all text from PDF
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text() or ""
+            full_text += text + "\n"
+    
+    # === HEADER PARSE ===
+    
+    # Period (FROM DD/MM/YYYY TO DD/MM/YYYY)
+    period_match = re.search(r'FROM\s+(\d{2}/\d{2}/\d{4})\s+TO\s+(\d{2}/\d{2}/\d{4})', full_text, re.IGNORECASE)
+    if period_match:
+        result["header"]["periodStart"] = period_match.group(1)
+        result["header"]["periodEnd"] = period_match.group(2)
+    
+    # Account Holder Name
+    holder_match = re.search(r'ACCOUNT HOLDER NAME\s*\n([A-Z\s\.]+(?:L\.?L\.?C|LLC))', full_text, re.IGNORECASE)
+    if holder_match:
+        result["header"]["accountHolder"] = holder_match.group(1).strip()
+    else:
+        # Alternative: Line starting with QUATTRO
+        alt_match = re.search(r'(QUATTRO STAND EVENTS\s*L\.?L\.?C)', full_text, re.IGNORECASE)
+        if alt_match:
+            result["header"]["accountHolder"] = alt_match.group(1).strip()
+    
+    # Currency
+    currency_match = re.search(r'CURRENCY\s*\n?\s*([A-Z]{3})', full_text, re.IGNORECASE)
+    if currency_match:
+        result["header"]["currency"] = currency_match.group(1)
+    else:
+        result["header"]["currency"] = "AED"  # Default
+    
+    # Interest Rate
+    interest_match = re.search(r'INTEREST RATE\s*\n?\s*(\d+%)', full_text, re.IGNORECASE)
+    if interest_match:
+        result["header"]["interestRate"] = interest_match.group(1)
+    else:
+        result["header"]["interestRate"] = "0%"
+    
+    # Account Type
+    type_match = re.search(r'ACCOUNT TYPE\s*\n?\s*(\w+(?:_\w+)?)', full_text, re.IGNORECASE)
+    if type_match:
+        account_type = type_match.group(1).replace('_', ' ').title()
+        result["header"]["accountType"] = account_type
+    else:
+        result["header"]["accountType"] = "Current Account"
+    
+    # Account Number
+    number_match = re.search(r'ACCOUNT NUMBER\s*\n?\s*(\d+)', full_text, re.IGNORECASE)
+    if number_match:
+        result["header"]["accountNumber"] = number_match.group(1)
+    
+    # Account Opened
+    opened_match = re.search(r'ACCOUNT OPENED\s*\n?\s*(\d{2}/\d{2}/\d{4})', full_text, re.IGNORECASE)
+    if opened_match:
+        result["header"]["accountOpened"] = opened_match.group(1)
+    
+    # IBAN
+    iban_match = re.search(r'IBAN\s*\n?\s*(AE\d+)', full_text, re.IGNORECASE)
+    if iban_match:
+        result["header"]["iban"] = iban_match.group(1)
+    
+    # Opening Balance
+    opening_match = re.search(r'OPENING BALANCE\s*\n?\s*([\d,]+\.?\d*)', full_text, re.IGNORECASE)
+    if opening_match:
+        result["header"]["openingBalance"] = float(opening_match.group(1).replace(',', ''))
+    
+    # Closing Balance
+    closing_match = re.search(r'CLOSING BALANCE\s*\n?\s*([\d,]+\.?\d*)', full_text, re.IGNORECASE)
+    if closing_match:
+        result["header"]["closingBalance"] = float(closing_match.group(1).replace(',', ''))
+    
+    # === TRANSACTIONS PARSE ===
+    
+    # Transaction line pattern:
+    # DD/MM/YYYY + space + PXXXXXXXXX + space + description + amount + balance
+    # Example: 01/01/2025    P810562836    Cashback reward for December    339.05    699.79
+    
+    transaction_pattern = r'(\d{2}/\d{2}/\d{4})\s+(P\d+)\s+(.+?)\s+([-]?[\d,]+\.?\d*)\s+([\d,]+\.?\d*)'
+    
+    matches = re.findall(transaction_pattern, full_text)
+    
+    for i, match in enumerate(matches):
+        date_str, ref_number, description, amount_str, balance_str = match
+        
+        # Parse amount - remove commas
+        amount = float(amount_str.replace(',', ''))
+        balance = float(balance_str.replace(',', ''))
+        
+        txn_id = str(uuid.uuid4())
+        result["transactions"].append({
+            "id": txn_id,
+            "date": date_str,
+            "refNumber": ref_number,
+            "description": description.strip(),
+            "amount": amount,
+            "balance": balance,
+            # Default empty values (user will fill)
+            "type": "",
+            "categoryId": None,
+            "subCategoryId": None,
+            "customerId": None,
+            "currencyPair": None,
+            "status": "pending",
+            "autoMatched": False,
+            "confidence": 0
+        })
+    
+    return result
 
 
 # ============================================================================
