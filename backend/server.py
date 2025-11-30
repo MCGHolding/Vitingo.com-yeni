@@ -13726,6 +13726,7 @@ async def create_category(data: CategoryCreate):
             })
         
         category = {
+            "id": str(uuid.uuid4()),
             "name": data.name.strip(),
             "slug": slugify(data.name),
             "icon": data.icon or "📁",
