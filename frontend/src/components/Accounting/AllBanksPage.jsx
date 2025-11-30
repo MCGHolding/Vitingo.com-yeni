@@ -456,13 +456,26 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
               {/* Selected Bank Content */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 {activeBank ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <span className="text-4xl mb-3 block">🏦</span>
-                    <p className="font-medium text-gray-800 mb-2">
-                      {banks.find(b => b.id === activeBank)?.bank_name}
-                    </p>
-                    <p className="text-sm">Hesap bilgileri yakında eklenecek</p>
-                  </div>
+                  (() => {
+                    const selectedBank = banks.find(b => b.id === activeBank);
+                    const isWioBank = selectedBank?.bank_name?.toLowerCase().includes('wio');
+                    
+                    if (isWioBank) {
+                      // Dynamically import and render BankStatementAnalyzer
+                      const BankStatementAnalyzer = require('../BankStatement/BankStatementAnalyzer').default;
+                      return <BankStatementAnalyzer bankId={activeBank} />;
+                    }
+                    
+                    return (
+                      <div className="text-center py-12 text-gray-500">
+                        <span className="text-4xl mb-3 block">🏦</span>
+                        <p className="font-medium text-gray-800 mb-2">
+                          {selectedBank?.bank_name}
+                        </p>
+                        <p className="text-sm">Hesap bilgileri yakında eklenecek</p>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div className="text-center py-12 text-gray-500">
                     <p>Banka seçin</p>
