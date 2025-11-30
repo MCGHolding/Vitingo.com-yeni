@@ -1,14 +1,84 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Download, Copy } from 'lucide-react';
+import { Upload, Download, Copy, Plus } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Transaction Types
+const TRANSACTION_TYPES = [
+  { value: '', label: 'Seçiniz', color: 'gray' },
+  { value: 'collection', label: 'Tahsilat', color: 'green', requiresCustomer: true },
+  { value: 'payment', label: 'Ödeme', color: 'red' },
+  { value: 'refund', label: 'İade', color: 'orange' },
+  { value: 'cashback', label: 'Cashback', color: 'purple' },
+  { value: 'fx_buy', label: 'Döviz Alım', color: 'blue', requiresCurrencyPair: true },
+  { value: 'fx_sell', label: 'Döviz Satım', color: 'blue', requiresCurrencyPair: true },
+  { value: 'cash_deposit', label: 'Nakit Yatan', color: 'teal' }
+];
+
+const CURRENCY_PAIRS = [
+  { value: 'USD-AED', label: 'USD → AED' },
+  { value: 'USD-EUR', label: 'USD → EUR' },
+  { value: 'AED-USD', label: 'AED → USD' },
+  { value: 'AED-EUR', label: 'AED → EUR' },
+  { value: 'EUR-AED', label: 'EUR → AED' },
+  { value: 'EUR-USD', label: 'EUR → USD' }
+];
+
 const BankStatementAnalyzer = ({ bankId }) => {
+  // State
   const [statement, setStatement] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [copySuccess, setCopySuccess] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  
+  // Customer modal
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [pendingCustomerTxnId, setPendingCustomerTxnId] = useState(null);
+  const [newCustomerData, setNewCustomerData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    address: '',
+    country: 'UAE',
+    city: 'Dubai'
+  });
+  const [customerErrors, setCustomerErrors] = useState({});
+  const [savingCustomer, setSavingCustomer] = useState(false);
+  
+  // Load categories and customers
+  useEffect(() => {
+    loadCategories();
+    loadCustomers();
+  }, []);
+  
+  const loadCategories = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/settings/expense-categories`);
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+    }
+  };
+  
+  const loadCustomers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/customers`);
+      const data = await response.json();
+      setCustomers(data.customers || data || []);
+    } catch (error) {
+      console.error('Failed to load customers:', error);
+    }
+  };
   
   // Dosya yükleme
   const onDrop = useCallback(async (acceptedFiles) => {
@@ -38,7 +108,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
       }
       
       const data = await response.json();
-      setStatement(data);
+      
+      setStatement({
+        id: data.statementId,
+        ...data.headerInfo,
+        ...data.statistics
+      });
+      setTransactions(data.transactions || []);
+      
+      if (data.autoMatchedCount > 0) {
+        alert(`✅ ${data.autoMatchedCount} işlem otomatik eşleştirildi!`);
+      }
       
     } catch (err) {
       setError(err.message);
@@ -66,7 +146,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
   // Yeni ekstre yükle
   const handleNewUpload = () => {
     setStatement(null);
+    setTransactions([]);
     setError(null);
+    setSelectedRows([]);
   };
   
   // Kopyalama
@@ -77,11 +159,194 @@ const BankStatementAnalyzer = ({ bankId }) => {
     });
   };
   
+  // Durum hesapla
+  const calculateStatus = (txn) => {
+    if (!txn.type) return 'pending';
+    if (txn.type === 'collection' && !txn.customerId) return 'pending';
+    if (['fx_buy', 'fx_sell'].includes(txn.type) && !txn.currencyPair) return 'pending';
+    return 'completed';
+  };
+  
+  // Kategori gerekli mi?
+  const typeRequiresCategory = (type) => {
+    return ['payment', 'refund', ''].includes(type);
+  };
+  
+  // İşlem güncelle
+  const handleTransactionUpdate = (txnId, field, value) => {
+    setTransactions(prev => prev.map(txn => {
+      if (txn.id !== txnId) return txn;
+      
+      const updated = { ...txn, [field]: value };
+      
+      // Tür değiştiğinde ilgili alanları temizle
+      if (field === 'type') {
+        if (value !== 'collection') updated.customerId = null;
+        if (!['fx_buy', 'fx_sell'].includes(value)) updated.currencyPair = null;
+        if (!typeRequiresCategory(value)) {
+          updated.categoryId = null;
+          updated.subCategoryId = null;
+        }
+      }
+      
+      // Kategori değiştiğinde alt kategoriyi temizle
+      if (field === 'categoryId') {
+        updated.subCategoryId = null;
+      }
+      
+      // Durumu güncelle
+      updated.status = calculateStatus(updated);
+      
+      return updated;
+    }));
+  };
+  
+  // Alt kategorileri getir
+  const getSubCategories = (categoryId) => {
+    const category = categories.find(c => c.id === categoryId);
+    return category?.subCategories || [];
+  };
+  
+  // Tür rengi
+  const getTypeColor = (type) => {
+    const found = TRANSACTION_TYPES.find(t => t.value === type);
+    const colorMap = {
+      green: 'bg-green-100 text-green-800 border-green-300',
+      red: 'bg-red-100 text-red-800 border-red-300',
+      orange: 'bg-orange-100 text-orange-800 border-orange-300',
+      purple: 'bg-purple-100 text-purple-800 border-purple-300',
+      blue: 'bg-blue-100 text-blue-800 border-blue-300',
+      teal: 'bg-teal-100 text-teal-800 border-teal-300',
+      gray: 'bg-gray-100 text-gray-600 border-gray-300'
+    };
+    return colorMap[found?.color || 'gray'];
+  };
+  
+  // Yeni müşteri ekle
+  const handleAddCustomer = async () => {
+    // Validasyon
+    if (!newCustomerData.name.trim()) {
+      setCustomerErrors({ name: 'Müşteri adı zorunlu' });
+      return;
+    }
+    
+    setSavingCustomer(true);
+    setCustomerErrors({});
+    
+    try {
+      const response = await fetch(`${API_URL}/api/customers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newCustomerData.name.trim(),
+          email: newCustomerData.email,
+          phone: newCustomerData.phone,
+          company_name: newCustomerData.company || newCustomerData.name.trim(),
+          address: newCustomerData.address,
+          country: newCustomerData.country,
+          city: newCustomerData.city
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Kaydetme hatası');
+      }
+      
+      const newCustomer = await response.json();
+      setCustomers(prev => [...prev, newCustomer]);
+      
+      // Pending transaction'a müşteriyi ata
+      if (pendingCustomerTxnId) {
+        handleTransactionUpdate(pendingCustomerTxnId, 'customerId', newCustomer.id);
+        setPendingCustomerTxnId(null);
+      }
+      
+      // Modal'ı kapat ve formu temizle
+      setShowCustomerModal(false);
+      setNewCustomerData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        address: '',
+        country: 'UAE',
+        city: 'Dubai'
+      });
+      
+    } catch (error) {
+      setCustomerErrors({ general: error.message });
+    } finally {
+      setSavingCustomer(false);
+    }
+  };
+  
+  // Döviz çiftini tahmin et
+  const suggestCurrencyPair = (description) => {
+    const desc = description.toLowerCase();
+    
+    if (desc.includes('usd') && desc.includes('aed')) return 'USD-AED';
+    if (desc.includes('usd') && desc.includes('eur')) return 'USD-EUR';
+    if (desc.includes('aed') && desc.includes('usd')) return 'AED-USD';
+    if (desc.includes('aed') && desc.includes('eur')) return 'AED-EUR';
+    if (desc.includes('eur') && desc.includes('aed')) return 'EUR-AED';
+    if (desc.includes('eur') && desc.includes('usd')) return 'EUR-USD';
+    
+    return null;
+  };
+  
+  // Kaydet
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch(`${API_URL}/api/banks/${bankId}/statements/${statement.id}/complete`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Kaydetme hatası');
+      }
+      
+      const data = await response.json();
+      alert(`✅ Kaydedildi! ${data.learnedPatterns || 0} yeni pattern öğrenildi.`);
+      
+      setStatement(prev => ({ ...prev, status: 'completed' }));
+    } catch (error) {
+      alert('Kaydetme hatası: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  
   // Excel export
   const handleExportExcel = () => {
-    // TODO: Excel export implementation
     alert('Excel export yakında eklenecek');
   };
+  
+  // İstatistikler
+  const stats = useMemo(() => {
+    const incoming = transactions.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
+    const outgoing = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
+    const completed = transactions.filter(t => t.status === 'completed').length;
+    const pending = transactions.filter(t => t.status === 'pending').length;
+    
+    return {
+      totalIncoming: incoming,
+      totalOutgoing: outgoing,
+      netChange: incoming - outgoing,
+      transactionCount: transactions.length,
+      categorizedCount: completed,
+      pendingCount: pending,
+      completedPercent: transactions.length > 0 ? Math.round((completed / transactions.length) * 100) : 0
+    };
+  }, [transactions]);
+  
+  // Filtreleme
+  const filteredTransactions = useMemo(() => {
+    if (showPendingOnly) {
+      return transactions.filter(t => t.status === 'pending');
+    }
+    return transactions;
+  }, [transactions, showPendingOnly]);
   
   // Ekstre yüklenmemişse - Upload Area göster
   if (!statement) {
@@ -139,9 +404,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
   }
   
   // Ekstre yüklendiyse - Detayları göster
-  const { headerInfo, statistics, transactions } = statement;
-  const header = headerInfo || {};
-  const stats = statistics || {};
+  const header = statement || {};
   
   return (
     <div className="p-6 space-y-6">
@@ -160,10 +423,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
           </button>
           <button
             onClick={handleExportExcel}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm font-medium"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm font-medium"
           >
             <Download className="h-4 w-4" />
             Excel İndir
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving || stats.pendingCount > 0}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
+          >
+            {saving ? '⏳ Kaydediliyor...' : '💾 Kaydet ve Öğren'}
           </button>
         </div>
       </div>
@@ -248,126 +518,447 @@ const BankStatementAnalyzer = ({ bankId }) => {
       </div>
       
       {/* İstatistik Kartları */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {/* Giren */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-          <div className="text-xs text-green-700 mb-1 font-medium">💵 GİREN</div>
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-green-600 mb-1 font-medium">💵 GİREN</div>
           <div className="text-lg font-bold text-green-700">
-            {formatMoney(stats.totalIncoming || 0, header.currency)}
+            {formatMoney(stats.totalIncoming, header.currency)}
           </div>
         </div>
         
-        {/* Çıkan */}
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <div className="text-xs text-red-700 mb-1 font-medium">💸 ÇIKAN</div>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-red-600 mb-1 font-medium">💸 ÇIKAN</div>
           <div className="text-lg font-bold text-red-700">
-            {formatMoney(stats.totalOutgoing || 0, header.currency)}
+            {formatMoney(stats.totalOutgoing, header.currency)}
           </div>
         </div>
         
-        {/* Net */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <div className="text-xs text-blue-700 mb-1 font-medium">📊 NET</div>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-blue-600 mb-1 font-medium">📊 NET</div>
           <div className={`text-lg font-bold ${
-            (stats.netChange || 0) >= 0 ? 'text-blue-700' : 'text-red-700'
+            stats.netChange >= 0 ? 'text-blue-700' : 'text-red-700'
           }`}>
-            {(stats.netChange || 0) >= 0 ? '+' : ''}{formatMoney(stats.netChange || 0, header.currency)}
+            {stats.netChange >= 0 ? '+' : ''}{formatMoney(stats.netChange, header.currency)}
           </div>
         </div>
         
-        {/* Toplam İşlem */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-          <div className="text-xs text-gray-700 mb-1 font-medium">🔄 İŞLEM</div>
-          <div className="text-lg font-bold text-gray-700">
-            {stats.transactionCount || 0}
-          </div>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-gray-600 mb-1 font-medium">🔄 İŞLEM</div>
+          <div className="text-lg font-bold text-gray-700">{stats.transactionCount}</div>
           <div className="text-xs text-gray-500 mt-0.5">adet</div>
         </div>
         
-        {/* Bekleyen */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <div className="text-xs text-yellow-700 mb-1 font-medium">⏳ BEKLEYEN</div>
-          <div className="text-lg font-bold text-yellow-700">
-            {stats.pendingCount || 0}
-          </div>
-          <div className="text-xs text-yellow-600 mt-0.5">
-            {stats.transactionCount > 0
-              ? `${Math.round(((stats.pendingCount || 0) / stats.transactionCount) * 100)}%`
-              : '0%'}
-          </div>
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-green-600 mb-1 font-medium">✅ TAMAM</div>
+          <div className="text-lg font-bold text-green-700">{stats.categorizedCount}</div>
+          <div className="text-xs text-green-600">%{stats.completedPercent}</div>
+        </div>
+        
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+          <div className="text-xs text-yellow-600 mb-1 font-medium">⏳ BEKLE</div>
+          <div className="text-lg font-bold text-yellow-700">{stats.pendingCount}</div>
+          <div className="text-xs text-yellow-600">%{100 - stats.completedPercent}</div>
         </div>
       </div>
       
-      {/* İşlemler Tablosu (Sadece görüntüleme) */}
+      {/* İşlemler Tablosu */}
       <div className="bg-white border rounded-xl overflow-hidden">
-        <div className="px-6 py-4 bg-gray-50 border-b">
+        <div className="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
           <h3 className="font-semibold text-gray-800">
-            İşlemler ({transactions?.length || 0})
+            İşlemler ({filteredTransactions.length})
           </h3>
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={showPendingOnly}
+              onChange={(e) => setShowPendingOnly(e.target.checked)}
+              className="rounded"
+            />
+            Sadece Bekleyenler
+          </label>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tarih
+                <th className="w-10 px-3 py-3">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedRows(filteredTransactions.map(t => t.id));
+                      } else {
+                        setSelectedRows([]);
+                      }
+                    }}
+                    className="rounded"
+                  />
                 </th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Açıklama
-                </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tutar
-                </th>
-                <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Bakiye
-                </th>
+                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase">Tarih</th>
+                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase">Açıklama</th>
+                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Tür</th>
+                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Kategori</th>
+                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Alt Kategori</th>
+                <th className="text-right px-3 py-3 text-xs font-medium text-gray-500 uppercase">Tutar</th>
+                <th className="text-right px-3 py-3 text-xs font-medium text-gray-500 uppercase">Bakiye</th>
+                <th className="text-center px-3 py-3 text-xs font-medium text-gray-500 uppercase w-16">Durum</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {transactions && transactions.length > 0 ? (
-                transactions.map((txn) => (
-                  <tr key={txn.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                      {txn.date}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-800">
-                      {txn.description}
-                    </td>
-                    <td className={`px-6 py-4 text-sm font-medium text-right whitespace-nowrap ${
-                      txn.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {txn.amount >= 0 ? '+' : ''}{formatMoney(txn.amount, header.currency)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 text-right whitespace-nowrap">
-                      {formatMoney(txn.balance, header.currency)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
-                    İşlem bulunamadı
-                  </td>
-                </tr>
-              )}
+            <tbody>
+              {filteredTransactions.map((txn) => {
+                const typeConfig = TRANSACTION_TYPES.find(t => t.value === txn.type);
+                const showCustomerField = txn.type === 'collection';
+                const showCurrencyField = ['fx_buy', 'fx_sell'].includes(txn.type);
+                const showCategoryFields = typeRequiresCategory(txn.type);
+                
+                return (
+                  <React.Fragment key={txn.id}>
+                    <tr className={`hover:bg-gray-50 ${txn.status === 'pending' ? 'bg-yellow-50/30' : ''}`}>
+                      {/* Checkbox */}
+                      <td className="px-3 py-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(txn.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedRows(prev => [...prev, txn.id]);
+                            } else {
+                              setSelectedRows(prev => prev.filter(id => id !== txn.id));
+                            }
+                          }}
+                          className="rounded"
+                        />
+                      </td>
+                      
+                      {/* Tarih */}
+                      <td className="px-3 py-3 text-sm text-gray-600 whitespace-nowrap">
+                        {txn.date}
+                      </td>
+                      
+                      {/* Açıklama */}
+                      <td className="px-3 py-3 text-sm text-gray-800 max-w-xs">
+                        <div className="truncate" title={txn.description}>
+                          {txn.description}
+                        </div>
+                        {txn.autoMatched && txn.confidence > 0 && (
+                          <div className="text-xs text-green-600 mt-1">
+                            🤖 %{Math.round(txn.confidence * 100)} güven
+                          </div>
+                        )}
+                      </td>
+                      
+                      {/* Tür */}
+                      <td className="px-3 py-3">
+                        <select
+                          value={txn.type || ''}
+                          onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
+                          className={`w-full px-2 py-1.5 border rounded-lg text-sm font-medium ${getTypeColor(txn.type)}`}
+                        >
+                          {TRANSACTION_TYPES.map(type => (
+                            <option key={type.value} value={type.value}>{type.label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      
+                      {/* Kategori */}
+                      <td className="px-3 py-3">
+                        <select
+                          value={txn.categoryId || ''}
+                          onChange={(e) => handleTransactionUpdate(txn.id, 'categoryId', e.target.value || null)}
+                          disabled={!showCategoryFields}
+                          className={`w-full px-2 py-1.5 border rounded-lg text-sm ${
+                            !showCategoryFields ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
+                          }`}
+                        >
+                          <option value="">─</option>
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      
+                      {/* Alt Kategori */}
+                      <td className="px-3 py-3">
+                        <select
+                          value={txn.subCategoryId || ''}
+                          onChange={(e) => handleTransactionUpdate(txn.id, 'subCategoryId', e.target.value || null)}
+                          disabled={!showCategoryFields || !txn.categoryId}
+                          className={`w-full px-2 py-1.5 border rounded-lg text-sm ${
+                            !showCategoryFields || !txn.categoryId ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
+                          }`}
+                        >
+                          <option value="">─</option>
+                          {getSubCategories(txn.categoryId).map(sub => (
+                            <option key={sub.id} value={sub.id}>{sub.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      
+                      {/* Tutar */}
+                      <td className={`px-3 py-3 text-sm font-medium text-right whitespace-nowrap ${
+                        txn.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {txn.amount >= 0 ? '+' : ''}{formatMoney(txn.amount, header.currency)}
+                      </td>
+                      
+                      {/* Bakiye */}
+                      <td className="px-3 py-3 text-sm text-gray-600 text-right whitespace-nowrap">
+                        {formatMoney(txn.balance, header.currency)}
+                      </td>
+                      
+                      {/* Durum */}
+                      <td className="px-3 py-3 text-center">
+                        {txn.status === 'completed' ? (
+                          <span className="text-xl">✅</span>
+                        ) : (
+                          <span className="text-xl">⏳</span>
+                        )}
+                      </td>
+                    </tr>
+                    
+                    {/* Koşullu Satır - Müşteri */}
+                    {showCustomerField && (
+                      <tr className="bg-green-50/30 border-t">
+                        <td></td>
+                        <td></td>
+                        <td colSpan={7} className="px-3 py-3">
+                          <div className="flex items-center gap-2">
+                            <label className="text-xs text-gray-600 font-medium whitespace-nowrap">🏢 Müşteri:</label>
+                            <select
+                              value={txn.customerId || ''}
+                              onChange={(e) => handleTransactionUpdate(txn.id, 'customerId', e.target.value || null)}
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            >
+                              <option value="">Müşteri seçin...</option>
+                              {customers.map(customer => (
+                                <option key={customer.id} value={customer.id}>{customer.name}</option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={() => {
+                                setPendingCustomerTxnId(txn.id);
+                                setShowCustomerModal(true);
+                              }}
+                              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1 text-sm font-medium whitespace-nowrap"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Yeni
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    
+                    {/* Koşullu Satır - Döviz Çifti */}
+                    {showCurrencyField && (
+                      <tr className="bg-blue-50/30 border-t">
+                        <td></td>
+                        <td></td>
+                        <td colSpan={7} className="px-3 py-3">
+                          <div className="flex items-center gap-2">
+                            <label className="text-xs text-gray-600 font-medium whitespace-nowrap">💱 Döviz Çifti:</label>
+                            <select
+                              value={txn.currencyPair || suggestCurrencyPair(txn.description) || ''}
+                              onChange={(e) => handleTransactionUpdate(txn.id, 'currencyPair', e.target.value || null)}
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                            >
+                              <option value="">Seçiniz...</option>
+                              {CURRENCY_PAIRS.map(pair => (
+                                <option key={pair.value} value={pair.value}>
+                                  {pair.label} {suggestCurrencyPair(txn.description) === pair.value ? '(önerilen)' : ''}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
+        
+        {/* Footer */}
+        {selectedRows.length > 0 && (
+          <div className="px-4 py-3 bg-gray-50 border-t flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Seçili: {selectedRows.length} satır
+            </div>
+            <div className="flex gap-2">
+              <button className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">
+                📁 Toplu Tür Ata
+              </button>
+              <button className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">
+                📂 Toplu Kategori Ata
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Bilgi Notu */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-        <span className="text-2xl">ℹ️</span>
-        <div className="flex-1">
-          <p className="text-sm text-blue-700 font-medium mb-1">
-            Ekstre başarıyla yüklendi!
-          </p>
-          <p className="text-sm text-blue-600">
-            Sonraki adımda her işlem için Tür, Kategori ve Alt Kategori seçebileceksiniz.
-          </p>
+      {stats.pendingCount > 0 ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-2xl">⚠️</span>
+          <div className="flex-1">
+            <p className="text-sm text-yellow-700 font-medium mb-1">
+              {stats.pendingCount} işlem bekliyor
+            </p>
+            <p className="text-sm text-yellow-600">
+              Tüm işlemleri kategorize etmelisiniz. Kaydet butonu aktif olacak.
+            </p>
+          </div>
         </div>
-      </div>
+      ) : stats.transactionCount > 0 ? (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-2xl">✅</span>
+          <div className="flex-1">
+            <p className="text-sm text-green-700 font-medium mb-1">
+              Tüm işlemler tamamlandı!
+            </p>
+            <p className="text-sm text-green-600">
+              Şimdi kaydet butonuna tıklayarak sisteme öğretebilirsiniz.
+            </p>
+          </div>
+        </div>
+      ) : null}
+      
+      {/* Yeni Müşteri Modal */}
+      {showCustomerModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            
+            {/* Header */}
+            <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
+              <h2 className="font-semibold text-gray-800 flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                Yeni Müşteri Ekle
+              </h2>
+              <button
+                onClick={() => {
+                  setShowCustomerModal(false);
+                  setPendingCustomerTxnId(null);
+                  setCustomerErrors({});
+                }}
+                className="text-gray-400 hover:text-gray-600 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+            
+            {/* Form */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {customerErrors.general && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                  ⚠️ {customerErrors.general}
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Müşteri / Şirket Adı <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newCustomerData.name}
+                  onChange={(e) => setNewCustomerData(prev => ({ ...prev, name: e.target.value }))}
+                  className={`w-full px-3 py-2 border rounded-lg ${
+                    customerErrors.name ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="ABC Trading LLC"
+                />
+                {customerErrors.name && (
+                  <p className="text-red-500 text-xs mt-1">{customerErrors.name}</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">E-posta</label>
+                <input
+                  type="email"
+                  value={newCustomerData.email}
+                  onChange={(e) => setNewCustomerData(prev => ({ ...prev, email: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="info@company.com"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                <input
+                  type="tel"
+                  value={newCustomerData.phone}
+                  onChange={(e) => setNewCustomerData(prev => ({ ...prev, phone: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="+971 50 123 4567"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ülke</label>
+                  <select
+                    value={newCustomerData.country}
+                    onChange={(e) => setNewCustomerData(prev => ({ ...prev, country: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="UAE">🇦🇪 BAE</option>
+                    <option value="Turkey">🇹🇷 Türkiye</option>
+                    <option value="USA">🇺🇸 ABD</option>
+                    <option value="UK">🇬🇧 İngiltere</option>
+                    <option value="Germany">🇩🇪 Almanya</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Şehir</label>
+                  <input
+                    type="text"
+                    value={newCustomerData.city}
+                    onChange={(e) => setNewCustomerData(prev => ({ ...prev, city: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    placeholder="Dubai"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Adres</label>
+                <textarea
+                  value={newCustomerData.address}
+                  onChange={(e) => setNewCustomerData(prev => ({ ...prev, address: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none"
+                  rows={2}
+                  placeholder="Adres detayları..."
+                />
+              </div>
+            </div>
+            
+            {/* Footer */}
+            <div className="px-6 py-4 border-t bg-gray-50 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowCustomerModal(false);
+                  setPendingCustomerTxnId(null);
+                  setCustomerErrors({});
+                }}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleAddCustomer}
+                disabled={savingCustomer}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {savingCustomer ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
