@@ -829,6 +829,28 @@ const BankStatementAnalyzer = ({ bankId }) => {
         </div>
       </div>
       
+      {/* Akıllı Eşleştirme Özeti */}
+      {(stats.autoMatchedCount > 0 || stats.suggestedCount > 0) && (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🤖</span>
+            <div className="flex-1">
+              <h3 className="font-semibold text-purple-800">Akıllı Eşleştirme</h3>
+              <p className="text-sm text-purple-600 mt-0.5">
+                {stats.autoMatchedCount > 0 && (
+                  <span className="mr-3">
+                    ✨ {stats.autoMatchedCount} işlem otomatik eşleştirildi
+                  </span>
+                )}
+                {stats.suggestedCount > 0 && (
+                  <span>💡 {stats.suggestedCount} öneri mevcut</span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* İşlemler Tablosu */}
       <div className="bg-white border rounded-xl overflow-hidden">
         <div className="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
