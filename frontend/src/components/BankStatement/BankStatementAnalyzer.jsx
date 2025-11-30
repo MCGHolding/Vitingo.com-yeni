@@ -592,6 +592,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
     const outgoing = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
     const completed = transactions.filter(t => t.status === 'completed').length;
     const pending = transactions.filter(t => t.status === 'pending').length;
+    const autoMatched = transactions.filter(t => t.autoMatched && !t.matchConfirmed).length;
+    const suggested = transactions.filter(t => t.suggestedMatch).length;
     
     return {
       totalIncoming: incoming,
@@ -600,7 +602,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
       transactionCount: transactions.length,
       categorizedCount: completed,
       pendingCount: pending,
-      completedPercent: transactions.length > 0 ? Math.round((completed / transactions.length) * 100) : 0
+      completedPercent: transactions.length > 0 ? Math.round((completed / transactions.length) * 100) : 0,
+      autoMatchedCount: autoMatched,
+      suggestedCount: suggested
     };
   }, [transactions]);
   
