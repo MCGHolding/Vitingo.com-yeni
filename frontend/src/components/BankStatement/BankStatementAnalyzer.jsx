@@ -59,7 +59,49 @@ const BankStatementAnalyzer = ({ bankId }) => {
   useEffect(() => {
     loadCategories();
     loadCustomers();
+    
+    // Auto-load the most recent statement for this bank (if exists)
+    loadLatestStatement();
   }, []);
+  
+  const loadLatestStatement = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/banks/${bankId}/statements`);
+      if (response.ok) {
+        const data = await response.json();
+        const statements = Array.isArray(data) ? data : (data.statements || []);
+        
+        if (statements.length > 0) {
+          // Load the most recent statement
+          const latest = statements[0];
+          
+          setStatement({
+            id: latest.id,
+            ...latest,
+            periodStart: latest.periodStart,
+            periodEnd: latest.periodEnd,
+            accountHolder: latest.accountHolder,
+            iban: latest.iban,
+            accountNumber: latest.accountNumber,
+            currency: latest.currency,
+            accountType: latest.accountType,
+            accountOpened: latest.accountOpened,
+            interestRate: latest.interestRate,
+            totalIncoming: latest.totalIncoming,
+            totalOutgoing: latest.totalOutgoing,
+            netChange: latest.netChange,
+            transactionCount: latest.transactionCount,
+            categorizedCount: latest.categorizedCount,
+            pendingCount: latest.pendingCount
+          });
+          
+          setTransactions(latest.transactions || []);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load statements:', error);
+    }
+  };
   
   const loadCategories = async () => {
     try {
