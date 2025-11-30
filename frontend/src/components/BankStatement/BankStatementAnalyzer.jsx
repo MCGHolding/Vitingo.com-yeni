@@ -614,10 +614,15 @@ const BankStatementAnalyzer = ({ bankId }) => {
     const autoMatched = transactions.filter(t => t.autoMatched && !t.matchConfirmed).length;
     const suggested = transactions.filter(t => t.suggestedMatch).length;
     
+    // Closing Balance = Opening + Incoming - Outgoing
+    const openingBalance = statement?.openingBalance || 0;
+    const calculatedClosing = openingBalance + incoming - outgoing;
+    const closingBalance = statement?.closingBalance || calculatedClosing;
+    
     return {
       totalIncoming: incoming,
       totalOutgoing: outgoing,
-      netChange: incoming - outgoing,
+      closingBalance: closingBalance,
       transactionCount: transactions.length,
       categorizedCount: completed,
       pendingCount: pending,
@@ -625,7 +630,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
       autoMatchedCount: autoMatched,
       suggestedCount: suggested
     };
-  }, [transactions]);
+  }, [transactions, statement]);
   
   // Filtreleme
   const filteredTransactions = useMemo(() => {
