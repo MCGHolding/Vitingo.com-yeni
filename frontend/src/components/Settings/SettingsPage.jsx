@@ -180,15 +180,6 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Organizasyon'
     },
     {
-      id: 'expense-categories',
-      title: 'Harcama Kategorileri',
-      description: 'Harcama kategorileri ve alt kategorilerini yönetin',
-      icon: FileText,
-      color: 'amber',
-      adminOnly: true,
-      category: 'Finans'
-    },
-    {
       id: 'library',
       title: 'Kütüphane',
       description: 'Para birimleri ve ülkeleri yönetin',
