@@ -14313,6 +14313,10 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
             "confidence": 0
         })
     
+    # Set closing balance from last transaction's balance (most reliable method)
+    if result["transactions"]:
+        result["header"]["closingBalance"] = result["transactions"][-1]["balance"]
+    
     return result
 
 
