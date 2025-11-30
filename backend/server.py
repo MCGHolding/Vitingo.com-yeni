@@ -13964,7 +13964,7 @@ async def reorder_categories(category_ids: List[str]):
 
 # ===================== BANK STATEMENT ANALYZER =====================
 
-import PyPDF2
+import pdfplumber
 from io import BytesIO
 
 # Pydantic Models
