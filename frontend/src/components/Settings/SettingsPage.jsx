@@ -144,9 +144,9 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Finans'
     },
     {
-      id: 'cc-categories',
-      title: 'Kredi Kartı Harcama Kategorileri',
-      description: 'Kredi kartı işlemleri için özel kategoriler oluşturun',
+      id: 'expense-categories',
+      title: 'Banka & Kredi Kartı Harcama Kategorileri',
+      description: 'Banka ve kredi kartı işlemleri için harcama kategorileri ve alt kategorileri yönetin',
       icon: Receipt,
       color: 'pink',
       adminOnly: true,
