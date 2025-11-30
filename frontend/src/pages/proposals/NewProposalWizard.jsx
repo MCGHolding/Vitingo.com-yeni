@@ -508,8 +508,10 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       fair_center: opportunity.trade_show || '',
       city: opportunity.city || '',
       country: opportunity.country || '',
-      start_date: opportunity.close_date || '',
-      end_date: opportunity.close_date || ''
+      start_date: opportunity.trade_show_start_date || opportunity.tradeShowStartDate || opportunity.close_date || '',
+      end_date: opportunity.trade_show_end_date || opportunity.tradeShowEndDate || opportunity.close_date || '',
+      stand_area: opportunity.stand_size || opportunity.standSize || '',
+      stand_area_unit: opportunity.stand_size_unit || opportunity.standSizeUnit || 'm²'
     }));
     
     console.log('✅ Form auto-filled with opportunity and customer data');
