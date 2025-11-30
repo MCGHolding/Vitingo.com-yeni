@@ -210,6 +210,9 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       recipientName: prev.companyName || '', // Auto-fill with company name
       recipientZipCode: ''
     }));
+    
+    // Clear IBAN error when country changes
+    setIbanError('');
   };
 
   const validateForm = () => {
