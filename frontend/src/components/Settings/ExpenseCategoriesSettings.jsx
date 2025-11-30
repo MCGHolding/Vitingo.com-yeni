@@ -276,77 +276,95 @@ const ExpenseCategoriesSettings = () => {
           {categories.map(category => (
             <div
               key={category.id || category.name}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+              className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all flex flex-col h-full"
             >
-              <div className="flex items-start justify-between">
-                {/* Sol - Kategori bilgileri */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xl">{category.icon || '📁'}</span>
-                    <h3 className="font-semibold text-gray-800">{category.name}</h3>
-                    {!category.id && (
-                      <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
-                        Eski Veri
-                      </span>
-                    )}
-                    {category.isSystem && (
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
-                        Sistem
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Alt kategoriler */}
-                  {category.subCategories?.length > 0 && (
-                    <div>
-                      <p className="text-xs text-gray-500 mb-2">Alt Kategoriler:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {category.subCategories.map(sub => (
-                          <span
-                            key={sub.id}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full"
-                          >
-                            {sub.name}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {(!category.subCategories || category.subCategories.length === 0) && (
-                    <p className="text-sm text-gray-400 italic">Alt kategori yok</p>
-                  )}
-                </div>
-                
-                {/* Sağ - Aksiyon butonları */}
-                <div className="flex items-center gap-2 ml-4">
-                  {!category.id ? (
-                    <div className="text-xs text-yellow-600 italic">
-                      Bu kategoriyi düzenlemek için önce silin ve yeniden oluşturun
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => openEditModal(category)}
-                        className="px-3 py-1.5 text-green-600 hover:bg-green-50 rounded-lg text-sm font-medium flex items-center gap-1"
-                      >
-                        ✏️ Düzenle
-                      </button>
-                      
-                      {!category.isSystem && (
-                        <button
-                          onClick={() => {
-                            setDeletingCategory(category);
-                            setShowDeleteModal(true);
-                          }}
-                          className="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium flex items-center gap-1"
-                        >
-                          🗑️ Sil
-                        </button>
+              {/* Üst - İkon ve Başlık */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl">{category.icon || '📁'}</span>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 text-base">{category.name}</h3>
+                    <div className="flex gap-1 mt-1">
+                      {!category.id && (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                          Eski Veri
+                        </span>
                       )}
-                    </>
-                  )}
+                      {category.isSystem && (
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
+                          Sistem
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Orta - Alt kategoriler */}
+              <div className="flex-1 mb-3">
+                {category.subCategories?.length > 0 ? (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Alt Kategoriler ({category.subCategories.length}):</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {category.subCategories.slice(0, 4).map(sub => (
+                        <span
+                          key={sub.id}
+                          className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-md"
+                        >
+                          {sub.name}
+                        </span>
+                      ))}
+                      {category.subCategories.length > 4 && (
+                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md">
+                          +{category.subCategories.length - 4} daha
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400 italic">Alt kategori yok</p>
+                )}
+              </div>
+              
+              {/* Alt - Aksiyon butonları */}
+              <div className="flex items-center gap-2 pt-3 border-t">
+                {!category.id ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        setDeletingCategory(category);
+                        setShowDeleteModal(true);
+                      }}
+                      className="flex-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium flex items-center justify-center gap-1"
+                    >
+                      🗑️ Sil
+                    </button>
+                    <div className="text-xs text-yellow-600 italic flex-1 text-center">
+                      Sonra yeniden oluştur
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => openEditModal(category)}
+                      className="flex-1 px-3 py-2 text-green-600 hover:bg-green-50 rounded-lg text-sm font-medium flex items-center justify-center gap-1"
+                    >
+                      ✏️ Düzenle
+                    </button>
+                    
+                    {!category.isSystem && (
+                      <button
+                        onClick={() => {
+                          setDeletingCategory(category);
+                          setShowDeleteModal(true);
+                        }}
+                        className="flex-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium flex items-center justify-center gap-1"
+                      >
+                        🗑️ Sil
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           ))}
