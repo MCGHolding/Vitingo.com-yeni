@@ -173,8 +173,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return ['payment', 'refund', ''].includes(type);
   };
   
-  // İşlem güncelle
-  const handleTransactionUpdate = (txnId, field, value) => {
+  // İşlem güncelle (with backend sync)
+  const handleTransactionUpdate = async (txnId, field, value) => {
+    // Optimistic update - önce local state'i güncelle
     setTransactions(prev => prev.map(txn => {
       if (txn.id !== txnId) return txn;
       
@@ -200,6 +201,48 @@ const BankStatementAnalyzer = ({ bankId }) => {
       
       return updated;
     }));
+    
+    // Backend'e kaydet
+    if (statement?.id) {
+      setSavingTransactions(prev => ({ ...prev, [txnId]: true }));
+      
+      try {
+        const updateData = { [field]: value };
+        
+        const response = await fetch(
+          `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/${txnId}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateData)
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error('Kaydetme hatası');
+        }
+        
+        const data = await response.json();
+        
+        // Backend'den gelen güncel transaction ile state'i senkronize et
+        if (data.updatedTransaction) {
+          setTransactions(prev => prev.map(txn => 
+            txn.id === txnId ? { ...txn, ...data.updatedTransaction } : txn
+          ));
+        }
+        
+      } catch (err) {
+        console.error('Transaction update failed:', err);
+        // Hata durumunda kullanıcıyı bilgilendirmek için toast/notification eklenebilir
+        // Şimdilik console'a yazıyoruz
+      } finally {
+        setSavingTransactions(prev => {
+          const newState = { ...prev };
+          delete newState[txnId];
+          return newState;
+        });
+      }
+    }
   };
   
   // Alt kategorileri getir
