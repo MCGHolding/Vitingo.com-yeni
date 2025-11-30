@@ -497,6 +497,13 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
     }
     
     // Fill form with opportunity data
+    // Ülke opportunity'den geliyorsa ve countries listesinde yoksa ekle
+    const opportunityCountry = opportunity.country || '';
+    if (opportunityCountry && !countries.find(c => c.name === opportunityCountry)) {
+      setCountries(prev => [...prev, { code: opportunityCountry.substring(0, 2).toUpperCase(), name: opportunityCountry }]);
+      console.log('✅ Added country to list:', opportunityCountry);
+    }
+    
     setFormData(prev => ({
       ...prev,
       company_name: opportunity.customer || '',
@@ -507,7 +514,7 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
       project_name: opportunity.title || '',
       fair_center: opportunity.trade_show || '',
       city: opportunity.city || '',
-      country: opportunity.country || '',
+      country: opportunityCountry,
       start_date: opportunity.trade_show_start_date || opportunity.tradeShowStartDate || opportunity.close_date || '',
       end_date: opportunity.trade_show_end_date || opportunity.tradeShowEndDate || opportunity.close_date || '',
       stand_area: opportunity.stand_size || opportunity.standSize || '',
