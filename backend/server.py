@@ -13825,9 +13825,14 @@ async def update_category(category_id: str, data: CategoryUpdate):
 
 @api_router.delete("/settings/expense-categories/{category_id}")
 async def delete_category(category_id: str):
-    """Kategori sil"""
+    """Kategori sil - id veya name ile"""
     try:
+        # Önce id ile ara
         category = await db.expense_categories.find_one({"id": category_id})
+        
+        # Bulunamazsa name ile ara (eski kategoriler için)
+        if not category:
+            category = await db.expense_categories.find_one({"name": category_id})
         
         if not category:
             raise HTTPException(404, "Kategori bulunamadı")
@@ -13840,7 +13845,7 @@ async def delete_category(category_id: str):
         try:
             expense_count = await db.expenses.count_documents({
                 "$or": [
-                    {"categoryId": category_id},
+                    {"categoryId": category.get("id")},
                     {"category": category.get("name")}
                 ]
             })
@@ -13853,7 +13858,11 @@ async def delete_category(category_id: str):
                 f"Bu kategoriye bağlı {expense_count} harcama kaydı var. Önce harcamaları başka kategoriye taşıyın."
             )
         
-        await db.expense_categories.delete_one({"id": category_id})
+        # id varsa ona göre, yoksa name'e göre sil
+        if category.get("id"):
+            await db.expense_categories.delete_one({"id": category["id"]})
+        else:
+            await db.expense_categories.delete_one({"name": category["name"]})
         
         return {"success": True, "message": "Kategori silindi"}
     except HTTPException:
