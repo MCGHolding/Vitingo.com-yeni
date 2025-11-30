@@ -118,8 +118,6 @@ import ExpenseReceiptApprovalPage from './components/ExpenseReceipts/ExpenseRece
 import NewBriefForm from './components/Brief/NewBriefForm';
 import NewCollectionForm from './components/Collections/NewCollectionForm';
 import AllBriefsPage from './components/Brief/AllBriefsPage';
-import TeklifForm from './components/Teklif/TeklifForm';
-import AllQuotesPage from './components/Teklif/AllQuotesPage';
 import ProposalProfilesPage from './pages/proposals/ProposalProfilesPage';
 import ProposalProfileWizard from './pages/proposals/ProposalProfileWizard';
 import NewProposalWizard from './pages/proposals/NewProposalWizard';
