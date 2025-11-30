@@ -1289,6 +1289,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
                           <span className="text-yellow-600 text-xl">⏳</span>
                         )}
                       </td>
+                      
+                      {/* Aksiyon */}
+                      <td className="px-3 py-3 text-center">
+                        <button
+                          onClick={() => resetTransaction(txn.id)}
+                          className="text-gray-400 hover:text-red-600 transition-colors"
+                          title="İşlemi Sıfırla"
+                        >
+                          🔄
+                        </button>
+                      </td>
                     </tr>
                     
                     {/* Otomatik Eşleştirme Badge */}
