@@ -14236,18 +14236,27 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     else:
         result["header"]["interestRate"] = "0%"
     
-    # Account Type - sadece CURRENT_ACCOUNT veya benzeri
-    type_match = re.search(r'ACCOUNT TYPE[\s\n:]+([A-Z_]+(?:ACCOUNT)?)', full_text, re.IGNORECASE | re.MULTILINE)
+    # Account Type - specifically look for CURRENT_ACCOUNT pattern
+    # PDF format: "ACCOUNT TYPE\nCURRENT_ACCOUNT"
+    type_match = re.search(r'ACCOUNT TYPE\s*\n\s*([A-Z]+_[A-Z]+)', full_text, re.MULTILINE)
     if type_match:
         account_type = type_match.group(1).replace('_', ' ').title()
         result["header"]["accountType"] = account_type
     else:
-        result["header"]["accountType"] = "Current Account"
+        # Fallback: any word after ACCOUNT TYPE
+        type_match2 = re.search(r'ACCOUNT TYPE\s*\n\s*(\S+)', full_text, re.MULTILINE)
+        if type_match2:
+            result["header"]["accountType"] = type_match2.group(1).replace('_', ' ').title()
+        else:
+            result["header"]["accountType"] = "Current Account"
     
-    # Account Number - 10 haneli numara
-    number_match = re.search(r'ACCOUNT NUMBER[\s\n:]+(\d{10})', full_text, re.IGNORECASE | re.MULTILINE)
+    # Account Number - must be on line after "ACCOUNT NUMBER"
+    # PDF format: "ACCOUNT NUMBER\n9368491092"
+    number_match = re.search(r'ACCOUNT NUMBER\s*\n\s*(\d{8,12})', full_text, re.MULTILINE)
     if number_match:
         result["header"]["accountNumber"] = number_match.group(1)
+    else:
+        result["header"]["accountNumber"] = None
     
     # Account Opened
     opened_match = re.search(r'ACCOUNT OPENED\s*\n?\s*(\d{2}/\d{2}/\d{4})', full_text, re.IGNORECASE)
