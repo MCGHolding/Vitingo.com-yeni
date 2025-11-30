@@ -6768,6 +6768,7 @@ class OpportunityCreate(BaseModel):
 class OpportunityUpdate(BaseModel):
     title: Optional[str] = None
     customer: Optional[str] = None
+    lead: Optional[str] = None
     contact_person: Optional[str] = None
     amount: Optional[float] = None
     currency: Optional[str] = None
@@ -6775,19 +6776,38 @@ class OpportunityUpdate(BaseModel):
     stage: Optional[str] = None
     priority: Optional[str] = None
     close_date: Optional[str] = None
+    expectedCloseDate: Optional[str] = None
     source: Optional[str] = None
     description: Optional[str] = None
+    notes: Optional[str] = None
     business_type: Optional[str] = None
+    businessType: Optional[str] = None
+    project_type: Optional[str] = None
+    projectType: Optional[str] = None
     country: Optional[str] = None
     city: Optional[str] = None
     trade_show: Optional[str] = None
+    tradeShow: Optional[str] = None
+    trade_show_start_date: Optional[str] = None
+    tradeShowStartDate: Optional[str] = None
+    trade_show_end_date: Optional[str] = None
+    tradeShowEndDate: Optional[str] = None
     trade_show_dates: Optional[str] = None
+    stand_size: Optional[float] = None
+    standSize: Optional[float] = None
+    stand_size_unit: Optional[str] = None
+    standSizeUnit: Optional[str] = None
     expected_revenue: Optional[float] = None
+    expectedRevenue: Optional[float] = None
     probability: Optional[int] = None
-    is_favorite: Optional[bool] = None  # Favori güncelleme
+    is_favorite: Optional[bool] = None
     tags: Optional[List[str]] = None
     design_files: Optional[List[str]] = None
+    designFiles: Optional[List[str]] = None
     sample_files: Optional[List[str]] = None
+    sampleFiles: Optional[List[str]] = None
+    reference_files: Optional[List[str]] = None
+    referenceFiles: Optional[List[str]] = None
 
 # Quote/Teklif Models
 class Quote(BaseModel):
