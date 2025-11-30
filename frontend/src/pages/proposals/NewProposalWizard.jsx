@@ -2110,37 +2110,54 @@ const NewProposalWizard = ({ onBack, editProposalId }) => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Başlangıç Tarihi *</label>
-                  <input
-                    type="date"
-                    value={formData.start_date}
-                    onChange={(e) => handleInputChange('start_date', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.start_date ? 'border-red-500' : 'border-gray-300'
-                    } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
-                    disabled={formData.creation_type === 'opportunity'}
-                  />
-                  {errors.start_date && (
-                    <p className="text-sm text-red-600 mt-1">{errors.start_date}</p>
-                  )}
-                </div>
+              <div className="space-y-4">
+                {/* Gün Sayısı Gösterimi */}
+                {formData.start_date && formData.end_date && (() => {
+                  const start = new Date(formData.start_date);
+                  const end = new Date(formData.end_date);
+                  const diffTime = Math.abs(end - start);
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 çünkü başlangıç günü de dahil
+                  return (
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                      <p className="text-sm font-medium text-blue-800">
+                        📅 Fuar Süresi: <span className="font-bold">{diffDays} gün</span>
+                      </p>
+                    </div>
+                  );
+                })()}
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bitiş Tarihi *</label>
-                  <input
-                    type="date"
-                    value={formData.end_date}
-                    onChange={(e) => handleInputChange('end_date', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.end_date ? 'border-red-500' : 'border-gray-300'
-                    } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
-                    disabled={formData.creation_type === 'opportunity'}
-                  />
-                  {errors.end_date && (
-                    <p className="text-sm text-red-600 mt-1">{errors.end_date}</p>
-                  )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Başlangıç Tarihi *</label>
+                    <input
+                      type="date"
+                      value={formData.start_date}
+                      onChange={(e) => handleInputChange('start_date', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.start_date ? 'border-red-500' : 'border-gray-300'
+                      } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
+                      disabled={formData.creation_type === 'opportunity'}
+                    />
+                    {errors.start_date && (
+                      <p className="text-sm text-red-600 mt-1">{errors.start_date}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Bitiş Tarihi *</label>
+                    <input
+                      type="date"
+                      value={formData.end_date}
+                      onChange={(e) => handleInputChange('end_date', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.end_date ? 'border-red-500' : 'border-gray-300'
+                      } ${formData.creation_type === 'opportunity' ? 'bg-gray-50' : ''}`}
+                      disabled={formData.creation_type === 'opportunity'}
+                    />
+                    {errors.end_date && (
+                      <p className="text-sm text-red-600 mt-1">{errors.end_date}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
