@@ -1625,7 +1625,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                             onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
                             className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm font-medium ${getTypeColor(txn.type)}`}
                           >
-                            {TRANSACTION_TYPES.map(type => (
+                            {transactionTypes.map(type => (
                               <option key={type.value} value={type.value}>{type.label}</option>
                             ))}
                           </select>
