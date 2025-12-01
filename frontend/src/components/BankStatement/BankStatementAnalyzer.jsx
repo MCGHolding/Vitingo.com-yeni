@@ -556,7 +556,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const handleBulkApply = async (shouldLearn = false) => {
     console.log('🚀 handleBulkApply called with shouldLearn:', shouldLearn);
     console.log('🚀 bulkAction:', bulkAction);
-    console.log('🚀 statement:', statement);
+    console.log('🚀 statement object:', statement);
     console.log('🚀 statement.id:', statement?.id);
     console.log('🚀 bankId:', bankId);
     
@@ -566,15 +566,24 @@ const BankStatementAnalyzer = ({ bankId }) => {
       return;
     }
     
-    if (!statement?.id) {
+    // Get statement ID from multiple possible sources
+    const statementId = statement?.id;
+    
+    console.log('🚀 Resolved statementId:', statementId);
+    console.log('🚀 statementId type:', typeof statementId);
+    console.log('🚀 Is statementId valid?:', !!statementId);
+    
+    if (!statementId) {
       console.error('❌ Missing statement.id');
-      console.error('❌ Current statement object:', statement);
-      alert('❌ Statement ID missing. Please reload the page.');
+      console.error('❌ Current statement object:', JSON.stringify(statement, null, 2));
+      console.error('❌ Available keys in statement:', statement ? Object.keys(statement) : 'statement is null/undefined');
+      alert('❌ Statement ID missing. Cannot proceed with bulk update. Please reload the page.');
       return;
     }
     
     const { field, value, similarTxns } = bulkAction;
     console.log(`🚀 Updating ${similarTxns.length} transactions with ${field}=${value}`);
+    console.log(`🚀 Transaction IDs:`, similarTxns.map(t => t.id));
     
     setSaving(true);
     setShowBulkModal(false);
@@ -590,18 +599,22 @@ const BankStatementAnalyzer = ({ bankId }) => {
         shouldLearn
       };
       
-      console.log('🚀 Request body:', requestBody);
-      console.log('🚀 Calling endpoint:', `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/bulk`);
+      const endpoint = `${API_URL}/api/banks/${bankId}/statements/${statementId}/transactions/bulk`;
+      
+      console.log('🚀 Request body:', JSON.stringify(requestBody, null, 2));
+      console.log('🚀 Full endpoint URL:', endpoint);
+      console.log('🚀 Endpoint breakdown:');
+      console.log('   - API_URL:', API_URL);
+      console.log('   - bankId:', bankId);
+      console.log('   - statementId:', statementId);
+      console.log('   - Final path:', `/api/banks/${bankId}/statements/${statementId}/transactions/bulk`);
       
       // Call backend bulk update endpoint
-      const response = await fetch(
-        `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/bulk`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
-        }
-      );
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
       
       console.log('🚀 Response status:', response.status);
       
