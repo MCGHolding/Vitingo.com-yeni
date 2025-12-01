@@ -14598,26 +14598,34 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
     currency_match = re.search(r'CURRENCY[\s\n:]+([A-Z]{3})\b', full_text, re.IGNORECASE | re.MULTILINE)
     if currency_match:
         currency = currency_match.group(1).upper()
+        logger.info(f"💰 Currency detected (Strategy 1 - CURRENCY label): {currency}")
     
     # Strategy 2: From summary table (e.g., "48,687.58 USD")
     if not currency:
         summary_match = re.search(r'CLOSING BALANCE.*?([\d,]+\.?\d*)\s+(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)', full_text, re.IGNORECASE | re.DOTALL)
         if summary_match:
             currency = summary_match.group(2).upper()
+            logger.info(f"💰 Currency detected (Strategy 2 - CLOSING BALANCE): {currency}")
     
     # Strategy 3: From transaction lines (e.g., "500.00 USD")
     if not currency:
         txn_currency_match = re.search(r'[\d,]+\.?\d+\s+(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)\s+[\d,]+', full_text, re.IGNORECASE)
         if txn_currency_match:
             currency = txn_currency_match.group(1).upper()
+            logger.info(f"💰 Currency detected (Strategy 3 - Transaction line): {currency}")
     
     # Strategy 4: Look for standalone currency code on page 2
     if not currency:
         standalone_match = re.search(r'\b(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)\b', full_text)
         if standalone_match:
             currency = standalone_match.group(1).upper()
+            logger.info(f"💰 Currency detected (Strategy 4 - Standalone): {currency}")
+    
+    if not currency:
+        logger.warning(f"⚠️ No currency detected, falling back to AED")
     
     result["header"]["currency"] = currency if currency else "AED"  # Fallback to AED
+    logger.info(f"💰 Final currency set: {result['header']['currency']}")
     
     # Interest Rate
     interest_match = re.search(r'INTEREST RATE[\s\n:]+(\d+%)', full_text, re.IGNORECASE | re.MULTILINE)
