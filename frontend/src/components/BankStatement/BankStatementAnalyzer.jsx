@@ -314,7 +314,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
   
   // Kategori gerekli mi?
   const typeRequiresCategory = (type) => {
-    return ['payment', 'refund', ''].includes(type);
+    // Tüm işlem türlerinde kategori seçilebilir
+    return true;
   };
   
   // Tüm işlemi sıfırla
