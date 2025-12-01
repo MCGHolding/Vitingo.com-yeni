@@ -75,10 +75,9 @@ const BulkActionModal = ({
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="text-xs text-gray-600 mb-2 font-medium">Uygulanacak:</div>
             <div className="space-y-1">
-              <div className="text-sm text-gray-800">• {getFieldDisplay()}</div>
-              {sourceTxn.currencyPair && field !== 'currencyPair' && (
-                <div className="text-sm text-gray-800">• Döviz Çifti: {sourceTxn.currencyPair}</div>
-              )}
+              {getFieldsDisplay().map((display, idx) => (
+                <div key={idx} className="text-sm text-gray-800">• {display}</div>
+              ))}
             </div>
           </div>
           
