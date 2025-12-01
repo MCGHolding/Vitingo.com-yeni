@@ -14931,7 +14931,9 @@ async def bulk_update_transactions(
                 bank_id,
                 "current_user"  # TODO: Get from auth
             )
-            logger.info(f"Learned {learned_count} patterns from bulk update")
+            logger.info(f"✅ Learned {learned_count} patterns from bulk update")
+        
+        logger.info(f"✅ Bulk update successful - updated {len(updated_transactions)} transactions")
         
         return {
             "success": True,
