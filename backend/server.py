@@ -14238,12 +14238,33 @@ def parse_wio_bank_pdf(pdf_bytes: bytes) -> dict:
         if alt_match:
             result["header"]["accountHolder"] = alt_match.group(1).strip()
     
-    # Currency - daha tolerant regex
+    # Currency - multiple parsing strategies
+    currency = None
+    
+    # Strategy 1: CURRENCY label followed by 3-letter code
     currency_match = re.search(r'CURRENCY[\s\n:]+([A-Z]{3})\b', full_text, re.IGNORECASE | re.MULTILINE)
     if currency_match:
-        result["header"]["currency"] = currency_match.group(1)
-    else:
-        result["header"]["currency"] = "AED"  # Default
+        currency = currency_match.group(1).upper()
+    
+    # Strategy 2: From summary table (e.g., "48,687.58 USD")
+    if not currency:
+        summary_match = re.search(r'CLOSING BALANCE.*?([\d,]+\.?\d*)\s+(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)', full_text, re.IGNORECASE | re.DOTALL)
+        if summary_match:
+            currency = summary_match.group(2).upper()
+    
+    # Strategy 3: From transaction lines (e.g., "500.00 USD")
+    if not currency:
+        txn_currency_match = re.search(r'[\d,]+\.?\d+\s+(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)\s+[\d,]+', full_text, re.IGNORECASE)
+        if txn_currency_match:
+            currency = txn_currency_match.group(1).upper()
+    
+    # Strategy 4: Look for standalone currency code on page 2
+    if not currency:
+        standalone_match = re.search(r'\b(USD|EUR|GBP|AED|CAD|TRY|CHF|JPY|SAR|INR)\b', full_text)
+        if standalone_match:
+            currency = standalone_match.group(1).upper()
+    
+    result["header"]["currency"] = currency if currency else "AED"  # Fallback to AED
     
     # Interest Rate
     interest_match = re.search(r'INTEREST RATE[\s\n:]+(\d+%)', full_text, re.IGNORECASE | re.MULTILINE)
