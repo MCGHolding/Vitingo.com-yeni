@@ -15254,7 +15254,19 @@ async def bulk_update_transactions(
             {"id": statement_id, "bankId": bank_id}
         )
         
+        logger.info(f"🚀 Bulk update - Statement query: id={statement_id}, bankId={bank_id}")
+        logger.info(f"🚀 Bulk update - Statement found: {statement is not None}")
+        
         if not statement:
+            # Debug: Check if statement exists with just statement_id
+            debug_stmt = await db.bank_statement_imports.find_one({"id": statement_id})
+            if debug_stmt:
+                logger.error(f"❌ BULK: Statement EXISTS but bankId mismatch! Found bankId: {debug_stmt.get('bankId')}, Expected: {bank_id}")
+            else:
+                logger.error(f"❌ BULK: Statement NOT FOUND with id: {statement_id}")
+                # Show available statement IDs
+                all_stmts = await db.bank_statement_imports.find({}, {"id": 1, "bankId": 1, "_id": 0}).limit(5).to_list(5)
+                logger.error(f"❌ BULK: Available statements (first 5): {all_stmts}")
             raise HTTPException(404, "Statement not found")
         
         # Update multiple transactions
