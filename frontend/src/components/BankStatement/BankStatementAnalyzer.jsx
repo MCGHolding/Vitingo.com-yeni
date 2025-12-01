@@ -125,6 +125,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
             
             setTransactions(fullStatement.transactions || []);
             setSaveStatus('saved');
+          } else if (detailResponse.status === 404) {
+            // Statement not found in DB - clear stale state
+            console.warn('⚠️ Statement not found in database. Clearing stale state.');
+            setStatement(null);
+            setTransactions([]);
           }
         } else {
           // No statement for this currency yet
@@ -134,6 +139,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
       }
     } catch (error) {
       console.error('Failed to load statements:', error);
+      // On error, clear state to prevent stale data issues
+      setStatement(null);
+      setTransactions([]);
     }
   };
   
