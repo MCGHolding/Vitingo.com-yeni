@@ -1576,7 +1576,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
             </thead>
             <tbody>
               {filteredTransactions.map((txn) => {
-                const typeConfig = TRANSACTION_TYPES.find(t => t.value === txn.type);
+                const typeConfig = transactionTypes.find(t => t.value === txn.type);
                 const showCustomerField = txn.type === 'collection';
                 const showCurrencyField = ['fx_buy', 'fx_sell'].includes(txn.type);
                 const showCategoryFields = typeRequiresCategory(txn.type);
