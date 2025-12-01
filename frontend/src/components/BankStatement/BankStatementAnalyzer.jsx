@@ -1622,12 +1622,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       </td>
                       
                       {/* Bakiye */}
-                      <td className="px-3 py-3 text-sm text-gray-600 text-right whitespace-nowrap">
+                      <td className="px-3 py-2 text-sm text-gray-600 text-right whitespace-nowrap border-b-0">
                         {formatMoney(txn.balance, header.currency)}
                       </td>
                       
                       {/* Durum */}
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-3 py-2 text-center border-b-0">
                         {txn.autoMatched && !txn.matchConfirmed ? (
                           <span className="text-purple-600 text-xl" title="Otomatik eşleştirildi">🤖</span>
                         ) : txn.status === 'completed' ? (
@@ -1638,7 +1638,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       </td>
                       
                       {/* Toplu Uygula */}
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-3 py-2 text-center border-b-0">
                         <button
                           onClick={() => handleManualBulkAction(txn.id)}
                           className="text-yellow-500 hover:text-yellow-600 transition-colors text-xl"
@@ -1649,7 +1649,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       </td>
                       
                       {/* Aksiyon */}
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-3 py-2 text-center border-b-0">
                         <button
                           onClick={() => resetTransaction(txn.id)}
                           className="text-gray-400 hover:text-red-600 transition-colors"
@@ -1657,6 +1657,95 @@ const BankStatementAnalyzer = ({ bankId }) => {
                         >
                           🔄
                         </button>
+                      </td>
+                    </tr>
+                    
+                    {/* ALT SATIR: Dropdown'lar (Tür, Kategori, Alt Kategori) */}
+                    <tr className={`group hover:bg-gray-50 bg-gray-50/30 ${txn.status === 'pending' ? 'bg-yellow-50/50' : ''}`}>
+                      {/* Checkbox boşluğu - rowspan ile üstten geliyor */}
+                      
+                      {/* Tarih boşluğu */}
+                      <td className="px-3 py-2"></td>
+                      
+                      {/* Dropdown'lar - Açıklama sütununun altında */}
+                      <td className="px-3 py-2" colSpan="5">
+                        <div className="flex items-center gap-3">
+                          {/* Tür Dropdown */}
+                          <div className="relative flex items-center gap-1" style={{minWidth: '140px'}}>
+                            <select
+                              value={txn.type || ''}
+                              onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
+                              className={`w-full px-2 py-1 pr-7 border rounded-md text-xs font-medium ${getTypeColor(txn.type)}`}
+                            >
+                              {transactionTypes.map(type => (
+                                <option key={type.value} value={type.value}>
+                                  {type.value ? type.label : '— Tür Seç —'}
+                                </option>
+                              ))}
+                            </select>
+                            {txn.type && (
+                              <button
+                                onClick={() => handleTransactionUpdate(txn.id, 'type', '')}
+                                className="absolute right-1 text-gray-400 hover:text-red-500 text-xs font-bold"
+                                title="Temizle"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                          
+                          {/* Kategori Dropdown */}
+                          <div className="relative flex items-center gap-1" style={{minWidth: '140px'}}>
+                            <select
+                              value={txn.categoryId || ''}
+                              onChange={(e) => handleTransactionUpdate(txn.id, 'categoryId', e.target.value || null)}
+                              disabled={!showCategoryFields}
+                              className={`w-full px-2 py-1 pr-7 border rounded-md text-xs ${
+                                !showCategoryFields ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
+                              }`}
+                            >
+                              <option value="">— Kategori Seç —</option>
+                              {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                              ))}
+                            </select>
+                            {txn.categoryId && showCategoryFields && (
+                              <button
+                                onClick={() => handleTransactionUpdate(txn.id, 'categoryId', null)}
+                                className="absolute right-1 text-gray-400 hover:text-red-500 text-xs font-bold"
+                                title="Temizle"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                          
+                          {/* Alt Kategori Dropdown */}
+                          <div className="relative flex items-center gap-1" style={{minWidth: '140px'}}>
+                            <select
+                              value={txn.subCategoryId || ''}
+                              onChange={(e) => handleTransactionUpdate(txn.id, 'subCategoryId', e.target.value || null)}
+                              disabled={!showCategoryFields || !txn.categoryId}
+                              className={`w-full px-2 py-1 pr-7 border rounded-md text-xs ${
+                                !showCategoryFields || !txn.categoryId ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
+                              }`}
+                            >
+                              <option value="">— Alt Kategori Seç —</option>
+                              {getSubCategories(txn.categoryId).map(sub => (
+                                <option key={sub.id} value={sub.id}>{sub.name}</option>
+                              ))}
+                            </select>
+                            {txn.subCategoryId && showCategoryFields && txn.categoryId && (
+                              <button
+                                onClick={() => handleTransactionUpdate(txn.id, 'subCategoryId', null)}
+                                className="absolute right-1 text-gray-400 hover:text-red-500 text-xs font-bold"
+                                title="Temizle"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     
