@@ -14910,6 +14910,13 @@ async def bulk_update_transactions(
                 
                 updated_transactions.append(txn)
         
+        logger.info(f"✅ Successfully updated {len(updated_transactions)} out of {len(transaction_ids)} requested")
+        
+        if len(updated_transactions) == 0:
+            logger.error(f"❌ No transactions were updated! Requested IDs don't match any transactions in statement")
+            logger.error(f"❌ Statement transaction IDs (first 5): {[t['id'] for t in transactions[:5]]}")
+            raise HTTPException(404, "No matching transactions found in statement")
+        
         # Recalculate statistics
         categorized_count = sum(1 for t in transactions if t["status"] == "completed")
         pending_count = sum(1 for t in transactions if t["status"] == "pending")
