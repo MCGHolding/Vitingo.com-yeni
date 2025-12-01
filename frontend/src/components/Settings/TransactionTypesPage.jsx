@@ -124,58 +124,14 @@ const TransactionTypesPage = () => {
 };
 
 const TransactionTypeCard = ({ type, onEdit, onDelete }) => {
-  const colorClasses = {
-    green: 'bg-green-50 border-green-200',
-    red: 'bg-red-50 border-red-200',
-    blue: 'bg-blue-50 border-blue-200',
-    purple: 'bg-purple-50 border-purple-200',
-    indigo: 'bg-indigo-50 border-indigo-200',
-    teal: 'bg-teal-50 border-teal-200',
-    orange: 'bg-orange-50 border-orange-200',
-    gray: 'bg-gray-50 border-gray-200',
-    pink: 'bg-pink-50 border-pink-200',
-    amber: 'bg-amber-50 border-amber-200',
-    emerald: 'bg-emerald-50 border-emerald-200'
-  };
-
   return (
-    <div className={`rounded-xl border-2 p-4 ${colorClasses[type.color] || 'bg-gray-50 border-gray-200'}`}>
+    <div className="rounded-xl border-2 bg-white border-gray-200 p-4 hover:shadow-md transition-shadow">
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{type.icon}</span>
-          <div>
-            <h3 className="font-semibold text-gray-800">{type.name}</h3>
-            <span className="text-xs text-gray-500">
-              {type.subTypes?.length || 0} Alt Tür
-            </span>
-          </div>
-        </div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-gray-800 text-base">{type.name}</h3>
         {type.isSystem && (
           <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
             Sistem
-          </span>
-        )}
-      </div>
-
-      {/* Description */}
-      {type.description && (
-        <p className="text-sm text-gray-600 mb-3">{type.description}</p>
-      )}
-
-      {/* Alt Türler */}
-      <div className="flex flex-wrap gap-1 mb-4 min-h-[60px]">
-        {type.subTypes?.slice(0, 4).map((sub, i) => (
-          <span
-            key={i}
-            className="px-2 py-1 bg-white rounded text-xs text-gray-600 border"
-          >
-            {sub.name}
-          </span>
-        ))}
-        {type.subTypes?.length > 4 && (
-          <span className="px-2 py-1 text-xs text-gray-400">
-            +{type.subTypes.length - 4} daha
           </span>
         )}
       </div>
