@@ -424,29 +424,6 @@ const ExpenseCategoriesSettings = () => {
                 )}
               </div>
               
-              {/* Kategori İkonu */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kategori İkonu
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {EMOJI_OPTIONS.map(emoji => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, icon: emoji }))}
-                      className={`w-10 h-10 rounded-lg text-xl flex items-center justify-center transition-colors ${
-                        formData.icon === emoji
-                          ? 'bg-green-100 ring-2 ring-green-500'
-                          : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
               {/* Alt Kategoriler */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
