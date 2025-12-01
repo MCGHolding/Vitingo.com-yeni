@@ -419,39 +419,6 @@ const BankStatementAnalyzer = ({ bankId }) => {
         // Save successful
         setSaveStatus('saved');
         
-        // Check for similar transactions (bulk action opportunity)
-        // Use updated transaction from backend response
-        const updatedTxn = data.updatedTransaction;
-        if (updatedTxn) {
-          const normalized = normalizeDescription(updatedTxn.description);
-          
-          // Get fresh transactions state after update
-          setTransactions(currentTransactions => {
-            const similarTxns = currentTransactions.filter(t => 
-              t.id !== txnId && 
-              normalizeDescription(t.description) === normalized &&
-              t.status === 'pending'
-            );
-            
-            // If there are 2+ similar pending transactions, show bulk action modal
-            if (similarTxns.length >= 2) {
-              console.log(`🚀 Found ${similarTxns.length} similar pending transactions`);
-              console.log('🚀 Similar transactions:', similarTxns.map(t => ({id: t.id, desc: t.description})));
-              
-              setBulkAction({
-                field,
-                value,
-                similarTxns,
-                normalizedDesc: normalized,
-                sourceTxn: updatedTxn
-              });
-              setShowBulkModal(true);
-            }
-            
-            return currentTransactions; // Don't modify state here
-          });
-        }
-        
       } catch (err) {
         console.error('Transaction update failed:', err);
         setSaveStatus('unsaved');
