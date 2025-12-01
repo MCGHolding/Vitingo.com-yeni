@@ -16,7 +16,6 @@ const ExpenseCategoriesSettings = () => {
   // Form state
   const [formData, setFormData] = useState({
     name: '',
-    icon: '📁',
     subCategories: []
   });
   const [newSubCategory, setNewSubCategory] = useState('');
