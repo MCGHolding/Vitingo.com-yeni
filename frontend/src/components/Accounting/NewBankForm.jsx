@@ -43,6 +43,9 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
   const [showAddCountryModal, setShowAddCountryModal] = useState(false);
   const [newCountryName, setNewCountryName] = useState('');
   const [isAddingCountry, setIsAddingCountry] = useState(false);
+  
+  // Currency management
+  const [currencies, setCurrencies] = useState([]);
 
   // Load countries from backend
   const loadCountries = async () => {
