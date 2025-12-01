@@ -843,7 +843,11 @@ const NewBankForm = ({ onBackToDashboard, onGoToBanks, bankToEdit = null }) => {
             <button
               onClick={() => {
                 setShowSuccessModal(false);
-                onBackToDashboard();
+                if (onGoToBanks) {
+                  onGoToBanks();
+                } else {
+                  onBackToDashboard();
+                }
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
