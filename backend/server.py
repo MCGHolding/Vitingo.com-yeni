@@ -13978,6 +13978,326 @@ async def reorder_categories(category_ids: List[str]):
         logger.error(f"Error reordering categories: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===================== TRANSACTION TYPES =====================
+
+@api_router.get("/settings/transaction-types")
+async def get_transaction_types():
+    """Get all transaction types with sub-types"""
+    try:
+        types = await db.transaction_types.find({"_id": 0}).sort("order", 1).to_list(1000)
+        return types
+    except Exception as e:
+        logger.error(f"Error getting transaction types: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/settings/transaction-types")
+async def create_transaction_type(type_data: dict):
+    """Create new transaction type"""
+    try:
+        new_type = {
+            "id": str(uuid.uuid4()),
+            "name": type_data.get("name"),
+            "nameEn": type_data.get("nameEn", type_data.get("name")),
+            "icon": type_data.get("icon", "🔄"),
+            "color": type_data.get("color", "gray"),
+            "description": type_data.get("description", ""),
+            "direction": type_data.get("direction", "both"),  # "in" | "out" | "both"
+            "isSystem": False,
+            "isActive": True,
+            "order": type_data.get("order", 999),
+            "subTypes": type_data.get("subTypes", []),
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.transaction_types.insert_one(new_type)
+        new_type.pop("_id", None)
+        
+        return new_type
+    except Exception as e:
+        logger.error(f"Error creating transaction type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/settings/transaction-types/{type_id}")
+async def update_transaction_type(type_id: str, type_data: dict):
+    """Update transaction type"""
+    try:
+        update_fields = {
+            "name": type_data.get("name"),
+            "icon": type_data.get("icon"),
+            "color": type_data.get("color"),
+            "description": type_data.get("description"),
+            "direction": type_data.get("direction"),
+            "subTypes": type_data.get("subTypes", []),
+            "updatedAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        result = await db.transaction_types.update_one(
+            {"id": type_id},
+            {"$set": update_fields}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(404, "Transaction type not found")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating transaction type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/settings/transaction-types/{type_id}")
+async def delete_transaction_type(type_id: str):
+    """Delete transaction type"""
+    try:
+        # Check if system type
+        type_doc = await db.transaction_types.find_one({"id": type_id})
+        if type_doc and type_doc.get("isSystem"):
+            raise HTTPException(400, "Cannot delete system transaction types")
+        
+        result = await db.transaction_types.delete_one({"id": type_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(404, "Transaction type not found")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting transaction type: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/settings/transaction-types/seed")
+async def seed_transaction_types():
+    """Seed default transaction types"""
+    try:
+        # Check if already seeded
+        count = await db.transaction_types.count_documents({})
+        if count > 0:
+            return {"message": "Transaction types already exist", "count": count}
+        
+        default_types = [
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Tahsilat",
+                "nameEn": "Collection",
+                "icon": "💰",
+                "color": "green",
+                "description": "Gelen ödemeler",
+                "direction": "in",
+                "isSystem": True,
+                "isActive": True,
+                "order": 1,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Müşteri Tahsilatı", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Proje Tahsilatı", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Avans Tahsilatı", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Depozito İadesi", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Ödeme",
+                "nameEn": "Payment",
+                "icon": "💸",
+                "color": "red",
+                "description": "Yapılan ödemeler",
+                "direction": "out",
+                "isSystem": True,
+                "isActive": True,
+                "order": 2,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Tedarikçi Ödemesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Personel Ödemesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Freelancer Ödemesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Kira Ödemesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Vergi Ödemesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Sigorta Ödemesi", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Döviz Alım",
+                "nameEn": "FX Buy",
+                "icon": "🔄",
+                "color": "blue",
+                "description": "Döviz alış işlemleri",
+                "direction": "both",
+                "isSystem": True,
+                "isActive": True,
+                "order": 3,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "USD → AED", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "EUR → AED", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "GBP → AED", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "TRY → AED", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Döviz Satım",
+                "nameEn": "FX Sell",
+                "icon": "💱",
+                "color": "purple",
+                "description": "Döviz satış işlemleri",
+                "direction": "both",
+                "isSystem": True,
+                "isActive": True,
+                "order": 4,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "AED → USD", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "AED → EUR", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "AED → TRY", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Transfer",
+                "nameEn": "Transfer",
+                "icon": "↔️",
+                "color": "indigo",
+                "description": "Hesaplar arası transfer",
+                "direction": "both",
+                "isSystem": True,
+                "isActive": True,
+                "order": 5,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Dahili Transfer", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Harici Transfer", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Swift Transfer", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Nakit Yatan",
+                "nameEn": "Cash Deposit",
+                "icon": "🏧",
+                "color": "teal",
+                "description": "Nakit para yatırma",
+                "direction": "in",
+                "isSystem": True,
+                "isActive": True,
+                "order": 6,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Şube Yatırım", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "ATM Yatırım", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Nakit Çekilen",
+                "nameEn": "Cash Withdrawal",
+                "icon": "💵",
+                "color": "orange",
+                "description": "Nakit para çekme",
+                "direction": "out",
+                "isSystem": True,
+                "isActive": True,
+                "order": 7,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Şube Çekim", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "ATM Çekim", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Banka Masrafı",
+                "nameEn": "Bank Fee",
+                "icon": "🏦",
+                "color": "gray",
+                "description": "Banka ücretleri",
+                "direction": "out",
+                "isSystem": True,
+                "isActive": True,
+                "order": 8,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Swift Ücreti", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Hesap İşletim Ücreti", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Havale Ücreti", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Kart Ücreti", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Cashback",
+                "nameEn": "Cashback",
+                "icon": "🎁",
+                "color": "pink",
+                "description": "Geri ödeme/ödül",
+                "direction": "in",
+                "isSystem": True,
+                "isActive": True,
+                "order": 9,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Kart Cashback", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Kampanya İadesi", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "İade",
+                "nameEn": "Refund",
+                "icon": "↩️",
+                "color": "amber",
+                "description": "İade işlemleri",
+                "direction": "both",
+                "isSystem": True,
+                "isActive": True,
+                "order": 10,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Müşteri İadesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Tedarikçi İadesi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Hatalı İşlem Düzeltme", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Faiz",
+                "nameEn": "Interest",
+                "icon": "📈",
+                "color": "emerald",
+                "description": "Faiz gelirleri",
+                "direction": "in",
+                "isSystem": True,
+                "isActive": True,
+                "order": 11,
+                "subTypes": [
+                    {"id": str(uuid.uuid4()), "name": "Mevduat Faizi", "isActive": True},
+                    {"id": str(uuid.uuid4()), "name": "Gecikme Faizi", "isActive": True}
+                ],
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "updatedAt": datetime.now(timezone.utc).isoformat()
+            }
+        ]
+        
+        await db.transaction_types.insert_many(default_types)
+        
+        return {"success": True, "message": f"Created {len(default_types)} default transaction types"}
+    except Exception as e:
+        logger.error(f"Error seeding transaction types: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===================== BANK STATEMENT ANALYZER =====================
 
 import pdfplumber
