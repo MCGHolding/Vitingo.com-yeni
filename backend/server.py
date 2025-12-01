@@ -14820,6 +14820,88 @@ async def update_transaction(
         logger.error(f"Error updating transaction: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/bulk")
+async def bulk_update_transactions(
+    bank_id: str,
+    statement_id: str,
+    request_data: dict
+):
+    """Bulk update multiple transactions at once"""
+    try:
+        transaction_ids = request_data.get("transactionIds", [])
+        update_data = request_data.get("updateData", {})
+        should_learn = request_data.get("shouldLearn", False)
+        
+        if not transaction_ids:
+            raise HTTPException(400, "No transaction IDs provided")
+        
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if not statement:
+            raise HTTPException(404, "Statement not found")
+        
+        # Update multiple transactions
+        transactions = statement["transactions"]
+        updated_transactions = []
+        
+        for txn in transactions:
+            if txn["id"] in transaction_ids:
+                # Apply updates
+                for key, value in update_data.items():
+                    txn[key] = value
+                
+                # Recalculate status
+                if txn.get("type"):
+                    if txn["type"] == "collection" and not txn.get("customerId"):
+                        txn["status"] = "pending"
+                    elif txn["type"] in ["fx_buy", "fx_sell"] and not txn.get("currencyPair"):
+                        txn["status"] = "pending"
+                    else:
+                        txn["status"] = "completed"
+                else:
+                    txn["status"] = "pending"
+                
+                updated_transactions.append(txn)
+        
+        # Recalculate statistics
+        categorized_count = sum(1 for t in transactions if t["status"] == "completed")
+        pending_count = sum(1 for t in transactions if t["status"] == "pending")
+        
+        # Save to database
+        await db.bank_statement_imports.update_one(
+            {"id": statement_id},
+            {
+                "$set": {
+                    "transactions": transactions,
+                    "categorizedCount": categorized_count,
+                    "pendingCount": pending_count,
+                    "updatedAt": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        # If shouldLearn is True, learn patterns from updated transactions
+        if should_learn and updated_transactions:
+            learned_count = await learn_patterns(
+                updated_transactions,
+                bank_id,
+                "current_user"  # TODO: Get from auth
+            )
+            logger.info(f"Learned {learned_count} patterns from bulk update")
+        
+        return {
+            "success": True,
+            "updatedCount": len(updated_transactions),
+            "updatedTransactions": updated_transactions
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error bulk updating transactions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/banks/{bank_id}/statements/{statement_id}/complete")
 async def complete_statement(bank_id: str, statement_id: str):
     """Complete statement and learn patterns"""
