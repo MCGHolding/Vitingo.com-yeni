@@ -727,6 +727,75 @@ const BankStatementAnalyzer = ({ bankId }) => {
       setSaving(false);
     }
   };
+  // Ekstre silme
+  const handleDeleteStatement = async () => {
+    if (!statement?.id) return;
+    
+    const confirmed = window.confirm(
+      '⚠️ Bu ekstreyi kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!'
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements/${statement.id}`,
+        { method: 'DELETE' }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Silme hatası');
+      }
+      
+      alert('✅ Ekstre başarıyla silindi!');
+      
+      // Clear state and reload
+      setStatement(null);
+      setTransactions([]);
+      await loadLatestStatement();
+      
+    } catch (error) {
+      alert(`❌ Silme hatası: ${error.message}`);
+    }
+  };
+  
+  // Tüm ekstreleri silme
+  const handleDeleteAllStatements = async () => {
+    const confirmed = window.confirm(
+      '⚠️ DİKKAT: Bu bankaya ait TÜM ekstreleri kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve tüm veriler kaybolacak!'
+    );
+    
+    if (!confirmed) return;
+    
+    // Double confirm
+    const doubleConfirm = window.confirm(
+      '⚠️ SON ONAY: Gerçekten TÜM ekstreleri silmek istediğinizden emin misiniz?'
+    );
+    
+    if (!doubleConfirm) return;
+    
+    try {
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements`,
+        { method: 'DELETE' }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Silme hatası');
+      }
+      
+      const data = await response.json();
+      alert(`✅ ${data.count} ekstre başarıyla silindi!`);
+      
+      // Clear state
+      setStatement(null);
+      setTransactions([]);
+      
+    } catch (error) {
+      alert(`❌ Silme hatası: ${error.message}`);
+    }
+  };
+
   
   // Otomatik eşleşmeyi onayla
   const handleConfirmMatch = async (txnId, patternId) => {
