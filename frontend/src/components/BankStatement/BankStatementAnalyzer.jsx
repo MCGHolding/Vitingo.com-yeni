@@ -1563,9 +1563,6 @@ const BankStatementAnalyzer = ({ bankId }) => {
                 </th>
                 <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase">Tarih</th>
                 <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase">Açıklama</th>
-                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Tür</th>
-                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Kategori</th>
-                <th className="text-left px-3 py-3 text-xs font-medium text-gray-500 uppercase w-40">Alt Kategori</th>
                 <th className="text-right px-3 py-3 text-xs font-medium text-gray-500 uppercase">Tutar</th>
                 <th className="text-right px-3 py-3 text-xs font-medium text-gray-500 uppercase">Bakiye</th>
                 <th className="text-center px-3 py-3 text-xs font-medium text-gray-500 uppercase w-16">Durum</th>
