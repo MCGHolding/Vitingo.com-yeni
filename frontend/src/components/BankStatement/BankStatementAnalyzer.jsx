@@ -458,7 +458,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
   
   // Tür rengi
   const getTypeColor = (type) => {
-    const found = TRANSACTION_TYPES.find(t => t.value === type);
+    const found = transactionTypes.find(t => t.value === type);
     const colorMap = {
       green: 'bg-green-100 text-green-800 border-green-300',
       red: 'bg-red-100 text-red-800 border-red-300',
