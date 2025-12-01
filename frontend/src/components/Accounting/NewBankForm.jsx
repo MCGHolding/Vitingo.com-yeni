@@ -120,6 +120,7 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
   useEffect(() => {
     loadCountries();
     loadGroupCompanies();
+    loadCurrencies();
   }, []);
 
   const handleAddCountry = async () => {
