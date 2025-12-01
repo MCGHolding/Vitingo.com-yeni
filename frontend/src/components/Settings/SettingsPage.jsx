@@ -153,6 +153,15 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Finans'
     },
     {
+      id: 'transaction-types',
+      title: 'İşlem Türleri',
+      description: 'Banka ekstreleri için işlem türleri ve alt türleri yönetin (Tahsilat, Ödeme, Döviz, vb.)',
+      icon: Zap,
+      color: 'teal',
+      adminOnly: true,
+      category: 'Finans'
+    },
+    {
       id: 'advance-categories',
       title: 'Avans Kategorileri',
       description: 'Avans kategorilerini yönetin',
