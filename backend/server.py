@@ -13984,7 +13984,7 @@ async def reorder_categories(category_ids: List[str]):
 async def get_transaction_types():
     """Get all transaction types with sub-types"""
     try:
-        types = await db.transaction_types.find({"_id": 0}).sort("order", 1).to_list(1000)
+        types = await db.transaction_types.find({}, {"_id": 0}).sort("order", 1).to_list(1000)
         return types
     except Exception as e:
         logger.error(f"Error getting transaction types: {str(e)}")
