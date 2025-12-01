@@ -56,6 +56,10 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [bulkAction, setBulkAction] = useState(null);
   
+  // Auto-match notification
+  const [showAutoMatchModal, setShowAutoMatchModal] = useState(false);
+  const [autoMatchData, setAutoMatchData] = useState(null);
+  
   // Customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pendingCustomerTxnId, setPendingCustomerTxnId] = useState(null);
