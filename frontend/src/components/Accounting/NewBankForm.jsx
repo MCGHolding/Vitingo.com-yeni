@@ -574,22 +574,58 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
               <h3 className="text-xl font-semibold text-gray-900">Banka Bilgileri</h3>
             </div>
 
-            {/* Common field - Bank Name */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Banka Adı *
-              </label>
-              <Input
-                value={formData.bankName}
-                onChange={(e) => handleInputChange('bankName', e.target.value)}
-                placeholder={
-                  formData.country === 'Turkey' ? 'Örn: Garanti BBVA' :
-                  formData.country === 'UAE' ? 'Örn: Emirates Islamic Bank' :
-                  formData.country === 'USA' ? 'Örn: Chase Bank' : 'Banka adını giriniz'
-                }
-                className="w-full"
-                required
-              />
+            {/* Common fields - Bank Name, Currency, User Code */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Banka Adı *
+                </label>
+                <Input
+                  value={formData.bankName}
+                  onChange={(e) => handleInputChange('bankName', e.target.value)}
+                  placeholder={
+                    formData.country === 'Turkey' ? 'Örn: Garanti BBVA' :
+                    formData.country === 'UAE' ? 'Örn: Emirates Islamic Bank' :
+                    formData.country === 'USA' ? 'Örn: Chase Bank' : 'Banka adını giriniz'
+                  }
+                  className="w-full"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Para Birimi *
+                </label>
+                <Select
+                  value={formData.currency}
+                  onValueChange={(value) => handleInputChange('currency', value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Para birimi seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map(curr => (
+                      <SelectItem key={curr} value={curr}>
+                        {curr}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kullanıcı Kodu
+                  <span className="text-xs text-gray-500 ml-2">(Opsiyonel)</span>
+                </label>
+                <Input
+                  value={formData.userCode}
+                  onChange={(e) => handleInputChange('userCode', e.target.value)}
+                  placeholder="Örn: BANK001"
+                  className="w-full"
+                />
+              </div>
             </div>
 
             {/* Turkey/UAE Fields */}
