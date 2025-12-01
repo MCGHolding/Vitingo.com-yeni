@@ -14865,9 +14865,14 @@ async def bulk_update_transactions(
 ):
     """Bulk update multiple transactions at once"""
     try:
+        logger.info(f"🚀 Bulk update request - bank_id: {bank_id}, statement_id: {statement_id}")
+        logger.info(f"🚀 Request data: {request_data}")
+        
         transaction_ids = request_data.get("transactionIds", [])
         update_data = request_data.get("updateData", {})
         should_learn = request_data.get("shouldLearn", False)
+        
+        logger.info(f"🚀 Updating {len(transaction_ids)} transactions with {update_data}")
         
         if not transaction_ids:
             raise HTTPException(400, "No transaction IDs provided")
