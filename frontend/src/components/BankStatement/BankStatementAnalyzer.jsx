@@ -162,6 +162,29 @@ const BankStatementAnalyzer = ({ bankId }) => {
       setCustomers([]);
     }
   };
+
+  const loadTransactionTypes = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/settings/transaction-types`);
+      if (response.ok) {
+        const data = await response.json();
+        // Backend'den gelen türleri dropdown formatına çevir
+        const formattedTypes = [
+          { value: '', label: 'Seçiniz', color: 'gray' },
+          ...data.map(type => ({
+            value: type.name.toLowerCase().replace(/\s+/g, '_'), // "Bank Fees" -> "bank_fees"
+            label: type.name,
+            color: type.color || 'gray',
+            id: type.id
+          }))
+        ];
+        setTransactionTypes(formattedTypes);
+      }
+    } catch (error) {
+      console.error('Failed to load transaction types:', error);
+    }
+  };
+
   
   // Dosya yükleme
   const onDrop = useCallback(async (acceptedFiles) => {
