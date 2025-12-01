@@ -15270,6 +15270,7 @@ async def bulk_update_transactions(
 ):
     """Bulk update multiple transactions at once"""
     try:
+        print(f"🚀🚀🚀 BULK UPDATE CALLED - bank_id: {bank_id}, statement_id: {statement_id}")
         logger.info(f"🚀 Bulk update request - bank_id: {bank_id}, statement_id: {statement_id}")
         logger.info(f"🚀 Request data: {request_data}")
         
