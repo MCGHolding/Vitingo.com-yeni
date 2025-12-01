@@ -1556,7 +1556,10 @@ const Dashboard = () => {
         />;
 
       case 'new-bank':
-        return <NewBankForm onBackToDashboard={handleBackToDashboard} />;
+        return <NewBankForm 
+          onBackToDashboard={handleBackToDashboard} 
+          onGoToBanks={() => setActiveContent('all-banks')}
+        />;
       
       case 'edit-bank':
         return <NewBankForm 
