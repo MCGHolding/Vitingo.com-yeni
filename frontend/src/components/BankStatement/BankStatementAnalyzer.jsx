@@ -573,7 +573,18 @@ const BankStatementAnalyzer = ({ bankId }) => {
     try {
       // Prepare bulk update data
       const transactionIds = similarTxns.map(t => t.id);
-      const updateData = { [field]: value };
+      
+      // updateData can be a single field or multiple fields
+      let updateData;
+      if (field && value !== undefined) {
+        // Old behavior: single field update
+        updateData = { [field]: value };
+      } else if (bulkAction.filledFields) {
+        // New behavior: multiple fields from manual bulk action
+        updateData = bulkAction.filledFields;
+      } else {
+        throw new Error('No update data provided');
+      }
       
       const requestBody = {
         transactionIds,
