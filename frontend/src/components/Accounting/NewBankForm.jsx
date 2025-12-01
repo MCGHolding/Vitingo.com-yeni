@@ -838,7 +838,20 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 text-center">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 text-center relative">
+            {/* X Butonu - Sağ üst köşe */}
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                onBackToDashboard();
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -862,7 +875,7 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
                 }}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
               >
-                📊 Dashboard'a Dön
+                🏦 Tüm Bankalar
               </Button>
               <Button
                 onClick={() => {
