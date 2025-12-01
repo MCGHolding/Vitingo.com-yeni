@@ -283,7 +283,9 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       // Prepare bank data based on country
       const bankData = {
         country: formData.country,
-        bank_name: formData.bankName
+        bank_name: formData.bankName,
+        currency: formData.currency,
+        user_code: formData.userCode || null
       };
 
       if (formData.country === 'Turkey' || formData.country === 'UAE') {
