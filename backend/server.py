@@ -14888,6 +14888,9 @@ async def bulk_update_transactions(
         transactions = statement["transactions"]
         updated_transactions = []
         
+        logger.info(f"🚀 Statement has {len(transactions)} total transactions")
+        logger.info(f"🚀 Looking for transaction IDs: {transaction_ids[:3]}... (showing first 3)")
+        
         for txn in transactions:
             if txn["id"] in transaction_ids:
                 # Apply updates
