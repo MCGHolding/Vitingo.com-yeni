@@ -630,6 +630,8 @@ class Bank(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     country: str = Field(..., description="Country: USA, Turkey, UAE")
     bank_name: str = Field(..., description="Bank name")
+    currency: Optional[str] = Field(None, description="Currency code (e.g., USD, EUR, AED)")
+    user_code: Optional[str] = Field(None, description="User-defined code for bank")
     
     # Common fields for Turkey/UAE
     swift_code: Optional[str] = Field(None, description="SWIFT code (Turkey/UAE)")
