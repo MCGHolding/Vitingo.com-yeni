@@ -278,7 +278,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
     if (!txn.type) return 'pending';
     if (txn.type === 'collection' && !txn.customerId) return 'pending';
     if ((txn.type === 'fx_buy' || txn.type === 'fx_sell') && !txn.currencyPair) return 'pending';
-    if (typeRequiresCategory(txn.type) && !txn.categoryId) return 'pending';
+    // Kategori artık zorunlu değil - her işlem türünde seçilebilir
     return 'completed';
   };
   
