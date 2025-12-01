@@ -9,31 +9,44 @@ const BulkActionModal = ({
 }) => {
   if (!isOpen || !bulkAction) return null;
   
-  const { field, value, similarTxns, normalizedDesc, sourceTxn } = bulkAction;
+  const { field, value, similarTxns, normalizedDesc, sourceTxn, filledFields } = bulkAction;
   
-  // Get display values
-  const getFieldDisplay = () => {
+  // Get display values for multiple fields
+  const getFieldsDisplay = () => {
+    const typeLabels = {
+      'payment': 'Ödeme',
+      'collection': 'Tahsilat',
+      'fx_buy': 'Döviz Alım',
+      'fx_sell': 'Döviz Satım',
+      'cashback': 'Cashback',
+      'refund': 'İade',
+      'transfer': 'Transfer',
+      'lending': 'Lending'
+    };
+    
+    // If filledFields exists (from manual bulk action), show all fields
+    if (filledFields) {
+      const displays = [];
+      if (filledFields.type) displays.push(`Tür: ${typeLabels[filledFields.type] || filledFields.type}`);
+      if (filledFields.categoryId) displays.push('Kategori');
+      if (filledFields.subCategoryId) displays.push('Alt Kategori');
+      if (filledFields.customerId) displays.push('Müşteri');
+      if (filledFields.currencyPair) displays.push(`Döviz Çifti: ${filledFields.currencyPair}`);
+      return displays;
+    }
+    
+    // Old behavior: single field
     switch(field) {
       case 'type':
-        const typeLabels = {
-          'payment': 'Ödeme',
-          'collection': 'Tahsilat',
-          'fx_buy': 'Döviz Alım',
-          'fx_sell': 'Döviz Satım',
-          'cashback': 'Cashback',
-          'refund': 'İade',
-          'transfer': 'Transfer',
-          'lending': 'Lending'
-        };
-        return `Tür: ${typeLabels[value] || value}`;
+        return [`Tür: ${typeLabels[value] || value}`];
       case 'categoryId':
-        return 'Kategori seçildi';
+        return ['Kategori seçildi'];
       case 'customerId':
-        return 'Müşteri seçildi';
+        return ['Müşteri seçildi'];
       case 'currencyPair':
-        return `Döviz Çifti: ${value}`;
+        return [`Döviz Çifti: ${value}`];
       default:
-        return field;
+        return [field];
     }
   };
   
