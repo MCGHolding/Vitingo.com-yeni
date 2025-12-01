@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://statement-tool.preview.emergentagent.com"
+BACKEND_URL = "https://finance-insights-34.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None
