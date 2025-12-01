@@ -1416,6 +1416,28 @@ const Dashboard = () => {
           </div>
         );
 
+      case 'transaction-types':
+        return (
+          <div className="min-h-screen bg-gray-50">
+            <div className="bg-white border-b border-gray-200">
+              <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setCurrentView('settings')}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    <span>←</span>
+                    <span>Geri</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <TransactionTypesPage />
+            </div>
+          </div>
+        );
+
       case 'library':
         return (
           <LibraryPage 
