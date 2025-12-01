@@ -13994,6 +13994,23 @@ async def get_transaction_types():
 async def create_transaction_type(type_data: dict):
     """Create new transaction type"""
     try:
+        # Process subTypes to add IDs if not present
+        sub_types = []
+        for sub in type_data.get("subTypes", []):
+            if isinstance(sub, dict):
+                sub_types.append({
+                    "id": sub.get("id", str(uuid.uuid4())),
+                    "name": sub.get("name", ""),
+                    "isActive": sub.get("isActive", True)
+                })
+            elif isinstance(sub, str):
+                # If it's just a string, create object
+                sub_types.append({
+                    "id": str(uuid.uuid4()),
+                    "name": sub,
+                    "isActive": True
+                })
+        
         new_type = {
             "id": str(uuid.uuid4()),
             "name": type_data.get("name"),
@@ -14005,7 +14022,7 @@ async def create_transaction_type(type_data: dict):
             "isSystem": False,
             "isActive": True,
             "order": type_data.get("order", 999),
-            "subTypes": type_data.get("subTypes", []),
+            "subTypes": sub_types,
             "createdAt": datetime.now(timezone.utc).isoformat(),
             "updatedAt": datetime.now(timezone.utc).isoformat()
         }
