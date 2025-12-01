@@ -1579,9 +1579,10 @@ const BankStatementAnalyzer = ({ bankId }) => {
                 
                 return (
                   <React.Fragment key={txn.id}>
-                    <tr className={`hover:bg-gray-50 ${txn.status === 'pending' ? 'bg-yellow-50/30' : ''}`}>
+                    {/* ÜST SATIR: Checkbox, Tarih, Açıklama, Tutar, Bakiye, Durum İkonları */}
+                    <tr className={`group hover:bg-gray-50 ${txn.status === 'pending' ? 'bg-yellow-50/30' : ''}`}>
                       {/* Checkbox */}
-                      <td className="px-3 py-3">
+                      <td className="px-3 py-2 border-b-0" rowSpan="2">
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(txn.id)}
@@ -1597,13 +1598,13 @@ const BankStatementAnalyzer = ({ bankId }) => {
                       </td>
                       
                       {/* Tarih */}
-                      <td className="px-3 py-3 text-sm text-gray-600 whitespace-nowrap">
+                      <td className="px-3 py-2 text-sm text-gray-600 whitespace-nowrap border-b-0">
                         {txn.date}
                       </td>
                       
-                      {/* Açıklama */}
-                      <td className="px-3 py-3 text-sm text-gray-800 max-w-xs">
-                        <div className="truncate" title={txn.description}>
+                      {/* Açıklama - TAM GENİŞLİK */}
+                      <td className="px-3 py-2 text-sm text-gray-800 border-b-0">
+                        <div title={txn.description}>
                           {txn.description}
                         </div>
                         {txn.autoMatched && txn.confidence > 0 && (
@@ -1612,8 +1613,6 @@ const BankStatementAnalyzer = ({ bankId }) => {
                           </div>
                         )}
                       </td>
-                      
-                      {/* Tür */}
                       <td className="px-3 py-3">
                         <div className="relative flex items-center gap-1">
                           <select
