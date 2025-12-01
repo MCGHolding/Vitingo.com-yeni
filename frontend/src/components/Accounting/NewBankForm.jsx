@@ -100,12 +100,6 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
     }
   };
 
-        { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
-        { code: 'USA', name: 'ABD', flag: '🇺🇸' }
-      ]);
-    }
-  };
-
   // Load group companies
   const loadGroupCompanies = async () => {
     try {
