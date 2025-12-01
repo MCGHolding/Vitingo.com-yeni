@@ -656,6 +656,8 @@ class Bank(BaseModel):
 class BankCreate(BaseModel):
     country: str
     bank_name: str
+    currency: Optional[str] = None
+    user_code: Optional[str] = None
     swift_code: Optional[str] = None
     iban: Optional[str] = None
     branch_name: Optional[str] = None
