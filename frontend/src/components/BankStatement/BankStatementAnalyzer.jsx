@@ -864,9 +864,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
       ) : (
         <>
           {/* Statement Details - When statement exists */}
-      
-      {/* Action Buttons */}
-      <div className="flex items-center justify-end gap-2">
+          
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end gap-2">
         <button
           onClick={handleNewUpload}
           className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
