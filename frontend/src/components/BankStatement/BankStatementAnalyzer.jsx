@@ -656,6 +656,49 @@ const BankStatementAnalyzer = ({ bankId }) => {
     setBulkAction(null);
   };
   
+
+  // Manuel bulk action - şimşek butonundan tetiklenir
+  const handleManualBulkAction = (txnId) => {
+    const sourceTxn = transactions.find(t => t.id === txnId);
+    if (!sourceTxn) return;
+    
+    // Sadece doldurulmuş fieldları topla
+    const filledFields = {};
+    if (sourceTxn.type) filledFields.type = sourceTxn.type;
+    if (sourceTxn.categoryId) filledFields.categoryId = sourceTxn.categoryId;
+    if (sourceTxn.subCategoryId) filledFields.subCategoryId = sourceTxn.subCategoryId;
+    if (sourceTxn.customerId) filledFields.customerId = sourceTxn.customerId;
+    if (sourceTxn.currencyPair) filledFields.currencyPair = sourceTxn.currencyPair;
+    
+    // En az bir field dolu olmalı
+    if (Object.keys(filledFields).length === 0) {
+      alert('⚠️ Önce en az bir alan doldurun (İşlem Türü, Kategori vb.)');
+      return;
+    }
+    
+    // Benzer işlemleri bul
+    const normalized = normalizeDescription(sourceTxn.description);
+    const similarTxns = transactions.filter(t => 
+      t.id !== txnId && 
+      normalizeDescription(t.description) === normalized &&
+      t.status === 'pending'
+    );
+    
+    if (similarTxns.length === 0) {
+      alert('ℹ️ Benzer bekleyen işlem bulunamadı.');
+      return;
+    }
+    
+    // Bulk action modal'ı aç
+    setBulkAction({
+      filledFields,
+      similarTxns,
+      normalizedDesc: normalized,
+      sourceTxn
+    });
+    setShowBulkModal(true);
+  };
+
   // Kaydet ve Öğren
   const handleSave = async () => {
     // Önce tüm pending transaction'ları kontrol et
