@@ -69,10 +69,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [customerErrors, setCustomerErrors] = useState({});
   const [savingCustomer, setSavingCustomer] = useState(false);
   
-  // Load categories and customers
+  // Load categories, customers, and transaction types
   useEffect(() => {
     loadCategories();
     loadCustomers();
+    loadTransactionTypes();
   }, []);
   
   // Load statement when currency changes
