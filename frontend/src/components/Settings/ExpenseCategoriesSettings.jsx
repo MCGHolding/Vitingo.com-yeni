@@ -274,7 +274,6 @@ const ExpenseCategoriesSettings = () => {
               {/* Üst - İkon ve Başlık */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl">{category.icon || '📁'}</span>
                   <div>
                     <h3 className="font-semibold text-gray-800 text-base">{category.name}</h3>
                     <div className="flex gap-1 mt-1">
