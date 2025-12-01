@@ -1621,6 +1621,15 @@ const BankStatementAnalyzer = ({ bankId }) => {
         onApplyAndLearn={handleBulkApplyAndLearn}
       />
       
+      {/* Auto-Match Notification Modal */}
+      <AutoMatchNotificationModal
+        isOpen={showAutoMatchModal}
+        onClose={() => setShowAutoMatchModal(false)}
+        autoMatchedCount={autoMatchData?.autoMatchedCount || 0}
+        suggestedCount={autoMatchData?.suggestedCount || 0}
+        transactions={autoMatchData?.transactions || []}
+      />
+      
       {/* Yeni Müşteri Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
