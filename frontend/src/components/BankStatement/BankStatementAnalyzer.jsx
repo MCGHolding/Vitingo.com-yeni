@@ -1176,8 +1176,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
         {statement.openingBalance !== undefined && (
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
             <div className="text-xs text-slate-600 mb-1 font-medium">💰 AÇILIŞ</div>
-            <div className="text-base font-bold text-slate-700">{formatMoney(statement.openingBalance)}</div>
-            <div className="text-xs text-slate-500">{statement.currency || 'AED'}</div>
+            <div className="text-base font-bold text-slate-700">{formatMoney(statement.openingBalance, header.currency || statement.currency)}</div>
           </div>
         )}
         
