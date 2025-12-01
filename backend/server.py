@@ -14039,13 +14039,29 @@ async def create_transaction_type(type_data: dict):
 async def update_transaction_type(type_id: str, type_data: dict):
     """Update transaction type"""
     try:
+        # Process subTypes to add IDs if not present
+        sub_types = []
+        for sub in type_data.get("subTypes", []):
+            if isinstance(sub, dict):
+                sub_types.append({
+                    "id": sub.get("id", str(uuid.uuid4())),
+                    "name": sub.get("name", ""),
+                    "isActive": sub.get("isActive", True)
+                })
+            elif isinstance(sub, str):
+                sub_types.append({
+                    "id": str(uuid.uuid4()),
+                    "name": sub,
+                    "isActive": True
+                })
+        
         update_fields = {
             "name": type_data.get("name"),
             "icon": type_data.get("icon"),
             "color": type_data.get("color"),
             "description": type_data.get("description"),
             "direction": type_data.get("direction"),
-            "subTypes": type_data.get("subTypes", []),
+            "subTypes": sub_types,
             "updatedAt": datetime.now(timezone.utc).isoformat()
         }
         
