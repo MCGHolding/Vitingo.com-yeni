@@ -8,17 +8,6 @@ import AutoMatchNotificationModal from './AutoMatchNotificationModal';
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Transaction Types
-const TRANSACTION_TYPES = [
-  { value: '', label: 'Seçiniz', color: 'gray' },
-  { value: 'collection', label: 'Tahsilat', color: 'green', requiresCustomer: true },
-  { value: 'payment', label: 'Ödeme', color: 'red' },
-  { value: 'refund', label: 'İade', color: 'orange' },
-  { value: 'cashback', label: 'Cashback', color: 'purple' },
-  { value: 'fx_buy', label: 'Döviz Alım', color: 'blue', requiresCurrencyPair: true },
-  { value: 'fx_sell', label: 'Döviz Satım', color: 'blue', requiresCurrencyPair: true },
-  { value: 'cash_deposit', label: 'Nakit Yatan', color: 'teal' }
-];
-
 const CURRENCY_PAIRS = [
   { value: 'USD-AED', label: 'USD → AED' },
   { value: 'USD-EUR', label: 'USD → EUR' },
