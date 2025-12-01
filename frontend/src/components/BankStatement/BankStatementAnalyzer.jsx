@@ -1466,7 +1466,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Tür: Tümü</option>
-            {TRANSACTION_TYPES.map(type => (
+            {transactionTypes.map(type => (
               <option key={type.value} value={type.value}>{type.label}</option>
             ))}
           </select>
