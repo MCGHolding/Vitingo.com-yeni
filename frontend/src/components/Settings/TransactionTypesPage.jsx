@@ -203,28 +203,7 @@ const TransactionTypeCard = ({ type, onEdit, onDelete }) => {
 
 const EditTypeModal = ({ type, onClose, onSave }) => {
   const [name, setName] = useState(type?.name || '');
-  const [icon, setIcon] = useState(type?.icon || '🔄');
-  const [color, setColor] = useState(type?.color || 'gray');
-  const [description, setDescription] = useState(type?.description || '');
-  const [direction, setDirection] = useState(type?.direction || 'both');
-  const [subTypes, setSubTypes] = useState(type?.subTypes || []);
-  const [newSubType, setNewSubType] = useState('');
   const [saving, setSaving] = useState(false);
-
-  const addSubType = () => {
-    if (newSubType.trim()) {
-      setSubTypes([...subTypes, {
-        id: `temp_${Date.now()}`,
-        name: newSubType.trim(),
-        isActive: true
-      }]);
-      setNewSubType('');
-    }
-  };
-
-  const removeSubType = (index) => {
-    setSubTypes(subTypes.filter((_, i) => i !== index));
-  };
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -236,12 +215,7 @@ const EditTypeModal = ({ type, onClose, onSave }) => {
 
     try {
       const data = {
-        name,
-        icon,
-        color,
-        description,
-        direction,
-        subTypes
+        name
       };
 
       const url = type
