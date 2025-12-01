@@ -1600,6 +1600,15 @@ const BankStatementAnalyzer = ({ bankId }) => {
         </>
       )}
       
+      {/* Bulk Action Modal */}
+      <BulkActionModal
+        isOpen={showBulkModal}
+        onClose={handleCloseBulkModal}
+        bulkAction={bulkAction}
+        onApply={handleBulkApply}
+        onApplyAndLearn={handleBulkApplyAndLearn}
+      />
+      
       {/* Yeni Müşteri Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
