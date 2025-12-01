@@ -1236,6 +1236,20 @@ const BankStatementAnalyzer = ({ bankId }) => {
         >
           {saving ? '⏳ Kaydediliyor...' : '💾 Kaydet ve Öğren'}
         </button>
+        <button
+          onClick={handleDeleteStatement}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 text-sm font-medium"
+        >
+          <Trash2 className="h-4 w-4" />
+          Bu Ekstreyi Sil
+        </button>
+        <button
+          onClick={handleDeleteAllStatements}
+          className="px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 flex items-center gap-2 text-sm font-medium"
+        >
+          <Trash2 className="h-4 w-4" />
+          Tüm Ekstreleri Sil
+        </button>
       </div>
       
       {/* Hesap Bilgileri Kartı */}
