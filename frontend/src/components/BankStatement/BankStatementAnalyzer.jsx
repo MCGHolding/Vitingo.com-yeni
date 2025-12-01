@@ -629,6 +629,15 @@ const BankStatementAnalyzer = ({ bankId }) => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Response error:', errorText);
+        
+        // Handle 404 specifically - statement doesn't exist in DB
+        if (response.status === 404) {
+          console.error('❌ Statement not found in database!');
+          setStatement(null);
+          setTransactions([]);
+          throw new Error('Ekstre veritabanında bulunamadı. Lütfen sayfayı yenileyin (Ctrl+Shift+R) ve PDF\'i yeniden yükleyin.');
+        }
+        
         throw new Error(`Toplu güncelleme hatası: ${response.status} - ${errorText}`);
       }
       
