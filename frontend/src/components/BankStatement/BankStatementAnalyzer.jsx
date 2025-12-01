@@ -392,6 +392,29 @@ const BankStatementAnalyzer = ({ bankId }) => {
         // Save successful
         setSaveStatus('saved');
         
+        // Check for similar transactions (bulk action opportunity)
+        const currentTxn = transactions.find(t => t.id === txnId);
+        if (currentTxn) {
+          const normalized = normalizeDescription(currentTxn.description);
+          const similarTxns = transactions.filter(t => 
+            t.id !== txnId && 
+            normalizeDescription(t.description) === normalized &&
+            t.status === 'pending'
+          );
+          
+          // If there are 2+ similar pending transactions, show bulk action modal
+          if (similarTxns.length >= 2) {
+            setBulkAction({
+              field,
+              value,
+              similarTxns,
+              normalizedDesc: normalized,
+              sourceTxn: currentTxn
+            });
+            setShowBulkModal(true);
+          }
+        }
+        
       } catch (err) {
         console.error('Transaction update failed:', err);
         setSaveStatus('unsaved');
