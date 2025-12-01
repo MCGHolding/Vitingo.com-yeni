@@ -15153,6 +15153,38 @@ async def get_bank_statement(bank_id: str, statement_id: str):
         logger.error(f"Error getting statement: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.delete("/banks/{bank_id}/statements/{statement_id}")
+async def delete_bank_statement(bank_id: str, statement_id: str):
+    """Delete a single bank statement"""
+    try:
+        result = await db.bank_statement_imports.delete_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        if result.deleted_count == 0:
+            raise HTTPException(404, "Statement not found")
+        
+        logger.info(f"✅ Deleted statement: {statement_id}")
+        return {"message": "Statement deleted successfully", "statementId": statement_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/banks/{bank_id}/statements")
+async def delete_all_bank_statements(bank_id: str):
+    """Delete all statements for a bank"""
+    try:
+        result = await db.bank_statement_imports.delete_many({"bankId": bank_id})
+        
+        logger.info(f"✅ Deleted {result.deleted_count} statements for bank: {bank_id}")
+        return {"message": f"Deleted {result.deleted_count} statements", "count": result.deleted_count}
+    except Exception as e:
+        logger.error(f"Error deleting statements: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}")
 async def update_transaction(
     bank_id: str,
