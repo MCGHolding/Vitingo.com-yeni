@@ -397,6 +397,13 @@ const BankStatementAnalyzer = ({ bankId }) => {
         );
         
         if (!response.ok) {
+          // Handle 404 - statement doesn't exist in DB
+          if (response.status === 404) {
+            console.error('❌ Statement not found in database!');
+            setStatement(null);
+            setTransactions([]);
+            alert('⚠️ Ekstre veritabanında bulunamadı. Lütfen sayfayı yenileyin (Ctrl+Shift+R) ve PDF\'i yeniden yükleyin.');
+          }
           throw new Error('Kaydetme hatası');
         }
         
