@@ -2,14 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Emoji seçenekleri
-const EMOJI_OPTIONS = [
-  '📁', '🏨', '🚗', '✈️', '🍽️', '💼', '🛒', '📦', '🔧', '💻',
-  '📱', '🎓', '🏥', '⚡', '🔌', '📞', '🖨️', '👷', '🎉', '🎁',
-  '📋', '💰', '🏦', '💳', '📊', '📈', '🔒', '⚙️', '🛠️', '🎨',
-  '🎪', '🚢', '🏗️', '🏭', '🌍', '🎯', '📍', '🏢', '🏛️', '📌'
-];
-
 const ExpenseCategoriesSettings = () => {
   // State
   const [categories, setCategories] = useState([]);
