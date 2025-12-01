@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Download, Copy, Plus } from 'lucide-react';
+import { Upload, Download, Copy, Plus, Trash2 } from 'lucide-react';
 import AutoMatchBadge from './AutoMatchBadge';
 import BulkActionModal from './BulkActionModal';
 import AutoMatchNotificationModal from './AutoMatchNotificationModal';
