@@ -12,6 +12,8 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
     companyId: bankToEdit?.company_id || '',
     companyName: bankToEdit?.company_name || '',
     country: bankToEdit?.country || '',
+    currency: bankToEdit?.currency || '',
+    userCode: bankToEdit?.user_code || '',
     bankName: bankToEdit?.bank_name || '',
     // Turkey/UAE fields
     swiftCode: bankToEdit?.swift_code || '',
