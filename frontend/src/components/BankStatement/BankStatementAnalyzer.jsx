@@ -1613,87 +1613,9 @@ const BankStatementAnalyzer = ({ bankId }) => {
                           </div>
                         )}
                       </td>
-                      <td className="px-3 py-3">
-                        <div className="relative flex items-center gap-1">
-                          <select
-                            value={txn.type || ''}
-                            onChange={(e) => handleTransactionUpdate(txn.id, 'type', e.target.value)}
-                            className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm font-medium ${getTypeColor(txn.type)}`}
-                          >
-                            {transactionTypes.map(type => (
-                              <option key={type.value} value={type.value}>{type.label}</option>
-                            ))}
-                          </select>
-                          {txn.type && (
-                            <button
-                              onClick={() => handleTransactionUpdate(txn.id, 'type', '')}
-                              className="absolute right-2 text-gray-400 hover:text-red-500 text-sm font-bold"
-                              title="Tür seçimini kaldır"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                      
-                      {/* Kategori */}
-                      <td className="px-3 py-3">
-                        <div className="relative flex items-center gap-1">
-                          <select
-                            value={txn.categoryId || ''}
-                            onChange={(e) => handleTransactionUpdate(txn.id, 'categoryId', e.target.value || null)}
-                            disabled={!showCategoryFields}
-                            className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm ${
-                              !showCategoryFields ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
-                            }`}
-                          >
-                            <option value="">─</option>
-                            {categories.map(cat => (
-                              <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
-                            ))}
-                          </select>
-                          {txn.categoryId && showCategoryFields && (
-                            <button
-                              onClick={() => handleTransactionUpdate(txn.id, 'categoryId', null)}
-                              className="absolute right-2 text-gray-400 hover:text-red-500 text-sm font-bold"
-                              title="Kategori seçimini kaldır"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                      
-                      {/* Alt Kategori */}
-                      <td className="px-3 py-3">
-                        <div className="relative flex items-center gap-1">
-                          <select
-                            value={txn.subCategoryId || ''}
-                            onChange={(e) => handleTransactionUpdate(txn.id, 'subCategoryId', e.target.value || null)}
-                            disabled={!showCategoryFields || !txn.categoryId}
-                            className={`w-full px-2 py-1.5 pr-8 border rounded-lg text-sm ${
-                              !showCategoryFields || !txn.categoryId ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-gray-300'
-                            }`}
-                          >
-                            <option value="">─</option>
-                            {getSubCategories(txn.categoryId).map(sub => (
-                              <option key={sub.id} value={sub.id}>{sub.name}</option>
-                            ))}
-                          </select>
-                          {txn.subCategoryId && showCategoryFields && txn.categoryId && (
-                            <button
-                              onClick={() => handleTransactionUpdate(txn.id, 'subCategoryId', null)}
-                              className="absolute right-2 text-gray-400 hover:text-red-500 text-sm font-bold"
-                              title="Alt kategori seçimini kaldır"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </td>
                       
                       {/* Tutar */}
-                      <td className={`px-3 py-3 text-sm font-medium text-right whitespace-nowrap ${
+                      <td className={`px-3 py-2 text-sm font-medium text-right whitespace-nowrap border-b-0 ${
                         txn.amount >= 0 ? 'text-green-600' : 'text-red-600'
                       }`}>
                         {txn.amount >= 0 ? '+' : ''}{formatMoney(txn.amount, header.currency)}
