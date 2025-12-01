@@ -338,7 +338,7 @@ const Dashboard = () => {
         // Try runtime config first, fallback to environment variables, then hardcoded  
         const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                           process.env.REACT_APP_BACKEND_URL || 
-                          'https://finance-insights-34.preview.emergentagent.com';
+                          'https://banktrans.preview.emergentagent.com';
         const response = await fetch(`${backendUrl}/api/fairs`);
         
         if (response.ok) {
@@ -363,7 +363,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       console.log('Loading customers from:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`);
       
@@ -414,7 +414,7 @@ const Dashboard = () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       
       const response = await fetch(`${backendUrl}/api/opportunities`);
       if (response.ok) {
@@ -507,7 +507,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       console.log('Updating customer to:', backendUrl);
       
       const response = await fetch(`${backendUrl}/api/customers/${updatedCustomer.id}`, {
@@ -671,7 +671,7 @@ const Dashboard = () => {
       // Try runtime config first, fallback to environment variables, then hardcoded
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       console.log('Saving customer to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/customers`, {
         method: 'POST',
@@ -704,7 +704,7 @@ const Dashboard = () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       
       const response = await fetch(`${backendUrl}/api/people`);
       if (response.ok) {
@@ -723,7 +723,7 @@ const Dashboard = () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
-                        'https://finance-insights-34.preview.emergentagent.com';
+                        'https://banktrans.preview.emergentagent.com';
       console.log('Saving person to:', backendUrl);
       const response = await fetch(`${backendUrl}/api/people`, {
         method: 'POST',

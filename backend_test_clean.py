@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://finance-insights-34.preview.emergentagent.com"
+BACKEND_URL = "https://banktrans.preview.emergentagent.com"
 
 def test_calendar_archive_and_meeting_requests():
     """
