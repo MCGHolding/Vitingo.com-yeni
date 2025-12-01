@@ -796,7 +796,103 @@ const BankStatementAnalyzer = ({ bankId }) => {
   
   // Excel export
   const handleExportExcel = () => {
-    alert('Excel export yakında eklenecek');
+    try {
+      // Dynamic import xlsx
+      import('xlsx').then((XLSX) => {
+        // Prepare data for Excel
+        const excelData = filteredTransactions.map(txn => {
+          const typeLabel = TRANSACTION_TYPES.find(t => t.value === txn.type)?.label || '-';
+          const category = categories.find(c => c.id === txn.categoryId);
+          const subCategory = category?.subCategories?.find(s => s.id === txn.subCategoryId);
+          const customer = customers.find(c => c.id === txn.customerId);
+          
+          return {
+            'Tarih': txn.date,
+            'Açıklama': txn.description,
+            'Tür': typeLabel,
+            'Kategori': category ? `${category.icon} ${category.name}` : '-',
+            'Alt Kategori': subCategory?.name || '-',
+            'Müşteri': customer?.companyName || customer?.name || '-',
+            'Döviz Çifti': txn.currencyPair || '-',
+            'Tutar': txn.amount,
+            'Bakiye': txn.balance,
+            'Durum': txn.status === 'completed' ? 'Tamamlandı' : 'Bekliyor',
+            'Otomatik Eşleşti': txn.autoMatched ? 'Evet' : 'Hayır',
+            'Güven Skoru': txn.confidence ? `%${Math.round(txn.confidence * 100)}` : '-'
+          };
+        });
+        
+        // Create worksheet
+        const ws = XLSX.utils.json_to_sheet(excelData);
+        
+        // Set column widths
+        ws['!cols'] = [
+          { wch: 12 }, // Tarih
+          { wch: 40 }, // Açıklama
+          { wch: 15 }, // Tür
+          { wch: 20 }, // Kategori
+          { wch: 20 }, // Alt Kategori
+          { wch: 25 }, // Müşteri
+          { wch: 15 }, // Döviz Çifti
+          { wch: 15 }, // Tutar
+          { wch: 15 }, // Bakiye
+          { wch: 12 }, // Durum
+          { wch: 12 }, // Otomatik Eşleşti
+          { wch: 12 }  // Güven Skoru
+        ];
+        
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'İşlemler');
+        
+        // Add summary sheet
+        const summaryData = [
+          ['HESAP BİLGİLERİ'],
+          [''],
+          ['Banka', 'Wio Bank'],
+          ['Hesap Sahibi', header.accountHolder || 'N/A'],
+          ['Hesap No', header.accountNumber || 'N/A'],
+          ['IBAN', header.iban || 'N/A'],
+          ['Para Birimi', header.currency || 'AED'],
+          [''],
+          ['DÖNEM BİLGİLERİ'],
+          [''],
+          ['Başlangıç', header.periodStart || 'N/A'],
+          ['Bitiş', header.periodEnd || 'N/A'],
+          [''],
+          ['BAKİYE BİLGİLERİ'],
+          [''],
+          ['Açılış Bakiyesi', statement?.openingBalance || 0],
+          ['Toplam Giren', stats.totalIncoming],
+          ['Toplam Çıkan', stats.totalOutgoing],
+          ['Kapanış Bakiyesi', stats.closingBalance],
+          [''],
+          ['İŞLEM İSTATİSTİKLERİ'],
+          [''],
+          ['Toplam İşlem', stats.transactionCount],
+          ['Tamamlanan', stats.categorizedCount],
+          ['Bekleyen', stats.pendingCount],
+          ['Tamamlanma Oranı', `%${stats.completedPercent}`],
+          ['Otomatik Eşleşen', stats.autoMatchedCount],
+          ['Önerilen', stats.suggestedCount]
+        ];
+        
+        const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary['!cols'] = [{ wch: 25 }, { wch: 30 }];
+        XLSX.utils.book_append_sheet(wb, wsSummary, 'Özet');
+        
+        // Generate filename
+        const filename = `Wio_Bank_Ekstre_${header.periodStart || 'tarihsiz'}_${header.currency || 'AED'}.xlsx`;
+        
+        // Download
+        XLSX.writeFile(wb, filename);
+        
+        console.log(`✅ Excel exported: ${filename}`);
+      });
+    } catch (error) {
+      console.error('Excel export error:', error);
+      alert('Excel dışa aktarma hatası: ' + error.message);
+    }
   };
   
   // İstatistikler
