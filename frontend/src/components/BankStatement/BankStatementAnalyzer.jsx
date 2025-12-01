@@ -1702,6 +1702,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
                         )}
                       </td>
                       
+                      {/* Toplu Uygula */}
+                      <td className="px-3 py-3 text-center">
+                        <button
+                          onClick={() => handleManualBulkAction(txn.id)}
+                          className="text-yellow-500 hover:text-yellow-600 transition-colors text-xl"
+                          title="Benzer İşlemlere Uygula"
+                        >
+                          ⚡
+                        </button>
+                      </td>
+                      
                       {/* Aksiyon */}
                       <td className="px-3 py-3 text-center">
                         <button
