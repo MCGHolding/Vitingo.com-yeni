@@ -15185,83 +15185,6 @@ async def delete_all_bank_statements(bank_id: str):
         logger.error(f"Error deleting statements: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}")
-async def update_transaction(
-    bank_id: str,
-    statement_id: str,
-    txn_id: str,
-    update_data: dict
-):
-    """Update a single transaction"""
-    try:
-        statement = await db.bank_statement_imports.find_one(
-            {"id": statement_id, "bankId": bank_id}
-        )
-        
-        logger.info(f"🚀 Statement query: id={statement_id}, bankId={bank_id}")
-        logger.info(f"🚀 Statement found: {statement is not None}")
-        
-        if not statement:
-            # Debug: Check if statement exists with just statement_id
-            debug_stmt = await db.bank_statement_imports.find_one({"id": statement_id})
-            if debug_stmt:
-                logger.error(f"❌ Statement EXISTS but bankId mismatch! Found bankId: {debug_stmt.get('bankId')}, Expected: {bank_id}")
-            else:
-                logger.error(f"❌ Statement NOT FOUND with id: {statement_id}")
-                # Show available statement IDs
-                all_stmts = await db.bank_statement_imports.find({}, {"id": 1, "bankId": 1, "_id": 0}).limit(5).to_list(5)
-                logger.error(f"❌ Available statements (first 5): {all_stmts}")
-            raise HTTPException(404, "Statement not found")
-        
-        # Update transaction
-        transactions = statement["transactions"]
-        updated = False
-        
-        for txn in transactions:
-            if txn["id"] == txn_id:
-                for key, value in update_data.items():
-                    txn[key] = value
-                
-                # Check completion
-                if txn.get("type"):
-                    if txn["type"] == "collection" and not txn.get("customerId"):
-                        txn["status"] = "pending"
-                    elif txn["type"] in ["fx_buy", "fx_sell"] and not txn.get("currencyPair"):
-                        txn["status"] = "pending"
-                    else:
-                        txn["status"] = "completed"
-                else:
-                    txn["status"] = "pending"
-                
-                updated = True
-                break
-        
-        if not updated:
-            raise HTTPException(404, "Transaction not found")
-        
-        # Recalculate statistics
-        categorized_count = sum(1 for t in transactions if t["status"] == "completed")
-        pending_count = sum(1 for t in transactions if t["status"] == "pending")
-        
-        await db.bank_statement_imports.update_one(
-            {"id": statement_id},
-            {
-                "$set": {
-                    "transactions": transactions,
-                    "categorizedCount": categorized_count,
-                    "pendingCount": pending_count,
-                    "updatedAt": datetime.now(timezone.utc).isoformat()
-                }
-            }
-        )
-        
-        return {"success": True, "updatedTransaction": txn}
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error updating transaction: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
 @api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/bulk")
 async def bulk_update_transactions(
     bank_id: str,
@@ -15373,6 +15296,83 @@ async def bulk_update_transactions(
     except Exception as e:
         logger.error(f"Error bulk updating transactions: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+@api_router.put("/banks/{bank_id}/statements/{statement_id}/transactions/{txn_id}")
+async def update_transaction(
+    bank_id: str,
+    statement_id: str,
+    txn_id: str,
+    update_data: dict
+):
+    """Update a single transaction"""
+    try:
+        statement = await db.bank_statement_imports.find_one(
+            {"id": statement_id, "bankId": bank_id}
+        )
+        
+        logger.info(f"🚀 Statement query: id={statement_id}, bankId={bank_id}")
+        logger.info(f"🚀 Statement found: {statement is not None}")
+        
+        if not statement:
+            # Debug: Check if statement exists with just statement_id
+            debug_stmt = await db.bank_statement_imports.find_one({"id": statement_id})
+            if debug_stmt:
+                logger.error(f"❌ Statement EXISTS but bankId mismatch! Found bankId: {debug_stmt.get('bankId')}, Expected: {bank_id}")
+            else:
+                logger.error(f"❌ Statement NOT FOUND with id: {statement_id}")
+                # Show available statement IDs
+                all_stmts = await db.bank_statement_imports.find({}, {"id": 1, "bankId": 1, "_id": 0}).limit(5).to_list(5)
+                logger.error(f"❌ Available statements (first 5): {all_stmts}")
+            raise HTTPException(404, "Statement not found")
+        
+        # Update transaction
+        transactions = statement["transactions"]
+        updated = False
+        
+        for txn in transactions:
+            if txn["id"] == txn_id:
+                for key, value in update_data.items():
+                    txn[key] = value
+                
+                # Check completion
+                if txn.get("type"):
+                    if txn["type"] == "collection" and not txn.get("customerId"):
+                        txn["status"] = "pending"
+                    elif txn["type"] in ["fx_buy", "fx_sell"] and not txn.get("currencyPair"):
+                        txn["status"] = "pending"
+                    else:
+                        txn["status"] = "completed"
+                else:
+                    txn["status"] = "pending"
+                
+                updated = True
+                break
+        
+        if not updated:
+            raise HTTPException(404, "Transaction not found")
+        
+        # Recalculate statistics
+        categorized_count = sum(1 for t in transactions if t["status"] == "completed")
+        pending_count = sum(1 for t in transactions if t["status"] == "pending")
+        
+        await db.bank_statement_imports.update_one(
+            {"id": statement_id},
+            {
+                "$set": {
+                    "transactions": transactions,
+                    "categorizedCount": categorized_count,
+                    "pendingCount": pending_count,
+                    "updatedAt": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        return {"success": True, "updatedTransaction": txn}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating transaction: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @api_router.post("/banks/{bank_id}/statements/{statement_id}/complete")
 async def complete_statement(bank_id: str, statement_id: str):
