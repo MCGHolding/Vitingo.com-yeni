@@ -544,9 +544,17 @@ const BankStatementAnalyzer = ({ bankId }) => {
   
   // Bulk action handler - Apply to similar transactions
   const handleBulkApply = async (shouldLearn = false) => {
-    if (!bulkAction || !statement?.id) return;
+    console.log('🚀 handleBulkApply called with shouldLearn:', shouldLearn);
+    console.log('🚀 bulkAction:', bulkAction);
+    console.log('🚀 statement:', statement);
+    
+    if (!bulkAction || !statement?.id) {
+      console.error('❌ Missing bulkAction or statement.id');
+      return;
+    }
     
     const { field, value, similarTxns } = bulkAction;
+    console.log(`🚀 Updating ${similarTxns.length} transactions with ${field}=${value}`);
     
     setSaving(true);
     setShowBulkModal(false);
@@ -556,28 +564,39 @@ const BankStatementAnalyzer = ({ bankId }) => {
       const transactionIds = similarTxns.map(t => t.id);
       const updateData = { [field]: value };
       
+      const requestBody = {
+        transactionIds,
+        updateData,
+        shouldLearn
+      };
+      
+      console.log('🚀 Request body:', requestBody);
+      console.log('🚀 Calling endpoint:', `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/bulk`);
+      
       // Call backend bulk update endpoint
       const response = await fetch(
         `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/bulk`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            transactionIds,
-            updateData,
-            shouldLearn
-          })
+          body: JSON.stringify(requestBody)
         }
       );
       
+      console.log('🚀 Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Toplu güncelleme hatası');
+        const errorText = await response.text();
+        console.error('❌ Response error:', errorText);
+        throw new Error(`Toplu güncelleme hatası: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
+      console.log('✅ Response data:', data);
       
       // Update local state with backend response
       if (data.updatedTransactions) {
+        console.log(`✅ Updating ${data.updatedTransactions.length} transactions in local state`);
         setTransactions(prev => prev.map(txn => {
           const updated = data.updatedTransactions.find(u => u.id === txn.id);
           return updated ? { ...txn, ...updated } : txn;
@@ -589,10 +608,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
       alert(`✅ ${transactionIds.length} işlem başarıyla güncellendi${learnMsg}!`);
       
       // Reload statement to get fresh data
+      console.log('🚀 Reloading statement...');
       await loadLatestStatement();
+      console.log('✅ Statement reloaded');
       
     } catch (error) {
-      console.error('Bulk update failed:', error);
+      console.error('❌ Bulk update failed:', error);
       alert(`❌ Toplu güncelleme hatası: ${error.message}`);
     } finally {
       setSaving(false);
