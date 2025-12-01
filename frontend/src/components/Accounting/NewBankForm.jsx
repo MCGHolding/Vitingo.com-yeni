@@ -875,7 +875,11 @@ const NewBankForm = ({ onBackToDashboard, onGoToBanks, bankToEdit = null }) => {
               <Button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  onBackToDashboard();
+                  if (onGoToBanks) {
+                    onGoToBanks();
+                  } else {
+                    onBackToDashboard();
+                  }
                 }}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
               >
