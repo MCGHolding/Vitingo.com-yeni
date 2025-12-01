@@ -69,6 +69,32 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       // Fallback to default countries
       setCountries([
         { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+
+  // Load currencies from backend
+  const loadCurrencies = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/currency-rates`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        // Extract unique currencies from rates
+        const uniqueCurrencies = [...new Set([
+          ...data.rates.map(r => r.from_currency),
+          ...data.rates.map(r => r.to_currency)
+        ])].sort();
+        setCurrencies(uniqueCurrencies);
+      } else {
+        // Fallback to common currencies
+        setCurrencies(['AED', 'USD', 'EUR', 'GBP', 'TRY']);
+      }
+    } catch (error) {
+      console.error('Error loading currencies:', error);
+      // Fallback to common currencies
+      setCurrencies(['AED', 'USD', 'EUR', 'GBP', 'TRY']);
+    }
+  };
+
         { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
         { code: 'USA', name: 'ABD', flag: '🇺🇸' }
       ]);
