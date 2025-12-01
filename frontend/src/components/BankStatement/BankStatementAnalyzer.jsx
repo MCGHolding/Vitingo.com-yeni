@@ -1197,9 +1197,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
           <div className="text-xs text-blue-600 mb-1 font-medium">💰 KAPANIŞ</div>
           <div className="text-base font-bold text-blue-700">
-            {formatMoney(stats.closingBalance)}
+            {formatMoney(stats.closingBalance, header.currency || statement.currency)}
           </div>
-          <div className="text-xs text-blue-600">{statement.currency || 'AED'}</div>
         </div>
         
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
