@@ -530,6 +530,75 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return null;
   };
   
+  // Bulk action handler - Apply to similar transactions
+  const handleBulkApply = async (shouldLearn = false) => {
+    if (!bulkAction || !statement?.id) return;
+    
+    const { field, value, similarTxns } = bulkAction;
+    
+    setSaving(true);
+    setShowBulkModal(false);
+    
+    try {
+      // Prepare bulk update data
+      const transactionIds = similarTxns.map(t => t.id);
+      const updateData = { [field]: value };
+      
+      // Call backend bulk update endpoint
+      const response = await fetch(
+        `${API_URL}/api/banks/${bankId}/statements/${statement.id}/transactions/bulk`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transactionIds,
+            updateData,
+            shouldLearn
+          })
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Toplu güncelleme hatası');
+      }
+      
+      const data = await response.json();
+      
+      // Update local state with backend response
+      if (data.updatedTransactions) {
+        setTransactions(prev => prev.map(txn => {
+          const updated = data.updatedTransactions.find(u => u.id === txn.id);
+          return updated ? { ...txn, ...updated } : txn;
+        }));
+      }
+      
+      // Show success message
+      const learnMsg = shouldLearn ? ' ve pattern öğrenildi' : '';
+      alert(`✅ ${transactionIds.length} işlem başarıyla güncellendi${learnMsg}!`);
+      
+      // Reload statement to get fresh data
+      await loadLatestStatement();
+      
+    } catch (error) {
+      console.error('Bulk update failed:', error);
+      alert(`❌ Toplu güncelleme hatası: ${error.message}`);
+    } finally {
+      setSaving(false);
+      setBulkAction(null);
+    }
+  };
+  
+  // Bulk action with learning
+  const handleBulkApplyAndLearn = async () => {
+    await handleBulkApply(true);
+  };
+  
+  // Close bulk modal
+  const handleCloseBulkModal = () => {
+    setShowBulkModal(false);
+    setBulkAction(null);
+  };
+  
   // Kaydet ve Öğren
   const handleSave = async () => {
     // Önce tüm pending transaction'ları kontrol et
