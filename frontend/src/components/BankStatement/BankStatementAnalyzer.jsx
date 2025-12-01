@@ -987,7 +987,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
       import('xlsx').then((XLSX) => {
         // Prepare data for Excel
         const excelData = filteredTransactions.map(txn => {
-          const typeLabel = TRANSACTION_TYPES.find(t => t.value === txn.type)?.label || '-';
+          const typeLabel = transactionTypes.find(t => t.value === txn.type)?.label || '-';
           const category = categories.find(c => c.id === txn.categoryId);
           const subCategory = category?.subCategories?.find(s => s.id === txn.subCategoryId);
           const customer = customers.find(c => c.id === txn.customerId);
