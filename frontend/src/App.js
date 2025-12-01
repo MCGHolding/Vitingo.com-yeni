@@ -69,6 +69,7 @@ import DepartmentsPage from './components/Settings/DepartmentsPage';
 import ExpenseCentersPage from './components/Settings/ExpenseCentersPage';
 import AdvanceCategoriesPage from './components/Settings/AdvanceCategoriesPage';
 import ExpenseCategoriesSettings from './components/Settings/ExpenseCategoriesSettings';
+import TransactionTypesPage from './components/Settings/TransactionTypesPage';
 import LibraryPage from './components/Settings/LibraryPage';
 import ContractCreatePage from './components/Settings/ContractCreatePage';
 import ManualTemplateCreator from './components/Settings/ManualTemplateCreator';
