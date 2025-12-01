@@ -69,6 +69,11 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
       // Fallback to default countries
       setCountries([
         { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
+        { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
+        { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+      ]);
+    }
+  };
 
   // Load currencies from backend
   const loadCurrencies = async () => {
