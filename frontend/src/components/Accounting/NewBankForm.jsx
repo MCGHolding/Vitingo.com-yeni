@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
+const NewBankForm = ({ onBackToDashboard, onGoToBanks, bankToEdit = null }) => {
   const isEditMode = Boolean(bankToEdit);
   
   const [formData, setFormData] = useState({
