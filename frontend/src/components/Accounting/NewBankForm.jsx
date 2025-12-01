@@ -248,8 +248,8 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
   };
 
   const validateForm = () => {
-    if (!formData.country || !formData.bankName) {
-      alert('Ülke ve banka adı gereklidir');
+    if (!formData.country || !formData.bankName || !formData.currency) {
+      alert('Ülke, banka adı ve para birimi gereklidir');
       return false;
     }
 
