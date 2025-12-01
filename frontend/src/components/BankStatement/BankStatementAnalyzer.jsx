@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Download, Copy, Plus } from 'lucide-react';
 import AutoMatchBadge from './AutoMatchBadge';
+import BulkActionModal from './BulkActionModal';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
