@@ -169,10 +169,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
       if (response.ok) {
         const data = await response.json();
         // Backend'den gelen türleri dropdown formatına çevir
+        // value olarak direkt name kullan (veritabanında da name saklanıyor)
         const formattedTypes = [
           { value: '', label: 'Seçiniz', color: 'gray' },
           ...data.map(type => ({
-            value: type.name.toLowerCase().replace(/\s+/g, '_'), // "Bank Fees" -> "bank_fees"
+            value: type.name, // Direkt name kullan
             label: type.name,
             color: type.color || 'gray',
             id: type.id
