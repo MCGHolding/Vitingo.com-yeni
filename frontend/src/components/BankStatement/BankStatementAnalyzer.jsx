@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Upload, Download, Copy, Plus } from 'lucide-react';
 import AutoMatchBadge from './AutoMatchBadge';
 import BulkActionModal from './BulkActionModal';
+import AutoMatchNotificationModal from './AutoMatchNotificationModal';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
