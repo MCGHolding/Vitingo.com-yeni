@@ -1504,6 +1504,8 @@ const BankStatementAnalyzer = ({ bankId }) => {
           </div>
         </div>
       ) : null}
+        </>
+      )}
       
       {/* Yeni Müşteri Modal */}
       {showCustomerModal && (
