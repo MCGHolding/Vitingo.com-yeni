@@ -196,8 +196,15 @@ const BankStatementAnalyzer = ({ bankId }) => {
       });
       setTransactions(data.transactions || []);
       
-      if (data.autoMatchedCount > 0) {
-        alert(`✅ ${data.autoMatchedCount} işlem otomatik eşleştirildi!`);
+      // Show auto-match notification modal if there are auto-matched transactions
+      if (data.autoMatchedCount > 0 || data.suggestedCount > 0) {
+        const autoMatched = (data.transactions || []).filter(t => t.autoMatched || t.suggestedMatch);
+        setAutoMatchData({
+          autoMatchedCount: data.autoMatchedCount || 0,
+          suggestedCount: data.suggestedCount || 0,
+          transactions: autoMatched
+        });
+        setShowAutoMatchModal(true);
       }
       
     } catch (err) {
