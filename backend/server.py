@@ -4769,16 +4769,32 @@ async def create_country(country_data: CountryCreate):
         logger.error(f"Error creating country: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/countries", response_model=List[Country])
+@api_router.get("/countries")
 async def get_countries():
     """Get all countries"""
     try:
-        countries = await db.countries.find().sort("name", 1).to_list(length=None)
-        return [Country(**country) for country in countries]
+        countries = await db.countries.find({}, {"_id": 0}).sort("name", 1).to_list(length=None)
+        
+        # If no countries in DB, return default countries
+        if not countries:
+            return [
+                {"id": str(uuid.uuid4()), "code": "Turkey", "name": "Türkiye", "continent": "Asia"},
+                {"id": str(uuid.uuid4()), "code": "UAE", "name": "BAE", "continent": "Asia"},
+                {"id": str(uuid.uuid4()), "code": "USA", "name": "ABD", "continent": "North America"},
+                {"id": str(uuid.uuid4()), "code": "UK", "name": "İngiltere", "continent": "Europe"},
+                {"id": str(uuid.uuid4()), "code": "Germany", "name": "Almanya", "continent": "Europe"}
+            ]
+        
+        return countries
         
     except Exception as e:
         logger.error(f"Error getting countries: {str(e)}")
-        return []
+        # Return default countries on error
+        return [
+            {"id": str(uuid.uuid4()), "code": "Turkey", "name": "Türkiye", "continent": "Asia"},
+            {"id": str(uuid.uuid4()), "code": "UAE", "name": "BAE", "continent": "Asia"},
+            {"id": str(uuid.uuid4()), "code": "USA", "name": "ABD", "continent": "North America"}
+        ]
 
 # ===================== CITIES ENDPOINTS =====================
 
