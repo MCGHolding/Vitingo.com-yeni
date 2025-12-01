@@ -253,124 +253,17 @@ const EditTypeModal = ({ type, onClose, onSave }) => {
           </h2>
 
           {/* Tür Adı */}
-          <div className="mb-4">
+          <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tür Adı *
+              İşlem Türü Adı *
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Örn: Tahsilat"
+              placeholder="Örn: Tahsilat, Ödeme, Transfer..."
             />
-          </div>
-
-          {/* Icon & Color */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                İkon
-              </label>
-              <input
-                type="text"
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-center text-2xl"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Renk
-              </label>
-              <select
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg"
-              >
-                <option value="green">🟢 Yeşil</option>
-                <option value="red">🔴 Kırmızı</option>
-                <option value="blue">🔵 Mavi</option>
-                <option value="purple">🟣 Mor</option>
-                <option value="indigo">🟣 İndigo</option>
-                <option value="teal">🔵 Turkuaz</option>
-                <option value="orange">🟠 Turuncu</option>
-                <option value="gray">⚫ Gri</option>
-                <option value="pink">🌸 Pembe</option>
-                <option value="amber">🟡 Sarı</option>
-                <option value="emerald">🟢 Zümrüt</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Açıklama
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Kısa açıklama..."
-            />
-          </div>
-
-          {/* Direction */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Yön
-            </label>
-            <select
-              value={direction}
-              onChange={(e) => setDirection(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
-            >
-              <option value="in">📥 Gelen (IN)</option>
-              <option value="out">📤 Giden (OUT)</option>
-              <option value="both">↔️ Her İkisi (BOTH)</option>
-            </select>
-          </div>
-
-          {/* Alt Türler */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Alt Türler
-            </label>
-
-            {/* Mevcut alt türler */}
-            <div className="space-y-2 mb-3 max-h-40 overflow-y-auto">
-              {subTypes.map((sub, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
-                  <span className="text-sm">{sub.name}</span>
-                  <button
-                    onClick={() => removeSubType(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Yeni alt tür ekle */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newSubType}
-                onChange={(e) => setNewSubType(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addSubType()}
-                placeholder="Yeni alt tür..."
-                className="flex-1 px-3 py-2 border rounded-lg"
-              />
-              <button
-                onClick={addSubType}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-              >
-                Ekle
-              </button>
-            </div>
           </div>
 
           {/* Actions */}
