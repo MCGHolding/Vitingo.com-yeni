@@ -383,10 +383,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
       if (field === 'type') {
         if (value !== 'collection') updated.customerId = null;
         if (!['fx_buy', 'fx_sell'].includes(value)) updated.currencyPair = null;
-        if (!typeRequiresCategory(value)) {
-          updated.categoryId = null;
-          updated.subCategoryId = null;
-        }
+        // Kategori ve alt kategori her zaman korunur
       }
       
       // Kategori değiştiğinde alt kategoriyi temizle
