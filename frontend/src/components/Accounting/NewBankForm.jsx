@@ -79,16 +79,16 @@ const NewBankForm = ({ onBackToDashboard, bankToEdit = null }) => {
   const loadCurrencies = async () => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/currency-rates`);
+      const response = await fetch(`${backendUrl}/api/currencies`);
       
       if (response.ok) {
         const data = await response.json();
-        // Extract unique currencies from rates
-        const uniqueCurrencies = [...new Set([
-          ...data.rates.map(r => r.from_currency),
-          ...data.rates.map(r => r.to_currency)
-        ])].sort();
-        setCurrencies(uniqueCurrencies);
+        // Extract currency codes and sort alphabetically
+        const currencyCodes = data
+          .filter(curr => curr.is_active)
+          .map(curr => curr.code)
+          .sort();
+        setCurrencies(currencyCodes);
       } else {
         // Fallback to common currencies
         setCurrencies(['AED', 'USD', 'EUR', 'GBP', 'TRY']);
