@@ -37,6 +37,11 @@ const BankStatementAnalyzer = ({ bankId }) => {
   const [availableCurrencies, setAvailableCurrencies] = useState(['AED', 'USD', 'EUR', 'GBP']);
   const [saveStatus, setSaveStatus] = useState('saved'); // 'saved' | 'saving' | 'unsaved'
   
+  // Transaction types (from backend)
+  const [transactionTypes, setTransactionTypes] = useState([
+    { value: '', label: 'Seçiniz', color: 'gray' }
+  ]);
+  
   // Filtering and bulk operations
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
