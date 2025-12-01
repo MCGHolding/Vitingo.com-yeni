@@ -757,67 +757,12 @@ const BankStatementAnalyzer = ({ bankId }) => {
     return filtered;
   }, [transactions, searchQuery, typeFilter, statusFilter, quickFilter, showPendingOnly]);
   
-  // Ekstre yüklenmemişse - Upload Area göster
-  if (!statement) {
-    return (
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          🏦 Wio Bank - Hesap Ekstresi
-        </h2>
-        
-        <div
-          {...getRootProps()}
-          className={`
-            border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition-all
-            ${
-              isDragActive
-                ? 'border-green-500 bg-green-50'
-                : uploading
-                ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
-                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-            }
-          `}
-        >
-          <input {...getInputProps()} />
-          
-          {uploading ? (
-            <div className="space-y-4">
-              <div className="text-6xl animate-bounce">⏳</div>
-              <p className="text-lg font-medium text-gray-700">PDF işleniyor...</p>
-              <p className="text-sm text-gray-500">Ekstre parse ediliyor, lütfen bekleyin</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-7xl">📄</div>
-              <p className="text-2xl font-medium text-gray-700">
-                {isDragActive ? 'Dosyayı bırakın...' : 'PDF Ekstre Yükle'}
-              </p>
-              <p className="text-gray-500">
-                Sürükle & Bırak veya tıklayın
-              </p>
-              <p className="text-sm text-gray-400">
-                Desteklenen format: PDF (Wio Bank)
-              </p>
-            </div>
-          )}
-        </div>
-        
-        {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            <p className="font-medium">⚠️ Hata</p>
-            <p className="text-sm mt-1">{error}</p>
-          </div>
-        )}
-      </div>
-    );
-  }
-  
-  // Ekstre yüklendiyse - Detayları göster
+  // Shared header data
   const header = statement || {};
   
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {/* Header - Always Visible */}
       <div className="bg-white border-b px-6 py-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -846,7 +791,7 @@ const BankStatementAnalyzer = ({ bankId }) => {
           )}
         </div>
         
-        {/* Currency Tabs */}
+        {/* Currency Tabs - Always Visible */}
         <div className="flex items-center gap-2">
           {availableCurrencies.map(currency => (
             <button
@@ -867,6 +812,58 @@ const BankStatementAnalyzer = ({ bankId }) => {
           ))}
         </div>
       </div>
+      
+      {/* Conditional Content: Upload Area OR Statement Details */}
+      {!statement ? (
+        <>
+          {/* Upload Area for selected currency */}
+          <div
+            {...getRootProps()}
+            className={`
+              border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition-all
+              ${
+                isDragActive
+                  ? 'border-green-500 bg-green-50'
+                  : uploading
+                  ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+              }
+            `}
+          >
+            <input {...getInputProps()} />
+            
+            {uploading ? (
+              <div className="space-y-4">
+                <div className="text-6xl animate-bounce">⏳</div>
+                <p className="text-lg font-medium text-gray-700">PDF işleniyor...</p>
+                <p className="text-sm text-gray-500">Ekstre parse ediliyor, lütfen bekleyin</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-7xl">📄</div>
+                <p className="text-2xl font-medium text-gray-700">
+                  {isDragActive ? 'Dosyayı bırakın...' : `${selectedCurrency} PDF Ekstresi Yükle`}
+                </p>
+                <p className="text-gray-500">
+                  Sürükle & Bırak veya tıklayın
+                </p>
+                <p className="text-sm text-gray-400">
+                  Desteklenen format: PDF (Wio Bank)
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {error && (
+            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              <p className="font-medium">⚠️ Hata</p>
+              <p className="text-sm mt-1">{error}</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Statement Details - When statement exists */}
       
       {/* Action Buttons */}
       <div className="flex items-center justify-end gap-2">
