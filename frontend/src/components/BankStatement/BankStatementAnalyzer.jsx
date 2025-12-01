@@ -557,9 +557,19 @@ const BankStatementAnalyzer = ({ bankId }) => {
     console.log('🚀 handleBulkApply called with shouldLearn:', shouldLearn);
     console.log('🚀 bulkAction:', bulkAction);
     console.log('🚀 statement:', statement);
+    console.log('🚀 statement.id:', statement?.id);
+    console.log('🚀 bankId:', bankId);
     
-    if (!bulkAction || !statement?.id) {
-      console.error('❌ Missing bulkAction or statement.id');
+    if (!bulkAction) {
+      console.error('❌ Missing bulkAction');
+      alert('❌ Bulk action data missing');
+      return;
+    }
+    
+    if (!statement?.id) {
+      console.error('❌ Missing statement.id');
+      console.error('❌ Current statement object:', statement);
+      alert('❌ Statement ID missing. Please reload the page.');
       return;
     }
     
