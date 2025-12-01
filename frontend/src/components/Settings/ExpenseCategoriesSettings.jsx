@@ -72,7 +72,6 @@ const ExpenseCategoriesSettings = () => {
     setEditingCategory(category);
     setFormData({
       name: category.name,
-      icon: category.icon || '📁',
       subCategories: category.subCategories || []
     });
     setFormErrors({});
