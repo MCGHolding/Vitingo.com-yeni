@@ -1567,7 +1567,11 @@ const Dashboard = () => {
           onBackToDashboard={() => {
             setSelectedBankForEdit(null);
             handleBackToDashboard();
-          }} 
+          }}
+          onGoToBanks={() => {
+            setSelectedBankForEdit(null);
+            setActiveContent('all-banks');
+          }}
         />;
 
       case 'bank-management':
