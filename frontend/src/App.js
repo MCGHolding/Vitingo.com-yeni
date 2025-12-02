@@ -2166,6 +2166,27 @@ function App() {
               path="/login" 
               element={<LoginPage />} 
             />
+            
+            {/* === YENİ TENANT-BASED ROUTES === */}
+            {/* Bu route'lar önce kontrol edilir */}
+            <Route path="/:tenantSlug" element={<ProtectedRoute><TenantLayout /></ProtectedRoute>}>
+              {/* Dashboard */}
+              <Route index element={<DashboardPage />} />
+              
+              {/* Müşteriler */}
+              <Route path="musteriler">
+                <Route index element={<CustomerListPage />} />
+                <Route path="yeni" element={<CustomerNewPage />} />
+                <Route path="pasif" element={<CustomerListPage />} />
+                <Route path="favoriler" element={<CustomerListPage />} />
+                <Route path="adaylar" element={<CustomerListPage />} />
+                <Route path=":customerId" element={<CustomerDetailPage />} />
+                <Route path=":customerId/duzenle" element={<CustomerEditPage />} />
+              </Route>
+            </Route>
+            
+            {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
+            {/* Bunlara DOKUNMA - olduğu gibi kalsın */}
             <Route 
               path="/" 
               element={
