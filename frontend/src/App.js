@@ -2173,13 +2173,15 @@ function App() {
               {/* Dashboard */}
               <Route index element={<DashboardPage />} />
               
-              {/* Müşteriler */}
+              {/* Müşteriler - DOĞRU SIRALAMA: Statik path'ler ÖNCE */}
               <Route path="musteriler">
                 <Route index element={<CustomerListPage />} />
+                {/* Statik path'ler ÖNCE (yeni, pasif, favoriler, adaylar) */}
                 <Route path="yeni" element={<CustomerNewPage />} />
                 <Route path="pasif" element={<CustomerListPage />} />
                 <Route path="favoriler" element={<CustomerListPage />} />
                 <Route path="adaylar" element={<CustomerListPage />} />
+                {/* Dinamik path'ler SONRA (:customerId) */}
                 <Route path=":customerId" element={<CustomerDetailPage />} />
                 <Route path=":customerId/duzenle" element={<CustomerEditPage />} />
               </Route>
