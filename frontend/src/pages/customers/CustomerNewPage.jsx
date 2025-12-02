@@ -11,7 +11,7 @@ const CustomerNewPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://banktrans.preview.emergentagent.com';
+                    'https://bank-router.preview.emergentagent.com';
 
   const handleSave = async (customerData) => {
     try {
