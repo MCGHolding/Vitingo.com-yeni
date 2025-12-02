@@ -34,7 +34,7 @@ const DashboardPage = () => {
               <h1 className="text-3xl font-bold text-white">
                 {tenant?.name || 'Vitingo CRM'}
               </h1>
-              <p className="text-slate-300 mt-1">Modern İş Yönetimi Dashboard'u</p>
+              <p className="text-slate-300 mt-1">Modern İş Yönetimi Dashboard&apos;u</p>
             </div>
           </div>
           <div className="flex items-center space-x-6">
