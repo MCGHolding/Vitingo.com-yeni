@@ -138,6 +138,16 @@ import {
   X
 } from 'lucide-react';
 
+// === YENİ TENANT-BASED ROUTING ===
+import TenantLayout from './layouts/TenantLayout';
+import { DashboardPage } from './pages/dashboard';
+import { 
+  CustomerListPage, 
+  CustomerDetailPage, 
+  CustomerEditPage, 
+  CustomerNewPage 
+} from './pages/customers';
+
 const Dashboard = () => {
   useActivityTracker();
   const { user } = useAuth();
