@@ -2193,6 +2193,16 @@ function App() {
                 <Route path=":customerId" element={<CustomerDetailPage />} />
                 <Route path=":customerId/duzenle" element={<CustomerEditPage />} />
               </Route>
+
+              {/* Projeler */}
+              <Route path="projeler">
+                <Route index element={<ProjectListPage />} />
+                <Route path="yeni" element={<ProjectNewPage />} />
+                <Route path="devam-eden" element={<OngoingProjectsPage />} />
+                <Route path="tamamlanan" element={<CompletedProjectsPage />} />
+                <Route path="iptal" element={<CancelledProjectsPage />} />
+                <Route path=":projectId/duzenle" element={<ProjectEditPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
