@@ -147,6 +147,14 @@ import {
   CustomerEditPage, 
   CustomerNewPage 
 } from './pages/customers';
+import {
+  ProjectListPage,
+  ProjectNewPage,
+  ProjectEditPage,
+  OngoingProjectsPage,
+  CompletedProjectsPage,
+  CancelledProjectsPage
+} from './pages/projects';
 
 const Dashboard = () => {
   useActivityTracker();
