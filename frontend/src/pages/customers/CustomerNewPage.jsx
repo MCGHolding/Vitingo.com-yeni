@@ -11,7 +11,7 @@ const CustomerNewPage = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://bank-router.preview.emergentagent.com';
+                    'https://tenancy-routes.preview.emergentagent.com';
 
   const handleSave = async (customerData) => {
     console.log('💾 Saving customer:', customerData);

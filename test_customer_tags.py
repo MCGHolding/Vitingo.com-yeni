@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://banktrans.preview.emergentagent.com"
+BACKEND_URL = "https://tenancy-routes.preview.emergentagent.com"
 
 def test_customer_tags_functionality():
     """

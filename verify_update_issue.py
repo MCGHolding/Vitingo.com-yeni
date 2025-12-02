@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://banktrans.preview.emergentagent.com"
+BACKEND_URL = "https://tenancy-routes.preview.emergentagent.com"
 
 def verify_update_issue():
     """Verify the update issue by checking database state"""
