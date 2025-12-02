@@ -2198,10 +2198,10 @@ function App() {
               <Route path="projeler">
                 <Route index element={<ProjectListPage />} />
                 <Route path="yeni" element={<ProjectNewPage />} />
-                <Route path="devam-eden" element={<OngoingProjectsPage />} />
-                <Route path="tamamlanan" element={<CompletedProjectsPage />} />
-                <Route path="iptal" element={<CancelledProjectsPage />} />
-                <Route path=":projectId/duzenle" element={<ProjectEditPage />} />
+                <Route path="devam-eden" element={<OngoingProjectsPageWrapper />} />
+                <Route path="tamamlanan" element={<CompletedProjectsPageWrapper />} />
+                <Route path="iptal" element={<CancelledProjectsPageWrapper />} />
+                <Route path=":projectId/duzenle" element={<ProjectEditPageWrapper />} />
               </Route>
             </Route>
             
