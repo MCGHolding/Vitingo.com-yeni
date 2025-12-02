@@ -34,7 +34,7 @@ const TenantLayoutInner = () => {
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Şirket Bulunamadı</h1>
-          <p className="text-gray-600 mb-4">"{tenantSlug}" adında bir şirket bulunamadı.</p>
+          <p className="text-gray-600 mb-4">&quot;{tenantSlug}&quot; adında bir şirket bulunamadı.</p>
           <button
             onClick={() => navigate('/login')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
