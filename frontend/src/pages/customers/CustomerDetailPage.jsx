@@ -11,9 +11,8 @@ const CustomerDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Backend URL
-  const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
-                    process.env.REACT_APP_BACKEND_URL || 
+  // Backend URL - Always use env variable, ignore window.ENV override
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 
                     'https://bank-router.preview.emergentagent.com';
 
   // Müşteri detayını yükle
