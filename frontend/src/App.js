@@ -150,10 +150,10 @@ import {
 import {
   ProjectListPage,
   ProjectNewPage,
-  ProjectEditPage,
-  OngoingProjectsPage,
-  CompletedProjectsPage,
-  CancelledProjectsPage
+  ProjectEditPage as ProjectEditPageWrapper,
+  OngoingProjectsPage as OngoingProjectsPageWrapper,
+  CompletedProjectsPage as CompletedProjectsPageWrapper,
+  CancelledProjectsPage as CancelledProjectsPageWrapper
 } from './pages/projects';
 
 const Dashboard = () => {
