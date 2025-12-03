@@ -20,7 +20,7 @@ const PeopleListPage = () => {
   // Kişileri yükle - useCallback ile memoize et
   const loadPeople = useCallback(async () => {
     // Zaten yüklendiyse tekrar yükleme
-    if (loaded && people.length > 0) {
+    if (loaded) {
       console.log('⏭️ People already loaded, skipping...');
       return;
     }
@@ -40,7 +40,7 @@ const PeopleListPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [backendUrl, loaded, people.length]);
+  }, [backendUrl, loaded]);
 
   // Sadece ilk yüklemede çalış
   useEffect(() => {
