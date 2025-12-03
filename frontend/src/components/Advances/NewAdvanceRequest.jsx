@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 import { Card } from '../ui/card';
+import { Label } from '../ui/label';
 import {
   PlusIcon,
   XIcon,
