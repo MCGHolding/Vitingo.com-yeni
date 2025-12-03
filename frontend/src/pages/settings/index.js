@@ -22,3 +22,4 @@ export { default as DocumentPermissionsPage } from './DocumentPermissionsPage';
 export { default as PaymentPermissionsPage } from './PaymentPermissionsPage';
 export { default as AppSettingsPage } from './AppSettingsPage';
 export { default as ExpenseCategoriesPage } from './ExpenseCategoriesPage';
+export { default as AdvanceManagementPage } from './AdvanceManagementPage';
