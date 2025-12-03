@@ -2430,8 +2430,11 @@ function App() {
               <Route path="avanslar">
                 <Route index element={<AdvanceListPage />} />
                 <Route path="yeni" element={<AdvanceNewPage />} />
+                <Route path="onaylilar" element={<AdvanceListPage />} />
                 <Route path="finans-onayi" element={<AdvanceFinanceApprovalPage />} />
+                <Route path="kapama" element={<AdvanceClosingPage />} />
                 <Route path="kapanmis" element={<AdvanceClosedPage />} />
+                <Route path="cari-hesap" element={<AdvanceCurrentAccountPage />} />
               </Route>
             </Route>
             
