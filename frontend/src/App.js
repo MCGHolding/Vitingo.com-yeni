@@ -186,6 +186,10 @@ import {
   ProposalProfilesPageWrapper,
   ProposalProfileWizardWrapper
 } from './pages/proposals/indexNew';
+import {
+  SupplierListPage,
+  SupplierNewPage
+} from './pages/suppliers';
 
 const Dashboard = () => {
   useActivityTracker();
