@@ -246,11 +246,31 @@ async def get_advance_rules_settings():
         }
     }
 
-@router.put("/rules")
+@router.put("/advance-rules")
 async def update_advance_rules(rules_data: Dict[str, Any]):
     """Update advance rules"""
+    # Güncellenecek alanlar
+    update_data = {
+        "standard_days": rules_data.get("standard_days", 15),
+        "medium_days": rules_data.get("medium_days", 30),
+        "extended_days": rules_data.get("extended_days", 60),
+        "yearly_medium_limit": rules_data.get("yearly_medium_limit", 8),
+        "yearly_extended_limit": rules_data.get("yearly_extended_limit", 8),
+        "max_open_advances": rules_data.get("max_open_advances", 3),
+        "max_total_amount": rules_data.get("max_total_amount", 100000),
+        "rules_enabled": rules_data.get("rules_enabled", True),
+        "updated_at": datetime.utcnow().isoformat()
+    }
+    
+    # MongoDB'de güncelle (upsert: yoksa oluştur)
+    await db.advance_rules.update_one(
+        {},  # İlk kuralı güncelle (tek bir kural set'i varsayıyoruz)
+        {"$set": update_data},
+        upsert=True
+    )
+    
     return {
         "success": True,
         "message": "Kurallar başarıyla güncellendi",
-        "rules": rules_data
+        "rules": update_data
     }
