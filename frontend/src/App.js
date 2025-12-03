@@ -2313,10 +2313,10 @@ function App() {
               <Route path="faturalar">
                 <Route index element={<InvoiceListPage />} />
                 <Route path="yeni" element={<InvoiceNewPage />} />
-                <Route path="taslak" element={<DraftInvoicesPage />} />
-                <Route path="bekleyen" element={<PendingCollectionPage />} />
-                <Route path="odenmis" element={<PaidInvoicesPage />} />
-                <Route path="vadesi-gecmis" element={<OverdueInvoicesPage />} />
+                <Route path="taslak" element={<DraftInvoicesPageWrapper />} />
+                <Route path="bekleyen" element={<PendingCollectionPageWrapper />} />
+                <Route path="odenmis" element={<PaidInvoicesPageWrapper />} />
+                <Route path="vadesi-gecmis" element={<OverdueInvoicesPageWrapper />} />
                 <Route path=":invoiceId/duzenle" element={<InvoiceEditPage />} />
               </Route>
             </Route>
