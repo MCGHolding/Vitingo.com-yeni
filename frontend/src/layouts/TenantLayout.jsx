@@ -143,6 +143,8 @@ const TenantLayoutInner = () => {
     onPaidExpenseReceipts: () => handleNavigate('/gider-makbuzu/odenmis'),
     
     // Avanslar
+    onAdvances: () => handleNavigate('/avanslar'),
+    onNewAdvance: () => handleNavigate('/avanslar/yeni'),
     onFinansOnayi: () => handleNavigate('/avanslar/finans-onayi'),
     onKapanmisAvanslar: () => handleNavigate('/avanslar/kapanmis'),
     
