@@ -6,13 +6,88 @@ router = APIRouter()
 @router.get("/categories")
 async def get_categories():
     """Get advance categories"""
-    return [
-        {"id": "1", "name": "Yol Masrafı", "description": "İş seyahati yol giderleri"},
-        {"id": "2", "name": "Konaklama", "description": "Otel ve konaklama giderleri"},
-        {"id": "3", "name": "Yemek", "description": "İş yemeği giderleri"},
-        {"id": "4", "name": "Ulaşım", "description": "Şehir içi ulaşım giderleri"},
-        {"id": "5", "name": "Diğer", "description": "Diğer iş giderleri"}
-    ]
+    return {
+        "categories": [
+            {
+                "id": "1",
+                "name": "Yol Masrafı",
+                "description": "İş seyahati yol giderleri",
+                "max_amount": 10000,
+                "currency": "TRY",
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z"
+            },
+            {
+                "id": "2",
+                "name": "Konaklama",
+                "description": "Otel ve konaklama giderleri",
+                "max_amount": 15000,
+                "currency": "TRY",
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z"
+            },
+            {
+                "id": "3",
+                "name": "Yemek",
+                "description": "İş yemeği giderleri",
+                "max_amount": 5000,
+                "currency": "TRY",
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z"
+            },
+            {
+                "id": "4",
+                "name": "Ulaşım",
+                "description": "Şehir içi ulaşım giderleri",
+                "max_amount": 3000,
+                "currency": "TRY",
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z"
+            },
+            {
+                "id": "5",
+                "name": "Diğer",
+                "description": "Diğer iş giderleri",
+                "max_amount": 8000,
+                "currency": "TRY",
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z"
+            }
+        ]
+    }
+
+@router.post("/categories")
+async def create_category(category_data: Dict[str, Any]):
+    """Create new category"""
+    return {
+        "success": True,
+        "message": "Kategori başarıyla oluşturuldu",
+        "category": {
+            "id": "6",
+            **category_data,
+            "created_at": "2024-12-04T00:00:00Z"
+        }
+    }
+
+@router.put("/categories/{category_id}")
+async def update_category(category_id: str, category_data: Dict[str, Any]):
+    """Update category"""
+    return {
+        "success": True,
+        "message": "Kategori başarıyla güncellendi",
+        "category": {
+            "id": category_id,
+            **category_data
+        }
+    }
+
+@router.delete("/categories/{category_id}")
+async def delete_category(category_id: str):
+    """Delete category"""
+    return {
+        "success": True,
+        "message": "Kategori başarıyla silindi"
+    }
 
 @router.get("/cost-centers/projects")
 async def get_projects():
