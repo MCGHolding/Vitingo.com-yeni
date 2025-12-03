@@ -9,7 +9,7 @@ import { Input } from '../ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
-import { formatAdvanceNumber } from '../utils/formatters';
+import { formatAdvanceNumber } from '../../utils/formatters';
 import Tooltip from '../ui/tooltip';
 import { 
   CreditCardIcon,

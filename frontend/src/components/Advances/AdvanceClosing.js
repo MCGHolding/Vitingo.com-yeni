@@ -8,7 +8,7 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { toast } from 'sonner';
-import { formatAdvanceNumber } from '../utils/formatters';
+import { formatAdvanceNumber } from '../../utils/formatters';
 import { formatCurrency } from '../utils/formatCurrency';
 import Tooltip from '../ui/tooltip';
 import { 
