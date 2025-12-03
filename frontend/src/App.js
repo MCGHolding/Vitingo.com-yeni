@@ -215,6 +215,11 @@ import {
   BriefNewPage
 } from './pages/briefs';
 import { SurveyPage } from './pages/surveys';
+import {
+  ContractListPage,
+  ContractNewPage,
+  ContractEditPage
+} from './pages/contracts';
 
 const Dashboard = () => {
   useActivityTracker();
