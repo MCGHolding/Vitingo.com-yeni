@@ -61,17 +61,7 @@ const AdvanceManagementPage = () => {
       <div className="mt-6">
         {activeTab === 'rules' && <AdvanceRulesSettings />}
         
-        {activeTab === 'categories' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">📂</div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Avans Kategorileri</h2>
-              <p className="text-gray-600">
-                Avans kategorileri ayarları yakında eklenecek.
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'categories' && <AdvanceCategoriesSettings />}
         
         {activeTab === 'approval' && (
           <div className="bg-white rounded-lg shadow p-6">
