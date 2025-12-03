@@ -488,12 +488,21 @@ export default function Sidebar({
       return;
     }
     
-    // Handle Ayarlar - open directly without submenu
-    if (item.name === 'Ayarlar' && !subItem) {
-      if (onSettings) {
-        onSettings();
+    // Handle Ayarlar submenu items
+    if (item.name === 'Ayarlar' && subItem) {
+      if (subItem.name === 'Avans Yönetimi') {
+        if (onAdvanceManagement) {
+          onAdvanceManagement();
+        }
+        return;
       }
-      return;
+      // Genel Ayarlar
+      if (subItem.name === 'Genel Ayarlar') {
+        if (onSettings) {
+          onSettings();
+        }
+        return;
+      }
     }
     
     // If no subItem and the item has submenu, toggle submenu
