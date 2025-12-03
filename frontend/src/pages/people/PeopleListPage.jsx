@@ -92,7 +92,6 @@ const PeopleListPage = () => {
   return (
     <AllPeoplePage
       people={people}
-      refreshPeople={refreshPeople}
       onBackToDashboard={handleBackToDashboard}
       onUpdatePerson={handleUpdatePerson}
     />
