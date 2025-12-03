@@ -190,6 +190,10 @@ import {
   SupplierListPage,
   SupplierNewPage
 } from './pages/suppliers';
+import {
+  BankListPage,
+  BankNewPage
+} from './pages/banks';
 
 const Dashboard = () => {
   useActivityTracker();
