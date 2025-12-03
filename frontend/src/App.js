@@ -2225,6 +2225,18 @@ function App() {
                 <Route path="talepler" element={<MeetingRequestsPageWrapper />} />
                 <Route path="arsiv" element={<ArchivedMeetingsPageWrapper />} />
               </Route>
+
+              {/* Fırsatlar */}
+              <Route path="firsatlar">
+                <Route index element={<OpportunityListPage />} />
+                <Route path="yeni" element={<OpportunityNewPage />} />
+                <Route path="acik" element={<OpenOpportunitiesPageWrapper />} />
+                <Route path="kazanilan" element={<WonOpportunitiesPageWrapper />} />
+                <Route path="kaybedilen" element={<LostOpportunitiesPageWrapper />} />
+                <Route path="favoriler" element={<FavoriteOpportunitiesPageWrapper />} />
+                <Route path=":opportunityId" element={<OpportunityDetailPageNew />} />
+                <Route path=":opportunityId/duzenle" element={<OpportunityEditPageWrapperNew />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
