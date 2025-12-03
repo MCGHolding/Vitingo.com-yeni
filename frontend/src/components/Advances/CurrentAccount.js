@@ -6,7 +6,7 @@ import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../../utils/formatters';
-import Tooltip from '../ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { 
   RefreshCwIcon,
   TrendingUpIcon,
