@@ -15,84 +15,121 @@ db = client.vitingo
 @router.get("/categories")
 async def get_categories():
     """Get advance categories"""
-    return {
-        "categories": [
+    categories = await db.advance_categories.find({}, {"_id": 0}).to_list(1000)
+    
+    # Eğer hiç kategori yoksa default'ları ekle
+    if not categories:
+        default_categories = [
             {
-                "id": "1",
+                "id": str(uuid4()),
                 "name": "Yol Masrafı",
                 "description": "İş seyahati yol giderleri",
                 "max_amount": 10000,
                 "currency": "TRY",
                 "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z"
+                "created_at": datetime.utcnow().isoformat()
             },
             {
-                "id": "2",
+                "id": str(uuid4()),
                 "name": "Konaklama",
                 "description": "Otel ve konaklama giderleri",
                 "max_amount": 15000,
                 "currency": "TRY",
                 "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z"
+                "created_at": datetime.utcnow().isoformat()
             },
             {
-                "id": "3",
+                "id": str(uuid4()),
                 "name": "Yemek",
                 "description": "İş yemeği giderleri",
                 "max_amount": 5000,
                 "currency": "TRY",
                 "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z"
+                "created_at": datetime.utcnow().isoformat()
             },
             {
-                "id": "4",
+                "id": str(uuid4()),
                 "name": "Ulaşım",
                 "description": "Şehir içi ulaşım giderleri",
                 "max_amount": 3000,
                 "currency": "TRY",
                 "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z"
+                "created_at": datetime.utcnow().isoformat()
             },
             {
-                "id": "5",
+                "id": str(uuid4()),
                 "name": "Diğer",
                 "description": "Diğer iş giderleri",
                 "max_amount": 8000,
                 "currency": "TRY",
                 "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z"
+                "created_at": datetime.utcnow().isoformat()
             }
         ]
-    }
+        await db.advance_categories.insert_many(default_categories)
+        categories = default_categories
+    
+    return {"categories": categories}
 
 @router.post("/categories")
 async def create_category(category_data: Dict[str, Any]):
     """Create new category"""
+    new_category = {
+        "id": str(uuid4()),
+        "name": category_data.get("name"),
+        "description": category_data.get("description", ""),
+        "max_amount": category_data.get("max_amount", 0),
+        "currency": category_data.get("currency", "TRY"),
+        "is_active": category_data.get("is_active", True),
+        "created_at": datetime.utcnow().isoformat()
+    }
+    
+    await db.advance_categories.insert_one(new_category)
+    
     return {
         "success": True,
         "message": "Kategori başarıyla oluşturuldu",
-        "category": {
-            "id": "6",
-            **category_data,
-            "created_at": "2024-12-04T00:00:00Z"
-        }
+        "category": new_category
     }
 
 @router.put("/categories/{category_id}")
 async def update_category(category_id: str, category_data: Dict[str, Any]):
     """Update category"""
+    # Güncellenecek alanlar
+    update_data = {
+        "name": category_data.get("name"),
+        "description": category_data.get("description"),
+        "max_amount": category_data.get("max_amount"),
+        "currency": category_data.get("currency", "TRY"),
+        "is_active": category_data.get("is_active", True),
+        "updated_at": datetime.utcnow().isoformat()
+    }
+    
+    result = await db.advance_categories.update_one(
+        {"id": category_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+    
+    # Güncellenmiş kategoriyi getir
+    updated_category = await db.advance_categories.find_one({"id": category_id}, {"_id": 0})
+    
     return {
         "success": True,
         "message": "Kategori başarıyla güncellendi",
-        "category": {
-            "id": category_id,
-            **category_data
-        }
+        "category": updated_category
     }
 
 @router.delete("/categories/{category_id}")
 async def delete_category(category_id: str):
     """Delete category"""
+    result = await db.advance_categories.delete_one({"id": category_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Kategori bulunamadı")
+    
     return {
         "success": True,
         "message": "Kategori başarıyla silindi"
