@@ -2428,6 +2428,8 @@ function App() {
             />
             
             {/* Eski sistem route'ları kaldırıldı - artık tenant-based sistem kullanılıyor */}
+            
+            {/* Public routes - tenant olmadan erişilebilir */}
             <Route 
               path="/survey/:token" 
               element={<SurveyFormPage />} 
@@ -2444,38 +2446,8 @@ function App() {
               path="/expense-receipt-approval/:token" 
               element={<ExpenseReceiptApprovalPage />} 
             />
-            <Route 
-              path="/suppliers/new" 
-              element={
-                <ProtectedRoute>
-                  <NewSupplierForm onClose={() => window.location.href = '/'} />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/suppliers" 
-              element={
-                <ProtectedRoute>
-                  <AllSuppliersPage onBackToDashboard={() => window.location.href = '/'} onNewSupplier={() => window.location.href = '/suppliers/new'} />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/customers/new" 
-              element={
-                <ProtectedRoute>
-                  <NewCustomerPage />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/customers/:customerId/emails" 
-              element={
-                <ProtectedRoute>
-                  <EmailPage />
-                </ProtectedRoute>
-              } 
-            />
+            
+            {/* Deprecated old routes - kaldırıldı */}
             <Route 
               path="/customers/:customerId/designs" 
               element={
