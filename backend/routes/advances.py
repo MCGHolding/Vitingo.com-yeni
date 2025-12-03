@@ -174,12 +174,27 @@ async def get_advance_eligibility():
 @router.get("/advance-rules")
 async def get_advance_rules():
     """Get advance rules"""
-    return {
-        "max_amount": 100000,
-        "min_amount": 100,
-        "currency": "TRY",
-        "max_days": 60
-    }
+    # MongoDB'den kuralları çek
+    rules = await db.advance_rules.find_one({}, {"_id": 0})
+    
+    # Eğer yoksa default kuralları oluştur
+    if not rules:
+        rules = {
+            "standard_days": 15,
+            "medium_days": 30,
+            "extended_days": 60,
+            "yearly_medium_limit": 8,      # 30 günlük avansı yılda 8 kez kullanabilir
+            "yearly_extended_limit": 8,    # 60 günlük avansı yılda 8 kez kullanabilir
+            "max_open_advances": 3,
+            "max_total_amount": 100000,
+            "min_amount": 100,
+            "currency": "TRY",
+            "rules_enabled": True,
+            "created_at": datetime.utcnow().isoformat()
+        }
+        await db.advance_rules.insert_one(rules)
+    
+    return rules
 
 @router.post("/documents/advances")
 async def create_advance(advance_data: Dict[str, Any]):
