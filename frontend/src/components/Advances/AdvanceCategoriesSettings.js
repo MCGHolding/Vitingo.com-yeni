@@ -29,7 +29,7 @@ const AdvanceCategoriesSettings = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API}/categories`);
-      const categoriesData = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      const categoriesData = response.data?.categories || response.data?.data || (Array.isArray(response.data) ? response.data : []);
       setCategories(categoriesData);
     } catch (error) {
       console.error('Kategoriler yüklenirken hata:', error);
