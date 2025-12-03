@@ -180,6 +180,12 @@ import {
   PeopleListPage,
   PersonNewPage
 } from './pages/people';
+import {
+  ProposalListPageWrapper,
+  ProposalNewPageWrapper,
+  ProposalProfilesPageWrapper,
+  ProposalProfileWizardWrapper
+} from './pages/proposals/indexNew';
 
 const Dashboard = () => {
   useActivityTracker();
