@@ -15590,6 +15590,7 @@ email_routes.set_database(db)
 # Include proposal router
 app.include_router(proposal_router)
 app.include_router(company_group_router)
+app.include_router(advances_router.router, prefix="/api", tags=["advances"])
 
 app.add_middleware(
     CORSMiddleware,
