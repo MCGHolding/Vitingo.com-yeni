@@ -2208,6 +2208,13 @@ function App() {
                 <Route path="iptal" element={<CancelledProjectsPageWrapper />} />
                 <Route path=":projectId/duzenle" element={<ProjectEditPageWrapper />} />
               </Route>
+
+              {/* Takvim */}
+              <Route path="takvim">
+                <Route index element={<CalendarViewPage />} />
+                <Route path="talepler" element={<MeetingRequestsPageWrapper />} />
+                <Route path="arsiv" element={<ArchivedMeetingsPageWrapper />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
