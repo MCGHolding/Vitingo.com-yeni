@@ -240,8 +240,11 @@ const getNavigation = (userDepartment) => {
       hasSubmenu: true,
       submenu: [
         { name: 'Yeni Avans', href: '/avanslar/yeni', icon: Plus },
-        { name: 'Finans Onayı', href: '/avanslar/finans-onayi', icon: CheckCircle },
-        { name: 'Kapanmış Avanslar', href: '/avanslar/kapanmis', icon: FileCheck }
+        { name: 'Onaylı Avanslar', href: '/avanslar/onaylilar', icon: CheckCircle },
+        { name: 'Finans Onayı', href: '/avanslar/finans-onayi', icon: DollarSign },
+        { name: 'Avans Kapama', href: '/avanslar/kapama', icon: FileCheck },
+        { name: 'Kapanmış Avanslar', href: '/avanslar/kapanmis', icon: Archive },
+        { name: 'Cari Hesap', href: '/avanslar/cari-hesap', icon: Wallet }
       ]
     },
     { 
