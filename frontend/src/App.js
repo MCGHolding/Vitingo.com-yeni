@@ -215,6 +215,14 @@ import {
   BriefNewPage
 } from './pages/briefs';
 import { SurveyPage } from './pages/surveys';
+
+// Avanslar pages
+import {
+  AdvanceListPage,
+  AdvanceNewPage,
+  AdvanceFinanceApprovalPage,
+  AdvanceClosedPage
+} from './pages/advances';
 import {
   ContractListPage,
   ContractNewPage,
