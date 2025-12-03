@@ -2339,6 +2339,12 @@ function App() {
                 <Route path="onaylanmis" element={<ApprovedExpenseReceiptsPageWrapper />} />
                 <Route path="odenmis" element={<PaidExpenseReceiptsPageWrapper />} />
               </Route>
+
+              {/* Briefler */}
+              <Route path="briefler">
+                <Route index element={<BriefListPage />} />
+                <Route path="yeni" element={<BriefNewPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
