@@ -2417,13 +2417,12 @@ function App() {
               </Route>
             </Route>
             
-            {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
-            {/* Bunlara DOKUNMA - olduğu gibi kalsın */}
+            {/* Ana sayfa - tenant'a yönlendir */}
             <Route 
               path="/" 
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Navigate to="/quattro-stand" replace />
                 </ProtectedRoute>
               } 
             />
