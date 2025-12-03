@@ -94,6 +94,7 @@ const PeopleListPage = () => {
       people={people}
       onBackToDashboard={handleBackToDashboard}
       onUpdatePerson={handleUpdatePerson}
+      refreshPeople={refreshPeople}
     />
   );
 };
