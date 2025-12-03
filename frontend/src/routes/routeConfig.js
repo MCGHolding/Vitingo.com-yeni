@@ -1,6 +1,9 @@
 // Tüm route tanımları merkezi bir yerde
 // Bu dosya hem route oluşturmak hem de link oluşturmak için kullanılır
 
+// Default tenant slug
+export const DEFAULT_TENANT = 'quattro-stand';
+
 export const ROUTES = {
   // Auth routes (tenant dışı)
   LOGIN: '/login',
