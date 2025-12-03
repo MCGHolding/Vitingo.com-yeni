@@ -198,10 +198,10 @@ import {
   InvoiceListPage,
   InvoiceNewPage,
   InvoiceEditPage,
-  DraftInvoicesPage,
-  PendingCollectionPage,
-  PaidInvoicesPage,
-  OverdueInvoicesPage
+  DraftInvoicesPage as DraftInvoicesPageWrapper,
+  PendingCollectionPage as PendingCollectionPageWrapper,
+  PaidInvoicesPage as PaidInvoicesPageWrapper,
+  OverdueInvoicesPage as OverdueInvoicesPageWrapper
 } from './pages/invoices';
 
 const Dashboard = () => {
