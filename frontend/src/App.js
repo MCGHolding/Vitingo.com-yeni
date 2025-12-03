@@ -2293,6 +2293,12 @@ function App() {
                 <Route index element={<SupplierListPage />} />
                 <Route path="yeni" element={<SupplierNewPage />} />
               </Route>
+
+              {/* Bankalar */}
+              <Route path="bankalar">
+                <Route index element={<BankListPage />} />
+                <Route path="yeni" element={<BankNewPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
