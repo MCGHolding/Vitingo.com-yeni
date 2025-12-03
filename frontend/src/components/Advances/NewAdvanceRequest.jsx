@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
+import { Card } from '../ui/card';
 import {
   PlusIcon,
   XIcon,
