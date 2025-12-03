@@ -84,7 +84,7 @@ const NewRequest = () => {
   // Check if user has admin permissions
   const hasAdminPermissions = () => {
     if (!user?.role) return false;
-    return user.role.name === 'Süper Admin' || user.role.name === 'Admin' || user.role.permissions.includes('*');
+    return user.role.name === 'Süper Admin' || user.role.name === 'Admin' || user.role.permissions?.includes('*');
   };
 
   // Fetch categories
