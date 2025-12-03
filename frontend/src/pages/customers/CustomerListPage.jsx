@@ -56,7 +56,6 @@ const CustomerListPage = () => {
 
   useEffect(() => {
     loadCustomers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]); // Filter değişince yeniden yükle
 
   // Navigation handlers
