@@ -568,7 +568,7 @@ const NewRequest = () => {
                       <div className="text-gray-600">
                         ₺{(eligibility.used_amount || 0).toLocaleString('tr-TR')} / ₺{(eligibility.max_total_amount || 300000).toLocaleString('tr-TR')} {eligibility.currency || 'TRY'}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm text-red-700 mt-1 font-medium">
                         Kalan: ₺{(eligibility.remaining_amount || 0).toLocaleString('tr-TR')}
                       </div>
                     </div>
