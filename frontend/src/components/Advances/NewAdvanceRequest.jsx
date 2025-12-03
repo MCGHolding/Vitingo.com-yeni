@@ -1,3 +1,19 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
+import {
+  PlusIcon,
+  XIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  InformationCircleIcon,
+  CheckIcon
+} from 'lucide-react';
+
+const API = process.env.REACT_APP_BACKEND_URL || '';
+
 const NewRequest = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -1342,3 +1358,4 @@ const NewRequest = () => {
     </div>
   );
 };
+export default NewRequest;
