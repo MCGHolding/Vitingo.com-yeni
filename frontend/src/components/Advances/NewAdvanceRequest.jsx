@@ -597,19 +597,16 @@ const NewRequest = () => {
                   <div className="bg-white p-3 rounded-lg">
                     <div className="font-medium text-gray-900">Açık Avans</div>
                     <div className="text-gray-600">
-                      {eligibility.open_advances_count} / {eligibility.max_open_advances}
+                      {eligibility.open_advances || 0} / {eligibility.max_open_advances || 6}
                     </div>
                   </div>
                   <div className="bg-white p-3 rounded-lg">
                     <div className="font-medium text-gray-900">Açık Avans Limiti</div>
                     <div className="text-gray-600">
-                      {getCurrencySymbol(eligibility.base_currency)}
-                      {(eligibility.total_amount_base || eligibility.total_amount_usd)?.toLocaleString('tr-TR')} / {getCurrencySymbol(eligibility.base_currency)}
-                      {(eligibility.max_total_amount_base || eligibility.max_total_amount_usd)?.toLocaleString('tr-TR')} {eligibility.base_currency}
+                      ₺{(eligibility.used_amount || 0).toLocaleString('tr-TR')} / ₺{(eligibility.max_total_amount || 300000).toLocaleString('tr-TR')} {eligibility.currency || 'TRY'}
                     </div>
                     <div className="text-sm text-green-700 mt-1 font-medium">
-                      Kalan: {getCurrencySymbol(eligibility.base_currency)}
-                      {((eligibility.max_total_amount_base || eligibility.max_total_amount_usd) - (eligibility.total_amount_base || eligibility.total_amount_usd))?.toLocaleString('tr-TR')}
+                      Kalan: ₺{(eligibility.remaining_amount || 0).toLocaleString('tr-TR')}
                     </div>
                   </div>
                 </div>
