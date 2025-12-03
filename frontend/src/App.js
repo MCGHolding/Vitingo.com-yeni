@@ -220,6 +220,15 @@ import {
   ContractNewPage,
   ContractEditPage
 } from './pages/contracts';
+import {
+  SettingsMainPage,
+  GroupCompaniesPage,
+  UserManagementPage,
+  DepartmentsPage,
+  PositionsPage,
+  ExpenseCentersPage,
+  LibraryPage
+} from './pages/settings';
 
 const Dashboard = () => {
   useActivityTracker();
