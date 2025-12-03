@@ -2331,9 +2331,9 @@ function App() {
               <Route path="gider-makbuzu">
                 <Route index element={<ExpenseReceiptListPage />} />
                 <Route path="yeni" element={<ExpenseReceiptNewPage />} />
-                <Route path="onay-bekleyen" element={<PendingExpenseReceiptsPage />} />
-                <Route path="onaylanmis" element={<ApprovedExpenseReceiptsPage />} />
-                <Route path="odenmis" element={<PaidExpenseReceiptsPage />} />
+                <Route path="onay-bekleyen" element={<PendingExpenseReceiptsPageWrapper />} />
+                <Route path="onaylanmis" element={<ApprovedExpenseReceiptsPageWrapper />} />
+                <Route path="odenmis" element={<PaidExpenseReceiptsPageWrapper />} />
               </Route>
             </Route>
             
