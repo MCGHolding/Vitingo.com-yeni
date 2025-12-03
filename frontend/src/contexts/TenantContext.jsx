@@ -23,15 +23,15 @@ export const TenantProvider = ({ children }) => {
         // const response = await fetch(`/api/tenants/${tenantSlug}`);
         // const data = await response.json();
         
-        // Şimdilik mock data
+        // Mock tenant data - şimdilik sabit, sonra API'den gelecek
         const mockTenant = {
-          id: '1',
-          slug: tenantSlug,
-          name: tenantSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          id: 'tenant_001',
+          slug: 'quattro-stand',
+          name: 'Quattro Stand',
           logo: null,
           settings: {
-            language: 'tr',
             currency: 'TRY',
+            language: 'tr',
             timezone: 'Europe/Istanbul'
           }
         };
