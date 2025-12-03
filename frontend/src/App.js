@@ -2425,6 +2425,7 @@ function App() {
                 <Route path="belge-yetkileri" element={<DocumentPermissionsPage />} />
                 <Route path="odeme-yetkileri" element={<PaymentPermissionsPage />} />
                 <Route path="uygulama" element={<AppSettingsPage />} />
+                <Route path="avans-yonetimi" element={<AdvanceManagementPage />} />
               </Route>
 
               {/* Avanslar */}
