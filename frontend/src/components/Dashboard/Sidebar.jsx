@@ -381,8 +381,12 @@ export default function Sidebar({
   onNewSupplier,
   onAllSuppliers,
   // Avans handlers
+  onNewAdvance,
+  onApprovedAdvances,
   onFinansOnayi,
+  onAdvanceClosing,
   onKapanmisAvanslar,
+  onCurrentAccount,
   // Brief handlers
   onNewBrief,
   onAllBriefs,
