@@ -2243,6 +2243,15 @@ function App() {
                 <Route path=":opportunityId" element={<OpportunityDetailPageNew />} />
                 <Route path=":opportunityId/duzenle" element={<OpportunityEditPageWrapperNew />} />
               </Route>
+
+              {/* Fuarlar */}
+              <Route path="fuarlar">
+                <Route index element={<FairListPage />} />
+                <Route path="yeni" element={<FairNewPage />} />
+                <Route path="aktif" element={<FutureFairsPageWrapper />} />
+                <Route path="gelecek" element={<FutureFairsPageWrapper />} />
+                <Route path="gecmis" element={<PastFairsPageWrapper />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
