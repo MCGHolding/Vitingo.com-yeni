@@ -74,8 +74,9 @@ async def get_categories():
 @router.post("/categories")
 async def create_category(category_data: Dict[str, Any]):
     """Create new category"""
+    category_id = str(uuid4())
     new_category = {
-        "id": str(uuid4()),
+        "id": category_id,
         "name": category_data.get("name"),
         "description": category_data.get("description", ""),
         "max_amount": category_data.get("max_amount", 0),
@@ -84,8 +85,10 @@ async def create_category(category_data: Dict[str, Any]):
         "created_at": datetime.utcnow().isoformat()
     }
     
-    await db.advance_categories.insert_one(new_category)
+    # MongoDB'ye insert et
+    await db.advance_categories.insert_one({**new_category})
     
+    # Response'da _id'yi çıkar
     return {
         "success": True,
         "message": "Kategori başarıyla oluşturuldu",
