@@ -2354,6 +2354,13 @@ function App() {
 
               {/* Anketler */}
               <Route path="anketler" element={<SurveyPage />} />
+
+              {/* Sözleşmeler */}
+              <Route path="sozlesmeler">
+                <Route index element={<ContractListPage />} />
+                <Route path="yeni" element={<ContractNewPage />} />
+                <Route path=":contractId/duzenle" element={<ContractEditPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
