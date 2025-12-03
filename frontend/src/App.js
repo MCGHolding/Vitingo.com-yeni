@@ -2374,12 +2374,12 @@ function App() {
               {/* Ayarlar */}
               <Route path="ayarlar">
                 <Route index element={<SettingsMainPage />} />
-                <Route path="sirketler" element={<GroupCompaniesPage />} />
-                <Route path="kullanicilar" element={<UserManagementPage />} />
-                <Route path="departmanlar" element={<DepartmentsPage />} />
-                <Route path="pozisyonlar" element={<PositionsPage />} />
-                <Route path="masraf-merkezleri" element={<ExpenseCentersPage />} />
-                <Route path="kutuphane" element={<LibraryPage />} />
+                <Route path="sirketler" element={<GroupCompaniesPageWrapper />} />
+                <Route path="kullanicilar" element={<UserManagementPageWrapper />} />
+                <Route path="departmanlar" element={<DepartmentsPageWrapper />} />
+                <Route path="pozisyonlar" element={<PositionsPageWrapper />} />
+                <Route path="masraf-merkezleri" element={<ExpenseCentersPageWrapper />} />
+                <Route path="kutuphane" element={<LibraryPageWrapper />} />
               </Route>
             </Route>
             
