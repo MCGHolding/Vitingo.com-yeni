@@ -7,7 +7,7 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../../utils/formatters';
-import Tooltip from '../ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { 
   CheckCircleIcon,
   CalendarIcon,

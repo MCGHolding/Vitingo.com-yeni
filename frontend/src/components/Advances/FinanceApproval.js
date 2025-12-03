@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../../utils/formatters';
-import Tooltip from '../ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { 
   CreditCardIcon,
   ClockIcon,

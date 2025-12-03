@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../../utils/formatters';
 import { formatCurrency } from '../utils/formatCurrency';
-import Tooltip from '../ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { 
   CheckCircleIcon,
   CalendarIcon,
