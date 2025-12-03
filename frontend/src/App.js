@@ -2268,6 +2268,17 @@ function App() {
                 <Route index element={<PeopleListPage />} />
                 <Route path="yeni" element={<PersonNewPage />} />
               </Route>
+
+              {/* Teklifler */}
+              <Route path="teklifler">
+                <Route index element={<ProposalListPageWrapper />} />
+                <Route path="yeni" element={<ProposalNewPageWrapper />} />
+                <Route path="profiller" element={<ProposalProfilesPageWrapper />} />
+                <Route path="profiller/yeni" element={<ProposalProfileWizardWrapper />} />
+                <Route path="profiller/:profileId/duzenle" element={<ProposalProfileWizardWrapper />} />
+                <Route path=":proposalId" element={<ProposalNewPageWrapper />} />
+                <Route path=":proposalId/duzenle" element={<ProposalNewPageWrapper />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
