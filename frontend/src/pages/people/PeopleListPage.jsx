@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTenant } from '../../contexts/TenantContext';
 import AllPeoplePage from '../../components/Customers/AllPeoplePage';
@@ -10,20 +10,29 @@ const PeopleListPage = () => {
   
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
                     'https://banktrans.preview.emergentagent.com';
 
-  // Kişileri yükle
-  const loadPeople = async () => {
+  // Kişileri yükle - useCallback ile memoize et
+  const loadPeople = useCallback(async () => {
+    // Zaten yüklendiyse tekrar yükleme
+    if (loaded && people.length > 0) {
+      console.log('⏭️ People already loaded, skipping...');
+      return;
+    }
+    
     try {
       setLoading(true);
+      console.log('🔍 Loading people...');
       const response = await fetch(`${backendUrl}/api/people`);
       if (response.ok) {
         const data = await response.json();
         setPeople(data);
+        setLoaded(true);
         console.log(`✅ Loaded ${data.length} people`);
       }
     } catch (error) {
@@ -31,11 +40,14 @@ const PeopleListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [backendUrl, loaded, people.length]);
 
+  // Sadece ilk yüklemede çalış
   useEffect(() => {
-    loadPeople();
-  }, []);
+    if (!loaded) {
+      loadPeople();
+    }
+  }, [loaded, loadPeople]);
 
   const handleBackToDashboard = () => {
     navigate(`/${tenantSlug}`);
@@ -47,10 +59,32 @@ const PeopleListPage = () => {
     ));
   };
 
-  if (loading) {
+  // Manuel refresh fonksiyonu
+  const refreshPeople = async () => {
+    setLoaded(false);
+    try {
+      setLoading(true);
+      const response = await fetch(`${backendUrl}/api/people`);
+      if (response.ok) {
+        const data = await response.json();
+        setPeople(data);
+        setLoaded(true);
+        console.log(`🔄 Refreshed ${data.length} people`);
+      }
+    } catch (error) {
+      console.error('Error refreshing people:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !loaded) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="p-6 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Kişiler yükleniyor...</p>
+        </div>
       </div>
     );
   }
@@ -58,7 +92,7 @@ const PeopleListPage = () => {
   return (
     <AllPeoplePage
       people={people}
-      refreshPeople={loadPeople}
+      refreshPeople={refreshPeople}
       onBackToDashboard={handleBackToDashboard}
       onUpdatePerson={handleUpdatePerson}
     />
