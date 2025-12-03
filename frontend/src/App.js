@@ -2391,12 +2391,29 @@ function App() {
               {/* Ayarlar */}
               <Route path="ayarlar">
                 <Route index element={<SettingsMainPage />} />
+                <Route path="profil" element={<ProfileSettingsPage />} />
+                <Route path="guvenlik" element={<SecuritySettingsPage />} />
+                <Route path="sirket-bilgileri" element={<CompanyInfoPage />} />
                 <Route path="sirketler" element={<GroupCompaniesPageWrapper />} />
+                <Route path="sozlesme-yonetimi" element={<ContractManagementSettingsPage />} />
                 <Route path="kullanicilar" element={<UserManagementPageWrapper />} />
-                <Route path="departmanlar" element={<DepartmentsPageWrapper />} />
                 <Route path="pozisyonlar" element={<PositionsPageWrapper />} />
+                <Route path="pozisyon-hiyerarsisi" element={<PositionHierarchyPage />} />
+                <Route path="tedarikci-yonetimi" element={<SupplierManagementPage />} />
+                <Route path="departmanlar" element={<DepartmentsPageWrapper />} />
+                <Route path="banka-yonetimi" element={<BankManagementSettingsPage />} />
+                <Route path="avans-kurallari" element={<AdvanceRulesPage />} />
                 <Route path="masraf-merkezleri" element={<ExpenseCentersPageWrapper />} />
+                <Route path="kredi-kartlari" element={<CreditCardsPage />} />
+                <Route path="harcama-kategorileri" element={<BankCreditCardCategoriesPage />} />
+                <Route path="islem-turleri" element={<TransactionTypesSettingsPage />} />
+                <Route path="avans-kategorileri" element={<AdvanceCategoriesSettingsPage />} />
+                <Route path="gider-kategorileri" element={<ExpenseCategoriesSettingsPage />} />
                 <Route path="kutuphane" element={<LibraryPageWrapper />} />
+                <Route path="kullanici-yetkileri" element={<UserPermissionsPage />} />
+                <Route path="belge-yetkileri" element={<DocumentPermissionsPage />} />
+                <Route path="odeme-yetkileri" element={<PaymentPermissionsPage />} />
+                <Route path="uygulama" element={<AppSettingsPage />} />
               </Route>
             </Route>
             
