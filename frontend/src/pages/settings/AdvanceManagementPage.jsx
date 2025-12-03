@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdvanceRulesSettings from '../../components/Advances/AdvanceRulesSettings';
+import AdvanceCategoriesSettings from '../../components/Advances/AdvanceCategoriesSettings';
 
 const AdvanceManagementPage = () => {
   const navigate = useNavigate();
