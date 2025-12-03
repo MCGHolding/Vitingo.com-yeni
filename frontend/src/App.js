@@ -206,9 +206,9 @@ import {
 import {
   ExpenseReceiptListPage,
   ExpenseReceiptNewPage,
-  PendingExpenseReceiptsPage,
-  ApprovedExpenseReceiptsPage,
-  PaidExpenseReceiptsPage
+  PendingExpenseReceiptsPage as PendingExpenseReceiptsPageWrapper,
+  ApprovedExpenseReceiptsPage as ApprovedExpenseReceiptsPageWrapper,
+  PaidExpenseReceiptsPage as PaidExpenseReceiptsPageWrapper
 } from './pages/expenses';
 
 const Dashboard = () => {
