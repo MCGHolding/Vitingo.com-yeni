@@ -1,7 +1,16 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Dict, Any
+from datetime import datetime
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+from uuid import uuid4
 
 router = APIRouter()
+
+# MongoDB connection
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.vitingo
 
 @router.get("/categories")
 async def get_categories():
