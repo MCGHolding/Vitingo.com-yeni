@@ -155,6 +155,11 @@ import {
   CompletedProjectsPage as CompletedProjectsPageWrapper,
   CancelledProjectsPage as CancelledProjectsPageWrapper
 } from './pages/projects';
+import {
+  CalendarViewPage,
+  MeetingRequestsPage as MeetingRequestsPageWrapper,
+  ArchivedMeetingsPage as ArchivedMeetingsPageWrapper
+} from './pages/calendar';
 
 const Dashboard = () => {
   useActivityTracker();
