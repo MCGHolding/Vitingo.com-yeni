@@ -194,6 +194,15 @@ import {
   BankListPage,
   BankNewPage
 } from './pages/banks';
+import {
+  InvoiceListPage,
+  InvoiceNewPage,
+  InvoiceEditPage,
+  DraftInvoicesPage,
+  PendingCollectionPage,
+  PaidInvoicesPage,
+  OverdueInvoicesPage
+} from './pages/invoices';
 
 const Dashboard = () => {
   useActivityTracker();
