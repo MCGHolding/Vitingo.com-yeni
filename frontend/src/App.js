@@ -221,7 +221,9 @@ import {
   AdvanceListPage,
   AdvanceNewPage,
   AdvanceFinanceApprovalPage,
-  AdvanceClosedPage
+  AdvanceClosedPage,
+  AdvanceClosingPage,
+  AdvanceCurrentAccountPage
 } from './pages/advances';
 import {
   ContractListPage,
