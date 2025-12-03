@@ -214,6 +214,7 @@ import {
   BriefListPage,
   BriefNewPage
 } from './pages/briefs';
+import { SurveyPage } from './pages/surveys';
 
 const Dashboard = () => {
   useActivityTracker();
