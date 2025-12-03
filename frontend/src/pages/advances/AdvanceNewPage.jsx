@@ -1,8 +1,8 @@
 import React from 'react';
-import AdvanceManagement from '../../components/Advances/AdvanceManagement';
+import NewAdvanceRequest from '../../components/Advances/NewAdvanceRequest';
 
 const AdvanceNewPage = () => {
-  return <AdvanceManagement />;
+  return <NewAdvanceRequest />;
 };
 
 export default AdvanceNewPage;
