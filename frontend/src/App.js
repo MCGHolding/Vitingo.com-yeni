@@ -210,6 +210,10 @@ import {
   ApprovedExpenseReceiptsPage as ApprovedExpenseReceiptsPageWrapper,
   PaidExpenseReceiptsPage as PaidExpenseReceiptsPageWrapper
 } from './pages/expenses';
+import {
+  BriefListPage,
+  BriefNewPage
+} from './pages/briefs';
 
 const Dashboard = () => {
   useActivityTracker();
