@@ -254,7 +254,8 @@ import {
   DocumentPermissionsPage,
   PaymentPermissionsPage,
   AppSettingsPage,
-  ExpenseCategoriesPage as ExpenseCategoriesSettingsPage
+  ExpenseCategoriesPage as ExpenseCategoriesSettingsPage,
+  AdvanceManagementPage
 } from './pages/settings';
 
 const Dashboard = () => {
