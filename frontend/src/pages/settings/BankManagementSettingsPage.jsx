@@ -1,24 +1,31 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTenant } from '../../contexts/TenantContext';
+import AllBanksPage from '../../components/Accounting/AllBanksPage';
 
 const BankManagementSettingsPage = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams();
+  const { tenant } = useTenant();
+
+  const handleBackToDashboard = () => {
+    navigate(`/${tenantSlug}/ayarlar`);
+  };
+
+  const handleNewBank = () => {
+    navigate(`/${tenantSlug}/bankalar/yeni`);
+  };
+
+  const handleEditBank = (bank) => {
+    navigate(`/${tenantSlug}/bankalar/${bank.id}/duzenle`);
+  };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center mb-6">
-        <button onClick={() => navigate(`/${tenantSlug}/ayarlar`)} className="mr-4 p-2 hover:bg-gray-100 rounded-lg">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-2xl font-bold">Banka Yönetimi</h1>
-      </div>
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-        <p className="text-yellow-800">🚧 Bu servis yakında hizmetinizde</p>
-      </div>
-    </div>
+    <AllBanksPage
+      onBackToDashboard={handleBackToDashboard}
+      onNewBank={handleNewBank}
+      onEditBank={handleEditBank}
+    />
   );
 };
 
