@@ -59,8 +59,8 @@ const PeopleListPage = () => {
     ));
   };
 
-  // Manuel refresh fonksiyonu
-  const refreshPeople = async () => {
+  // Manuel refresh fonksiyonu - useCallback ile memoize et
+  const refreshPeople = useCallback(async () => {
     setLoaded(false);
     try {
       setLoading(true);
@@ -76,7 +76,7 @@ const PeopleListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [backendUrl]);
 
   if (loading && !loaded) {
     return (
