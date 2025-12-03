@@ -52,8 +52,8 @@ export default function LoginPage() {
     try {
       // Development mode: Allow login without password
       await login({ username: formData.username, password: formData.password || '', rememberMe: formData.rememberMe });
-      // Redirect to dashboard on successful login
-      navigate('/');
+      // Redirect to tenant dashboard on successful login
+      navigate('/quattro-stand');
     } catch (err) {
       setError(err.message);
     } finally {
