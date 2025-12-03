@@ -7,7 +7,7 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { CheckIcon, XIcon, CreditCardIcon } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

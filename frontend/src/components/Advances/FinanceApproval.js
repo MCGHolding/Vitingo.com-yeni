@@ -8,7 +8,7 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Textarea } from '../ui/textarea';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { formatAdvanceNumber } from '../../utils/formatters';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 import { 

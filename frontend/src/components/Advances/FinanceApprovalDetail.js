@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '../ui/textarea';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { getFreshPresignedUrl } from '../../utils/s3';
 import { 
   ArrowLeftIcon,

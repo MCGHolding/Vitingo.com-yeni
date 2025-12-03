@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { formatAdvanceNumber } from '../../utils/formatters';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
