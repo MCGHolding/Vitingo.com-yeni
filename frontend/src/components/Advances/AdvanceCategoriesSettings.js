@@ -7,7 +7,7 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { PlusIcon, EditIcon, TrashIcon, FolderIcon } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { Switch } from '../ui/switch';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
