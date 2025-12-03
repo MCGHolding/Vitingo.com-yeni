@@ -2370,6 +2370,17 @@ function App() {
                 <Route path="yeni" element={<ContractNewPage />} />
                 <Route path=":contractId/duzenle" element={<ContractEditPage />} />
               </Route>
+
+              {/* Ayarlar */}
+              <Route path="ayarlar">
+                <Route index element={<SettingsMainPage />} />
+                <Route path="sirketler" element={<GroupCompaniesPage />} />
+                <Route path="kullanicilar" element={<UserManagementPage />} />
+                <Route path="departmanlar" element={<DepartmentsPage />} />
+                <Route path="pozisyonlar" element={<PositionsPage />} />
+                <Route path="masraf-merkezleri" element={<ExpenseCentersPage />} />
+                <Route path="kutuphane" element={<LibraryPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
