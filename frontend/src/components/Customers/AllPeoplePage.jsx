@@ -44,7 +44,7 @@ export default function AllPeoplePage({ onBackToDashboard, people: peopleProp = 
     if (refreshPeople) {
       refreshPeople();
     }
-  }, []);
+  }, [refreshPeople]);
 
   // Update people when props change
   React.useEffect(() => {
