@@ -301,7 +301,19 @@ const getNavigation = (userDepartment) => {
       name: 'Ayarlar', 
       href: '/settings', 
       icon: Settings, 
-      current: false
+      current: false,
+      hasSubmenu: true,
+      submenu: [
+        { name: 'Genel Ayarlar', href: '/ayarlar', icon: Settings },
+        { name: 'Grup Şirketleri', href: '/ayarlar/grup-sirketleri', icon: Building },
+        { name: 'Kullanıcı Yönetimi', href: '/ayarlar/kullanici-yonetimi', icon: Users },
+        { name: 'Departman Yönetimi', href: '/ayarlar/departman-yonetimi', icon: Briefcase },
+        { name: 'Pozisyon Yönetimi', href: '/ayarlar/pozisyon-yonetimi', icon: Award },
+        { name: 'Avans Yönetimi', href: '/ayarlar/avans-yonetimi', icon: CreditCard },
+        { name: 'Masraf Merkezleri', href: '/ayarlar/masraf-merkezleri', icon: DollarSign },
+        { name: 'Banka Yönetimi', href: '/ayarlar/banka-yonetimi', icon: Building },
+        { name: 'Kütüphane', href: '/ayarlar/kutuphane', icon: BookOpen }
+      ]
     }
   ];
 
