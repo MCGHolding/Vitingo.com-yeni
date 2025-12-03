@@ -2283,6 +2283,12 @@ function App() {
                 <Route path=":proposalId" element={<ProposalNewPageWrapper />} />
                 <Route path=":proposalId/duzenle" element={<ProposalNewPageWrapper />} />
               </Route>
+
+              {/* Tedarikçiler */}
+              <Route path="tedarikciler">
+                <Route index element={<SupplierListPage />} />
+                <Route path="yeni" element={<SupplierNewPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
