@@ -2326,6 +2326,15 @@ function App() {
                 <Route path="vadesi-gecmis" element={<OverdueInvoicesPageWrapper />} />
                 <Route path=":invoiceId/duzenle" element={<InvoiceEditPage />} />
               </Route>
+
+              {/* Gider Makbuzları */}
+              <Route path="gider-makbuzu">
+                <Route index element={<ExpenseReceiptListPage />} />
+                <Route path="yeni" element={<ExpenseReceiptNewPage />} />
+                <Route path="onay-bekleyen" element={<PendingExpenseReceiptsPage />} />
+                <Route path="onaylanmis" element={<ApprovedExpenseReceiptsPage />} />
+                <Route path="odenmis" element={<PaidExpenseReceiptsPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
