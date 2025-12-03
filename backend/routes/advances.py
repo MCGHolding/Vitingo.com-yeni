@@ -164,11 +164,43 @@ async def get_base_currency():
 @router.get("/advance-eligibility")
 async def get_advance_eligibility():
     """Check if user can request advance"""
+    # Avans kurallarını al
+    rules = await db.advance_rules.find_one({}, {"_id": 0})
+    if not rules:
+        rules = {
+            "max_open_advances": 6,
+            "max_total_amount": 300000,
+            "currency": "TRY"
+        }
+    
+    # Kullanıcının açık avanslarını say
+    # TODO: Gerçek kullanıcı ID'si ile filtrele
+    open_advances = await db.advances.count_documents({
+        "status": {"$in": ["pending", "approved", "paid"]}
+    })
+    
+    # Kullanıcının açık avanslarının toplam tutarını hesapla
+    pipeline = [
+        {"$match": {"status": {"$in": ["pending", "approved", "paid"]}}},
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]
+    result = await db.advances.aggregate(pipeline).to_list(1)
+    used_amount = result[0]["total"] if result else 0
+    
+    max_open = rules.get("max_open_advances", 6)
+    max_total = rules.get("max_total_amount", 300000)
+    
+    can_request = open_advances < max_open and used_amount < max_total
+    
     return {
-        "can_request": True,
-        "message": "Avans talebi oluşturabilirsiniz",
-        "remaining_limit": 50000,
-        "currency": "TRY"
+        "can_request": can_request,
+        "message": "Yeni Avans Talebi Oluşturabilirsiniz" if can_request else "Avans limitiniz dolmuş",
+        "open_advances": open_advances,
+        "max_open_advances": max_open,
+        "used_amount": used_amount,
+        "max_total_amount": max_total,
+        "remaining_amount": max_total - used_amount,
+        "currency": rules.get("currency", "TRY")
     }
 
 @router.get("/advance-rules")
