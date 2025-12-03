@@ -176,6 +176,10 @@ import {
   FutureFairsPage as FutureFairsPageWrapper,
   PastFairsPage as PastFairsPageWrapper
 } from './pages/fairs';
+import {
+  PeopleListPage,
+  PersonNewPage
+} from './pages/people';
 
 const Dashboard = () => {
   useActivityTracker();
