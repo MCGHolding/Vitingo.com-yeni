@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
+import { Button } from '../ui/button';
+import { Card } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../utils/formatters';
-import Tooltip from './ui/tooltip';
+import Tooltip from '../ui/tooltip';
 import { 
   CheckCircleIcon,
   CalendarIcon,

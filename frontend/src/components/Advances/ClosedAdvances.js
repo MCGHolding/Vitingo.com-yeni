@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { formatAdvanceNumber } from '../utils/formatters';
-import Tooltip from './ui/tooltip';
+import Tooltip from '../ui/tooltip';
 
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge.jsx';
-import { Input } from './ui/input';
+import { Button } from '../ui/button';
+import { Card } from '../ui/card';
+import { Badge } from '../ui/badge.jsx';
+import { Input } from '../ui/input';
 
 import { 
   CalendarIcon,
