@@ -227,7 +227,24 @@ import {
   DepartmentsPage as DepartmentsPageWrapper,
   PositionsPage as PositionsPageWrapper,
   ExpenseCentersPage as ExpenseCentersPageWrapper,
-  LibraryPage as LibraryPageWrapper
+  LibraryPage as LibraryPageWrapper,
+  ProfileSettingsPage,
+  SecuritySettingsPage,
+  CompanyInfoPage,
+  ContractManagementPage as ContractManagementSettingsPage,
+  PositionHierarchyPage,
+  SupplierManagementPage,
+  BankManagementSettingsPage,
+  AdvanceRulesPage,
+  CreditCardsPage,
+  BankCreditCardCategoriesPage,
+  TransactionTypesPage as TransactionTypesSettingsPage,
+  AdvanceCategoriesPage as AdvanceCategoriesSettingsPage,
+  UserPermissionsPage,
+  DocumentPermissionsPage,
+  PaymentPermissionsPage,
+  AppSettingsPage,
+  ExpenseCategoriesPage as ExpenseCategoriesSettingsPage
 } from './pages/settings';
 
 const Dashboard = () => {
