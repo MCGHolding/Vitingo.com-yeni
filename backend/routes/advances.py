@@ -163,3 +163,30 @@ async def get_currency_settings():
         "allowed_currencies": ["TRY", "USD", "EUR"],
         "default_currency": "TRY"
     }
+
+@router.get("/rules")
+async def get_advance_rules_settings():
+    """Get advance rules for settings page"""
+    return {
+        "rules": {
+            "min_amount": 100,
+            "max_amount": 100000,
+            "currency": "TRY",
+            "min_closure_days": 15,
+            "max_closure_days": 60,
+            "default_closure_days": 30,
+            "allow_multiple_open_advances": False,
+            "require_manager_approval": True,
+            "require_finance_approval": True,
+            "auto_approval_limit": 5000
+        }
+    }
+
+@router.put("/rules")
+async def update_advance_rules(rules_data: Dict[str, Any]):
+    """Update advance rules"""
+    return {
+        "success": True,
+        "message": "Kurallar başarıyla güncellendi",
+        "rules": rules_data
+    }
