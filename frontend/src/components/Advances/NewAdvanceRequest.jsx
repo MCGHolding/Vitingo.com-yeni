@@ -93,7 +93,8 @@ const NewRequest = () => {
     try {
       setLoadingCategories(true);
       const response = await axios.get(`${API}/categories`);
-      setCategories(response.data);
+      const categoriesData = response.data?.categories || response.data || [];
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     } catch (error) {
       toast.error('Kategoriler yüklenirken hata oluştu');
     } finally {
