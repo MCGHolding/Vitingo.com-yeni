@@ -10,8 +10,8 @@ import { PlusIcon, EditIcon, TrashIcon, FolderIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Switch } from '../ui/switch';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API = BACKEND_URL ? `${BACKEND_URL}/api` : '/api';
 
 const AdvanceCategoriesSettings = () => {
   const [categories, setCategories] = useState([]);
