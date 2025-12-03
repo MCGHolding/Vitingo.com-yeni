@@ -2256,6 +2256,12 @@ function App() {
                 <Route path="gelecek" element={<FutureFairsPageWrapper />} />
                 <Route path="gecmis" element={<PastFairsPageWrapper />} />
               </Route>
+
+              {/* Kişiler */}
+              <Route path="kisiler">
+                <Route index element={<PeopleListPage />} />
+                <Route path="yeni" element={<PersonNewPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
