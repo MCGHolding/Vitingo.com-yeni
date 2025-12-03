@@ -160,6 +160,16 @@ import {
   MeetingRequestsPage as MeetingRequestsPageWrapper,
   ArchivedMeetingsPage as ArchivedMeetingsPageWrapper
 } from './pages/calendar';
+import {
+  OpportunityListPage,
+  OpportunityNewPage,
+  OpportunityDetailPageWrapper as OpportunityDetailPageNew,
+  OpportunityEditPageWrapper as OpportunityEditPageWrapperNew,
+  OpenOpportunitiesPageWrapper,
+  WonOpportunitiesPageWrapper,
+  LostOpportunitiesPageWrapper,
+  FavoriteOpportunitiesPageWrapper
+} from './pages/opportunities';
 
 const Dashboard = () => {
   useActivityTracker();
