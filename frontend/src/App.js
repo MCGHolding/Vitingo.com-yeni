@@ -2259,6 +2259,7 @@ function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" />
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="App">
         <BrowserRouter>
           <Routes>
