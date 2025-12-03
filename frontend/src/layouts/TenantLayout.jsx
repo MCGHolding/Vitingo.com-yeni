@@ -170,6 +170,7 @@ const TenantLayoutInner = () => {
     onSettings: () => handleNavigate('/ayarlar'),
     onImportData: () => handleNavigate('/ayarlar/veri-aktar'),
     onExportData: () => handleNavigate('/ayarlar/veri-indir'),
+    onAdvanceManagement: () => handleNavigate('/ayarlar/avans-yonetimi'),
     
     // Raporlar
     onSalesReports: () => handleNavigate('/raporlar/satis'),
