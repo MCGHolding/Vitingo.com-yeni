@@ -2308,6 +2308,17 @@ function App() {
                 <Route index element={<BankListPage />} />
                 <Route path="yeni" element={<BankNewPage />} />
               </Route>
+
+              {/* Faturalar */}
+              <Route path="faturalar">
+                <Route index element={<InvoiceListPage />} />
+                <Route path="yeni" element={<InvoiceNewPage />} />
+                <Route path="taslak" element={<DraftInvoicesPage />} />
+                <Route path="bekleyen" element={<PendingCollectionPage />} />
+                <Route path="odenmis" element={<PaidInvoicesPage />} />
+                <Route path="vadesi-gecmis" element={<OverdueInvoicesPage />} />
+                <Route path=":invoiceId/duzenle" element={<InvoiceEditPage />} />
+              </Route>
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
