@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../App';
 import axios from 'axios';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Input } from './ui/input';
+import { Button } from '../ui/button';
+import { Card } from '../ui/card';
+import { Input } from '../ui/input';
 import { toast } from 'sonner';
-import { formatAdvanceNumber } from '../utils/formatters';
-import Tooltip from './ui/tooltip';
+import { formatAdvanceNumber } from '../../utils/formatters';
+import Tooltip from '../ui/tooltip';
 import { 
   RefreshCwIcon,
   TrendingUpIcon,
