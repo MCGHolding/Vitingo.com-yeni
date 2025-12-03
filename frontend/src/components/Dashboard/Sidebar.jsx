@@ -914,6 +914,20 @@ export default function Sidebar({
     }
 
     // Handle Avans menu actions
+    if (subItem && subItem.name === 'Yeni Avans') {
+      if (onNewAdvance) {
+        onNewAdvance();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Onaylı Avanslar') {
+      if (onApprovedAdvances) {
+        onApprovedAdvances();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Finans Onayı') {
       if (onFinansOnayi) {
         onFinansOnayi();
@@ -921,9 +935,23 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Avans Kapama') {
+      if (onAdvanceClosing) {
+        onAdvanceClosing();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Kapanmış Avanslar') {
       if (onKapanmisAvanslar) {
         onKapanmisAvanslar();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Cari Hesap') {
+      if (onCurrentAccount) {
+        onCurrentAccount();
       }
       return;
     }
