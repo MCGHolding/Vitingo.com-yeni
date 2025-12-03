@@ -203,6 +203,13 @@ import {
   PaidInvoicesPage as PaidInvoicesPageWrapper,
   OverdueInvoicesPage as OverdueInvoicesPageWrapper
 } from './pages/invoices';
+import {
+  ExpenseReceiptListPage,
+  ExpenseReceiptNewPage,
+  PendingExpenseReceiptsPage,
+  ApprovedExpenseReceiptsPage,
+  PaidExpenseReceiptsPage
+} from './pages/expenses';
 
 const Dashboard = () => {
   useActivityTracker();
