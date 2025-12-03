@@ -145,8 +145,11 @@ const TenantLayoutInner = () => {
     // Avanslar
     onAdvances: () => handleNavigate('/avanslar'),
     onNewAdvance: () => handleNavigate('/avanslar/yeni'),
+    onApprovedAdvances: () => handleNavigate('/avanslar/onaylilar'),
     onFinansOnayi: () => handleNavigate('/avanslar/finans-onayi'),
+    onAdvanceClosing: () => handleNavigate('/avanslar/kapama'),
     onKapanmisAvanslar: () => handleNavigate('/avanslar/kapanmis'),
+    onCurrentAccount: () => handleNavigate('/avanslar/cari-hesap'),
     
     // Briefler
     onNewBrief: () => handleNavigate('/briefler/yeni'),
