@@ -222,12 +222,12 @@ import {
 } from './pages/contracts';
 import {
   SettingsMainPage,
-  GroupCompaniesPage,
-  UserManagementPage,
-  DepartmentsPage,
-  PositionsPage,
-  ExpenseCentersPage,
-  LibraryPage
+  GroupCompaniesPage as GroupCompaniesPageWrapper,
+  UserManagementPage as UserManagementPageWrapper,
+  DepartmentsPage as DepartmentsPageWrapper,
+  PositionsPage as PositionsPageWrapper,
+  ExpenseCentersPage as ExpenseCentersPageWrapper,
+  LibraryPage as LibraryPageWrapper
 } from './pages/settings';
 
 const Dashboard = () => {
