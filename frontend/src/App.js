@@ -170,6 +170,12 @@ import {
   LostOpportunitiesPageWrapper,
   FavoriteOpportunitiesPageWrapper
 } from './pages/opportunities';
+import {
+  FairListPage,
+  FairNewPage,
+  FutureFairsPage as FutureFairsPageWrapper,
+  PastFairsPage as PastFairsPageWrapper
+} from './pages/fairs';
 
 const Dashboard = () => {
   useActivityTracker();
