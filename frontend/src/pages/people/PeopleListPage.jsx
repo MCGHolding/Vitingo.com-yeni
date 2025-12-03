@@ -15,7 +15,7 @@ const PeopleListPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://banktrans.preview.emergentagent.com';
+                    'https://tenant-router.preview.emergentagent.com';
 
   // Kişileri yükle - useCallback ile memoize et
   const loadPeople = useCallback(async () => {
