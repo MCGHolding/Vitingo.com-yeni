@@ -1129,11 +1129,8 @@ const NewRequest = () => {
                             </span>
                           )}
                           {days === advanceRules.extended_days.toString() && (
-                            <span className="text-xs block">
-                              {advanceUsage && advanceUsage.can_use_extended ? 
-                                `(${advanceUsage.remaining_extended} hak)` : 
-                                '(Hak yok)'
-                              }
+                            <span className="text-xs block text-teal-600">
+                              ({advanceRules.yearly_extended_limit || 0} hak/yıl)
                             </span>
                           )}
                         </>
