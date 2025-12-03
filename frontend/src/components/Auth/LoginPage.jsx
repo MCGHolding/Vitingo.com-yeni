@@ -153,7 +153,7 @@ export default function LoginPage() {
                     setError('');
                     try {
                       await login({ username: 'murb', password: '', rememberMe: false });
-                      navigate('/');
+                      navigate('/quattro-stand');
                     } catch (err) {
                       setError(err.message);
                     } finally {
@@ -174,7 +174,7 @@ export default function LoginPage() {
                     setError('');
                     try {
                       await login({ username: 'biry', password: '', rememberMe: false });
-                      navigate('/');
+                      navigate('/quattro-stand');
                     } catch (err) {
                       setError(err.message);
                     } finally {
@@ -195,7 +195,7 @@ export default function LoginPage() {
                     setError('');
                     try {
                       await login({ username: 'tame', password: '', rememberMe: false });
-                      navigate('/');
+                      navigate('/quattro-stand');
                     } catch (err) {
                       setError(err.message);
                     } finally {
