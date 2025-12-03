@@ -2423,6 +2423,14 @@ function App() {
                 <Route path="odeme-yetkileri" element={<PaymentPermissionsPage />} />
                 <Route path="uygulama" element={<AppSettingsPage />} />
               </Route>
+
+              {/* Avanslar */}
+              <Route path="avanslar">
+                <Route index element={<AdvanceListPage />} />
+                <Route path="yeni" element={<AdvanceNewPage />} />
+                <Route path="finans-onayi" element={<AdvanceFinanceApprovalPage />} />
+                <Route path="kapanmis" element={<AdvanceClosedPage />} />
+              </Route>
             </Route>
             
             {/* Ana sayfa - tenant'a yönlendir */}
