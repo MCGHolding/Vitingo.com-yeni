@@ -2346,6 +2346,9 @@ function App() {
                 <Route index element={<BriefListPage />} />
                 <Route path="yeni" element={<BriefNewPage />} />
               </Route>
+
+              {/* Anketler */}
+              <Route path="anketler" element={<SurveyPage />} />
             </Route>
             
             {/* === ESKİ ROUTE'LAR (Mevcut sistem) === */}
