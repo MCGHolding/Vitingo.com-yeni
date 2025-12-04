@@ -268,14 +268,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' }
   ];
 
-  const paymentTerms = [
-    { value: '0', label: 'Peşin' },
-    { value: '15', label: '15 Gün' },
-    { value: '30', label: '30 Gün' },
-    { value: '45', label: '45 Gün' },
-    { value: '60', label: '60 Gün' },
-    { value: '90', label: '90 Gün' }
-  ];
+  // Old paymentTerms array removed - now using state with payment term profiles
 
 
 
