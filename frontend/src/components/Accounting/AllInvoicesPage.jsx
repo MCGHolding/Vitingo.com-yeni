@@ -631,13 +631,13 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
             <tbody className="bg-white divide-y divide-gray-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <div className="text-gray-500">Faturalar yükleniyor...</div>
                   </td>
                 </tr>
               ) : filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <div className="text-gray-500">
                       {invoices.length === 0 ? 'Henüz fatura oluşturulmamış' : 'Filtre kriterlerinize uygun fatura bulunamadı'}
                     </div>
@@ -646,16 +646,37 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
               ) : (
                 filteredInvoices.map((invoice, index) => (
                   <tr key={invoice.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-4 whitespace-nowrap text-center">
+                    {/* No */}
+                    <td className="px-6 py-4 whitespace-nowrap text-left">
                       <div className="text-sm font-medium text-gray-700">
                         {index + 1}
                       </div>
                     </td>
+                    
+                    {/* Tarih */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {new Date(invoice.date).toLocaleDateString('tr-TR')}
+                    </td>
+                    
+                    {/* Fatura No - Son 4 Hane + Tooltip */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-mono font-medium text-blue-600">
-                        {invoice.invoice_number}
+                      <div className="group relative">
+                        <span 
+                          className="text-blue-600 font-medium cursor-pointer hover:text-blue-800"
+                          title={invoice.invoice_number}
+                        >
+                          ...{(invoice.invoice_number || '').slice(-4)}
+                        </span>
+                        {/* Tooltip - hover'da tam numara */}
+                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10">
+                          <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                            {invoice.invoice_number}
+                          </div>
+                        </div>
                       </div>
                     </td>
+                    
+                    {/* Müşteri */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {invoice.customer_name}
@@ -664,99 +685,94 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                         {invoice.items ? invoice.items.length : 0} kalem
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(invoice.date).toLocaleDateString('tr-TR')}
+                    
+                    {/* Tutar (Orijinal Para Birimi) */}
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <span className="font-medium text-gray-900">
+                        {(invoice.total || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                      </span>
+                      <span className="text-gray-500 ml-1">{invoice.currency || 'TRY'}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {getCurrencySymbol(invoice.currency)}{formatNumber(invoice.total.toFixed(2))}
-                      </div>
+                    
+                    {/* Tutar (TL Karşılığı) */}
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <span className="font-bold text-green-600">
+                        {calculateTRYAmount(invoice.total || 0, invoice.currency).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                      </span>
+                      <span className="text-green-500 ml-1">TL</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(invoice.status)}`}>
-                        {getStatusLabel(invoice.status)}
+                    
+                    {/* Durum - Ödenmiş/Ödenmemiş */}
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        invoice.status === 'paid'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {invoice.status === 'paid' ? '✓ Ödenmiş' : '✗ Ödenmemiş'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex space-x-2">
+                    
+                    {/* İşlemler */}
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        {/* Görüntüle */}
                         <button
-                          onClick={() => handleAction('view', invoice)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          onClick={() => handleView(invoice)}
+                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Görüntüle"
                         >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleAction('edit', invoice)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="Düzenle"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleAction('download', invoice)}
-                          className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                          title="İndir"
-                        >
-                          <Download className="h-4 w-4" />
+                          <Eye className="w-5 h-5" />
                         </button>
                         
-                        {/* More Options Dropdown */}
+                        {/* Düzenle */}
+                        <button
+                          onClick={() => handleEdit(invoice)}
+                          className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="Düzenle"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        
+                        {/* 3 Nokta Menü */}
                         <div className="relative">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleDropdown(invoice.id);
+                              toggleMenu(invoice.id);
                             }}
-                            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                            title="Daha Fazla Seçenek"
+                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                            title="Daha fazla"
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="w-5 h-5" />
                           </button>
                           
-                          {openDropdownId === invoice.id && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                              <div className="py-1">
-                                <button
-                                  onClick={() => handleDropdownAction('cancel', invoice)}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <XCircle className="h-4 w-4 mr-3 text-red-500" />
-                                  İptal
-                                </button>
-                                <button
-                                  onClick={() => handleDropdownAction('mail', invoice)}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <Mail className="h-4 w-4 mr-3 text-blue-500" />
-                                  Mail
-                                </button>
-                                <button
-                                  onClick={() => handleDropdownAction('message', invoice)}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <MessageSquare className="h-4 w-4 mr-3 text-green-500" />
-                                  Mesaj
-                                </button>
-                                <button
-                                  onClick={() => handleDropdownAction('payment-request', invoice)}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                  <CreditCard className="h-4 w-4 mr-3 text-purple-500" />
-                                  Ödeme Talebi
-                                </button>
-                                
-                                {/* Separator */}
-                                <div className="border-t border-gray-100 my-1"></div>
-                                
-                                <button
-                                  onClick={() => handleDropdownAction('delete', invoice)}
-                                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-4 w-4 mr-3" />
-                                  Sil
-                                </button>
-                              </div>
+                          {/* Dropdown Menü */}
+                          {openMenu === invoice.id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-20">
+                              <button
+                                onClick={() => handleDownload(invoice)}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                PDF İndir
+                              </button>
+                              <button
+                                onClick={() => handleDuplicate(invoice)}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                              >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                Kopyala
+                              </button>
+                              <button
+                                onClick={() => handleDelete(invoice)}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Sil
+                              </button>
                             </div>
                           )}
                         </div>
