@@ -3,15 +3,19 @@ import { Plus, Edit2, Trash2, CreditCard, Eye, EyeOff } from 'lucide-react';
 
 const CreditCardsManagement = ({ onBackToDashboard }) => {
   const [cards, setCards] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
+  const [cardTypeFilter, setCardTypeFilter] = useState('all'); // all, corporate, personal
   const [formData, setFormData] = useState({
-    cardName: '',
+    cardCategory: 'corporate', // corporate or personal
+    cardHolderFirstName: '',
+    cardHolderLastName: '',
+    companyId: '',
     cardNumber: '',
     expiryDate: '',
     cardType: 'visa',
     bank: '',
-    limit: '',
     isActive: true
   });
   const [showCardNumbers, setShowCardNumbers] = useState({});
