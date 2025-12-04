@@ -1220,23 +1220,32 @@ const NewRequest = () => {
                 )}
               </div>
 
-              {/* Custom Date Selection */}
-              <div className="space-y-2">
-                <Label className="text-sm text-gray-600">Veya özel tarih seçin:</Label>
+              {/* Custom Date Selection - More Prominent */}
+              <div className="mt-4 space-y-2 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg">
+                <div className="flex items-center space-x-2 mb-2">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <Label className="text-base font-semibold text-indigo-900">Özel Tarih Seçin</Label>
+                </div>
+                <p className="text-sm text-indigo-700 mb-3">
+                  Yukarıdaki standart sürelerden farklı bir kapanış tarihi istiyorsanız buradan özel tarih belirleyebilirsiniz.
+                </p>
                 <Input
                   type="date"
-                  value={formData.closure_date}
+                  value={formData.closure_type === 'date' ? formData.closure_date : ''}
                   onChange={(e) => setFormData({...formData, closure_type: 'date', closure_date: e.target.value, closure_days: ''})}
-                  className="form-input modern-date-picker"
+                  className="form-input modern-date-picker border-2 border-indigo-300 focus:border-indigo-500"
                   placeholder="dd.mm.yyyy"
                   data-testid="closure-date-input"
+                  min={formData.request_date}
                 />
                 
                 {/* Manual Date Display */}
                 {formData.closure_type === 'date' && formData.closure_date && (
-                  <div className="text-sm text-gray-600 bg-blue-50 px-3 py-2 rounded-lg" data-testid="manual-closure-date">
+                  <div className="text-sm text-indigo-600 bg-white px-3 py-2 rounded-lg border border-indigo-200 mt-2" data-testid="manual-closure-date">
                     <div className="flex items-center">
-                      <CheckIcon className="w-4 h-4 text-blue-500 mr-2" />
+                      <CheckIcon className="w-4 h-4 text-indigo-500 mr-2" />
                       <span>
                         <strong>Seçilen Kapama Tarihi:</strong> {formatDateForDisplay(formData.closure_date)}
                         {formData.request_date && (() => {
@@ -1245,7 +1254,7 @@ const NewRequest = () => {
                           const diffTime = Math.abs(endDate - startDate);
                           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                           return (
-                            <span className="text-gray-500 ml-2">
+                            <span className="text-indigo-500 ml-2 font-medium">
                               ({diffDays} gün sonra)
                             </span>
                           );
