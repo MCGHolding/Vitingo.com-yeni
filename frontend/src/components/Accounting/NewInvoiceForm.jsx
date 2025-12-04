@@ -72,11 +72,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Tab state
   const [activeTab, setActiveTab] = useState('satis'); // 'satis' veya 'alis'
   
-  // Purchase invoice state (Alış Faturaları)
-  const [documentType, setDocumentType] = useState('fatura'); // 'fatura' veya 'fis'
+  // Purchase invoice state (Alış Faturaları) - ENHANCED VERSION
   const [purchaseItems, setPurchaseItems] = useState([
     {
       id: 1,
+      documentType: 'fatura', // fatura veya fis
       documentNo: '',
       date: new Date().toISOString().split('T')[0],
       supplierId: '',
@@ -87,10 +87,19 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       price: 0,
       currency: 'TRY',
       amount: 0,
-      amountTRY: 0
+      amountTRY: 0,
+      paymentStatus: 'odenmedi', // odendi veya odenmedi
+      paymentMethod: '', // nakit, banka, kredi-karti
+      bankAccountId: '',
+      creditCardId: '',
+      attachments: [], // { id, name, url, type }
+      saved: false
     }
   ]);
   const [suppliers, setSuppliers] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [creditCards, setCreditCards] = useState([]);
+  const [previewModal, setPreviewModal] = useState({ open: false, file: null });
 
   // Customer and Products state
   const [customers, setCustomers] = useState([]);
