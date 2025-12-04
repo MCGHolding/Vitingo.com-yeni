@@ -314,6 +314,7 @@ const getNavigation = (userDepartment) => {
         { name: 'Avans Yönetimi', href: '/ayarlar/avans-yonetimi', icon: CreditCard },
         { name: 'Masraf Merkezleri', href: '/ayarlar/masraf-merkezleri', icon: DollarSign },
         { name: 'Banka Yönetimi', href: '/ayarlar/banka-yonetimi', icon: Building },
+        { name: 'Kredi Kartları', href: '/ayarlar/kredi-kartlari', icon: CreditCard },
         { name: 'Kütüphane', href: '/ayarlar/kutuphane', icon: BookOpen }
       ]
     }
