@@ -24,6 +24,7 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
 
   useEffect(() => {
     loadCards();
+    loadCompanies();
   }, []);
 
   const loadCards = async () => {
@@ -35,8 +36,51 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
       }
     } catch (error) {
       console.error('Error loading cards:', error);
+      setCards([]);
     }
   };
+
+  const loadCompanies = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/group-companies`);
+      if (response.ok) {
+        const data = await response.json();
+        setCompanies(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      console.error('Error loading companies:', error);
+      setCompanies([]);
+    }
+  };
+
+  // Format card number: add space every 4 digits
+  const formatCardNumber = (value) => {
+    const cleaned = value.replace(/\D/g, '');
+    const limited = cleaned.slice(0, 16);
+    const formatted = limited.match(/.{1,4}/g)?.join(' ') || limited;
+    return formatted;
+  };
+
+  // Mask card number: show only last 4 digits
+  const maskCardNumber = (number) => {
+    if (!number) return '****';
+    const cleaned = number.replace(/\D/g, '');
+    if (cleaned.length < 4) return '****';
+    const last4 = cleaned.slice(-4);
+    return `**** **** **** ${last4}`;
+  };
+
+  const handleCardNumberChange = (e) => {
+    const formatted = formatCardNumber(e.target.value);
+    setFormData({ ...formData, cardNumber: formatted });
+  };
+
+  const filteredCards = cards.filter(card => {
+    if (cardTypeFilter === 'all') return true;
+    if (cardTypeFilter === 'corporate') return card.cardCategory === 'corporate';
+    if (cardTypeFilter === 'personal') return card.cardCategory === 'personal';
+    return true;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
