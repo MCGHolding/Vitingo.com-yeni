@@ -1394,7 +1394,6 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
         </div>
       )}
-      </form>
       ) : (
         /* ALIŞ FATURALARI FORMU */
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
