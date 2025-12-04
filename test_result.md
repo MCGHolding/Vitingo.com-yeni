@@ -4181,3 +4181,102 @@ agent_communication:
         timestamp: "2025-12-01T06:32:00Z"
         comment: "🚨 CRITICAL CURRENCY BUG FIXED! Enhanced PDF parsing with multi-strategy approach: ❌ ORIGINAL PROBLEM: USD statement uploaded with 'CURRENCY: USD' in PDF, system displayed AED everywhere, all amounts showed AED currency label, opening/closing balance in AED, user-reported bug with screenshot evidence (155,298.01 shown as AED, should be USD) ✅ ROOT CAUSE: PDF parsing only had basic CURRENCY regex that failed on some PDF formats, fallback always defaulted to AED, no alternative parsing strategies, frontend formatMoney not consistently using header.currency ✅ BACKEND FIX (4-STRATEGY PARSING): Strategy 1: Enhanced CURRENCY label regex with flexible whitespace/newline handling (CURRENCY[\\s\\n:]+([A-Z]{3})), Strategy 2: Extract from summary table closing balance (e.g., '48,687.58 USD' -> USD), Strategy 3: Detect from transaction lines (amount patterns like '500.00 USD'), Strategy 4: Standalone currency code search as final fallback, Supports 9 major currencies: USD, EUR, GBP, AED, CAD, TRY, CHF, JPY, SAR, INR ✅ FRONTEND FIX: Updated formatMoney calls to always pass header.currency, opening balance now uses: formatMoney(statement.openingBalance, header.currency || statement.currency), closing balance: formatMoney(stats.closingBalance, header.currency || statement.currency), transaction amounts already using header.currency correctly (line 1503, 1508) ✅ MULTI-CURRENCY SUPPORT: System now properly detects and displays: USD statements with USD labels, EUR statements with EUR labels, GBP statements with GBP labels, any supported currency auto-detected from PDF ✅ TESTING APPROACH: Backend parsing enhanced (code reviewed), frontend display fixed (code reviewed), user needs to re-upload USD PDF to verify fix, system should auto-detect currency=USD, all displays (opening, closing, transactions) should show USD ✅ VERIFICATION CHECKLIST FOR USER: Upload USD PDF again, check 'PARA BİRİMİ / FAİZ' card shows 'USD' (not AED), check opening balance card shows USD, check closing balance card shows USD, check all transaction amounts show USD, check statistics (Giren/Çıkan) show USD, verify USD tab becomes active after upload ✅ EXPECTED BEHAVIOR AFTER FIX: PDF upload -> auto-detect currency from PDF content, currency tabs work correctly (AED for AED statements, USD for USD statements), all monetary displays use correct currency, no hardcoded AED anywhere, dynamic currency support for future extensions ✅ CONCLUSION: Critical currency detection bug has been fixed with robust 4-strategy parsing. User must re-upload USD PDF to verify the fix works correctly. System is now production-ready for multi-currency statements."
 
+
+---
+
+## Test Session - 2025-12-04 00:21 UTC
+
+### Feature: Advance Usage Confirmation Dialogs & Custom Date Picker
+
+**Test Environment:**
+- Agent: Fork Agent (E1)
+- Frontend: React (Hot Reload)
+- Backend: FastAPI (Hot Reload)
+- Database: MongoDB
+
+**Tested Components:**
+- Frontend: `/app/frontend/src/components/Advances/NewAdvanceRequest.jsx`
+- Backend: `/app/backend/routes/advances.py`
+
+**Test Case 1: 30-Day Advance Modal (Medium Days)**
+✅ PASSED
+- Modal opens when 30-day button is clicked
+- Shows dynamic usage status with color coding (green when available)
+- Displays: "30 günlük avans: 0/4 kez kullanıldı"
+- Shows remaining rights: "Kalan hakkınız: 4 kez"
+- Three button options visible: "15 Gün (Standart)", "60 Gün (Uzun)", "30 Gün Hakkını Kullan"
+- Alternative option (extended days) shown in purple info box
+- Button is disabled when yearly limit is exceeded (!advanceUsage.can_use_medium)
+
+**Test Case 2: 60-Day Advance Modal (Extended Days)**
+✅ PASSED
+- Modal opens when 60-day button is clicked
+- Shows dynamic usage status with color coding (green when available)
+- Displays: "60 günlük avans: 0/2 kez kullanıldı"
+- Shows remaining rights: "Kalan hakkınız: 2 kez"
+- Conditional button layout based on availability
+- When limit exceeded, shows red warning and only standard option
+
+**Test Case 3: Custom Date Picker**
+✅ PASSED
+- Custom date picker section is prominently displayed with indigo/purple gradient background
+- Section includes icon, bold title "Özel Tarih Seçin"
+- Descriptive text explains the purpose
+- Date input has enhanced styling (border-2 border-indigo-300)
+- Min date validation set to request_date
+- Selected date displays correctly with day calculation: "Seçilen Kapama Tarihi: 18.01.2026 (45 gün sonra)"
+
+**Test Case 4: Backend API - /api/advance-usage**
+✅ PASSED
+- Endpoint returns correct structure:
+  - used_medium_advances, used_extended_advances
+  - yearly_medium_limit, yearly_extended_limit
+  - remaining_medium, remaining_extended
+  - can_use_medium, can_use_extended
+  - Descriptive messages in Turkish
+- Correctly calculates usage based on current year
+- Returns proper limits from advance_rules collection
+
+**Screenshots Captured:**
+1. Initial page load with eligibility card
+2. Date selection section with all buttons visible
+3. 30-day modal with usage information
+4. 60-day modal with usage information
+5. Custom date picker section (prominent display)
+6. Custom date selected with calculation
+
+**Performance:**
+- Page load: < 2 seconds
+- API response time: < 100ms
+- Modal open animation: Smooth
+- No console errors
+- Hot reload working correctly
+
+**Code Quality:**
+- Proper error handling in backend
+- MongoDB _id exclusion implemented
+- Dynamic color coding based on state
+- Responsive design maintained
+- Accessibility: testid attributes present
+- TypeScript-style prop validation
+
+**User Experience Improvements:**
+1. ✅ Confirmation dialogs show remaining usage rights
+2. ✅ Custom date picker is now highly visible
+3. ✅ Color-coded status (green = available, red = exceeded)
+4. ✅ Clear messaging in Turkish
+5. ✅ Alternative options suggested
+6. ✅ Disabled state for unavailable options
+
+**Known Issues:**
+None found.
+
+**Next Steps:**
+- Monitor user feedback on the new UI
+- Consider adding usage history view
+- Potential enhancement: Show usage timeline/calendar
+
+**Test Result:** ✅ ALL TESTS PASSED
+**Ready for User Testing:** YES
+**Regression Risk:** LOW
+
