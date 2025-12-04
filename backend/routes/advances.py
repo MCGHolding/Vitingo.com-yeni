@@ -230,27 +230,73 @@ async def get_advance_rules():
 
 @router.post("/documents/advances")
 async def create_advance(advance_data: Dict[str, Any]):
-    """Create new advance request"""
-    return {
-        "success": True,
-        "message": "Avans talebi başarıyla oluşturuldu",
-        "id": "ADV-001"
-    }
+    """Create new advance request - REAL MongoDB implementation"""
+    try:
+        # Generate advance ID
+        advance_id = str(uuid4())
+        advance_number = f"ADV-{datetime.utcnow().strftime('%Y%m')}-{advance_id[:8].upper()}"
+        
+        # Prepare advance document
+        new_advance = {
+            "id": advance_id,
+            "advance_number": advance_number,
+            "user_id": advance_data.get("user_id", "default_user"),
+            "user_name": advance_data.get("user_name", "Demo User"),
+            "amount": float(advance_data.get("amount", 0)),
+            "currency": advance_data.get("currency", "TRY"),
+            "category_id": advance_data.get("category_id"),
+            "category_name": advance_data.get("category_name", ""),
+            "project_id": advance_data.get("project_id"),
+            "project_name": advance_data.get("project_name", ""),
+            "closure_days": int(advance_data.get("closure_days", 15)),
+            "reason": advance_data.get("reason", ""),
+            "status": "pending",  # pending, approved, paid, rejected, closed
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Insert to MongoDB
+        await db.advances.insert_one(new_advance)
+        
+        return {
+            "success": True,
+            "message": "Avans talebi başarıyla oluşturuldu",
+            "id": advance_id,
+            "advance_number": advance_number,
+            "advance": {k: v for k, v in new_advance.items() if k != "_id"}
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Avans oluşturma hatası: {str(e)}")
 
 @router.get("/documents/advances")
 async def get_advances():
-    """Get user's advances"""
-    return {
-        "success": True,
-        "advances": {
+    """Get user's advances - REAL MongoDB implementation"""
+    try:
+        # Fetch all advances from MongoDB
+        advances = await db.advances.find({}, {"_id": 0}).to_list(1000)
+        
+        # Group by status
+        grouped = {
             "pending": [],
             "approved": [],
             "paid": [],
-            "rejected": []
-        },
-        "is_accounting": False,
-        "is_admin": False
-    }
+            "rejected": [],
+            "closed": []
+        }
+        
+        for advance in advances:
+            status = advance.get("status", "pending")
+            if status in grouped:
+                grouped[status].append(advance)
+        
+        return {
+            "success": True,
+            "advances": grouped,
+            "is_accounting": False,
+            "is_admin": False
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Avans listesi getirme hatası: {str(e)}")
 
 @router.get("/currency-settings")
 async def get_currency_settings():
