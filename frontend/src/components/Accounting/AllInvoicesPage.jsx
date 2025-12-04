@@ -40,6 +40,16 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     dateFrom: '',
     dateTo: ''
   });
+  
+  // Import & Export States
+  const [importExportModal, setImportExportModal] = useState(false);
+  const [activeImportExportTab, setActiveImportExportTab] = useState('import');
+  const [importFile, setImportFile] = useState(null);
+  const [importProgress, setImportProgress] = useState(0);
+  const [importStatus, setImportStatus] = useState('idle');
+  const [importResults, setImportResults] = useState(null);
+  const [exportFormat, setExportFormat] = useState('xlsx');
+  const [exportProgress, setExportProgress] = useState(0);
 
   // Load invoices from backend
   const loadInvoices = async () => {
