@@ -1241,6 +1241,374 @@ FT-2024-003,Demo Firması,03.12.2024,Tasarım hizmeti,5,Saat,150,EUR,20,Ödenmed
           </div>
         </div>
       )}
+
+      {/* Import & Export Modal */}
+      {importExportModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            {/* Overlay */}
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+              onClick={() => setImportExportModal(false)}
+            ></div>
+            
+            {/* Modal */}
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
+                <div className="flex items-center text-white">
+                  <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  <div>
+                    <h2 className="text-xl font-bold">Import & Export</h2>
+                    <p className="text-blue-100 text-sm">Fatura verilerini içe/dışa aktarın</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setImportExportModal(false)}
+                  className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Tab Navigation */}
+              <div className="flex border-b">
+                <button
+                  onClick={() => setActiveImportExportTab('import')}
+                  className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                    activeImportExportTab === 'import'
+                      ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    İçe Aktar (Import)
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveImportExportTab('export')}
+                  className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
+                    activeImportExportTab === 'export'
+                      ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Dışa Aktar (Export)
+                  </div>
+                </button>
+              </div>
+              
+              {/* Content */}
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                
+                {/* IMPORT TAB */}
+                {activeImportExportTab === 'import' && (
+                  <div className="space-y-6">
+                    {/* Kurallar */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Import Kuralları
+                      </h3>
+                      <ul className="text-sm text-blue-800 space-y-2">
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          Desteklenen formatlar: <strong>CSV, XLSX, XLS</strong>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          İlk satır <strong>başlık satırı</strong> olmalıdır
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          Zorunlu alanlar: <strong>Fatura No, Müşteri, Tarih, Tutar</strong>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          Tarih formatı: <strong>GG.AA.YYYY</strong> veya <strong>YYYY-AA-GG</strong>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          Para birimi belirtilmezse <strong>TRY</strong> kabul edilir
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          Maksimum dosya boyutu: <strong>10 MB</strong>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    {/* Örnek Dosya */}
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                      <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Örnek Dosya
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Doğru formatta veri yüklemek için örnek dosyayı indirin ve inceleyin.
+                      </p>
+                      <button
+                        onClick={downloadSampleFile}
+                        className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                      >
+                        <svg className="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Örnek CSV İndir
+                      </button>
+                    </div>
+                    
+                    {/* Dosya Yükleme Alanı */}
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-colors">
+                      {!importFile ? (
+                        <>
+                          <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                          </svg>
+                          <p className="text-gray-600 mb-2">Dosyayı buraya sürükleyin veya</p>
+                          <label className="cursor-pointer">
+                            <span className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-block">
+                              Dosya Seç
+                            </span>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept=".csv,.xlsx,.xls"
+                              onChange={handleFileSelect}
+                            />
+                          </label>
+                          <p className="text-xs text-gray-500 mt-2">CSV, XLSX, XLS (max 10MB)</p>
+                        </>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-center text-green-600">
+                            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <p className="font-medium text-gray-900">{importFile.name}</p>
+                          <p className="text-sm text-gray-500">
+                            {(importFile.size / 1024).toFixed(2)} KB
+                          </p>
+                          <button
+                            onClick={() => setImportFile(null)}
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            Dosyayı Kaldır
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    {importStatus !== 'idle' && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">
+                            {importStatus === 'uploading' && 'Yükleniyor...'}
+                            {importStatus === 'processing' && 'İşleniyor...'}
+                            {importStatus === 'success' && 'Tamamlandı!'}
+                            {importStatus === 'error' && 'Hata!'}
+                          </span>
+                          <span className="font-medium">{importProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              importStatus === 'error' ? 'bg-red-600' : 'bg-blue-600'
+                            }`}
+                            style={{ width: `${importProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Import Sonuçları */}
+                    {importResults && (
+                      <div className={`rounded-xl p-4 ${
+                        importResults.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                      }`}>
+                        <h4 className={`font-semibold mb-2 ${
+                          importResults.success ? 'text-green-900' : 'text-red-900'
+                        }`}>
+                          {importResults.success ? '✓ Import Başarılı!' : '✗ Import Hatası'}
+                        </h4>
+                        <ul className="text-sm space-y-1">
+                          <li>Toplam satır: <strong>{importResults.total}</strong></li>
+                          <li className="text-green-700">Başarılı: <strong>{importResults.success}</strong></li>
+                          {importResults.failed > 0 && (
+                            <li className="text-red-700">Başarısız: <strong>{importResults.failed}</strong></li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {/* Import Butonu */}
+                    <button
+                      onClick={handleImport}
+                      disabled={!importFile || importStatus === 'uploading' || importStatus === 'processing'}
+                      className={`w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center ${
+                        importFile && importStatus === 'idle'
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      İçe Aktar
+                    </button>
+                  </div>
+                )}
+                
+                {/* EXPORT TAB */}
+                {activeImportExportTab === 'export' && (
+                  <div className="space-y-6">
+                    {/* Export Bilgisi */}
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                      <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Export Bilgileri
+                      </h3>
+                      <ul className="text-sm text-green-800 space-y-2">
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          Toplam <strong>{filteredInvoices.length}</strong> fatura dışa aktarılacak
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          Filtreler uygulanmışsa sadece <strong>filtrelenmiş veriler</strong> aktarılır
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-green-500 mr-2">•</span>
+                          Türkçe karakterler <strong>UTF-8</strong> encoding ile korunur
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    {/* Format Seçimi */}
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-4">Dosya Formatı Seçin</h3>
+                      <div className="grid grid-cols-3 gap-4">
+                        {/* Excel */}
+                        <button
+                          onClick={() => setExportFormat('xlsx')}
+                          className={`p-4 border-2 rounded-xl text-center transition-all ${
+                            exportFormat === 'xlsx'
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="w-12 h-12 mx-auto mb-2 bg-green-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-xs">XLSX</span>
+                          </div>
+                          <p className="font-medium text-gray-900">Excel</p>
+                          <p className="text-xs text-gray-500">.xlsx</p>
+                        </button>
+                        
+                        {/* CSV */}
+                        <button
+                          onClick={() => setExportFormat('csv')}
+                          className={`p-4 border-2 rounded-xl text-center transition-all ${
+                            exportFormat === 'csv'
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="w-12 h-12 mx-auto mb-2 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-xs">CSV</span>
+                          </div>
+                          <p className="font-medium text-gray-900">CSV</p>
+                          <p className="text-xs text-gray-500">.csv</p>
+                        </button>
+                        
+                        {/* PDF */}
+                        <button
+                          onClick={() => setExportFormat('pdf')}
+                          className={`p-4 border-2 rounded-xl text-center transition-all ${
+                            exportFormat === 'pdf'
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="w-12 h-12 mx-auto mb-2 bg-red-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-xs">PDF</span>
+                          </div>
+                          <p className="font-medium text-gray-900">PDF</p>
+                          <p className="text-xs text-gray-500">.pdf</p>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Export Seçenekleri */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="font-semibold text-gray-900 mb-3">Export Seçenekleri</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" />
+                          <span className="ml-2 text-sm text-gray-700">Başlık satırını dahil et</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" />
+                          <span className="ml-2 text-sm text-gray-700">TL karşılıklarını dahil et</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" />
+                          <span className="ml-2 text-sm text-gray-700">Sadece ödenmemiş faturaları aktar</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    {exportProgress > 0 && exportProgress < 100 && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Dışa aktarılıyor...</span>
+                          <span className="font-medium">{exportProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full bg-green-600 transition-all duration-300"
+                            style={{ width: `${exportProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Export Butonu */}
+                    <button
+                      onClick={handleExport}
+                      className="w-full py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      {exportFormat.toUpperCase()} Olarak İndir
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
