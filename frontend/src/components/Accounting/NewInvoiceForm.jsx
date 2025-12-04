@@ -488,8 +488,29 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
-  // ===== PURCHASE INVOICE HELPER FUNCTIONS - ENHANCED =====
+  // ===== PURCHASE INVOICE HELPER FUNCTIONS - PROFESSIONAL WITH VAT =====
   
+  // Net tutar hesapla
+  const calculateNetAmount = (quantity, price) => {
+    return quantity * price;
+  };
+
+  // KDV tutarı hesapla
+  const calculateVatAmount = (netAmount, vatRate) => {
+    return netAmount * (vatRate / 100);
+  };
+
+  // Brüt tutar hesapla (Net + KDV)
+  const calculateGrossAmount = (netAmount, vatAmount) => {
+    return netAmount + vatAmount;
+  };
+
+  // TL'ye çevir
+  const calculateTRYAmount = (amount, currency) => {
+    const rates = { TRY: 1, USD: 34.50, EUR: 37.20, GBP: 43.80 };
+    return amount * (rates[currency] || 1);
+  };
+
   // Yeni satır ekle (Alış Faturaları) - Enhanced with afterId parameter
   const addPurchaseItem = (afterId = null) => {
     const newId = Date.now();
@@ -505,7 +526,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       unit: 'Adet',
       price: 0,
       currency: 'TRY',
-      amount: 0,
+      vatRate: 20,
+      netAmount: 0,
+      vatAmount: 0,
+      grossAmount: 0,
       amountTRY: 0,
       paymentStatus: 'odenmedi',
       paymentMethod: '',
@@ -525,7 +549,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
-  // Satır güncelle - Enhanced with supplier name and payment logic
+  // Satır güncelle - Enhanced with VAT calculation
   const updatePurchaseItem = (id, field, value) => {
     setPurchaseItems(purchaseItems.map(item => {
       if (item.id === id) {
@@ -535,6 +559,19 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         if (field === 'supplierId') {
           const supplier = suppliers.find(s => s.id === value || s._id === value);
           updated.supplierName = supplier?.name || supplier?.companyName || '';
+        }
+        
+        // Miktar, fiyat, KDV veya para birimi değiştiğinde yeniden hesapla
+        if (['quantity', 'price', 'vatRate', 'currency'].includes(field)) {
+          const qty = field === 'quantity' ? value : updated.quantity;
+          const prc = field === 'price' ? value : updated.price;
+          const vat = field === 'vatRate' ? value : updated.vatRate;
+          const cur = field === 'currency' ? value : updated.currency;
+          
+          updated.netAmount = calculateNetAmount(qty, prc);
+          updated.vatAmount = calculateVatAmount(updated.netAmount, vat);
+          updated.grossAmount = calculateGrossAmount(updated.netAmount, updated.vatAmount);
+          updated.amountTRY = calculateTRYAmount(updated.grossAmount, cur);
         }
         
         // Ödeme durumu değiştiğinde
