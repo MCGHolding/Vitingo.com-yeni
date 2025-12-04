@@ -203,7 +203,8 @@ import {
   DraftInvoicesPage as DraftInvoicesPageWrapper,
   PendingCollectionPage as PendingCollectionPageWrapper,
   PaidInvoicesPage as PaidInvoicesPageWrapper,
-  OverdueInvoicesPage as OverdueInvoicesPageWrapper
+  OverdueInvoicesPage as OverdueInvoicesPageWrapper,
+  PurchaseInvoiceListPage
 } from './pages/invoices';
 import {
   ExpenseReceiptListPage,
