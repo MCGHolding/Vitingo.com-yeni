@@ -1332,19 +1332,31 @@ FT-2024-005,Proforma Fatura,Yeni Müşteri Ltd.,7777888899,Şişli Mahallesi No:
                         </li>
                         <li className="flex items-start">
                           <span className="text-blue-500 mr-2">•</span>
-                          İlk satır <strong>başlık satırı</strong> olmalıdır
+                          <strong>Zorunlu alanlar:</strong> Fatura No, Müşteri Adı, Fatura Tarihi, Ürün/Hizmet (en az 1 ürün)
                         </li>
                         <li className="flex items-start">
                           <span className="text-blue-500 mr-2">•</span>
-                          Zorunlu alanlar: <strong>Fatura No, Müşteri, Tarih, Tutar</strong>
+                          <strong>Müşteri bilgileri:</strong> Vergi No, Adres, Telefon, Email (opsiyonel ama önerilir)
                         </li>
                         <li className="flex items-start">
                           <span className="text-blue-500 mr-2">•</span>
-                          Tarih formatı: <strong>GG.AA.YYYY</strong> veya <strong>YYYY-AA-GG</strong>
+                          <strong>Ürün satırları:</strong> Her ürün için ayrı sütunlar (maks. 3 ürün), fazlası için yeni satır ekleyin
                         </li>
                         <li className="flex items-start">
                           <span className="text-blue-500 mr-2">•</span>
-                          Para birimi belirtilmezse <strong>TRY</strong> kabul edilir
+                          <strong>Tarih formatı:</strong> GG.AA.YYYY (örn: 05.12.2024)
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <strong>Para birimi:</strong> TRY, USD, EUR, GBP (belirtilmezse TRY)
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <strong>KDV Oranları:</strong> 0, 1, 10, 20 (% cinsinden)
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <strong>İskonto:</strong> Hem ürün bazlı hem de genel iskonto (% veya sabit tutar)
                         </li>
                         <li className="flex items-start">
                           <span className="text-blue-500 mr-2">•</span>
