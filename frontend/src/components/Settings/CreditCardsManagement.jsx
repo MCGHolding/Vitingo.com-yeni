@@ -199,12 +199,6 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
     setShowCardNumbers(prev => ({ ...prev, [cardId]: !prev[cardId] }));
   };
 
-  const maskCardNumber = (number) => {
-    if (!number) return '****';
-    const last4 = number.slice(-4);
-    return `**** **** **** ${last4}`;
-  };
-
   return (
     <div className="p-6">
       {/* Header */}
