@@ -485,13 +485,14 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
-  // ===== PURCHASE INVOICE HELPER FUNCTIONS =====
+  // ===== PURCHASE INVOICE HELPER FUNCTIONS - ENHANCED =====
   
-  // Yeni satır ekle (Alış Faturaları)
-  const addPurchaseItem = () => {
-    const newId = Math.max(...purchaseItems.map(i => i.id)) + 1;
-    setPurchaseItems([...purchaseItems, {
+  // Yeni satır ekle (Alış Faturaları) - Enhanced with afterId parameter
+  const addPurchaseItem = (afterId = null) => {
+    const newId = Date.now();
+    const newItem = {
       id: newId,
+      documentType: 'fatura',
       documentNo: '',
       date: new Date().toISOString().split('T')[0],
       supplierId: '',
@@ -502,15 +503,54 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       price: 0,
       currency: 'TRY',
       amount: 0,
-      amountTRY: 0
-    }]);
+      amountTRY: 0,
+      paymentStatus: 'odenmedi',
+      paymentMethod: '',
+      bankAccountId: '',
+      creditCardId: '',
+      attachments: [],
+      saved: false
+    };
+    
+    if (afterId) {
+      const index = purchaseItems.findIndex(i => i.id === afterId);
+      const newItems = [...purchaseItems];
+      newItems.splice(index + 1, 0, newItem);
+      setPurchaseItems(newItems);
+    } else {
+      setPurchaseItems([...purchaseItems, newItem]);
+    }
   };
 
-  // Satır güncelle
+  // Satır güncelle - Enhanced with supplier name and payment logic
   const updatePurchaseItem = (id, field, value) => {
-    setPurchaseItems(purchaseItems.map(item => 
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+    setPurchaseItems(purchaseItems.map(item => {
+      if (item.id === id) {
+        const updated = { ...item, [field]: value, saved: false };
+        
+        // Tedarikçi seçildiğinde adını da kaydet
+        if (field === 'supplierId') {
+          const supplier = suppliers.find(s => s.id === value || s._id === value);
+          updated.supplierName = supplier?.name || supplier?.companyName || '';
+        }
+        
+        // Ödeme durumu değiştiğinde
+        if (field === 'paymentStatus' && value === 'odenmedi') {
+          updated.paymentMethod = '';
+          updated.bankAccountId = '';
+          updated.creditCardId = '';
+        }
+        
+        // Ödeme yöntemi değiştiğinde
+        if (field === 'paymentMethod') {
+          if (value !== 'banka') updated.bankAccountId = '';
+          if (value !== 'kredi-karti') updated.creditCardId = '';
+        }
+        
+        return updated;
+      }
+      return item;
+    }));
   };
 
   // Satır sil
@@ -538,53 +578,83 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }, 0);
   };
 
-  // Kaydet (Alış Faturaları)
-  const savePurchaseInvoices = async () => {
+  // Tek satır kaydet - NEW FUNCTION
+  const saveSingleItem = async (item) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
       const data = {
         type: 'purchase',
-        documentType: documentType,
-        items: purchaseItems.map(item => ({
-          ...item,
-          amount: item.quantity * item.price,
-          amountTRY: calculateTRYAmount(item.quantity * item.price, item.currency)
-        })),
-        totalTRY: calculateTotalTRY()
+        documentType: item.documentType,
+        documentNo: item.documentNo,
+        date: item.date,
+        supplierId: item.supplierId,
+        supplierName: item.supplierName,
+        description: item.description,
+        quantity: item.quantity,
+        unit: item.unit,
+        price: item.price,
+        currency: item.currency,
+        amount: item.quantity * item.price,
+        amountTRY: calculateTRYAmount(item.quantity * item.price, item.currency),
+        paymentStatus: item.paymentStatus,
+        paymentMethod: item.paymentMethod,
+        bankAccountId: item.bankAccountId,
+        creditCardId: item.creditCardId,
+        attachments: item.attachments
       };
       
-      console.log('Saving purchase invoices:', data);
+      console.log('💾 Saving item:', data);
       
-      // API call buraya gelecek
+      // API call (commented for now)
       // const response = await fetch(`${backendUrl}/api/purchase-invoices`, {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(data)
       // });
       
-      alert(`${purchaseItems.length} adet ${documentType} başarıyla kaydedildi!`);
-      
-      // Reset form
-      setPurchaseItems([{
-        id: 1,
-        documentNo: '',
-        date: new Date().toISOString().split('T')[0],
-        supplierId: '',
-        supplierName: '',
-        description: '',
-        quantity: 0,
-        unit: 'Adet',
-        price: 0,
-        currency: 'TRY',
-        amount: 0,
-        amountTRY: 0
-      }]);
-      
+      // if (response.ok) {
+        updatePurchaseItem(item.id, 'saved', true);
+        alert('✅ Kayıt başarılı!');
+      // } else {
+      //   throw new Error('Kayıt hatası');
+      // }
     } catch (error) {
-      console.error('Error saving:', error);
-      alert('Kayıt sırasında hata oluştu!');
+      console.error('Error:', error);
+      alert('❌ Kayıt sırasında hata oluştu!');
     }
+  };
+
+  // Belge yükleme - NEW FUNCTION
+  const handleFileUpload = async (itemId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Basit dosya bilgisi (gerçek upload sonra yapılacak)
+    const fileInfo = {
+      id: Date.now(),
+      name: file.name,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      file: file
+    };
+    
+    setPurchaseItems(purchaseItems.map(item => {
+      if (item.id === itemId) {
+        return { ...item, attachments: [...item.attachments, fileInfo] };
+      }
+      return item;
+    }));
+  };
+
+  // Belge önizleme - NEW FUNCTION
+  const openPreview = (file) => {
+    setPreviewModal({ open: true, file });
+  };
+
+  // Modal kapat - NEW FUNCTION
+  const closePreview = () => {
+    setPreviewModal({ open: false, file: null });
   };
 
   // ===== END PURCHASE INVOICE HELPERS =====
