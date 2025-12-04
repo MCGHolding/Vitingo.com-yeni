@@ -1039,16 +1039,28 @@ const NewRequest = () => {
                     </div>
                   </div>
 
-                  <div className="text-center p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="text-sm text-red-800 font-medium">
-                      ⚠️ {advanceRules.extended_days} Gün Hakkı Kullanımı
+                  <div className={`text-center p-3 border rounded-lg ${
+                    advanceUsage.can_use_extended 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className={`text-sm font-medium ${
+                      advanceUsage.can_use_extended ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {advanceUsage.can_use_extended ? '✅' : '⚠️'} Bu Yılki Kullanım Durumunuz
                     </div>
-                    <div className="text-sm text-red-700 mt-1">
-                      {advanceUsage.message}
+                    <div className={`text-sm mt-2 ${
+                      advanceUsage.can_use_extended ? 'text-green-700' : 'text-red-700'
+                    }`}>
+                      <strong>{advanceRules.extended_days} günlük avans:</strong> {advanceUsage.used_extended_advances}/{advanceUsage.yearly_extended_limit} kez kullanıldı
                     </div>
-                    {advanceUsage.can_use_extended && (
-                      <div className="text-sm text-red-700 mt-2 font-medium">
-                        Bu hakkınızı kullanmak istiyor musunuz?
+                    {advanceUsage.can_use_extended ? (
+                      <div className="text-sm text-green-700 mt-1 font-medium">
+                        Kalan hakkınız: {advanceUsage.remaining_extended} kez
+                      </div>
+                    ) : (
+                      <div className="text-sm text-red-700 mt-1 font-medium">
+                        Yıllık limitiniz dolmuştur. Lütfen standart süreyi kullanın.
                       </div>
                     )}
                   </div>
