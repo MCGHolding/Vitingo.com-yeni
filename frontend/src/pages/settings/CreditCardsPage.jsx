@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import CreditCardsManagement from '../../components/Settings/CreditCardsManagement';
+import CreditCardsManagementV2 from '../../components/Settings/CreditCardsManagementV2';
 
 const CreditCardsPage = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const CreditCardsPage = () => {
   };
 
   return (
-    <CreditCardsManagement onBackToDashboard={handleBackToDashboard} />
+    <CreditCardsManagementV2 onBackToDashboard={handleBackToDashboard} />
   );
 };
 
