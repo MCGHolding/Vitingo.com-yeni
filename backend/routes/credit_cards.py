@@ -424,12 +424,12 @@ async def delete_credit_card(card_id: str):
 
 
 @router.get("/credit-cards/{card_id}/decrypt")
-async def decrypt_credit_card(card_id: str, x_user_role: str = None):
+async def decrypt_credit_card(
+    card_id: str,
+    x_user_role: Optional[str] = Header(None, alias="X-User-Role")
+):
     """Decrypt and return full card details - Only for ultra admin"""
     try:
-        # Get role from header (frontend sends this)
-        from fastapi import Header
-        
         # Only allow super-admin and admin roles
         allowed_roles = ['super-admin', 'admin']
         if not x_user_role or x_user_role not in allowed_roles:
