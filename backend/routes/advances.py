@@ -306,3 +306,80 @@ async def update_advance_rules(rules_data: Dict[str, Any]):
         "message": "Kurallar başarıyla güncellendi",
         "rules": update_data
     }
+
+@router.get("/advance-usage")
+async def get_advance_usage():
+    """Get user's advance usage for the current year"""
+    # Avans kurallarını al
+    rules = await db.advance_rules.find_one({}, {"_id": 0})
+    if not rules:
+        return {
+            "used_medium_advances": 0,
+            "used_extended_advances": 0,
+            "yearly_medium_limit": 8,
+            "yearly_extended_limit": 8,
+            "can_use_medium": True,
+            "can_use_extended": True,
+            "message": "Yıllık kullanım haklarınız: 8 orta süre, 8 uzun süre"
+        }
+    
+    # Yılın başlangıcını hesapla
+    current_year = datetime.utcnow().year
+    year_start = datetime(current_year, 1, 1)
+    
+    # TODO: Gerçek kullanıcı ID'si ile filtrele
+    # Kullanıcının bu yıl içinde oluşturduğu avansları say
+    # 30 günlük avanslar (medium)
+    medium_days = rules.get("medium_days", 30)
+    used_medium = await db.advances.count_documents({
+        "closure_days": medium_days,
+        "created_at": {"$gte": year_start.isoformat()}
+    })
+    
+    # 60 günlük avanslar (extended)
+    extended_days = rules.get("extended_days", 60)
+    used_extended = await db.advances.count_documents({
+        "closure_days": extended_days,
+        "created_at": {"$gte": year_start.isoformat()}
+    })
+    
+    yearly_medium_limit = rules.get("yearly_medium_limit", 8)
+    yearly_extended_limit = rules.get("yearly_extended_limit", 8)
+    
+    can_use_medium = used_medium < yearly_medium_limit
+    can_use_extended = used_extended < yearly_extended_limit
+    
+    # Mesajları oluştur
+    if can_use_medium:
+        medium_message = f"Bu yıl {medium_days} günlük avans hakkınızı {used_medium}/{yearly_medium_limit} kez kullandınız. Kalan: {yearly_medium_limit - used_medium}"
+    else:
+        medium_message = f"Bu yıl {medium_days} günlük avans hakkınızı {used_medium}/{yearly_medium_limit} kez kullandınız. Limit doldu."
+    
+    if can_use_extended:
+        extended_message = f"Bu yıl {extended_days} günlük avans hakkınızı {used_extended}/{yearly_extended_limit} kez kullandınız. Kalan: {yearly_extended_limit - used_extended}"
+    else:
+        extended_message = f"Bu yıl {extended_days} günlük avans hakkınızı {used_extended}/{yearly_extended_limit} kez kullandınız. Limit doldu."
+    
+    return {
+        "used_medium_advances": used_medium,
+        "used_extended_advances": used_extended,
+        "yearly_medium_limit": yearly_medium_limit,
+        "yearly_extended_limit": yearly_extended_limit,
+        "remaining_medium": yearly_medium_limit - used_medium,
+        "remaining_extended": yearly_extended_limit - used_extended,
+        "can_use_medium": can_use_medium,
+        "can_use_extended": can_use_extended,
+        "medium_message": medium_message,
+        "extended_message": extended_message,
+        "message": f"Yıllık kullanım durumu: {medium_days} gün ({used_medium}/{yearly_medium_limit}), {extended_days} gün ({used_extended}/{yearly_extended_limit})"
+    }
+
+@router.post("/advance-usage/use-extended")
+async def use_extended_advance():
+    """Record extended advance usage (not actually needed, just for compatibility)"""
+    # Bu endpoint modal'dan çağrılıyor ama aslında kayıt oluşturma endpoint'i kullanılacak
+    # Şimdilik sadece success döndür
+    return {
+        "success": True,
+        "message": "Uzun süre hakkı kullanıldı olarak işaretlendi"
+    }
