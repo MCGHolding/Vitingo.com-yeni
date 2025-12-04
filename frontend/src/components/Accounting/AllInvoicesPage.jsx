@@ -618,27 +618,14 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                  No
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fatura No
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Müşteri
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tarih
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tutar
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Durum
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  İşlemler
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fatura No</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Müşteri</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Tutar</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Tutar (TL)</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Durum</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">İşlemler</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
