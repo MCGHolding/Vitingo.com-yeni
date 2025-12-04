@@ -1832,11 +1832,14 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                           >
                             <option value="">Hesap Seçin...</option>
                             {bankAccounts.map(bank => (
-                              <option key={bank.id || bank._id} value={bank.id || bank._id}>
-                                🏦 {bank.bankName} - {bank.accountName}
+                              <option key={bank._id || bank.id} value={bank._id || bank.id}>
+                                🏦 {bank.bankName || bank.name} {bank.accountName ? `- ${bank.accountName}` : ''} {bank.iban ? `(${bank.iban.slice(-4)})` : ''}
                               </option>
                             ))}
                           </select>
+                          {bankAccounts.length === 0 && (
+                            <p className="text-xs text-red-500 mt-1">⚠️ Banka hesabı bulunamadı.</p>
+                          )}
                         </div>
                       )}
                       
@@ -1850,8 +1853,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                           >
                             <option value="">Kart Seçin...</option>
                             {creditCards.map(card => (
-                              <option key={card.id || card._id} value={card.id || card._id}>
-                                💳 {card.name}
+                              <option key={card._id || card.id} value={card._id || card.id}>
+                                💳 {card.cardName || card.name} {card.lastFourDigits ? `(**** ${card.lastFourDigits})` : ''}
                               </option>
                             ))}
                           </select>
