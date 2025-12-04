@@ -2568,6 +2568,117 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
         </div>
       )}
+
+      {/* Profil Yönetim Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowProfileModal(false)}></div>
+            
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
+                <div className="text-white">
+                  <h2 className="text-xl font-bold">Vade Profilleri</h2>
+                  <p className="text-blue-100 text-sm">Sık kullanılan vade şablonlarını yönetin</p>
+                </div>
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="p-2 text-white hover:bg-white/20 rounded-lg"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Content */}
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                {/* Mevcut Profiller */}
+                <div className="mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-3">Kayıtlı Profiller</h3>
+                  <div className="space-y-2">
+                    {paymentTermProfiles.length === 0 ? (
+                      <p className="text-gray-500 text-sm py-4 text-center">Henüz profil oluşturulmamış</p>
+                    ) : (
+                      paymentTermProfiles.map(profile => (
+                        <div 
+                          key={profile.id} 
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+                        >
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {profile.name}
+                              {profile.isDefault && <span className="ml-2 text-yellow-500">⭐</span>}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {profile.terms?.map(t => `%${t.percentage} - ${t.days} gün`).join(' | ')}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => applyProfile(profile)}
+                              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
+                            >
+                              Uygula
+                            </button>
+                            <button
+                              onClick={() => deleteProfile(profile.id)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+                
+                {/* Yeni Profil Oluştur */}
+                <div className="border-t pt-6">
+                  <h3 className="font-semibold text-gray-900 mb-3">Mevcut Vadeyi Profil Olarak Kaydet</h3>
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={newProfileName}
+                      onChange={(e) => setNewProfileName(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Profil adı (örn: 30-60-90 Gün)"
+                    />
+                    <input
+                      type="text"
+                      value={newProfileDescription}
+                      onChange={(e) => setNewProfileDescription(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Açıklama (opsiyonel)"
+                    />
+                    <div className="p-3 bg-blue-50 rounded-lg text-sm">
+                      <p className="font-medium text-blue-900 mb-1">Kaydedilecek vade yapısı:</p>
+                      <p className="text-blue-700">
+                        {paymentTerms.map(t => `%${t.percentage} - ${t.days} gün`).join(' | ')}
+                      </p>
+                    </div>
+                    <button
+                      onClick={saveCurrentAsProfile}
+                      disabled={!newProfileName.trim() || getTotalPercentage() !== 100}
+                      className={`w-full py-2 rounded-lg font-medium transition-colors ${
+                        newProfileName.trim() && getTotalPercentage() === 100
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      Profil Olarak Kaydet
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
