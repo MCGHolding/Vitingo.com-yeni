@@ -15594,6 +15594,7 @@ app.include_router(proposal_router)
 app.include_router(company_group_router)
 app.include_router(advances_router.router, prefix="/api", tags=["advances"])
 app.include_router(credit_cards_router.router, prefix="/api", tags=["credit-cards"])
+app.include_router(purchase_invoices_router.router, prefix="/api", tags=["purchase-invoices"])
 
 app.add_middleware(
     CORSMiddleware,
