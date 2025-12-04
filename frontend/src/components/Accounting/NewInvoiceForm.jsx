@@ -205,6 +205,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Generate invoice number on mount
   useEffect(() => {
     generateInvoiceNumber(formData.currency);
+    loadPaymentTermProfiles();
   }, []);
 
   // Regenerate invoice number when invoice type changes
