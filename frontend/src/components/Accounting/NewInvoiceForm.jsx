@@ -148,6 +148,13 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     generateInvoiceNumber(formData.currency);
   }, []);
 
+  // Regenerate invoice number when invoice type changes
+  useEffect(() => {
+    if (formData.invoiceType) {
+      generateInvoiceNumber(formData.currency, formData.invoiceType);
+    }
+  }, [formData.invoiceType]);
+
   // Yeni eklenen müşteriyi otomatik seç ve form state'ini geri yükle
   useEffect(() => {
     // Yeni eklenen müşteri var mı kontrol et
