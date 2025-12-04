@@ -1394,6 +1394,241 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
         </div>
       )}
+      </form>
+      ) : (
+        /* ALIŞ FATURALARI FORMU */
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          
+          {/* Belge Tipi Seçimi */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Belge Tipi</label>
+            <div className="flex space-x-4">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  value="fatura"
+                  checked={documentType === 'fatura'}
+                  onChange={(e) => setDocumentType(e.target.value)}
+                  className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">Fatura</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  value="fis"
+                  checked={documentType === 'fis'}
+                  onChange={(e) => setDocumentType(e.target.value)}
+                  className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">Fiş</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Belge Listesi Tablosu */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">
+                {documentType === 'fatura' ? 'Fatura' : 'Fiş'} Listesi
+              </h3>
+              <button
+                type="button"
+                onClick={addPurchaseItem}
+                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Plus className="w-5 h-5 mr-1" />
+                Yeni Satır Ekle
+              </button>
+            </div>
+
+            {/* Tablo */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sıra</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Belge No</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tedarikçi</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Açıklama</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Miktar</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Birim</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fiyat</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Para Birimi</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tutar</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">TPB Tutar (TL)</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlem</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {purchaseItems.map((item, index) => (
+                    <tr key={item.id}>
+                      {/* Sıra No */}
+                      <td className="px-3 py-2 text-sm text-gray-900">{index + 1}</td>
+                      
+                      {/* Belge No */}
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={item.documentNo}
+                          onChange={(e) => updatePurchaseItem(item.id, 'documentNo', e.target.value)}
+                          className="w-28 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                          placeholder="FT-001"
+                        />
+                      </td>
+                      
+                      {/* Tarih */}
+                      <td className="px-3 py-2">
+                        <input
+                          type="date"
+                          value={item.date}
+                          onChange={(e) => updatePurchaseItem(item.id, 'date', e.target.value)}
+                          className="w-32 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                        />
+                      </td>
+                      
+                      {/* Tedarikçi */}
+                      <td className="px-3 py-2">
+                        <select
+                          value={item.supplierId}
+                          onChange={(e) => updatePurchaseItem(item.id, 'supplierId', e.target.value)}
+                          className="w-36 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                        >
+                          <option value="">Seçiniz...</option>
+                          {suppliers.map(s => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      
+                      {/* Açıklama */}
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={item.description}
+                          onChange={(e) => updatePurchaseItem(item.id, 'description', e.target.value)}
+                          className="w-40 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                          placeholder="Açıklama..."
+                        />
+                      </td>
+                      
+                      {/* Miktar */}
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => updatePurchaseItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                          min="0"
+                          step="0.01"
+                        />
+                      </td>
+                      
+                      {/* Birim */}
+                      <td className="px-3 py-2">
+                        <select
+                          value={item.unit}
+                          onChange={(e) => updatePurchaseItem(item.id, 'unit', e.target.value)}
+                          className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                        >
+                          <option value="Adet">Adet</option>
+                          <option value="Kg">Kg</option>
+                          <option value="Mt">Mt</option>
+                          <option value="Mtul">Mtül</option>
+                          <option value="Litre">Litre</option>
+                          <option value="M2">M²</option>
+                          <option value="M3">M³</option>
+                          <option value="Paket">Paket</option>
+                          <option value="Kutu">Kutu</option>
+                          <option value="Koli">Koli</option>
+                          <option value="Ton">Ton</option>
+                          <option value="Takim">Takım</option>
+                          <option value="Palet">Palet</option>
+                        </select>
+                      </td>
+                      
+                      {/* Fiyat */}
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) => updatePurchaseItem(item.id, 'price', parseFloat(e.target.value) || 0)}
+                          className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                          min="0"
+                          step="0.01"
+                        />
+                      </td>
+                      
+                      {/* Para Birimi */}
+                      <td className="px-3 py-2">
+                        <select
+                          value={item.currency}
+                          onChange={(e) => updatePurchaseItem(item.id, 'currency', e.target.value)}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-green-500 focus:border-green-500"
+                        >
+                          <option value="TRY">TRY</option>
+                          <option value="USD">USD</option>
+                          <option value="EUR">EUR</option>
+                          <option value="GBP">GBP</option>
+                        </select>
+                      </td>
+                      
+                      {/* Tutar (Hesaplanan) */}
+                      <td className="px-3 py-2 text-sm font-medium text-gray-900">
+                        {(item.quantity * item.price).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {item.currency}
+                      </td>
+                      
+                      {/* TPB Tutar TL (Hesaplanan) */}
+                      <td className="px-3 py-2 text-sm font-medium text-green-600">
+                        {calculateTRYAmount(item.quantity * item.price, item.currency).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                      </td>
+                      
+                      {/* Silme Butonu */}
+                      <td className="px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => removePurchaseItem(item.id)}
+                          className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                          disabled={purchaseItems.length === 1}
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Toplam */}
+            <div className="mt-4 flex justify-end">
+              <div className="bg-gray-50 rounded-lg p-4 w-64">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Toplam Satır:</span>
+                  <span className="font-medium">{purchaseItems.length}</span>
+                </div>
+                <div className="flex justify-between text-lg font-bold text-green-600">
+                  <span>Genel Toplam (TL):</span>
+                  <span>{calculateTotalTRY().toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Kaydet Butonu */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={savePurchaseInvoices}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center"
+            >
+              <Save className="w-5 h-5 mr-2" />
+              {purchaseItems.length > 1 ? 'Toplu Kaydet' : 'Kaydet'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
