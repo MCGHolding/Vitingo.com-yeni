@@ -725,13 +725,21 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                     
                     {/* Durum - Ödenmiş/Ödenmemiş */}
                     <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        invoice.status === 'paid'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {invoice.status === 'paid' ? '✓ Ödenmiş' : '✗ Ödenmemiş'}
-                      </span>
+                      <div className="relative inline-block">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          invoice.status === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}>
+                          {invoice.status === 'paid' ? '✓ Ödenmiş' : '✗ Ödenmemiş'}
+                        </span>
+                        {/* Vade Geçmiş Gün Sayısı Badge */}
+                        {invoice.status !== 'paid' && calculateOverdueDays(invoice) > 0 && (
+                          <span className="absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 bg-orange-500 text-white text-xs font-bold rounded-full border-2 border-white shadow-md">
+                            {calculateOverdueDays(invoice)}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     
                     {/* İşlemler */}
