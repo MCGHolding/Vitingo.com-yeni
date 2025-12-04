@@ -25,7 +25,9 @@ const SettingsMainPage = () => {
       'advance-categories': 'avans-kategorileri',
       'expense-categories': 'gider-kategorileri',
       'transaction-types': 'islem-turleri',
-      'library': 'kutuphane'
+      'library': 'kutuphane',
+      'bank-management': 'banka-yonetimi',
+      'credit-cards': 'kredi-kartlari'
     };
     
     const path = viewToPath[view];
