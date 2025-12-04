@@ -863,12 +863,14 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     const profile = paymentTermProfiles.find(p => p.id === profileId);
     if (profile) {
       setSelectedProfile(profile);
-      setPaymentTerms(profile.terms.map((term, index) => ({
+      // Handle both data formats: profile.terms (new) and profile.paymentTerms (existing)
+      const terms = profile.terms || profile.paymentTerms || [];
+      setPaymentTerms(terms.map((term, index) => ({
         id: index + 1,
         percentage: term.percentage,
-        days: term.days,
-        description: term.description || '',
-        dueDate: calculateDueDate(term.days)
+        days: term.dueDays || term.days || 0,
+        description: term.notes || term.description || term.dueType || '',
+        dueDate: calculateDueDate(term.dueDays || term.days || 0)
       })));
     }
   };
