@@ -663,20 +663,28 @@ FT-2024-003,Demo Firması,03.12.2024,Tasarım hizmeti,5,Saat,150,EUR,20,Ödenmed
             <p className="text-gray-600">{filteredInvoices.length} fatura bulundu</p>
           </div>
         </div>
-        <div className="flex space-x-3">
-          <Button
+        <div className="flex items-center space-x-3">
+          {/* Import & Export Butonu */}
+          <button
+            onClick={() => setImportExportModal(true)}
+            className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+            Import & Export
+          </button>
+          
+          {/* Yeni Fatura Butonu */}
+          <button
             onClick={onNewInvoice}
-            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
             Yeni Fatura
-          </Button>
-          <Button
-            onClick={onBackToDashboard}
-            variant="outline"
-          >
-            Dashboard'a Dön
-          </Button>
+          </button>
         </div>
       </div>
 
