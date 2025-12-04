@@ -309,7 +309,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       
       if (suppliersResponse.ok) {
         const supplierData = await suppliersResponse.json();
-        console.log('Suppliers loaded:', supplierData.length);
+        console.log('✅ Suppliers loaded:', supplierData.length);
         setSuppliers(supplierData);
       } else {
         console.log('Suppliers endpoint not available yet, using mock data');
@@ -318,6 +318,41 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           { id: '1', name: 'Tedarikçi A' },
           { id: '2', name: 'Tedarikçi B' },
           { id: '3', name: 'Tedarikçi C' }
+        ]);
+      }
+      
+      // Load bank accounts for purchase invoices
+      try {
+        const banksResponse = await fetch(`${backendUrl}/api/banks`);
+        if (banksResponse.ok) {
+          const banksData = await banksResponse.json();
+          console.log('✅ Banks loaded:', banksData.length);
+          setBankAccounts(banksData);
+        }
+      } catch (error) {
+        console.log('Banks endpoint not available, using empty array');
+        setBankAccounts([]);
+      }
+      
+      // Load credit cards
+      try {
+        const cardsResponse = await fetch(`${backendUrl}/api/credit-cards`);
+        if (cardsResponse.ok) {
+          const cardsData = await cardsResponse.json();
+          console.log('✅ Credit cards loaded:', cardsData.length);
+          setCreditCards(cardsData);
+        } else {
+          // Mock credit cards if endpoint doesn't exist
+          setCreditCards([
+            { id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
+            { id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
+          ]);
+        }
+      } catch (error) {
+        console.log('Credit cards endpoint not available, using mock data');
+        setCreditCards([
+          { id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
+          { id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
         ]);
       }
       
