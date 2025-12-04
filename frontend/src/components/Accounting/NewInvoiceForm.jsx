@@ -634,10 +634,23 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Tek satır kaydet - WITH VAT
   const saveSingleItem = async (item) => {
     try {
+      // Validations
+      if (!item.supplierId) {
+        alert('❌ Lütfen tedarikçi seçin!');
+        return;
+      }
+      if (!item.documentNo) {
+        alert('❌ Lütfen belge numarası girin!');
+        return;
+      }
+      if (item.quantity <= 0 || item.price <= 0) {
+        alert('❌ Miktar ve fiyat sıfırdan büyük olmalı!');
+        return;
+      }
+      
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
       const data = {
-        type: 'purchase',
         documentType: item.documentType,
         documentNo: item.documentNo,
         date: item.date,
@@ -660,24 +673,29 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         attachments: item.attachments
       };
       
-      console.log('💾 Saving item:', data);
+      console.log('💾 Saving purchase invoice:', data);
       
-      // API call (commented for now)
-      // const response = await fetch(`${backendUrl}/api/purchase-invoices`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
+      const response = await fetch(`${backendUrl}/api/purchase-invoices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
       
-      // if (response.ok) {
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Saved:', result);
+        
+        // Mark row as saved
         updatePurchaseItem(item.id, 'saved', true);
-        alert('✅ Kayıt başarılı!');
-      // } else {
-      //   throw new Error('Kayıt hatası');
-      // }
+        
+        alert('✅ Fatura başarıyla kaydedildi!');
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || 'Kayıt hatası');
+      }
     } catch (error) {
-      console.error('Error:', error);
-      alert('❌ Kayıt sırasında hata oluştu!');
+      console.error('❌ Save error:', error);
+      alert('❌ Kayıt sırasında hata oluştu: ' + error.message);
     }
   };
 
