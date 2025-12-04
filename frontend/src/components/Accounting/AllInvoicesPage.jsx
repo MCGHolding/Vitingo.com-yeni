@@ -411,7 +411,7 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
             <FileText className="h-6 w-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Tüm Faturalar</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Satış Faturaları</h1>
             <p className="text-gray-600">{filteredInvoices.length} fatura bulundu</p>
           </div>
         </div>
