@@ -842,14 +842,14 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const loadPaymentTermProfiles = async () => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/payment-term-profiles`);
+      const response = await fetch(`${backendUrl}/api/payment-profiles`);
       if (response.ok) {
         const data = await response.json();
         setPaymentTermProfiles(data);
-        console.log('✅ Payment term profiles loaded:', data.length);
+        console.log('✅ Payment profiles loaded:', data.length);
       }
     } catch (error) {
-      console.error('Error loading payment term profiles:', error);
+      console.error('Error loading payment profiles:', error);
     }
   };
 
