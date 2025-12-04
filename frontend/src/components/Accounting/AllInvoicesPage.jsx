@@ -108,6 +108,11 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     return integerPart;
   };
 
+  const calculateTRYAmount = (amount, currency) => {
+    const rates = { TRY: 1, USD: 34.50, EUR: 37.20, GBP: 43.80 };
+    return amount * (rates[currency] || 1);
+  };
+
   const getCurrencySymbol = (currencyCode) => {
     const currency = currencies.find(c => c.code === currencyCode);
     return currency ? currency.symbol : '';
