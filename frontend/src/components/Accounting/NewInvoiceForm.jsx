@@ -930,15 +930,17 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       const profileData = {
         name: newProfileName,
         description: newProfileDescription,
-        terms: paymentTerms.map(t => ({
+        paymentTerms: paymentTerms.map((t, index) => ({
+          id: Date.now() + index,
           percentage: t.percentage,
-          days: t.days,
-          description: t.description
-        })),
-        isDefault: paymentTermProfiles.length === 0
+          amount: 0,
+          dueType: t.description || 'vade',
+          dueDays: t.days,
+          notes: t.description || ''
+        }))
       };
       
-      const response = await fetch(`${backendUrl}/api/payment-term-profiles`, {
+      const response = await fetch(`${backendUrl}/api/payment-profiles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileData)
