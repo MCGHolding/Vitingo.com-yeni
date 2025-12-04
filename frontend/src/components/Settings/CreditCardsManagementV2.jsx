@@ -172,8 +172,7 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
         cardNumber: '', // Don't pre-fill for security
         expiryDate: card.expiryDate || '',
         bank: card.bank || '',
-        companyId: card.companyId || '',
-        spendingLimit: card.spendingLimit || ''
+        companyId: card.companyId || ''
       });
     } else {
       setEditingCard(null);
@@ -182,23 +181,23 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
         cardNumber: '',
         expiryDate: '',
         bank: '',
-        companyId: '',
-        spendingLimit: ''
+        companyId: ''
       });
     }
+    setCardNumberError('');
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingCard(null);
+    setCardNumberError('');
     setFormData({
       cardHolderName: '',
       cardNumber: '',
       expiryDate: '',
       bank: '',
-      companyId: '',
-      spendingLimit: ''
+      companyId: ''
     });
   };
 
