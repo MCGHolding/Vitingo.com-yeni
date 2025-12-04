@@ -523,6 +523,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       
       const invoice = {
         invoice_number: formData.invoiceNumber,
+        invoice_type: formData.invoiceType || 'satis', // Fatura tipi eklendi
         customer_id: formData.customerId || null,
         customer_name: currentSelectedCustomer?.companyName || 'Unknown Customer', // USE SELECTED CUSTOMER NAME
         date: formData.date,
