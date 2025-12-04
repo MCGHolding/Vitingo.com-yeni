@@ -963,7 +963,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/payment-term-profiles/${profileId}`, {
+      const response = await fetch(`${backendUrl}/api/payment-profiles/${profileId}`, {
         method: 'DELETE'
       });
       
