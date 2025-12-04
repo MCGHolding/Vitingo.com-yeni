@@ -1643,7 +1643,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 key={item.id} 
                 className={`border-2 rounded-xl overflow-hidden transition-all ${
                   item.saved 
-                    ? 'border-green-400 bg-green-50' 
+                    ? 'border-green-500 bg-green-50 shadow-lg' 
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
@@ -1659,7 +1659,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                     </span>
                   </div>
                   {item.saved && (
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    <span className="px-3 py-1 bg-green-500 text-white rounded-full text-xs font-bold animate-pulse">
                       ✓ Kaydedildi
                     </span>
                   )}
