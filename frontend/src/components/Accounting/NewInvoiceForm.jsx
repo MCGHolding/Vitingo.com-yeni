@@ -2001,24 +2001,49 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 <div className="text-sm text-gray-500">Toplam Satır</div>
                 <div className="text-2xl font-bold text-gray-700">{purchaseItems.length}</div>
               </div>
+              
               <div className="text-center p-4 bg-white rounded-lg border">
                 <div className="text-sm text-gray-500">Net Toplam</div>
-                <div className="text-xl font-bold text-gray-700">
-                  {calculateTotals().netTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                <div className="text-lg font-bold text-gray-700">
+                  {calculateTotals().netTotalTRY.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
                 </div>
+                {Object.entries(calculateTotals().byCurrency).map(([currency, amounts]) => (
+                  currency !== 'TRY' && amounts.net > 0 && (
+                    <div key={currency} className="text-xs text-gray-500 mt-1">
+                      ({amounts.net.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {currency})
+                    </div>
+                  )
+                ))}
               </div>
+              
               <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200">
                 <div className="text-sm text-amber-600">KDV Toplam</div>
-                <div className="text-xl font-bold text-amber-700">
-                  {calculateTotals().vatTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                <div className="text-lg font-bold text-amber-700">
+                  {calculateTotals().vatTotalTRY.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
                 </div>
+                {Object.entries(calculateTotals().byCurrency).map(([currency, amounts]) => (
+                  currency !== 'TRY' && amounts.vat > 0 && (
+                    <div key={currency} className="text-xs text-amber-500 mt-1">
+                      ({amounts.vat.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {currency})
+                    </div>
+                  )
+                ))}
               </div>
+              
               <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="text-sm text-blue-600">Brüt Toplam</div>
-                <div className="text-xl font-bold text-blue-700">
-                  {calculateTotals().grossTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                <div className="text-lg font-bold text-blue-700">
+                  {calculateTotals().grossTotalTRY.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
                 </div>
+                {Object.entries(calculateTotals().byCurrency).map(([currency, amounts]) => (
+                  currency !== 'TRY' && amounts.gross > 0 && (
+                    <div key={currency} className="text-xs text-blue-500 mt-1">
+                      ({amounts.gross.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {currency})
+                    </div>
+                  )
+                ))}
               </div>
+              
               <div className="text-center p-4 bg-green-100 rounded-lg border border-green-300">
                 <div className="text-sm text-green-600">Genel Toplam (TL)</div>
                 <div className="text-2xl font-bold text-green-700">
