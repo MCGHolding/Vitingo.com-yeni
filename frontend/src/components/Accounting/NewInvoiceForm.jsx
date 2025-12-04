@@ -72,7 +72,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Tab state
   const [activeTab, setActiveTab] = useState('satis'); // 'satis' veya 'alis'
   
-  // Purchase invoice state (Alış Faturaları) - ENHANCED VERSION
+  // Purchase invoice state (Alış Faturaları) - PROFESSIONAL VERSION WITH VAT
   const [purchaseItems, setPurchaseItems] = useState([
     {
       id: 1,
@@ -86,7 +86,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       unit: 'Adet',
       price: 0,
       currency: 'TRY',
-      amount: 0,
+      vatRate: 20, // KDV Oranı: 0, 1, 10, 20
+      netAmount: 0,
+      vatAmount: 0,
+      grossAmount: 0,
       amountTRY: 0,
       paymentStatus: 'odenmedi', // odendi veya odenmedi
       paymentMethod: '', // nakit, banka, kredi-karti
