@@ -454,14 +454,6 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
                   </div>
                 )}
 
-                {/* Spending Limit (for corporate cards) */}
-                {card.spendingLimit && (
-                  <div className="mb-4">
-                    <div className="text-xs text-white/70 mb-1">Harcama Limiti</div>
-                    <div className="font-semibold">₺{card.spendingLimit.toLocaleString('tr-TR')}</div>
-                  </div>
-                )}
-
                 {/* Footer: Expiry & Bank */}
                 <div className="flex items-center justify-between text-sm pt-4 border-t border-white/20">
                   <div>
