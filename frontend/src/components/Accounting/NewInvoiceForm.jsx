@@ -742,6 +742,46 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
+  // Başarı Modal Fonksiyonları
+  const goToPurchaseInvoices = () => {
+    setSuccessModal({ open: false, documentNo: '' });
+    navigate(`/${tenantSlug}/alis-faturalari`);
+  };
+
+  const addNewPurchaseInvoice = () => {
+    setSuccessModal({ open: false, documentNo: '' });
+    
+    // Formu sıfırla - yeni boş satır
+    setPurchaseItems([{
+      id: Date.now(),
+      documentType: 'fatura',
+      documentNo: '',
+      date: new Date().toISOString().split('T')[0],
+      supplierId: '',
+      supplierName: '',
+      description: '',
+      quantity: 0,
+      unit: 'Adet',
+      price: 0,
+      currency: 'TRY',
+      vatRate: 20,
+      netAmount: 0,
+      vatAmount: 0,
+      grossAmount: 0,
+      amountTRY: 0,
+      paymentStatus: 'odenmedi',
+      paymentMethod: '',
+      bankAccountId: '',
+      creditCardId: '',
+      attachments: [],
+      saved: false
+    }]);
+  };
+
+  const closeSuccessModal = () => {
+    setSuccessModal({ open: false, documentNo: '' });
+  };
+
   // Belge yükleme - NEW FUNCTION
   const handleFileUpload = async (itemId, event) => {
     const file = event.target.files[0];
