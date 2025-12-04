@@ -214,13 +214,24 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
             <p className="text-sm text-gray-500 mt-1">Şirket kredi kartlarını yönetin</p>
           </div>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Yeni Kart Ekle
-        </button>
+        <div className="flex items-center space-x-3">
+          <select
+            value={cardTypeFilter}
+            onChange={(e) => setCardTypeFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Tüm Kartlar</option>
+            <option value="corporate">Kurumsal Kartlar</option>
+            <option value="personal">Bireysel Kartlar</option>
+          </select>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Yeni Kart Ekle
+          </button>
+        </div>
       </div>
 
       {/* Cards Grid */}
