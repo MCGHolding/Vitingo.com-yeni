@@ -735,8 +735,8 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
                         </span>
                         {/* Vade Geçmiş Gün Sayısı Badge */}
                         {invoice.status !== 'paid' && calculateOverdueDays(invoice) > 0 && (
-                          <span className="absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 bg-orange-500 text-white text-xs font-bold rounded-full border-2 border-white shadow-md">
-                            {calculateOverdueDays(invoice)}
+                          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-orange-500 text-white text-[10px] font-bold rounded-full border-2 border-white shadow-md">
+                            {calculateOverdueDays(invoice) > 99 ? '99+' : calculateOverdueDays(invoice)}
                           </span>
                         )}
                       </div>
