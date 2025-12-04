@@ -600,22 +600,16 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
-  // TL'ye çevir (basit kur - sonra API'den gelecek)
-  const calculateTRYAmount = (amount, currency) => {
-    const rates = {
-      TRY: 1,
-      USD: 34.50,
-      EUR: 37.20,
-      GBP: 43.80
-    };
-    return amount * (rates[currency] || 1);
-  };
-
-  // Toplam TL hesapla
-  const calculateTotalTRY = () => {
-    return purchaseItems.reduce((total, item) => {
-      return total + calculateTRYAmount(item.quantity * item.price, item.currency);
-    }, 0);
+  // Toplam hesaplamaları - VAT included
+  const calculateTotals = () => {
+    return purchaseItems.reduce((totals, item) => {
+      return {
+        netTotal: totals.netTotal + item.netAmount,
+        vatTotal: totals.vatTotal + item.vatAmount,
+        grossTotal: totals.grossTotal + item.grossAmount,
+        tryTotal: totals.tryTotal + item.amountTRY
+      };
+    }, { netTotal: 0, vatTotal: 0, grossTotal: 0, tryTotal: 0 });
   };
 
   // Tek satır kaydet - NEW FUNCTION
