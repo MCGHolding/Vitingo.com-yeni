@@ -85,27 +85,58 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validation
+    if (!formData.cardHolderFirstName.trim()) {
+      alert('Kart sahibinin adını giriniz!');
+      return;
+    }
+    if (!formData.cardHolderLastName.trim()) {
+      alert('Kart sahibinin soyadını giriniz!');
+      return;
+    }
+    if (formData.cardCategory === 'corporate' && !formData.companyId) {
+      alert('Kurumsal kart için şirket seçiniz!');
+      return;
+    }
+    if (!formData.cardNumber || formData.cardNumber.replace(/\D/g, '').length !== 16) {
+      alert('Geçerli bir kart numarası giriniz (16 haneli)!');
+      return;
+    }
+    
     try {
+      const cleanedCardNumber = formData.cardNumber.replace(/\D/g, '');
+      const dataToSend = {
+        ...formData,
+        cardNumber: cleanedCardNumber,
+        cardHolderFullName: `${formData.cardHolderFirstName} ${formData.cardHolderLastName}`
+      };
+      
       const url = editingCard 
         ? `${backendUrl}/api/credit-cards/${editingCard._id || editingCard.id}`
         : `${backendUrl}/api/credit-cards`;
       
       const method = editingCard ? 'PUT' : 'POST';
       
+      console.log('Submitting card:', dataToSend);
+      
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataToSend)
       });
       
       if (response.ok) {
-        loadCards();
+        await loadCards();
         closeModal();
         alert(editingCard ? '✅ Kart güncellendi!' : '✅ Kart eklendi!');
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('❌ Kayıt hatası: ' + error);
       }
     } catch (error) {
       console.error('Error saving card:', error);
-      alert('❌ Kayıt hatası!');
+      alert('❌ Kayıt hatası: ' + error.message);
     }
   };
 
