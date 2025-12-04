@@ -342,11 +342,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       
       // Load bank accounts for purchase invoices
       try {
-        console.log('🔍 Loading banks from:', `${backendUrl}/api/banks`);
+        console.log('🏦 Loading banks from:', `${backendUrl}/api/banks`);
         const banksResponse = await fetch(`${backendUrl}/api/banks`);
         if (banksResponse.ok) {
           const banksData = await banksResponse.json();
-          console.log('✅ Banks loaded:', banksData);
+          console.log('✅ Banks RAW data (first item):', JSON.stringify(banksData[0], null, 2));
+          console.log('✅ Banks ALL:', banksData);
           console.log('📊 Banks count:', Array.isArray(banksData) ? banksData.length : 'Not an array');
           setBankAccounts(Array.isArray(banksData) ? banksData : []);
         } else {
@@ -360,11 +361,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       
       // Load credit cards
       try {
-        console.log('🔍 Loading credit cards from:', `${backendUrl}/api/credit-cards`);
+        console.log('💳 Loading credit cards from:', `${backendUrl}/api/credit-cards`);
         const cardsResponse = await fetch(`${backendUrl}/api/credit-cards`);
         if (cardsResponse.ok) {
           const cardsData = await cardsResponse.json();
-          console.log('✅ Credit cards loaded:', cardsData);
+          console.log('✅ Credit Cards RAW data (first item):', JSON.stringify(cardsData[0], null, 2));
+          console.log('✅ Credit Cards ALL:', cardsData);
           console.log('📊 Credit cards count:', Array.isArray(cardsData) ? cardsData.length : 'Not an array');
           setCreditCards(Array.isArray(cardsData) ? cardsData : []);
         } else {
