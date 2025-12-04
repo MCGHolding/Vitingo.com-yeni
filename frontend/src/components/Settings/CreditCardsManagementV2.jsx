@@ -562,20 +562,33 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
                 {/* Card Number */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Kart Numarası * (16 haneli)
+                    Kart Numarası * (13-19 haneli)
                   </label>
                   <input
                     type="text"
                     value={formData.cardNumber}
                     onChange={handleCardNumberChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-lg"
-                    placeholder="1234 5678 9012 3456"
-                    maxLength="19"
+                    onBlur={handleCardNumberBlur}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-lg ${
+                      cardNumberError ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder={editingCard ? `Mevcut: ${editingCard.cardNumber}` : '1234 5678 9012 3456'}
+                    maxLength="23"
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Otomatik formatlama: 4xxx = Visa, 5xxx = Mastercard, 3xxx = Amex
-                  </p>
+                  {cardNumberError && (
+                    <p className="text-red-500 text-xs mt-1">⚠️ {cardNumberError}</p>
+                  )}
+                  {!cardNumberError && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Otomatik formatlama: 4xxx = Visa, 5xxx = Mastercard, 3xxx = Amex
+                    </p>
+                  )}
+                  {editingCard && !formData.cardNumber && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      ⚠️ Güvenlik nedeniyle kart numarası gösterilmiyor. Değiştirmek için yeni numara girin.
+                    </p>
+                  )}
                 </div>
 
                 {/* Expiry Date & Bank */}
