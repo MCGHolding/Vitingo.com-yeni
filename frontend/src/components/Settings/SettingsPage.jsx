@@ -144,6 +144,15 @@ const SettingsPage = ({ onBack, currentUser, onNavigate }) => {
       category: 'Finans'
     },
     {
+      id: 'credit-cards',
+      title: 'Kredi Kartları',
+      description: 'Şirket kredi kartlarını yönetin',
+      icon: CreditCard,
+      color: 'blue',
+      adminOnly: true,
+      category: 'Finans'
+    },
+    {
       id: 'expense-categories',
       title: 'Banka & Kredi Kartı Harcama Kategorileri',
       description: 'Banka ve kredi kartı işlemleri için harcama kategorileri ve alt kategorileri yönetin',
