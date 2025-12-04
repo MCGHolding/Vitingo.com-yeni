@@ -933,7 +933,7 @@ const NewRequest = () => {
               <DialogContent data-testid="medium-days-modal" className="max-w-md">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-center">
-                    Orta Süre Seçeneği
+                    Orta Süre Seçeneği ({advanceRules.medium_days} Gün)
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
@@ -942,24 +942,51 @@ const NewRequest = () => {
                       <strong>Standart kapama süresi {advanceRules.standard_days} gündür</strong>
                     </div>
                     <div className="text-sm text-blue-700">
-                      {advanceRules.medium_days} gün için özel hakkınızı kullanabilirsiniz.
+                      Sadece yoğun sezon için bir takvim yılında en fazla {advanceRules.yearly_medium_limit} defa {advanceRules.medium_days} gün seçeneği sunulur.
                     </div>
                   </div>
 
-                  <div className="text-center p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <div className="text-sm text-amber-800">
-                      {advanceUsage.message}
+                  <div className={`text-center p-3 border rounded-lg ${
+                    advanceUsage.can_use_medium 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className={`text-sm font-medium ${
+                      advanceUsage.can_use_medium ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {advanceUsage.can_use_medium ? '✅' : '⚠️'} Bu Yılki Kullanım Durumunuz
                     </div>
-                    <div className="text-sm text-amber-700 mt-2 font-medium">
-                      {advanceRules.medium_days} gün hakkınızı kullanmak istiyor musunuz?
+                    <div className={`text-sm mt-2 ${
+                      advanceUsage.can_use_medium ? 'text-green-700' : 'text-red-700'
+                    }`}>
+                      <strong>{advanceRules.medium_days} günlük avans:</strong> {advanceUsage.used_medium_advances}/{advanceUsage.yearly_medium_limit} kez kullanıldı
+                    </div>
+                    {advanceUsage.can_use_medium ? (
+                      <div className="text-sm text-green-700 mt-1 font-medium">
+                        Kalan hakkınız: {advanceUsage.remaining_medium} kez
+                      </div>
+                    ) : (
+                      <div className="text-sm text-red-700 mt-1 font-medium">
+                        Yıllık limitiniz dolmuştur.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-center p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="text-sm text-purple-800 font-medium">
+                      ℹ️ Uzun Süre Alternatifi
+                    </div>
+                    <div className="text-sm text-purple-700 mt-1">
+                      Eğer daha fazla süreye ihtiyacınız varsa, {advanceRules.extended_days} günlük seçeneğini de kullanabilirsiniz
+                      (Yıllık limit: {advanceRules.yearly_extended_limit} defa)
                     </div>
                   </div>
 
                   <div className="flex gap-3 pt-4">
                     <Button
+                      variant="outline"
                       onClick={handleUseMediumDaysStandard}
                       disabled={loadingAdvanceData}
-                      variant="outline"
                       className="flex-1"
                       data-testid="use-standard-from-medium-btn"
                     >
@@ -967,8 +994,21 @@ const NewRequest = () => {
                     </Button>
                     
                     <Button
-                      onClick={handleUseMediumDays}
+                      variant="outline"
+                      onClick={() => {
+                        setShowMediumModal(false);
+                        handleQuickDaysSelection(advanceRules.extended_days.toString());
+                      }}
                       disabled={loadingAdvanceData}
+                      className="flex-1"
+                      data-testid="switch-to-extended-btn"
+                    >
+                      {advanceRules.extended_days} Gün (Uzun)
+                    </Button>
+                    
+                    <Button
+                      onClick={handleUseMediumDays}
+                      disabled={loadingAdvanceData || !advanceUsage.can_use_medium}
                       className="btn-primary flex-1"
                       data-testid="use-medium-days-btn"
                     >
