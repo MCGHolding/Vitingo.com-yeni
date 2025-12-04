@@ -1548,259 +1548,311 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       )}
         </div>
       ) : (
-        /* ALIŞ FATURALARI FORMU - ENHANCED 2-ROW LAYOUT */
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        /* ALIŞ FATURALARI - PROFESİYONEL 3 SATIRLI LAYOUT + KDV */
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           
-          {/* Başlık */}
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Alış Faturaları / Fişler</h3>
-            <div className="text-sm text-gray-500">
-              Toplam: <span className="font-bold text-green-600">{calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</span>
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Alış Faturaları / Fişler</h3>
+              <p className="text-sm text-gray-500 mt-1">Tedarikçilerden gelen fatura ve fişleri kaydedin</p>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Genel Toplam</div>
+              <div className="text-2xl font-bold text-green-600">
+                {calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+              </div>
             </div>
           </div>
 
           {/* Satır Listesi */}
-          <div className="space-y-4">
+          <div className="p-6 space-y-6">
             {purchaseItems.map((item, index) => (
               <div 
                 key={item.id} 
-                className={`border rounded-lg p-4 ${item.saved ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}
+                className={`border-2 rounded-xl overflow-hidden transition-all ${
+                  item.saved 
+                    ? 'border-green-400 bg-green-50' 
+                    : 'border-gray-200 bg-white hover:border-gray-300'
+                }`}
               >
-                {/* SATIR 1 */}
-                <div className="grid grid-cols-12 gap-3 mb-3">
-                  {/* Sıra No */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Sıra</label>
-                    <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-center font-bold">
+                {/* Satır Başlığı */}
+                <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b">
+                  <div className="flex items-center space-x-3">
+                    <span className="w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded-full font-bold text-sm">
                       {index + 1}
-                    </div>
+                    </span>
+                    <span className="text-sm font-medium text-gray-600">
+                      {item.documentType === 'fatura' ? '📄 Fatura' : '🧾 Fiş'}
+                      {item.documentNo && ` - ${item.documentNo}`}
+                    </span>
                   </div>
-                  
-                  {/* Belge Tipi */}
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Belge Tipi</label>
-                    <select
-                      value={item.documentType}
-                      onChange={(e) => updatePurchaseItem(item.id, 'documentType', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      <option value="fatura">📄 Fatura</option>
-                      <option value="fis">🧾 Fiş</option>
-                    </select>
-                  </div>
-                  
-                  {/* Belge No */}
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Belge No</label>
-                    <input
-                      type="text"
-                      value={item.documentNo}
-                      onChange={(e) => updatePurchaseItem(item.id, 'documentNo', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      placeholder="FT-001"
-                    />
-                  </div>
-                  
-                  {/* Tarih */}
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Tarih</label>
-                    <input
-                      type="date"
-                      value={item.date}
-                      onChange={(e) => updatePurchaseItem(item.id, 'date', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    />
-                  </div>
-                  
-                  {/* Tedarikçi */}
-                  <div className="col-span-3">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Tedarikçi</label>
-                    <select
-                      value={item.supplierId}
-                      onChange={(e) => updatePurchaseItem(item.id, 'supplierId', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      <option value="">Tedarikçi Seçin...</option>
-                      {suppliers.map(s => (
-                        <option key={s.id || s._id} value={s.id || s._id}>
-                          {s.name || s.companyName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  {/* Açıklama */}
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Açıklama</label>
-                    <input
-                      type="text"
-                      value={item.description}
-                      onChange={(e) => updatePurchaseItem(item.id, 'description', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      placeholder="Açıklama..."
-                    />
-                  </div>
+                  {item.saved && (
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                      ✓ Kaydedildi
+                    </span>
+                  )}
                 </div>
                 
-                {/* SATIR 2 */}
-                <div className="grid grid-cols-12 gap-3 items-end">
-                  {/* Miktar */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Miktar</label>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => updatePurchaseItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-                  
-                  {/* Birim */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Birim</label>
-                    <select
-                      value={item.unit}
-                      onChange={(e) => updatePurchaseItem(item.id, 'unit', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      <option value="Adet">Adet</option>
-                      <option value="Kg">Kg</option>
-                      <option value="Mt">Mt</option>
-                      <option value="Mtul">Mtül</option>
-                      <option value="Litre">Litre</option>
-                      <option value="M2">M²</option>
-                      <option value="M3">M³</option>
-                      <option value="Paket">Paket</option>
-                      <option value="Kutu">Kutu</option>
-                      <option value="Koli">Koli</option>
-                      <option value="Ton">Ton</option>
-                      <option value="Takim">Takım</option>
-                      <option value="Palet">Palet</option>
-                    </select>
-                  </div>
-                  
-                  {/* Fiyat */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Fiyat</label>
-                    <input
-                      type="number"
-                      value={item.price}
-                      onChange={(e) => updatePurchaseItem(item.id, 'price', parseFloat(e.target.value) || 0)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-                  
-                  {/* Para Birimi */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">PB</label>
-                    <select
-                      value={item.currency}
-                      onChange={(e) => updatePurchaseItem(item.id, 'currency', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      <option value="TRY">TRY</option>
-                      <option value="USD">USD</option>
-                      <option value="EUR">EUR</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                  </div>
-                  
-                  {/* Tutar */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Tutar</label>
-                    <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium">
-                      {(item.quantity * item.price).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                <div className="p-5 space-y-4">
+                  {/* SATIR 1: BELGE BİLGİLERİ */}
+                  <div className="grid grid-cols-4 gap-4">
+                    {/* Belge Tipi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Belge Tipi</label>
+                      <select
+                        value={item.documentType}
+                        onChange={(e) => updatePurchaseItem(item.id, 'documentType', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                      >
+                        <option value="fatura">📄 Fatura</option>
+                        <option value="fis">🧾 Fiş</option>
+                      </select>
+                    </div>
+                    
+                    {/* Belge No */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Belge No</label>
+                      <input
+                        type="text"
+                        value={item.documentNo}
+                        onChange={(e) => updatePurchaseItem(item.id, 'documentNo', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="FT-2024-001"
+                      />
+                    </div>
+                    
+                    {/* Tarih */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tarih</label>
+                      <input
+                        type="date"
+                        value={item.date}
+                        onChange={(e) => updatePurchaseItem(item.id, 'date', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                      />
+                    </div>
+                    
+                    {/* Tedarikçi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tedarikçi</label>
+                      <select
+                        value={item.supplierId}
+                        onChange={(e) => updatePurchaseItem(item.id, 'supplierId', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                      >
+                        <option value="">Tedarikçi Seçin...</option>
+                        {suppliers.map(s => (
+                          <option key={s.id || s._id} value={s.id || s._id}>
+                            {s.name || s.companyName}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   
-                  {/* TPB Tutar */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">TL</label>
-                    <div className="w-full px-3 py-2 bg-green-100 border border-green-300 rounded-lg text-sm font-bold text-green-700">
-                      {calculateTRYAmount(item.quantity * item.price, item.currency).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                  {/* SATIR 2: ÜRÜN/HİZMET BİLGİLERİ */}
+                  <div className="grid grid-cols-6 gap-4">
+                    {/* Açıklama */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama</label>
+                      <input
+                        type="text"
+                        value={item.description}
+                        onChange={(e) => updatePurchaseItem(item.id, 'description', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Ürün veya hizmet açıklaması..."
+                      />
+                    </div>
+                    
+                    {/* Miktar */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Miktar</label>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => updatePurchaseItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    
+                    {/* Birim */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Birim</label>
+                      <select
+                        value={item.unit}
+                        onChange={(e) => updatePurchaseItem(item.id, 'unit', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                      >
+                        <option value="Adet">Adet</option>
+                        <option value="Kg">Kg</option>
+                        <option value="Mt">Metre</option>
+                        <option value="Litre">Litre</option>
+                        <option value="M2">M²</option>
+                        <option value="Kutu">Kutu</option>
+                        <option value="Paket">Paket</option>
+                      </select>
+                    </div>
+                    
+                    {/* Birim Fiyat */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Birim Fiyat</label>
+                      <input
+                        type="number"
+                        value={item.price}
+                        onChange={(e) => updatePurchaseItem(item.id, 'price', parseFloat(e.target.value) || 0)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    
+                    {/* Para Birimi */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Para Birimi</label>
+                      <select
+                        value={item.currency}
+                        onChange={(e) => updatePurchaseItem(item.id, 'currency', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                      >
+                        <option value="TRY">🇹🇷 TRY</option>
+                        <option value="USD">🇺🇸 USD</option>
+                        <option value="EUR">🇪🇺 EUR</option>
+                        <option value="GBP">🇬🇧 GBP</option>
+                      </select>
                     </div>
                   </div>
                   
-                  {/* Ödeme Durumu */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Ödeme</label>
-                    <select
-                      value={item.paymentStatus}
-                      onChange={(e) => updatePurchaseItem(item.id, 'paymentStatus', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        item.paymentStatus === 'odendi' ? 'bg-green-100 border-green-300' : 'bg-red-50 border-red-300'
-                      }`}
-                    >
-                      <option value="odenmedi">❌ Ödenmedi</option>
-                      <option value="odendi">✅ Ödendi</option>
-                    </select>
+                  {/* SATIR 3: KDV & TUTAR & ÖDEME */}
+                  <div className="grid grid-cols-12 gap-4 items-end">
+                    {/* KDV Oranı */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı</label>
+                      <select
+                        value={item.vatRate}
+                        onChange={(e) => updatePurchaseItem(item.id, 'vatRate', parseInt(e.target.value))}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                      >
+                        <option value={0}>%0 (KDV Yok)</option>
+                        <option value={1}>%1</option>
+                        <option value={10}>%10</option>
+                        <option value={20}>%20</option>
+                      </select>
+                    </div>
+                    
+                    {/* Net Tutar */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Net Tutar</label>
+                      <div className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium text-gray-700">
+                        {item.netAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {item.currency}
+                      </div>
+                    </div>
+                    
+                    {/* KDV Tutarı */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">KDV Tutarı</label>
+                      <div className="w-full px-4 py-3 bg-amber-50 border border-amber-300 rounded-lg text-sm font-medium text-amber-700">
+                        {item.vatAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {item.currency}
+                      </div>
+                    </div>
+                    
+                    {/* Brüt Tutar */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Brüt Tutar</label>
+                      <div className="w-full px-4 py-3 bg-blue-50 border border-blue-300 rounded-lg text-sm font-bold text-blue-700">
+                        {item.grossAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {item.currency}
+                      </div>
+                    </div>
+                    
+                    {/* TL Karşılığı */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">TL Karşılığı</label>
+                      <div className="w-full px-4 py-3 bg-green-100 border border-green-400 rounded-lg text-sm font-bold text-green-700">
+                        {item.amountTRY.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                      </div>
+                    </div>
+                    
+                    {/* Ödeme Durumu */}
+                    <div className="col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme</label>
+                      <select
+                        value={item.paymentStatus}
+                        onChange={(e) => updatePurchaseItem(item.id, 'paymentStatus', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-500 ${
+                          item.paymentStatus === 'odendi' 
+                            ? 'bg-green-100 border-green-400 text-green-700' 
+                            : 'bg-red-50 border-red-300 text-red-700'
+                        }`}
+                      >
+                        <option value="odenmedi">❌ Ödenmedi</option>
+                        <option value="odendi">✅ Ödendi</option>
+                      </select>
+                    </div>
                   </div>
                   
-                  {/* Ödeme Yöntemi (Ödendi ise) */}
+                  {/* ÖDEME YÖNTEMİ (Ödendi ise) */}
                   {item.paymentStatus === 'odendi' && (
-                    <div className="col-span-1">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Yöntem</label>
-                      <select
-                        value={item.paymentMethod}
-                        onChange={(e) => updatePurchaseItem(item.id, 'paymentMethod', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      >
-                        <option value="">Seçin...</option>
-                        <option value="nakit">💵 Nakit</option>
-                        <option value="banka">🏦 Banka</option>
-                        <option value="kredi-karti">💳 Kredi Kartı</option>
-                      </select>
+                    <div className="grid grid-cols-3 gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Yöntemi</label>
+                        <select
+                          value={item.paymentMethod}
+                          onChange={(e) => updatePurchaseItem(item.id, 'paymentMethod', e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                        >
+                          <option value="">Seçin...</option>
+                          <option value="nakit">💵 Nakit</option>
+                          <option value="banka">🏦 Banka</option>
+                          <option value="kredi-karti">💳 Kredi Kartı</option>
+                        </select>
+                      </div>
+                      
+                      {item.paymentMethod === 'banka' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Banka Hesabı</label>
+                          <select
+                            value={item.bankAccountId}
+                            onChange={(e) => updatePurchaseItem(item.id, 'bankAccountId', e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                          >
+                            <option value="">Hesap Seçin...</option>
+                            {bankAccounts.map(bank => (
+                              <option key={bank.id || bank._id} value={bank.id || bank._id}>
+                                🏦 {bank.bankName} - {bank.accountName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      
+                      {item.paymentMethod === 'kredi-karti' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Kredi Kartı</label>
+                          <select
+                            value={item.creditCardId}
+                            onChange={(e) => updatePurchaseItem(item.id, 'creditCardId', e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                          >
+                            <option value="">Kart Seçin...</option>
+                            {creditCards.map(card => (
+                              <option key={card.id || card._id} value={card.id || card._id}>
+                                💳 {card.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   )}
                   
-                  {/* Banka Seçimi */}
-                  {item.paymentStatus === 'odendi' && item.paymentMethod === 'banka' && (
-                    <div className="col-span-1">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Banka</label>
-                      <select
-                        value={item.bankAccountId}
-                        onChange={(e) => updatePurchaseItem(item.id, 'bankAccountId', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      >
-                        <option value="">Seçin...</option>
-                        {bankAccounts.map(bank => (
-                          <option key={bank.id || bank._id} value={bank.id || bank._id}>
-                            {bank.bankName} - {bank.accountName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  
-                  {/* Kredi Kartı Seçimi */}
-                  {item.paymentStatus === 'odendi' && item.paymentMethod === 'kredi-karti' && (
-                    <div className="col-span-1">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Kart</label>
-                      <select
-                        value={item.creditCardId}
-                        onChange={(e) => updatePurchaseItem(item.id, 'creditCardId', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      >
-                        <option value="">Seçin...</option>
-                        {creditCards.map(card => (
-                          <option key={card.id || card._id} value={card.id || card._id}>
-                            {card.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  
-                  {/* Belge Ekleme */}
-                  <div className="col-span-1">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Belge</label>
-                    <div className="flex items-center space-x-1">
-                      <label className="cursor-pointer px-3 py-2 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-200 transition-colors">
-                        <span className="text-sm">📎</span>
+                  {/* BELGE & İŞLEMLER */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    {/* Belge Yükleme */}
+                    <div className="flex items-center space-x-3">
+                      <label className="cursor-pointer flex items-center px-4 py-2 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-200 transition-colors">
+                        <span className="text-sm font-medium">📎 Belge Ekle</span>
                         <input
                           type="file"
                           className="hidden"
@@ -1808,83 +1860,94 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                           onChange={(e) => handleFileUpload(item.id, e)}
                         />
                       </label>
+                      
                       {item.attachments.length > 0 && (
+                        <div className="flex items-center space-x-2">
+                          {item.attachments.map(att => (
+                            <button
+                              key={att.id}
+                              onClick={() => openPreview(att)}
+                              className="flex items-center px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-sm"
+                            >
+                              👁️ {att.name.substring(0, 15)}...
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* İşlem Butonları */}
+                    <div className="flex items-center space-x-3">
+                      {/* Kaydet */}
+                      <button
+                        type="button"
+                        onClick={() => saveSingleItem(item)}
+                        className={`flex items-center px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                          item.saved 
+                            ? 'bg-green-600 text-white' 
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {item.saved ? '✓ Kaydedildi' : '💾 Kaydet'}
+                      </button>
+                      
+                      {/* Yeni Satır Ekle */}
+                      <button
+                        type="button"
+                        onClick={() => addPurchaseItem(item.id)}
+                        className="flex items-center px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      >
+                        + Yeni
+                      </button>
+                      
+                      {/* Sil */}
+                      {index > 0 && (
                         <button
                           type="button"
-                          onClick={() => openPreview(item.attachments[0])}
-                          className="px-3 py-2 bg-purple-100 text-purple-700 border border-purple-300 rounded-lg hover:bg-purple-200 transition-colors"
+                          onClick={() => removePurchaseItem(item.id)}
+                          className="flex items-center px-4 py-2.5 bg-red-100 text-red-700 border border-red-300 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
                         >
-                          👁️
+                          🗑️ Sil
                         </button>
                       )}
                     </div>
                   </div>
-                  
-                  {/* İşlem Butonları */}
-                  <div className="col-span-2 flex items-center space-x-2">
-                    {/* Kaydet */}
-                    <button
-                      type="button"
-                      onClick={() => saveSingleItem(item)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        item.saved 
-                          ? 'bg-green-600 text-white' 
-                          : 'bg-blue-600 text-white hover:bg-blue-700'
-                      }`}
-                    >
-                      {item.saved ? '✓' : '💾'}
-                    </button>
-                    
-                    {/* Yeni Satır Ekle */}
-                    <button
-                      type="button"
-                      onClick={() => addPurchaseItem(item.id)}
-                      className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-bold"
-                    >
-                      +
-                    </button>
-                    
-                    {/* Sil (ilk satırda yok) */}
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => removePurchaseItem(item.id)}
-                        className="px-3 py-2 bg-red-100 text-red-700 border border-red-300 rounded-lg hover:bg-red-200 transition-colors"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </div>
                 </div>
-                
-                {/* Ek Belge Gösterimi */}
-                {item.attachments.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs text-gray-500">Ekli Belgeler:</span>
-                      {item.attachments.map(att => (
-                        <button
-                          key={att.id}
-                          onClick={() => openPreview(att)}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200"
-                        >
-                          📄 {att.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
 
-          {/* Genel Toplam */}
-          <div className="mt-6 flex justify-between items-center p-4 bg-gray-100 rounded-lg">
-            <div className="text-sm text-gray-600">
-              Toplam Satır: <span className="font-bold">{purchaseItems.length}</span>
-            </div>
-            <div className="text-xl font-bold text-green-600">
-              Genel Toplam: {calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+          {/* GENEL TOPLAM ÖZET */}
+          <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
+            <div className="grid grid-cols-5 gap-4">
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="text-sm text-gray-500">Toplam Satır</div>
+                <div className="text-2xl font-bold text-gray-700">{purchaseItems.length}</div>
+              </div>
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="text-sm text-gray-500">Net Toplam</div>
+                <div className="text-xl font-bold text-gray-700">
+                  {calculateTotals().netTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                </div>
+              </div>
+              <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200">
+                <div className="text-sm text-amber-600">KDV Toplam</div>
+                <div className="text-xl font-bold text-amber-700">
+                  {calculateTotals().vatTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                </div>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="text-sm text-blue-600">Brüt Toplam</div>
+                <div className="text-xl font-bold text-blue-700">
+                  {calculateTotals().grossTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                </div>
+              </div>
+              <div className="text-center p-4 bg-green-100 rounded-lg border border-green-300">
+                <div className="text-sm text-green-600">Genel Toplam (TL)</div>
+                <div className="text-2xl font-bold text-green-700">
+                  {calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1894,15 +1957,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       {previewModal.open && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4">
-            {/* Overlay */}
             <div 
               className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
               onClick={closePreview}
             ></div>
             
-            {/* Modal */}
             <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden z-10">
-              {/* Header */}
               <div className="flex items-center justify-between p-4 border-b">
                 <h3 className="text-lg font-semibold">
                   📄 {previewModal.file?.name}
@@ -1915,7 +1975,6 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 </button>
               </div>
               
-              {/* Content */}
               <div className="p-4 overflow-auto max-h-[70vh]">
                 {previewModal.file?.type === 'application/pdf' ? (
                   <iframe
@@ -1932,7 +1991,6 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 )}
               </div>
               
-              {/* Footer */}
               <div className="flex justify-end p-4 border-t">
                 <button
                   onClick={closePreview}
