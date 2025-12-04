@@ -15626,6 +15626,68 @@ async def get_tenant(tenant_slug: str):
         logger.error(f"Error fetching tenant: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching tenant: {str(e)}")
 
+# Payment Term Profiles endpoints
+@app.get("/api/payment-term-profiles")
+async def get_payment_term_profiles():
+    """Get all active payment term profiles"""
+    try:
+        profiles = await db.payment_term_profiles.find({"isActive": True}, {"_id": 0}).to_list(100)
+        return profiles
+    except Exception as e:
+        logger.error(f"Error fetching payment term profiles: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching payment term profiles: {str(e)}")
+
+@app.post("/api/payment-term-profiles")
+async def create_payment_term_profile(profile: dict):
+    """Create new payment term profile"""
+    try:
+        profile_id = str(uuid4())
+        profile['id'] = profile_id
+        profile['createdAt'] = datetime.now(timezone.utc).isoformat()
+        profile['updatedAt'] = datetime.now(timezone.utc).isoformat()
+        profile['isActive'] = True
+        
+        await db.payment_term_profiles.insert_one(profile)
+        return {"success": True, "id": profile_id}
+    except Exception as e:
+        logger.error(f"Error creating payment term profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating payment term profile: {str(e)}")
+
+@app.put("/api/payment-term-profiles/{profile_id}")
+async def update_payment_term_profile(profile_id: str, profile: dict):
+    """Update payment term profile"""
+    try:
+        profile['updatedAt'] = datetime.now(timezone.utc).isoformat()
+        result = await db.payment_term_profiles.update_one(
+            {"id": profile_id},
+            {"$set": profile}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating payment term profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error updating payment term profile: {str(e)}")
+
+@app.delete("/api/payment-term-profiles/{profile_id}")
+async def delete_payment_term_profile(profile_id: str):
+    """Soft delete payment term profile"""
+    try:
+        result = await db.payment_term_profiles.update_one(
+            {"id": profile_id},
+            {"$set": {"isActive": False, "updatedAt": datetime.now(timezone.utc).isoformat()}}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting payment term profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting payment term profile: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
