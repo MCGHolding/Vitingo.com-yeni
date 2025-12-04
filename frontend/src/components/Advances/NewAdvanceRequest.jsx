@@ -182,6 +182,7 @@ const NewRequest = () => {
       
       const usageResponse = await axios.get(`${API}/advance-usage`);
       setAdvanceUsage(usageResponse.data);
+      console.log('📊 Advance usage data:', usageResponse.data);
     } catch (error) {
       console.error('Error fetching advance data:', error);
     }
