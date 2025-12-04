@@ -15,7 +15,7 @@ const PeopleListPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://advance-manager-1.preview.emergentagent.com';
+                    'https://paymint-1.preview.emergentagent.com';
 
   // Kişileri yükle - useCallback ile memoize et
   const loadPeople = useCallback(async () => {
