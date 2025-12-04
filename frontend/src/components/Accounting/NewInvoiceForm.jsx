@@ -845,6 +845,142 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
+  // Payment Term Profile Functions
+  const loadPaymentTermProfiles = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/payment-term-profiles`);
+      if (response.ok) {
+        const data = await response.json();
+        setPaymentTermProfiles(data);
+        console.log('✅ Payment term profiles loaded:', data.length);
+      }
+    } catch (error) {
+      console.error('Error loading payment term profiles:', error);
+    }
+  };
+
+  const handleProfileSelect = (profileId) => {
+    if (!profileId) {
+      setSelectedProfile(null);
+      setPaymentTerms([{ id: 1, percentage: 100, days: 30, description: 'Vade', dueDate: '' }]);
+      return;
+    }
+    
+    const profile = paymentTermProfiles.find(p => p.id === profileId);
+    if (profile) {
+      setSelectedProfile(profile);
+      setPaymentTerms(profile.terms.map((term, index) => ({
+        id: index + 1,
+        percentage: term.percentage,
+        days: term.days,
+        description: term.description || '',
+        dueDate: calculateDueDate(term.days)
+      })));
+    }
+  };
+
+  const calculateDueDate = (days) => {
+    const date = new Date(formData.date || new Date());
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split('T')[0];
+  };
+
+  const updatePaymentTerm = (id, field, value) => {
+    setPaymentTerms(prev => prev.map(term => {
+      if (term.id === id) {
+        const updated = { ...term, [field]: value };
+        if (field === 'days') {
+          updated.dueDate = calculateDueDate(value);
+        }
+        return updated;
+      }
+      return term;
+    }));
+    setSelectedProfile(null);
+  };
+
+  const addPaymentTerm = () => {
+    const newId = Math.max(...paymentTerms.map(t => t.id)) + 1;
+    const remainingPercentage = Math.max(0, 100 - getTotalPercentage());
+    setPaymentTerms([...paymentTerms, {
+      id: newId,
+      percentage: remainingPercentage,
+      days: 30,
+      description: '',
+      dueDate: calculateDueDate(30)
+    }]);
+    setSelectedProfile(null);
+  };
+
+  const removePaymentTerm = (id) => {
+    setPaymentTerms(prev => prev.filter(term => term.id !== id));
+    setSelectedProfile(null);
+  };
+
+  const getTotalPercentage = () => {
+    return paymentTerms.reduce((sum, term) => sum + (term.percentage || 0), 0);
+  };
+
+  const applyProfile = (profile) => {
+    handleProfileSelect(profile.id);
+    setShowProfileModal(false);
+  };
+
+  const saveCurrentAsProfile = async () => {
+    if (!newProfileName.trim() || getTotalPercentage() !== 100) return;
+    
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const profileData = {
+        name: newProfileName,
+        description: newProfileDescription,
+        terms: paymentTerms.map(t => ({
+          percentage: t.percentage,
+          days: t.days,
+          description: t.description
+        })),
+        isDefault: paymentTermProfiles.length === 0
+      };
+      
+      const response = await fetch(`${backendUrl}/api/payment-term-profiles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData)
+      });
+      
+      if (response.ok) {
+        alert('✅ Profil başarıyla kaydedildi!');
+        setNewProfileName('');
+        setNewProfileDescription('');
+        loadPaymentTermProfiles();
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('❌ Profil kaydedilemedi!');
+    }
+  };
+
+  const deleteProfile = async (profileId) => {
+    if (!confirm('Bu profili silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/payment-term-profiles/${profileId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        loadPaymentTermProfiles();
+        if (selectedProfile?.id === profileId) {
+          setSelectedProfile(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
