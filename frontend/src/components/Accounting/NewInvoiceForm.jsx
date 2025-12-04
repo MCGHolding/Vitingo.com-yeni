@@ -2161,6 +2161,71 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
         </div>
       )}
+
+      {/* Başarı Modal */}
+      {successModal.open && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            {/* Overlay */}
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+              onClick={closeSuccessModal}
+            ></div>
+            
+            {/* Modal */}
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
+              {/* Başarı İkonu */}
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              
+              {/* Başlık */}
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Faturanız Başarıyla İşlendi!
+                </h3>
+                <p className="text-gray-500">
+                  <span className="font-semibold text-green-600">{successModal.documentNo}</span> numaralı belge sisteme kaydedildi.
+                </p>
+              </div>
+              
+              {/* Butonlar */}
+              <div className="space-y-3">
+                <button
+                  onClick={goToPurchaseInvoices}
+                  className="w-full flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  Alış Faturaları Sayfası
+                </button>
+                
+                <button
+                  onClick={addNewPurchaseInvoice}
+                  className="w-full flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Yeni Alış Faturası Ekle
+                </button>
+                
+                <button
+                  onClick={closeSuccessModal}
+                  className="w-full px-6 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
