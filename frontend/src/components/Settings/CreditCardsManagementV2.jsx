@@ -643,6 +643,67 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
           </div>
         </div>
       )}
+
+      {/* Preview Modal - Ultra Admin Only */}
+      {showPreviewModal && previewCard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">🔓 Kart Bilgileri (Şifresiz)</h3>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="text-gray-500 hover:text-gray-700 p-2"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 text-white mb-6">
+              <div className="text-xs opacity-80 mb-1">Kart Numarası (Şifresiz)</div>
+              <div className="text-2xl font-mono tracking-wider mb-6">
+                {previewCard.fullCardNumber || previewCard.cardNumber}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs opacity-80 mb-1">Kart Sahibi</div>
+                  <div className="font-medium">{previewCard.cardHolder || previewCard.cardHolderFullName}</div>
+                </div>
+                <div>
+                  <div className="text-xs opacity-80 mb-1">Son Kullanma</div>
+                  <div className="font-medium">{previewCard.expiryDate}</div>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-white/20">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-xs opacity-80 mb-1">Kart Tipi</div>
+                    <div className="font-medium capitalize">{previewCard.cardType}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs opacity-80 mb-1">CVV</div>
+                    <div className="font-medium">{previewCard.cvv || '***'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <p className="text-xs text-red-500 mb-4 flex items-center justify-center">
+                <span className="mr-2">⚠️</span>
+                Bu bilgiler hassastır. Ekranı paylaşmayın!
+              </p>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
