@@ -621,14 +621,31 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
 
   // Toplam hesaplamaları - VAT included
   const calculateTotals = () => {
-    return purchaseItems.reduce((totals, item) => {
-      return {
-        netTotal: totals.netTotal + item.netAmount,
-        vatTotal: totals.vatTotal + item.vatAmount,
-        grossTotal: totals.grossTotal + item.grossAmount,
-        tryTotal: totals.tryTotal + item.amountTRY
-      };
-    }, { netTotal: 0, vatTotal: 0, grossTotal: 0, tryTotal: 0 });
+    const totals = {
+      netTotalTRY: 0,
+      vatTotalTRY: 0,
+      grossTotalTRY: 0,
+      tryTotal: 0,
+      byCurrency: {}
+    };
+    
+    purchaseItems.forEach(item => {
+      // TL cinsinden toplamlar (TRY karşılığı)
+      totals.netTotalTRY += calculateTRYAmount(item.netAmount, item.currency);
+      totals.vatTotalTRY += calculateTRYAmount(item.vatAmount, item.currency);
+      totals.grossTotalTRY += calculateTRYAmount(item.grossAmount, item.currency);
+      totals.tryTotal += item.amountTRY;
+      
+      // Para birimi bazında toplamlar
+      if (!totals.byCurrency[item.currency]) {
+        totals.byCurrency[item.currency] = { net: 0, vat: 0, gross: 0 };
+      }
+      totals.byCurrency[item.currency].net += item.netAmount;
+      totals.byCurrency[item.currency].vat += item.vatAmount;
+      totals.byCurrency[item.currency].gross += item.grossAmount;
+    });
+    
+    return totals;
   };
 
   // Tek satır kaydet - WITH VAT
