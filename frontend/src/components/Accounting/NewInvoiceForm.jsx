@@ -441,6 +441,110 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
+  // ===== PURCHASE INVOICE HELPER FUNCTIONS =====
+  
+  // Yeni satır ekle (Alış Faturaları)
+  const addPurchaseItem = () => {
+    const newId = Math.max(...purchaseItems.map(i => i.id)) + 1;
+    setPurchaseItems([...purchaseItems, {
+      id: newId,
+      documentNo: '',
+      date: new Date().toISOString().split('T')[0],
+      supplierId: '',
+      supplierName: '',
+      description: '',
+      quantity: 0,
+      unit: 'Adet',
+      price: 0,
+      currency: 'TRY',
+      amount: 0,
+      amountTRY: 0
+    }]);
+  };
+
+  // Satır güncelle
+  const updatePurchaseItem = (id, field, value) => {
+    setPurchaseItems(purchaseItems.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    ));
+  };
+
+  // Satır sil
+  const removePurchaseItem = (id) => {
+    if (purchaseItems.length > 1) {
+      setPurchaseItems(purchaseItems.filter(item => item.id !== id));
+    }
+  };
+
+  // TL'ye çevir (basit kur - sonra API'den gelecek)
+  const calculateTRYAmount = (amount, currency) => {
+    const rates = {
+      TRY: 1,
+      USD: 34.50,
+      EUR: 37.20,
+      GBP: 43.80
+    };
+    return amount * (rates[currency] || 1);
+  };
+
+  // Toplam TL hesapla
+  const calculateTotalTRY = () => {
+    return purchaseItems.reduce((total, item) => {
+      return total + calculateTRYAmount(item.quantity * item.price, item.currency);
+    }, 0);
+  };
+
+  // Kaydet (Alış Faturaları)
+  const savePurchaseInvoices = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      const data = {
+        type: 'purchase',
+        documentType: documentType,
+        items: purchaseItems.map(item => ({
+          ...item,
+          amount: item.quantity * item.price,
+          amountTRY: calculateTRYAmount(item.quantity * item.price, item.currency)
+        })),
+        totalTRY: calculateTotalTRY()
+      };
+      
+      console.log('Saving purchase invoices:', data);
+      
+      // API call buraya gelecek
+      // const response = await fetch(`${backendUrl}/api/purchase-invoices`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(data)
+      // });
+      
+      alert(`${purchaseItems.length} adet ${documentType} başarıyla kaydedildi!`);
+      
+      // Reset form
+      setPurchaseItems([{
+        id: 1,
+        documentNo: '',
+        date: new Date().toISOString().split('T')[0],
+        supplierId: '',
+        supplierName: '',
+        description: '',
+        quantity: 0,
+        unit: 'Adet',
+        price: 0,
+        currency: 'TRY',
+        amount: 0,
+        amountTRY: 0
+      }]);
+      
+    } catch (error) {
+      console.error('Error saving:', error);
+      alert('Kayıt sırasında hata oluştu!');
+    }
+  };
+
+  // ===== END PURCHASE INVOICE HELPERS =====
+
   const handleAddNewCustomer = () => {
     console.log('Yeni müşteri ekleme sayfasına yönlendiriliyor...');
     // Form verilerini localStorage'da sakla (kullanıcı geri döndüğünde kaldığı yerden devam etsin)
