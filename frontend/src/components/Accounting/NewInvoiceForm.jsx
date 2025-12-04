@@ -2616,7 +2616,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                               {profile.isDefault && <span className="ml-2 text-yellow-500">⭐</span>}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {profile.terms?.map(t => `%${t.percentage} - ${t.days} gün`).join(' | ')}
+                              {(profile.terms || profile.paymentTerms)?.map(t => `%${t.percentage} - ${t.dueDays || t.days || 0} gün`).join(' | ')}
                             </p>
                           </div>
                           <div className="flex items-center space-x-2">
