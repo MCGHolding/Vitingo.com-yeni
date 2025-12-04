@@ -632,8 +632,44 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
             </div>
           </div>
 
-          {/* Currency, Date and Customer Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Invoice Type, Currency, Date and Customer Selection */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Invoice Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <FileText className="inline h-4 w-4 mr-1" />
+                Fatura Tipi *
+              </label>
+              <Select 
+                value={formData.invoiceType} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, invoiceType: value }))}
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Seçiniz..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="satis">
+                    <div className="flex items-center space-x-2">
+                      <span>📄</span>
+                      <span>Satış Faturası</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="iade">
+                    <div className="flex items-center space-x-2">
+                      <span>↩️</span>
+                      <span>İade Faturası</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="proforma">
+                    <div className="flex items-center space-x-2">
+                      <span>📋</span>
+                      <span>Proforma Fatura</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Currency */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
