@@ -216,11 +216,15 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
       return;
     }
 
-    const cleanCardNumber = formData.cardNumber.replace(/\D/g, '');
-    if (cleanCardNumber.length !== 16) {
-      alert('❌ Kart numarası 16 haneli olmalıdır!');
+    // Luhn validation
+    const validation = validateCardNumber(formData.cardNumber);
+    if (!validation.valid) {
+      alert('❌ ' + validation.message);
+      setCardNumberError(validation.message);
       return;
     }
+
+    const cleanCardNumber = formData.cardNumber.replace(/\D/g, '');
 
     if (!formData.expiryDate.trim() || formData.expiryDate.length !== 5) {
       alert('❌ Son kullanma tarihi MM/YY formatında olmalıdır!');
