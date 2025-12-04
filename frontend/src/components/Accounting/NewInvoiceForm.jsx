@@ -726,7 +726,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           )
         );
         
-        alert('✅ Fatura başarıyla kaydedildi!');
+        // ALERT YERİNE MODAL AÇ
+        setSuccessModal({
+          open: true,
+          documentNo: item.documentNo
+        });
       } else {
         const errorText = await response.text();
         console.error('❌ API Error:', errorText);
