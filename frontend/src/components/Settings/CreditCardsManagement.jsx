@@ -1,0 +1,385 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, CreditCard, Eye, EyeOff } from 'lucide-react';
+
+const CreditCardsManagement = ({ onBackToDashboard }) => {
+  const [cards, setCards] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState(null);
+  const [formData, setFormData] = useState({
+    cardName: '',
+    cardNumber: '',
+    expiryDate: '',
+    cardType: 'visa',
+    bank: '',
+    limit: '',
+    isActive: true
+  });
+  const [showCardNumbers, setShowCardNumbers] = useState({});
+
+  const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  const loadCards = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/credit-cards`);
+      if (response.ok) {
+        const data = await response.json();
+        setCards(Array.isArray(data) ? data : []);
+      }
+    } catch (error) {
+      console.error('Error loading cards:', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const url = editingCard 
+        ? `${backendUrl}/api/credit-cards/${editingCard._id || editingCard.id}`
+        : `${backendUrl}/api/credit-cards`;
+      
+      const method = editingCard ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        loadCards();
+        closeModal();
+        alert(editingCard ? '✅ Kart güncellendi!' : '✅ Kart eklendi!');
+      }
+    } catch (error) {
+      console.error('Error saving card:', error);
+      alert('❌ Kayıt hatası!');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Bu kartı silmek istediğinizden emin misiniz?')) return;
+    
+    try {
+      const response = await fetch(`${backendUrl}/api/credit-cards/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        loadCards();
+        alert('✅ Kart silindi!');
+      }
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      alert('❌ Silme hatası!');
+    }
+  };
+
+  const openModal = (card = null) => {
+    if (card) {
+      setEditingCard(card);
+      setFormData({
+        cardName: card.cardName || '',
+        cardNumber: card.cardNumber || '',
+        expiryDate: card.expiryDate || '',
+        cardType: card.cardType || 'visa',
+        bank: card.bank || '',
+        limit: card.limit || '',
+        isActive: card.isActive !== false
+      });
+    } else {
+      setEditingCard(null);
+      setFormData({
+        cardName: '',
+        cardNumber: '',
+        expiryDate: '',
+        cardType: 'visa',
+        bank: '',
+        limit: '',
+        isActive: true
+      });
+    }
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingCard(null);
+  };
+
+  const toggleCardVisibility = (cardId) => {
+    setShowCardNumbers(prev => ({ ...prev, [cardId]: !prev[cardId] }));
+  };
+
+  const maskCardNumber = (number) => {
+    if (!number) return '****';
+    const last4 = number.slice(-4);
+    return `**** **** **** ${last4}`;
+  };
+
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <button onClick={onBackToDashboard} className="mr-4 p-2 hover:bg-gray-100 rounded-lg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Kredi Kartları</h1>
+            <p className="text-sm text-gray-500 mt-1">Şirket kredi kartlarını yönetin</p>
+          </div>
+        </div>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Yeni Kart Ekle
+        </button>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map(card => (
+          <div
+            key={card._id || card.id}
+            className={`bg-gradient-to-br ${
+              card.cardType === 'visa' ? 'from-blue-500 to-blue-700' :
+              card.cardType === 'mastercard' ? 'from-orange-500 to-red-600' :
+              card.cardType === 'amex' ? 'from-green-500 to-teal-600' :
+              'from-gray-500 to-gray-700'
+            } text-white rounded-xl p-6 shadow-lg relative`}
+          >
+            {/* Card Type Logo */}
+            <div className="flex items-center justify-between mb-8">
+              <CreditCard className="w-10 h-10" />
+              <span className="text-xs font-semibold uppercase tracking-wider">
+                {card.cardType || 'Card'}
+              </span>
+            </div>
+
+            {/* Card Number */}
+            <div className="mb-4">
+              <button
+                onClick={() => toggleCardVisibility(card._id || card.id)}
+                className="flex items-center text-sm text-white/80 hover:text-white mb-2"
+              >
+                {showCardNumbers[card._id || card.id] ? (
+                  <>
+                    <EyeOff className="w-4 h-4 mr-1" />
+                    Gizle
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 mr-1" />
+                    Göster
+                  </>
+                )}
+              </button>
+              <div className="text-xl font-mono tracking-wider">
+                {showCardNumbers[card._id || card.id] 
+                  ? card.cardNumber 
+                  : maskCardNumber(card.cardNumber)
+                }
+              </div>
+            </div>
+
+            {/* Card Details */}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs text-white/70 mb-1">Kart Adı</div>
+                <div className="font-medium">{card.cardName}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-white/70 mb-1">Son Kullanma</div>
+                <div className="font-medium">{card.expiryDate || '--/--'}</div>
+              </div>
+            </div>
+
+            {/* Bank */}
+            {card.bank && (
+              <div className="mt-3 text-sm text-white/80">
+                🏦 {card.bank}
+              </div>
+            )}
+
+            {/* Limit */}
+            {card.limit && (
+              <div className="mt-2 text-sm text-white/90">
+                Limit: {parseFloat(card.limit).toLocaleString('tr-TR')} TL
+              </div>
+            )}
+
+            {/* Status Badge */}
+            <div className="absolute top-4 right-4">
+              <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                card.isActive === false ? 'bg-red-500' : 'bg-green-500'
+              }`}>
+                {card.isActive === false ? 'Pasif' : 'Aktif'}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center space-x-2 mt-6 pt-4 border-t border-white/20">
+              <button
+                onClick={() => openModal(card)}
+                className="flex-1 flex items-center justify-center px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+              >
+                <Edit2 className="w-4 h-4 mr-1" />
+                Düzenle
+              </button>
+              <button
+                onClick={() => handleDelete(card._id || card.id)}
+                className="flex-1 flex items-center justify-center px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Sil
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {cards.length === 0 && (
+          <div className="col-span-full text-center py-12">
+            <CreditCard className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+            <p className="text-gray-500">Henüz kredi kartı eklenmemiş</p>
+            <button
+              onClick={() => openModal()}
+              className="mt-4 text-blue-600 hover:text-blue-700"
+            >
+              İlk kartı ekle
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeModal}></div>
+            
+            <div className="relative bg-white rounded-xl shadow-2xl max-w-md w-full p-6 z-10">
+              <h2 className="text-xl font-bold mb-4">
+                {editingCard ? 'Kart Düzenle' : 'Yeni Kart Ekle'}
+              </h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kart Adı *</label>
+                  <input
+                    type="text"
+                    value={formData.cardName}
+                    onChange={(e) => setFormData({...formData, cardName: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Örn: Şirket Kartı"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kart Numarası *</label>
+                  <input
+                    type="text"
+                    value={formData.cardNumber}
+                    onChange={(e) => setFormData({...formData, cardNumber: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="1234 5678 9012 3456"
+                    maxLength="19"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Son Kullanma *</label>
+                    <input
+                      type="text"
+                      value={formData.expiryDate}
+                      onChange={(e) => setFormData({...formData, expiryDate: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="MM/YY"
+                      maxLength="5"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Kart Tipi</label>
+                    <select
+                      value={formData.cardType}
+                      onChange={(e) => setFormData({...formData, cardType: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="visa">Visa</option>
+                      <option value="mastercard">Mastercard</option>
+                      <option value="amex">American Express</option>
+                      <option value="other">Diğer</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banka</label>
+                  <input
+                    type="text"
+                    value={formData.bank}
+                    onChange={(e) => setFormData({...formData, bank: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Örn: Ziraat Bankası"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kart Limiti (TL)</label>
+                  <input
+                    type="number"
+                    value={formData.limit}
+                    onChange={(e) => setFormData({...formData, limit: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="50000"
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label className="ml-2 text-sm text-gray-700">Aktif</label>
+                </div>
+
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    İptal
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingCard ? 'Güncelle' : 'Kaydet'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CreditCardsManagement;
