@@ -108,6 +108,16 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const [creditCards, setCreditCards] = useState([]);
   const [previewModal, setPreviewModal] = useState({ open: false, file: null });
   const [successModal, setSuccessModal] = useState({ open: false, documentNo: '' });
+  
+  // Payment Term Profile States
+  const [paymentTermProfiles, setPaymentTermProfiles] = useState([]);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [paymentTerms, setPaymentTerms] = useState([
+    { id: 1, percentage: 100, days: 30, description: 'Vade', dueDate: '' }
+  ]);
+  const [newProfileName, setNewProfileName] = useState('');
+  const [newProfileDescription, setNewProfileDescription] = useState('');
 
   // Debug log - Check data availability
   console.log('📊 NewInvoiceForm data status:', {
