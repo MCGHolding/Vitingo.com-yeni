@@ -1959,9 +1959,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                       <button
                         type="button"
                         onClick={() => saveSingleItem(item)}
+                        disabled={item.saved}
                         className={`flex items-center px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                           item.saved 
-                            ? 'bg-green-600 text-white' 
+                            ? 'bg-green-500 text-white cursor-not-allowed opacity-75' 
                             : 'bg-blue-600 text-white hover:bg-blue-700'
                         }`}
                       >
