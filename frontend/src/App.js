@@ -696,12 +696,28 @@ const Dashboard = () => {
   };
 
   // Avans handlers
+  const handleNewAdvance = () => {
+    navigate(`/${tenantSlug}/avanslar/yeni`);
+  };
+
+  const handleApprovedAdvances = () => {
+    navigate(`/${tenantSlug}/avanslar/onaylilar`);
+  };
+
   const handleFinansOnayi = () => {
-    setCurrentView('finans-onayi');
+    navigate(`/${tenantSlug}/avanslar/finans-onayi`);
+  };
+
+  const handleAdvanceClosing = () => {
+    navigate(`/${tenantSlug}/avanslar/kapama`);
   };
 
   const handleKapanmisAvanslar = () => {
-    setCurrentView('kapanmis-avanslar');
+    navigate(`/${tenantSlug}/avanslar/kapanmis`);
+  };
+
+  const handleCurrentAccount = () => {
+    navigate(`/${tenantSlug}/avanslar/cari-hesap`);
   };
 
   // User Management Handlers
