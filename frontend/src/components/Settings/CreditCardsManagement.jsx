@@ -161,24 +161,29 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
   const openModal = (card = null) => {
     if (card) {
       setEditingCard(card);
+      const [firstName, ...lastNameParts] = (card.cardHolderFullName || '').split(' ');
       setFormData({
-        cardName: card.cardName || '',
+        cardCategory: card.cardCategory || 'corporate',
+        cardHolderFirstName: firstName || '',
+        cardHolderLastName: lastNameParts.join(' ') || '',
+        companyId: card.companyId || '',
         cardNumber: card.cardNumber || '',
         expiryDate: card.expiryDate || '',
         cardType: card.cardType || 'visa',
         bank: card.bank || '',
-        limit: card.limit || '',
         isActive: card.isActive !== false
       });
     } else {
       setEditingCard(null);
       setFormData({
-        cardName: '',
+        cardCategory: 'corporate',
+        cardHolderFirstName: '',
+        cardHolderLastName: '',
+        companyId: '',
         cardNumber: '',
         expiryDate: '',
         cardType: 'visa',
         bank: '',
-        limit: '',
         isActive: true
       });
     }
