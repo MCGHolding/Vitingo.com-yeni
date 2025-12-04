@@ -15596,6 +15596,36 @@ app.include_router(advances_router.router, prefix="/api", tags=["advances"])
 app.include_router(credit_cards_router.router, prefix="/api", tags=["credit-cards"])
 app.include_router(purchase_invoices_router.router, prefix="/api", tags=["purchase-invoices"])
 
+# Tenant endpoint
+@app.get("/api/tenants/{tenant_slug}")
+async def get_tenant(tenant_slug: str):
+    """Get tenant information by slug"""
+    try:
+        # Fetch tenant from MongoDB
+        tenant = await db.tenants.find_one({"slug": tenant_slug}, {"_id": 0})
+        
+        # If tenant doesn't exist, create a default one
+        if not tenant:
+            tenant = {
+                "id": f"tenant_{tenant_slug}",
+                "slug": tenant_slug,
+                "name": tenant_slug.replace("-", " ").title(),
+                "logo": None,
+                "settings": {
+                    "currency": "TRY",
+                    "language": "tr",
+                    "timezone": "Europe/Istanbul"
+                },
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            # Insert to database
+            await db.tenants.insert_one(tenant.copy())
+        
+        return tenant
+    except Exception as e:
+        logger.error(f"Error fetching tenant: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching tenant: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
