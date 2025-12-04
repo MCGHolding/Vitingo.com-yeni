@@ -298,6 +298,101 @@ async def get_advances():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Avans listesi getirme hatası: {str(e)}")
 
+@router.get("/documents/advances/{advance_id}")
+async def get_advance_by_id(advance_id: str):
+    """Get single advance by ID"""
+    try:
+        advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+        
+        if not advance:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        return {
+            "success": True,
+            "advance": advance
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Avans getirme hatası: {str(e)}")
+
+@router.put("/documents/advances/{advance_id}")
+async def update_advance(advance_id: str, advance_data: Dict[str, Any]):
+    """Update advance (status, amount, etc.)"""
+    try:
+        # Prepare update data
+        update_data = {
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        # Optional fields to update
+        if "status" in advance_data:
+            update_data["status"] = advance_data["status"]
+        if "amount" in advance_data:
+            update_data["amount"] = float(advance_data["amount"])
+        if "currency" in advance_data:
+            update_data["currency"] = advance_data["currency"]
+        if "category_id" in advance_data:
+            update_data["category_id"] = advance_data["category_id"]
+        if "category_name" in advance_data:
+            update_data["category_name"] = advance_data["category_name"]
+        if "project_id" in advance_data:
+            update_data["project_id"] = advance_data["project_id"]
+        if "project_name" in advance_data:
+            update_data["project_name"] = advance_data["project_name"]
+        if "closure_days" in advance_data:
+            update_data["closure_days"] = int(advance_data["closure_days"])
+        if "reason" in advance_data:
+            update_data["reason"] = advance_data["reason"]
+        if "rejection_reason" in advance_data:
+            update_data["rejection_reason"] = advance_data["rejection_reason"]
+        if "approved_at" in advance_data:
+            update_data["approved_at"] = advance_data["approved_at"]
+        if "paid_at" in advance_data:
+            update_data["paid_at"] = advance_data["paid_at"]
+        if "closed_at" in advance_data:
+            update_data["closed_at"] = advance_data["closed_at"]
+        
+        # Update in MongoDB
+        result = await db.advances.update_one(
+            {"id": advance_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        # Get updated advance
+        updated_advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+        
+        return {
+            "success": True,
+            "message": "Avans başarıyla güncellendi",
+            "advance": updated_advance
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Avans güncelleme hatası: {str(e)}")
+
+@router.delete("/documents/advances/{advance_id}")
+async def delete_advance(advance_id: str):
+    """Delete advance"""
+    try:
+        result = await db.advances.delete_one({"id": advance_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Avans bulunamadı")
+        
+        return {
+            "success": True,
+            "message": "Avans başarıyla silindi"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Avans silme hatası: {str(e)}")
+
 @router.get("/currency-settings")
 async def get_currency_settings():
     """Get user currency settings"""
