@@ -100,14 +100,31 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
   const handleCardNumberChange = (e) => {
     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
     
-    // Limit to 16 digits
-    if (value.length > 16) {
-      value = value.slice(0, 16);
+    // Limit to 19 digits (some cards can be longer)
+    if (value.length > 19) {
+      value = value.slice(0, 19);
     }
     
     // Add spaces every 4 digits
     const formatted = value.match(/.{1,4}/g)?.join(' ') || value;
     setFormData({ ...formData, cardNumber: formatted });
+    
+    // Clear error when user types
+    if (cardNumberError) {
+      setCardNumberError('');
+    }
+  };
+
+  // Validate card number on blur
+  const handleCardNumberBlur = () => {
+    if (formData.cardNumber.trim()) {
+      const validation = validateCardNumber(formData.cardNumber);
+      if (!validation.valid) {
+        setCardNumberError(validation.message);
+      } else {
+        setCardNumberError('');
+      }
+    }
   };
 
   // Auto-format expiry date: MM/YY
