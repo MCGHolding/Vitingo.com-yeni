@@ -53,6 +53,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
 
   const [formData, setFormData] = useState({
     invoiceNumber: '',
+    invoiceType: '', // Fatura tipi: satis, iade, proforma
     currency: 'USD',
     date: new Date().toISOString().split('T')[0],
     customerId: '', // Selected customer ID
