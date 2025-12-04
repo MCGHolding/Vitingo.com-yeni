@@ -253,7 +253,6 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
       companyName: activeTab === 'corporate' && formData.companyId 
         ? companies.find(c => c.id === formData.companyId)?.name || '' 
         : null,
-      spendingLimit: formData.spendingLimit ? parseFloat(formData.spendingLimit) : null,
       isActive: true
     };
 
