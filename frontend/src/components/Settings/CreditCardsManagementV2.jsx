@@ -470,6 +470,15 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center space-x-2 mt-6 pt-4 border-t border-white/20">
+                  {isUltraAdmin && (
+                    <button
+                      onClick={() => handlePreviewCard(card)}
+                      className="flex items-center justify-center px-3 py-2 bg-purple-500/30 hover:bg-purple-500/50 rounded-lg transition-colors"
+                      title="Ön İzleme (Tam Bilgi)"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  )}
                   <button
                     onClick={() => openModal(card)}
                     className="flex-1 flex items-center justify-center px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
