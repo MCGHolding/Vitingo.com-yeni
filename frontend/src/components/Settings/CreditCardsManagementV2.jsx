@@ -622,26 +622,6 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
                   </div>
                 </div>
 
-                {/* Spending Limit (Corporate Only) */}
-                {activeTab === 'corporate' && (
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Harcama Limiti (Opsiyonel)
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-3 text-gray-500">₺</span>
-                      <input
-                        type="number"
-                        value={formData.spendingLimit}
-                        onChange={(e) => setFormData({ ...formData, spendingLimit: e.target.value })}
-                        className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="50000"
-                        step="0.01"
-                      />
-                    </div>
-                  </div>
-                )}
-
                 {/* Action Buttons */}
                 <div className="flex space-x-3 pt-4">
                   <button
