@@ -430,6 +430,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     });
     console.log('Current totals:', totals);
     
+    // Validate invoice type selection
+    if (!formData.invoiceType) {
+      alert('Lütfen fatura tipini seçiniz');
+      return;
+    }
+    
     // Validate that we have selected a customer
     if (!formData.customerId) {
       alert('Lütfen bir müşteri seçiniz');
