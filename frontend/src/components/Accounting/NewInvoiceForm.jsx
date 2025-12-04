@@ -576,8 +576,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         
         // Tedarikçi seçildiğinde adını da kaydet
         if (field === 'supplierId') {
-          const supplier = suppliers.find(s => s.id === value || s._id === value);
-          updated.supplierName = supplier?.name || supplier?.companyName || '';
+          const supplier = suppliers.find(s => (s.id === value || s._id === value));
+          updated.supplierName = supplier?.company_title || supplier?.company_short_name || supplier?.companyName || supplier?.name || '';
         }
         
         // Miktar, fiyat, KDV veya para birimi değiştiğinde yeniden hesapla
