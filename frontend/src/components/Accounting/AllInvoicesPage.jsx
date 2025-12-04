@@ -113,6 +113,27 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     return amount * (rates[currency] || 1);
   };
 
+  const calculateOverdueDays = (invoice) => {
+    if (invoice.status === 'paid') return 0;
+    
+    // Vade tarihi = Fatura tarihi + Ödeme vadesi (varsayılan 30 gün)
+    const invoiceDate = new Date(invoice.date);
+    const paymentTerm = invoice.payment_term || invoice.paymentTerm || 30; // gün cinsinden
+    const dueDate = new Date(invoiceDate);
+    dueDate.setDate(dueDate.getDate() + paymentTerm);
+    
+    // Bugünün tarihi
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    dueDate.setHours(0, 0, 0, 0);
+    
+    // Vade geçmiş gün sayısı
+    const diffTime = today - dueDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays > 0 ? diffDays : 0;
+  };
+
   const getCurrencySymbol = (currencyCode) => {
     const currency = currencies.find(c => c.code === currencyCode);
     return currency ? currency.symbol : '';
