@@ -234,8 +234,261 @@ const CreditCardsManagement = ({ onBackToDashboard }) => {
         </div>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Section Headers */}
+      {cardTypeFilter === 'all' && (
+        <>
+          {filteredCards.filter(c => c.cardCategory === 'corporate').length > 0 && (
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Kurumsal Kartlar</h2>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {filteredCards.filter(card => card.cardCategory === 'corporate').map(card => (
+              <CardItem key={card._id || card.id} card={card} />
+            ))}
+          </div>
+          
+          {filteredCards.filter(c => c.cardCategory === 'personal').length > 0 && (
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Bireysel Kartlar</h2>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCards.filter(card => card.cardCategory === 'personal').map(card => (
+              <CardItem key={card._id || card.id} card={card} />
+            ))}
+          </div>
+        </>
+      )}
+      
+      {cardTypeFilter !== 'all' && (
+        <>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            {cardTypeFilter === 'corporate' ? 'Kurumsal Kartlar' : 'Bireysel Kartlar'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCards.map(card => (
+              <CardItem key={card._id || card.id} card={card} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {filteredCards.length === 0 && (
+        <div className="col-span-full text-center py-12">
+          <CreditCard className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+          <p className="text-gray-500">
+            {cardTypeFilter === 'all' ? 'Henüz kredi kartı eklenmemiş' :
+             cardTypeFilter === 'corporate' ? 'Henüz kurumsal kart eklenmemiş' :
+             'Henüz bireysel kart eklenmemiş'}
+          </p>
+          <button
+            onClick={() => openModal()}
+            className="mt-4 text-blue-600 hover:text-blue-700"
+          >
+            İlk kartı ekle
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  // Card Item Component
+  const CardItem = ({ card }) => (
+    <div
+      className={`bg-gradient-to-br ${
+        card.cardType === 'visa' ? 'from-blue-500 to-blue-700' :
+        card.cardType === 'mastercard' ? 'from-orange-500 to-red-600' :
+        card.cardType === 'amex' ? 'from-green-500 to-teal-600' :
+        'from-gray-500 to-gray-700'
+      } text-white rounded-xl p-6 shadow-lg relative`}
+    >
+      {/* Card Type Badge */}
+      <div className="absolute top-4 left-4">
+        <span className="px-2 py-1 text-xs font-medium rounded-full bg-white/20">
+          {card.cardCategory === 'corporate' ? '🏢 Kurumsal' : '👤 Bireysel'}
+        </span>
+      </div>
+
+      {/* Card Type Logo */}
+      <div className="flex items-center justify-end mb-8">
+        <span className="text-xs font-semibold uppercase tracking-wider">
+          {card.cardType || 'Card'}
+        </span>
+      </div>
+
+      {/* Card Number */}
+      <div className="mb-4">
+        <button
+          onClick={() => toggleCardVisibility(card._id || card.id)}
+          className="flex items-center text-sm text-white/80 hover:text-white mb-2"
+        >
+          {showCardNumbers[card._id || card.id] ? (
+            <>
+              <EyeOff className="w-4 h-4 mr-1" />
+              Gizle
+            </>
+          ) : (
+            <>
+              <Eye className="w-4 h-4 mr-1" />
+              Göster
+            </>
+          )}
+        </button>
+        <div className="text-xl font-mono tracking-wider">
+          {showCardNumbers[card._id || card.id] 
+            ? formatCardNumber(card.cardNumber || '')
+            : maskCardNumber(card.cardNumber)
+          }
+        </div>
+      </div>
+
+      {/* Card Holder */}
+      <div className="mb-3">
+        <div className="text-xs text-white/70 mb-1">Kart Sahibi</div>
+        <div className="font-medium">{card.cardHolderFullName || 'İsimsiz'}</div>
+      </div>
+
+      {/* Company (if corporate) */}
+      {card.cardCategory === 'corporate' && card.companyName && (
+        <div className="mb-3 text-sm text-white/80">
+          🏢 {card.companyName}
+        </div>
+      )}
+
+      {/* Expiry & Bank */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-xs text-white/70 mb-1">Son Kullanma</div>
+          <div className="font-medium">{card.expiryDate || '--/--'}</div>
+        </div>
+        <div className="text-right">
+          <div className="text-xs text-white/70 mb-1">Banka</div>
+          <div className="font-medium text-sm">{card.bank || '-'}</div>
+        </div>
+      </div>
+
+      {/* Status Badge */}
+      <div className="absolute top-4 right-4">
+        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+          card.isActive === false ? 'bg-red-500' : 'bg-green-500'
+        }`}>
+          {card.isActive === false ? 'Pasif' : 'Aktif'}
+        </span>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center space-x-2 mt-6 pt-4 border-t border-white/20">
+        <button
+          onClick={() => openModal(card)}
+          className="flex-1 flex items-center justify-center px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+        >
+          <Edit2 className="w-4 h-4 mr-1" />
+          Düzenle
+        </button>
+        <button
+          onClick={() => handleDelete(card._id || card.id)}
+          className="flex-1 flex items-center justify-center px-3 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors"
+        >
+          <Trash2 className="w-4 h-4 mr-1" />
+          Sil
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="p-6">
+      {/* Header - moved above */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <button onClick={onBackToDashboard} className="mr-4 p-2 hover:bg-gray-100 rounded-lg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Kredi Kartları</h1>
+            <p className="text-sm text-gray-500 mt-1">Şirket kredi kartlarını yönetin</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <select
+            value={cardTypeFilter}
+            onChange={(e) => setCardTypeFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Tüm Kartlar</option>
+            <option value="corporate">Kurumsal Kartlar</option>
+            <option value="personal">Bireysel Kartlar</option>
+          </select>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Yeni Kart Ekle
+          </button>
+        </div>
+      </div>
+
+      {/* Content Grid Sections */}
+      <div>
+      {cardTypeFilter === 'all' && (
+        <>
+          {filteredCards.filter(c => c.cardCategory === 'corporate').length > 0 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Kurumsal Kartlar</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {filteredCards.filter(card => card.cardCategory === 'corporate').map(card => (
+                  <CardItem key={card._id || card.id} card={card} />
+                ))}
+              </div>
+            </>
+          )}
+          
+          {filteredCards.filter(c => c.cardCategory === 'personal').length > 0 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Bireysel Kartlar</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredCards.filter(card => card.cardCategory === 'personal').map(card => (
+                  <CardItem key={card._id || card.id} card={card} />
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
+      
+      {cardTypeFilter !== 'all' && (
+        <>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            {cardTypeFilter === 'corporate' ? 'Kurumsal Kartlar' : 'Bireysel Kartlar'}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCards.map(card => (
+              <CardItem key={card._id || card.id} card={card} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {filteredCards.length === 0 && (
+        <div className="text-center py-12">
+          <CreditCard className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+          <p className="text-gray-500">
+            {cardTypeFilter === 'all' ? 'Henüz kredi kartı eklenmemiş' :
+             cardTypeFilter === 'corporate' ? 'Henüz kurumsal kart eklenmemiş' :
+             'Henüz bireysel kart eklenmemiş'}
+          </p>
+          <button
+            onClick={() => openModal()}
+            className="mt-4 text-blue-600 hover:text-blue-700"
+          >
+            İlk kartı ekle
+          </button>
+        </div>
+      )}
+      </div>
+
+      {/* OLD CARDS GRID - REMOVING */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{display: 'none'}}>
         {cards.map(card => (
           <div
             key={card._id || card.id}
