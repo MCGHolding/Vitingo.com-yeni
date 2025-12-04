@@ -357,17 +357,22 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     setOpenDropdownId(openDropdownId === invoiceId ? null : invoiceId);
   };
 
+  const toggleMenu = (id) => {
+    setOpenMenu(openMenu === id ? null : id);
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setOpenDropdownId(null);
+      setOpenMenu(null);
     };
     
-    if (openDropdownId) {
+    if (openDropdownId || openMenu) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [openDropdownId]);
+  }, [openDropdownId, openMenu]);
 
   // Calculate totals and statistics
   const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + (invoice.total || invoice.amount || 0), 0);
