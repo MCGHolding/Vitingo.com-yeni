@@ -263,16 +263,18 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
 
   // Import & Export Fonksiyonları
   const downloadSampleFile = () => {
-    const sampleData = `Fatura No,Müşteri,Tarih,Açıklama,Miktar,Birim,Birim Fiyat,Para Birimi,KDV Oranı,Durum
-FT-2024-001,ABC Şirketi,01.12.2024,Stand montaj hizmeti,1,Adet,5000,TRY,20,Ödenmedi
-FT-2024-002,XYZ Ltd.,02.12.2024,Fuar malzemeleri,10,Kutu,250,USD,20,Ödenmiş
-FT-2024-003,Demo Firması,03.12.2024,Tasarım hizmeti,5,Saat,150,EUR,20,Ödenmedi`;
+    const sampleData = `Fatura No,Fatura Tipi,Müşteri Adı,Müşteri Vergi No,Müşteri Adresi,Müşteri Telefon,Müşteri Email,Fatura Tarihi,Vade Günü,Vade Tarihi,Para Birimi,Ürün/Hizmet 1,Miktar 1,Birim 1,Birim Fiyat 1,İskonto 1,KDV Oranı 1,Ürün/Hizmet 2,Miktar 2,Birim 2,Birim Fiyat 2,İskonto 2,KDV Oranı 2,Ürün/Hizmet 3,Miktar 3,Birim 3,Birim Fiyat 3,İskonto 3,KDV Oranı 3,Genel İskonto,İskonto Türü,Ödeme Yöntemi,Banka,Notlar,Durum
+FT-2024-001,Satış Faturası,ABC Teknoloji A.Ş.,1234567890,Maslak Mahallesi No:123 Sarıyer/İstanbul,0212 123 4567,info@abcteknoloji.com,01.12.2024,30,31.12.2024,TRY,Web Sitesi Tasarımı,1,Proje,25000,0,20,Hosting Hizmeti,12,Ay,500,0,20,Domain Kaydı,1,Adet,150,0,20,0,percentage,Havale/EFT,İş Bankası - 1234,Proje 3 ay içinde teslim edilecektir,Ödenmedi
+FT-2024-002,Satış Faturası,XYZ Danışmanlık Ltd.,9876543210,Kadıköy Mahallesi No:456 Kadıköy/İstanbul,0216 987 6543,iletisim@xyzdanismanlik.com,02.12.2024,15,17.12.2024,USD,Danışmanlık Hizmeti,40,Saat,150,10,20,Raporlama,1,Paket,2000,0,20,,,,,,,5,percentage,Kredi Kartı,Garanti Bankası,Aylık raporlama yapılacaktır,Ödenmiş
+FT-2024-003,Satış Faturası,Demo Ajans,5555555555,Beşiktaş Mahallesi No:789 Beşiktaş/İstanbul,0212 555 5555,hello@demoajans.com,03.12.2024,45,17.01.2025,EUR,Sosyal Medya Yönetimi,3,Ay,1500,0,20,Grafik Tasarım,10,Adet,100,15,20,Video Prodüksiyon,2,Adet,800,0,20,0,fixed,Havale/EFT,Ziraat Bankası,3 aylık paket başlamıştır,Ödenmedi
+FT-2024-004,Satış Faturası,E-Ticaret Merkezi A.Ş.,1111222233,Levent Mahallesi No:321 Beşiktaş/İstanbul,0212 111 2222,destek@eticaret.com,04.12.2024,30,03.01.2025,TRY,E-Ticaret Platformu,1,Lisans,45000,0,20,Entegrasyon Hizmeti,1,Paket,8000,0,20,Eğitim,5,Gün,1000,0,20,2000,fixed,Havale/EFT,Yapı Kredi - 5678,Kurulum 2 hafta içinde tamamlanacak,Ödenmedi
+FT-2024-005,Proforma Fatura,Yeni Müşteri Ltd.,7777888899,Şişli Mahallesi No:999 Şişli/İstanbul,0212 777 8888,info@yenimusteri.com,05.12.2024,60,03.02.2025,TRY,Mobil Uygulama Geliştirme,1,Proje,85000,0,20,UI/UX Tasarım,1,Paket,12000,5,20,App Store Yayınlama,1,Hizmet,3000,0,20,0,percentage,Havale/EFT,Akbank - 9999,6 aylık geliştirme süreci,Ödenmedi`;
 
     const BOM = '\uFEFF';
     const blob = new Blob([BOM + sampleData], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'fatura_import_ornegi.csv';
+    link.download = 'fatura_import_ornegi_detayli.csv';
     link.click();
   };
 
