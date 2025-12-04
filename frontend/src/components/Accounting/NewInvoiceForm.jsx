@@ -1943,11 +1943,29 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
                           >
                             <option value="">Hesap Seçin...</option>
-                            {bankAccounts.map(bank => (
-                              <option key={bank._id || bank.id} value={bank._id || bank.id}>
-                                🏦 {bank.bankName || bank.name} {bank.accountName ? `- ${bank.accountName}` : ''} {bank.iban ? `(${bank.iban.slice(-4)})` : ''}
-                              </option>
-                            ))}
+                            {bankAccounts.map(bank => {
+                              // Tüm olası field kombinasyonlarını dene
+                              const id = bank._id || bank.id || bank.bankId;
+                              const bankName = bank.bankName || bank.bank_name || bank.name || bank.title || '';
+                              const accountName = bank.accountName || bank.account_name || bank.hesapAdi || '';
+                              const iban = bank.iban || bank.IBAN || '';
+                              const accountNo = bank.accountNo || bank.account_no || bank.hesapNo || '';
+                              
+                              // Display text oluştur
+                              let displayText = bankName;
+                              if (accountName) displayText += ` - ${accountName}`;
+                              if (iban) displayText += ` (****${iban.slice(-4)})`;
+                              else if (accountNo) displayText += ` (${accountNo.slice(-4)})`;
+                              
+                              // Eğer hiçbir isim yoksa ID'yi göster
+                              if (!displayText.trim()) displayText = `Banka #${id}`;
+                              
+                              return (
+                                <option key={id} value={id}>
+                                  🏦 {displayText}
+                                </option>
+                              );
+                            })}
                           </select>
                           {bankAccounts.length === 0 && (
                             <p className="text-xs text-red-500 mt-1">⚠️ Banka hesabı bulunamadı.</p>
@@ -1964,12 +1982,36 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
                           >
                             <option value="">Kart Seçin...</option>
-                            {creditCards.map(card => (
-                              <option key={card._id || card.id} value={card._id || card.id}>
-                                💳 {card.cardName || card.name} {card.lastFourDigits ? `(**** ${card.lastFourDigits})` : ''}
-                              </option>
-                            ))}
+                            {creditCards.map(card => {
+                              // Tüm olası field kombinasyonlarını dene
+                              const id = card._id || card.id || card.cardId;
+                              const cardHolderFullName = card.cardHolderFullName || card.cardHolder || card.card_holder || card.holderName || '';
+                              const cardNumber = card.cardNumber || card.card_number || ''; // masked olmalı
+                              const lastFour = cardNumber.slice(-4) || card.lastFourDigits || card.last_four || '';
+                              const cardType = card.cardType || card.card_type || card.type || '';
+                              const bank = card.bank || '';
+                              
+                              // Display text oluştur
+                              let displayText = '';
+                              if (cardHolderFullName) displayText = cardHolderFullName;
+                              else if (bank) displayText = bank;
+                              else if (cardType) displayText = cardType;
+                              
+                              if (lastFour) displayText += ` (**** ${lastFour})`;
+                              
+                              // Eğer hiçbir isim yoksa ID'yi göster
+                              if (!displayText.trim()) displayText = `Kart #${id}`;
+                              
+                              return (
+                                <option key={id} value={id}>
+                                  💳 {displayText}
+                                </option>
+                              );
+                            })}
                           </select>
+                          {creditCards.length === 0 && (
+                            <p className="text-xs text-red-500 mt-1">⚠️ Kredi kartı bulunamadı.</p>
+                          )}
                         </div>
                       )}
                     </div>
