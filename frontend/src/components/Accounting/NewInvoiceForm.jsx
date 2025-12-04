@@ -69,6 +69,29 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     isDraft: false // Taslak fatura checkbox durumu
   });
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState('satis'); // 'satis' veya 'alis'
+  
+  // Purchase invoice state (Alış Faturaları)
+  const [documentType, setDocumentType] = useState('fatura'); // 'fatura' veya 'fis'
+  const [purchaseItems, setPurchaseItems] = useState([
+    {
+      id: 1,
+      documentNo: '',
+      date: new Date().toISOString().split('T')[0],
+      supplierId: '',
+      supplierName: '',
+      description: '',
+      quantity: 0,
+      unit: 'Adet',
+      price: 0,
+      currency: 'TRY',
+      amount: 0,
+      amountTRY: 0
+    }
+  ]);
+  const [suppliers, setSuppliers] = useState([]);
+
   // Customer and Products state
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
