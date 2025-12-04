@@ -261,6 +261,184 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     setShowDeleteModal(true);
   };
 
+  // Import & Export Fonksiyonları
+  const downloadSampleFile = () => {
+    const sampleData = `Fatura No,Müşteri,Tarih,Açıklama,Miktar,Birim,Birim Fiyat,Para Birimi,KDV Oranı,Durum
+FT-2024-001,ABC Şirketi,01.12.2024,Stand montaj hizmeti,1,Adet,5000,TRY,20,Ödenmedi
+FT-2024-002,XYZ Ltd.,02.12.2024,Fuar malzemeleri,10,Kutu,250,USD,20,Ödenmiş
+FT-2024-003,Demo Firması,03.12.2024,Tasarım hizmeti,5,Saat,150,EUR,20,Ödenmedi`;
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + sampleData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'fatura_import_ornegi.csv';
+    link.click();
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Dosya boyutu 10MB\'dan büyük olamaz!');
+        return;
+      }
+      setImportFile(file);
+      setImportStatus('idle');
+      setImportResults(null);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) return;
+    
+    setImportStatus('uploading');
+    setImportProgress(0);
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', importFile);
+      
+      const progressInterval = setInterval(() => {
+        setImportProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 200);
+      
+      setImportStatus('processing');
+      
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices/import`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      clearInterval(progressInterval);
+      setImportProgress(100);
+      
+      if (response.ok) {
+        const result = await response.json();
+        setImportStatus('success');
+        setImportResults({
+          success: true,
+          total: result.total || 0,
+          success: result.imported || 0,
+          failed: result.failed || 0
+        });
+        
+        setTimeout(() => {
+          loadInvoices();
+        }, 1500);
+      } else {
+        throw new Error('Import başarısız');
+      }
+    } catch (error) {
+      console.error('Import error:', error);
+      setImportStatus('error');
+      setImportProgress(100);
+      setImportResults({
+        success: false,
+        total: 0,
+        success: 0,
+        failed: 1,
+        error: error.message
+      });
+    }
+  };
+
+  const exportAsCSV = () => {
+    const headers = ['No', 'Fatura No', 'Müşteri', 'Tarih', 'Tutar', 'Para Birimi', 'Tutar (TL)', 'Durum'];
+    
+    const rows = filteredInvoices.map((inv, index) => [
+      index + 1,
+      inv.invoice_number || '',
+      inv.customer_name || '',
+      new Date(inv.date).toLocaleDateString('tr-TR'),
+      inv.total || 0,
+      inv.currency || 'TRY',
+      calculateTRYAmount(inv.total || 0, inv.currency),
+      inv.status === 'paid' ? 'Ödenmiş' : 'Ödenmemiş'
+    ]);
+    
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+    
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `satis_faturalari_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
+  const exportAsExcel = async () => {
+    exportAsCSV();
+  };
+
+  const exportAsPDF = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/invoices/export/pdf`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceIds: filteredInvoices.map(i => i.id) })
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `satis_faturalari_${new Date().toISOString().split('T')[0]}.pdf`;
+        link.click();
+      } else {
+        alert('PDF export şu anda kullanılamıyor. CSV olarak indiriliyor...');
+        exportAsCSV();
+      }
+    } catch (error) {
+      console.error('PDF export error:', error);
+      alert('PDF export şu anda kullanılamıyor. CSV olarak indiriliyor...');
+      exportAsCSV();
+    }
+  };
+
+  const handleExport = async () => {
+    setExportProgress(10);
+    
+    try {
+      const progressInterval = setInterval(() => {
+        setExportProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + 20;
+        });
+      }, 200);
+      
+      if (exportFormat === 'csv') {
+        await exportAsCSV();
+      } else if (exportFormat === 'xlsx') {
+        await exportAsExcel();
+      } else if (exportFormat === 'pdf') {
+        await exportAsPDF();
+      }
+      
+      clearInterval(progressInterval);
+      setExportProgress(100);
+      
+      setTimeout(() => {
+        setExportProgress(0);
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Export sırasında hata oluştu!');
+      setExportProgress(0);
+    }
+  };
+
   const downloadInvoicePDF = async (invoice) => {
     try {
       console.log('PDF indirme başlatılıyor:', invoice.id);
