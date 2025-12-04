@@ -612,7 +612,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }, { netTotal: 0, vatTotal: 0, grossTotal: 0, tryTotal: 0 });
   };
 
-  // Tek satır kaydet - NEW FUNCTION
+  // Tek satır kaydet - WITH VAT
   const saveSingleItem = async (item) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
@@ -629,8 +629,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         unit: item.unit,
         price: item.price,
         currency: item.currency,
-        amount: item.quantity * item.price,
-        amountTRY: calculateTRYAmount(item.quantity * item.price, item.currency),
+        vatRate: item.vatRate,
+        netAmount: item.netAmount,
+        vatAmount: item.vatAmount,
+        grossAmount: item.grossAmount,
+        amountTRY: item.amountTRY,
         paymentStatus: item.paymentStatus,
         paymentMethod: item.paymentMethod,
         bankAccountId: item.bankAccountId,
