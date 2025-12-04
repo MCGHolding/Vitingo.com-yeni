@@ -107,6 +107,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [creditCards, setCreditCards] = useState([]);
   const [previewModal, setPreviewModal] = useState({ open: false, file: null });
+  const [successModal, setSuccessModal] = useState({ open: false, documentNo: '' });
 
   // Debug log - Check data availability
   console.log('📊 NewInvoiceForm data status:', {
