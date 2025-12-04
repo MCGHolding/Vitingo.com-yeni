@@ -1660,174 +1660,45 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 )}
               </div>
 
-              {/* VADE YÖNETİMİ - PROFESYONEL MODÜL */}
+              {/* VADE YÖNETİMİ - Proje Modülü ile Aynı */}
               <div className="col-span-2">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      Vade Koşulları
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Ödeme Koşulları</h3>
                     <button
                       type="button"
                       onClick={() => setShowProfileModal(true)}
-                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                      className="text-sm text-blue-600 hover:text-blue-800"
                     >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      Profil Yönetimi
+                      Profil Oluştur
                     </button>
                   </div>
 
                   {/* Profil Seçimi */}
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Vade Profili</label>
-                    <div className="flex space-x-2">
-                      <select
-                        value={selectedProfile?.id || ''}
-                        onChange={(e) => handleProfileSelect(e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="">Manuel Vade Girişi</option>
-                        {paymentTermProfiles.map(profile => (
-                          <option key={profile.id} value={profile.id}>
-                            {profile.name} {profile.isDefault && '⭐'}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => setShowProfileModal(true)}
-                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                        title="Yeni Profil Oluştur"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Vade Satırları */}
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 uppercase px-2">
-                      <div className="col-span-1">#</div>
-                      <div className="col-span-2">Oran (%)</div>
-                      <div className="col-span-2">Gün</div>
-                      <div className="col-span-3">Vade Tarihi</div>
-                      <div className="col-span-3">Açıklama</div>
-                      <div className="col-span-1"></div>
-                    </div>
-                    
-                    {paymentTerms.map((term, index) => (
-                      <div key={term.id} className="grid grid-cols-12 gap-2 items-center bg-gray-50 rounded-lg p-2">
-                        {/* Sıra */}
-                        <div className="col-span-1">
-                          <span className="w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full text-xs font-bold">
-                            {index + 1}
-                          </span>
-                        </div>
-                        
-                        {/* Oran */}
-                        <div className="col-span-2">
-                          <div className="flex items-center">
-                            <input
-                              type="number"
-                              value={term.percentage}
-                              onChange={(e) => updatePaymentTerm(term.id, 'percentage', parseFloat(e.target.value) || 0)}
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                              min="0"
-                              max="100"
-                            />
-                            <span className="ml-1 text-gray-500">%</span>
-                          </div>
-                        </div>
-                        
-                        {/* Gün */}
-                        <div className="col-span-2">
-                          <div className="flex items-center">
-                            <input
-                              type="number"
-                              value={term.days}
-                              onChange={(e) => updatePaymentTerm(term.id, 'days', parseInt(e.target.value) || 0)}
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                              min="0"
-                            />
-                            <span className="ml-1 text-gray-500 text-xs">gün</span>
-                          </div>
-                        </div>
-                        
-                        {/* Vade Tarihi */}
-                        <div className="col-span-3">
-                          <input
-                            type="date"
-                            value={term.dueDate || calculateDueDate(term.days)}
-                            onChange={(e) => updatePaymentTerm(term.id, 'dueDate', e.target.value)}
-                            className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                        
-                        {/* Açıklama */}
-                        <div className="col-span-3">
-                          <input
-                            type="text"
-                            value={term.description}
-                            onChange={(e) => updatePaymentTerm(term.id, 'description', e.target.value)}
-                            className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
-                            placeholder="Açıklama..."
-                          />
-                        </div>
-                        
-                        {/* Sil */}
-                        <div className="col-span-1">
-                          {paymentTerms.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => removePaymentTerm(term.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {/* Yeni Vade Ekle */}
-                    <button
-                      type="button"
-                      onClick={addPaymentTerm}
-                      className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors flex items-center justify-center"
+                    <select
+                      value={selectedProfile?.id || ''}
+                      onChange={(e) => handleProfileSelect(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
-                      <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      Yeni Vade Ekle
-                    </button>
+                      <option value="">Manuel Vade Girişi</option>
+                      {paymentTermProfiles.map(profile => (
+                        <option key={profile.id} value={profile.id}>
+                          {profile.name} {profile.isDefault && '⭐'}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Toplam Kontrol */}
-                  <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Toplam Oran:</span>
-                      <span className={`font-bold ${
-                        getTotalPercentage() === 100 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        %{getTotalPercentage()}
-                        {getTotalPercentage() !== 100 && (
-                          <span className="text-xs ml-2">
-                            ({getTotalPercentage() < 100 ? `${100 - getTotalPercentage()}% eksik` : `${getTotalPercentage() - 100}% fazla`})
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  </div>
+                  {/* PaymentTermsBuilder Component */}
+                  <PaymentTermsBuilder
+                    paymentTerms={paymentTerms}
+                    onChange={setPaymentTerms}
+                    contractAmount={totals?.total || 0}
+                    hideAmounts={false}
+                    contractDate={formData.date}
+                  />
                 </div>
               </div>
             </div>
