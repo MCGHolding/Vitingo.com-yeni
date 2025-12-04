@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, CreditCard, X, Building2, User } from 'lucide-react';
+import { Plus, Edit2, Trash2, CreditCard, X, Building2, User, Eye } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('corporate'); // 'corporate' or 'personal'
   const [cards, setCards] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -12,11 +14,16 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
     cardNumber: '',
     expiryDate: '',
     bank: '',
-    companyId: '',
-    spendingLimit: ''
+    companyId: ''
   });
+  const [cardNumberError, setCardNumberError] = useState('');
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewCard, setPreviewCard] = useState(null);
 
   const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+  
+  // Check if user is ultra admin (super-admin or admin)
+  const isUltraAdmin = user?.role === 'super-admin' || user?.role === 'admin';
 
   useEffect(() => {
     loadCards();
