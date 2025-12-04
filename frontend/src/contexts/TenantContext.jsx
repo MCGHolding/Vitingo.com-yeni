@@ -19,24 +19,16 @@ export const TenantProvider = ({ children }) => {
 
       try {
         setLoading(true);
-        // TODO: Backend'den tenant bilgisi çek
-        // const response = await fetch(`/api/tenants/${tenantSlug}`);
-        // const data = await response.json();
+        // Fetch tenant from backend
+        const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/tenants/${tenantSlug}`);
         
-        // Mock tenant data - şimdilik sabit, sonra API'den gelecek
-        const mockTenant = {
-          id: 'tenant_001',
-          slug: 'quattro-stand',
-          name: 'Quattro Stand',
-          logo: null,
-          settings: {
-            currency: 'TRY',
-            language: 'tr',
-            timezone: 'Europe/Istanbul'
-          }
-        };
+        if (!response.ok) {
+          throw new Error(`Tenant fetch failed: ${response.status}`);
+        }
         
-        setTenant(mockTenant);
+        const data = await response.json();
+        setTenant(data);
         setError(null);
       } catch (err) {
         console.error('Tenant load error:', err);
