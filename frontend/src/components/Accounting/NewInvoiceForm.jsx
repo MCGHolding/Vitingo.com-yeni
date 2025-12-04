@@ -1663,7 +1663,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                         <option value="">Tedarikçi Seçin...</option>
                         {suppliers.map(s => (
                           <option key={s._id || s.id} value={s._id || s.id}>
-                            {s.companyName || s.name || s.title || 'İsimsiz Tedarikçi'}
+                            {s.company_title || s.company_short_name || s.companyName || s.name || s.title || 'İsimsiz Tedarikçi'}
                           </option>
                         ))}
                       </select>
