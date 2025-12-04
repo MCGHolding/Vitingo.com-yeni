@@ -650,6 +650,13 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
 
   // Tek satır kaydet - WITH VAT
   const saveSingleItem = async (item) => {
+    // Backend URL'i al
+    const backendUrl = (window.runtimeConfig && window.runtimeConfig.REACT_APP_BACKEND_URL) || 
+                       process.env.REACT_APP_BACKEND_URL;
+    
+    console.log('🔍 Backend URL:', backendUrl);
+    console.log('📦 Saving item:', item);
+    
     try {
       // Validations
       if (!item.supplierId) {
@@ -664,8 +671,6 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         alert('❌ Miktar ve fiyat sıfırdan büyük olmalı!');
         return;
       }
-      
-      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
       const data = {
         documentType: item.documentType,
@@ -684,31 +689,43 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         grossAmount: item.grossAmount,
         amountTRY: item.amountTRY,
         paymentStatus: item.paymentStatus,
-        paymentMethod: item.paymentMethod,
-        bankAccountId: item.bankAccountId,
-        creditCardId: item.creditCardId,
-        attachments: item.attachments
+        paymentMethod: item.paymentMethod || '',
+        bankAccountId: item.bankAccountId || '',
+        creditCardId: item.creditCardId || '',
+        attachments: item.attachments || []
       };
       
-      console.log('💾 Saving purchase invoice:', data);
+      console.log('📤 Sending to API:', data);
       
       const response = await fetch(`${backendUrl}/api/purchase-invoices`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(data)
       });
       
+      console.log('📥 Response status:', response.status);
+      
       if (response.ok) {
         const result = await response.json();
-        console.log('✅ Saved:', result);
+        console.log('✅ Saved successfully:', result);
         
-        // Mark row as saved
-        updatePurchaseItem(item.id, 'saved', true);
+        // Satırı kaydedildi olarak işaretle - DOĞRU GÜNCELLEME
+        setPurchaseItems(prevItems => 
+          prevItems.map(i => 
+            i.id === item.id 
+              ? { ...i, saved: true, dbId: result.id } 
+              : i
+          )
+        );
         
         alert('✅ Fatura başarıyla kaydedildi!');
       } else {
-        const error = await response.json();
-        throw new Error(error.detail || 'Kayıt hatası');
+        const errorText = await response.text();
+        console.error('❌ API Error:', errorText);
+        throw new Error(errorText || 'Kayıt hatası');
       }
     } catch (error) {
       console.error('❌ Save error:', error);
