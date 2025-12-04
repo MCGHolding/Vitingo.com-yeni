@@ -1917,6 +1917,31 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                     </div>
                   </div>
                   
+                  {/* DEBUG - Geçici */}
+                  {process.env.NODE_ENV === 'development' && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+                      <p className="font-bold mb-1">🔍 Debug Info:</p>
+                      <p>Bankalar: {bankAccounts.length} adet</p>
+                      <p>Kartlar: {creditCards.length} adet</p>
+                      {bankAccounts.length > 0 && (
+                        <details className="mt-2">
+                          <summary className="cursor-pointer font-semibold">İlk Banka</summary>
+                          <pre className="mt-1 text-xs bg-white p-2 rounded overflow-auto">
+                            {JSON.stringify(bankAccounts[0], null, 2)}
+                          </pre>
+                        </details>
+                      )}
+                      {creditCards.length > 0 && (
+                        <details className="mt-2">
+                          <summary className="cursor-pointer font-semibold">İlk Kart</summary>
+                          <pre className="mt-1 text-xs bg-white p-2 rounded overflow-auto">
+                            {JSON.stringify(creditCards[0], null, 2)}
+                          </pre>
+                        </details>
+                      )}
+                    </div>
+                  )}
+                  
                   {/* ÖDEME YÖNTEMİ (Ödendi ise) */}
                   {item.paymentStatus === 'odendi' && (
                     <div className="grid grid-cols-3 gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
