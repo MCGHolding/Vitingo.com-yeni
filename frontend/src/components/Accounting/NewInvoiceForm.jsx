@@ -277,10 +277,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       
-      // Load customers and products in parallel
-      const [customersResponse, productsResponse] = await Promise.all([
+      // Load customers, products, and suppliers in parallel
+      const [customersResponse, productsResponse, suppliersResponse] = await Promise.all([
         fetch(`${backendUrl}/api/customers`),
-        fetch(`${backendUrl}/api/products`)
+        fetch(`${backendUrl}/api/products`),
+        fetch(`${backendUrl}/api/suppliers`).catch(() => ({ ok: false })) // Graceful fallback if suppliers endpoint doesn't exist yet
       ]);
       
       if (customersResponse.ok) {
@@ -295,6 +296,20 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       if (productsResponse.ok) {
         const productData = await productsResponse.json();
         setProducts(productData);
+      }
+      
+      if (suppliersResponse.ok) {
+        const supplierData = await suppliersResponse.json();
+        console.log('Suppliers loaded:', supplierData.length);
+        setSuppliers(supplierData);
+      } else {
+        console.log('Suppliers endpoint not available yet, using mock data');
+        // Mock supplier data for now
+        setSuppliers([
+          { id: '1', name: 'Tedarikçi A' },
+          { id: '2', name: 'Tedarikçi B' },
+          { id: '3', name: 'Tedarikçi C' }
+        ]);
       }
       
     } catch (error) {
