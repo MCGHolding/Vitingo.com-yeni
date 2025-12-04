@@ -25,7 +25,7 @@ const CustomerListPage = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://paymint-1.preview.emergentagent.com';
+                    'https://accrue-tenant.preview.emergentagent.com';
 
   // Müşterileri yükle
   const loadCustomers = async () => {
