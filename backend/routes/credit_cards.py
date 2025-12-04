@@ -421,3 +421,46 @@ async def delete_credit_card(card_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Kart silme hatası: {str(e)}")
+
+
+@router.get("/credit-cards/{card_id}/decrypt")
+async def decrypt_credit_card(card_id: str, x_user_role: str = None):
+    """Decrypt and return full card details - Only for ultra admin"""
+    try:
+        # Get role from header (frontend sends this)
+        from fastapi import Header
+        
+        # Only allow super-admin and admin roles
+        allowed_roles = ['super-admin', 'admin']
+        if not x_user_role or x_user_role not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Yetkisiz erişim - Bu işlem sadece yöneticiler tarafından yapılabilir")
+        
+        # Find card
+        card = await db.credit_cards.find_one({"id": card_id}, {"_id": 0})
+        if not card:
+            raise HTTPException(status_code=404, detail="Kart bulunamadı")
+        
+        # Decrypt card number
+        try:
+            decrypted_number = decrypt_card_number(card.get("encrypted_card_number", ""))
+            
+            # Format the decrypted number with spaces (4-digit groups)
+            formatted_number = ' '.join([decrypted_number[i:i+4] for i in range(0, len(decrypted_number), 4)])
+            
+            return {
+                "cardHolder": card.get("cardHolderFullName", ""),
+                "cardHolderFullName": card.get("cardHolderFullName", ""),
+                "fullCardNumber": formatted_number,
+                "expiryDate": card.get("expiryDate", ""),
+                "cardType": card.get("cardType", ""),
+                "cvv": "***",  # CVV is never stored or shown
+                "bank": card.get("bank", ""),
+                "cardCategory": card.get("cardCategory", "")
+            }
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Kart şifresi çözülemedi: {str(e)}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Hata: {str(e)}")
