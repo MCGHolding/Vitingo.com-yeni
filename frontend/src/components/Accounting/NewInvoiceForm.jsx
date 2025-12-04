@@ -310,52 +310,62 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         setProducts(productData);
       }
       
+      console.log('🔍 Loading suppliers from:', `${backendUrl}/api/suppliers`);
       if (suppliersResponse.ok) {
         const supplierData = await suppliersResponse.json();
-        console.log('✅ Suppliers loaded:', supplierData.length);
-        setSuppliers(supplierData);
+        console.log('✅ Suppliers loaded:', supplierData);
+        console.log('📊 Suppliers count:', Array.isArray(supplierData) ? supplierData.length : 'Not an array');
+        setSuppliers(Array.isArray(supplierData) ? supplierData : []);
       } else {
-        console.log('Suppliers endpoint not available yet, using mock data');
+        console.error('❌ Suppliers API error:', suppliersResponse.status, suppliersResponse.statusText);
         // Mock supplier data for now
         setSuppliers([
-          { id: '1', name: 'Tedarikçi A' },
-          { id: '2', name: 'Tedarikçi B' },
-          { id: '3', name: 'Tedarikçi C' }
+          { id: '1', _id: '1', name: 'Tedarikçi A', companyName: 'Tedarikçi A' },
+          { id: '2', _id: '2', name: 'Tedarikçi B', companyName: 'Tedarikçi B' },
+          { id: '3', _id: '3', name: 'Tedarikçi C', companyName: 'Tedarikçi C' }
         ]);
       }
       
       // Load bank accounts for purchase invoices
       try {
+        console.log('🔍 Loading banks from:', `${backendUrl}/api/banks`);
         const banksResponse = await fetch(`${backendUrl}/api/banks`);
         if (banksResponse.ok) {
           const banksData = await banksResponse.json();
-          console.log('✅ Banks loaded:', banksData.length);
-          setBankAccounts(banksData);
+          console.log('✅ Banks loaded:', banksData);
+          console.log('📊 Banks count:', Array.isArray(banksData) ? banksData.length : 'Not an array');
+          setBankAccounts(Array.isArray(banksData) ? banksData : []);
+        } else {
+          console.error('❌ Banks API error:', banksResponse.status, banksResponse.statusText);
+          setBankAccounts([]);
         }
       } catch (error) {
-        console.log('Banks endpoint not available, using empty array');
+        console.error('❌ Banks endpoint error:', error);
         setBankAccounts([]);
       }
       
       // Load credit cards
       try {
+        console.log('🔍 Loading credit cards from:', `${backendUrl}/api/credit-cards`);
         const cardsResponse = await fetch(`${backendUrl}/api/credit-cards`);
         if (cardsResponse.ok) {
           const cardsData = await cardsResponse.json();
-          console.log('✅ Credit cards loaded:', cardsData.length);
-          setCreditCards(cardsData);
+          console.log('✅ Credit cards loaded:', cardsData);
+          console.log('📊 Credit cards count:', Array.isArray(cardsData) ? cardsData.length : 'Not an array');
+          setCreditCards(Array.isArray(cardsData) ? cardsData : []);
         } else {
+          console.log('⚠️ Credit cards API not found, using mock data');
           // Mock credit cards if endpoint doesn't exist
           setCreditCards([
-            { id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
-            { id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
+            { id: 'cc1', _id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
+            { id: 'cc2', _id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
           ]);
         }
       } catch (error) {
-        console.log('Credit cards endpoint not available, using mock data');
+        console.log('⚠️ Credit cards endpoint error, using mock data:', error);
         setCreditCards([
-          { id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
-          { id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
+          { id: 'cc1', _id: 'cc1', name: 'Şirket Kredi Kartı - **** 1234' },
+          { id: 'cc2', _id: 'cc2', name: 'Kurumsal Kart - **** 5678' }
         ]);
       }
       
