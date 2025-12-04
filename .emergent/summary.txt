@@ -1,0 +1,133 @@
+<analysis>**original_problem_statement:**
+The user's primary goal was to perform a major architectural refactor of the frontend, replacing a state-based navigation system with a new, robust Enterprise Multi-Tenant URL Routing architecture. After successfully completing this migration, the user requested the integration of a new Advances (Avanslar) module from a separate private GitHub repository (). The current work focuses on building out this new module, including its various pages, settings, and backend logic, to match the functionality and appearance specified by the user through a series of screenshots.
+
+PRODUCT REQUIREMENTS:
+- Integrate the Advances module from the  repository.
+- Re-create all necessary pages for the module within the new tenant-based routing system (e.g., list, new request, settings).
+- Ensure all UI elements and functionalities (forms, tabs, dialogs) match the user's provided screenshots.
+- Implement a backend for the new module with real database persistence (MongoDB) for all CRUD operations.
+- Make the UI interactive and data-driven, reflecting data from the backend settings (e.g., advance rules, limits, usage rights).
+
+**User's preferred language**: Turkish
+
+**what currently exists?**
+The application has successfully undergone a major frontend refactor to a URL-based, multi-tenant routing system, with the old state-based navigation now fully decommissioned. The default tenant is .
+
+Work is heavily focused on the new Advances (Avanslar) module, which has been partially integrated from an external repository. Several key components are now in place and partially functional:
+-   **New Advance Request Form** (): The form UI has been built, and it dynamically displays an eligibility card with user limits (e.g., max open advances, total amount) fetched from the backend.
+-   **Advance Management Settings** (): A settings page with two functional tabs:
+    -   **Advance Rules Tab:** Allows configuration of advance parameters (e.g., duration, yearly usage limits). These settings are saved to MongoDB and correctly reflected on the New Advance Request form.
+    -   **Advance Categories Tab:** Provides full CRUD functionality for managing advance categories, with all operations persisting to the MongoDB database.
+-   **Backend Support:** Placeholder backend API endpoints in  are being progressively replaced with real MongoDB logic.
+
+**Last working item**:
+-   Last item agent was working: The user has requested to add two key pieces of functionality to the New Advance Request form, based on provided screenshots:
+    1.  When a user clicks a closure date button (e.g., 30 Gün, 60 Gün), a confirmation dialog should appear, showing them their remaining usage rights for that advance type for the year.
+    2.  An option for the user to select a custom closure date should be added.
+-   Status: **NOT STARTED**
+-   Agent Testing Done: N
+-   Which testing method agent to use? **screenshot tool**. The agent should take screenshots to verify: 1) the confirmation dialogs appear correctly with the right data, and 2) the new custom date input is visible and functional.
+-   User Testing Done: N
+
+**All Pending/In progress Issue list**:
+-   There are no outstanding blocking issues.
+
+**In progress Task List**:
+-   **Task 1: Implement Advance Usage Logic and Custom Date Picker (P0)**
+
+**Task Detail:**
+-   **Task 1:**
+    -   **Where to resume:** The agent needs to implement the new features for the New Advance Request form as requested by the user.
+    -   **What will be achieved with this?** The form will become fully interactive regarding date selection. It will prevent users from selecting advance types for which they have no remaining rights and provide them with the flexibility to choose a custom date.
+    -   **Next Steps:**
+        1.  **Backend:** Modify the  endpoint in  to also return the user's current usage counts for medium (30-day) and extended (60-day) advances for the year (e.g., , ).
+        2.  **Frontend ():**
+            -   Fetch the new usage data from the backend.
+            -   Implement the confirmation dialog (e.g., using a modal from ) that triggers when the 30-day or 60-day buttons are clicked. This dialog should display the fetched usage data.
+            -   Add a new date picker input field below the existing date buttons for Özel tarih seçin (Select custom date).
+            -   Ensure the logic correctly handles user confirmation from the dialog and updates the form state.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Blocked on something:** None.
+
+**Upcoming and Future Tasks**
+-   **(P1) Finalize Advances Module Backend:** The backend for the Advances module was built progressively. A full review is needed to ensure all CRUD operations for all parts of the module (Rules, Categories, and especially the Advance Requests themselves) are fully implemented, validated, and connected to the database.
+-   **(P2) Implement Full Advances Module Sidebar Navigation:** Ensure all sub-menu items for the Avanslar section in the sidebar navigate to the correct pages (e.g., Finans Onayı, Kapanmış Avanslar).
+-   **(P3) Decommission Old System Code:** While the old routing *logic* was removed, a full audit and cleanup of unused components and files from the old state-based system is needed to reduce code debt.
+-   **(P4) Implement Backend Tenant Fetching:** In , replace the mock tenant data with a real API call to a  endpoint.
+-   **(P5) Add Missing Modules:** Add the Sales Reports and Reports modules, which were identified as missing during the migration.
+-   **(P6) Implement Query Parameters:** Add support for URL query parameters for filtering, sorting, and pagination across all list pages (e.g., ).
+
+**Completed work in this session**
+-   **Architectural Refactor Finalized:** The old state-based routing system was completely removed, and the application now exclusively uses the new tenant-based URL system (). All navigation and login logic were updated accordingly.
+-   **People Page Bug Fixed:** Resolved an infinite loop on the People list page and re-enabled the refresh functionality.
+-   **Advances Module Integration:** Ported the Advances module from a private repository. This involved:
+    -   Copying and adapting dozens of components and utilities.
+    -   Resolving dependency and import path issues ( vs. , UI component paths).
+    -   Fixing common API URL errors by ensuring all calls use the local proxy ().
+-   **Advances Module Features Implemented:**
+    -   **New Advance Request Form:** Successfully built the complex form, including a dynamic eligibility card that shows the user's current advance limits based on backend rules.
+    -   **Advance Management Settings:**
+        -   **Advance Categories:** Implemented full CRUD functionality, connected to a real MongoDB collection.
+        -   **Advance Rules:** Implemented the UI to configure rules (like yearly limits) and connected it to the database, ensuring these rules are reflected in the New Advance form.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Module Integration from External Repo:** The core activity involved porting a module from a separate private repository. This required extensive debugging of dependencies, import paths, and environment-specific API configurations.
+-   **Progressive Backend Implementation:** The agent successfully used a strategy of creating placeholder backend endpoints to unblock frontend work, then iteratively replacing them with real MongoDB-backed logic based on user feedback.
+-   **Data-Driven UI:** Key UI elements, like the eligibility card on the advance form and the display of remaining usage rights, are dynamically rendered based on data fetched from the backend, creating an interactive user experience.
+
+**key DB schema**
+-   **:** 
+-   **:** 
+-   **:** (Implicitly used) Stores individual advance requests, used for eligibility checks.
+
+**changes in tech stack**
+-   **** was installed to provide UI notifications.
+
+**All files of reference**
+-   : The main form for creating a new advance request.
+-   : The settings page hosting the rules and categories tabs.
+-   : Component for managing advance rules.
+-   : Component for managing advance categories.
+-   : The new backend file containing all API endpoints for the Advances module.
+-   : The main routing file.
+-   : The application's sidebar.
+
+**Critical Info for New Agent**
+-   **The Advances module is the central focus.** It was ported from an external repository and is being built out feature by feature. Assume all new tasks will relate to this module.
+-   **User provides exact visual requirements via screenshots.** You must match the UI and functionality precisely to the user's images.
+-   **Backend work is required.** The backend is being built iteratively. Most new frontend features will require corresponding changes or additions to the backend in .
+-   **Watch for API URL issues.** The agent frequently had to fix components that were calling incorrect API endpoints. Ensure all new API calls are relative (e.g., ) to work with the local development proxy.
+-   The immediate task is to implement confirmation dialogs and a custom date picker on the New Advance Request form, which will require both frontend and backend modifications.
+
+**Last 10 User Messages and any pending user messages**
+-   **User:** The New Advance Request form is completely un-clickable. Here is what it should look like. (COMPLETED)
+-   **User:** Add an Advance Management page under Settings. (COMPLETED)
+-   **User:** Activate the Advance Categories tab on that page. (COMPLETED)
+-   **User:** The add/edit/delete buttons don't actually save anything. (COMPLETED - Real backend was implemented).
+-   **User:** The Yearly Rights in settings should be reflected on the New Advance form. (COMPLETED)
+-   **User:** The eligibility card (showing open advances/limits) is missing from the top of the New Advance form. (COMPLETED)
+-   **User:** There's a mismatch between the rights shown in settings and on the form's date buttons. (COMPLETED)
+-   **User:** (PENDING) Implement these functions: show a confirmation dialog with remaining rights when clicking date buttons, and allow for custom date entry. (Provided screenshots).
+
+**Project Health Check:**
+-   **Broken:** None
+-   **Mocked:** The backend logic for tracking a user's *usage* of different advance types () is not yet implemented. This is needed for the current task.
+
+**3rd Party Integrations**:
+-   None.
+
+**Testing status**
+-   Testing agent used after significant changes: NO
+-   Troubleshoot agent used after agent stuck in loop: NO
+-   Test files created: []
+-   Known regressions: None.
+
+**Credentials to test flow:**
+-   None required.
+
+**What agent forgot to execute**
+-   The agent has not yet started the latest user request to implement confirmation dialogs and custom date selection.</analysis>

@@ -15,7 +15,7 @@ const OpportunityListPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://tenant-router.preview.emergentagent.com';
+                    'https://advance-manager-1.preview.emergentagent.com';
 
   // URL'den filtre belirle
   const getFilterFromPath = () => {

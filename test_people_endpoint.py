@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://tenant-router.preview.emergentagent.com"
+BACKEND_URL = "https://advance-manager-1.preview.emergentagent.com"
 
 def test_people_endpoint():
     """
