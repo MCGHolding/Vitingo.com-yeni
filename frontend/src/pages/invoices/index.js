@@ -5,3 +5,4 @@ export { default as DraftInvoicesPage } from './DraftInvoicesPage';
 export { default as PendingCollectionPage } from './PendingCollectionPage';
 export { default as PaidInvoicesPage } from './PaidInvoicesPage';
 export { default as OverdueInvoicesPage } from './OverdueInvoicesPage';
+export { default as PurchaseInvoiceListPage } from './PurchaseInvoiceListPage';
