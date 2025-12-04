@@ -795,6 +795,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
 
       {/* Tab Content */}
       {activeTab === 'satis' ? (
+        <div>
         <form id="invoice-form" onSubmit={handleSubmit} className="space-y-8">
         {/* Invoice Header */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
