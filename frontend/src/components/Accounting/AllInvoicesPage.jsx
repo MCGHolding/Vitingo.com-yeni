@@ -202,6 +202,34 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
     }
   };
 
+  const handleView = (invoice) => {
+    setSelectedInvoice(invoice);
+    setShowPreviewModal(true);
+  };
+
+  const handleEdit = (invoice) => {
+    if (onEditInvoice) {
+      onEditInvoice(invoice);
+    }
+  };
+
+  const handleDownload = (invoice) => {
+    setOpenMenu(null);
+    downloadInvoicePDF(invoice);
+  };
+
+  const handleDuplicate = (invoice) => {
+    setOpenMenu(null);
+    console.log('Kopyalama işlemi:', invoice);
+    alert(`${invoice.invoice_number} numaralı fatura kopyalanacak`);
+  };
+
+  const handleDelete = (invoice) => {
+    setOpenMenu(null);
+    setSelectedInvoice(invoice);
+    setShowDeleteModal(true);
+  };
+
   const downloadInvoicePDF = async (invoice) => {
     try {
       console.log('PDF indirme başlatılıyor:', invoice.id);
