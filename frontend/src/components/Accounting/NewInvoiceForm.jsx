@@ -104,6 +104,15 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const [creditCards, setCreditCards] = useState([]);
   const [previewModal, setPreviewModal] = useState({ open: false, file: null });
 
+  // Debug log - Check data availability
+  console.log('📊 NewInvoiceForm data status:', {
+    suppliers: suppliers.length,
+    bankAccounts: bankAccounts.length,
+    creditCards: creditCards.length,
+    suppliersData: suppliers.slice(0, 2), // First 2 suppliers for debug
+    banksData: bankAccounts.slice(0, 2)
+  });
+
   // Customer and Products state
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
