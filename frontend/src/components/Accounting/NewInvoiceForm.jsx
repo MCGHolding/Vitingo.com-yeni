@@ -86,8 +86,18 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     total: 0
   });
 
+  // Get invoice prefix based on type
+  const getInvoicePrefix = (invoiceType) => {
+    switch(invoiceType) {
+      case 'satis': return 'SF';
+      case 'iade': return 'IF';
+      case 'proforma': return 'PF';
+      default: return 'FT';
+    }
+  };
+
   // Generate invoice number when component mounts or currency changes
-  const generateInvoiceNumber = async (currency) => {
+  const generateInvoiceNumber = async (currency, invoiceType = '') => {
     setIsGeneratingInvoiceNumber(true);
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
@@ -96,9 +106,18 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       if (response.ok) {
         const data = await response.json();
         console.log('Generated invoice number:', data);
+        
+        // Add invoice type prefix if selected
+        let invoiceNumber = data.next_invoice_number;
+        if (invoiceType) {
+          const prefix = getInvoicePrefix(invoiceType);
+          // Replace default prefix with type-specific prefix
+          invoiceNumber = `${prefix}-${invoiceNumber.split('-').slice(1).join('-')}`;
+        }
+        
         setFormData(prev => ({ 
           ...prev, 
-          invoiceNumber: data.next_invoice_number 
+          invoiceNumber: invoiceNumber 
         }));
       } else {
         console.error('Failed to generate invoice number');
@@ -106,7 +125,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         const now = new Date();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const year = now.getFullYear();
-        const fallback = `${currency}-${month}${year}100001`;
+        const prefix = invoiceType ? getInvoicePrefix(invoiceType) : currency;
+        const fallback = `${prefix}-${month}${year}100001`;
         setFormData(prev => ({ ...prev, invoiceNumber: fallback }));
       }
     } catch (error) {
@@ -115,7 +135,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       const now = new Date();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const year = now.getFullYear();
-      const fallback = `${currency}-${month}${year}100001`;
+      const prefix = invoiceType ? getInvoicePrefix(invoiceType) : currency;
+      const fallback = `${prefix}-${month}${year}100001`;
       setFormData(prev => ({ ...prev, invoiceNumber: fallback }));
     } finally {
       setIsGeneratingInvoiceNumber(false);
