@@ -25,6 +25,46 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
   // Check if user is ultra admin (super-admin or admin)
   const isUltraAdmin = user?.role === 'super-admin' || user?.role === 'admin';
 
+  // Luhn Algorithm - Card Number Validation
+  const validateCardNumber = (cardNumber) => {
+    // Remove spaces and dashes
+    const cleanNumber = cardNumber.replace(/[\s-]/g, '');
+    
+    // Only digits allowed
+    if (!/^\d+$/.test(cleanNumber)) {
+      return { valid: false, message: 'Kart numarası sadece rakam içermeli' };
+    }
+    
+    // Must be 13-19 digits (most cards are 16)
+    if (cleanNumber.length < 13 || cleanNumber.length > 19) {
+      return { valid: false, message: 'Kart numarası 13-19 hane arasında olmalı' };
+    }
+    
+    // Luhn algorithm
+    let sum = 0;
+    let isEven = false;
+    
+    for (let i = cleanNumber.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleanNumber[i], 10);
+      
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+      
+      sum += digit;
+      isEven = !isEven;
+    }
+    
+    if (sum % 10 !== 0) {
+      return { valid: false, message: 'Geçersiz kart numarası! Lütfen kontrol edin.' };
+    }
+    
+    return { valid: true, message: '' };
+  };
+
   useEffect(() => {
     loadCards();
     loadCompanies();
