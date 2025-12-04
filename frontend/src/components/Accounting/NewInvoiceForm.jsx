@@ -1555,7 +1555,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Alış Faturaları / Fişler</h3>
             <div className="text-sm text-gray-500">
-              Toplam: <span className="font-bold text-green-600">{calculateTotalTRY().toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</span>
+              Toplam: <span className="font-bold text-green-600">{calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</span>
             </div>
           </div>
 
@@ -1884,7 +1884,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
               Toplam Satır: <span className="font-bold">{purchaseItems.length}</span>
             </div>
             <div className="text-xl font-bold text-green-600">
-              Genel Toplam: {calculateTotalTRY().toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
+              Genel Toplam: {calculateTotals().tryTotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL
             </div>
           </div>
         </div>
