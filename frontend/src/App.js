@@ -2378,6 +2378,9 @@ function App() {
                 <Route path=":invoiceId/duzenle" element={<InvoiceEditPage />} />
               </Route>
 
+              {/* Alış Faturaları */}
+              <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
+
               {/* Gider Makbuzları */}
               <Route path="gider-makbuzu">
                 <Route index element={<ExpenseReceiptListPage />} />
