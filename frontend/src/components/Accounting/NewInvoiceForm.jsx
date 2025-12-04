@@ -20,6 +20,9 @@ import {
 } from 'lucide-react';
 
 const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
+  const navigate = useNavigate();
+  const { tenantSlug } = useParams();
+  
   // Number formatting functions
   const formatNumber = (value) => {
     if (!value && value !== 0) return '';
