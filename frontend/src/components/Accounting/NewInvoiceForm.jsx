@@ -6,6 +6,7 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import SearchableSelect from '../ui/SearchableSelect';
 import AddProductModal from './AddProductModal';
+import PaymentTermsBuilder from '../Projects/PaymentTermsBuilder';
 import { 
   Plus,
   Trash2,
