@@ -305,6 +305,30 @@ const CreditCardsManagementV2 = ({ onBackToDashboard }) => {
     }
   };
 
+  // Preview card (decrypt) - Only for ultra admin
+  const handlePreviewCard = async (card) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/credit-cards/${card.id}/decrypt`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Role': user?.role || 'user'
+        }
+      });
+      
+      if (response.ok) {
+        const decryptedCard = await response.json();
+        setPreviewCard(decryptedCard);
+        setShowPreviewModal(true);
+      } else {
+        alert('❌ Bu işlem için yetkiniz yok!');
+      }
+    } catch (error) {
+      console.error('Preview error:', error);
+      alert('❌ Kart bilgileri alınamadı!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
