@@ -8576,6 +8576,358 @@ async def create_mock_customers():
         logger.error(f"Error creating mock customers: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== TAHSİLAT (COLLECTIONS) API ====================
+
+class CollectionCreate(BaseModel):
+    customerId: str
+    customerName: str = ""
+    invoiceId: str = ""  # Opsiyonel - belirli faturaya bağlı
+    invoiceNo: str = ""
+    amount: float
+    currency: str = "TRY"
+    paymentMethod: str = "bank_transfer"  # cash, bank_transfer, credit_card, check, eft
+    bankId: str = ""
+    bankName: str = ""
+    accountNo: str = ""
+    checkNo: str = ""
+    checkDate: str = ""
+    receiptNo: str = ""
+    date: str
+    description: str = ""
+    status: str = "completed"  # pending, completed, cancelled
+
+@api_router.get("/collections")
+async def get_collections(
+    customer_id: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    status: str = None
+):
+    """Tahsilatları listele"""
+    try:
+        query = {"status": {"$ne": "deleted"}}
+        
+        if customer_id:
+            query["customerId"] = customer_id
+        if status:
+            query["status"] = status
+        if start_date:
+            query["date"] = {"$gte": start_date}
+        if end_date:
+            if "date" in query:
+                query["date"]["$lte"] = end_date
+            else:
+                query["date"] = {"$lte": end_date}
+        
+        collections = await db.collections.find(query, {"_id": 0}).sort("date", -1).to_list(None)
+        
+        # ID'leri string'e çevir
+        for c in collections:
+            if not c.get("id"):
+                c["id"] = str(uuid.uuid4())
+        
+        # Toplam hesapla
+        total = sum(c.get("amount", 0) for c in collections)
+        
+        return {
+            "collections": collections,
+            "total": total,
+            "count": len(collections)
+        }
+    except Exception as e:
+        logger.error(f"Error getting collections: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/collections")
+async def create_collection(collection: CollectionCreate):
+    """Yeni tahsilat oluştur"""
+    try:
+        collection_data = collection.dict()
+        collection_data["id"] = str(uuid.uuid4())
+        collection_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        collection_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Makbuz numarası oluştur
+        if not collection_data.get("receiptNo"):
+            count = await db.collections.count_documents({})
+            collection_data["receiptNo"] = f"TAH-{datetime.now().year}-{str(count + 1).zfill(5)}"
+        
+        await db.collections.insert_one(collection_data)
+        
+        # Eğer faturaya bağlıysa, faturanın ödenen tutarını güncelle
+        if collection_data.get("invoiceId"):
+            invoice = await db.invoices.find_one({
+                "$or": [
+                    {"id": collection_data["invoiceId"]},
+                    {"_id": ObjectId(collection_data["invoiceId"]) if len(collection_data["invoiceId"]) == 24 else None}
+                ]
+            })
+            if invoice:
+                current_paid = invoice.get("paidAmount", 0) or 0
+                new_paid = current_paid + collection_data["amount"]
+                total = invoice.get("total", 0) or invoice.get("grandTotal", 0) or 0
+                
+                update_data = {
+                    "paidAmount": new_paid,
+                    "remainingAmount": total - new_paid,
+                    "paymentStatus": "paid" if new_paid >= total else "partial"
+                }
+                
+                await db.invoices.update_one(
+                    {"$or": [{"id": collection_data["invoiceId"]}, {"_id": invoice.get("_id")}]},
+                    {"$set": update_data}
+                )
+        
+        logger.info(f"Collection created: {collection_data['receiptNo']}")
+        return {"success": True, "id": collection_data["id"], "receiptNo": collection_data["receiptNo"]}
+        
+    except Exception as e:
+        logger.error(f"Error creating collection: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/collections/{collection_id}")
+async def get_collection(collection_id: str):
+    """Tek tahsilat detayı"""
+    try:
+        collection = await db.collections.find_one({
+            "$or": [
+                {"id": collection_id},
+                {"_id": ObjectId(collection_id) if len(collection_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not collection:
+            raise HTTPException(status_code=404, detail="Tahsilat bulunamadı")
+        
+        if not collection.get("id"):
+            collection["id"] = collection_id
+        
+        return collection
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting collection: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/collections/{collection_id}")
+async def delete_collection(collection_id: str):
+    """Tahsilat sil (iptal et)"""
+    try:
+        # Önce tahsilatı bul
+        collection = await db.collections.find_one({
+            "$or": [
+                {"id": collection_id},
+                {"_id": ObjectId(collection_id) if len(collection_id) == 24 else None}
+            ]
+        })
+        
+        if not collection:
+            raise HTTPException(status_code=404, detail="Tahsilat bulunamadı")
+        
+        # Soft delete
+        await db.collections.update_one(
+            {"$or": [{"id": collection_id}, {"_id": collection.get("_id")}]},
+            {"$set": {"status": "deleted", "deleted_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # Faturadan düş
+        if collection.get("invoiceId"):
+            invoice = await db.invoices.find_one({
+                "$or": [
+                    {"id": collection["invoiceId"]},
+                    {"_id": ObjectId(collection["invoiceId"]) if len(collection["invoiceId"]) == 24 else None}
+                ]
+            })
+            if invoice:
+                current_paid = invoice.get("paidAmount", 0) or 0
+                new_paid = max(0, current_paid - collection.get("amount", 0))
+                total = invoice.get("total", 0) or invoice.get("grandTotal", 0) or 0
+                
+                await db.invoices.update_one(
+                    {"$or": [{"id": collection["invoiceId"]}, {"_id": invoice.get("_id")}]},
+                    {"$set": {
+                        "paidAmount": new_paid,
+                        "remainingAmount": total - new_paid,
+                        "paymentStatus": "paid" if new_paid >= total else "partial" if new_paid > 0 else "pending"
+                    }}
+                )
+        
+        return {"success": True, "message": "Tahsilat iptal edildi"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting collection: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== ÖDEME (PAYMENTS) API ====================
+
+class PaymentCreate(BaseModel):
+    supplierId: str
+    supplierName: str = ""
+    invoiceId: str = ""  # Opsiyonel - belirli faturaya bağlı
+    invoiceNo: str = ""
+    amount: float
+    currency: str = "TRY"
+    paymentMethod: str = "bank_transfer"
+    bankId: str = ""
+    bankName: str = ""
+    accountNo: str = ""
+    checkNo: str = ""
+    checkDate: str = ""
+    receiptNo: str = ""
+    date: str
+    description: str = ""
+    status: str = "completed"
+
+@api_router.get("/payments")
+async def get_payments(
+    supplier_id: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    status: str = None
+):
+    """Ödemeleri listele"""
+    try:
+        query = {"status": {"$ne": "deleted"}}
+        
+        if supplier_id:
+            query["supplierId"] = supplier_id
+        if status:
+            query["status"] = status
+        if start_date:
+            query["date"] = {"$gte": start_date}
+        if end_date:
+            if "date" in query:
+                query["date"]["$lte"] = end_date
+            else:
+                query["date"] = {"$lte": end_date}
+        
+        payments = await db.payments.find(query, {"_id": 0}).sort("date", -1).to_list(None)
+        
+        for p in payments:
+            if not p.get("id"):
+                p["id"] = str(uuid.uuid4())
+        
+        total = sum(p.get("amount", 0) for p in payments)
+        
+        return {
+            "payments": payments,
+            "total": total,
+            "count": len(payments)
+        }
+    except Exception as e:
+        logger.error(f"Error getting payments: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/payments")
+async def create_payment(payment: PaymentCreate):
+    """Yeni ödeme oluştur"""
+    try:
+        payment_data = payment.dict()
+        payment_data["id"] = str(uuid.uuid4())
+        payment_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        payment_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        if not payment_data.get("receiptNo"):
+            count = await db.payments.count_documents({})
+            payment_data["receiptNo"] = f"ODE-{datetime.now().year}-{str(count + 1).zfill(5)}"
+        
+        await db.payments.insert_one(payment_data)
+        
+        logger.info(f"Payment created: {payment_data['receiptNo']}")
+        return {"success": True, "id": payment_data["id"], "receiptNo": payment_data["receiptNo"]}
+        
+    except Exception as e:
+        logger.error(f"Error creating payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/payments/{payment_id}")
+async def get_payment(payment_id: str):
+    """Tek ödeme detayı"""
+    try:
+        payment = await db.payments.find_one({
+            "$or": [
+                {"id": payment_id},
+                {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not payment:
+            raise HTTPException(status_code=404, detail="Ödeme bulunamadı")
+        
+        if not payment.get("id"):
+            payment["id"] = payment_id
+        
+        return payment
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/payments/{payment_id}")
+async def delete_payment(payment_id: str):
+    """Ödeme sil"""
+    try:
+        result = await db.payments.update_one(
+            {"$or": [{"id": payment_id}, {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}]},
+            {"$set": {"status": "deleted", "deleted_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Ödeme bulunamadı")
+        
+        return {"success": True, "message": "Ödeme iptal edildi"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== MÜŞTERİNİN AÇIK FATURALARI ====================
+
+@api_router.get("/customers/{customer_id}/open-invoices")
+async def get_customer_open_invoices(customer_id: str):
+    """Müşterinin ödenmemiş/kısmi ödenmiş faturalarını getir"""
+    try:
+        invoices = await db.invoices.find({
+            "$or": [
+                {"customerId": customer_id},
+                {"customer_id": customer_id}
+            ],
+            "paymentStatus": {"$in": ["pending", "partial", None]},
+            "status": {"$ne": "deleted"}
+        }, {"_id": 0}).sort("date", 1).to_list(None)
+        
+        result = []
+        for inv in invoices:
+            total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+            paid = inv.get("paidAmount", 0) or 0
+            remaining = total - paid
+            
+            if remaining > 0:
+                result.append({
+                    "id": inv.get("id", ""),
+                    "invoiceNo": inv.get("invoice_number") or inv.get("invoiceNo") or "",
+                    "date": inv.get("date", ""),
+                    "dueDate": inv.get("dueDate", ""),
+                    "total": total,
+                    "paid": paid,
+                    "remaining": remaining,
+                    "currency": inv.get("currency", "TRY")
+                })
+        
+        return {"invoices": result, "totalRemaining": sum(i["remaining"] for i in result)}
+        
+    except Exception as e:
+        logger.error(f"Error getting open invoices: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ===================== COLLECTION STATISTICS ENDPOINT =====================
 
 class CollectionStatistics(BaseModel):
