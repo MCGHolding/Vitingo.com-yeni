@@ -81,6 +81,7 @@ export default function NewProjectForm({ onClose, onSave }) {
     loadCustomers();
     loadPaymentProfiles();
     loadGroupCompanies();
+    loadProducts();
   }, []);
 
   const loadPaymentProfiles = async () => {
