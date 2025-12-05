@@ -234,6 +234,17 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   }, [selectedProject]);
 
+  // Fatura toplamı değiştiğinde ödeme tutarlarını yeniden hesapla
+  useEffect(() => {
+    if (totals.total > 0 && !selectedProject && paymentTerms.length > 0) {
+      setPaymentTerms(prev => prev.map(term => ({
+        ...term,
+        amount: (totals.total * (term.percentage || 0)) / 100
+      })));
+      console.log('💰 Recalculated payment amounts based on invoice total:', totals.total);
+    }
+  }, [totals.total]);
+
   // Regenerate invoice number when invoice type changes
   useEffect(() => {
     if (formData.invoiceType) {
