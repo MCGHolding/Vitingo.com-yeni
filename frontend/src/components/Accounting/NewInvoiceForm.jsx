@@ -923,7 +923,16 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const handleProfileSelect = (profileId) => {
     if (!profileId) {
       setSelectedProfile(null);
-      setPaymentTerms([{ id: 1, percentage: 100, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }]);
+      const defaultAmount = (totals.total * 100) / 100;
+      setPaymentTerms([{ 
+        id: 1, 
+        percentage: 100, 
+        amount: defaultAmount,
+        days: 30, 
+        dueType: 'pesin', 
+        description: 'Vade', 
+        dueDate: '' 
+      }]);
       return;
     }
     
@@ -932,9 +941,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       setSelectedProfile(profile);
       // Handle both data formats: profile.terms (new) and profile.paymentTerms (existing)
       const terms = profile.terms || profile.paymentTerms || [];
+      const invoiceTotal = totals.total || 0;
       setPaymentTerms(terms.map((term, index) => ({
         id: index + 1,
         percentage: term.percentage,
+        amount: (invoiceTotal * (term.percentage || 0)) / 100,
         dueType: term.dueType || 'pesin',
         dueDays: term.dueDays || term.days || 0,
         days: term.dueDays || term.days || 0,
@@ -942,6 +953,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         dueDate: calculateDueDate(term.dueDays || term.days || 0),
         notes: term.notes || ''
       })));
+      console.log('💰 Profile selected, amounts calculated based on invoice total:', invoiceTotal);
     }
   };
 
