@@ -2401,6 +2401,7 @@ function App() {
 
               {/* Cari Hesaplar */}
               <Route path="cari-hesaplar" element={<CurrentAccountsPage />} />
+              <Route path="cari-hesaplar/:accountId" element={<CurrentAccountDetailPage />} />
 
               {/* Alış Faturaları */}
               <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
