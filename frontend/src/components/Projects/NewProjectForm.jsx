@@ -63,8 +63,17 @@ export default function NewProjectForm({ onClose, onSave }) {
     standLength: '',
     standLengthUnit: 'mt',
     standHeight: '',
-    standHeightUnit: 'mt'
+    standHeightUnit: 'mt',
+    // Financial items (invoice items)
+    financialItems: [
+      { id: 1, description: '', quantity: 1, unitPrice: 0, total: 0 }
+    ]
   });
+  
+  // Calculate total from financial items
+  const calculateTotalFromItems = () => {
+    return formData.financialItems.reduce((sum, item) => sum + (item.total || 0), 0);
+  };
 
   useEffect(() => {
     loadFairs();
