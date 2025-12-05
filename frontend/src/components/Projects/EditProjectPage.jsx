@@ -494,6 +494,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sözleşme Tarihi</label>
                 <input
+                  key={`contract-date-${formData.contractDate}`}
                   type="date"
                   value={formData.contractDate || ''}
                   onChange={(e) => handleInputChange('contractDate', e.target.value)}
