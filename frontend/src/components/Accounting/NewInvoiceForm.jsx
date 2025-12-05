@@ -927,11 +927,28 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
     
     const project = projects.find(p => p.id === projectId);
-    if (project && project.paymentTerms && project.paymentTerms.length > 0) {
+    if (project) {
       setSelectedProject(project);
       setSelectedProfile(null); // Clear profile selection
       console.log('✅ Selected project:', project.name, 'Amount:', project.contractAmount);
-      // paymentTerms will be set by useEffect
+      
+      // TÜM ALANLARI PROJEDEN DOLDUR
+      setFormData(prev => ({
+        ...prev,
+        customerId: project.customerId || '',
+        customerName: project.customerName || '',
+        currency: project.currency || 'USD',
+        // contractAmount'ı total olarak kullan (items yoksa)
+      }));
+      
+      // Müşteriyi customer listesinden bul ve set et
+      const customer = customers.find(c => c.id === project.customerId);
+      if (customer) {
+        setSelectedCustomer(customer);
+        console.log('✅ Customer auto-selected:', customer.companyName);
+      }
+      
+      // Payment terms will be set by useEffect
     }
   };
 
