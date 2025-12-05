@@ -12,7 +12,17 @@ const DUE_TYPE_OPTIONS = [
   { value: 'ozel', label: 'Özel' }
 ];
 
-export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false, fairStartDate = '', kurulumStartDate = '', contractDate = '' }) {
+export default function PaymentTermsBuilder({ 
+  paymentTerms, 
+  onChange, 
+  contractAmount, 
+  hideAmounts = false, 
+  fairStartDate = '', 
+  kurulumStartDate = '', 
+  contractDate = '',
+  sourceType = 'project', // 'project' or 'invoice'
+  invoiceDate = ''
+}) {
   
   // ============ HELPER FUNCTIONS FOR DYNAMIC PERCENTAGE ============
   
