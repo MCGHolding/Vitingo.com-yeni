@@ -867,7 +867,7 @@ export default function NewProjectForm({ onClose, onSave }) {
               </Select>
             </div>
 
-            {/* Fatura Kalemleri Tablosu - AYNEN INVOICE FORMUNDAK İ GİBİ */}
+            {/* Fatura Kalemleri Tablosu */}
             <div className="overflow-visible">
               <table className="w-full">
                 <thead>
@@ -877,7 +877,6 @@ export default function NewProjectForm({ onClose, onSave }) {
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Miktar</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Birim</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Birim Fiyat</th>
-                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Para Birimi</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Tutar</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">İşlem</th>
                   </tr>
@@ -940,21 +939,8 @@ export default function NewProjectForm({ onClose, onSave }) {
                         />
                       </td>
                       <td className="py-3 px-2">
-                        <select
-                          value={item.currency || 'TRY'}
-                          onChange={(e) => updateFinancialItem(item.id, 'currency', e.target.value)}
-                          className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        >
-                          <option value="TRY">₺ TL</option>
-                          <option value="USD">$ USD</option>
-                          <option value="EUR">€ EUR</option>
-                          <option value="GBP">£ GBP</option>
-                          <option value="AED">د.إ AED</option>
-                        </select>
-                      </td>
-                      <td className="py-3 px-2">
                         <div className="bg-gray-50 px-3 py-2 rounded font-medium">
-                          {item.currency === 'USD' ? '$' : item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : item.currency === 'AED' ? 'د.إ' : '₺'}
+                          {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : formData.currency === 'AED' ? 'د.إ' : '₺'}
                           {item.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </td>
