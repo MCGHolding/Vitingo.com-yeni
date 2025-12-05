@@ -343,23 +343,34 @@ export default function PaymentTermsBuilder({
                       const value = e.target.value;
                       console.log('🔄 Vade değişti:', term.id, value);
                       
-                      handleTermChange(term.id, 'dueType', value);
-                      
-                      // Fatura modunda ek işlemler
-                      if (sourceType === 'invoice') {
-                        if (value === 'immediate') {
-                          handleTermChange(term.id, 'dueDays', 0);
-                          handleTermChange(term.id, 'dueDate', invoiceDate || new Date().toISOString().split('T')[0]);
-                        } else if (value === 'custom') {
-                          const days = parseInt(term.customDays) || 0;
-                          handleTermChange(term.id, 'dueDays', days);
-                          handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
-                        } else if (!isNaN(parseInt(value))) {
-                          const days = parseInt(value);
-                          handleTermChange(term.id, 'dueDays', days);
-                          handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
+                      // TÜM güncellemeleri tek seferde yap
+                      const updatedTerms = paymentTerms.map(t => {
+                        if (t.id === term.id) {
+                          const updated = { ...t, dueType: value };
+                          
+                          // Fatura modunda ek işlemler
+                          if (sourceType === 'invoice') {
+                            if (value === 'immediate') {
+                              updated.dueDays = 0;
+                              updated.dueDate = invoiceDate || new Date().toISOString().split('T')[0];
+                            } else if (value === 'custom') {
+                              const days = parseInt(t.customDays) || 0;
+                              updated.dueDays = days;
+                              updated.dueDate = calculateInvoiceDueDate(days);
+                            } else if (!isNaN(parseInt(value))) {
+                              const days = parseInt(value);
+                              updated.dueDays = days;
+                              updated.dueDate = calculateInvoiceDueDate(days);
+                            }
+                          }
+                          
+                          return updated;
                         }
-                      }
+                        return t;
+                      });
+                      
+                      console.log('✅ Güncellenen terms:', updatedTerms.map(t => ({ id: t.id, dueType: t.dueType })));
+                      onChange(updatedTerms);
                     }}
                     className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
