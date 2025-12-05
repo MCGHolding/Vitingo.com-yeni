@@ -1345,7 +1345,114 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         </Button>
       </div>
 
+      {/* FATURA TİPİ SEÇİMİ - İlk adım */}
+      {!invoiceCreationMode && (
+        <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+            Fatura Oluşturma Yöntemini Seçin
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            
+            {/* Manuel Fatura */}
+            <button
+              type="button"
+              onClick={() => {
+                setInvoiceCreationMode('manual');
+                resetForm();
+              }}
+              className="p-8 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 hover:shadow-lg transition-all group text-left"
+            >
+              <div className="text-6xl mb-4 text-center">📝</div>
+              <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 mb-2">
+                Manuel Fatura
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Sıfırdan yeni fatura oluşturun. Müşteri, ürünler ve ödeme koşullarını manuel olarak girin.
+              </p>
+              <div className="mt-4 flex items-center text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-sm font-medium">Devam Et →</span>
+              </div>
+            </button>
+            
+            {/* Projeye Bağlı Fatura */}
+            <button
+              type="button"
+              onClick={() => {
+                setInvoiceCreationMode('project');
+                resetForm();
+              }}
+              className="p-8 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 hover:shadow-lg transition-all group text-left"
+            >
+              <div className="text-6xl mb-4 text-center">📁</div>
+              <h3 className="text-xl font-semibold text-gray-800 group-hover:text-green-600 mb-2">
+                Projeye Bağlı Fatura
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Mevcut bir projeden fatura oluşturun. Müşteri, tutar ve ödeme koşulları otomatik dolacaktır.
+              </p>
+              <div className="mt-4 flex items-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-sm font-medium">Devam Et →</span>
+              </div>
+            </button>
+            
+          </div>
+        </div>
+      )}
+
+      {/* Tip değiştirme butonu - Tip seçildiyse göster */}
+      {invoiceCreationMode && (
+        <div className="mb-4 flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="flex items-center space-x-3">
+            <span className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              invoiceCreationMode === 'manual' 
+                ? 'bg-blue-100 text-blue-700' 
+                : 'bg-green-100 text-green-700'
+            }`}>
+              {invoiceCreationMode === 'manual' ? '📝 Manuel Fatura' : '📁 Projeye Bağlı Fatura'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setInvoiceCreationMode(null);
+              setSelectedProject(null);
+              resetForm();
+            }}
+            className="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors flex items-center space-x-1"
+          >
+            <span>←</span>
+            <span>Yöntem Değiştir</span>
+          </button>
+        </div>
+      )}
+
+      {/* PROJEYE BAĞLI İSE - Proje Seçimi */}
+      {invoiceCreationMode === 'project' && !selectedProject && (
+        <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
+            <span className="text-2xl mr-2">📁</span>
+            Proje Seçin
+          </h3>
+          <p className="text-sm text-green-700 mb-4">
+            Bir proje seçtiğinizde müşteri, tutar, para birimi ve ödeme koşulları otomatik olarak dolacaktır.
+          </p>
+          <select
+            value={selectedProject?.id || ''}
+            onChange={(e) => handleProjectSelect(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-green-300 rounded-lg text-base focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+          >
+            <option value="">Proje seçin...</option>
+            {projects.map(project => (
+              <option key={project.id} value={project.id}>
+                {project.name} - {project.customerName} ({project.fairName || 'Fuar bilgisi yok'})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Tab Navigation */}
+      {invoiceCreationMode && (invoiceCreationMode === 'manual' || selectedProject) && (
       <div className="flex border-b border-gray-200 mb-6 bg-white rounded-t-xl">
         <button
           type="button"
