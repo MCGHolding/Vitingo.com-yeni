@@ -378,20 +378,22 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Başlangıç *</label>
-                  <Input
+                  <input
                     type="date"
-                    value={formData.fairStartDate}
+                    value={formData.fairStartDate || ''}
                     onChange={(e) => handleInputChange('fairStartDate', e.target.value)}
                     required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Bitiş *</label>
-                  <Input
+                  <input
                     type="date"
-                    value={formData.fairEndDate}
+                    value={formData.fairEndDate || ''}
                     onChange={(e) => handleInputChange('fairEndDate', e.target.value)}
                     required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
