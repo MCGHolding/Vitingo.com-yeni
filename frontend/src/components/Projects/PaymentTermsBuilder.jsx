@@ -360,11 +360,11 @@ export default function PaymentTermsBuilder({
                   </div>
                 )}
 
-                {/* Vade + Hesaplanan Tarih - YAN YANA */}
+                {/* Vade + Hesaplanan Tarih - YAN YANA - GENİŞ */}
                 <div className="flex-1">
                   <label className="text-xs text-gray-600 mb-1 block">Vade</label>
                   <div className="flex gap-2">
-                    {/* Vade Dropdown */}
+                    {/* Vade Dropdown - Esnek genişlik */}
                     <select
                       value={term.dueType || ''}
                       onChange={(e) => {
