@@ -145,12 +145,28 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       return;
     }
 
+    // Prepare data with all date fields
+    const projectData = {
+      ...formData,
+      // Ensure date fields are included
+      contractDate: formData.contractDate || '',
+      fairStartDate: formData.fairStartDate || '',
+      fairEndDate: formData.fairEndDate || '',
+      installationStartDate: formData.installationStartDate || '',
+      installationEndDate: formData.installationEndDate || '',
+      isAmericaFair: formData.isAmericaFair || false,
+      updatedAt: new Date().toISOString()
+    };
+
     console.log('📤 Sending project data:', {
-      contractDate: formData.contractDate,
-      installationStartDate: formData.installationStartDate,
-      installationEndDate: formData.installationEndDate,
-      isAmericaFair: formData.isAmericaFair
+      contractDate: projectData.contractDate,
+      fairStartDate: projectData.fairStartDate,
+      fairEndDate: projectData.fairEndDate,
+      installationStartDate: projectData.installationStartDate,
+      installationEndDate: projectData.installationEndDate,
+      isAmericaFair: projectData.isAmericaFair
     });
+    console.log('📦 Full project data:', JSON.stringify(projectData, null, 2));
 
     setLoading(true);
     try {
@@ -161,7 +177,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(projectData)
       });
 
       if (!response.ok) throw new Error('Proje güncellenemedi');
