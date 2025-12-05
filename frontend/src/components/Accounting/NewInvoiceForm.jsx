@@ -1487,9 +1487,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </span>
         </button>
       </div>
+      )}
 
       {/* Tab Content */}
-      {activeTab === 'satis' ? (
+      {invoiceCreationMode && (invoiceCreationMode === 'manual' || selectedProject) && activeTab === 'satis' ? (
         <div>
         <form id="invoice-form" onSubmit={handleSubmit} className="space-y-8">
         {/* Invoice Header */}
