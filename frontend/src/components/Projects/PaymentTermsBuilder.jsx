@@ -360,60 +360,83 @@ export default function PaymentTermsBuilder({
                   </div>
                 )}
 
-                {/* Due Type - Native Select (Basit ve Çalışır!) */}
+                {/* Vade + Hesaplanan Tarih - YAN YANA */}
                 <div>
                   <label className="text-xs text-gray-600 mb-1 block">Vade</label>
-                  <select
-                    value={term.dueType || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      console.log('🔄 Vade değişti:', term.id, value);
-                      
-                      // TÜM güncellemeleri tek seferde yap
-                      const updatedTerms = paymentTerms.map(t => {
-                        if (t.id === term.id) {
-                          const updated = { ...t, dueType: value };
-                          
-                          // Fatura modunda ek işlemler
-                          if (sourceType === 'invoice') {
-                            if (value === 'immediate') {
-                              updated.dueDays = 0;
-                              updated.dueDate = invoiceDate || new Date().toISOString().split('T')[0];
-                            } else if (value === 'custom') {
-                              const days = parseInt(t.customDays) || 0;
-                              updated.dueDays = days;
-                              updated.dueDate = calculateInvoiceDueDate(days);
-                            } else if (!isNaN(parseInt(value))) {
-                              const days = parseInt(value);
-                              updated.dueDays = days;
-                              updated.dueDate = calculateInvoiceDueDate(days);
+                  <div className="flex gap-2">
+                    {/* Vade Dropdown */}
+                    <select
+                      value={term.dueType || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        console.log('🔄 Vade değişti:', term.id, value);
+                        
+                        // TÜM güncellemeleri tek seferde yap
+                        const updatedTerms = paymentTerms.map(t => {
+                          if (t.id === term.id) {
+                            const updated = { ...t, dueType: value };
+                            
+                            // Fatura modunda ek işlemler
+                            if (sourceType === 'invoice') {
+                              if (value === 'immediate') {
+                                updated.dueDays = 0;
+                                updated.dueDate = invoiceDate || new Date().toISOString().split('T')[0];
+                              } else if (value === 'custom') {
+                                const days = parseInt(t.customDays) || 0;
+                                updated.dueDays = days;
+                                updated.dueDate = calculateInvoiceDueDate(days);
+                              } else if (!isNaN(parseInt(value))) {
+                                const days = parseInt(value);
+                                updated.dueDays = days;
+                                updated.dueDate = calculateInvoiceDueDate(days);
+                              }
                             }
+                            
+                            return updated;
                           }
-                          
-                          return updated;
-                        }
-                        return t;
-                      });
-                      
-                      console.log('✅ Güncellenen terms:', updatedTerms.map(t => ({ id: t.id, dueType: t.dueType })));
-                      onChange(updatedTerms);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Vade Seçin...</option>
-                    {sourceType === 'invoice' 
-                      ? invoiceDueOptions.map(option => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))
-                      : projectDueOptions.map(option => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))
-                    }
-                  </select>
+                          return t;
+                        });
+                        
+                        console.log('✅ Güncellenen terms:', updatedTerms.map(t => ({ id: t.id, dueType: t.dueType })));
+                        onChange(updatedTerms);
+                      }}
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Vade Seçin...</option>
+                      {sourceType === 'invoice' 
+                        ? invoiceDueOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))
+                        : projectDueOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))
+                      }
+                    </select>
+                    
+                    {/* Hesaplanan Tarih - SAĞDA */}
+                    <div className="flex-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center justify-center">
+                      <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                      <span className="text-xs font-medium text-blue-800 truncate">
+                        {term.dueType ? (
+                          sourceType === 'invoice' ? (
+                            <>
+                              {term.dueType === 'immediate' && formatDate(invoiceDate || new Date())}
+                              {term.dueType === 'custom' && formatDate(term.dueDate)}
+                              {!isNaN(parseInt(term.dueType)) && formatDate(term.dueDate)}
+                            </>
+                          ) : (
+                            calculateDueDate(term).split('(')[0].trim() // Sadece tarih, parantez içindeki açıklama olmadan
+                          )
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
