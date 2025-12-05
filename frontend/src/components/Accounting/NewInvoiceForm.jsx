@@ -907,7 +907,16 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const handleProjectSelect = (projectId) => {
     if (!projectId) {
       setSelectedProject(null);
-      setPaymentTerms([{ id: 1, percentage: 100, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }]);
+      const defaultAmount = (totals.total * 100) / 100;
+      setPaymentTerms([{ 
+        id: 1, 
+        percentage: 100, 
+        amount: defaultAmount,
+        days: 30, 
+        dueType: 'pesin', 
+        description: 'Vade', 
+        dueDate: '' 
+      }]);
       return;
     }
     
