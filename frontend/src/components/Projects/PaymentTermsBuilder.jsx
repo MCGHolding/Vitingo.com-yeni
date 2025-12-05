@@ -232,25 +232,27 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
               </div>
 
               <div className={`grid grid-cols-1 gap-3 ${hideAmounts ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
-                {/* Percentage */}
+                {/* Percentage - Dynamic Options */}
                 <div>
-                  <label className="text-xs text-gray-600 mb-1 block">Yüzde (%)</label>
+                  <label className="text-xs text-gray-600 mb-1 block">
+                    Yüzde (%)
+                    <span className="ml-2 text-blue-600 font-medium">
+                      Max: %{getMaxPercentageForTerm(term.id)}
+                    </span>
+                  </label>
                   <Select
                     value={term.percentage.toString()}
                     onValueChange={(value) => handleTermChange(term.id, 'percentage', parseInt(value))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={term.percentage ? 'border-gray-300' : 'border-orange-300 bg-orange-50'}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {[...Array(20)].map((_, i) => {
-                        const percent = (i + 1) * 5;
-                        return (
-                          <SelectItem key={percent} value={percent.toString()}>
-                            %{percent}
-                          </SelectItem>
-                        );
-                      })}
+                      {getPercentageOptions(term.id, term.percentage).map(percent => (
+                        <SelectItem key={percent} value={percent.toString()}>
+                          %{percent}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
