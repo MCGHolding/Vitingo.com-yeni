@@ -40,7 +40,8 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     currency: 'TRY',
     paymentTerms: [],
     notes: '',
-    status: 'yeni'
+    status: 'yeni',
+    financialItems: []
   });
 
   useEffect(() => {
