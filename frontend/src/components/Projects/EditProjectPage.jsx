@@ -399,19 +399,21 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Başlangıç</label>
-                  <Input
+                  <input
                     type="date"
-                    value={formData.installationStartDate}
+                    value={formData.installationStartDate || ''}
                     onChange={(e) => handleInputChange('installationStartDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Bitiş</label>
-                  <Input
+                  <input
                     type="date"
-                    value={formData.installationEndDate}
+                    value={formData.installationEndDate || ''}
                     onChange={(e) => handleInputChange('installationEndDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">Kurulum son günü</p>
                 </div>
