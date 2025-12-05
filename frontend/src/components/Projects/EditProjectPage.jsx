@@ -313,18 +313,24 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fuar *</label>
-                  <Select value={formData.fairId || ''} onValueChange={(value) => {
-                    console.log('🎪 Fair changed to:', value);
-                    const fair = fairs.find(f => f.id === value);
-                    handleInputChange('fairId', value);
-                    handleInputChange('fairName', fair?.name || '');
-                    handleInputChange('fairStartDate', fair?.start_date || '');
-                    handleInputChange('fairEndDate', fair?.end_date || '');
-                    handleInputChange('city', fair?.city || '');
-                    handleInputChange('country', fair?.country || 'TR');
-                  }}>
+                  <Select 
+                    key={`fair-${formData.fairId || 'empty'}`}
+                    value={formData.fairId} 
+                    onValueChange={(value) => {
+                      console.log('🎪 Fair changed to:', value);
+                      const fair = fairs.find(f => f.id === value);
+                      handleInputChange('fairId', value);
+                      handleInputChange('fairName', fair?.name || '');
+                      handleInputChange('fairStartDate', fair?.start_date || '');
+                      handleInputChange('fairEndDate', fair?.end_date || '');
+                      handleInputChange('city', fair?.city || '');
+                      handleInputChange('country', fair?.country || 'TR');
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Fuar seçin" />
+                      <SelectValue placeholder="Fuar seçin">
+                        {formData.fairName || 'Fuar seçin'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {fairs.map(fair => (
@@ -335,7 +341,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     </SelectContent>
                   </Select>
                   {formData.fairId && (
-                    <p className="text-xs text-gray-500 mt-1">Seçili: {formData.fairName || formData.fairId}</p>
+                    <p className="text-xs text-gray-500 mt-1">ID: {formData.fairId.substring(0, 8)}...</p>
                   )}
                 </div>
               </div>
