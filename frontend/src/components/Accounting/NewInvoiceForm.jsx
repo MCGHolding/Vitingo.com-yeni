@@ -1879,6 +1879,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                     contractAmount={selectedProject?.contractAmount || totals?.total || 0}
                     hideAmounts={false}
                     contractDate={formData.date}
+                    sourceType={selectedProject ? 'project' : 'invoice'}
+                    invoiceDate={formData.date}
                   />
                 </div>
               </div>
