@@ -174,12 +174,12 @@ export default function PaymentTermsBuilder({
       id: Date.now().toString(),
       percentage: remaining,
       amount: (contractAmount * remaining) / 100,
-      dueType: 'pesin',
-      dueDays: null,
+      dueType: sourceType === 'invoice' ? '30' : 'pesin',
+      dueDays: sourceType === 'invoice' ? 30 : null,
+      dueDate: sourceType === 'invoice' ? calculateInvoiceDueDate(30) : '',
+      customDays: '',
       notes: ''
     };
-    console.log('PaymentTermsBuilder - Adding term with remaining:', remaining);
-    console.log('PaymentTermsBuilder - New term:', newTerm);
     onChange([...paymentTerms, newTerm]);
   };
 
