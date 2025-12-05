@@ -68,7 +68,7 @@ export default function NewProjectForm({ onClose, onSave }) {
     standHeightUnit: 'mt',
     // Financial items (invoice items)
     financialItems: [
-      { id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0 }
+      { id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }
     ]
   });
   
