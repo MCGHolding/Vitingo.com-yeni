@@ -530,7 +530,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                   contractDate={formData.contractDate}
                   fairStartDate={formData.fairStartDate}
                   installationStartDate={formData.installationStartDate}
-                  kurulumStartDate={formData.installationStartDate}
                 />
               </div>
             </CardContent>
