@@ -247,6 +247,7 @@ export default function NewProjectForm({ onClose, onSave }) {
         const randomCurrency = currencies[Math.floor(Math.random() * currencies.length)];
         
         setFormData({
+          ...formData,
           name: `${randomCustomer.companyName} - ${randomName}`,
           customerId: randomCustomer.id,
           customerName: randomCustomer.companyName,
@@ -256,13 +257,18 @@ export default function NewProjectForm({ onClose, onSave }) {
           fairEndDate: randomFair.defaultEndDate || randomFair.endDate,
           city: randomFair.defaultCity || randomFair.city,
           country: randomFair.defaultCountry || randomFair.country,
-          contractAmount: randomAmount,
           currency: randomCurrency,
           paymentTerms: [],
           notes: 'Test verisi ile otomatik oluşturuldu',
           status: 'yeni',
           isNew: true,
-          createdFrom: 'manual'
+          createdFrom: 'manual',
+          // Keep financialItems with test data
+          financialItems: [
+            { id: 1, description: 'Stand Tasarımı', quantity: 1, unit: 'adet', unitPrice: randomAmount * 0.6, total: randomAmount * 0.6, productId: '' },
+            { id: 2, description: 'Kurulum Hizmeti', quantity: 1, unit: 'adet', unitPrice: randomAmount * 0.3, total: randomAmount * 0.3, productId: '' },
+            { id: 3, description: 'Ekstra Hizmetler', quantity: 1, unit: 'adet', unitPrice: randomAmount * 0.1, total: randomAmount * 0.1, productId: '' }
+          ]
         });
         
         toast({
