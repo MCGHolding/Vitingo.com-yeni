@@ -347,7 +347,7 @@ export default function PaymentTermsBuilder({
                   </Select>
                 </div>
 
-                {/* Amount - Only show if not hidden */}
+                {/* Amount - Only show if not hidden - ORTA */}
                 {!hideAmounts && (
                   <div className="w-40">
                     <label className="text-xs text-gray-600 mb-1 block">Tutar</label>
