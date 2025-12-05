@@ -50,6 +50,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     loadFairs();
     loadCustomers();
     loadGroupCompanies();
+    loadProducts();
     loadProject();
   }, [projectId]);
 
