@@ -1328,6 +1328,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Yeni Fatura</h1>
+            {invoiceCreationMode && (
+              <p className="text-sm text-gray-500 mt-1">
+                {invoiceCreationMode === 'manual' ? '📝 Manuel Fatura Oluştur' : '📁 Projeye Bağlı Fatura Oluştur'}
+              </p>
+            )}
             <p className="text-gray-600">Modern fatura oluşturma sistemi</p>
           </div>
         </div>
