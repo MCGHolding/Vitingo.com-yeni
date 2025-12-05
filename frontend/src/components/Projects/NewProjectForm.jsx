@@ -148,6 +148,22 @@ export default function NewProjectForm({ onClose, onSave }) {
     }
   };
 
+  const loadProducts = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+
+      const response = await fetch(`${backendUrl}/api/products`);
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+    }
+  };
+
   const loadFairs = async () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
