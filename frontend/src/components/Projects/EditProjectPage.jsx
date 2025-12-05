@@ -56,22 +56,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/projects/${projectId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('📦 Loaded project data:', data);
-        console.log('🏢 Company ID:', data.companyId);
-        console.log('👤 Customer ID:', data.customerId);
-        console.log('🎪 Fair ID:', data.fairId);
-        console.log('📅 Contract Date:', data.contractDate);
-        console.log('💰 Contract Amount:', data.contractAmount);
-        console.log('💳 Payment Terms:', data.paymentTerms);
         setFormData(data);
-        
-        // Verify formData was updated
-        setTimeout(() => {
-          console.log('✅ FormData state after setFormData:');
-          console.log('  companyId:', data.companyId);
-          console.log('  customerId:', data.customerId);
-          console.log('  fairId:', data.fairId);
-        }, 100);
       }
     } catch (error) {
       console.error('Error loading project:', error);
