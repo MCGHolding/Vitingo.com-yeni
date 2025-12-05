@@ -123,8 +123,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
           });
         }
         
-        console.log('🏢 Group Companies loaded:', companies.length, 'companies');
-        console.log('🏢 First company:', companies[0]);
         setGroupCompanies(companies);
       }
     } catch (error) {
