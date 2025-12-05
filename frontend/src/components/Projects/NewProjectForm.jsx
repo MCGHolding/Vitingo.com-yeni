@@ -335,7 +335,7 @@ export default function NewProjectForm({ onClose, onSave }) {
     const newId = Math.max(...formData.financialItems.map(i => i.id), 0) + 1;
     setFormData({
       ...formData,
-      financialItems: [...formData.financialItems, { id: newId, description: '', quantity: 1, unit: 'adet', unitPrice: 0, currency: 'TRY', total: 0, productId: '' }]
+      financialItems: [...formData.financialItems, { id: newId, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
     });
   };
   
@@ -376,7 +376,6 @@ export default function NewProjectForm({ onClose, onSave }) {
           description: selectedProduct.name,
           unit: selectedProduct.unit || 'adet',
           unitPrice: unitPrice,
-          currency: selectedProduct.currency || 'TRY',
           total: quantity * unitPrice
         };
       }
