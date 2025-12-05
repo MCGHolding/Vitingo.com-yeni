@@ -429,7 +429,9 @@ export default function PaymentTermsBuilder({
                               {!isNaN(parseInt(term.dueType)) && formatDate(term.dueDate)}
                             </>
                           ) : (
-                            calculateDueDate(term).split('(')[0].trim() // Sadece tarih, parantez içindeki açıklama olmadan
+                            term.dueType === 'ozel' && term.customDate
+                              ? formatDate(term.customDate)
+                              : calculateDueDate(term).split('(')[0].trim()
                           )
                         ) : (
                           <span className="text-gray-400">-</span>
