@@ -67,7 +67,17 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
         console.log('  installationStartDate:', data.installationStartDate);
         console.log('  installationEndDate:', data.installationEndDate);
         
-        setFormData(data);
+        // Mevcut state'i koru, sadece gelen field'ları güncelle
+        setFormData(prev => ({
+          ...prev,
+          ...data,
+          // Ensure date fields are explicitly set
+          installationStartDate: data.installationStartDate || '',
+          installationEndDate: data.installationEndDate || '',
+          fairStartDate: data.fairStartDate || '',
+          fairEndDate: data.fairEndDate || '',
+          contractDate: data.contractDate || ''
+        }));
         
         // State set edildikten sonra kontrol et
         setTimeout(() => {
