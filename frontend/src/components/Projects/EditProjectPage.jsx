@@ -138,7 +138,12 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log(`🔄 handleInputChange: ${field} = ${value}`);
+    setFormData(prev => {
+      const updated = { ...prev, [field]: value };
+      console.log(`✅ Updated formData.${field}:`, updated[field]);
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
