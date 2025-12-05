@@ -1811,7 +1811,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                   <PaymentTermsBuilder
                     paymentTerms={paymentTerms}
                     onChange={setPaymentTerms}
-                    contractAmount={totals?.total || 0}
+                    contractAmount={selectedProject?.contractAmount || totals?.total || 0}
                     hideAmounts={false}
                     contractDate={formData.date}
                   />
