@@ -157,8 +157,8 @@ export default function PaymentTermsBuilder({
         }
         return 'Sözleşme tarihi girilmeli';
       case 'kurulum':
-        if (kurulumStartDate) {
-          baseDate = new Date(kurulumStartDate);
+        if (installationStartDate) {
+          baseDate = new Date(installationStartDate);
           return `${baseDate.toLocaleDateString('tr-TR')} (Kurulum başlangıcı)`;
         }
         return 'Kurulum başlangıcı girilmeli';
