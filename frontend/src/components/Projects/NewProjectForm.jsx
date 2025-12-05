@@ -882,7 +882,7 @@ export default function NewProjectForm({ onClose, onSave }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {formData.financialItems.map((item, index) => (
+                  {(formData.financialItems || []).map((item, index) => (
                     <tr key={item.id} className="border-b border-gray-100">
                       <td className="py-3 px-2">
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
@@ -891,7 +891,7 @@ export default function NewProjectForm({ onClose, onSave }) {
                       </td>
                       <td className="py-3 px-2">
                         <SearchableSelect
-                          options={products.map(product => ({
+                          options={(products || []).map(product => ({
                             id: product.id,
                             label: product.name,
                             sublabel: `${product.default_price ? product.default_price.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' ' + product.currency : ''} / ${product.unit}`.trim(),
