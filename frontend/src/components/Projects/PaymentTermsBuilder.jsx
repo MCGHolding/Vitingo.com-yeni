@@ -334,13 +334,15 @@ export default function PaymentTermsBuilder({
                   </div>
                 )}
 
-                {/* Due Type - Koşullu: Fatura için gün bazlı, Proje için olay bazlı */}
+                {/* Due Type - Native Select (Basit ve Çalışır!) */}
                 <div>
                   <label className="text-xs text-gray-600 mb-1 block">Vade</label>
-                  <Select
-                    key={`vade-${term.id}-${term.dueType || 'empty'}`}
+                  <select
                     value={term.dueType || ''}
-                    onValueChange={(value) => {
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      console.log('🔄 Vade değişti:', term.id, value);
+                      
                       handleTermChange(term.id, 'dueType', value);
                       
                       // Fatura modunda ek işlemler
@@ -359,25 +361,22 @@ export default function PaymentTermsBuilder({
                         }
                       }
                     }}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seçiniz" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sourceType === 'invoice' 
-                        ? invoiceDueOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))
-                        : projectDueOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))
-                      }
-                    </SelectContent>
-                  </Select>
+                    <option value="">Vade Seçin...</option>
+                    {sourceType === 'invoice' 
+                      ? invoiceDueOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))
+                      : projectDueOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))
+                    }
+                  </select>
                 </div>
               </div>
 
