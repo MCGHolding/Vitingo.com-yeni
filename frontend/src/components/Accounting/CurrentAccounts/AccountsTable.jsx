@@ -142,7 +142,13 @@ const AccountsTable = ({
             {accounts.map((account, index) => (
               <tr
                 key={account.id}
-                className={`transition-colors ${
+                onClick={(e) => {
+                  // Checkbox veya menü butonuna tıklanmadıysa detaya git
+                  if (!e.target.closest('input[type="checkbox"]') && !e.target.closest('button')) {
+                    navigate(`/${tenantSlug}/cari-hesaplar/${account.id}`);
+                  }
+                }}
+                className={`transition-colors cursor-pointer ${
                   hoveredRow === account.id ? 'bg-blue-50' : 
                   account.overdueAmount > 0 ? 'bg-orange-50' :
                   selectedAccounts.includes(account.id) ? 'bg-blue-50' : 
