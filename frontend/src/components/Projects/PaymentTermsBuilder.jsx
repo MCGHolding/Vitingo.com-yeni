@@ -380,18 +380,47 @@ export default function PaymentTermsBuilder({
                 </div>
               </div>
 
-              {/* Due Days (for takip and ozel) */}
-              {(term.dueType === 'takip' || term.dueType === 'ozel') && (
-                <div>
-                  <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı</label>
-                  <Input
-                    type="number"
-                    placeholder="Örn: 30"
-                    value={term.dueDays || ''}
-                    onChange={(e) => handleTermChange(term.id, 'dueDays', parseInt(e.target.value) || null)}
-                    className="w-full"
-                  />
-                </div>
+              {/* Due Days - Koşullu render */}
+              {sourceType === 'invoice' ? (
+                /* FATURA MODU: Custom gün girişi */
+                term.dueType === 'custom' && (
+                  <div>
+                    <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı</label>
+                    <Input
+                      type="text"
+                      placeholder="Gün sayısı girin"
+                      value={term.customDays || ''}
+                      onChange={(e) => {
+                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                        const days = parseInt(numericValue) || 0;
+                        handleTermChange(term.id, 'customDays', numericValue);
+                        handleTermChange(term.id, 'dueDays', days);
+                        handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
+                      }}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      maxLength={3}
+                      className="w-full"
+                    />
+                  </div>
+                )
+              ) : (
+                /* PROJE MODU: takip ve ozel için gün girişi */
+                (term.dueType === 'takip' || term.dueType === 'ozel') && (
+                  <div>
+                    <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı</label>
+                    <Input
+                      type="number"
+                      placeholder="Örn: 30"
+                      value={term.dueDays || ''}
+                      onChange={(e) => handleTermChange(term.id, 'dueDays', parseInt(e.target.value) || null)}
+                      className="w-full"
+                    />
+                  </div>
+                )
               )}
 
               {/* Calculated Due Date Display */}
@@ -400,7 +429,19 @@ export default function PaymentTermsBuilder({
                   <div className="flex items-center text-xs text-blue-800">
                     <Calendar className="h-3 w-3 mr-1" />
                     <span className="font-medium">Vade: </span>
-                    <span className="ml-1">{calculateDueDate(term)}</span>
+                    <span className="ml-1">
+                      {sourceType === 'invoice' ? (
+                        /* FATURA için vade gösterimi */
+                        <>
+                          {term.dueType === 'immediate' && `${formatDate(invoiceDate || new Date())} (Peşin)`}
+                          {term.dueType === 'custom' && `${formatDate(term.dueDate)} (${term.customDays || 0} gün sonra)`}
+                          {!isNaN(parseInt(term.dueType)) && `${formatDate(term.dueDate)} (${term.dueType} gün sonra)`}
+                        </>
+                      ) : (
+                        /* PROJE için vade gösterimi */
+                        calculateDueDate(term)
+                      )}
+                    </span>
                   </div>
                 </div>
               )}
