@@ -252,7 +252,8 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Şirketi Seç *</label>
                   <Select
-                    value={formData.companyId || ''}
+                    key={`company-${formData.companyId || 'empty'}`}
+                    value={formData.companyId}
                     onValueChange={(value) => {
                       console.log('🏢 Company changed to:', value);
                       const selectedCompany = groupCompanies.find(c => c.id === value);
@@ -261,7 +262,9 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Şirket seçin" />
+                      <SelectValue placeholder="Şirket seçin">
+                        {formData.companyName || 'Şirket seçin'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {groupCompanies.map((company) => (
@@ -272,7 +275,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     </SelectContent>
                   </Select>
                   {formData.companyId && (
-                    <p className="text-xs text-gray-500 mt-1">Seçili: {formData.companyName || formData.companyId}</p>
+                    <p className="text-xs text-gray-500 mt-1">ID: {formData.companyId.substring(0, 8)}...</p>
                   )}
                 </div>
               </div>
