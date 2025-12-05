@@ -376,10 +376,13 @@ export default function NewProjectForm({ onClose, onSave }) {
       return;
     }
 
-    if (formData.contractAmount <= 0) {
+    // Calculate total from items
+    const calculatedTotal = calculateTotalFromItems();
+    
+    if (calculatedTotal <= 0) {
       toast({
         title: "Geçersiz Tutar",
-        description: "Sözleşme tutarı 0'dan büyük olmalıdır",
+        description: "Lütfen en az bir fatura kalemi ekleyin ve tutar giriniz",
         variant: "destructive"
       });
       return;
@@ -405,6 +408,7 @@ export default function NewProjectForm({ onClose, onSave }) {
       
       const projectData = {
         ...formData,
+        contractAmount: calculatedTotal, // Use calculated total from items
         fairName: selectedFair?.name || '',
         status: 'yeni',
         isNew: true,
