@@ -14,6 +14,57 @@ const DUE_TYPE_OPTIONS = [
 
 export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAmount, hideAmounts = false, fairStartDate = '', kurulumStartDate = '', contractDate = '' }) {
   
+  // ============ HELPER FUNCTIONS FOR DYNAMIC PERCENTAGE ============
+  
+  // Toplam kullanılan yüzdeyi hesapla
+  const getTotalUsedPercentage = () => {
+    return paymentTerms.reduce((sum, term) => sum + (term.percentage || 0), 0);
+  };
+
+  // Kalan yüzdeyi hesapla
+  const getRemainingPercentage = () => {
+    return 100 - getTotalUsedPercentage();
+  };
+
+  // Belirli bir satır HARİÇ toplam yüzde (o satırın kendi değerini dahil etmemek için)
+  const getUsedPercentageExcluding = (excludeId) => {
+    return paymentTerms
+      .filter(term => term.id !== excludeId)
+      .reduce((sum, term) => sum + (term.percentage || 0), 0);
+  };
+
+  // Bir satır için mümkün olan maksimum yüzde
+  const getMaxPercentageForTerm = (termId) => {
+    const usedByOthers = getUsedPercentageExcluding(termId);
+    return 100 - usedByOthers;
+  };
+
+  // Dropdown seçeneklerini oluştur (5'er artışla)
+  const getPercentageOptions = (termId, currentValue) => {
+    const maxAllowed = getMaxPercentageForTerm(termId);
+    const options = [];
+    
+    // 5'er artışla seçenekler (5, 10, 15, ... maxAllowed'a kadar)
+    for (let i = 5; i <= maxAllowed; i += 5) {
+      options.push(i);
+    }
+    
+    // Eğer maxAllowed 5'in katı değilse, maxAllowed'ı da ekle
+    if (maxAllowed % 5 !== 0 && maxAllowed > 0) {
+      options.push(maxAllowed);
+    }
+    
+    // Mevcut değer listede yoksa ekle (düzenleme durumu için)
+    if (currentValue && !options.includes(currentValue) && currentValue <= maxAllowed) {
+      options.push(currentValue);
+      options.sort((a, b) => a - b);
+    }
+    
+    return options;
+  };
+  
+  // ============ END HELPER FUNCTIONS ============
+  
   // Calculate due date based on type
   const calculateDueDate = (term) => {
     if (!term.dueType) return null;
@@ -57,18 +108,26 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
         return null;
     }
   };
+  
   const handleAddTerm = () => {
+    const remaining = getRemainingPercentage();
+    
+    // Kalan yoksa ekleme yapma
+    if (remaining <= 0) {
+      return;
+    }
+    
+    // Kalan oranı otomatik ata
     const newTerm = {
       id: Date.now().toString(),
-      percentage: 10,
-      amount: (contractAmount * 10) / 100,
+      percentage: remaining,
+      amount: (contractAmount * remaining) / 100,
       dueType: 'pesin',
       dueDays: null,
       notes: ''
     };
-    console.log('PaymentTermsBuilder - Adding term:', newTerm);
-    console.log('PaymentTermsBuilder - Current terms:', paymentTerms);
-    console.log('PaymentTermsBuilder - New terms:', [...paymentTerms, newTerm]);
+    console.log('PaymentTermsBuilder - Adding term with remaining:', remaining);
+    console.log('PaymentTermsBuilder - New term:', newTerm);
     onChange([...paymentTerms, newTerm]);
   };
 
