@@ -219,6 +219,19 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Amerika Fuarları Checkbox */}
+              <div className="flex justify-end">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isAmericaFair || false}
+                    onChange={(e) => handleInputChange('isAmericaFair', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Amerika Fuarları</span>
+                </label>
+              </div>
+
               {/* Proje Adı ve Şirketi Seç - Same Row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
