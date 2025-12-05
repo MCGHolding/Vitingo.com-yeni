@@ -396,17 +396,34 @@ export default function PaymentTermsBuilder({
                 /* FATURA MODU: Custom gün girişi */
                 term.dueType === 'custom' && (
                   <div>
-                    <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı</label>
-                    <Input
+                    <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı (Max 365)</label>
+                    <input
                       type="text"
-                      placeholder="Gün sayısı girin"
+                      placeholder="Gün sayısı girin (örn: 45)"
                       value={term.customDays || ''}
                       onChange={(e) => {
                         const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                        const days = parseInt(numericValue) || 0;
-                        handleTermChange(term.id, 'customDays', numericValue);
-                        handleTermChange(term.id, 'dueDays', days);
-                        handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
+                        let days = parseInt(numericValue) || 0;
+                        
+                        // Max 365 gün sınırı
+                        if (days > 365) {
+                          days = 365;
+                        }
+                        
+                        // TÜM güncellemeleri tek seferde yap
+                        const updatedTerms = paymentTerms.map(t => {
+                          if (t.id === term.id) {
+                            return {
+                              ...t,
+                              customDays: days.toString(),
+                              dueDays: days,
+                              dueDate: calculateInvoiceDueDate(days)
+                            };
+                          }
+                          return t;
+                        });
+                        
+                        onChange(updatedTerms);
                       }}
                       onKeyPress={(e) => {
                         if (!/[0-9]/.test(e.key)) {
@@ -414,8 +431,9 @@ export default function PaymentTermsBuilder({
                         }
                       }}
                       maxLength={3}
-                      className="w-full"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Maximum 365 gün girebilirsiniz</p>
                   </div>
                 )
               ) : (
