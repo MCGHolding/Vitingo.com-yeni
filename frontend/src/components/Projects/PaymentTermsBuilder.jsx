@@ -192,6 +192,8 @@ export default function PaymentTermsBuilder({
   };
 
   const handleTermChange = (termId, field, value) => {
+    console.log(`🔄 handleTermChange: termId=${termId}, field=${field}, value=${value}`);
+    
     const updatedTerms = paymentTerms.map(term => {
       if (term.id === termId) {
         const updated = { ...term, [field]: value };
@@ -207,7 +209,6 @@ export default function PaymentTermsBuilder({
           }
           // Tutarı yeniden hesapla
           updated.amount = (contractAmount * updated.percentage) / 100;
-          console.log(`💰 Percentage changed to ${updated.percentage}%, amount: ${updated.amount}`);
         }
         
         // If amount changes manually, recalculate percentage
@@ -215,10 +216,17 @@ export default function PaymentTermsBuilder({
           updated.percentage = contractAmount > 0 ? (value / contractAmount) * 100 : 0;
         }
         
+        // Log for dueType changes
+        if (field === 'dueType') {
+          console.log(`📅 DueType changed to: ${value}, sourceType: ${sourceType}`);
+        }
+        
         return updated;
       }
       return term;
     });
+    
+    console.log(`✅ Updated terms:`, updatedTerms.map(t => ({ id: t.id, dueType: t.dueType, dueDays: t.dueDays })));
     onChange(updatedTerms);
   };
 
