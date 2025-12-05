@@ -265,7 +265,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     key={`customer-${formData.customerId || 'empty'}`}
                     value={formData.customerId} 
                     onValueChange={(value) => {
-                      console.log('👤 Customer changed to:', value);
                       const customer = customers.find(c => c.id === value);
                       handleInputChange('customerId', value);
                       handleInputChange('customerName', customer?.companyName || '');
