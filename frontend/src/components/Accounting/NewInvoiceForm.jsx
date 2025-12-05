@@ -1519,8 +1519,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       </div>
       )}
 
-      {/* Tab Content */}
-      {invoiceCreationMode && (invoiceCreationMode === 'manual' || selectedProject) && activeTab === 'satis' ? (
+      {/* SATIŞ FATURASI FORMU - Manuel veya Projeye Bağlı modda */}
+      {invoiceCreationMode && (invoiceCreationMode === 'manual' || (invoiceCreationMode === 'project' && selectedProject)) ? (
         <div>
         <form id="invoice-form" onSubmit={handleSubmit} className="space-y-8">
         {/* Invoice Header */}
