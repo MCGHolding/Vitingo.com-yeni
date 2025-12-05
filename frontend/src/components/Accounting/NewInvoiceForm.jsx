@@ -1654,11 +1654,22 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 })()}
                 value={formData.customerId}
                 onChange={handleCustomerChange}
-                placeholder={isLoadingData ? "Müşteriler yükleniyor..." : "Müşteri seçiniz..."}
+                placeholder={
+                  selectedProject 
+                    ? `✓ Projeden: ${selectedProject.customerName}` 
+                    : isLoadingData 
+                      ? "Müşteriler yükleniyor..." 
+                      : "Müşteri seçiniz..."
+                }
                 searchPlaceholder="Müşteri ara..."
-                disabled={isLoadingData}
+                disabled={isLoadingData || !!selectedProject}
                 className="w-full"
               />
+              {selectedProject && (
+                <p className="text-xs text-green-600 mt-1">
+                  ✓ Müşteri projeden otomatik seçildi
+                </p>
+              )}
               
             </div>
           </div>
