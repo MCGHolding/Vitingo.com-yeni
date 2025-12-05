@@ -332,23 +332,26 @@ export default function NewProjectForm({ onClose, onSave }) {
 
   // Financial Items Management
   const addFinancialItem = () => {
-    const newId = Math.max(...formData.financialItems.map(i => i.id), 0) + 1;
+    const items = formData.financialItems || [];
+    const newId = items.length > 0 ? Math.max(...items.map(i => i.id), 0) + 1 : 1;
     setFormData({
       ...formData,
-      financialItems: [...formData.financialItems, { id: newId, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
+      financialItems: [...items, { id: newId, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
     });
   };
   
   const removeFinancialItem = (id) => {
-    if (formData.financialItems.length === 1) return; // At least one item
+    const items = formData.financialItems || [];
+    if (items.length === 1) return; // At least one item
     setFormData({
       ...formData,
-      financialItems: formData.financialItems.filter(item => item.id !== id)
+      financialItems: items.filter(item => item.id !== id)
     });
   };
   
   const updateFinancialItem = (id, field, value) => {
-    const updatedItems = formData.financialItems.map(item => {
+    const items = formData.financialItems || [];
+    const updatedItems = items.map(item => {
       if (item.id === id) {
         const updated = { ...item, [field]: value };
         // Calculate total
@@ -363,10 +366,11 @@ export default function NewProjectForm({ onClose, onSave }) {
   };
   
   const handleProductSelect = (itemId, productId) => {
-    const selectedProduct = products.find(p => p.id === productId);
+    const selectedProduct = (products || []).find(p => p.id === productId);
     if (!selectedProduct) return;
     
-    const updatedItems = formData.financialItems.map(item => {
+    const items = formData.financialItems || [];
+    const updatedItems = items.map(item => {
       if (item.id === itemId) {
         const quantity = item.quantity || 1;
         const unitPrice = selectedProduct.default_price || 0;
