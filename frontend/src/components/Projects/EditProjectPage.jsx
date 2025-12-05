@@ -234,7 +234,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     key={`company-${formData.companyId || 'empty'}`}
                     value={formData.companyId}
                     onValueChange={(value) => {
-                      console.log('🏢 Company changed to:', value);
                       const selectedCompany = groupCompanies.find(c => c.id === value);
                       handleInputChange('companyId', value);
                       handleInputChange('companyName', selectedCompany?.name || '');
