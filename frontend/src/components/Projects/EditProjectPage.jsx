@@ -158,6 +158,86 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     }
   };
 
+  const loadProducts = async () => {
+    try {
+      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
+                        process.env.REACT_APP_BACKEND_URL || 
+                        import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/products`);
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+    }
+  };
+
+  // Calculate total from financial items
+  const calculateTotalFromItems = () => {
+    const items = formData.financialItems || [];
+    return items.reduce((sum, item) => sum + (item.total || 0), 0);
+  };
+
+  // Financial Items Management
+  const addFinancialItem = () => {
+    const items = formData.financialItems || [];
+    const newId = items.length > 0 ? Math.max(...items.map(i => i.id), 0) + 1 : 1;
+    setFormData({
+      ...formData,
+      financialItems: [...items, { id: newId, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
+    });
+  };
+  
+  const removeFinancialItem = (id) => {
+    const items = formData.financialItems || [];
+    if (items.length === 1) return; // At least one item
+    setFormData({
+      ...formData,
+      financialItems: items.filter(item => item.id !== id)
+    });
+  };
+  
+  const updateFinancialItem = (id, field, value) => {
+    const items = formData.financialItems || [];
+    const updatedItems = items.map(item => {
+      if (item.id === id) {
+        const updated = { ...item, [field]: value };
+        // Calculate total
+        if (field === 'quantity' || field === 'unitPrice') {
+          updated.total = (updated.quantity || 0) * (updated.unitPrice || 0);
+        }
+        return updated;
+      }
+      return item;
+    });
+    setFormData({ ...formData, financialItems: updatedItems });
+  };
+  
+  const handleProductSelect = (itemId, productId) => {
+    const selectedProduct = (products || []).find(p => p.id === productId);
+    if (!selectedProduct) return;
+    
+    const items = formData.financialItems || [];
+    const updatedItems = items.map(item => {
+      if (item.id === itemId) {
+        const quantity = item.quantity || 1;
+        const unitPrice = selectedProduct.default_price || 0;
+        return {
+          ...item,
+          productId: productId,
+          description: selectedProduct.name,
+          unit: selectedProduct.unit || 'adet',
+          unitPrice: unitPrice,
+          total: quantity * unitPrice
+        };
+      }
+      return item;
+    });
+    
+    setFormData({ ...formData, financialItems: updatedItems });
+  };
+
   const handleInputChange = (field, value) => {
     console.log(`🔄 handleInputChange: ${field} = ${value}`);
     setFormData(prev => {
