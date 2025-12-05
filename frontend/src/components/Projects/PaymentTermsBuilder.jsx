@@ -319,14 +319,38 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
             </div>
           ))}
 
-          {/* Summary */}
-          <div className="border-t pt-3 mt-4">
+          {/* Summary - Enhanced with Smart Indicators */}
+          <div className={`border-t pt-3 mt-4 rounded-lg p-4 ${
+            totalPercentage === 100 
+              ? 'bg-green-50 border-green-200' 
+              : 'bg-red-50 border-red-200'
+          }`}>
             <div className="flex justify-between items-center text-sm">
               <span className="font-medium text-gray-700">Toplam:</span>
-              <div className="flex space-x-4">
-                <span className={`font-semibold ${totalPercentage === 100 ? 'text-green-600' : 'text-red-600'}`}>
-                  %{totalPercentage.toFixed(0)}
-                </span>
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <span className={`text-lg font-bold ${
+                    totalPercentage === 100 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    %{totalPercentage.toFixed(0)}
+                  </span>
+                  
+                  {totalPercentage !== 100 && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {totalPercentage < 100 
+                        ? `%${(100 - totalPercentage).toFixed(0)} daha eklenmeli`
+                        : `%${(totalPercentage - 100).toFixed(0)} fazla!`
+                      }
+                    </p>
+                  )}
+                  
+                  {totalPercentage === 100 && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Ödeme planı tamamlandı
+                    </p>
+                  )}
+                </div>
+                
                 {!hideAmounts && (
                   <span className="font-semibold text-gray-900">
                     {totalAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -334,11 +358,6 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                 )}
               </div>
             </div>
-            {totalPercentage !== 100 && (
-              <p className="text-xs text-red-600 mt-1 text-right">
-                Ödeme koşullarının toplamı %100 olmalıdır
-              </p>
-            )}
           </div>
         </div>
       )}
