@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://accrue-tenant.preview.emergentagent.com"
+BACKEND_URL = "https://payday-manager-7.preview.emergentagent.com"
 
 def verify_update_issue():
     """Verify the update issue by checking database state"""
