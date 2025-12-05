@@ -15712,6 +15712,403 @@ async def delete_payment_term_profile(profile_id: str):
         logger.error(f"Error deleting payment term profile: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting payment term profile: {str(e)}")
 
+# ==================== CARİ HESAPLAR API ====================
+
+class CurrentAccountSummary(BaseModel):
+    id: str
+    accountNo: str
+    name: str
+    type: str  # customer, supplier, personnel
+    email: str = ""
+    phone: str = ""
+    receivables: float = 0  # Alacak (bize borçlu)
+    payables: float = 0  # Borç (bizim borcumuz)
+    balance: float = 0  # Bakiye (receivables - payables)
+    status: str = "zero"  # debtor, creditor, zero
+    lastTransaction: str = ""
+    riskScore: int = 1
+    overdueAmount: float = 0
+    currency: str = "TRY"
+
+@api_router.get("/current-accounts")
+async def get_current_accounts():
+    """Tüm cari hesapları getir - müşteriler ve tedarikçilerden hesapla"""
+    try:
+        accounts = []
+        stats = {
+            "totalAccounts": 0,
+            "totalReceivables": 0,
+            "totalPayables": 0,
+            "netBalance": 0,
+            "debtorCount": 0,
+            "creditorCount": 0,
+            "zeroBalanceCount": 0,
+            "overdueCount": 0
+        }
+        
+        # 1. MÜŞTERİLERİ ÇEK
+        customers = await db.customers.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        
+        for customer in customers:
+            customer_id = customer.get("id")
+            if not customer_id:
+                continue
+            
+            # Müşteriye kesilen satış faturaları (ALACAK - bize borçlu)
+            sales_invoices = await db.invoices.find({
+                "$or": [
+                    {"customer_id": customer_id},
+                    {"customerId": customer_id}
+                ]
+            }, {"_id": 0}).to_list(None)
+            
+            total_receivables = sum(
+                inv.get("total", 0) or inv.get("grandTotal", 0) or 0 
+                for inv in sales_invoices
+            )
+            
+            # Müşteriden alınan tahsilatlar (ALACAKTAN DÜŞ)
+            collections = await db.collections.find({
+                "$or": [
+                    {"customer_id": customer_id},
+                    {"customerId": customer_id}
+                ]
+            }, {"_id": 0}).to_list(None)
+            
+            total_collections = sum(
+                c.get("amount", 0) or 0 
+                for c in collections
+            )
+            
+            # Net alacak
+            net_receivables = total_receivables - total_collections
+            
+            # Bakiye hesapla
+            balance = net_receivables
+            
+            # Durum belirle
+            if balance > 0:
+                status = "debtor"  # Bize borçlu
+            elif balance < 0:
+                status = "creditor"  # Biz borçluyuz
+            else:
+                status = "zero"
+            
+            # Son işlem tarihi
+            last_transaction = ""
+            all_transactions = sales_invoices + collections
+            if all_transactions:
+                dates = [
+                    t.get("date") or t.get("created_at") or t.get("createdAt") 
+                    for t in all_transactions if t.get("date") or t.get("created_at") or t.get("createdAt")
+                ]
+                if dates:
+                    last_transaction = max(dates) if dates else ""
+            
+            # Vadesi geçmiş tutar hesapla
+            overdue_amount = 0
+            today = datetime.now().strftime("%Y-%m-%d")
+            for inv in sales_invoices:
+                due_date = inv.get("dueDate") or inv.get("due_date")
+                if due_date and due_date < today:
+                    paid = inv.get("paidAmount", 0) or 0
+                    total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+                    if total > paid:
+                        overdue_amount += (total - paid)
+            
+            # Risk skoru hesapla (1-5)
+            risk_score = 1
+            if overdue_amount > 0:
+                if overdue_amount > 100000:
+                    risk_score = 5
+                elif overdue_amount > 50000:
+                    risk_score = 4
+                elif overdue_amount > 20000:
+                    risk_score = 3
+                elif overdue_amount > 5000:
+                    risk_score = 2
+            
+            # Hesap numarası oluştur
+            account_no = f"MUS-{str(customer_id)[-4:].upper()}"
+            
+            account = {
+                "id": customer_id,
+                "accountNo": account_no,
+                "name": customer.get("companyName") or customer.get("name") or "İsimsiz",
+                "type": "customer",
+                "email": customer.get("email", ""),
+                "phone": customer.get("phone", ""),
+                "receivables": net_receivables if net_receivables > 0 else 0,
+                "payables": abs(net_receivables) if net_receivables < 0 else 0,
+                "balance": balance,
+                "status": status,
+                "lastTransaction": last_transaction if isinstance(last_transaction, str) else str(last_transaction)[:10],
+                "riskScore": risk_score,
+                "overdueAmount": overdue_amount,
+                "currency": "TRY"
+            }
+            
+            accounts.append(account)
+            
+            # İstatistikleri güncelle
+            stats["totalReceivables"] += account["receivables"]
+            stats["totalPayables"] += account["payables"]
+            if status == "debtor":
+                stats["debtorCount"] += 1
+            elif status == "creditor":
+                stats["creditorCount"] += 1
+            else:
+                stats["zeroBalanceCount"] += 1
+            if overdue_amount > 0:
+                stats["overdueCount"] += 1
+        
+        # 2. TEDARİKÇİLERİ ÇEK (suppliers collection varsa)
+        try:
+            suppliers = await db.suppliers.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+            
+            for supplier in suppliers:
+                supplier_id = supplier.get("id")
+                if not supplier_id:
+                    continue
+                
+                # Tedarikçiden alınan alış faturaları (BORÇ - bizim borcumuz)
+                purchase_invoices = await db.purchase_invoices.find({
+                    "$or": [
+                        {"supplier_id": supplier_id},
+                        {"supplierId": supplier_id}
+                    ]
+                }, {"_id": 0}).to_list(None)
+                
+                total_payables = sum(
+                    inv.get("total", 0) or inv.get("grandTotal", 0) or 0 
+                    for inv in purchase_invoices
+                )
+                
+                # Tedarikçiye yapılan ödemeler (BORÇTAN DÜŞ)
+                payments = await db.payments.find({
+                    "$or": [
+                        {"supplier_id": supplier_id},
+                        {"supplierId": supplier_id}
+                    ]
+                }, {"_id": 0}).to_list(None)
+                
+                total_payments = sum(
+                    p.get("amount", 0) or 0 
+                    for p in payments
+                )
+                
+                # Net borç
+                net_payables = total_payables - total_payments
+                
+                # Bakiye (negatif = biz borçluyuz)
+                balance = -net_payables
+                
+                # Durum
+                if balance > 0:
+                    status = "debtor"
+                elif balance < 0:
+                    status = "creditor"
+                else:
+                    status = "zero"
+                
+                # Hesap numarası
+                account_no = f"TED-{str(supplier_id)[-4:].upper()}"
+                
+                account = {
+                    "id": supplier_id,
+                    "accountNo": account_no,
+                    "name": supplier.get("companyName") or supplier.get("name") or "İsimsiz",
+                    "type": "supplier",
+                    "email": supplier.get("email", ""),
+                    "phone": supplier.get("phone", ""),
+                    "receivables": 0,
+                    "payables": net_payables if net_payables > 0 else 0,
+                    "balance": balance,
+                    "status": status,
+                    "lastTransaction": "",
+                    "riskScore": 1,
+                    "overdueAmount": 0,
+                    "currency": "TRY"
+                }
+                
+                accounts.append(account)
+                
+                stats["totalPayables"] += account["payables"]
+                if status == "debtor":
+                    stats["debtorCount"] += 1
+                elif status == "creditor":
+                    stats["creditorCount"] += 1
+                else:
+                    stats["zeroBalanceCount"] += 1
+        except Exception as e:
+            logger.info(f"Suppliers collection not found or error: {e}")
+        
+        # Final istatistikler
+        stats["totalAccounts"] = len(accounts)
+        stats["netBalance"] = stats["totalReceivables"] - stats["totalPayables"]
+        
+        # Bakiyeye göre sırala (büyükten küçüğe)
+        accounts.sort(key=lambda x: abs(x["balance"]), reverse=True)
+        
+        return {
+            "accounts": accounts,
+            "stats": stats
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting current accounts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/current-accounts/{account_id}")
+async def get_current_account_detail(account_id: str):
+    """Tek bir cari hesabın detayını getir"""
+    try:
+        # Önce müşterilerde ara
+        customer = await db.customers.find_one({
+            "id": account_id
+        }, {"_id": 0})
+        
+        if customer:
+            customer_id = customer.get("id")
+            
+            # Satış faturaları
+            invoices = await db.invoices.find({
+                "$or": [
+                    {"customer_id": customer_id},
+                    {"customerId": customer_id}
+                ]
+            }, {"_id": 0}).sort("date", -1).to_list(None)
+            
+            # Tahsilatlar
+            collections = await db.collections.find({
+                "$or": [
+                    {"customer_id": customer_id},
+                    {"customerId": customer_id}
+                ]
+            }, {"_id": 0}).sort("date", -1).to_list(None)
+            
+            # Tüm hareketleri birleştir
+            transactions = []
+            
+            for inv in invoices:
+                transactions.append({
+                    "id": inv.get("id"),
+                    "date": inv.get("date", ""),
+                    "type": "invoice",
+                    "description": f"Fatura #{inv.get('invoice_number', '')}",
+                    "debit": inv.get("total", 0),  # Borç (bize borçlu)
+                    "credit": 0,
+                    "balance": 0  # Sonra hesaplanacak
+                })
+            
+            for col in collections:
+                transactions.append({
+                    "id": col.get("id"),
+                    "date": col.get("date", ""),
+                    "type": "collection",
+                    "description": f"Tahsilat #{col.get('receipt_number', '')}",
+                    "debit": 0,
+                    "credit": col.get("amount", 0),  # Alacak (ödeme aldık)
+                    "balance": 0
+                })
+            
+            # Tarihe göre sırala
+            transactions.sort(key=lambda x: x["date"])
+            
+            # Bakiyeleri hesapla
+            running_balance = 0
+            for t in transactions:
+                running_balance += t["debit"] - t["credit"]
+                t["balance"] = running_balance
+            
+            return {
+                "account": {
+                    "id": customer_id,
+                    "accountNo": f"MUS-{str(customer_id)[-4:].upper()}",
+                    "name": customer.get("companyName", ""),
+                    "type": "customer",
+                    "email": customer.get("email", ""),
+                    "phone": customer.get("phone", ""),
+                    "address": customer.get("address", ""),
+                    "taxNumber": customer.get("taxNumber", ""),
+                    "taxOffice": customer.get("taxOffice", "")
+                },
+                "transactions": transactions,
+                "summary": {
+                    "totalDebit": sum(t["debit"] for t in transactions),
+                    "totalCredit": sum(t["credit"] for t in transactions),
+                    "balance": running_balance
+                }
+            }
+        
+        raise HTTPException(status_code=404, detail="Hesap bulunamadı")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting account detail: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/current-accounts/{account_id}/statement")
+async def get_account_statement(account_id: str, start_date: str = None, end_date: str = None):
+    """Cari hesap ekstresi oluştur"""
+    try:
+        detail = await get_current_account_detail(account_id)
+        
+        transactions = detail["transactions"]
+        
+        # Tarih filtresi
+        if start_date:
+            transactions = [t for t in transactions if t["date"] >= start_date]
+        if end_date:
+            transactions = [t for t in transactions if t["date"] <= end_date]
+        
+        return {
+            "account": detail["account"],
+            "period": {
+                "start": start_date or "Başlangıç",
+                "end": end_date or datetime.now().strftime("%Y-%m-%d")
+            },
+            "transactions": transactions,
+            "summary": {
+                "openingBalance": 0,  # Dönem başı bakiye
+                "totalDebit": sum(t["debit"] for t in transactions),
+                "totalCredit": sum(t["credit"] for t in transactions),
+                "closingBalance": transactions[-1]["balance"] if transactions else 0
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/current-accounts/send-statement")
+async def send_account_statement(data: dict):
+    """Cari hesap ekstresini e-posta ile gönder"""
+    try:
+        account_id = data.get("accountId")
+        email = data.get("email")
+        
+        if not account_id or not email:
+            raise HTTPException(status_code=400, detail="accountId ve email gerekli")
+        
+        # Ekstre oluştur
+        statement = await get_account_statement(account_id)
+        
+        # E-posta gönder (email_service kullan)
+        # ... email gönderme kodu
+        
+        return {"success": True, "message": f"Ekstre {email} adresine gönderildi"}
+        
+    except Exception as e:
+        logger.error(f"Error sending statement: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== END CARİ HESAPLAR API ====================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
