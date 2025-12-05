@@ -1033,7 +1033,7 @@ export default function NewProjectForm({ onClose, onSave }) {
               contractAmount={calculateTotalFromItems()}
               contractDate={formData.contractDate}
               fairStartDate={formData.fairStartDate}
-              kurulumStartDate={formData.kurulumStartDate}
+              installationStartDate={formData.installationStartDate}
             />
           </CardContent>
         </Card>
