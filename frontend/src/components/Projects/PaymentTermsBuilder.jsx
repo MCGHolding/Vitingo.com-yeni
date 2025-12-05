@@ -18,7 +18,7 @@ export default function PaymentTermsBuilder({
   contractAmount, 
   hideAmounts = false, 
   fairStartDate = '', 
-  kurulumStartDate = '', 
+  installationStartDate = '', 
   contractDate = '',
   sourceType = 'project', // 'project' or 'invoice'
   invoiceDate = ''
