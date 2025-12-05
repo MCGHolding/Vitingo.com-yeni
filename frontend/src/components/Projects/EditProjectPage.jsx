@@ -379,6 +379,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Başlangıç *</label>
                   <input
+                    key={`fair-start-${formData.fairStartDate}`}
                     type="date"
                     value={formData.fairStartDate || ''}
                     onChange={(e) => handleInputChange('fairStartDate', e.target.value)}
@@ -389,6 +390,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Bitiş *</label>
                   <input
+                    key={`fair-end-${formData.fairEndDate}`}
                     type="date"
                     value={formData.fairEndDate || ''}
                     onChange={(e) => handleInputChange('fairEndDate', e.target.value)}
