@@ -514,8 +514,8 @@ export default function PaymentTermsBuilder({
                   </div>
                 )
               ) : (
-                /* PROJE MODU: takip ve ozel için gün girişi */
-                (term.dueType === 'takip' || term.dueType === 'ozel') && (
+                /* PROJE MODU: sadece "takip" için gün girişi - "ozel" için DEĞİL */
+                term.dueType === 'takip' && (
                   <div>
                     <label className="text-xs text-gray-600 mb-1 block">Gün Sayısı</label>
                     <Input
