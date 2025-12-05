@@ -731,6 +731,23 @@ export default function NewProjectForm({ onClose, onSave }) {
               </div>
             </div>
 
+            {/* Sözleşme Tarihi - Moved here from Contract section */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sözleşme Tarihi <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={formData.contractDate}
+                  onChange={(e) => setFormData({ ...formData, contractDate: e.target.value })}
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Peşin ve özel vade hesaplamalarında kullanılır</p>
+              </div>
+              <div></div>
+            </div>
+
             {/* City and Country */}
             <div className="grid grid-cols-2 gap-4">
               <div>
