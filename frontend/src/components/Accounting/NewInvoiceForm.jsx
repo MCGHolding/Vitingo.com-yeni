@@ -894,6 +894,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       })));
       
       console.log('✅ Applied payment terms from project:', project.name);
+      console.log('💰 Project contract amount:', project.contractAmount);
     }
   };
 
