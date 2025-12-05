@@ -180,10 +180,21 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
           variant="outline"
           size="sm"
           onClick={handleAddTerm}
-          className="flex items-center space-x-1"
+          disabled={getRemainingPercentage() <= 0}
+          className={`flex items-center space-x-1 ${
+            getRemainingPercentage() <= 0 
+              ? 'opacity-50 cursor-not-allowed' 
+              : 'hover:bg-gray-100'
+          }`}
+          title={getRemainingPercentage() <= 0 ? 'Toplam %100\'e ulaşıldı' : `Kalan: %${getRemainingPercentage()}`}
         >
           <Plus className="h-4 w-4" />
           <span>Ödeme Ekle</span>
+          {getRemainingPercentage() > 0 && (
+            <span className="ml-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+              %{getRemainingPercentage()}
+            </span>
+          )}
         </Button>
       </div>
 
