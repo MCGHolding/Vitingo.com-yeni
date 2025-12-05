@@ -64,6 +64,14 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
         console.log('💰 Contract Amount:', data.contractAmount);
         console.log('💳 Payment Terms:', data.paymentTerms);
         setFormData(data);
+        
+        // Verify formData was updated
+        setTimeout(() => {
+          console.log('✅ FormData state after setFormData:');
+          console.log('  companyId:', data.companyId);
+          console.log('  customerId:', data.customerId);
+          console.log('  fairId:', data.fairId);
+        }, 100);
       }
     } catch (error) {
       console.error('Error loading project:', error);
