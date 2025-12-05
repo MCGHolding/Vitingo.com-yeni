@@ -119,6 +119,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   ]);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileDescription, setNewProfileDescription] = useState('');
+  
+  // Projects for payment terms
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   // Debug log - Check data availability
   console.log('📊 NewInvoiceForm data status:', {
