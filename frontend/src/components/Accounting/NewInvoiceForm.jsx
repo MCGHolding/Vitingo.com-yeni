@@ -859,6 +859,44 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     }
   };
 
+  const loadProjects = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/projects`);
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data);
+        console.log('✅ Projects loaded:', data.length);
+      }
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    }
+  };
+
+  const handleProjectSelect = (projectId) => {
+    if (!projectId) {
+      setSelectedProject(null);
+      return;
+    }
+    
+    const project = projects.find(p => p.id === projectId);
+    if (project && project.paymentTerms && project.paymentTerms.length > 0) {
+      setSelectedProject(project);
+      setSelectedProfile(null); // Clear profile selection
+      
+      // Map project payment terms to our format
+      setPaymentTerms(project.paymentTerms.map((term, index) => ({
+        id: index + 1,
+        percentage: term.percentage || 0,
+        days: term.dueDays || 0,
+        description: term.notes || term.dueType || '',
+        dueDate: calculateDueDate(term.dueDays || 0)
+      })));
+      
+      console.log('✅ Applied payment terms from project:', project.name);
+    }
+  };
+
   const handleProfileSelect = (profileId) => {
     if (!profileId) {
       setSelectedProfile(null);
