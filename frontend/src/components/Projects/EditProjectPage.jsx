@@ -294,7 +294,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     key={`fair-${formData.fairId || 'empty'}`}
                     value={formData.fairId} 
                     onValueChange={(value) => {
-                      console.log('🎪 Fair changed to:', value);
                       const fair = fairs.find(f => f.id === value);
                       handleInputChange('fairId', value);
                       handleInputChange('fairName', fair?.name || '');
