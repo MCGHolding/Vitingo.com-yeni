@@ -912,7 +912,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const handleProfileSelect = (profileId) => {
     if (!profileId) {
       setSelectedProfile(null);
-      setPaymentTerms([{ id: 1, percentage: 100, days: 30, description: 'Vade', dueDate: '' }]);
+      setPaymentTerms([{ id: 1, percentage: 100, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }]);
       return;
     }
     
@@ -924,9 +924,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       setPaymentTerms(terms.map((term, index) => ({
         id: index + 1,
         percentage: term.percentage,
+        dueType: term.dueType || 'pesin',
+        dueDays: term.dueDays || term.days || 0,
         days: term.dueDays || term.days || 0,
-        description: term.notes || term.description || term.dueType || '',
-        dueDate: calculateDueDate(term.dueDays || term.days || 0)
+        description: term.notes || term.description || '',
+        dueDate: calculateDueDate(term.dueDays || term.days || 0),
+        notes: term.notes || ''
       })));
     }
   };
