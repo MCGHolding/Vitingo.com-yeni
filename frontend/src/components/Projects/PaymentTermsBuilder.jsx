@@ -99,7 +99,25 @@ export default function PaymentTermsBuilder({
   
   // ============ END HELPER FUNCTIONS ============
   
-  // Calculate due date based on type
+  // Fatura için vade tarihi hesaplama (fatura tarihine göre)
+  const calculateInvoiceDueDate = (days) => {
+    const baseDate = new Date(invoiceDate || new Date());
+    baseDate.setDate(baseDate.getDate() + days);
+    return baseDate.toISOString().split('T')[0];
+  };
+
+  // Tarih formatlama
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('tr-TR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+  
+  // Calculate due date based on type (Proje için)
   const calculateDueDate = (term) => {
     if (!term.dueType) return null;
     
