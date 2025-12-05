@@ -299,8 +299,12 @@ class ProjectCreate(BaseModel):
     fairName: str = ""
     fairStartDate: str = ""
     fairEndDate: str = ""
+    installationStartDate: str = ""
+    installationEndDate: str = ""
+    isAmericaFair: bool = False
     city: str = ""
     country: str = ""
+    contractDate: str = ""
     contractAmount: float = 0
     currency: str = "TRY"
     paymentTerms: list = []
