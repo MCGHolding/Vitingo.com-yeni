@@ -440,6 +440,32 @@ export default function PaymentTermsBuilder({
                 </div>
               </div>
 
+              {/* Özel Tarih Seçimi - PROJE MODU */}
+              {sourceType === 'project' && term.dueType === 'ozel' && (
+                <div className="col-span-full">
+                  <label className="text-xs text-gray-600 mb-1 block">Özel Ödeme Tarihi</label>
+                  <input
+                    type="date"
+                    value={term.customDate || ''}
+                    onChange={(e) => {
+                      const updatedTerms = paymentTerms.map(t => {
+                        if (t.id === term.id) {
+                          return {
+                            ...t,
+                            customDate: e.target.value,
+                            dueDate: e.target.value
+                          };
+                        }
+                        return t;
+                      });
+                      onChange(updatedTerms);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Ödeme için belirli bir tarih seçin</p>
+                </div>
+              )}
+
               {/* Due Days - Koşullu render */}
               {sourceType === 'invoice' ? (
                 /* FATURA MODU: Custom gün girişi */
