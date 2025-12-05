@@ -81,7 +81,11 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
           installationEndDate: data.installationEndDate || '',
           fairStartDate: data.fairStartDate || '',
           fairEndDate: data.fairEndDate || '',
-          contractDate: data.contractDate || ''
+          contractDate: data.contractDate || '',
+          // Initialize financialItems if empty
+          financialItems: (data.financialItems && data.financialItems.length > 0) 
+            ? data.financialItems 
+            : [{ id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
         }));
         
         // State set edildikten sonra kontrol et
