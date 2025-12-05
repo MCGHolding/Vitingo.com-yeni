@@ -261,13 +261,12 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
                 {!hideAmounts && (
                   <div>
                     <label className="text-xs text-gray-600 mb-1 block">Tutar</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={term.amount}
-                      onChange={(e) => handleTermChange(term.id, 'amount', parseFloat(e.target.value) || 0)}
-                      className="w-full"
-                    />
+                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm font-medium text-gray-800">
+                      {term.amount?.toLocaleString('tr-TR', { 
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2 
+                      }) || '0,00'}
+                    </div>
                   </div>
                 )}
 
