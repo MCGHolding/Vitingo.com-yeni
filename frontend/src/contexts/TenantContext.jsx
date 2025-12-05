@@ -11,7 +11,7 @@ export const TenantProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadTenant = async () => {
+    const loadTenant = async (retryCount = 0, maxRetries = 3) => {
       if (!tenantSlug) {
         setLoading(false);
         return;
@@ -31,11 +31,26 @@ export const TenantProvider = ({ children }) => {
         setTenant(data);
         setError(null);
       } catch (err) {
-        console.error('Tenant load error:', err);
-        setError('Şirket bulunamadı');
-        setTenant(null);
+        console.error(`Tenant load error (attempt ${retryCount + 1}/${maxRetries + 1}):`, err);
+        
+        // Backend henüz hazır değilse, birkaç saniye sonra tekrar dene
+        if (retryCount < maxRetries) {
+          const delay = 1000 * (retryCount + 1); // 1s, 2s, 3s
+          console.log(`Retrying in ${delay}ms...`);
+          setTimeout(() => {
+            loadTenant(retryCount + 1, maxRetries);
+          }, delay);
+        } else {
+          // Tüm denemeler başarısız oldu
+          setError('Şirket bulunamadı');
+          setTenant(null);
+          setLoading(false);
+        }
       } finally {
-        setLoading(false);
+        // Son denemede loading'i false yap
+        if (retryCount === maxRetries) {
+          setLoading(false);
+        }
       }
     };
 
