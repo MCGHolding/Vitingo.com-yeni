@@ -1753,26 +1753,55 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ⭐ Kayıtlı Vade Profilinden Seç
+                        Vade Girişi
                       </label>
-                      <select
-                        value={selectedProfile?.id || ''}
-                        onChange={(e) => {
-                          setSelectedProject(null); // Clear project selection
-                          handleProfileSelect(e.target.value);
-                        }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="">Manuel Vade Girişi</option>
-                        {paymentTermProfiles.map(profile => (
-                          <option key={profile.id} value={profile.id}>
-                            {profile.name} {profile.isDefault && '⭐'}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Manuel Buton */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedProject(null);
+                            setSelectedProfile(null);
+                            setPaymentTerms([{ id: 1, percentage: 100, days: 30, description: 'Vade', dueDate: '' }]);
+                          }}
+                          className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center ${
+                            !selectedProfile && !selectedProject
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                          Manuel Giriş
+                        </button>
+                        
+                        {/* Profil Dropdown */}
+                        <select
+                          value={selectedProfile?.id || ''}
+                          onChange={(e) => {
+                            setSelectedProject(null);
+                            handleProfileSelect(e.target.value);
+                          }}
+                          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Profil Seç</option>
+                          {paymentTermProfiles.map(profile => (
+                            <option key={profile.id} value={profile.id}>
+                              {profile.name} {profile.isDefault && '⭐'}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
                       {selectedProfile && (
-                        <p className="mt-1 text-xs text-blue-600">
+                        <p className="mt-2 text-xs text-blue-600">
                           ✅ Vade profili uygulandı: {selectedProfile.name}
+                        </p>
+                      )}
+                      {!selectedProfile && !selectedProject && (
+                        <p className="mt-2 text-xs text-gray-500">
+                          ✍️ Manuel vade girişi aktif
                         </p>
                       )}
                     </div>
