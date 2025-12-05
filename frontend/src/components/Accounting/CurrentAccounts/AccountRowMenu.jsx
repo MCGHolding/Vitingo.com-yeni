@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AccountRowMenu = ({ account, onClose }) => {
   const menuRef = useRef(null);
+  const navigate = useNavigate();
+  const { tenantSlug } = useParams();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
