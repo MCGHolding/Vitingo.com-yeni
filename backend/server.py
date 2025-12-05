@@ -1033,15 +1033,31 @@ async def update_project(project_id: str, project_input: ProjectCreate):
     """Update a project"""
     try:
         update_data = project_input.dict()
+        
+        # DEBUG: Print date fields received
+        print("🔍 DEBUG: Received date fields in backend:")
+        print(f"  contractDate: {update_data.get('contractDate')}")
+        print(f"  fairStartDate: {update_data.get('fairStartDate')}")
+        print(f"  fairEndDate: {update_data.get('fairEndDate')}")
+        print(f"  installationStartDate: {update_data.get('installationStartDate')}")
+        print(f"  installationEndDate: {update_data.get('installationEndDate')}")
+        print(f"  isAmericaFair: {update_data.get('isAmericaFair')}")
+        
         update_data["updated_at"] = datetime.utcnow()
+        
+        # DEBUG: Print full update payload
+        print(f"📦 Full update payload keys: {list(update_data.keys())}")
         
         result = await db.projects.update_one(
             {"id": project_id},
             {"$set": update_data}
         )
         
+        print(f"✅ MongoDB update result: modified_count={result.modified_count}")
+        
         if result.modified_count:
             updated_project = await db.projects.find_one({"id": project_id})
+            print(f"📥 Retrieved updated project from DB, contractDate: {updated_project.get('contractDate')}")
             return Project(**updated_project)
         else:
             raise HTTPException(status_code=404, detail="Project not found or no changes made")
