@@ -77,8 +77,6 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/projects/fairs/all`);
       if (response.ok) {
         const data = await response.json();
-        console.log('🎪 Fairs loaded:', data.length, 'fairs');
-        console.log('🎪 First fair:', data[0]);
         setFairs(data);
       }
     } catch (error) {
