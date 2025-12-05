@@ -500,31 +500,6 @@ export default function PaymentTermsBuilder({
                   </div>
                 )
               )}
-
-              {/* Hesaplanan Ödeme Tarihi - Vade'nin sağında */}
-              <div>
-                <label className="text-xs text-gray-600 mb-1 block">Hesaplanan Ödeme Tarihi</label>
-                <div className="h-10 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
-                    {term.dueType ? (
-                      sourceType === 'invoice' ? (
-                        /* FATURA için vade gösterimi */
-                        <>
-                          {term.dueType === 'immediate' && `${formatDate(invoiceDate || new Date())} (Peşin)`}
-                          {term.dueType === 'custom' && `${formatDate(term.dueDate)} (${term.customDays || 0} gün)`}
-                          {!isNaN(parseInt(term.dueType)) && `${formatDate(term.dueDate)} (${term.dueType} gün)`}
-                        </>
-                      ) : (
-                        /* PROJE için vade gösterimi */
-                        calculateDueDate(term)
-                      )
-                    ) : (
-                      <span className="text-gray-400">Vade seçin</span>
-                    )}
-                  </span>
-                </div>
-              </div>
             </div>
           ))}
 
