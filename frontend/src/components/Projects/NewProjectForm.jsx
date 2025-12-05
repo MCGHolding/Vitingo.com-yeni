@@ -8,7 +8,6 @@ import { useToast } from '../../hooks/use-toast';
 import { useAuth } from '../../contexts/AuthContext';
 import PaymentTermsBuilder from './PaymentTermsBuilder';
 import AddFairModal from './AddFairModal';
-import ModernDatePicker from '../ui/DatePicker';
 import SearchableSelect from '../ui/SearchableSelect';
 
 const CURRENCIES = [
