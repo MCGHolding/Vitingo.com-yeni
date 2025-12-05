@@ -561,39 +561,141 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Sözleşme Tutarı *</label>
-                  <Input
-                    type="text"
-                    value={formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR') : ''}
-                    onChange={(e) => {
-                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                      handleInputChange('contractAmount', parseFloat(numericValue) || 0);
-                    }}
-                    onBlur={(e) => {
-                      // Format on blur
-                      const formatted = formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR') : '';
-                      e.target.value = formatted;
-                    }}
-                    placeholder="0"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Para Birimi</label>
-                  <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CURRENCIES.map(curr => (
-                        <SelectItem key={curr.value} value={curr.value}>
-                          {curr.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              {/* Para Birimi Seçimi */}
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">
+                  Para Birimi <span className="text-red-500">*</span>
+                </label>
+                <Select 
+                  value={formData.currency} 
+                  onValueChange={(v) => handleInputChange('currency', v)}
+                >
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map(c => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Fatura Kalemleri Tablosu */}
+              <div className="overflow-visible">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">Sıra No</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700">Ürün ve Hizmet Adı</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Miktar</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Birim</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Birim Fiyat</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Tutar</th>
+                      <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(formData.financialItems || []).map((item, index) => (
+                      <tr key={item.id} className="border-b border-gray-100">
+                        <td className="py-3 px-2">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2">
+                          <SearchableSelect
+                            options={(products || []).map(product => ({
+                              id: product.id,
+                              label: product.name,
+                              sublabel: `${product.default_price ? product.default_price.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' ' + product.currency : ''} / ${product.unit}`.trim(),
+                              data: product
+                            }))}
+                            value={item.productId || ''}
+                            onChange={(productId) => handleProductSelect(item.id, productId)}
+                            placeholder="Ürün/Hizmet seçin..."
+                            searchPlaceholder="Ürün ara..."
+                            className="min-w-[300px]"
+                            emptyMessage="Ürün bulunamadı"
+                          />
+                        </td>
+                        <td className="py-3 px-2">
+                          <Input
+                            type="text"
+                            value={item.quantity || ''}
+                            onChange={(e) => updateFinancialItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                            placeholder="0"
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="py-3 px-2">
+                          <select
+                            value={item.unit || 'adet'}
+                            onChange={(e) => updateFinancialItem(item.id, 'unit', e.target.value)}
+                            className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="adet">Adet</option>
+                            <option value="kg">Kg</option>
+                            <option value="m2">M²</option>
+                            <option value="m3">M³</option>
+                            <option value="lt">Litre</option>
+                            <option value="saat">Saat</option>
+                            <option value="gün">Gün</option>
+                          </select>
+                        </td>
+                        <td className="py-3 px-2">
+                          <Input
+                            type="text"
+                            value={item.unitPrice || ''}
+                            onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                            placeholder="0,00"
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="py-3 px-2">
+                          <div className="bg-gray-50 px-3 py-2 rounded font-medium">
+                            {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : formData.currency === 'AED' ? 'د.إ' : '₺'}
+                            {item.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2">
+                          <div className="flex space-x-1">
+                            <button
+                              type="button"
+                              onClick={addFinancialItem}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Yeni satır ekle"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                            {formData.financialItems.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeFinancialItem(item.id)}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Satırı sil"
+                              >
+                                <span className="text-lg">×</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Total Display */}
+              <div className="flex justify-end">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 min-w-[300px]">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">Toplam Sözleşme Tutarı:</span>
+                    <span className="text-2xl font-bold text-blue-600">
+                      {calculateTotalFromItems().toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Bu tutar ödeme koşullarında kullanılacaktır</p>
                 </div>
               </div>
 
@@ -614,7 +716,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <PaymentTermsBuilder
                   paymentTerms={formData.paymentTerms}
                   onChange={(terms) => handleInputChange('paymentTerms', terms)}
-                  contractAmount={formData.contractAmount}
+                  contractAmount={calculateTotalFromItems()}
                   currency={formData.currency}
                   contractDate={formData.contractDate}
                   fairStartDate={formData.fairStartDate}
