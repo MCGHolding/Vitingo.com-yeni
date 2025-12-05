@@ -211,6 +211,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   useEffect(() => {
     generateInvoiceNumber(formData.currency);
     loadPaymentTermProfiles();
+    loadProjects();
   }, []);
 
   // Regenerate invoice number when invoice type changes
