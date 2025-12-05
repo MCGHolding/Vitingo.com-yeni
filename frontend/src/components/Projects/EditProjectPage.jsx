@@ -171,14 +171,14 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       updatedAt: new Date().toISOString()
     };
 
-    console.log('📤 Sending project data:', {
-      contractDate: projectData.contractDate,
-      fairStartDate: projectData.fairStartDate,
-      fairEndDate: projectData.fairEndDate,
-      installationStartDate: projectData.installationStartDate,
-      installationEndDate: projectData.installationEndDate,
-      isAmericaFair: projectData.isAmericaFair
-    });
+    console.log('========== DEBUG: SENDING TO BACKEND ==========');
+    console.log('contractDate:', projectData.contractDate);
+    console.log('installationStartDate:', projectData.installationStartDate);
+    console.log('installationEndDate:', projectData.installationEndDate);
+    console.log('formData.contractDate:', formData.contractDate);
+    console.log('formData.installationStartDate:', formData.installationStartDate);
+    console.log('formData.installationEndDate:', formData.installationEndDate);
+    console.log('================================================');
     console.log('📦 Full project data:', JSON.stringify(projectData, null, 2));
 
     setLoading(true);
