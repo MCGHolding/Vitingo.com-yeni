@@ -145,8 +145,15 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       return;
     }
 
+    console.log('📤 Sending project data:', {
+      contractDate: formData.contractDate,
+      installationStartDate: formData.installationStartDate,
+      installationEndDate: formData.installationEndDate,
+      isAmericaFair: formData.isAmericaFair
+    });
+
     setLoading(true);
-    try {
+    try:
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
