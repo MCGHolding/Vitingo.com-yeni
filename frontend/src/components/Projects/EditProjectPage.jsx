@@ -338,6 +338,49 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 </div>
               </div>
 
+              {/* Fuar ve Kurulum Tarihleri */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Başlangıç *</label>
+                  <Input
+                    type="date"
+                    value={formData.fairStartDate}
+                    onChange={(e) => handleInputChange('fairStartDate', e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fuar Bitiş *</label>
+                  <Input
+                    type="date"
+                    value={formData.fairEndDate}
+                    onChange={(e) => handleInputChange('fairEndDate', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Başlangıç</label>
+                  <Input
+                    type="date"
+                    value={formData.installationStartDate}
+                    onChange={(e) => handleInputChange('installationStartDate', e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Bitiş</label>
+                  <Input
+                    type="date"
+                    value={formData.installationEndDate}
+                    onChange={(e) => handleInputChange('installationEndDate', e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Kurulum son günü</p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Şehir</label>
