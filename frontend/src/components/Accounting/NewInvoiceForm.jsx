@@ -1430,9 +1430,15 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
             <span className={`px-4 py-2 rounded-lg text-sm font-medium ${
               invoiceCreationMode === 'manual' 
                 ? 'bg-blue-100 text-blue-700' 
-                : 'bg-green-100 text-green-700'
+                : invoiceCreationMode === 'project'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-purple-100 text-purple-700'
             }`}>
-              {invoiceCreationMode === 'manual' ? '📝 Manuel Fatura' : '📁 Projeye Bağlı Fatura'}
+              {invoiceCreationMode === 'manual' 
+                ? '📝 Manuel Fatura' 
+                : invoiceCreationMode === 'project'
+                  ? '📁 Projeye Bağlı Fatura'
+                  : '🛒 Alış Faturaları'}
             </span>
           </div>
           <button
@@ -1445,7 +1451,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
             className="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors flex items-center space-x-1"
           >
             <span>←</span>
-            <span>Yöntem Değiştir</span>
+            <span>Tip Değiştir</span>
           </button>
         </div>
       )}
