@@ -1345,32 +1345,33 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         </Button>
       </div>
 
-      {/* FATURA TİPİ SEÇİMİ - İlk adım */}
+      {/* FATURA TİPİ SEÇİMİ - İlk adım - 3 KART */}
       {!invoiceCreationMode && (
         <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
             Fatura Oluşturma Yöntemini Seçin
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             
             {/* Manuel Fatura */}
             <button
               type="button"
               onClick={() => {
                 setInvoiceCreationMode('manual');
+                setActiveTab('satis');
                 resetForm();
               }}
-              className="p-8 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 hover:shadow-lg transition-all group text-left"
+              className="p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 hover:shadow-lg transition-all group text-left"
             >
-              <div className="text-6xl mb-4 text-center">📝</div>
-              <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 mb-2">
+              <div className="text-5xl mb-3 text-center">📝</div>
+              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 mb-2">
                 Manuel Fatura
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Sıfırdan yeni fatura oluşturun. Müşteri, ürünler ve ödeme koşullarını manuel olarak girin.
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Sıfırdan yeni fatura oluştur. Müşteri, ürünler ve ödeme koşullarını manuel gir.
               </p>
-              <div className="mt-4 flex items-center text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">Devam Et →</span>
+              <div className="mt-3 flex items-center text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs font-medium">Devam Et →</span>
               </div>
             </button>
             
@@ -1379,19 +1380,42 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
               type="button"
               onClick={() => {
                 setInvoiceCreationMode('project');
+                setActiveTab('satis');
                 resetForm();
               }}
-              className="p-8 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 hover:shadow-lg transition-all group text-left"
+              className="p-6 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 hover:shadow-lg transition-all group text-left"
             >
-              <div className="text-6xl mb-4 text-center">📁</div>
-              <h3 className="text-xl font-semibold text-gray-800 group-hover:text-green-600 mb-2">
+              <div className="text-5xl mb-3 text-center">📁</div>
+              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-green-600 mb-2">
                 Projeye Bağlı Fatura
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Mevcut bir projeden fatura oluşturun. Müşteri, tutar ve ödeme koşulları otomatik dolacaktır.
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Mevcut projeden fatura oluştur. Müşteri, tutar ve ödeme koşulları otomatik dolar.
               </p>
-              <div className="mt-4 flex items-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium">Devam Et →</span>
+              <div className="mt-3 flex items-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs font-medium">Devam Et →</span>
+              </div>
+            </button>
+            
+            {/* Alış Faturaları */}
+            <button
+              type="button"
+              onClick={() => {
+                setInvoiceCreationMode('purchase');
+                setActiveTab('alis');
+                resetForm();
+              }}
+              className="p-6 border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 hover:shadow-lg transition-all group text-left"
+            >
+              <div className="text-5xl mb-3 text-center">🛒</div>
+              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-purple-600 mb-2">
+                Alış Faturaları
+              </h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Tedarikçilerden gelen fatura ve fişleri kaydet. Gider takibi yap.
+              </p>
+              <div className="mt-3 flex items-center text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs font-medium">Devam Et →</span>
               </div>
             </button>
             
