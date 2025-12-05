@@ -59,6 +59,14 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/projects/${projectId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('📥 Loaded project from DB:', data);
+        console.log('📅 Date fields from DB:', {
+          contractDate: data.contractDate,
+          fairStartDate: data.fairStartDate,
+          fairEndDate: data.fairEndDate,
+          installationStartDate: data.installationStartDate,
+          installationEndDate: data.installationEndDate
+        });
         setFormData(data);
       }
     } catch (error) {
