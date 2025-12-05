@@ -2398,6 +2398,9 @@ function App() {
                 <Route path=":invoiceId/duzenle" element={<InvoiceEditPage />} />
               </Route>
 
+              {/* Cari Hesaplar */}
+              <Route path="cari-hesaplar" element={<CurrentAccountsPage />} />
+
               {/* Alış Faturaları */}
               <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
 
