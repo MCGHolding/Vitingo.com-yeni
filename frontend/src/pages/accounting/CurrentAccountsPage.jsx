@@ -282,11 +282,38 @@ const CurrentAccountsPage = () => {
         {/* DASHBOARD */}
         <Dashboard stats={stats} loading={loading} />
         
-        {/* PLACEHOLDER FOR FILTERS & TABLE */}
-        <div className="bg-white rounded-xl p-8 text-center border border-gray-200">
-          <p className="text-gray-500 text-lg">🚧 Filtreler ve Tablo - Bölüm 2'de gelecek...</p>
-          <p className="text-sm text-gray-400 mt-2">Toplam {filteredAccounts.length} hesap bulundu</p>
-        </div>
+        {/* FILTERS */}
+        <Filters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          accountTypeFilter={accountTypeFilter}
+          setAccountTypeFilter={setAccountTypeFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          overdueFilter={overdueFilter}
+          setOverdueFilter={setOverdueFilter}
+          resetFilters={resetFilters}
+          totalFiltered={filteredAccounts.length}
+          totalAccounts={accounts.length}
+        />
+        
+        {/* ACCOUNTS TABLE */}
+        <AccountsTable
+          accounts={paginatedAccounts}
+          loading={loading}
+          selectedAccounts={selectedAccounts}
+          onSelectAll={handleSelectAll}
+          onSelectAccount={handleSelectAccount}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={filteredAccounts.length}
+          onPageChange={setCurrentPage}
+        />
         
       </div>
     </div>
