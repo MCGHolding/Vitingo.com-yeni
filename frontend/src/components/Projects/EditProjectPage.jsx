@@ -12,7 +12,8 @@ const CURRENCIES = [
   { value: 'TRY', label: '₺ TRY' },
   { value: 'USD', label: '$ USD' },
   { value: 'EUR', label: '€ EUR' },
-  { value: 'GBP', label: '£ GBP' }
+  { value: 'GBP', label: '£ GBP' },
+  { value: 'AED', label: 'د.إ AED' }
 ];
 
 export default function EditProjectPage({ projectId, onClose, onSave }) {
