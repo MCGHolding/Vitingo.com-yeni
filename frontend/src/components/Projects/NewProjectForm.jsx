@@ -760,23 +760,21 @@ export default function NewProjectForm({ onClose, onSave }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Kurulum Başlangıç
                 </label>
-                <ModernDatePicker
-                  selected={formData.kurulumStartDate ? new Date(formData.kurulumStartDate) : null}
-                  onChange={(date) => setFormData({ ...formData, kurulumStartDate: date ? date.toISOString().split('T')[0] : '' })}
-                  minDate={new Date()}
-                  placeholder="Kurulum başlangıç tarihi seçin"
+                <Input
+                  type="date"
+                  value={formData.kurulumStartDate}
+                  onChange={(e) => setFormData({ ...formData, kurulumStartDate: e.target.value })}
                 />
-                <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü (geçmiş tarih seçilemez)</p>
+                <p className="text-xs text-gray-500 mt-1">Kurulum ilk günü</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Kurulum Bitiş
                 </label>
-                <ModernDatePicker
-                  selected={formData.kurulumEndDate ? new Date(formData.kurulumEndDate) : null}
-                  onChange={(date) => setFormData({ ...formData, kurulumEndDate: date ? date.toISOString().split('T')[0] : '' })}
-                  minDate={formData.kurulumStartDate ? new Date(formData.kurulumStartDate) : new Date()}
-                  placeholder="Kurulum bitiş tarihi seçin"
+                <Input
+                  type="date"
+                  value={formData.kurulumEndDate}
+                  onChange={(e) => setFormData({ ...formData, kurulumEndDate: e.target.value })}
                 />
                 <p className="text-xs text-gray-500 mt-1">Kurulum son günü</p>
               </div>
