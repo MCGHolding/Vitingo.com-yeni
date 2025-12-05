@@ -16107,6 +16107,224 @@ async def send_account_statement(data: dict):
         logger.error(f"Error sending statement: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# Helper fonksiyon
+def get_transaction_label(type_str):
+    labels = {
+        'invoice': 'Satış Faturası',
+        'collection': 'Tahsilat',
+        'payment': 'Ödeme',
+        'debit_note': 'Borç Dekontu',
+        'credit_note': 'Alacak Dekontu'
+    }
+    return labels.get(type_str, 'İşlem')
+
+
+@api_router.get("/current-accounts/{account_id}/export/excel")
+async def export_account_excel(account_id: str):
+    """Cari hesap ekstresini Excel olarak indir"""
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+        
+        # Hesap detayını al
+        detail = await get_current_account_detail(account_id)
+        account = detail["account"]
+        transactions = detail["transactions"]
+        summary = detail["summary"]
+        
+        # Excel oluştur
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Cari Hesap Ekstresi"
+        
+        # Stil tanımları
+        header_font = Font(bold=True, size=14)
+        title_font = Font(bold=True, size=11)
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font_white = Font(bold=True, color="FFFFFF")
+        border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Başlık
+        ws.merge_cells('A1:F1')
+        ws['A1'] = f"CARİ HESAP EKSTRESİ - {account['name']}"
+        ws['A1'].font = header_font
+        ws['A1'].alignment = Alignment(horizontal='center')
+        
+        # Hesap bilgileri
+        ws['A3'] = "Hesap No:"
+        ws['B3'] = account.get('accountNo', '')
+        ws['A4'] = "Firma:"
+        ws['B4'] = account.get('name', '')
+        ws['A5'] = "Tarih:"
+        ws['B5'] = datetime.now().strftime("%d.%m.%Y %H:%M")
+        
+        # Tablo başlıkları
+        headers = ['Tarih', 'İşlem Tipi', 'Açıklama', 'Borç (₺)', 'Alacak (₺)', 'Bakiye (₺)']
+        header_row = 7
+        
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=header_row, column=col, value=header)
+            cell.font = header_font_white
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal='center')
+            cell.border = border
+        
+        # Veriler
+        row = header_row + 1
+        for t in transactions:
+            ws.cell(row=row, column=1, value=t.get('date', '')[:10] if t.get('date') else '').border = border
+            ws.cell(row=row, column=2, value=get_transaction_label(t.get('type', ''))).border = border
+            ws.cell(row=row, column=3, value=t.get('description', '')).border = border
+            
+            debit_cell = ws.cell(row=row, column=4, value=t.get('debit', 0) if t.get('debit', 0) > 0 else '')
+            debit_cell.border = border
+            debit_cell.number_format = '#,##0.00'
+            
+            credit_cell = ws.cell(row=row, column=5, value=t.get('credit', 0) if t.get('credit', 0) > 0 else '')
+            credit_cell.border = border
+            credit_cell.number_format = '#,##0.00'
+            
+            balance_cell = ws.cell(row=row, column=6, value=t.get('balance', 0))
+            balance_cell.border = border
+            balance_cell.number_format = '#,##0.00'
+            
+            row += 1
+        
+        # Toplam satırı
+        ws.cell(row=row, column=1, value='').border = border
+        ws.cell(row=row, column=2, value='').border = border
+        ws.cell(row=row, column=3, value='TOPLAM').border = border
+        ws.cell(row=row, column=3).font = Font(bold=True)
+        
+        total_debit = ws.cell(row=row, column=4, value=summary.get('totalDebit', 0))
+        total_debit.border = border
+        total_debit.font = Font(bold=True)
+        total_debit.number_format = '#,##0.00'
+        
+        total_credit = ws.cell(row=row, column=5, value=summary.get('totalCredit', 0))
+        total_credit.border = border
+        total_credit.font = Font(bold=True)
+        total_credit.number_format = '#,##0.00'
+        
+        total_balance = ws.cell(row=row, column=6, value=summary.get('balance', 0))
+        total_balance.border = border
+        total_balance.font = Font(bold=True)
+        total_balance.number_format = '#,##0.00'
+        
+        # Sütun genişlikleri
+        ws.column_dimensions['A'].width = 12
+        ws.column_dimensions['B'].width = 15
+        ws.column_dimensions['C'].width = 35
+        ws.column_dimensions['D'].width = 15
+        ws.column_dimensions['E'].width = 15
+        ws.column_dimensions['F'].width = 15
+        
+        # BytesIO'ya kaydet
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        filename = f"cari_hesap_{account.get('accountNo', 'ekstre')}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting Excel: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/current-accounts/export/excel")
+async def export_all_accounts_excel():
+    """Tüm cari hesapları Excel olarak indir"""
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+        from openpyxl.utils import get_column_letter
+        
+        # Tüm hesapları al
+        data = await get_current_accounts()
+        accounts = data.get("accounts", [])
+        
+        # Excel oluştur
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Cari Hesaplar"
+        
+        # Stil tanımları
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+        border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Başlıklar
+        headers = ['Sıra', 'Hesap No', 'Firma Adı', 'Tip', 'Borçlar (₺)', 'Alacaklar (₺)', 'Bakiye (₺)', 'Durum', 'Risk']
+        
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.border = border
+            cell.alignment = Alignment(horizontal='center')
+        
+        # Veriler
+        for row_num, acc in enumerate(accounts, 2):
+            ws.cell(row=row_num, column=1, value=row_num-1).border = border
+            ws.cell(row=row_num, column=2, value=acc.get('accountNo', '')).border = border
+            ws.cell(row=row_num, column=3, value=acc.get('name', '')).border = border
+            ws.cell(row=row_num, column=4, value='Müşteri' if acc.get('type') == 'customer' else 'Tedarikçi').border = border
+            
+            receivables = ws.cell(row=row_num, column=5, value=acc.get('receivables', 0))
+            receivables.border = border
+            receivables.number_format = '#,##0.00'
+            
+            payables = ws.cell(row=row_num, column=6, value=acc.get('payables', 0))
+            payables.border = border
+            payables.number_format = '#,##0.00'
+            
+            balance = ws.cell(row=row_num, column=7, value=acc.get('balance', 0))
+            balance.border = border
+            balance.number_format = '#,##0.00'
+            
+            status_text = 'Borçlu' if acc.get('status') == 'debtor' else 'Alacaklı' if acc.get('status') == 'creditor' else 'Denk'
+            ws.cell(row=row_num, column=8, value=status_text).border = border
+            ws.cell(row=row_num, column=9, value=acc.get('riskScore', 1)).border = border
+        
+        # Sütun genişlikleri
+        widths = [6, 12, 35, 12, 15, 15, 15, 12, 8]
+        for i, width in enumerate(widths, 1):
+            ws.column_dimensions[get_column_letter(i)].width = width
+        
+        # BytesIO'ya kaydet
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        filename = f"tum_cari_hesaplar_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting all accounts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== END CARİ HESAPLAR API ====================
 
 app.add_middleware(
