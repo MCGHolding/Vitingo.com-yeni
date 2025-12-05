@@ -1481,9 +1481,9 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         </div>
       )}
 
-      {/* Tab Navigation */}
-      {invoiceCreationMode && (invoiceCreationMode === 'manual' || selectedProject) && (
-      <div className="flex border-b border-gray-200 mb-6 bg-white rounded-t-xl">
+      {/* Tab Navigation - KALDIRILDI, artık gerek yok */}
+      {invoiceCreationMode && (invoiceCreationMode === 'manual' || selectedProject || invoiceCreationMode === 'purchase') && (
+      <div className="hidden">
         <button
           type="button"
           onClick={() => setActiveTab('satis')}
